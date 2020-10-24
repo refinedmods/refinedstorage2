@@ -1,0 +1,31 @@
+plugins {
+    id 'fabric-loom' version '0.5-SNAPSHOT'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+archivesBaseName = 'core'
+group = 'com.refinedmods.refinedstorage2'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft 'com.mojang:minecraft:1.16.3'
+    mappings 'net.fabricmc:yarn:1.16.3+build.17:v2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.6.1'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.1.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
