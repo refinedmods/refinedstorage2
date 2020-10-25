@@ -8,7 +8,7 @@ public class GraphScannerResult<T> {
     private final Set<T> removedEntries;
     private final Set<T> allEntries;
 
-    public GraphScannerResult(Set<T> newEntries, Set<T> removedEntries, Set<T> allEntries) {
+    GraphScannerResult(Set<T> newEntries, Set<T> removedEntries, Set<T> allEntries) {
         this.newEntries = Collections.unmodifiableSet(newEntries);
         this.removedEntries = Collections.unmodifiableSet(removedEntries);
         this.allEntries = Collections.unmodifiableSet(allEntries);

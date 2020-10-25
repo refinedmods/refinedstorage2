@@ -79,6 +79,11 @@ public class NetworkManagerImpl implements NetworkManager {
         return Optional.ofNullable(networks.get(id));
     }
 
+    @Override
+    public Collection<Network> getNetworks() {
+        return networks.values();
+    }
+
     private void removeNetwork(Network network) {
         networks.remove(network.getId());
     }
