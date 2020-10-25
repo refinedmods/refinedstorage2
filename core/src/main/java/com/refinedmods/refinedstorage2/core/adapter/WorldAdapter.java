@@ -7,6 +7,4 @@ import java.util.Optional;
 
 public interface WorldAdapter {
     Optional<BlockEntity> getBlockEntity(BlockPos pos);
-
-    WorldIdentifier getIdentifier();
 }

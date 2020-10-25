@@ -17,9 +17,9 @@ class NetworkManagerImplTest {
     @Test
     void Test_notifying_network_manager_of_node_being_added_while_node_not_present_should_fail() {
         // Arrange
-        FakeNetworkNodeAdapter networkNodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(networkNodeAdapter);
+        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
 
         // Act
         Executable action = () -> networkManager.onNodeAdded(BlockPos.ORIGIN);
@@ -32,11 +32,11 @@ class NetworkManagerImplTest {
     @Test
     void Test_adding_node_should_form_network() {
         // Arrange
-        FakeNetworkNodeAdapter networkNodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkNode node01 = networkNodeAdapter.setNode(BlockPos.ORIGIN, new FakeNetworkNode());
+        NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN, new FakeNetworkNode());
 
-        NetworkManager networkManager = new NetworkManagerImpl(networkNodeAdapter);
+        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
 
         // Act
         Network network01 = networkManager.onNodeAdded(BlockPos.ORIGIN);
@@ -52,12 +52,12 @@ class NetworkManagerImplTest {
     @Test
     void Test_having_neighboring_node_without_network_should_fail() {
         // Arrange
-        FakeNetworkNodeAdapter networkNodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(networkNodeAdapter);
+        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
 
-        networkNodeAdapter.setNode(BlockPos.ORIGIN, new FakeNetworkNode());
-        networkNodeAdapter.setNode(BlockPos.ORIGIN.down(), new FakeNetworkNode());
+        nodeAdapter.setNode(BlockPos.ORIGIN, new FakeNetworkNode());
+        nodeAdapter.setNode(BlockPos.ORIGIN.down(), new FakeNetworkNode());
 
         // Act
         Executable action = () -> networkManager.onNodeAdded(BlockPos.ORIGIN);
@@ -70,12 +70,12 @@ class NetworkManagerImplTest {
     @Test
     void Test_adding_node_should_join_existing_network() {
         // Arrange
-        FakeNetworkNodeAdapter networkNodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(networkNodeAdapter);
+        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
 
         // Act & assert
-        NetworkNode node01 = networkNodeAdapter.setNode(BlockPos.ORIGIN, new FakeNetworkNode());
+        NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN, new FakeNetworkNode());
         Network network01 = networkManager.onNodeAdded(BlockPos.ORIGIN);
 
         assertThat(network01.getNodeReferences()).containsExactlyInAnyOrder(
@@ -83,7 +83,7 @@ class NetworkManagerImplTest {
         );
         assertThat(node01.getNetwork()).isSameAs(network01);
 
-        NetworkNode node02 = networkNodeAdapter.setNode(BlockPos.ORIGIN.down(), new FakeNetworkNode());
+        NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down(), new FakeNetworkNode());
         Network network02 = networkManager.onNodeAdded(BlockPos.ORIGIN.down());
 
         assertThat(network02).isSameAs(network01);
@@ -97,12 +97,12 @@ class NetworkManagerImplTest {
     @Test
     void Test_adding_a_node_should_merge_existing_networks() {
         // Arrange
-        FakeNetworkNodeAdapter networkNodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(networkNodeAdapter);
+        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
 
         // Act & assert
-        NetworkNode node01 = networkNodeAdapter.setNode(BlockPos.ORIGIN, new FakeNetworkNode());
+        NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN, new FakeNetworkNode());
         Network network01 = networkManager.onNodeAdded(BlockPos.ORIGIN);
 
         assertThat(network01.getNodeReferences()).containsExactlyInAnyOrder(
@@ -111,7 +111,7 @@ class NetworkManagerImplTest {
         assertThat(node01.getNetwork()).isSameAs(network01);
         assertThat(networkManager.getNetworks()).hasSize(1);
 
-        NetworkNode node02 = networkNodeAdapter.setNode(BlockPos.ORIGIN.down().down(), new FakeNetworkNode());
+        NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down().down(), new FakeNetworkNode());
         Network network02 = networkManager.onNodeAdded(BlockPos.ORIGIN.down().down());
 
         assertThat(network02.getNodeReferences()).containsExactlyInAnyOrder(
@@ -120,7 +120,7 @@ class NetworkManagerImplTest {
         assertThat(node02.getNetwork()).isSameAs(network02);
         assertThat(networkManager.getNetworks()).hasSize(2);
 
-        NetworkNode node03 = networkNodeAdapter.setNode(BlockPos.ORIGIN.down(), new FakeNetworkNode());
+        NetworkNode node03 = nodeAdapter.setNode(BlockPos.ORIGIN.down(), new FakeNetworkNode());
         Network network03 = networkManager.onNodeAdded(BlockPos.ORIGIN.down());
 
         assertThat(network03.getNodeReferences()).containsExactlyInAnyOrder(

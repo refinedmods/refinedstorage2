@@ -26,9 +26,7 @@ class GraphScannerTest {
         GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN));
 
         // Assert
-        assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
-                b01
-        );
+        assertThat(result.getAllEntries()).containsExactlyInAnyOrder(b01);
     }
 
     @Test
@@ -45,9 +43,7 @@ class GraphScannerTest {
         GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN));
 
         // Assert
-        assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
-                b01
-        );
+        assertThat(result.getAllEntries()).containsExactlyInAnyOrder(b01);
     }
 
     @Test
@@ -65,11 +61,7 @@ class GraphScannerTest {
         GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN));
 
         // Assert
-        assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
-                b01,
-                b02,
-                b03
-        );
+        assertThat(result.getAllEntries()).containsExactlyInAnyOrder(b01, b02, b03);
     }
 
     @Test
@@ -87,9 +79,7 @@ class GraphScannerTest {
         GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN));
 
         // Assert
-        assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
-                b01
-        );
+        assertThat(result.getAllEntries()).containsExactlyInAnyOrder(b01);
     }
 
     @Test
@@ -110,13 +100,7 @@ class GraphScannerTest {
         GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN));
 
         // Assert
-        assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
-                b01,
-                b02,
-                b03,
-                b04,
-                b05
-        );
+        assertThat(result.getAllEntries()).containsExactlyInAnyOrder(b01, b02, b03, b04, b05);
     }
 
     @Test
@@ -134,22 +118,13 @@ class GraphScannerTest {
         GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), result1.getAllEntries());
 
         // Assert
-        assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(
-                b01
-        );
+        assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(b01);
         assertThat(result1.getRemovedEntries()).isEmpty();
-        assertThat(result1.getNewEntries()).containsExactlyInAnyOrder(
-                b01
-        );
+        assertThat(result1.getNewEntries()).containsExactlyInAnyOrder(b01);
 
-        assertThat(result2.getAllEntries()).containsExactlyInAnyOrder(
-                b01,
-                b02
-        );
-        assertThat(result1.getRemovedEntries()).isEmpty();
-        assertThat(result2.getNewEntries()).containsExactlyInAnyOrder(
-                b02
-        );
+        assertThat(result2.getAllEntries()).containsExactlyInAnyOrder(b01, b02);
+        assertThat(result2.getRemovedEntries()).isEmpty();
+        assertThat(result2.getNewEntries()).containsExactlyInAnyOrder(b02);
     }
 
     @Test
@@ -170,28 +145,12 @@ class GraphScannerTest {
         GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), result1.getAllEntries());
 
         // Assert
-        assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(
-                b00,
-                b01,
-                b02,
-                b03
-        );
+        assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(b00, b01, b02, b03);
         assertThat(result1.getRemovedEntries()).isEmpty();
-        assertThat(result1.getNewEntries()).containsExactlyInAnyOrder(
-                b00,
-                b01,
-                b02,
-                b03
-        );
+        assertThat(result1.getNewEntries()).containsExactlyInAnyOrder(b00, b01, b02, b03);
 
-        assertThat(result2.getAllEntries()).containsExactlyInAnyOrder(
-                b00,
-                b01
-        );
-        assertThat(result2.getRemovedEntries()).containsExactlyInAnyOrder(
-                b02,
-                b03
-        );
+        assertThat(result2.getAllEntries()).containsExactlyInAnyOrder(b00, b01);
+        assertThat(result2.getRemovedEntries()).containsExactlyInAnyOrder(b02, b03);
         assertThat(result2.getNewEntries()).isEmpty();
     }
 
@@ -213,27 +172,12 @@ class GraphScannerTest {
         GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), result1.getAllEntries());
 
         // Assert
-        assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(
-                b00,
-                b01
-        );
+        assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(b00, b01);
         assertThat(result1.getRemovedEntries()).isEmpty();
-        assertThat(result1.getNewEntries()).containsExactlyInAnyOrder(
-                b00,
-                b01
-        );
+        assertThat(result1.getNewEntries()).containsExactlyInAnyOrder(b00, b01);
 
-        assertThat(result2.getAllEntries()).containsExactlyInAnyOrder(
-                b01,
-                b03,
-                b02
-        );
-        assertThat(result2.getRemovedEntries()).containsExactlyInAnyOrder(
-                b00
-        );
-        assertThat(result2.getNewEntries()).containsExactlyInAnyOrder(
-                b03,
-                b02
-        );
+        assertThat(result2.getAllEntries()).containsExactlyInAnyOrder(b01, b03, b02);
+        assertThat(result2.getRemovedEntries()).containsExactlyInAnyOrder(b00);
+        assertThat(result2.getNewEntries()).containsExactlyInAnyOrder(b03, b02);
     }
 }
