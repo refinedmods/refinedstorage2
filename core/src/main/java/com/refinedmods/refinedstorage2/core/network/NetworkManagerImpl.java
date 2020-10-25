@@ -8,6 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class NetworkManagerImpl implements NetworkManager {
     private final NetworkNodeAdapter networkNodeAdapter;
@@ -16,7 +17,7 @@ public class NetworkManagerImpl implements NetworkManager {
 
     public NetworkManagerImpl(NetworkNodeAdapter networkNodeAdapter) {
         this.networkNodeAdapter = networkNodeAdapter;
-        this.graphScanner = new GraphScanner<>();
+        this.graphScanner = new GraphScanner<>(new NetworkNodeRequestHandler());
     }
 
     @Override
@@ -25,14 +26,14 @@ public class NetworkManagerImpl implements NetworkManager {
 
         Set<Network> neighboringNetworks = getNeighboringNetworks(pos);
         if (neighboringNetworks.isEmpty()) {
-            return formNetwork(node, pos);
+            return formNetwork(node);
         } else {
             return mergeNetworks(neighboringNetworks, pos);
         }
     }
 
     private Network mergeNetworks(Set<Network> neighboringNetworks, BlockPos pos) {
-        GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(networkNodeAdapter, pos), new NetworkNodeRequestHandler());
+        GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(networkNodeAdapter, pos));
 
         Iterator<Network> it = neighboringNetworks.iterator();
         Network mainNetwork = it.next();
@@ -50,7 +51,7 @@ public class NetworkManagerImpl implements NetworkManager {
         return mainNetwork;
     }
 
-    private Network formNetwork(NetworkNode node, BlockPos pos) {
+    private Network formNetwork(NetworkNode node) {
         Network network = new NetworkImpl(UUID.randomUUID(), node.createReference());
 
         addNetwork(network);
@@ -65,13 +66,13 @@ public class NetworkManagerImpl implements NetworkManager {
     }
 
     private Set<Network> getNeighboringNetworks(BlockPos pos) {
-        Set<Network> networks = new HashSet<>();
-        for (Direction dir : Direction.values()) {
-            networkNodeAdapter.getNode(pos.offset(dir))
-                    .ifPresent(node -> networks.add(node.getNetwork()));
-        }
-
-        return networks;
+        return Arrays.stream(Direction.values())
+                .map(pos::offset)
+                .map(networkNodeAdapter::getNode)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(NetworkNode::getNetwork)
+                .collect(Collectors.toSet());
     }
 
     @Override

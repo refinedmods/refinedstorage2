@@ -4,7 +4,13 @@ import java.util.Collections;
 import java.util.Set;
 
 public class GraphScanner<T, R> {
-    public GraphScannerResult<T> scanAt(R initialRequest, Set<T> previousEntries, RequestHandler<T, R> requestHandler) {
+    private final RequestHandler<T, R> requestHandler;
+
+    public GraphScanner(RequestHandler<T, R> requestHandler) {
+        this.requestHandler = requestHandler;
+    }
+
+    public GraphScannerResult<T> scanAt(R initialRequest, Set<T> previousEntries) {
         GraphScannerContext<T, R> context = new GraphScannerContext<>(previousEntries);
 
         context.addRequest(initialRequest);
@@ -17,7 +23,7 @@ public class GraphScanner<T, R> {
         return context.toResult();
     }
 
-    public GraphScannerResult<T> scanAt(R initialRequest, RequestHandler<T, R> requestHandler) {
-        return scanAt(initialRequest, Collections.emptySet(), requestHandler);
+    public GraphScannerResult<T> scanAt(R initialRequest) {
+        return scanAt(initialRequest, Collections.emptySet());
     }
 }

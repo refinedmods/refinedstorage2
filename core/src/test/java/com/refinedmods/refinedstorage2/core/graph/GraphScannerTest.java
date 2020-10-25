@@ -11,8 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RefinedStorage2Test
 class GraphScannerTest {
-    private final GraphScanner<FurnaceBlockEntity, BlockEntityRequest> scanner = new GraphScanner<>();
-    private final BlockEntityRequestHandler<FurnaceBlockEntity> requestHandler = new BlockEntityRequestHandler<>(FurnaceBlockEntity.class);
+    private final GraphScanner<FurnaceBlockEntity, BlockEntityRequest> scanner = new GraphScanner<>(new BlockEntityRequestHandler<>(FurnaceBlockEntity.class));
 
     @Test
     void Test_scanning_from_origin_contains_origin() {
@@ -24,7 +23,7 @@ class GraphScannerTest {
         worldAdapter.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
+        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN));
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
@@ -43,7 +42,7 @@ class GraphScannerTest {
         worldAdapter.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
+        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN));
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
@@ -63,7 +62,7 @@ class GraphScannerTest {
         worldAdapter.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
+        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN));
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
@@ -85,7 +84,7 @@ class GraphScannerTest {
         worldAdapter.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
+        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN));
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
@@ -108,7 +107,7 @@ class GraphScannerTest {
         worldAdapter.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
+        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN));
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
@@ -128,11 +127,11 @@ class GraphScannerTest {
         FurnaceBlockEntity b01 = worldAdapter.setBlockEntity(BlockPos.ORIGIN, new FurnaceBlockEntity());
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
+        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN));
 
         FurnaceBlockEntity b02 = worldAdapter.setBlockEntity(BlockPos.ORIGIN.down(), new FurnaceBlockEntity());
 
-        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), result1.getAllEntries(), requestHandler);
+        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), result1.getAllEntries());
 
         // Assert
         assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(
@@ -164,11 +163,11 @@ class GraphScannerTest {
         FurnaceBlockEntity b03 = worldAdapter.setBlockEntity(BlockPos.ORIGIN.down().down(), new FurnaceBlockEntity());
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
+        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN));
 
         worldAdapter.removeBlockEntity(BlockPos.ORIGIN.down());
 
-        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), result1.getAllEntries(), requestHandler);
+        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), result1.getAllEntries());
 
         // Assert
         assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(
@@ -206,12 +205,12 @@ class GraphScannerTest {
         FurnaceBlockEntity b02 = worldAdapter.setBlockEntity(BlockPos.ORIGIN.down().down(), new FurnaceBlockEntity());
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
+        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN));
 
         worldAdapter.removeBlockEntity(BlockPos.ORIGIN.up());
         FurnaceBlockEntity b03 = worldAdapter.setBlockEntity(BlockPos.ORIGIN.down(), new FurnaceBlockEntity());
 
-        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), result1.getAllEntries(), requestHandler);
+        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), result1.getAllEntries());
 
         // Assert
         assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(
