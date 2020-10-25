@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.core.graph.GraphScannerResult;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeAdapter;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
@@ -40,19 +39,18 @@ public class NetworkManagerImpl implements NetworkManager {
         GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(networkNodeAdapter, pos));
 
         Iterator<Network> it = neighboringNetworks.iterator();
-        Network mainNetwork = it.next();
+        Network pivotNetwork = it.next();
         while (it.hasNext()) {
             removeNetwork(it.next());
         }
 
-        mainNetwork.getNodeReferences().clear();
-
+        pivotNetwork.getNodeReferences().clear();
         result.getAllEntries().forEach(node -> {
-            node.setNetwork(mainNetwork);
-            mainNetwork.getNodeReferences().add(node.createReference());
+            node.setNetwork(pivotNetwork);
+            pivotNetwork.getNodeReferences().add(node.createReference());
         });
 
-        return mainNetwork;
+        return pivotNetwork;
     }
 
     private Network formNetwork(BlockPos pos) {
@@ -70,56 +68,70 @@ public class NetworkManagerImpl implements NetworkManager {
     }
 
     @Override
-    public Set<Network> onNodeRemoved(BlockPos pos) {
-        // TODO verify whether node is removed.
-
-        Set<Network> neighboringNetworks = getNeighboringNetworks(pos);
-        // TODO verify networks are the  same.
-
-        Optional<Pair<Network, BlockPos>> firstNeighboringNetwork = getFirstNeighboringNetwork(pos);
-        if (firstNeighboringNetwork.isPresent()) {
-            Network neighborNetwork = firstNeighboringNetwork.get().getLeft();
-            BlockPos neighborPos = firstNeighboringNetwork.get().getRight();
-            Set<NetworkNode> neighborNetworkNodes = neighborNetwork.getNodeReferences()
-                    .stream()
-                    .map(NetworkNodeReference::get)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toSet());
-
-            GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(networkNodeAdapter, neighborPos), neighborNetworkNodes);
-
-            neighborNetwork.getNodeReferences().clear();
-            for (NetworkNode remainingNode : result.getAllEntries()) {
-                neighborNetwork.getNodeReferences().add(remainingNode.createReference());
+    public void onNodeRemoved(NetworkNode node) {
+        for (Network neighboringNetwork : getNeighboringNetworks(node.getPosition())) {
+            if (neighboringNetwork != node.getNetwork()) {
+                throw new NetworkManagerException(String.format("The network manager was left in invalid state. The network of a neighboring node doesn't match the origin node. The origin node is located at %s", node.getPosition()));
             }
-
-            for (NetworkNode removedNode : result.getRemovedEntries()) {
-                removedNode.setNetwork(null);
-            }
-
-            for (NetworkNode removedNode : result.getRemovedEntries()) {
-                if (!removedNode.getPosition().equals(pos) && removedNode.getNetwork() == null) {
-                    formNetwork(removedNode.getPosition());
-                }
-            }
-        } else {
-            // TODO remove network..
         }
 
-        return Collections.emptySet();
+        Optional<NetworkNode> neighborNode = getFirstNeighboringNode(node.getPosition());
+        if (neighborNode.isPresent()) {
+            splitNetworks(neighborNode.get(), node.getPosition());
+        } else {
+            removeNetwork(node.getNetwork());
+        }
     }
 
-    private Optional<Pair<Network, BlockPos>> getFirstNeighboringNetwork(BlockPos pos) {
+    private void splitNetworks(NetworkNode pivot, BlockPos removedPos) {
+        Network pivotNetwork = pivot.getNetwork();
+        Set<NetworkNode> pivotNodes = getNodesInNetwork(pivotNetwork);
+
+        GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(networkNodeAdapter, pivot.getPosition()), pivotNodes);
+
+        pivotNetwork.getNodeReferences().clear();
+        for (NetworkNode node : result.getAllEntries()) {
+            pivotNetwork.getNodeReferences().add(node.createReference());
+        }
+
+        for (NetworkNode removedNode : result.getRemovedEntries()) {
+            removedNode.setNetwork(null);
+        }
+
+        boolean foundRemovedNode = false;
+
+        for (NetworkNode removedNode : result.getRemovedEntries()) {
+            if (removedNode.getPosition().equals(removedPos)) {
+                foundRemovedNode = true;
+                continue;
+            }
+
+            if (removedNode.getNetwork() == null) {
+                formNetwork(removedNode.getPosition());
+            }
+        }
+
+        if (!foundRemovedNode) {
+            throw new NetworkManagerException(String.format("The removed node at %s is still present in the world!", removedPos));
+        }
+    }
+
+    private Set<NetworkNode> getNodesInNetwork(Network network) {
+        return network.getNodeReferences()
+                .stream()
+                .map(NetworkNodeReference::get)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
+    }
+
+    private Optional<NetworkNode> getFirstNeighboringNode(BlockPos pos) {
         for (Direction dir : Direction.values()) {
             BlockPos offsetPos = pos.offset(dir);
 
             Optional<NetworkNode> node = networkNodeAdapter.getNode(offsetPos);
             if (node.isPresent()) {
-                return node.map(n -> {
-                    // TODO check n.getNetwork()
-                    return new Pair<>(n.getNetwork(), offsetPos);
-                });
+                return node;
             }
         }
 
