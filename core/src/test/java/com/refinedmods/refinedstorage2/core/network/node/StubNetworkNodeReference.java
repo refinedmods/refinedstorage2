@@ -27,4 +27,11 @@ public class StubNetworkNodeReference implements NetworkNodeReference {
     public int hashCode() {
         return Objects.hash(node);
     }
+
+    @Override
+    public String toString() {
+        return "StubNetworkNodeReference{" +
+                "node=" + node +
+                '}';
+    }
 }

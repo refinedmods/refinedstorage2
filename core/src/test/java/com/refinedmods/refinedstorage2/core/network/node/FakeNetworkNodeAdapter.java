@@ -9,9 +9,14 @@ import java.util.Optional;
 public class FakeNetworkNodeAdapter implements NetworkNodeAdapter {
     private final Map<BlockPos, NetworkNode> nodes = new HashMap<>();
 
-    public NetworkNode setNode(BlockPos pos, NetworkNode node) {
+    public NetworkNode setNode(BlockPos pos) {
+        NetworkNode node = new FakeNetworkNode(pos);
         nodes.put(pos, node);
         return node;
+    }
+
+    public void removeNode(BlockPos pos) {
+        nodes.remove(pos);
     }
 
     @Override

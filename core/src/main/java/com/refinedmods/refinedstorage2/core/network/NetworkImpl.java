@@ -11,9 +11,8 @@ public class NetworkImpl implements Network {
     private final UUID id;
     private final Set<NetworkNodeReference> nodeReferences = new HashSet<>();
 
-    public NetworkImpl(UUID id, NetworkNodeReference initialNodeReference) {
+    public NetworkImpl(UUID id) {
         this.id = id;
-        this.nodeReferences.add(initialNodeReference);
     }
 
     @Override

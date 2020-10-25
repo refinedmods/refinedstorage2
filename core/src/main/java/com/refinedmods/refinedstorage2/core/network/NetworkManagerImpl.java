@@ -4,10 +4,13 @@ import com.refinedmods.refinedstorage2.core.graph.GraphScanner;
 import com.refinedmods.refinedstorage2.core.graph.GraphScannerResult;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeAdapter;
+import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class NetworkManagerImpl implements NetworkManager {
     private final NetworkNodeAdapter networkNodeAdapter;
@@ -21,13 +24,13 @@ public class NetworkManagerImpl implements NetworkManager {
 
     @Override
     public Network onNodeAdded(BlockPos pos) {
-        NetworkNode node = networkNodeAdapter
-                .getNode(pos)
-                .orElseThrow(() -> new NetworkManagerException(String.format("Could not find added node at position %s", pos)));
+        if (!networkNodeAdapter.getNode(pos).isPresent()) {
+            throw new NetworkManagerException(String.format("Could not find added node at position %s", pos));
+        }
 
         Set<Network> neighboringNetworks = getNeighboringNetworks(pos);
         if (neighboringNetworks.isEmpty()) {
-            return formNetwork(node);
+            return formNetwork(pos);
         } else {
             return mergeNetworks(neighboringNetworks, pos);
         }
@@ -52,18 +55,75 @@ public class NetworkManagerImpl implements NetworkManager {
         return mainNetwork;
     }
 
-    private Network formNetwork(NetworkNode node) {
-        Network network = new NetworkImpl(UUID.randomUUID(), node.createReference());
+    private Network formNetwork(BlockPos pos) {
+        Network network = new NetworkImpl(UUID.randomUUID());
         addNetwork(network);
 
-        node.setNetwork(network);
+        GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(networkNodeAdapter, pos));
+
+        result.getAllEntries().forEach(node -> {
+            node.setNetwork(network);
+            network.getNodeReferences().add(node.createReference());
+        });
 
         return network;
     }
 
     @Override
-    public void onNodeRemoved(BlockPos pos) {
+    public Set<Network> onNodeRemoved(BlockPos pos) {
+        // TODO verify whether node is removed.
 
+        Set<Network> neighboringNetworks = getNeighboringNetworks(pos);
+        // TODO verify networks are the  same.
+
+        Optional<Pair<Network, BlockPos>> firstNeighboringNetwork = getFirstNeighboringNetwork(pos);
+        if (firstNeighboringNetwork.isPresent()) {
+            Network neighborNetwork = firstNeighboringNetwork.get().getLeft();
+            BlockPos neighborPos = firstNeighboringNetwork.get().getRight();
+            Set<NetworkNode> neighborNetworkNodes = neighborNetwork.getNodeReferences()
+                    .stream()
+                    .map(NetworkNodeReference::get)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toSet());
+
+            GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(networkNodeAdapter, neighborPos), neighborNetworkNodes);
+
+            neighborNetwork.getNodeReferences().clear();
+            for (NetworkNode remainingNode : result.getAllEntries()) {
+                neighborNetwork.getNodeReferences().add(remainingNode.createReference());
+            }
+
+            for (NetworkNode removedNode : result.getRemovedEntries()) {
+                removedNode.setNetwork(null);
+            }
+
+            for (NetworkNode removedNode : result.getRemovedEntries()) {
+                if (!removedNode.getPosition().equals(pos) && removedNode.getNetwork() == null) {
+                    formNetwork(removedNode.getPosition());
+                }
+            }
+        } else {
+            // TODO remove network..
+        }
+
+        return Collections.emptySet();
+    }
+
+    private Optional<Pair<Network, BlockPos>> getFirstNeighboringNetwork(BlockPos pos) {
+        for (Direction dir : Direction.values()) {
+            BlockPos offsetPos = pos.offset(dir);
+
+            Optional<NetworkNode> node = networkNodeAdapter.getNode(offsetPos);
+            if (node.isPresent()) {
+                return node.map(n -> {
+                    // TODO check n.getNetwork()
+                    return new Pair<>(n.getNetwork(), offsetPos);
+                });
+            }
+        }
+
+        return Optional.empty();
     }
 
     private Set<Network> getNeighboringNetworks(BlockPos pos) {
