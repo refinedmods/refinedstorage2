@@ -1,22 +1,18 @@
 package com.refinedmods.refinedstorage2.core.network.node;
 
-import net.minecraft.util.math.BlockPos;
-
 import java.util.Objects;
 import java.util.Optional;
 
-public class StubNetworkNodeReference  implements NetworkNodeReference {
-    private final NetworkNode networkNode;
-    private final BlockPos pos;
+public class StubNetworkNodeReference implements NetworkNodeReference {
+    private final NetworkNode node;
 
-    public StubNetworkNodeReference(BlockPos pos, NetworkNode networkNode) {
-        this.pos = pos;
-        this.networkNode = networkNode;
+    public StubNetworkNodeReference(NetworkNode node) {
+        this.node = node;
     }
 
     @Override
     public Optional<NetworkNode> get() {
-        return Optional.of(networkNode);
+        return Optional.of(node);
     }
 
     @Override
@@ -24,11 +20,11 @@ public class StubNetworkNodeReference  implements NetworkNodeReference {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StubNetworkNodeReference that = (StubNetworkNodeReference) o;
-        return networkNode.equals(that.networkNode) && pos.equals(that.pos);
+        return node.equals(that.node);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(networkNode, pos);
+        return Objects.hash(node);
     }
 }

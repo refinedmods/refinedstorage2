@@ -6,4 +6,6 @@ public interface NetworkNode {
     void setNetwork(Network network);
 
     Network getNetwork();
+
+    NetworkNodeReference createReference();
 }

@@ -1,15 +1,23 @@
 package com.refinedmods.refinedstorage2.core.graph;
 
-import com.refinedmods.refinedstorage2.core.adapter.WorldAdapter;
-import net.minecraft.util.math.BlockPos;
-
 import java.util.Collections;
 import java.util.Set;
 
-public interface GraphScanner<T> {
-    GraphScannerResult<T> scanAt(WorldAdapter worldAdapter, BlockPos pos, Set<GraphEntry<T>> previousEntries);
+public class GraphScanner<T, R> {
+    public GraphScannerResult<T> scanAt(R initialRequest, Set<T> previousEntries, RequestHandler<T, R> requestHandler) {
+        GraphScannerContext<T, R> context = new GraphScannerContext<>(previousEntries);
 
-    default GraphScannerResult<T> scanAt(WorldAdapter worldAdapter, BlockPos pos) {
-        return scanAt(worldAdapter, pos, Collections.emptySet());
+        context.addRequest(initialRequest);
+
+        R request;
+        while ((request = context.getRequests().poll()) != null) {
+            requestHandler.handle(request, context);
+        }
+
+        return context.toResult();
+    }
+
+    public GraphScannerResult<T> scanAt(R initialRequest, RequestHandler<T, R> requestHandler) {
+        return scanAt(initialRequest, Collections.emptySet(), requestHandler);
     }
 }

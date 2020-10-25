@@ -4,25 +4,25 @@ import java.util.Collections;
 import java.util.Set;
 
 public class GraphScannerResult<T> {
-    private final Set<GraphEntry<T>> newEntries;
-    private final Set<GraphEntry<T>> removedEntries;
-    private final Set<GraphEntry<T>> allEntries;
+    private final Set<T> newEntries;
+    private final Set<T> removedEntries;
+    private final Set<T> allEntries;
 
-    public GraphScannerResult(Set<GraphEntry<T>> newEntries, Set<GraphEntry<T>> removedEntries, Set<GraphEntry<T>> allEntries) {
+    public GraphScannerResult(Set<T> newEntries, Set<T> removedEntries, Set<T> allEntries) {
         this.newEntries = Collections.unmodifiableSet(newEntries);
         this.removedEntries = Collections.unmodifiableSet(removedEntries);
         this.allEntries = Collections.unmodifiableSet(allEntries);
     }
 
-    public Set<GraphEntry<T>> getNewEntries() {
+    public Set<T> getNewEntries() {
         return newEntries;
     }
 
-    public Set<GraphEntry<T>> getRemovedEntries() {
+    public Set<T> getRemovedEntries() {
         return removedEntries;
     }
 
-    public Set<GraphEntry<T>> getAllEntries() {
+    public Set<T> getAllEntries() {
         return allEntries;
     }
 }

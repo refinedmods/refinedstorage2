@@ -10,7 +10,10 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RefinedStorage2Test
-class BlockEntityGraphScannerTest {
+class GraphScannerTest {
+    private final GraphScanner<FurnaceBlockEntity, BlockEntityRequest> scanner = new GraphScanner<>();
+    private final BlockEntityRequestHandler<FurnaceBlockEntity> requestHandler = new BlockEntityRequestHandler<>(FurnaceBlockEntity.class);
+
     @Test
     void Test_scanning_from_origin_contains_origin() {
         // Arrange
@@ -20,14 +23,12 @@ class BlockEntityGraphScannerTest {
 
         worldAdapter.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
 
-        GraphScanner<FurnaceBlockEntity> scanner = new BlockEntityGraphScanner<>(FurnaceBlockEntity.class);
-
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(worldAdapter, BlockPos.ORIGIN);
+        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01)
+                b01
         );
     }
 
@@ -41,14 +42,12 @@ class BlockEntityGraphScannerTest {
 
         worldAdapter.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
 
-        GraphScanner<FurnaceBlockEntity> scanner = new BlockEntityGraphScanner<>(FurnaceBlockEntity.class);
-
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(worldAdapter, BlockPos.ORIGIN);
+        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01)
+                b01
         );
     }
 
@@ -63,16 +62,14 @@ class BlockEntityGraphScannerTest {
 
         worldAdapter.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
 
-        GraphScanner<FurnaceBlockEntity> scanner = new BlockEntityGraphScanner<>(FurnaceBlockEntity.class);
-
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(worldAdapter, BlockPos.ORIGIN);
+        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down(), b02),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.up(), b03)
+                b01,
+                b02,
+                b03
         );
     }
 
@@ -87,14 +84,12 @@ class BlockEntityGraphScannerTest {
 
         worldAdapter.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
 
-        GraphScanner<FurnaceBlockEntity> scanner = new BlockEntityGraphScanner<>(FurnaceBlockEntity.class);
-
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(worldAdapter, BlockPos.ORIGIN);
+        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01)
+                b01
         );
     }
 
@@ -112,18 +107,16 @@ class BlockEntityGraphScannerTest {
 
         worldAdapter.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
 
-        GraphScanner<FurnaceBlockEntity> scanner = new BlockEntityGraphScanner<>(FurnaceBlockEntity.class);
-
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(worldAdapter, BlockPos.ORIGIN);
+        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down().down(), b02),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.north(), b03),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.north().down(), b04),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.north().down().down(), b05)
+                b01,
+                b02,
+                b03,
+                b04,
+                b05
         );
     }
 
@@ -134,31 +127,29 @@ class BlockEntityGraphScannerTest {
 
         FurnaceBlockEntity b01 = worldAdapter.setBlockEntity(BlockPos.ORIGIN, new FurnaceBlockEntity());
 
-        GraphScanner<FurnaceBlockEntity> scanner = new BlockEntityGraphScanner<>(FurnaceBlockEntity.class);
-
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(worldAdapter, BlockPos.ORIGIN);
+        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
 
         FurnaceBlockEntity b02 = worldAdapter.setBlockEntity(BlockPos.ORIGIN.down(), new FurnaceBlockEntity());
 
-        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(worldAdapter, BlockPos.ORIGIN, result1.getAllEntries());
+        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), result1.getAllEntries(), requestHandler);
 
         // Assert
         assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01)
+                b01
         );
         assertThat(result1.getRemovedEntries()).isEmpty();
         assertThat(result1.getNewEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01)
+                b01
         );
 
         assertThat(result2.getAllEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down(), b02)
+                b01,
+                b02
         );
         assertThat(result1.getRemovedEntries()).isEmpty();
         assertThat(result2.getNewEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down(), b02)
+                b02
         );
     }
 
@@ -172,37 +163,35 @@ class BlockEntityGraphScannerTest {
         FurnaceBlockEntity b02 = worldAdapter.setBlockEntity(BlockPos.ORIGIN.down(), new FurnaceBlockEntity());
         FurnaceBlockEntity b03 = worldAdapter.setBlockEntity(BlockPos.ORIGIN.down().down(), new FurnaceBlockEntity());
 
-        GraphScanner<FurnaceBlockEntity> scanner = new BlockEntityGraphScanner<>(FurnaceBlockEntity.class);
-
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(worldAdapter, BlockPos.ORIGIN);
+        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
 
         worldAdapter.removeBlockEntity(BlockPos.ORIGIN.down());
 
-        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(worldAdapter, BlockPos.ORIGIN, result1.getAllEntries());
+        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), result1.getAllEntries(), requestHandler);
 
         // Assert
         assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.up(), b00),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down(), b02),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down().down(), b03)
+                b00,
+                b01,
+                b02,
+                b03
         );
         assertThat(result1.getRemovedEntries()).isEmpty();
         assertThat(result1.getNewEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.up(), b00),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down(), b02),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down().down(), b03)
+                b00,
+                b01,
+                b02,
+                b03
         );
 
         assertThat(result2.getAllEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.up(), b00),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01)
+                b00,
+                b01
         );
         assertThat(result2.getRemovedEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down(), b02),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down().down(), b03)
+                b02,
+                b03
         );
         assertThat(result2.getNewEntries()).isEmpty();
     }
@@ -216,38 +205,36 @@ class BlockEntityGraphScannerTest {
         FurnaceBlockEntity b01 = worldAdapter.setBlockEntity(BlockPos.ORIGIN, new FurnaceBlockEntity());
         FurnaceBlockEntity b02 = worldAdapter.setBlockEntity(BlockPos.ORIGIN.down().down(), new FurnaceBlockEntity());
 
-        GraphScanner<FurnaceBlockEntity> scanner = new BlockEntityGraphScanner<>(FurnaceBlockEntity.class);
-
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(worldAdapter, BlockPos.ORIGIN);
+        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), requestHandler);
 
         worldAdapter.removeBlockEntity(BlockPos.ORIGIN.up());
         FurnaceBlockEntity b03 = worldAdapter.setBlockEntity(BlockPos.ORIGIN.down(), new FurnaceBlockEntity());
 
-        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(worldAdapter, BlockPos.ORIGIN, result1.getAllEntries());
+        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(worldAdapter, BlockPos.ORIGIN), result1.getAllEntries(), requestHandler);
 
         // Assert
         assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.up(), b00),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01)
+                b00,
+                b01
         );
         assertThat(result1.getRemovedEntries()).isEmpty();
         assertThat(result1.getNewEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.up(), b00),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01)
+                b00,
+                b01
         );
 
         assertThat(result2.getAllEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN, b01),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down(), b03),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down().down(), b02)
+                b01,
+                b03,
+                b02
         );
         assertThat(result2.getRemovedEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.up(), b00)
+                b00
         );
         assertThat(result2.getNewEntries()).containsExactlyInAnyOrder(
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down(), b03),
-                new GraphEntry<>(FakeWorldAdapter.IDENTIFIER, BlockPos.ORIGIN.down().down(), b02)
+                b03,
+                b02
         );
     }
 }
