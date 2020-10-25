@@ -8,7 +8,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class NetworkManagerImpl implements NetworkManager {
     private final NetworkNodeAdapter networkNodeAdapter;
@@ -22,7 +21,9 @@ public class NetworkManagerImpl implements NetworkManager {
 
     @Override
     public Network onNodeAdded(BlockPos pos) {
-        NetworkNode node = networkNodeAdapter.getNode(pos).orElseThrow(() -> new RuntimeException("Node not present"));
+        NetworkNode node = networkNodeAdapter
+                .getNode(pos)
+                .orElseThrow(() -> new NetworkManagerException(String.format("Could not find added node at position %s", pos)));
 
         Set<Network> neighboringNetworks = getNeighboringNetworks(pos);
         if (neighboringNetworks.isEmpty()) {
@@ -53,8 +54,8 @@ public class NetworkManagerImpl implements NetworkManager {
 
     private Network formNetwork(NetworkNode node) {
         Network network = new NetworkImpl(UUID.randomUUID(), node.createReference());
-
         addNetwork(network);
+
         node.setNetwork(network);
 
         return network;
@@ -66,13 +67,21 @@ public class NetworkManagerImpl implements NetworkManager {
     }
 
     private Set<Network> getNeighboringNetworks(BlockPos pos) {
-        return Arrays.stream(Direction.values())
-                .map(pos::offset)
-                .map(networkNodeAdapter::getNode)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(NetworkNode::getNetwork)
-                .collect(Collectors.toSet());
+        Set<Network> neighboringNetworks = new HashSet<>();
+        for (Direction dir : Direction.values()) {
+            BlockPos offsetPos = pos.offset(dir);
+
+            networkNodeAdapter.getNode(offsetPos).ifPresent(node -> {
+                Network network = node.getNetwork();
+                if (network == null) {
+                    throw new NetworkManagerException(String.format("The network manager was left in an invalid state. Network node at %s has no network!", offsetPos));
+                }
+
+                neighboringNetworks.add(network);
+            });
+        }
+
+        return neighboringNetworks;
     }
 
     @Override

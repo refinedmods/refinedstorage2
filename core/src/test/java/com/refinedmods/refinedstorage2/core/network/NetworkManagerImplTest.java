@@ -7,11 +7,28 @@ import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
 import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RefinedStorage2Test
 class NetworkManagerImplTest {
+    @Test
+    void Test_notifying_network_manager_of_node_being_added_while_node_not_present_should_fail() {
+        // Arrange
+        FakeNetworkNodeAdapter networkNodeAdapter = new FakeNetworkNodeAdapter();
+
+        NetworkManager networkManager = new NetworkManagerImpl(networkNodeAdapter);
+
+        // Act
+        Executable action = () -> networkManager.onNodeAdded(BlockPos.ORIGIN);
+
+        // Assert
+        NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
+        assertThat(e.getMessage()).isEqualTo("Could not find added node at position BlockPos{x=0, y=0, z=0}");
+    }
+
     @Test
     void Test_adding_node_should_form_network() {
         // Arrange
@@ -30,6 +47,24 @@ class NetworkManagerImplTest {
         );
         assertThat(node01.getNetwork()).isSameAs(network01);
         assertThat(networkManager.getNetworks()).hasSize(1);
+    }
+
+    @Test
+    void Test_having_neighboring_node_without_network_should_fail() {
+        // Arrange
+        FakeNetworkNodeAdapter networkNodeAdapter = new FakeNetworkNodeAdapter();
+
+        NetworkManager networkManager = new NetworkManagerImpl(networkNodeAdapter);
+
+        networkNodeAdapter.setNode(BlockPos.ORIGIN, new FakeNetworkNode());
+        networkNodeAdapter.setNode(BlockPos.ORIGIN.down(), new FakeNetworkNode());
+
+        // Act
+        Executable action = () -> networkManager.onNodeAdded(BlockPos.ORIGIN);
+
+        // Assert
+        NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
+        assertThat(e.getMessage()).isEqualTo("The network manager was left in an invalid state. Network node at BlockPos{x=0, y=-1, z=0} has no network!");
     }
 
     @Test
