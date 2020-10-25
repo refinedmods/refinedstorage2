@@ -5,8 +5,8 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-archivesBaseName = 'core'
 group = 'com.refinedmods.refinedstorage2'
+archivesBaseName = 'core'
 version = '1.0-SNAPSHOT'
 
 repositories {
@@ -18,7 +18,7 @@ dependencies {
     mappings 'net.fabricmc:yarn:1.16.3+build.17:v2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.17.2'
+    testCompile 'org.assertj:assertj-core:3.17.2'
 }
 
 test {

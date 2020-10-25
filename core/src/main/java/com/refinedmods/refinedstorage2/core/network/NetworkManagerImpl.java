@@ -156,21 +156,16 @@ public class NetworkManagerImpl implements NetworkManager {
         return neighboringNetworks;
     }
 
-    @Override
-    public Optional<Network> getNetwork(UUID id) {
-        return Optional.ofNullable(networks.get(id));
-    }
-
-    @Override
-    public Collection<Network> getNetworks() {
-        return networks.values();
-    }
-
     private void removeNetwork(Network network) {
         networks.remove(network.getId());
     }
 
     private void addNetwork(Network network) {
         networks.put(network.getId(), network);
+    }
+
+    @Override
+    public Collection<Network> getNetworks() {
+        return networks.values();
     }
 }
