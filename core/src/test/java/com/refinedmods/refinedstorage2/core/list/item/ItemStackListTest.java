@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundTag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -82,6 +83,53 @@ class ItemStackListTest {
         assertThat(result3.getStack()).isNotSameAs(stack3);
 
         assertItemStackListContents(list, new ItemStack(Items.DIRT, 15), new ItemStack(Items.DIAMOND, 3));
+    }
+
+    @Test
+    void Test_adding_multiple_stacks_with_same_item_but_different_tag() {
+        // Arrange
+        CompoundTag tag1 = new CompoundTag();
+        tag1.putInt("hello", 1);
+        ItemStack stack1 = new ItemStack(Items.DIRT, 10);
+        stack1.setTag(tag1);
+
+        CompoundTag tag2 = new CompoundTag();
+        tag2.putInt("hello", 2);
+        ItemStack stack2 = new ItemStack(Items.DIRT, 5);
+        stack2.setTag(tag2);
+
+        ItemStack stack3 = new ItemStack(Items.DIAMOND, 3);
+
+        // Act
+        StackListResult<ItemStack> result1 = list.add(stack1, 10);
+        StackListResult<ItemStack> result2 = list.add(stack2, 5);
+        StackListResult<ItemStack> result3 = list.add(stack3, 3);
+
+        // Assert
+        assertThat(result1.getId()).isNotNull();
+        assertThat(result1.getChange()).isEqualTo(10);
+        assertThat(result1.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
+
+        assertThat(result2.getId()).isNotNull();
+        assertThat(result2.getChange()).isEqualTo(5);
+        assertThat(result2.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
+
+        assertThat(result3.getId()).isNotNull();
+        assertThat(result3.getChange()).isEqualTo(3);
+        assertThat(result3.getStack()).isNotSameAs(stack3);
+
+        ItemStack expectedStack1 = new ItemStack(Items.DIRT, 10);
+        expectedStack1.setTag(tag1.copy());
+
+        ItemStack expectedStack2 = new ItemStack(Items.DIRT, 5);
+        expectedStack2.setTag(tag2.copy());
+
+        assertItemStackListContents(
+                list,
+                expectedStack1,
+                expectedStack2,
+                new ItemStack(Items.DIAMOND, 3)
+        );
     }
 
     @Test
