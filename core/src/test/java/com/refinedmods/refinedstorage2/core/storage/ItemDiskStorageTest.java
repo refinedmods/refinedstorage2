@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.core.storage;
 
 import com.refinedmods.refinedstorage2.core.Action;
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
-import com.refinedmods.refinedstorage2.core.util.ItemStackAssertions;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,7 @@ class ItemDiskStorageTest {
         // Assert
         assertThat(remainder).isEmpty();
 
-        ItemStackAssertions.assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 64));
+        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 64));
 
         assertThat(disk.getStored()).isEqualTo(64);
     }
@@ -46,7 +45,7 @@ class ItemDiskStorageTest {
         // Assert
         assertThat(remainder).isEmpty();
 
-        ItemStackAssertions.assertItemStackListContents(disk.getStacks());
+        assertItemStackListContents(disk.getStacks());
 
         assertThat(disk.getStored()).isZero();
     }
@@ -67,7 +66,7 @@ class ItemDiskStorageTest {
         assertThat(remainder2.get()).isNotSameAs(stack1).isNotSameAs(stack2);
 
         assertItemStack(remainder2.get(), new ItemStack(Items.DIRT, 5));
-        ItemStackAssertions.assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 60), new ItemStack(Items.DIRT, 40));
+        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 60), new ItemStack(Items.DIRT, 40));
 
         assertThat(disk.getStored()).isEqualTo(100);
     }
@@ -88,7 +87,7 @@ class ItemDiskStorageTest {
         assertThat(remainder2.get()).isNotSameAs(stack1).isNotSameAs(stack2);
 
         assertItemStack(remainder2.get(), new ItemStack(Items.DIRT, 5));
-        ItemStackAssertions.assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 60));
+        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 60));
 
         assertThat(disk.getStored()).isEqualTo(60);
     }
@@ -147,7 +146,7 @@ class ItemDiskStorageTest {
         assertThat(result.get()).isNotSameAs(stack);
 
         assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 2));
-        ItemStackAssertions.assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 30));
+        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 30));
 
         assertThat(disk.getStored()).isEqualTo(30);
     }
@@ -166,7 +165,7 @@ class ItemDiskStorageTest {
         assertThat(result.get()).isNotSameAs(stack);
 
         assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 32));
-        ItemStackAssertions.assertItemStackListContents(disk.getStacks());
+        assertItemStackListContents(disk.getStacks());
 
         assertThat(disk.getStored()).isZero();
     }
@@ -185,7 +184,7 @@ class ItemDiskStorageTest {
         assertThat(result.get()).isNotSameAs(stack);
 
         assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 32));
-        ItemStackAssertions.assertItemStackListContents(disk.getStacks());
+        assertItemStackListContents(disk.getStacks());
 
         assertThat(disk.getStored()).isZero();
     }
@@ -204,7 +203,7 @@ class ItemDiskStorageTest {
         assertThat(result.get()).isNotSameAs(stack);
 
         assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 2));
-        ItemStackAssertions.assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 32));
+        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 32));
 
         assertThat(disk.getStored()).isEqualTo(32);
     }
@@ -223,7 +222,7 @@ class ItemDiskStorageTest {
         assertThat(result.get()).isNotSameAs(stack);
 
         assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 32));
-        ItemStackAssertions.assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 32));
+        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 32));
 
         assertThat(disk.getStored()).isEqualTo(32);
     }
@@ -242,7 +241,7 @@ class ItemDiskStorageTest {
         assertThat(result.get()).isNotSameAs(stack);
 
         assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 32));
-        ItemStackAssertions.assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 32));
+        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 32));
 
         assertThat(disk.getStored()).isEqualTo(32);
     }

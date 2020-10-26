@@ -22,7 +22,9 @@ public class NetworkManagerImpl implements NetworkManager {
     }
 
     @Override
-    public Network onNodeAdded(BlockPos pos) {
+    public Network onNodeAdded(NetworkNode node) {
+        BlockPos pos = node.getPosition();
+
         if (!networkNodeAdapter.getNode(pos).isPresent()) {
             throw new NetworkManagerException(String.format("Could not find added node at position %s", pos));
         }
