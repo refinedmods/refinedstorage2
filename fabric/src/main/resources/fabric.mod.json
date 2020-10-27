@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "refinedstorage2",
+  "version": "${version}",
+  "name": "Refined Storage 2",
+  "description": "An elegant solution to your hoarding problem.",
+  "authors": [
+    "Refined Mods"
+  ],
+  "contact": {
+    "homepage": "https://refinedmods.com/",
+    "sources": "https://github.com/refinedmods/refinedstorage2",
+    "issues": "https://github.com/refinedmods/refinedstorage2/issues"
+  },
+  "icon": "assets/refinedstorage2/icon.png",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  }
+}

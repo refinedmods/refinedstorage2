@@ -11,3 +11,5 @@ pluginManagement {
 
 rootProject.name = 'refinedstorage2'
 include 'core'
+include 'fabric'
+
