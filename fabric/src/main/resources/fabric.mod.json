@@ -18,6 +18,9 @@
   "entrypoints": {
     "main": [
       "com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod"
+    ],
+    "client": [
+      "com.refinedmods.refinedstorage2.fabric.RefinedStorage2ClientMod"
     ]
   },
   "depends": {
