@@ -2,5 +2,13 @@
   "itemGroup.refinedstorage2.general": "Refined Storage 2",
   "block.refinedstorage2.cable": "Cable",
   "block.refinedstorage2.quartz_enriched_iron_block": "Block of Quartz Enriched Iron",
-  "item.refinedstorage2.quartz_enriched_iron": "Quartz Enriched Iron"
+  "item.refinedstorage2.quartz_enriched_iron": "Quartz Enriched Iron",
+  "item.refinedstorage2.processor_binding": "Processor Binding",
+  "item.refinedstorage2.silicon": "Silicon",
+  "item.refinedstorage2.raw_basic_processor": "Raw Basic Processor",
+  "item.refinedstorage2.raw_improved_processor": "Raw Improved Processor",
+  "item.refinedstorage2.raw_advanced_processor": "Raw Advanced Processor",
+  "item.refinedstorage2.basic_processor": "Basic Processor",
+  "item.refinedstorage2.improved_processor": "Improved Processor",
+  "item.refinedstorage2.advanced_processor": "Advanced Processor"
 }
