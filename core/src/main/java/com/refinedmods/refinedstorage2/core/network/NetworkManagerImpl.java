@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.core.network;
 
 import com.refinedmods.refinedstorage2.core.graph.GraphScanner;
 import com.refinedmods.refinedstorage2.core.graph.GraphScannerResult;
+import com.refinedmods.refinedstorage2.core.network.node.HidingNetworkNodeAdapter;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeAdapter;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
@@ -9,11 +10,15 @@ import com.refinedmods.refinedstorage2.core.network.node.graph.NetworkNodeReques
 import com.refinedmods.refinedstorage2.core.network.node.graph.NetworkNodeRequestHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class NetworkManagerImpl implements NetworkManager {
+    private static final Logger LOGGER = LogManager.getLogger(NetworkManagerImpl.class);
+
     private final GraphScanner<NetworkNode, NetworkNodeRequest> graphScanner;
     private final Map<UUID, Network> networks = new HashMap<>();
 
@@ -24,6 +29,8 @@ public class NetworkManagerImpl implements NetworkManager {
     @Override
     public Network onNodeAdded(NetworkNodeAdapter nodeAdapter, NetworkNode node) {
         BlockPos pos = node.getPosition();
+
+        LOGGER.debug("A node has been added at {}", node.getPosition());
 
         if (!nodeAdapter.getNode(pos).isPresent()) {
             throw new NetworkManagerException(String.format("Could not find added node at position %s", pos));
@@ -43,13 +50,16 @@ public class NetworkManagerImpl implements NetworkManager {
         Iterator<Network> it = neighboringNetworks.iterator();
         Network pivotNetwork = it.next();
         while (it.hasNext()) {
-            removeNetwork(it.next());
+            Network network = it.next();
+            removeNetwork(network);
+            LOGGER.debug("Merged network {} with {}", network.getId(), pivotNetwork.getId());
         }
 
         pivotNetwork.getNodeReferences().clear();
         result.getAllEntries().forEach(node -> {
             node.setNetwork(pivotNetwork);
             pivotNetwork.getNodeReferences().add(node.createReference());
+            LOGGER.debug("Changing network of node {} to {}", node.getPosition(), pivotNetwork.getId());
         });
 
         return pivotNetwork;
@@ -66,11 +76,17 @@ public class NetworkManagerImpl implements NetworkManager {
             network.getNodeReferences().add(node.createReference());
         });
 
+        LOGGER.debug("Formed new network {} with {} references", network.getId(), network.getNodeReferences().size());
+
         return network;
     }
 
     @Override
     public void onNodeRemoved(NetworkNodeAdapter nodeAdapter, NetworkNode node) {
+        if (!nodeAdapter.getNode(node.getPosition()).isPresent()) {
+            throw new NetworkManagerException(String.format("The node at %s is not present", node.getPosition()));
+        }
+
         for (Network neighboringNetwork : getNeighboringNetworks(nodeAdapter, node.getPosition())) {
             if (neighboringNetwork != node.getNetwork()) {
                 throw new NetworkManagerException(String.format("The network manager was left in invalid state. The network of a neighboring node doesn't match the origin node. The origin node is located at %s", node.getPosition()));
@@ -89,12 +105,20 @@ public class NetworkManagerImpl implements NetworkManager {
         Network pivotNetwork = pivot.getNetwork();
         Set<NetworkNode> pivotNodes = getNodesInNetwork(pivotNetwork);
 
+        LOGGER.debug("Splitting network {}", pivotNetwork.getId());
+
+        nodeAdapter = new HidingNetworkNodeAdapter(nodeAdapter, removedPos);
+
         GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(nodeAdapter, pivot.getPosition()), pivotNodes);
 
+        LOGGER.debug("Network {} retains {} references", pivotNetwork.getId(), result.getAllEntries().size());
+
         pivotNetwork.getNodeReferences().clear();
-        for (NetworkNode node : result.getAllEntries()) {
+        for (NetworkNode node : result.getAllEntries()) { // TODO ensure that NetworkNode#network is set again.
             pivotNetwork.getNodeReferences().add(node.createReference());
         }
+
+        LOGGER.debug("Network {} has lost {} references, forming new networks where necessary", pivotNetwork.getId(), result.getRemovedEntries().size());
 
         for (NetworkNode removedNode : result.getRemovedEntries()) {
             removedNode.setNetwork(null);
@@ -109,22 +133,23 @@ public class NetworkManagerImpl implements NetworkManager {
             }
 
             if (removedNode.getNetwork() == null) {
+                LOGGER.debug("Forming new network at {}", removedNode.getPosition());
                 formNetwork(nodeAdapter, removedNode.getPosition());
             }
         }
 
         if (!foundRemovedNode) {
-            throw new NetworkManagerException(String.format("The removed node at %s is still present in the world!", removedPos));
+            throw new NetworkManagerException(String.format("The node that was removed at %s wasn't marked as a removed node in the graph", removedPos));
         }
     }
 
     private Set<NetworkNode> getNodesInNetwork(Network network) {
         return network.getNodeReferences()
-                .stream()
-                .map(NetworkNodeReference::get)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
+            .stream()
+            .map(NetworkNodeReference::get)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toSet());
     }
 
     private Optional<NetworkNode> getFirstNeighboringNode(NetworkNodeAdapter nodeAdapter, BlockPos pos) {
@@ -159,10 +184,12 @@ public class NetworkManagerImpl implements NetworkManager {
     }
 
     private void removeNetwork(Network network) {
+        LOGGER.debug("Network {} has been removed", network.getId());
         networks.remove(network.getId());
     }
 
     private void addNetwork(Network network) {
+        LOGGER.debug("Network {} has been added", network.getId());
         networks.put(network.getId(), network);
     }
 

@@ -151,8 +151,8 @@ class NetworkManagerImplTest {
 
         assertThat(networkManager.getNetworks()).hasSize(1);
 
-        nodeAdapter.removeNode(BlockPos.ORIGIN.down());
         networkManager.onNodeRemoved(nodeAdapter, node02);
+        nodeAdapter.removeNode(BlockPos.ORIGIN.down());
 
         assertThat(networkManager.getNetworks()).hasSize(2);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
@@ -185,8 +185,8 @@ class NetworkManagerImplTest {
 
         assertThat(networkManager.getNetworks()).hasSize(1);
 
-        nodeAdapter.removeNode(BlockPos.ORIGIN);
         networkManager.onNodeRemoved(nodeAdapter, node01);
+        nodeAdapter.removeNode(BlockPos.ORIGIN);
 
         assertThat(networkManager.getNetworks()).hasSize(3);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
@@ -237,12 +237,12 @@ class NetworkManagerImplTest {
         networkManager.onNodeAdded(nodeAdapter, node02);
         int sizeBeforeRemoving = networkManager.getNetworks().size();
 
-        nodeAdapter.removeNode(BlockPos.ORIGIN);
         networkManager.onNodeRemoved(nodeAdapter, node01);
+        nodeAdapter.removeNode(BlockPos.ORIGIN);
         int sizeAfterRemovingFirst = networkManager.getNetworks().size();
 
-        nodeAdapter.removeNode(BlockPos.ORIGIN.down());
         networkManager.onNodeRemoved(nodeAdapter, node02);
+        nodeAdapter.removeNode(BlockPos.ORIGIN.down());
         int sizeAfterRemovingLast = networkManager.getNetworks().size();
 
         // Assert
@@ -273,21 +273,15 @@ class NetworkManagerImplTest {
     }
 
     @Test
-    void Test_removing_a_node_with_the_node_still_existing_should_fail() {
+    void Test_removing_a_node_that_does_not_exist_should_fail() {
         // Arrange
         FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
         // Act
-        NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(nodeAdapter, node01);
-
-        NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        networkManager.onNodeAdded(nodeAdapter, node02);
-
-        Executable action = () -> networkManager.onNodeRemoved(nodeAdapter, node01);
+        Executable action = () -> networkManager.onNodeRemoved(nodeAdapter, new FakeNetworkNode(BlockPos.ORIGIN));
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
-        assertThat(e.getMessage()).isEqualTo("The removed node at BlockPos{x=0, y=0, z=0} is still present in the world!");
+        assertThat(e.getMessage()).isEqualTo("The node at BlockPos{x=0, y=0, z=0} is not present");
     }
 }

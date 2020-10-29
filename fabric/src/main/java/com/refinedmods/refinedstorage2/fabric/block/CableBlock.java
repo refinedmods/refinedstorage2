@@ -51,15 +51,35 @@ public class CableBlock extends Block implements BlockEntityProvider {
             .with(DOWN, false));
     }
 
+    @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.onPlaced(world, pos, state, placer, stack);
+
+        if (world instanceof ServerWorld) {
+            RefinedStorage2Mod.API
+                .getNetworkManager((ServerWorld) world)
+                .onNodeAdded(
+                    new FabricNetworkNodeAdapter(world),
+                    (NetworkNode) world.getBlockEntity(pos)
+                );
+        }
+    }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        super.onPlaced(world, pos, state, placer, itemStack);
+    @SuppressWarnings("deprecation")
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.isOf(newState.getBlock())) {
+            if (world instanceof ServerWorld) {
+                RefinedStorage2Mod.API
+                    .getNetworkManager((ServerWorld) world)
+                    .onNodeRemoved(
+                        new FabricNetworkNodeAdapter(world),
+                        (NetworkNode) world.getBlockEntity(pos)
+                    );
+            }
 
-        if (world instanceof ServerWorld)
-            RefinedStorage2Mod.API.getNetworkManager((ServerWorld) world).onNodeAdded(new FabricNetworkNodeAdapter(world), (NetworkNode) world.getBlockEntity(pos));
-
-        System.out.println("Placed! " + world.getBlockEntity(pos));
+            super.onStateReplaced(state, world, pos, newState, moved);
+        }
     }
 
     @Override

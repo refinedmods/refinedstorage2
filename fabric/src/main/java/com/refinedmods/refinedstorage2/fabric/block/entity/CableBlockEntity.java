@@ -23,7 +23,6 @@ public class CableBlockEntity extends BlockEntity implements NetworkNode {
 
     @Override
     public void setNetwork(Network network) {
-        System.out.println("Network set! " + network.getId());
         this.network = network;
     }
 
