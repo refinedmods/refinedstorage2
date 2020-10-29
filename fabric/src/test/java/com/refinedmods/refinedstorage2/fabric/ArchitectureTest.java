@@ -14,9 +14,10 @@ class ArchitectureTest {
         .layer("Blocks").definedBy("com.refinedmods.refinedstorage2.fabric.block")
         .layer("Block Entities").definedBy("com.refinedmods.refinedstorage2.fabric.block.entity")
         .layer("Core Impl").definedBy("com.refinedmods.refinedstorage2.fabric.coreimpl..")
-        .layer("Init").definedBy("com.refinedmods.refinedstorage2.fabric")
-        .whereLayer("Blocks").mayOnlyBeAccessedByLayers("Init")
-        .whereLayer("Block Entities").mayOnlyBeAccessedByLayers("Init", "Blocks")
-        .whereLayer("Init").mayOnlyBeAccessedByLayers("Blocks", "Block Entities")
-        .whereLayer("Core Impl").mayOnlyBeAccessedByLayers("Init", "Blocks", "Block Entities");
+        .layer("Init").definedBy("com.refinedmods.refinedstorage2.fabric.init..")
+        .layer("Entrypoint").definedBy("com.refinedmods.refinedstorage2.fabric")
+        .whereLayer("Blocks").mayOnlyBeAccessedByLayers("Init", "Entrypoint")
+        .whereLayer("Block Entities").mayOnlyBeAccessedByLayers("Init", "Entrypoint", "Blocks")
+        .whereLayer("Init").mayOnlyBeAccessedByLayers("Entrypoint", "Blocks", "Block Entities")
+        .whereLayer("Core Impl").mayOnlyBeAccessedByLayers("Entrypoint", "Blocks", "Block Entities");
 }

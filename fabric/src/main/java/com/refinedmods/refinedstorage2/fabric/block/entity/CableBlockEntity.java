@@ -4,6 +4,6 @@ import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 
 public class CableBlockEntity extends NetworkNodeBlockEntity {
     public CableBlockEntity() {
-        super(RefinedStorage2Mod.CABLE_BLOCK_ENTITY);
+        super(RefinedStorage2Mod.BLOCK_ENTITIES.getCable());
     }
 }
