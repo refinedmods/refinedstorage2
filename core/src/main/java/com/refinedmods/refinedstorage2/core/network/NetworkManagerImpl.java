@@ -27,14 +27,12 @@ public class NetworkManagerImpl implements NetworkManager {
     }
 
     @Override
-    public Network onNodeAdded(NetworkNodeAdapter nodeAdapter, NetworkNode node) {
-        BlockPos pos = node.getPosition();
-
-        LOGGER.debug("A node has been added at {}", node.getPosition());
-
+    public Network onNodeAdded(NetworkNodeAdapter nodeAdapter, BlockPos pos) {
         if (!nodeAdapter.getNode(pos).isPresent()) {
             throw new NetworkManagerException(String.format("Could not find added node at position %s", pos));
         }
+
+        LOGGER.debug("A node has been added at {}", pos);
 
         Set<Network> neighboringNetworks = getNeighboringNetworks(nodeAdapter, pos);
         if (neighboringNetworks.isEmpty()) {
@@ -82,20 +80,18 @@ public class NetworkManagerImpl implements NetworkManager {
     }
 
     @Override
-    public void onNodeRemoved(NetworkNodeAdapter nodeAdapter, NetworkNode node) {
-        if (!nodeAdapter.getNode(node.getPosition()).isPresent()) {
-            throw new NetworkManagerException(String.format("The node at %s is not present", node.getPosition()));
-        }
+    public void onNodeRemoved(NetworkNodeAdapter nodeAdapter, BlockPos pos) {
+        NetworkNode node = nodeAdapter.getNode(pos).orElseThrow(() -> new NetworkManagerException(String.format("The node at %s is not present", pos)));
 
-        for (Network neighboringNetwork : getNeighboringNetworks(nodeAdapter, node.getPosition())) {
+        for (Network neighboringNetwork : getNeighboringNetworks(nodeAdapter, pos)) {
             if (neighboringNetwork != node.getNetwork()) {
-                throw new NetworkManagerException(String.format("The network manager was left in invalid state. The network of a neighboring node doesn't match the origin node. The origin node is located at %s", node.getPosition()));
+                throw new NetworkManagerException(String.format("The network manager was left in invalid state. The network of a neighboring node doesn't match the origin node. The origin node is located at %s", pos));
             }
         }
 
-        Optional<NetworkNode> neighborNode = getFirstNeighboringNode(nodeAdapter, node.getPosition());
+        Optional<NetworkNode> neighborNode = getFirstNeighboringNode(nodeAdapter, pos);
         if (neighborNode.isPresent()) {
-            splitNetworks(nodeAdapter, neighborNode.get(), node.getPosition());
+            splitNetworks(nodeAdapter, neighborNode.get(), pos);
         } else {
             removeNetwork(node.getNetwork());
         }

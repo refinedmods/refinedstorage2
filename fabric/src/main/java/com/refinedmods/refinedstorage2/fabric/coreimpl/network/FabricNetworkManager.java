@@ -2,9 +2,9 @@ package com.refinedmods.refinedstorage2.fabric.coreimpl.network;
 
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.NetworkManager;
-import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeAdapter;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.PersistentState;
 
 import java.util.Collection;
@@ -20,13 +20,13 @@ public class FabricNetworkManager extends PersistentState implements NetworkMana
     }
 
     @Override
-    public Network onNodeAdded(NetworkNodeAdapter nodeAdapter, NetworkNode node) {
-        return parent.onNodeAdded(nodeAdapter, node);
+    public Network onNodeAdded(NetworkNodeAdapter nodeAdapter, BlockPos pos) {
+        return parent.onNodeAdded(nodeAdapter, pos);
     }
 
     @Override
-    public void onNodeRemoved(NetworkNodeAdapter nodeAdapter, NetworkNode node) {
-        parent.onNodeRemoved(nodeAdapter, node);
+    public void onNodeRemoved(NetworkNodeAdapter nodeAdapter, BlockPos pos) {
+        parent.onNodeRemoved(nodeAdapter, pos);
     }
 
     @Override

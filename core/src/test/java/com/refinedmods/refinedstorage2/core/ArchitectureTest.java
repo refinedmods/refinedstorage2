@@ -31,7 +31,7 @@ class ArchitectureTest {
             .and(are(not(assignableTo(BlockEntity.class))))
             .and(are(not(assignableTo(CompoundTag.class))))
             .and(are(not(assignableTo(ServerWorld.class))))
-    ).because("we want the core module to stay fairly independent from Minecraft and only use essential classes");
+    ).because("we want the core module to stay fairly independent from Minecraft by only using essential classes");
 
     @ArchTest
     public static final ArchRule dontUseAnyFabricClasses = noClasses().should()
