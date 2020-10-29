@@ -19,6 +19,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:0.10.0+build.208"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.22.0+build.408-1.16"
     implementation project(':core')
+    modRuntime "me.shedaniel:RoughlyEnoughItems:5.7.0"
+    modRuntime "io.github.prospector:modmenu:1.14.6+build.31"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testCompile 'org.assertj:assertj-core:3.17.2'
