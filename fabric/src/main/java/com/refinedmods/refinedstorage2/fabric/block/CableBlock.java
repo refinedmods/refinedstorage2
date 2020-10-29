@@ -1,16 +1,13 @@
 package com.refinedmods.refinedstorage2.fabric.block;
 
-import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.CableBlockEntity;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeAdapter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Material;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -19,11 +16,10 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-public class CableBlock extends Block implements BlockEntityProvider {
+public class CableBlock extends NetworkNodeBlock {
     private static final BooleanProperty NORTH = BooleanProperty.of("north");
     private static final BooleanProperty EAST = BooleanProperty.of("east");
     private static final BooleanProperty SOUTH = BooleanProperty.of("south");
@@ -49,37 +45,6 @@ public class CableBlock extends Block implements BlockEntityProvider {
             .with(WEST, false)
             .with(UP, false)
             .with(DOWN, false));
-    }
-
-    @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        super.onPlaced(world, pos, state, placer, stack);
-
-        if (world instanceof ServerWorld) {
-            RefinedStorage2Mod.API
-                .getNetworkManager((ServerWorld) world)
-                .onNodeAdded(
-                    new FabricNetworkNodeAdapter(world),
-                    (NetworkNode) world.getBlockEntity(pos)
-                );
-        }
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!state.isOf(newState.getBlock())) {
-            if (world instanceof ServerWorld) {
-                RefinedStorage2Mod.API
-                    .getNetworkManager((ServerWorld) world)
-                    .onNodeRemoved(
-                        new FabricNetworkNodeAdapter(world),
-                        (NetworkNode) world.getBlockEntity(pos)
-                    );
-            }
-
-            super.onStateReplaced(state, world, pos, newState, moved);
-        }
     }
 
     @Override
@@ -132,17 +97,17 @@ public class CableBlock extends Block implements BlockEntityProvider {
         return shape;
     }
 
-    private boolean hasConnection(WorldAccess world, BlockPos pos, Direction direction) {
-        return world.getBlockState(pos).getBlock() instanceof CableBlock;
+    private boolean hasConnection(WorldAccess world, BlockPos pos) {
+        return world.getBlockState(pos).getBlock() instanceof NetworkNodeBlock;
     }
 
     private BlockState getState(BlockState currentState, WorldAccess world, BlockPos pos) {
-        boolean north = hasConnection(world, pos.offset(Direction.NORTH), Direction.SOUTH);
-        boolean east = hasConnection(world, pos.offset(Direction.EAST), Direction.WEST);
-        boolean south = hasConnection(world, pos.offset(Direction.SOUTH), Direction.NORTH);
-        boolean west = hasConnection(world, pos.offset(Direction.WEST), Direction.EAST);
-        boolean up = hasConnection(world, pos.offset(Direction.UP), Direction.DOWN);
-        boolean down = hasConnection(world, pos.offset(Direction.DOWN), Direction.UP);
+        boolean north = hasConnection(world, pos.offset(Direction.NORTH));
+        boolean east = hasConnection(world, pos.offset(Direction.EAST));
+        boolean south = hasConnection(world, pos.offset(Direction.SOUTH));
+        boolean west = hasConnection(world, pos.offset(Direction.WEST));
+        boolean up = hasConnection(world, pos.offset(Direction.UP));
+        boolean down = hasConnection(world, pos.offset(Direction.DOWN));
 
         return currentState
             .with(NORTH, north)
