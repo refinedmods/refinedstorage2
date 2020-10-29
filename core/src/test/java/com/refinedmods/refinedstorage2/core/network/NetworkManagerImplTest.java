@@ -16,15 +16,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RefinedStorage2Test
 class NetworkManagerImplTest {
+    private final NetworkManager networkManager = new NetworkManagerImpl();
+
     @Test
     void Test_notifying_network_manager_of_node_being_added_while_node_not_present_should_fail() {
         // Arrange
         FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
-
         // Act
-        Executable action = () -> networkManager.onNodeAdded(new FakeNetworkNode(BlockPos.ORIGIN));
+        Executable action = () -> networkManager.onNodeAdded(nodeAdapter, new FakeNetworkNode(BlockPos.ORIGIN));
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
@@ -36,11 +36,9 @@ class NetworkManagerImplTest {
         // Arrange
         FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
-
         // Act
         NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        Network network01 = networkManager.onNodeAdded(node01);
+        Network network01 = networkManager.onNodeAdded(nodeAdapter, node01);
 
         // Assert
         assertThat(networkManager.getNetworks()).hasSize(1);
@@ -56,13 +54,11 @@ class NetworkManagerImplTest {
         // Arrange
         FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
-
         // Act
         NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
         nodeAdapter.setNode(BlockPos.ORIGIN.down());
 
-        Executable action = () -> networkManager.onNodeAdded(node01);
+        Executable action = () -> networkManager.onNodeAdded(nodeAdapter, node01);
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
@@ -74,14 +70,12 @@ class NetworkManagerImplTest {
         // Arrange
         FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
-
         // Act
         NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(node01);
+        networkManager.onNodeAdded(nodeAdapter, node01);
 
         NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        Network network02 = networkManager.onNodeAdded(node02);
+        Network network02 = networkManager.onNodeAdded(nodeAdapter, node02);
 
         // Assert
         assertThat(networkManager.getNetworks()).hasSize(1);
@@ -101,11 +95,9 @@ class NetworkManagerImplTest {
         // Arrange
         FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
-
         // Act & assert
         NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        Network network01 = networkManager.onNodeAdded(node01);
+        Network network01 = networkManager.onNodeAdded(nodeAdapter, node01);
 
         assertThat(networkManager.getNetworks()).hasSize(1);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
@@ -115,7 +107,7 @@ class NetworkManagerImplTest {
         });
 
         NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down().down());
-        Network network02 = networkManager.onNodeAdded(node02);
+        Network network02 = networkManager.onNodeAdded(nodeAdapter, node02);
 
         assertThat(networkManager.getNetworks()).hasSize(2);
         assertThat(network01).isNotSameAs(network02);
@@ -126,7 +118,7 @@ class NetworkManagerImplTest {
         });
 
         NetworkNode node03 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        Network network03 = networkManager.onNodeAdded(node03);
+        Network network03 = networkManager.onNodeAdded(nodeAdapter, node03);
 
         assertThat(networkManager.getNetworks()).hasSize(1);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
@@ -147,22 +139,20 @@ class NetworkManagerImplTest {
         // Arrange
         FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
-
         // Act & assert
         NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(node01);
+        networkManager.onNodeAdded(nodeAdapter, node01);
 
         NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        networkManager.onNodeAdded(node02);
+        networkManager.onNodeAdded(nodeAdapter, node02);
 
         NetworkNode node03 = nodeAdapter.setNode(BlockPos.ORIGIN.down().down());
-        networkManager.onNodeAdded(node03);
+        networkManager.onNodeAdded(nodeAdapter, node03);
 
         assertThat(networkManager.getNetworks()).hasSize(1);
 
         nodeAdapter.removeNode(BlockPos.ORIGIN.down());
-        networkManager.onNodeRemoved(node02);
+        networkManager.onNodeRemoved(nodeAdapter, node02);
 
         assertThat(networkManager.getNetworks()).hasSize(2);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
@@ -180,25 +170,23 @@ class NetworkManagerImplTest {
         // Arrange
         FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
-
         // Act & assert
         NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(node01);
+        networkManager.onNodeAdded(nodeAdapter, node01);
 
         NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.north());
-        networkManager.onNodeAdded(node02);
+        networkManager.onNodeAdded(nodeAdapter, node02);
 
         NetworkNode node03 = nodeAdapter.setNode(BlockPos.ORIGIN.east());
-        networkManager.onNodeAdded(node03);
+        networkManager.onNodeAdded(nodeAdapter, node03);
 
         NetworkNode node04 = nodeAdapter.setNode(BlockPos.ORIGIN.up());
-        networkManager.onNodeAdded(node04);
+        networkManager.onNodeAdded(nodeAdapter, node04);
 
         assertThat(networkManager.getNetworks()).hasSize(1);
 
         nodeAdapter.removeNode(BlockPos.ORIGIN);
-        networkManager.onNodeRemoved(node01);
+        networkManager.onNodeRemoved(nodeAdapter, node01);
 
         assertThat(networkManager.getNetworks()).hasSize(3);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
@@ -220,18 +208,16 @@ class NetworkManagerImplTest {
         // Arrange
         FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
-
         // Act
         NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(node01);
+        networkManager.onNodeAdded(nodeAdapter, node01);
 
         NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        networkManager.onNodeAdded(node02);
+        networkManager.onNodeAdded(nodeAdapter, node02);
 
         node02.setNetwork(null);
 
-        Executable action = () -> networkManager.onNodeRemoved(node01);
+        Executable action = () -> networkManager.onNodeRemoved(nodeAdapter, node01);
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
@@ -243,22 +229,20 @@ class NetworkManagerImplTest {
         // Arrange
         FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
-
         // Act
         NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(node01);
+        networkManager.onNodeAdded(nodeAdapter, node01);
 
         NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        networkManager.onNodeAdded(node02);
+        networkManager.onNodeAdded(nodeAdapter, node02);
         int sizeBeforeRemoving = networkManager.getNetworks().size();
 
         nodeAdapter.removeNode(BlockPos.ORIGIN);
-        networkManager.onNodeRemoved(node01);
+        networkManager.onNodeRemoved(nodeAdapter, node01);
         int sizeAfterRemovingFirst = networkManager.getNetworks().size();
 
         nodeAdapter.removeNode(BlockPos.ORIGIN.down());
-        networkManager.onNodeRemoved(node02);
+        networkManager.onNodeRemoved(nodeAdapter, node02);
         int sizeAfterRemovingLast = networkManager.getNetworks().size();
 
         // Assert
@@ -272,18 +256,16 @@ class NetworkManagerImplTest {
         // Arrange
         FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
-
         // Act
         NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(node01);
+        networkManager.onNodeAdded(nodeAdapter, node01);
 
         NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        networkManager.onNodeAdded(node02);
+        networkManager.onNodeAdded(nodeAdapter, node02);
 
         node02.setNetwork(new NetworkImpl(UUID.randomUUID()));
 
-        Executable action = () -> networkManager.onNodeRemoved(node01);
+        Executable action = () -> networkManager.onNodeRemoved(nodeAdapter, node01);
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
@@ -295,16 +277,14 @@ class NetworkManagerImplTest {
         // Arrange
         FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
 
-        NetworkManager networkManager = new NetworkManagerImpl(nodeAdapter);
-
         // Act
         NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(node01);
+        networkManager.onNodeAdded(nodeAdapter, node01);
 
         NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        networkManager.onNodeAdded(node02);
+        networkManager.onNodeAdded(nodeAdapter, node02);
 
-        Executable action = () -> networkManager.onNodeRemoved(node01);
+        Executable action = () -> networkManager.onNodeRemoved(nodeAdapter, node01);
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);

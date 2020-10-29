@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
-import com.refinedmods.refinedstorage2.core.Action;
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
+import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

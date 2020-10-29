@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.network;
+package com.refinedmods.refinedstorage2.core.network.node.graph;
 
 import com.refinedmods.refinedstorage2.core.graph.GraphScannerContext;
 import com.refinedmods.refinedstorage2.core.graph.RequestHandler;

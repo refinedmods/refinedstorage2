@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
-import com.refinedmods.refinedstorage2.core.Action;
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
+import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.junit.jupiter.api.Test;

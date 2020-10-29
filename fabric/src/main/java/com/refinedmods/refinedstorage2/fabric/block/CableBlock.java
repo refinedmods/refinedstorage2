@@ -1,11 +1,16 @@
 package com.refinedmods.refinedstorage2.fabric.block;
 
+import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
+import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.block.entity.CableBlockEntity;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeAdapter;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.block.*;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -14,10 +19,11 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-public class CableBlock extends Block {
+public class CableBlock extends Block implements BlockEntityProvider {
     private static final BooleanProperty NORTH = BooleanProperty.of("north");
     private static final BooleanProperty EAST = BooleanProperty.of("east");
     private static final BooleanProperty SOUTH = BooleanProperty.of("south");
@@ -43,6 +49,17 @@ public class CableBlock extends Block {
             .with(WEST, false)
             .with(UP, false)
             .with(DOWN, false));
+    }
+
+
+    @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.onPlaced(world, pos, state, placer, itemStack);
+
+        if (world instanceof ServerWorld)
+            RefinedStorage2Mod.API.getNetworkManager((ServerWorld) world).onNodeAdded(new FabricNetworkNodeAdapter(world), (NetworkNode) world.getBlockEntity(pos));
+
+        System.out.println("Placed! " + world.getBlockEntity(pos));
     }
 
     @Override
@@ -114,5 +131,10 @@ public class CableBlock extends Block {
             .with(WEST, west)
             .with(UP, up)
             .with(DOWN, down);
+    }
+
+    @Override
+    public @Nullable BlockEntity createBlockEntity(BlockView world) {
+        return new CableBlockEntity();
     }
 }

@@ -7,7 +7,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 group = 'com.refinedmods.refinedstorage2'
 archivesBaseName = 'fabric'
-version = '1.0-SNAPSHOT'
+version = '2.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -18,6 +18,7 @@ dependencies {
     mappings 'net.fabricmc:yarn:1.16.3+build.17:v2'
     modImplementation "net.fabricmc:fabric-loader:0.10.0+build.208"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.22.0+build.408-1.16"
+    implementation project(':core')
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testCompile 'org.assertj:assertj-core:3.17.2'

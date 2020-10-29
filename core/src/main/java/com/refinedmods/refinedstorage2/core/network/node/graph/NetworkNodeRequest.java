@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.network;
+package com.refinedmods.refinedstorage2.core.network.node.graph;
 
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeAdapter;
 import net.minecraft.util.math.BlockPos;
