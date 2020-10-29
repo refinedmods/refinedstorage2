@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "refinedstorage2:block/quartz_enriched_iron_block"
+    }
+  }
+}

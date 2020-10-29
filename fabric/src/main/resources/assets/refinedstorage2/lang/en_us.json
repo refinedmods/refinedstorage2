@@ -1,4 +1,6 @@
 {
   "itemGroup.refinedstorage2.general": "Refined Storage 2",
-  "block.refinedstorage2.cable": "Cable"
+  "block.refinedstorage2.cable": "Cable",
+  "block.refinedstorage2.quartz_enriched_iron_block": "Block of Quartz Enriched Iron",
+  "item.refinedstorage2.quartz_enriched_iron": "Quartz Enriched Iron"
 }
