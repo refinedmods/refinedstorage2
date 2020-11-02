@@ -27,6 +27,7 @@ public class FabricStorageDiskManager extends PersistentState implements Storage
     @Override
     public <T> void setDisk(UUID id, StorageDisk<T> storage) {
         parent.setDisk(id, storage);
+        // TODO marking dirty here. and in the disk.
     }
 
     @Override
@@ -36,11 +37,12 @@ public class FabricStorageDiskManager extends PersistentState implements Storage
 
     @Override
     public void fromTag(CompoundTag tag) {
-
+        // TODO
     }
 
     @Override
     public CompoundTag toTag(CompoundTag tag) {
+        // TODO
         return tag;
     }
 }

@@ -24,6 +24,10 @@ public class ClientStorageDiskManager implements StorageDiskManager {
         throw new IllegalStateException("Server-side only");
     }
 
+    public void setInfo(UUID id, int stored, int capacity) {
+        info.put(id, new StorageDiskInfo(stored, capacity));
+    }
+
     @Override
     public StorageDiskInfo getInfo(UUID id) {
         requestInfoCallback.accept(id);

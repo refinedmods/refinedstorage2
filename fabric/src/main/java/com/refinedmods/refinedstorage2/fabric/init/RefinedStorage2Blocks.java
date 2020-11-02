@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.init;
 
+import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.CableBlock;
 import com.refinedmods.refinedstorage2.fabric.block.QuartzEnrichedIronBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -18,9 +19,9 @@ public class RefinedStorage2Blocks {
     private CableBlock cable;
     private QuartzEnrichedIronBlock quartzEnrichedIron;
 
-    public void register(String namespace) {
-        cable = Registry.register(Registry.BLOCK, new Identifier(namespace, "cable"), new CableBlock());
-        quartzEnrichedIron = Registry.register(Registry.BLOCK, new Identifier(namespace, "quartz_enriched_iron_block"), new QuartzEnrichedIronBlock(STONE_SETTINGS));
+    public void register() {
+        cable = Registry.register(Registry.BLOCK, new Identifier(RefinedStorage2Mod.ID, "cable"), new CableBlock());
+        quartzEnrichedIron = Registry.register(Registry.BLOCK, new Identifier(RefinedStorage2Mod.ID, "quartz_enriched_iron_block"), new QuartzEnrichedIronBlock(STONE_SETTINGS));
     }
 
     public CableBlock getCable() {

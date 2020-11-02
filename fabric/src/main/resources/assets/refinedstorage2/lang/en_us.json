@@ -19,5 +19,7 @@
   "item.refinedstorage2.4k_storage_disk": "4k Storage Disk",
   "item.refinedstorage2.16k_storage_disk": "16k Storage Disk",
   "item.refinedstorage2.64k_storage_disk": "64k Storage Disk",
-  "item.refinedstorage2.creative_storage_disk": "Creative Storage Disk"
+  "item.refinedstorage2.creative_storage_disk": "Creative Storage Disk",
+  "misc.refinedstorage2.stored": "Stored: %s",
+  "misc.refinedstorage2.stored_with_capacity": "Stored: %s / %s"
 }

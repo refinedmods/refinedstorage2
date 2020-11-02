@@ -8,6 +8,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -31,6 +32,7 @@ class ArchitectureTest {
             .and(are(not(assignableTo(BlockEntity.class))))
             .and(are(not(assignableTo(CompoundTag.class))))
             .and(are(not(assignableTo(ServerWorld.class))))
+            .and(are(not(assignableTo(MinecraftServer.class))))
     ).because("we want the core module to stay fairly independent from Minecraft by only using essential classes");
 
     @ArchTest
