@@ -12,6 +12,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 
 import static com.tngtech.archunit.base.DescribedPredicate.not;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.assignableTo;
@@ -32,6 +33,7 @@ class ArchitectureTest {
             .and(are(not(assignableTo(BlockEntity.class))))
             .and(are(not(assignableTo(CompoundTag.class))))
             .and(are(not(assignableTo(ServerWorld.class))))
+            .and(are(not(assignableTo(World.class))))
             .and(are(not(assignableTo(MinecraftServer.class))))
     ).because("we want the core module to stay fairly independent from Minecraft by only using essential classes");
 
