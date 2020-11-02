@@ -9,14 +9,18 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class RefinedStorage2Blocks {
-    private final FabricBlockSettings rockSettings = FabricBlockSettings.of(Material.STONE).hardness(1.9F).resistance(1.9F).sounds(BlockSoundGroup.STONE);
+    private static final FabricBlockSettings STONE_SETTINGS = FabricBlockSettings
+        .of(Material.STONE)
+        .hardness(1.9F)
+        .resistance(1.9F)
+        .sounds(BlockSoundGroup.STONE);
 
-    private final CableBlock cable = new CableBlock();
-    private final QuartzEnrichedIronBlock quartzEnrichedIron = new QuartzEnrichedIronBlock(rockSettings);
+    private CableBlock cable;
+    private QuartzEnrichedIronBlock quartzEnrichedIron;
 
     public void register(String namespace) {
-        Registry.register(Registry.BLOCK, new Identifier(namespace, "cable"), cable);
-        Registry.register(Registry.BLOCK, new Identifier(namespace, "quartz_enriched_iron_block"), quartzEnrichedIron);
+        cable = Registry.register(Registry.BLOCK, new Identifier(namespace, "cable"), new CableBlock());
+        quartzEnrichedIron = Registry.register(Registry.BLOCK, new Identifier(namespace, "quartz_enriched_iron_block"), new QuartzEnrichedIronBlock(STONE_SETTINGS));
     }
 
     public CableBlock getCable() {

@@ -110,7 +110,7 @@ public class NetworkManagerImpl implements NetworkManager {
         LOGGER.debug("Network {} retains {} references", pivotNetwork.getId(), result.getAllEntries().size());
 
         pivotNetwork.getNodeReferences().clear();
-        for (NetworkNode node : result.getAllEntries()) { // TODO ensure that NetworkNode#network is set again.
+        for (NetworkNode node : result.getAllEntries()) {
             pivotNetwork.getNodeReferences().add(node.createReference());
         }
 
