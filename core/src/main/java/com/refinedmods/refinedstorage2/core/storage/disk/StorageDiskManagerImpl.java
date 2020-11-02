@@ -21,7 +21,7 @@ public class StorageDiskManagerImpl implements StorageDiskManager {
     @Override
     public StorageDiskInfo getInfo(UUID id) {
         return getDisk(id)
-            .map(disk -> new StorageDiskInfo(disk.getCapacity(), disk.getStored()))
+            .map(disk -> new StorageDiskInfo(disk.getStored(), disk.getCapacity()))
             .orElse(StorageDiskInfo.UNKNOWN);
     }
 }

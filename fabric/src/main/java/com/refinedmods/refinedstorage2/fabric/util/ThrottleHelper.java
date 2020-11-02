@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.fabric.util;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO test
 public class ThrottleHelper<T> {
     private final Map<T, Long> time = new HashMap<>();
     private final int timeoutMs;
