@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.storage;
+package com.refinedmods.refinedstorage2.core.storage.disk;
 
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class ItemDiskStorage implements Storage<ItemStack> {
+public class ItemDiskStorage implements StorageDisk<ItemStack> {
     private final StackList<ItemStack> list = new ItemStackList();
     private final int capacity;
     private int stored;
@@ -95,5 +95,10 @@ public class ItemDiskStorage implements Storage<ItemStack> {
     @Override
     public int getStored() {
         return stored;
+    }
+
+    @Override
+    public int getCapacity() {
+        return capacity;
     }
 }

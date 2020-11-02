@@ -10,5 +10,14 @@
   "item.refinedstorage2.raw_advanced_processor": "Raw Advanced Processor",
   "item.refinedstorage2.basic_processor": "Basic Processor",
   "item.refinedstorage2.improved_processor": "Improved Processor",
-  "item.refinedstorage2.advanced_processor": "Advanced Processor"
+  "item.refinedstorage2.advanced_processor": "Advanced Processor",
+  "item.refinedstorage2.1k_storage_part": "1k Storage Part",
+  "item.refinedstorage2.4k_storage_part": "4k Storage Part",
+  "item.refinedstorage2.16k_storage_part": "16k Storage Part",
+  "item.refinedstorage2.64k_storage_part": "64k Storage Part",
+  "item.refinedstorage2.1k_storage_disk": "1k Storage Disk",
+  "item.refinedstorage2.4k_storage_disk": "4k Storage Disk",
+  "item.refinedstorage2.16k_storage_disk": "16k Storage Disk",
+  "item.refinedstorage2.64k_storage_disk": "64k Storage Disk",
+  "item.refinedstorage2.creative_storage_disk": "Creative Storage Disk"
 }

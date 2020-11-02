@@ -1,9 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.init;
 
-import com.refinedmods.refinedstorage2.fabric.item.ProcessorBindingItem;
-import com.refinedmods.refinedstorage2.fabric.item.ProcessorItem;
-import com.refinedmods.refinedstorage2.fabric.item.QuartzEnrichedIronItem;
-import com.refinedmods.refinedstorage2.fabric.item.SiliconItem;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.ItemStorageType;
+import com.refinedmods.refinedstorage2.fabric.item.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -20,6 +18,16 @@ public class RefinedStorage2Items {
 
         for (ProcessorItem.Type type : ProcessorItem.Type.values()) {
             Registry.register(Registry.ITEM, new Identifier(namespace, type.getName() + "_processor"), new ProcessorItem(new Item.Settings().group(itemGroup)));
+        }
+
+        for (ItemStorageType type : ItemStorageType.values()) {
+            if (type != ItemStorageType.CREATIVE) {
+                Registry.register(Registry.ITEM, new Identifier(namespace, type.getName() + "_storage_part"), new StoragePartItem(new Item.Settings().group(itemGroup)));
+            }
+        }
+
+        for (ItemStorageType type : ItemStorageType.values()) {
+            Registry.register(Registry.ITEM, new Identifier(namespace, type.getName() + "_storage_disk"), new StorageDiskItem(new Item.Settings().group(itemGroup).maxCount(1)));
         }
     }
 }

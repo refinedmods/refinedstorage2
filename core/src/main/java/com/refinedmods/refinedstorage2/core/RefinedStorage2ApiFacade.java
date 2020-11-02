@@ -1,8 +1,11 @@
 package com.refinedmods.refinedstorage2.core;
 
 import com.refinedmods.refinedstorage2.core.network.NetworkManager;
-import net.minecraft.server.world.ServerWorld;
+import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskManager;
+import net.minecraft.server.MinecraftServer;
 
 public interface RefinedStorage2ApiFacade {
-    NetworkManager getNetworkManager(ServerWorld world);
+    NetworkManager getNetworkManager(MinecraftServer server);
+
+    StorageDiskManager getStorageDiskManager(MinecraftServer server);
 }

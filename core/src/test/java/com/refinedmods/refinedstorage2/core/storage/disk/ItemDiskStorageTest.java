@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.storage;
+package com.refinedmods.refinedstorage2.core.storage.disk;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.util.Action;
