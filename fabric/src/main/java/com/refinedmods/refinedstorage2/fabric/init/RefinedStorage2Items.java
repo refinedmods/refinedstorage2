@@ -16,6 +16,7 @@ public class RefinedStorage2Items {
         Registry.register(Registry.ITEM, new Identifier(RefinedStorage2Mod.ID, "quartz_enriched_iron_block"), new BlockItem(blocks.getQuartzEnrichedIron(), new Item.Settings().group(itemGroup)));
         Registry.register(Registry.ITEM, new Identifier(RefinedStorage2Mod.ID, "silicon"), new SiliconItem(new Item.Settings().group(itemGroup)));
         Registry.register(Registry.ITEM, new Identifier(RefinedStorage2Mod.ID, "processor_binding"), new ProcessorBindingItem(new Item.Settings().group(itemGroup)));
+        Registry.register(Registry.ITEM, new Identifier(RefinedStorage2Mod.ID, "disk_drive"), new DiskDriveBlockItem(blocks.getDiskDrive(), new Item.Settings().group(itemGroup)));
 
         for (ProcessorItem.Type type : ProcessorItem.Type.values()) {
             Registry.register(Registry.ITEM, new Identifier(RefinedStorage2Mod.ID, type.getName() + "_processor"), new ProcessorItem(new Item.Settings().group(itemGroup)));
