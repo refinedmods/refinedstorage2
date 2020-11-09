@@ -21,7 +21,7 @@ public class QuadRotator implements RenderContext.QuadTransform {
             quad.copyPos(i, tmp);
 
             tmp.add(-0.5F, -0.5F, -0.5F);
-            tmp.rotate(this.direction.getQuaternion());
+            tmp.rotate(direction.getQuaternion());
             tmp.add(0.5F, 0.5F, 0.5F);
 
             quad.pos(i, tmp);

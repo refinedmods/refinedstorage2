@@ -31,7 +31,9 @@ public enum BiDirection implements StringIdentifiable {
         this.quaternion = new Quaternion(vec.getX(), vec.getY(), vec.getZ(), true);
         this.mat = new Matrix4f();
         this.mat.loadIdentity();
-        this.mat.multiply(quaternion);
+        this.mat.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(vec.getX()));
+        this.mat.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(vec.getY()));
+        this.mat.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(vec.getZ()));
     }
 
     public Quaternion getQuaternion() {
