@@ -12,6 +12,8 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Direction;
 
+import java.util.List;
+
 public class DiskDriveBlockEntityRenderer extends BlockEntityRenderer<DiskDriveBlockEntity> {
     public static final RenderLayer RENDER_LAYER = RenderLayer.of("drive_leds", VertexFormats.POSITION_COLOR, 7, 32565, false, true, RenderLayer.MultiPhaseParameters.builder().build(false));
 
@@ -30,35 +32,42 @@ public class DiskDriveBlockEntityRenderer extends BlockEntityRenderer<DiskDriveB
     public void render(DiskDriveBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         matrices.push();
 
+        List<DiskDriveBlockEntity.DiskState> states = (List<DiskDriveBlockEntity.DiskState>) entity.getRenderAttachmentData();
+
         matrices.translate(0.5F, 0.5F, 0.5F);
         matrices.multiply(entity.getWorld().getBlockState(entity.getPos()).get(DiskDriveBlock.DIRECTION).getQuaternion());
         matrices.translate(-0.5F, -0.5F, -0.5F);
 
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RENDER_LAYER);
 
-        for (int x = 0; x < 2; ++x) {
-            for (int y = 0; y < 4; ++y) {
-                float x1 = LED_X1 - (x * 7F);
-                float y1 = LED_Y1 - (y * 3F);
+        int i = 0;
+        for (int y = 0; y < 4; ++y) {
+            for (int x = 0; x < 2; ++x) {
+                DiskDriveBlockEntity.DiskState state = states.get(i++);
 
-                float x2 = LED_X2 - (x * 7F);
-                float y2 = LED_Y2 - (y * 3F);
+                if (state != DiskDriveBlockEntity.DiskState.NONE) {
+                    float x1 = LED_X1 - (x * 7F);
+                    float y1 = LED_Y1 - (y * 3F);
 
-                CubeBuilder.INSTANCE.putCube(
-                    matrices,
-                    vertexConsumer,
-                    x1 / 16F,
-                    y1 / 16F,
-                    LED_Z1 / 16F,
-                    x2 / 16F,
-                    y2 / 16F,
-                    LED_Z2 / 16F,
-                    0,
-                    255,
-                    0,
-                    255,
-                    Direction.SOUTH
-                );
+                    float x2 = LED_X2 - (x * 7F);
+                    float y2 = LED_Y2 - (y * 3F);
+
+                    CubeBuilder.INSTANCE.putCube(
+                            matrices,
+                            vertexConsumer,
+                            x1 / 16F,
+                            y1 / 16F,
+                            LED_Z1 / 16F,
+                            x2 / 16F,
+                            y2 / 16F,
+                            LED_Z2 / 16F,
+                            state.getColor() & 0xFF0000,
+                            state.getColor() & 0x00FF00,
+                            state.getColor() & 0x0000FF,
+                            255,
+                            Direction.SOUTH
+                    );
+                }
             }
         }
 

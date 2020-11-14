@@ -9,11 +9,21 @@ import java.util.List;
 
 public class DiskDriveBlockEntity extends NetworkNodeBlockEntity implements RenderAttachmentBlockEntity {
     public enum DiskState {
-        NONE,
-        DISCONNECTED,
-        NORMAL,
-        NEAR_CAPACITY,
-        FULL
+        NONE(0),
+        DISCONNECTED(0x323232),
+        NORMAL(0x00E9FF),
+        NEAR_CAPACITY(0xFFB700),
+        FULL(0xDA4B40);
+
+        private final int color;
+
+        DiskState(int color) {
+            this.color = color;
+        }
+
+        public int getColor() {
+            return color;
+        }
     }
 
     public DiskDriveBlockEntity() {
