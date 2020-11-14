@@ -61,9 +61,9 @@ public class DiskDriveBlockEntityRenderer extends BlockEntityRenderer<DiskDriveB
                             x2 / 16F,
                             y2 / 16F,
                             LED_Z2 / 16F,
-                            state.getColor() & 0xFF0000,
-                            state.getColor() & 0x00FF00,
-                            state.getColor() & 0x0000FF,
+                            state.getColor() >> 16 & 0xFF,
+                            state.getColor() >> 8 & 0xFF,
+                            state.getColor() & 0xFF,
                             255,
                             Direction.SOUTH
                     );
