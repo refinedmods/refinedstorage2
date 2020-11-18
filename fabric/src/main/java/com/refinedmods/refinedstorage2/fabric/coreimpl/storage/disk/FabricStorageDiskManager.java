@@ -27,14 +27,14 @@ public class FabricStorageDiskManager extends PersistentState implements Storage
     @Override
     public <T> void setDisk(UUID id, StorageDisk<T> disk) {
         parent.setDisk(id, disk);
-        // TODO marking dirty here. and in the disk.
+        markDirty();
     }
 
     @Override
     public <T> Optional<StorageDisk<T>> disassembleDisk(UUID id) {
         return parent.disassembleDisk(id)
             .map(disk -> {
-                // TODO marking dirty
+                markDirty();
                 return (StorageDisk<T>) disk;
             });
     }
