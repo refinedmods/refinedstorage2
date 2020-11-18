@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.core.storage.disk;
 
+import com.google.common.base.Preconditions;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -15,6 +17,13 @@ public class StorageDiskManagerImpl implements StorageDiskManager {
 
     @Override
     public <T> void setDisk(UUID id, StorageDisk<T> disk) {
+        Preconditions.checkNotNull(id);
+        Preconditions.checkNotNull(disk);
+
+        if (disks.containsKey(id)) {
+            throw new IllegalArgumentException(id + " already exists");
+        }
+
         disks.put(id, disk);
     }
 

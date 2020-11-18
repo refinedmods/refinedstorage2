@@ -5,11 +5,13 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RefinedStorage2Test
 class StorageDiskManagerImplTest {
@@ -108,5 +110,18 @@ class StorageDiskManagerImplTest {
         assertThat(disassembledDisk).isNotEmpty();
         assertThat(disassembledDisk.get()).isSameAs(storage);
         assertThat(disk).isNotPresent();
+    }
+
+    @Test
+    void Test_inserting_duplicate_storage_disk_ids_should_fail() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        storageDiskManager.setDisk(id, new ItemDiskStorage(10));
+
+        // Act
+        Executable action = () -> storageDiskManager.setDisk(id, new ItemDiskStorage(10));
+
+        // Assert
+        assertThrows(IllegalArgumentException.class, action);
     }
 }
