@@ -1,7 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.render.entity;
 
+import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.fabric.block.DiskDriveBlock;
-import com.refinedmods.refinedstorage2.fabric.block.entity.DiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.render.CubeBuilder;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -32,7 +33,7 @@ public class DiskDriveBlockEntityRenderer extends BlockEntityRenderer<DiskDriveB
     public void render(DiskDriveBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         matrices.push();
 
-        List<DiskDriveBlockEntity.DiskState> states = (List<DiskDriveBlockEntity.DiskState>) entity.getRenderAttachmentData();
+        List<DiskState> states = (List<DiskState>) entity.getRenderAttachmentData();
 
         matrices.translate(0.5F, 0.5F, 0.5F);
         matrices.multiply(entity.getWorld().getBlockState(entity.getPos()).get(DiskDriveBlock.DIRECTION).getQuaternion());
@@ -43,9 +44,9 @@ public class DiskDriveBlockEntityRenderer extends BlockEntityRenderer<DiskDriveB
         int i = 0;
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 2; ++x) {
-                DiskDriveBlockEntity.DiskState state = states.get(i++);
+                DiskState state = states.get(i++);
 
-                if (state != DiskDriveBlockEntity.DiskState.NONE) {
+                if (state != DiskState.NONE) {
                     float x1 = LED_X1 - (x * 7F);
                     float y1 = LED_Y1 - (y * 3F);
 

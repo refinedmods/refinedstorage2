@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.init;
 
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.CableBlockEntity;
-import com.refinedmods.refinedstorage2.fabric.block.entity.DiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
