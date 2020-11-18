@@ -20,7 +20,12 @@ public class ClientStorageDiskManager implements StorageDiskManager {
     }
 
     @Override
-    public <T> void setDisk(UUID id, StorageDisk<T> storage) {
+    public <T> void setDisk(UUID id, StorageDisk<T> disk) {
+        throw new IllegalStateException("Server-side only");
+    }
+
+    @Override
+    public <T> Optional<StorageDisk<T>> disassembleDisk(UUID id) {
         throw new IllegalStateException("Server-side only");
     }
 

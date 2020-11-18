@@ -6,7 +6,9 @@ import java.util.UUID;
 public interface StorageDiskManager {
     <T> Optional<StorageDisk<T>> getDisk(UUID id);
 
-    <T> void setDisk(UUID id, StorageDisk<T> storage);
+    <T> void setDisk(UUID id, StorageDisk<T> disk);
+
+    <T> Optional<StorageDisk<T>> disassembleDisk(UUID id);
 
     StorageDiskInfo getInfo(UUID id);
 }

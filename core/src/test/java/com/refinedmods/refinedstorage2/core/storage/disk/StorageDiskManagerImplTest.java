@@ -66,4 +66,47 @@ class StorageDiskManagerImplTest {
         assertThat(info.getCapacity()).isZero();
         assertThat(info.getStored()).isZero();
     }
+
+    @Test
+    void Test_disassembling_a_non_existing_disk() {
+        // Act
+        Optional<StorageDisk<ItemStack>> disassembledDisk = storageDiskManager.disassembleDisk(UUID.randomUUID());
+
+        // Assert
+        assertThat(disassembledDisk).isEmpty();
+    }
+
+    @Test
+    void Test_disassembling_a_non_empty_disk() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        StorageDisk<ItemStack> storage = new ItemDiskStorage(10);
+        storage.insert(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+        storageDiskManager.setDisk(id, storage);
+
+        // Act
+        Optional<StorageDisk<ItemStack>> disassembledDisk = storageDiskManager.disassembleDisk(id);
+        Optional<StorageDisk<ItemStack>> disk = storageDiskManager.getDisk(id);
+
+        // Assert
+        assertThat(disassembledDisk).isEmpty();
+        assertThat(disk).isPresent();
+    }
+
+    @Test
+    void Test_disassembling_an_empty_disk() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        StorageDisk<ItemStack> storage = new ItemDiskStorage(10);
+        storageDiskManager.setDisk(id, storage);
+
+        // Act
+        Optional<StorageDisk<ItemStack>> disassembledDisk = storageDiskManager.disassembleDisk(id);
+        Optional<StorageDisk<ItemStack>> disk = storageDiskManager.getDisk(id);
+
+        // Assert
+        assertThat(disassembledDisk).isNotEmpty();
+        assertThat(disassembledDisk.get()).isSameAs(storage);
+        assertThat(disk).isNotPresent();
+    }
 }

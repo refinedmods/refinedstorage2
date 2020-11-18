@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.item;
 
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
@@ -24,7 +23,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class StorageDiskItem extends Item {
@@ -59,30 +57,27 @@ public class StorageDiskItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
 
-        if (world instanceof ServerWorld &&
-            user.isSneaking() &&
-            type != ItemStorageType.CREATIVE &&
-            stack.hasTag() &&
-            stack.getTag().containsUuid("id")) {
-            UUID id = stack.getTag().getUuid("id");
+        if (!(world instanceof ServerWorld) || !user.isSneaking() || type == ItemStorageType.CREATIVE || !stack.hasTag() || !stack.getTag().containsUuid("id")) {
+            return TypedActionResult.fail(stack);
+        }
 
-            Optional<StorageDisk<ItemStack>> storageDisk = RefinedStorage2Mod.API.getStorageDiskManager(world).getDisk(id);
-            if (storageDisk.isPresent() && storageDisk.get().getStored() == 0) {
+        UUID id = stack.getTag().getUuid("id");
+
+        return RefinedStorage2Mod.API
+            .getStorageDiskManager(world)
+            .disassembleDisk(id)
+            .map(disk -> {
                 ItemStack storagePart = new ItemStack(RefinedStorage2Mod.ITEMS.getStoragePart(type), stack.getCount());
 
                 if (!user.inventory.insertStack(storagePart.copy())) {
                     world.spawnEntity(new ItemEntity(world, user.getX(), user.getY(), user.getZ(), storagePart));
                 }
 
-                // RefinedStorage2Mod.API.getStorageDiskManager(world).remove(id); // TODO
-                // RefinedStorage2Mod.API.getStorageDiskManager(world).markDirty(); // TODO
-
                 return TypedActionResult.success(new ItemStack(RefinedStorage2Mod.ITEMS.getStorageHousing()));
-            }
-        }
-
-        return TypedActionResult.fail(stack);
+            })
+            .orElse(TypedActionResult.fail(stack));
     }
+
     // TODO immunity for despawning
     // TODO tags in recipes
 

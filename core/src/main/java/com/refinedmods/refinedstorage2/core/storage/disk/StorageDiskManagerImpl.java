@@ -6,16 +6,28 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class StorageDiskManagerImpl implements StorageDiskManager {
-    private final Map<UUID, StorageDisk<?>> storages = new HashMap<>();
+    private final Map<UUID, StorageDisk<?>> disks = new HashMap<>();
 
     @Override
     public <T> Optional<StorageDisk<T>> getDisk(UUID id) {
-        return Optional.ofNullable((StorageDisk<T>) storages.get(id));
+        return Optional.ofNullable((StorageDisk<T>) disks.get(id));
     }
 
     @Override
-    public <T> void setDisk(UUID id, StorageDisk<T> storage) {
-        storages.put(id, storage);
+    public <T> void setDisk(UUID id, StorageDisk<T> disk) {
+        disks.put(id, disk);
+    }
+
+    @Override
+    public <T> Optional<StorageDisk<T>> disassembleDisk(UUID id) {
+        return getDisk(id)
+            .map(disk -> {
+                if (disk.getStored() == 0) {
+                    disks.remove(id);
+                    return (StorageDisk<T>) disk;
+                }
+                return null;
+            });
     }
 
     @Override
