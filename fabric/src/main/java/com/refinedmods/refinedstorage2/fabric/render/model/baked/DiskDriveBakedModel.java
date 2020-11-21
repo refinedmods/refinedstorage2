@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.render.model.baked;
 
+import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.fabric.block.DiskDriveBlock;
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
@@ -10,7 +11,6 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockRenderView;
 
-import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -39,10 +39,13 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         super.emitBlockQuads(blockView, state, pos, randomSupplier, context);
 
         if (blockView instanceof RenderAttachedBlockView) {
-            Object diskStates = ((RenderAttachedBlockView) blockView).getBlockEntityRenderAttachment(pos);
-            if (diskStates != null) {
+            Object renderAttachment = ((RenderAttachedBlockView) blockView).getBlockEntityRenderAttachment(pos);
+
+            if (renderAttachment instanceof DiskDriveState) {
+                DiskDriveState states = (DiskDriveState) renderAttachment;
+
                 for (int i = 0; i < translators.length; ++i) {
-                    if (((List<DiskState>) diskStates).get(i) != DiskState.NONE) {
+                    if (states.getState(i) != DiskState.NONE) {
                         context.pushTransform(translators[i]);
                         context.fallbackConsumer().accept(diskModel);
                         context.popTransform();

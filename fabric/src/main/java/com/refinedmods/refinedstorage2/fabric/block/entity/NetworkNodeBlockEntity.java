@@ -3,36 +3,44 @@ package com.refinedmods.refinedstorage2.fabric.block.entity;
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.util.dynamic.GlobalPos;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
-public abstract class NetworkNodeBlockEntity extends BlockEntity implements NetworkNode {
-    protected Network network;
+public abstract class NetworkNodeBlockEntity<T extends NetworkNode> extends BlockEntity implements NetworkNode {
+    protected T node;
 
     public NetworkNodeBlockEntity(BlockEntityType<?> type) {
         super(type);
     }
 
     @Override
+    public void setLocation(World world, BlockPos pos) {
+        super.setLocation(world, pos);
+
+        node = createNode(world, pos);
+    }
+
+    protected abstract T createNode(World world, BlockPos pos);
+
+    @Override
     public BlockPos getPosition() {
-        return getPos();
+        return node.getPosition();
     }
 
     @Override
     public void setNetwork(Network network) {
-        this.network = network;
+        node.setNetwork(network);
     }
 
     @Override
     public Network getNetwork() {
-        return network;
+        return node.getNetwork();
     }
 
     @Override
     public NetworkNodeReference createReference() {
-        return new FabricNetworkNodeReference(world.getServer(), GlobalPos.create(world.getRegistryKey(), getPos()));
+        return node.createReference();
     }
 }

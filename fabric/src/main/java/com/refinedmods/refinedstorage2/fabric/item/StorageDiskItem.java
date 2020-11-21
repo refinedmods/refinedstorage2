@@ -34,13 +34,6 @@ public class StorageDiskItem extends Item {
         this.type = type;
     }
 
-    public static Optional<UUID> getId(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().containsUuid("id")) {
-            return Optional.of(stack.getTag().getUuid("id"));
-        }
-        return Optional.empty();
-    }
-
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
@@ -100,5 +93,12 @@ public class StorageDiskItem extends Item {
             stack.setTag(new CompoundTag());
             stack.getTag().putUuid("id", id);
         }
+    }
+
+    public static Optional<UUID> getId(ItemStack stack) {
+        if (stack.hasTag() && stack.getTag().containsUuid("id")) {
+            return Optional.of(stack.getTag().getUuid("id"));
+        }
+        return Optional.empty();
     }
 }
