@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.core.network;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
-import com.refinedmods.refinedstorage2.core.network.node.FakeNetworkNodeAdapter;
+import com.refinedmods.refinedstorage2.core.network.node.FakeNetworkNodeRepository;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
 import net.minecraft.util.math.BlockPos;
@@ -20,10 +20,10 @@ class NetworkManagerImplTest {
     @Test
     void Test_notifying_network_manager_of_node_being_added_while_node_not_present_should_fail() {
         // Arrange
-        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        Executable action = () -> networkManager.onNodeAdded(nodeAdapter, BlockPos.ORIGIN);
+        Executable action = () -> networkManager.onNodeAdded(repo, BlockPos.ORIGIN);
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
@@ -33,11 +33,11 @@ class NetworkManagerImplTest {
     @Test
     void Test_adding_node_should_form_network() {
         // Arrange
-        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        Network network01 = networkManager.onNodeAdded(nodeAdapter, node01.getPosition());
+        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        Network network01 = networkManager.onNodeAdded(repo, node01.getPosition());
 
         // Assert
         assertThat(networkManager.getNetworks()).hasSize(1);
@@ -51,13 +51,13 @@ class NetworkManagerImplTest {
     @Test
     void Test_when_adding_node_having_a_neighboring_node_without_network_should_fail() {
         // Arrange
-        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        nodeAdapter.setNode(BlockPos.ORIGIN.down());
+        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        repo.setNode(BlockPos.ORIGIN.down());
 
-        Executable action = () -> networkManager.onNodeAdded(nodeAdapter, node01.getPosition());
+        Executable action = () -> networkManager.onNodeAdded(repo, node01.getPosition());
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
@@ -67,21 +67,21 @@ class NetworkManagerImplTest {
     @Test
     void Test_adding_node_should_join_existing_network() {
         // Arrange
-        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(nodeAdapter, node01.getPosition());
+        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        networkManager.onNodeAdded(repo, node01.getPosition());
 
-        NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        Network network02 = networkManager.onNodeAdded(nodeAdapter, node02.getPosition());
+        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.down());
+        Network network02 = networkManager.onNodeAdded(repo, node02.getPosition());
 
         // Assert
         assertThat(networkManager.getNetworks()).hasSize(1);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
             assertThat(network.getNodeReferences()).containsExactlyInAnyOrder(
-                    new StubNetworkNodeReference(node01),
-                    new StubNetworkNodeReference(node02)
+                new StubNetworkNodeReference(node01),
+                new StubNetworkNodeReference(node02)
             );
             assertThat(network02).isSameAs(network);
             assertThat(node01.getNetwork()).isSameAs(network);
@@ -92,11 +92,11 @@ class NetworkManagerImplTest {
     @Test
     void Test_adding_a_node_should_merge_existing_networks() {
         // Arrange
-        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act & assert
-        NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        Network network01 = networkManager.onNodeAdded(nodeAdapter, node01.getPosition());
+        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        Network network01 = networkManager.onNodeAdded(repo, node01.getPosition());
 
         assertThat(networkManager.getNetworks()).hasSize(1);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
@@ -105,8 +105,8 @@ class NetworkManagerImplTest {
             assertThat(node01.getNetwork()).isSameAs(network);
         });
 
-        NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down().down());
-        Network network02 = networkManager.onNodeAdded(nodeAdapter, node02.getPosition());
+        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.down().down());
+        Network network02 = networkManager.onNodeAdded(repo, node02.getPosition());
 
         assertThat(networkManager.getNetworks()).hasSize(2);
         assertThat(network01).isNotSameAs(network02);
@@ -116,15 +116,15 @@ class NetworkManagerImplTest {
             assertThat(node02.getNetwork()).isSameAs(network);
         });
 
-        NetworkNode node03 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        Network network03 = networkManager.onNodeAdded(nodeAdapter, node03.getPosition());
+        NetworkNode node03 = repo.setNode(BlockPos.ORIGIN.down());
+        Network network03 = networkManager.onNodeAdded(repo, node03.getPosition());
 
         assertThat(networkManager.getNetworks()).hasSize(1);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
             assertThat(network.getNodeReferences()).containsExactlyInAnyOrder(
-                    new StubNetworkNodeReference(node01),
-                    new StubNetworkNodeReference(node02),
-                    new StubNetworkNodeReference(node03)
+                new StubNetworkNodeReference(node01),
+                new StubNetworkNodeReference(node02),
+                new StubNetworkNodeReference(node03)
             );
             assertThat(network03).isSameAs(network);
             assertThat(node01.getNetwork()).isSameAs(network);
@@ -136,22 +136,22 @@ class NetworkManagerImplTest {
     @Test
     void Test_splitting_networks_in_two_networks() {
         // Arrange
-        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act & assert
-        NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(nodeAdapter, node01.getPosition());
+        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        networkManager.onNodeAdded(repo, node01.getPosition());
 
-        NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        networkManager.onNodeAdded(nodeAdapter, node02.getPosition());
+        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.down());
+        networkManager.onNodeAdded(repo, node02.getPosition());
 
-        NetworkNode node03 = nodeAdapter.setNode(BlockPos.ORIGIN.down().down());
-        networkManager.onNodeAdded(nodeAdapter, node03.getPosition());
+        NetworkNode node03 = repo.setNode(BlockPos.ORIGIN.down().down());
+        networkManager.onNodeAdded(repo, node03.getPosition());
 
         assertThat(networkManager.getNetworks()).hasSize(1);
 
-        networkManager.onNodeRemoved(nodeAdapter, node02.getPosition());
-        nodeAdapter.removeNode(BlockPos.ORIGIN.down());
+        networkManager.onNodeRemoved(repo, node02.getPosition());
+        repo.removeNode(BlockPos.ORIGIN.down());
 
         assertThat(networkManager.getNetworks()).hasSize(2);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
@@ -167,25 +167,25 @@ class NetworkManagerImplTest {
     @Test
     void Test_splitting_networks_in_three_networks() {
         // Arrange
-        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act & assert
-        NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(nodeAdapter, node01.getPosition());
+        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        networkManager.onNodeAdded(repo, node01.getPosition());
 
-        NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.north());
-        networkManager.onNodeAdded(nodeAdapter, node02.getPosition());
+        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.north());
+        networkManager.onNodeAdded(repo, node02.getPosition());
 
-        NetworkNode node03 = nodeAdapter.setNode(BlockPos.ORIGIN.east());
-        networkManager.onNodeAdded(nodeAdapter, node03.getPosition());
+        NetworkNode node03 = repo.setNode(BlockPos.ORIGIN.east());
+        networkManager.onNodeAdded(repo, node03.getPosition());
 
-        NetworkNode node04 = nodeAdapter.setNode(BlockPos.ORIGIN.up());
-        networkManager.onNodeAdded(nodeAdapter, node04.getPosition());
+        NetworkNode node04 = repo.setNode(BlockPos.ORIGIN.up());
+        networkManager.onNodeAdded(repo, node04.getPosition());
 
         assertThat(networkManager.getNetworks()).hasSize(1);
 
-        networkManager.onNodeRemoved(nodeAdapter, node01.getPosition());
-        nodeAdapter.removeNode(BlockPos.ORIGIN);
+        networkManager.onNodeRemoved(repo, node01.getPosition());
+        repo.removeNode(BlockPos.ORIGIN);
 
         assertThat(networkManager.getNetworks()).hasSize(3);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
@@ -205,18 +205,18 @@ class NetworkManagerImplTest {
     @Test
     void Test_when_removing_a_node_having_a_neighboring_node_without_network_should_fail() {
         // Arrange
-        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(nodeAdapter, node01.getPosition());
+        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        networkManager.onNodeAdded(repo, node01.getPosition());
 
-        NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        networkManager.onNodeAdded(nodeAdapter, node02.getPosition());
+        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.down());
+        networkManager.onNodeAdded(repo, node02.getPosition());
 
         node02.setNetwork(null);
 
-        Executable action = () -> networkManager.onNodeRemoved(nodeAdapter, node01.getPosition());
+        Executable action = () -> networkManager.onNodeRemoved(repo, node01.getPosition());
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
@@ -226,22 +226,22 @@ class NetworkManagerImplTest {
     @Test
     void Test_removing_last_node_removes_network() {
         // Arrange
-        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(nodeAdapter, node01.getPosition());
+        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        networkManager.onNodeAdded(repo, node01.getPosition());
 
-        NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        networkManager.onNodeAdded(nodeAdapter, node02.getPosition());
+        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.down());
+        networkManager.onNodeAdded(repo, node02.getPosition());
         int sizeBeforeRemoving = networkManager.getNetworks().size();
 
-        networkManager.onNodeRemoved(nodeAdapter, node01.getPosition());
-        nodeAdapter.removeNode(BlockPos.ORIGIN);
+        networkManager.onNodeRemoved(repo, node01.getPosition());
+        repo.removeNode(BlockPos.ORIGIN);
         int sizeAfterRemovingFirst = networkManager.getNetworks().size();
 
-        networkManager.onNodeRemoved(nodeAdapter, node02.getPosition());
-        nodeAdapter.removeNode(BlockPos.ORIGIN.down());
+        networkManager.onNodeRemoved(repo, node02.getPosition());
+        repo.removeNode(BlockPos.ORIGIN.down());
         int sizeAfterRemovingLast = networkManager.getNetworks().size();
 
         // Assert
@@ -253,18 +253,18 @@ class NetworkManagerImplTest {
     @Test
     void Test_removing_a_node_with_unmatched_neighbor_network_should_fail() {
         // Arrange
-        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        NetworkNode node01 = nodeAdapter.setNode(BlockPos.ORIGIN);
-        networkManager.onNodeAdded(nodeAdapter, node01.getPosition());
+        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        networkManager.onNodeAdded(repo, node01.getPosition());
 
-        NetworkNode node02 = nodeAdapter.setNode(BlockPos.ORIGIN.down());
-        networkManager.onNodeAdded(nodeAdapter, node02.getPosition());
+        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.down());
+        networkManager.onNodeAdded(repo, node02.getPosition());
 
         node02.setNetwork(new NetworkImpl(UUID.randomUUID()));
 
-        Executable action = () -> networkManager.onNodeRemoved(nodeAdapter, node01.getPosition());
+        Executable action = () -> networkManager.onNodeRemoved(repo, node01.getPosition());
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
@@ -274,10 +274,10 @@ class NetworkManagerImplTest {
     @Test
     void Test_removing_a_node_that_does_not_exist_should_fail() {
         // Arrange
-        FakeNetworkNodeAdapter nodeAdapter = new FakeNetworkNodeAdapter();
+        FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        Executable action = () -> networkManager.onNodeRemoved(nodeAdapter, BlockPos.ORIGIN);
+        Executable action = () -> networkManager.onNodeRemoved(repo, BlockPos.ORIGIN);
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);

@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +33,6 @@ class DiskDriveNetworkNodeTest {
         diskProvider = mock(StorageDiskProvider.class);
 
         diskDrive = new DiskDriveNetworkNode(
-            mock(World.class),
             BlockPos.ORIGIN,
             mock(NetworkNodeReference.class),
             diskManager,
@@ -54,7 +52,7 @@ class DiskDriveNetworkNodeTest {
     }
 
     @Test
-    void Test_state_when_adding_an_empty_disk() {
+    void Test_state_with_an_empty_disk() {
         // Arrange
         UUID id = UUID.randomUUID();
 
@@ -83,7 +81,7 @@ class DiskDriveNetworkNodeTest {
     }
 
     @Test
-    void Test_state_when_adding_a_full_disk() {
+    void Test_state_with_a_full_disk() {
         // Arrange
         UUID id = UUID.randomUUID();
 
@@ -93,7 +91,7 @@ class DiskDriveNetworkNodeTest {
         when(diskManager.getDisk(id)).thenReturn(Optional.of((StorageDisk) storageDisk));
 
         when(diskProvider.getDiskId(anyInt())).thenReturn(Optional.empty());
-        when(diskProvider.getDiskId(2)).thenReturn(Optional.of(id));
+        when(diskProvider.getDiskId(7)).thenReturn(Optional.of(id));
 
         // Act
         diskDrive.onDiskChanged(7);
@@ -112,7 +110,7 @@ class DiskDriveNetworkNodeTest {
     }
 
     @Test
-    void Test_state_when_adding_a_nearly_full_disk() {
+    void Test_state_with_a_nearly_full_disk() {
         // Arrange
         UUID id = UUID.randomUUID();
 
@@ -141,7 +139,7 @@ class DiskDriveNetworkNodeTest {
     }
 
     @Test
-    void Test_state_when_adding_a_disk_that_is_not_present_in_the_manager() {
+    void Test_state_with_a_disk_that_does_not_exist() {
         // Arrange
         UUID id = UUID.randomUUID();
 
@@ -160,7 +158,7 @@ class DiskDriveNetworkNodeTest {
     }
 
     @Test
-    void Test_state_when_changing_a_disk_in_an_invalid_slot() {
+    void Test_state_when_changing_an_invalid_slot() {
         // Act
         diskDrive.onDiskChanged(-1);
         diskDrive.onDiskChanged(DiskDriveNetworkNode.DISK_COUNT);

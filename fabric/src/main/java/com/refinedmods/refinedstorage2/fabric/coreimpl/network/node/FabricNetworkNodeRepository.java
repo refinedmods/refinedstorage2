@@ -1,17 +1,17 @@
 package com.refinedmods.refinedstorage2.fabric.coreimpl.network.node;
 
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
-import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeAdapter;
+import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeRepository;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Optional;
 
-public class FabricNetworkNodeAdapter implements NetworkNodeAdapter {
+public class FabricNetworkNodeRepository implements NetworkNodeRepository {
     private final World world;
 
-    public FabricNetworkNodeAdapter(World world) {
+    public FabricNetworkNodeRepository(World world) {
         this.world = world;
     }
 

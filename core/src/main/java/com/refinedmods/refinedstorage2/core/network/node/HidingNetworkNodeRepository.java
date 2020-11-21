@@ -4,11 +4,11 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.Optional;
 
-public class HidingNetworkNodeAdapter implements NetworkNodeAdapter {
-    private final NetworkNodeAdapter parent;
+public class HidingNetworkNodeRepository implements NetworkNodeRepository {
+    private final NetworkNodeRepository parent;
     private final BlockPos hiddenPos;
 
-    public HidingNetworkNodeAdapter(NetworkNodeAdapter parent, BlockPos hiddenPos) {
+    public HidingNetworkNodeRepository(NetworkNodeRepository parent, BlockPos hiddenPos) {
         this.parent = parent;
         this.hiddenPos = hiddenPos;
     }

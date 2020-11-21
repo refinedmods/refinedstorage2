@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class FakeNetworkNodeAdapter implements NetworkNodeAdapter {
+public class FakeNetworkNodeRepository implements NetworkNodeRepository {
     private final Map<BlockPos, NetworkNode> nodes = new HashMap<>();
 
     public NetworkNode setNode(BlockPos pos) {

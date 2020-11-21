@@ -39,7 +39,6 @@ public class FabricStorageDiskManager extends PersistentState implements Storage
             });
     }
 
-
     @Override
     public StorageDiskInfo getInfo(UUID id) {
         return parent.getInfo(id);

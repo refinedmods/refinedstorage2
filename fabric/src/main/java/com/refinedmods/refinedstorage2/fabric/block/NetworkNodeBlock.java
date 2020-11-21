@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.block;
 
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeAdapter;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeRepository;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -22,7 +22,7 @@ public abstract class NetworkNodeBlock extends Block implements BlockEntityProvi
         super.onPlaced(world, pos, state, placer, stack);
 
         if (world instanceof ServerWorld) {
-            RefinedStorage2Mod.API.getNetworkManager(world.getServer()).onNodeAdded(new FabricNetworkNodeAdapter(world), pos);
+            RefinedStorage2Mod.API.getNetworkManager(world.getServer()).onNodeAdded(new FabricNetworkNodeRepository(world), pos);
         }
     }
 
@@ -31,7 +31,7 @@ public abstract class NetworkNodeBlock extends Block implements BlockEntityProvi
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.isOf(newState.getBlock())) {
             if (world instanceof ServerWorld) {
-                RefinedStorage2Mod.API.getNetworkManager(world.getServer()).onNodeRemoved(new FabricNetworkNodeAdapter(world), pos);
+                RefinedStorage2Mod.API.getNetworkManager(world.getServer()).onNodeRemoved(new FabricNetworkNodeRepository(world), pos);
             }
 
             super.onStateReplaced(state, world, pos, newState, moved);

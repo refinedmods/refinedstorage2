@@ -8,10 +8,10 @@ import net.minecraft.util.math.Direction;
 public class NetworkNodeRequestHandler implements RequestHandler<NetworkNode, NetworkNodeRequest> {
     @Override
     public void handle(NetworkNodeRequest request, GraphScannerContext<NetworkNode, NetworkNodeRequest> context) {
-        request.getNetworkNodeAdapter().getNode(request.getPos()).ifPresent(node -> {
+        request.getNetworkNodeRepository().getNode(request.getPos()).ifPresent(node -> {
             if (context.addEntry(node)) {
                 for (Direction direction : Direction.values()) {
-                    context.addRequest(new NetworkNodeRequest(request.getNetworkNodeAdapter(), request.getPos().offset(direction)));
+                    context.addRequest(new NetworkNodeRequest(request.getNetworkNodeRepository(), request.getPos().offset(direction)));
                 }
             }
         });
