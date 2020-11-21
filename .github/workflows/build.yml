@@ -1,15 +1,11 @@
-name: build
+name: Build
 on: [ pull_request, push ]
 jobs:
   build:
     strategy:
       matrix:
-        java: [
-            1.8,
-            11,
-            15
-        ]
-        os: [ ubuntu-20.04, windows-latest ]
+        java: [ 1.8 ]
+        os: [ ubuntu-20.04 ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
