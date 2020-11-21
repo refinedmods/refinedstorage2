@@ -27,23 +27,23 @@ public class NetworkManagerImpl implements NetworkManager {
     }
 
     @Override
-    public Network onNodeAdded(NetworkNodeRepository repository, BlockPos pos) {
-        if (!repository.getNode(pos).isPresent()) {
+    public Network onNodeAdded(NetworkNodeRepository nodeRepository, BlockPos pos) {
+        if (!nodeRepository.getNode(pos).isPresent()) {
             throw new NetworkManagerException(String.format("Could not find added node at position %s", pos));
         }
 
         LOGGER.debug("A node has been added at {}", pos);
 
-        Set<Network> neighboringNetworks = getNeighboringNetworks(repository, pos);
+        Set<Network> neighboringNetworks = getNeighboringNetworks(nodeRepository, pos);
         if (neighboringNetworks.isEmpty()) {
-            return formNetwork(repository, pos);
+            return formNetwork(nodeRepository, pos);
         } else {
-            return mergeNetworks(repository, neighboringNetworks, pos);
+            return mergeNetworks(nodeRepository, neighboringNetworks, pos);
         }
     }
 
-    private Network mergeNetworks(NetworkNodeRepository repository, Set<Network> neighboringNetworks, BlockPos pos) {
-        GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(repository, pos));
+    private Network mergeNetworks(NetworkNodeRepository nodeRepository, Set<Network> neighboringNetworks, BlockPos pos) {
+        GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(nodeRepository, pos));
 
         Iterator<Network> it = neighboringNetworks.iterator();
         Network pivotNetwork = it.next();
@@ -63,11 +63,11 @@ public class NetworkManagerImpl implements NetworkManager {
         return pivotNetwork;
     }
 
-    private Network formNetwork(NetworkNodeRepository nodeAdapter, BlockPos pos) {
+    private Network formNetwork(NetworkNodeRepository nodeRepository, BlockPos pos) {
         Network network = new NetworkImpl(UUID.randomUUID());
         addNetwork(network);
 
-        GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(nodeAdapter, pos));
+        GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(nodeRepository, pos));
 
         result.getAllEntries().forEach(node -> {
             node.setNetwork(network);
@@ -80,32 +80,32 @@ public class NetworkManagerImpl implements NetworkManager {
     }
 
     @Override
-    public void onNodeRemoved(NetworkNodeRepository repository, BlockPos pos) {
-        NetworkNode node = repository.getNode(pos).orElseThrow(() -> new NetworkManagerException(String.format("The node at %s is not present", pos)));
+    public void onNodeRemoved(NetworkNodeRepository nodeRepository, BlockPos pos) {
+        NetworkNode node = nodeRepository.getNode(pos).orElseThrow(() -> new NetworkManagerException(String.format("The node at %s is not present", pos)));
 
-        for (Network neighboringNetwork : getNeighboringNetworks(repository, pos)) {
+        for (Network neighboringNetwork : getNeighboringNetworks(nodeRepository, pos)) {
             if (neighboringNetwork != node.getNetwork()) {
                 throw new NetworkManagerException(String.format("The network manager was left in invalid state. The network of a neighboring node doesn't match the origin node. The origin node is located at %s", pos));
             }
         }
 
-        Optional<NetworkNode> neighborNode = getFirstNeighboringNode(repository, pos);
+        Optional<NetworkNode> neighborNode = getFirstNeighboringNode(nodeRepository, pos);
         if (neighborNode.isPresent()) {
-            splitNetworks(repository, neighborNode.get(), pos);
+            splitNetworks(nodeRepository, neighborNode.get(), pos);
         } else {
             removeNetwork(node.getNetwork());
         }
     }
 
-    private void splitNetworks(NetworkNodeRepository nodeAdapter, NetworkNode pivot, BlockPos removedPos) {
+    private void splitNetworks(NetworkNodeRepository nodeRepository, NetworkNode pivot, BlockPos removedPos) {
         Network pivotNetwork = pivot.getNetwork();
         Set<NetworkNode> pivotNodes = getNodesInNetwork(pivotNetwork);
 
         LOGGER.debug("Splitting network {}", pivotNetwork.getId());
 
-        nodeAdapter = new HidingNetworkNodeRepository(nodeAdapter, removedPos);
+        nodeRepository = new HidingNetworkNodeRepository(nodeRepository, removedPos);
 
-        GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(nodeAdapter, pivot.getPosition()), pivotNodes);
+        GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(nodeRepository, pivot.getPosition()), pivotNodes);
 
         LOGGER.debug("Network {} retains {} references", pivotNetwork.getId(), result.getAllEntries().size());
 
@@ -130,7 +130,7 @@ public class NetworkManagerImpl implements NetworkManager {
 
             if (removedNode.getNetwork() == null) {
                 LOGGER.debug("Forming new network at {}", removedNode.getPosition());
-                formNetwork(nodeAdapter, removedNode.getPosition());
+                formNetwork(nodeRepository, removedNode.getPosition());
             }
         }
 
@@ -148,11 +148,11 @@ public class NetworkManagerImpl implements NetworkManager {
             .collect(Collectors.toSet());
     }
 
-    private Optional<NetworkNode> getFirstNeighboringNode(NetworkNodeRepository nodeAdapter, BlockPos pos) {
+    private Optional<NetworkNode> getFirstNeighboringNode(NetworkNodeRepository nodeRepository, BlockPos pos) {
         for (Direction dir : Direction.values()) {
             BlockPos offsetPos = pos.offset(dir);
 
-            Optional<NetworkNode> node = nodeAdapter.getNode(offsetPos);
+            Optional<NetworkNode> node = nodeRepository.getNode(offsetPos);
             if (node.isPresent()) {
                 return node;
             }
@@ -161,12 +161,12 @@ public class NetworkManagerImpl implements NetworkManager {
         return Optional.empty();
     }
 
-    private Set<Network> getNeighboringNetworks(NetworkNodeRepository nodeAdapter, BlockPos pos) {
+    private Set<Network> getNeighboringNetworks(NetworkNodeRepository nodeRepository, BlockPos pos) {
         Set<Network> neighboringNetworks = new HashSet<>();
         for (Direction dir : Direction.values()) {
             BlockPos offsetPos = pos.offset(dir);
 
-            nodeAdapter.getNode(offsetPos).ifPresent(node -> {
+            nodeRepository.getNode(offsetPos).ifPresent(node -> {
                 Network network = node.getNetwork();
                 if (network == null) {
                     throw new NetworkManagerException(String.format("The network manager was left in an invalid state. Network node at %s has no network!", offsetPos));

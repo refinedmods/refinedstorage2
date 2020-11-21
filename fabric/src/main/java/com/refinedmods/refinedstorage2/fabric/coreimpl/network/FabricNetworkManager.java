@@ -20,15 +20,15 @@ public class FabricNetworkManager extends PersistentState implements NetworkMana
     }
 
     @Override
-    public Network onNodeAdded(NetworkNodeRepository repository, BlockPos pos) {
-        Network network = parent.onNodeAdded(repository, pos);
+    public Network onNodeAdded(NetworkNodeRepository nodeRepository, BlockPos pos) {
+        Network network = parent.onNodeAdded(nodeRepository, pos);
         markDirty();
         return network;
     }
 
     @Override
-    public void onNodeRemoved(NetworkNodeRepository repository, BlockPos pos) {
-        parent.onNodeRemoved(repository, pos);
+    public void onNodeRemoved(NetworkNodeRepository nodeRepository, BlockPos pos) {
+        parent.onNodeRemoved(nodeRepository, pos);
         markDirty();
     }
 

@@ -6,9 +6,9 @@ import net.minecraft.util.math.BlockPos;
 import java.util.Collection;
 
 public interface NetworkManager {
-    Network onNodeAdded(NetworkNodeRepository repository, BlockPos pos);
+    Network onNodeAdded(NetworkNodeRepository nodeRepository, BlockPos pos);
 
-    void onNodeRemoved(NetworkNodeRepository repository, BlockPos pos);
+    void onNodeRemoved(NetworkNodeRepository nodeRepository, BlockPos pos);
 
     Collection<Network> getNetworks();
 }
