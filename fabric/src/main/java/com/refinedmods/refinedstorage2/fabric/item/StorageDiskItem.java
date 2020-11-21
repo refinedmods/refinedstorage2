@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class StorageDiskItem extends Item {
@@ -33,13 +34,18 @@ public class StorageDiskItem extends Item {
         this.type = type;
     }
 
+    public static Optional<UUID> getId(ItemStack stack) {
+        if (stack.hasTag() && stack.getTag().containsUuid("id")) {
+            return Optional.of(stack.getTag().getUuid("id"));
+        }
+        return Optional.empty();
+    }
+
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
 
-        if (stack.hasTag() && stack.getTag().containsUuid("id")) {
-            UUID id = stack.getTag().getUuid("id");
-
+        getId(stack).ifPresent(id -> {
             StorageDiskInfo info = RefinedStorage2Mod.API.getStorageDiskManager(world).getInfo(id);
             if (info.getCapacity() == -1) {
                 tooltip.add(new TranslatableText("misc.refinedstorage2.stored", Quantities.formatWithUnits(info.getStored())).formatted(Formatting.GRAY));
@@ -50,24 +56,21 @@ public class StorageDiskItem extends Item {
             if (context.isAdvanced()) {
                 tooltip.add(new LiteralText(id.toString()).formatted(Formatting.GRAY));
             }
-        }
+        });
     }
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
 
-        if (!(world instanceof ServerWorld) || !user.isSneaking() || type == ItemStorageType.CREATIVE || !stack.hasTag() || !stack.getTag().containsUuid("id")) {
+        if (!(world instanceof ServerWorld) || !user.isSneaking() || type == ItemStorageType.CREATIVE) {
             return TypedActionResult.fail(stack);
         }
 
-        UUID id = stack.getTag().getUuid("id");
-
-        return RefinedStorage2Mod.API
-            .getStorageDiskManager(world)
-            .disassembleDisk(id)
+        return getId(stack)
+            .flatMap(id -> RefinedStorage2Mod.API.getStorageDiskManager(world).disassembleDisk(id))
             .map(disk -> {
-                ItemStack storagePart = new ItemStack(RefinedStorage2Mod.ITEMS.getStoragePart(type), stack.getCount());
+                ItemStack storagePart = createStoragePart(stack.getCount());
 
                 if (!user.inventory.insertStack(storagePart.copy())) {
                     world.spawnEntity(new ItemEntity(world, user.getX(), user.getY(), user.getZ(), storagePart));
@@ -76,6 +79,10 @@ public class StorageDiskItem extends Item {
                 return TypedActionResult.success(new ItemStack(RefinedStorage2Mod.ITEMS.getStorageHousing()));
             })
             .orElse(TypedActionResult.fail(stack));
+    }
+
+    private ItemStack createStoragePart(int count) {
+        return new ItemStack(RefinedStorage2Mod.ITEMS.getStoragePart(type), count);
     }
 
     // TODO immunity for despawning
