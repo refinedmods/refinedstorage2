@@ -56,8 +56,8 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         UUID id = UUID.randomUUID();
 
-        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(10);
-        storageDisk.insert(new ItemStack(Items.DIRT), 7, Action.EXECUTE);
+        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        storageDisk.insert(new ItemStack(Items.DIRT), 74, Action.EXECUTE);
 
         when(diskManager.getDisk(id)).thenReturn(Optional.of((StorageDisk) storageDisk));
 
@@ -114,8 +114,8 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         UUID id = UUID.randomUUID();
 
-        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(10);
-        storageDisk.insert(new ItemStack(Items.DIRT), 8, Action.EXECUTE);
+        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        storageDisk.insert(new ItemStack(Items.DIRT), 75, Action.EXECUTE);
 
         when(diskManager.getDisk(id)).thenReturn(Optional.of((StorageDisk) storageDisk));
 

@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.fabric.coreimpl.FabricRefinedStorage2ApiF
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2BlockEntities;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2Blocks;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2Items;
+import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2ScreenHandlers;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.StorageDiskInfoRequestPacket;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -25,6 +26,7 @@ public class RefinedStorage2Mod implements ModInitializer {
     public static final RefinedStorage2Blocks BLOCKS = new RefinedStorage2Blocks();
     public static final RefinedStorage2Items ITEMS = new RefinedStorage2Items();
     public static final RefinedStorage2BlockEntities BLOCK_ENTITIES = new RefinedStorage2BlockEntities();
+    public static final RefinedStorage2ScreenHandlers SCREEN_HANDLERS = new RefinedStorage2ScreenHandlers();
 
     private static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(new Identifier(ID, "general"), () -> new ItemStack(BLOCKS.getCable()));
 
@@ -33,6 +35,7 @@ public class RefinedStorage2Mod implements ModInitializer {
         BLOCKS.register();
         ITEMS.register(BLOCKS, ITEM_GROUP);
         BLOCK_ENTITIES.register(BLOCKS);
+        SCREEN_HANDLERS.register();
 
         ServerSidePacketRegistry.INSTANCE.register(StorageDiskInfoRequestPacket.ID, new StorageDiskInfoRequestPacket());
 

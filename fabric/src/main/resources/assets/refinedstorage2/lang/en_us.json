@@ -4,6 +4,7 @@
   "block.refinedstorage2.quartz_enriched_iron_block": "Block of Quartz Enriched Iron",
   "block.refinedstorage2.disk_drive": "Disk Drive",
   "block.refinedstorage2.machine_casing": "Machine Casing",
+  "gui.refinedstorage2.disk_drive.disks": "Disks",
   "item.refinedstorage2.quartz_enriched_iron": "Quartz Enriched Iron",
   "item.refinedstorage2.processor_binding": "Processor Binding",
   "item.refinedstorage2.silicon": "Silicon",

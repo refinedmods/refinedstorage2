@@ -38,25 +38,27 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl {
     }
 
     public DiskDriveState createState() {
-        DiskDriveState state = new DiskDriveState(DISK_COUNT);
+        DiskDriveState states = new DiskDriveState(DISK_COUNT);
         for (int i = 0; i < DISK_COUNT; ++i) {
-            StorageDisk disk = disks[i];
-
-            if (disk == null) {
-                state.setState(i, DiskState.NONE);
-            } else {
-                double fullness = (double) disk.getStored() / (double) disk.getCapacity();
-
-                if (fullness >= 1D) {
-                    state.setState(i, DiskState.FULL);
-                } else if (fullness >= DISK_NEAR_CAPACITY_THRESHOLD) {
-                    state.setState(i, DiskState.NEAR_CAPACITY);
-                } else {
-                    state.setState(i, DiskState.NORMAL);
-                }
-            }
+            states.setState(i, getState(disks[i]));
         }
 
-        return state;
+        return states;
+    }
+
+    private DiskState getState(StorageDisk<?> disk) {
+        if (disk == null) {
+            return DiskState.NONE;
+        } else {
+            double fullness = (double) disk.getStored() / (double) disk.getCapacity();
+
+            if (fullness >= 1D) {
+                return DiskState.FULL;
+            } else if (fullness >= DISK_NEAR_CAPACITY_THRESHOLD) {
+                return DiskState.NEAR_CAPACITY;
+            } else {
+                return DiskState.NORMAL;
+            }
+        }
     }
 }
