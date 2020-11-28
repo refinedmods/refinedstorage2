@@ -3,30 +3,37 @@ package com.refinedmods.refinedstorage2.fabric.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.GridScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.screen.widget.History;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ScrollbarWidget;
+import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GridScreen extends HandledScreen<GridScreenHandler> {
     private static final Identifier TEXTURE = new Identifier(RefinedStorage2Mod.ID, "textures/gui/grid.png");
 
     private static final int TOP_HEIGHT = 19;
     private static final int BOTTOM_HEIGHT = 99;
+    private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
 
     private ScrollbarWidget scrollbar;
+    private SearchFieldWidget searchField;
 
     public GridScreen(GridScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
 
-        titleX = 7;
-        titleY = 7;
-        playerInventoryTitleX = 7;
-        playerInventoryTitleY = 75;
-        backgroundWidth = 227;
-        backgroundHeight = 176;
+        this.titleX = 7;
+        this.titleY = 7;
+        this.playerInventoryTitleX = 7;
+        this.playerInventoryTitleY = 75;
+        this.backgroundWidth = 227;
+        this.backgroundHeight = 176;
     }
 
     @Override
@@ -36,11 +43,19 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
         super.init();
 
+        if (searchField == null) {
+            searchField = new SearchFieldWidget(textRenderer, x + 80 + 1, y + 6 + 1, 88 - 6, new History(SEARCH_FIELD_HISTORY));
+        } else {
+            searchField.x = x + 80 + 1;
+            searchField.y = y + 6 + 1;
+        }
+
         getScreenHandler().addSlots(backgroundHeight - BOTTOM_HEIGHT + 17);
 
         scrollbar = new ScrollbarWidget(client, x + 174, y + 20, 12, (getVisibleRows() * 18) - 2);
 
         children.add(scrollbar);
+        addButton(searchField);
     }
 
     private int getVisibleRows() {
@@ -84,6 +99,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         super.render(matrices, mouseX, mouseY, partialTicks);
         drawMouseoverTooltip(matrices, mouseX, mouseY);
         scrollbar.render(matrices, mouseX, mouseY, partialTicks);
+        searchField.render(matrices, 0, 0, 0);
     }
 
     @Override
@@ -110,5 +126,19 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
     @Override
     public boolean mouseScrolled(double x, double y, double delta) {
         return this.scrollbar.mouseScrolled(x, y, delta) || super.mouseScrolled(x, y, delta);
+    }
+
+    @Override
+    public boolean charTyped(char unknown1, int unknown2) {
+        return searchField.charTyped(unknown1, unknown2) || super.charTyped(unknown1, unknown2);
+    }
+
+    @Override
+    public boolean keyPressed(int key, int scanCode, int modifiers) {
+        if (searchField.keyPressed(key, scanCode, modifiers) || searchField.isActive()) {
+            return true;
+        }
+
+        return super.keyPressed(key, scanCode, modifiers);
     }
 }

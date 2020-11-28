@@ -26,5 +26,7 @@
   "item.refinedstorage2.creative_storage_disk": "Creative Storage Disk",
   "item.refinedstorage2.storage_housing": "Storage Housing",
   "misc.refinedstorage2.stored": "Stored: %s",
-  "misc.refinedstorage2.stored_with_capacity": "Stored: %s / %s"
+  "misc.refinedstorage2.stored_with_capacity": "Stored: %s / %s",
+  "key.refinedstorage2.focus_search_bar": "Focus Search Bar",
+  "category.refinedstorage2.key_bindings": "Refined Storage 2"
 }

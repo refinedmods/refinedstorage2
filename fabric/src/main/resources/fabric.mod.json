@@ -23,6 +23,9 @@
       "com.refinedmods.refinedstorage2.fabric.RefinedStorage2ClientMod"
     ]
   },
+  "mixins": [
+    "refinedstorage2.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.7.4",
     "fabric": "*",

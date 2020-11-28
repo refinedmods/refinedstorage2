@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.refinedmods.refinedstorage2.fabric.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "TextFieldWidgetAccessor",
+    "KeyBindingAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
