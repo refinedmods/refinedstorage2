@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.screen.handler;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
@@ -11,12 +12,12 @@ public class BaseScreenHandler extends ScreenHandler {
         super(type, syncId);
     }
 
-    protected void addPlayerInventory(PlayerEntity player, int xInventory, int yInventory) {
+    protected void addPlayerInventory(PlayerInventory inventory, int xInventory, int yInventory) {
         int id = 9;
 
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 9; x++) {
-                addSlot(new Slot(player.inventory, id++, xInventory + x * 18, yInventory + y * 18));
+                addSlot(new Slot(inventory, id++, xInventory + x * 18, yInventory + y * 18));
             }
         }
 
@@ -26,7 +27,7 @@ public class BaseScreenHandler extends ScreenHandler {
             int x = xInventory + i * 18;
             int y = yInventory + 4 + (3 * 18);
 
-            addSlot(new Slot(player.inventory, id++, x, y));
+            addSlot(new Slot(inventory, id++, x, y));
         }
     }
 

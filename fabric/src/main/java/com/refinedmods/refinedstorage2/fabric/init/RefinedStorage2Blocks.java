@@ -1,10 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.init;
 
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.block.CableBlock;
-import com.refinedmods.refinedstorage2.fabric.block.DiskDriveBlock;
-import com.refinedmods.refinedstorage2.fabric.block.MachineCasingBlock;
-import com.refinedmods.refinedstorage2.fabric.block.QuartzEnrichedIronBlock;
+import com.refinedmods.refinedstorage2.fabric.block.*;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Material;
 import net.minecraft.sound.BlockSoundGroup;
@@ -22,12 +19,14 @@ public class RefinedStorage2Blocks {
     private QuartzEnrichedIronBlock quartzEnrichedIron;
     private DiskDriveBlock diskDrive;
     private MachineCasingBlock machineCasing;
+    private GridBlock grid;
 
     public void register() {
         cable = Registry.register(Registry.BLOCK, new Identifier(RefinedStorage2Mod.ID, "cable"), new CableBlock());
         quartzEnrichedIron = Registry.register(Registry.BLOCK, new Identifier(RefinedStorage2Mod.ID, "quartz_enriched_iron_block"), new QuartzEnrichedIronBlock(STONE_SETTINGS));
         diskDrive = Registry.register(Registry.BLOCK, new Identifier(RefinedStorage2Mod.ID, "disk_drive"), new DiskDriveBlock(STONE_SETTINGS));
         machineCasing = Registry.register(Registry.BLOCK, new Identifier(RefinedStorage2Mod.ID, "machine_casing"), new MachineCasingBlock(STONE_SETTINGS));
+        grid = Registry.register(Registry.BLOCK, new Identifier(RefinedStorage2Mod.ID, "grid"), new GridBlock(STONE_SETTINGS));
     }
 
     public CableBlock getCable() {
@@ -44,5 +43,9 @@ public class RefinedStorage2Blocks {
 
     public MachineCasingBlock getMachineCasing() {
         return machineCasing;
+    }
+
+    public GridBlock getGrid() {
+        return grid;
     }
 }

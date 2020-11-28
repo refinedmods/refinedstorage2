@@ -14,9 +14,9 @@ repositories {
 }
 
 dependencies {
-    minecraft 'com.mojang:minecraft:1.16.3'
-    mappings 'net.fabricmc:yarn:1.16.3+build.17:v2'
-    modImplementation "net.fabricmc:fabric-loader:0.10.0+build.208"
+    minecraft 'com.mojang:minecraft:1.16.4'
+    mappings 'net.fabricmc:yarn:1.16.4+build.6'
+    modImplementation "net.fabricmc:fabric-loader:0.10.6+build.214"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testCompile 'org.assertj:assertj-core:3.17.2'

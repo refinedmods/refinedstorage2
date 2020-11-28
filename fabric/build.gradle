@@ -22,10 +22,10 @@ repositories {
 }
 
 dependencies {
-    minecraft 'com.mojang:minecraft:1.16.3'
-    mappings 'net.fabricmc:yarn:1.16.3+build.17:v2'
-    modImplementation "net.fabricmc:fabric-loader:0.10.0+build.208"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.22.0+build.408-1.16"
+    minecraft 'com.mojang:minecraft:1.16.4'
+    mappings 'net.fabricmc:yarn:1.16.4+build.6'
+    modImplementation "net.fabricmc:fabric-loader:0.10.6+build.214"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.25.1+build.416-1.16"
     implementation project(':core')
     modImplementation "alexiil.mc.lib:libblockattributes-all:0.8.4"
     modRuntime "me.shedaniel:RoughlyEnoughItems:5.7.0"

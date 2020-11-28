@@ -31,7 +31,7 @@ public class DiskDriveScreenHandler extends BaseScreenHandler {
             ));
         }
 
-        addPlayerInventory(player, 8, 141);
+        addPlayerInventory(player.inventory, 8, 141);
     }
 
     @Override
