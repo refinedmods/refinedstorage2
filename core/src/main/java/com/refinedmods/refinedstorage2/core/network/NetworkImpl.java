@@ -23,4 +23,9 @@ public class NetworkImpl implements Network {
     public Set<NetworkNodeReference> getNodeReferences() {
         return nodeReferences;
     }
+
+    @Override
+    public void onNodesChanged() {
+
+    }
 }

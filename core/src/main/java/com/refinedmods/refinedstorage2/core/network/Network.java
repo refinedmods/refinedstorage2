@@ -9,4 +9,6 @@ public interface Network {
     UUID getId();
 
     Set<NetworkNodeReference> getNodeReferences();
+
+    void onNodesChanged();
 }
