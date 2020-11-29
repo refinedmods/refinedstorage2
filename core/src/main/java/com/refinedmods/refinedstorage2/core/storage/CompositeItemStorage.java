@@ -1,15 +1,22 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
 import com.refinedmods.refinedstorage2.core.list.StackList;
+import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 public class CompositeItemStorage implements Storage<ItemStack> {
     private final List<Storage<ItemStack>> sources;
     private final StackList<ItemStack> list;
+
+    public static CompositeItemStorage emptyStorage() {
+        return new CompositeItemStorage(Collections.emptyList(), new ItemStackList());
+    }
 
     public CompositeItemStorage(List<Storage<ItemStack>> sources, StackList<ItemStack> list) {
         this.sources = sources;
@@ -19,7 +26,7 @@ public class CompositeItemStorage implements Storage<ItemStack> {
     }
 
     private void fillListFromSources() {
-        sources.forEach(source -> source.getStacks().getAll().forEach(stack -> list.add(stack, stack.getCount())));
+        sources.forEach(source -> source.getStacks().forEach(stack -> list.add(stack, stack.getCount())));
     }
 
     @Override
@@ -78,8 +85,8 @@ public class CompositeItemStorage implements Storage<ItemStack> {
     }
 
     @Override
-    public StackList<ItemStack> getStacks() {
-        return list;
+    public Collection<ItemStack> getStacks() {
+        return list.getAll();
     }
 
     @Override
