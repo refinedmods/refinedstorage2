@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
 import com.refinedmods.refinedstorage2.core.list.StackList;
-import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 
@@ -10,10 +9,12 @@ import java.util.Optional;
 
 public class CompositeItemStorage implements Storage<ItemStack> {
     private final List<Storage<ItemStack>> sources;
-    private final StackList<ItemStack> list = new ItemStackList();
+    private final StackList<ItemStack> list;
 
-    public CompositeItemStorage(List<Storage<ItemStack>> sources) {
+    public CompositeItemStorage(List<Storage<ItemStack>> sources, StackList<ItemStack> list) {
         this.sources = sources;
+        this.list = list;
+
         fillListFromSources();
     }
 

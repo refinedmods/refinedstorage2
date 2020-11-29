@@ -1,17 +1,7 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
-import com.refinedmods.refinedstorage2.core.list.StackList;
-import com.refinedmods.refinedstorage2.core.util.Action;
+public interface StorageChannel<T> extends Storage<T> {
+    void addListener(StorageChannelListener<T> listener);
 
-import java.util.List;
-import java.util.Optional;
-
-public interface StorageChannel<T> {
-    Optional<T> extract(T template, int amount, Action action);
-
-    Optional<T> insert(T template, int amount, Action action);
-
-    StackList<T> getList();
-
-    void setSources(List<Storage<T>> sources);
+    void removeListener(StorageChannelListener<T> listener);
 }
