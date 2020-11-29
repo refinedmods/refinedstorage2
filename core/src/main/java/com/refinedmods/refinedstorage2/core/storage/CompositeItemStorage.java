@@ -5,13 +5,21 @@ import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class ItemStorageChannel implements StorageChannel<ItemStack> {
+public class CompositeItemStorage implements Storage<ItemStack> {
+    private final List<Storage<ItemStack>> sources;
     private final StackList<ItemStack> list = new ItemStackList();
-    private List<Storage<ItemStack>> sources = Collections.emptyList();
+
+    public CompositeItemStorage(List<Storage<ItemStack>> sources) {
+        this.sources = sources;
+        fillListFromSources();
+    }
+
+    private void fillListFromSources() {
+        sources.forEach(source -> source.getStacks().getAll().forEach(stack -> list.add(stack, stack.getCount())));
+    }
 
     @Override
     public Optional<ItemStack> extract(ItemStack template, int amount, Action action) {
@@ -69,15 +77,12 @@ public class ItemStorageChannel implements StorageChannel<ItemStack> {
     }
 
     @Override
-    public StackList<ItemStack> getList() {
+    public StackList<ItemStack> getStacks() {
         return list;
     }
 
     @Override
-    public void setSources(List<Storage<ItemStack>> sources) {
-        this.sources = sources;
-
-        list.clear();
-        sources.forEach(source -> source.getStacks().forEach(stack -> list.add(stack, stack.getCount())));
+    public int getStored() {
+        return sources.stream().mapToInt(Storage::getStored).sum();
     }
 }

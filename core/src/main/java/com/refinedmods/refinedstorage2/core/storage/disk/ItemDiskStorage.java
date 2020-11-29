@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public class ItemDiskStorage implements StorageDisk<ItemStack> {
     private final StackList<ItemStack> list = new ItemStackList();
@@ -66,6 +65,11 @@ public class ItemDiskStorage implements StorageDisk<ItemStack> {
         }
     }
 
+    @Override
+    public StackList<ItemStack> getStacks() {
+        return list;
+    }
+
     private Optional<ItemStack> insertPartly(ItemStack template, int amount, int remainder, Action action) {
         if (action == Action.EXECUTE && amount > 0) {
             stored += amount;
@@ -85,11 +89,6 @@ public class ItemDiskStorage implements StorageDisk<ItemStack> {
         }
 
         return Optional.empty();
-    }
-
-    @Override
-    public Stream<ItemStack> getStacks() {
-        return list.getAll().stream();
     }
 
     @Override
