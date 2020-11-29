@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RefinedStorage2Test
+// TODO Improve tests to use parameterized.
 class ItemDiskStorageTest {
     private final ItemDiskStorage disk = new ItemDiskStorage(100);
 
@@ -24,14 +25,14 @@ class ItemDiskStorageTest {
         ItemStack stack = new ItemStack(Items.DIAMOND, 32);
 
         // Act
-        Optional<ItemStack> remainder = disk.insert(stack, 64, Action.EXECUTE);
+        Optional<ItemStack> remainder = disk.insert(stack, 100, Action.EXECUTE);
 
         // Assert
         assertThat(remainder).isEmpty();
 
-        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 64));
+        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 100));
 
-        assertThat(disk.getStored()).isEqualTo(64);
+        assertThat(disk.getStored()).isEqualTo(100);
     }
 
     @Test
@@ -51,7 +52,7 @@ class ItemDiskStorageTest {
     }
 
     @Test
-    void Test_adding_an_item_but_exceeding_capacity() {
+    void Test_adding_an_item_and_exceeding_capacity() {
         // Arrange
         ItemStack stack1 = new ItemStack(Items.DIAMOND);
         ItemStack stack2 = new ItemStack(Items.DIRT);
@@ -72,7 +73,7 @@ class ItemDiskStorageTest {
     }
 
     @Test
-    void Test_adding_an_item_but_exceeding_capacity_simulated() {
+    void Test_adding_an_item_and_exceeding_capacity_simulated() {
         // Arrange
         ItemStack stack1 = new ItemStack(Items.DIAMOND);
         ItemStack stack2 = new ItemStack(Items.DIRT);
@@ -90,6 +91,44 @@ class ItemDiskStorageTest {
         assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 60));
 
         assertThat(disk.getStored()).isEqualTo(60);
+    }
+
+    @Test
+    void Test_adding_items_to_an_already_full_disk_and_exceeding_capacity() {
+        // Arrange
+        ItemStack stack = new ItemStack(Items.DIAMOND);
+
+        // Act
+        Optional<ItemStack> remainder1 = disk.insert(stack, 100, Action.EXECUTE);
+        Optional<ItemStack> remainder2 = disk.insert(stack, 101, Action.EXECUTE);
+
+        // Assert
+        assertThat(remainder1).isEmpty();
+
+        assertThat(remainder2).isPresent();
+        assertItemStack(remainder2.get(), new ItemStack(Items.DIAMOND, 101));
+
+        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 100));
+        assertThat(disk.getStored()).isEqualTo(100);
+    }
+
+    @Test
+    void Test_adding_items_to_an_already_full_disk_and_exceeding_capacity_simulated() {
+        // Arrange
+        ItemStack stack = new ItemStack(Items.DIAMOND);
+
+        // Act
+        Optional<ItemStack> remainder1 = disk.insert(stack, 100, Action.EXECUTE);
+        Optional<ItemStack> remainder2 = disk.insert(stack, 101, Action.SIMULATE);
+
+        // Assert
+        assertThat(remainder1).isEmpty();
+
+        assertThat(remainder2).isPresent();
+        assertItemStack(remainder2.get(), new ItemStack(Items.DIAMOND, 101));
+
+        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 100));
+        assertThat(disk.getStored()).isEqualTo(100);
     }
 
     @Test

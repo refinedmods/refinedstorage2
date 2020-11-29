@@ -15,7 +15,29 @@ public class ItemStorageChannel implements StorageChannel<ItemStack> {
 
     @Override
     public Optional<ItemStack> extract(ItemStack template, int amount, Action action) {
-        return Optional.empty();
+        int remaining = amount;
+        for (Storage<ItemStack> source : sources) {
+            Optional<ItemStack> stack = source.extract(template, remaining, action);
+            if (stack.isPresent()) {
+                remaining -= stack.get().getCount();
+                if (remaining == 0) {
+                    break;
+                }
+            }
+        }
+
+        int extracted = amount - remaining;
+        if (action == Action.EXECUTE && extracted > 0) {
+            list.remove(template, extracted);
+        }
+
+        if (extracted == 0) {
+            return Optional.empty();
+        } else {
+            ItemStack result = template.copy();
+            result.setCount(extracted);
+            return Optional.of(result);
+        }
     }
 
     @Override
@@ -54,5 +76,8 @@ public class ItemStorageChannel implements StorageChannel<ItemStack> {
     @Override
     public void setSources(List<Storage<ItemStack>> sources) {
         this.sources = sources;
+
+        list.clear();
+        sources.forEach(source -> source.getStacks().forEach(stack -> list.add(stack, stack.getCount())));
     }
 }

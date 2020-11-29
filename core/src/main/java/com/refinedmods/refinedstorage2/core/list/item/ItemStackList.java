@@ -95,4 +95,10 @@ public class ItemStackList implements StackList<ItemStack> {
     public Collection<ItemStack> getAll() {
         return entries.values();
     }
+
+    @Override
+    public void clear() {
+        index.clear();
+        entries.clear();
+    }
 }

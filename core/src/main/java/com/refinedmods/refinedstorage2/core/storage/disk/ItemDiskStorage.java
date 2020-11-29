@@ -67,7 +67,7 @@ public class ItemDiskStorage implements StorageDisk<ItemStack> {
     }
 
     private Optional<ItemStack> insertPartly(ItemStack template, int amount, int remainder, Action action) {
-        if (action == Action.EXECUTE) {
+        if (action == Action.EXECUTE && amount > 0) {
             stored += amount;
             list.add(template, amount);
         }

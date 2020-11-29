@@ -8,7 +8,10 @@ import net.minecraft.nbt.CompoundTag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
@@ -351,5 +354,35 @@ class ItemStackListTest {
 
         // Assert
         assertThat(stack1InList).isNotPresent();
+    }
+
+    @Test
+    void Test_clearing_list() {
+        // Arrange
+        ItemStack stack1 = new ItemStack(Items.DIRT, 10);
+        ItemStack stack2 = new ItemStack(Items.GLASS, 5);
+
+        UUID id1 = list.add(stack1, 10).getId();
+        UUID id2 = list.add(stack2, 5).getId();
+
+        Collection<ItemStack> listContentsBeforeClear = new ArrayList<>(list.getAll());
+        Optional<ItemStack> stack1ByIdBeforeClear = list.get(id1);
+        Optional<ItemStack> stack2ByIdBeforeClear = list.get(id2);
+
+        // Act
+        list.clear();
+
+        Collection<ItemStack> listContentsAfterClear = list.getAll();
+        Optional<ItemStack> stack1ByIdAfterClear = list.get(id1);
+        Optional<ItemStack> stack2ByIdAfterClear = list.get(id2);
+
+        // Assert
+        assertThat(listContentsBeforeClear).hasSize(2);
+        assertThat(stack1ByIdBeforeClear).isPresent();
+        assertThat(stack2ByIdBeforeClear).isPresent();
+
+        assertThat(listContentsAfterClear).isEmpty();
+        assertThat(stack1ByIdAfterClear).isEmpty();
+        assertThat(stack2ByIdAfterClear).isEmpty();
     }
 }

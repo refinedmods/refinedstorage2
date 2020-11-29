@@ -5,12 +5,11 @@ import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
@@ -18,6 +17,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RefinedStorage2Test
 class ItemStorageChannelTest {
+    @Test
+    void Test_inserting_without_any_storage_present() {
+        // Arrange
+        ItemStorageChannel storageChannel = new ItemStorageChannel();
+
+        // Act
+        Optional<ItemStack> remainder = storageChannel.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+
+        // Assert
+        assertThat(remainder).isPresent();
+        assertItemStack(remainder.get(), new ItemStack(Items.DIRT, 10));
+    }
+
     @ParameterizedTest
     @EnumSource(Action.class)
     void Test_single_source_insert_without_remainder(Action action) {
@@ -122,6 +134,122 @@ class ItemStorageChannelTest {
             assertItemStackListContents(diskStorage3.getStacks());
             assertItemStackListContents(storageChannel.getList());
         }
+    }
+
+    @Test
+    void Test_extracting_without_any_storage_present() {
+        // Arrange
+        ItemStorageChannel storageChannel = new ItemStorageChannel();
+
+        // Act
+        Optional<ItemStack> result = storageChannel.extract(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+
+        // Assert
+        assertThat(result).isEmpty();
+    }
+
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void Test_single_source_partial_extract(Action action) {
+        // Arrange
+        ItemDiskStorage diskStorage = new ItemDiskStorage(10);
+        diskStorage.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        ItemStorageChannel storageChannel = new ItemStorageChannel();
+        storageChannel.setSources(createSources(diskStorage));
+
+        // Act
+        Optional<ItemStack> result = storageChannel.extract(new ItemStack(Items.DIRT), 3, action);
+
+        // Assert
+        assertThat(result).isPresent();
+        assertItemStack(result.get(), new ItemStack(Items.DIRT, 3));
+
+        if (action == Action.EXECUTE) {
+            assertItemStackListContents(diskStorage.getStacks(), new ItemStack(Items.DIRT, 7));
+            assertItemStackListContents(storageChannel.getList(), new ItemStack(Items.DIRT, 7));
+        } else {
+            assertItemStackListContents(diskStorage.getStacks(), new ItemStack(Items.DIRT, 10));
+            assertItemStackListContents(storageChannel.getList(), new ItemStack(Items.DIRT, 10));
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void Test_single_source_full_extract(Action action) {
+        // Arrange
+        ItemDiskStorage diskStorage = new ItemDiskStorage(10);
+        diskStorage.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        ItemStorageChannel storageChannel = new ItemStorageChannel();
+        storageChannel.setSources(createSources(diskStorage));
+
+        // Act
+        Optional<ItemStack> result = storageChannel.extract(new ItemStack(Items.DIRT), 10, action);
+
+        // Assert
+        assertThat(result).isPresent();
+        assertItemStack(result.get(), new ItemStack(Items.DIRT, 10));
+
+        if (action == Action.EXECUTE) {
+            assertItemStackListContents(diskStorage.getStacks());
+            assertItemStackListContents(storageChannel.getList());
+        } else {
+            assertItemStackListContents(diskStorage.getStacks(), new ItemStack(Items.DIRT, 10));
+            assertItemStackListContents(storageChannel.getList(), new ItemStack(Items.DIRT, 10));
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void Test_single_source_more_than_is_available_extract(Action action) {
+        // Arrange
+        ItemDiskStorage diskStorage = new ItemDiskStorage(10);
+        diskStorage.insert(new ItemStack(Items.DIRT), 4, Action.EXECUTE);
+        ItemStorageChannel storageChannel = new ItemStorageChannel();
+        storageChannel.setSources(createSources(diskStorage));
+
+        // Act
+        Optional<ItemStack> result = storageChannel.extract(new ItemStack(Items.DIRT), 7, action);
+
+        // Assert
+        assertThat(result).isPresent();
+        assertItemStack(result.get(), new ItemStack(Items.DIRT, 4));
+
+        if (action == Action.EXECUTE) {
+            assertItemStackListContents(diskStorage.getStacks());
+            assertItemStackListContents(storageChannel.getList());
+        } else {
+            assertItemStackListContents(diskStorage.getStacks(), new ItemStack(Items.DIRT, 4));
+            assertItemStackListContents(storageChannel.getList(), new ItemStack(Items.DIRT, 4));
+        }
+    }
+
+    @Test
+    void Test_setting_sources_should_clear_and_fill_list() {
+        // Arrange
+        ItemDiskStorage diskStorage1 = new ItemDiskStorage(10);
+        diskStorage1.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+
+        ItemDiskStorage diskStorage2 = new ItemDiskStorage(10);
+        diskStorage2.insert(new ItemStack(Items.GLASS), 5, Action.EXECUTE);
+
+        ItemDiskStorage diskStorage3 = new ItemDiskStorage(10);
+        diskStorage3.insert(new ItemStack(Items.DIAMOND), 7, Action.EXECUTE);
+
+        ItemStorageChannel channel = new ItemStorageChannel();
+
+        // Act
+        Collection<ItemStack> list1 = new ArrayList<>(channel.getList().getAll());
+
+        channel.setSources(createSources(diskStorage3));
+        Collection<ItemStack> list2 = new ArrayList<>(channel.getList().getAll());
+
+        channel.setSources(createSources(diskStorage1, diskStorage2));
+        Collection<ItemStack> list3 = new ArrayList<>(channel.getList().getAll());
+
+        // Assert
+        assertItemStackListContents(list1.stream());
+        assertItemStackListContents(list2.stream(), new ItemStack(Items.DIAMOND, 7));
+        assertItemStackListContents(list3.stream(), new ItemStack(Items.DIRT, 10), new ItemStack(Items.GLASS, 5));
     }
 
     private List<Storage<ItemStack>> createSources(Storage... storages) {

@@ -14,4 +14,6 @@ public interface StackList<T> {
     Optional<T> get(UUID id);
 
     Collection<T> getAll();
+
+    void clear();
 }
