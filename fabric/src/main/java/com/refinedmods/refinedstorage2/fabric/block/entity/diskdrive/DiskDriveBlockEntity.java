@@ -5,6 +5,8 @@ import alexiil.mc.lib.attributes.item.FixedItemInvView;
 import alexiil.mc.lib.attributes.item.ItemInvSlotChangeListener;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveState;
+import com.refinedmods.refinedstorage2.core.storage.Storage;
+import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
@@ -27,7 +29,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetworkNode> implements RenderAttachmentBlockEntity, ItemInvSlotChangeListener, BlockEntityClientSerializable, NamedScreenHandlerFactory, BlockEntityWithDrops {
+import java.util.Collection;
+import java.util.Optional;
+
+public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetworkNode> implements Storage<ItemStack>, RenderAttachmentBlockEntity, ItemInvSlotChangeListener, BlockEntityClientSerializable, NamedScreenHandlerFactory, BlockEntityWithDrops {
     private final DiskDriveInventory diskInventory = new DiskDriveInventory();
     private DiskDriveState driveState;
 
@@ -122,5 +127,25 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
         DefaultedList<ItemStack> drops = DefaultedList.of();
         diskInventory.stackIterable().forEach(drops::add);
         return drops;
+    }
+
+    @Override
+    public Optional<ItemStack> extract(ItemStack template, int amount, Action action) {
+        return node.extract(template, amount, action);
+    }
+
+    @Override
+    public Optional<ItemStack> insert(ItemStack template, int amount, Action action) {
+        return node.insert(template, amount, action);
+    }
+
+    @Override
+    public Collection<ItemStack> getStacks() {
+        return node.getStacks();
+    }
+
+    @Override
+    public int getStored() {
+        return node.getStored();
     }
 }

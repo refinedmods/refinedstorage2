@@ -32,6 +32,6 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
 
     @Override
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new GridScreenHandler(syncId, playerInventory);
+        return new GridScreenHandler(syncId, playerInventory, this);
     }
 }
