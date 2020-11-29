@@ -24,6 +24,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
     private ScrollbarWidget scrollbar;
     private SearchFieldWidget searchField;
+    private int visibleRows;
 
     public GridScreen(GridScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -38,8 +39,9 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
     @Override
     protected void init() {
-        backgroundHeight = TOP_HEIGHT + (getVisibleRows() * 18) + BOTTOM_HEIGHT;
-        playerInventoryTitleY = backgroundHeight - BOTTOM_HEIGHT + 4;
+        this.visibleRows = calculateVisibleRows();
+        this.backgroundHeight = TOP_HEIGHT + (visibleRows * 18) + BOTTOM_HEIGHT;
+        this.playerInventoryTitleY = backgroundHeight - BOTTOM_HEIGHT + 4;
 
         super.init();
 
@@ -52,13 +54,13 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
         getScreenHandler().addSlots(backgroundHeight - BOTTOM_HEIGHT + 17);
 
-        scrollbar = new ScrollbarWidget(client, x + 174, y + 20, 12, (getVisibleRows() * 18) - 2);
+        this.scrollbar = new ScrollbarWidget(client, x + 174, y + 20, 12, (visibleRows * 18) - 2);
 
         children.add(scrollbar);
         addButton(searchField);
     }
 
-    private int getVisibleRows() {
+    private int calculateVisibleRows() {
         int screenSpaceAvailable = height - TOP_HEIGHT - BOTTOM_HEIGHT;
         int maxRows = Integer.MAX_VALUE;
 
@@ -74,23 +76,33 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
         drawTexture(matrices, x, y, 0, 0, backgroundWidth - 34, TOP_HEIGHT);
 
-        for (int i = 0; i < getVisibleRows(); ++i) {
+        for (int row = 0; row < visibleRows; ++row) {
             int textureY = 37;
-            if (i == 0) {
+            if (row == 0) {
                 textureY = 19;
-            } else if (i == getVisibleRows() - 1) {
+            } else if (row == visibleRows - 1) {
                 textureY = 55;
             }
 
-            drawTexture(matrices, x, y + TOP_HEIGHT + (18 * i), 0, textureY, backgroundWidth - 34, 18);
+            drawTexture(matrices, x, y + TOP_HEIGHT + (18 * row), 0, textureY, backgroundWidth - 34, 18);
         }
 
-        drawTexture(matrices, x, y + TOP_HEIGHT + (18 * getVisibleRows()), 0, 73, backgroundWidth - 34, BOTTOM_HEIGHT);
-    }
+        drawTexture(matrices, x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, backgroundWidth - 34, BOTTOM_HEIGHT);
 
-    @Override
-    protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
-        super.drawForeground(matrices, mouseX, mouseY);
+        for (int column = 0; column < 9; ++column) {
+            for (int row = 0; row < visibleRows; ++row) {
+                int slotX = x + 8 + (column * 18);
+                int slotY = y + 20 + (row * 18);
+
+                if (mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16) {
+                    RenderSystem.disableDepthTest();
+                    RenderSystem.colorMask(true, true, true, false);
+                    fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, -2130706433, -2130706433);
+                    RenderSystem.colorMask(true, true, true, true);
+                    RenderSystem.enableDepthTest();
+                }
+            }
+        }
     }
 
     @Override
@@ -98,6 +110,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         renderBackground(matrices);
         super.render(matrices, mouseX, mouseY, partialTicks);
         drawMouseoverTooltip(matrices, mouseX, mouseY);
+
         scrollbar.render(matrices, mouseX, mouseY, partialTicks);
         searchField.render(matrices, 0, 0, 0);
     }

@@ -73,15 +73,19 @@ class HistoryTest {
 
     @Test
     void Test_saving() {
+        // Arrange
         History history = new History(new ArrayList<>());
 
+        // Act & assert
         assertThat(history.save("Hello")).isTrue();
     }
 
     @Test
     void Test_saving_duplicates() {
+        // Arrange
         History history = new History(new ArrayList<>());
 
+        // Act & assert
         assertThat(history.save("Hello1")).isTrue();
         assertThat(history.save("Hello1")).isFalse();
 
@@ -94,8 +98,10 @@ class HistoryTest {
 
     @Test
     void Test_saving_empty_values() {
+        // Arrange
         History history = new History(new ArrayList<>());
 
+        // Act & assert
         assertThat(history.save("")).isFalse();
         assertThat(history.save("    ")).isFalse();
     }
