@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public class ItemDiskStorage implements StorageDisk<ItemStack> {
@@ -66,8 +67,8 @@ public class ItemDiskStorage implements StorageDisk<ItemStack> {
     }
 
     @Override
-    public StackList<ItemStack> getStacks() {
-        return list;
+    public Collection<ItemStack> getStacks() {
+        return list.getAll();
     }
 
     private Optional<ItemStack> insertPartly(ItemStack template, int amount, int remainder, Action action) {

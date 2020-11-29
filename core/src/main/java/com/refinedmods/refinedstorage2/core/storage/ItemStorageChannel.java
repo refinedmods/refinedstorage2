@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
-import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.util.Action;
@@ -10,7 +9,7 @@ import java.util.*;
 
 public class ItemStorageChannel implements StorageChannel<ItemStack> {
     private final Set<StorageChannelListener<ItemStack>> listeners = new HashSet<>();
-    private CompositeItemStorage storage = new CompositeItemStorage(Collections.emptyList(), new ItemStackList());
+    private CompositeItemStorage storage = CompositeItemStorage.emptyStorage();
 
     public void setSources(List<Storage<ItemStack>> sources) {
         storage = new CompositeItemStorage(sources, new ItemStackList() {
@@ -51,7 +50,7 @@ public class ItemStorageChannel implements StorageChannel<ItemStack> {
     }
 
     @Override
-    public StackList<ItemStack> getStacks() {
+    public Collection<ItemStack> getStacks() {
         return storage.getStacks();
     }
 

@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
-import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.util.Action;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public interface Storage<T> {
@@ -10,7 +10,7 @@ public interface Storage<T> {
 
     Optional<T> insert(T template, int amount, Action action);
 
-    StackList<T> getStacks();
+    Collection<T> getStacks();
 
     int getStored();
 }
