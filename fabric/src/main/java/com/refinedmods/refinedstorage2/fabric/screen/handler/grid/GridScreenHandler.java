@@ -1,9 +1,11 @@
-package com.refinedmods.refinedstorage2.fabric.screen.handler;
+package com.refinedmods.refinedstorage2.fabric.screen.handler.grid;
 
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.screen.grid.GridEventHandler;
+import com.refinedmods.refinedstorage2.fabric.screen.handler.BaseScreenHandler;
 import net.minecraft.entity.player.PlayerInventory;
 
-public class GridScreenHandler extends BaseScreenHandler {
+public class GridScreenHandler extends BaseScreenHandler implements GridEventHandler {
     private final PlayerInventory playerInventory;
 
     public GridScreenHandler(int syncId, PlayerInventory playerInventory) {
@@ -18,5 +20,10 @@ public class GridScreenHandler extends BaseScreenHandler {
         slots.clear();
 
         addPlayerInventory(playerInventory, 8, playerInventoryY);
+    }
+
+    @Override
+    public void onInsertFromCursor(boolean single) {
+        System.out.println("Inserting " + playerInventory.getCursorStack() + " (single=" + single + ")");
     }
 }

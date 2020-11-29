@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.init;
 
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.DiskDriveScreenHandler;
-import com.refinedmods.refinedstorage2.fabric.screen.handler.GridScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;

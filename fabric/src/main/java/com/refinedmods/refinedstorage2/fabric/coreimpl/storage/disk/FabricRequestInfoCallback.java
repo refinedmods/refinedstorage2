@@ -2,9 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk;
 
 import com.refinedmods.refinedstorage2.core.util.ThrottleHelper;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.StorageDiskInfoRequestPacket;
-import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
-import net.minecraft.network.PacketByteBuf;
+import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,10 +19,7 @@ public class FabricRequestInfoCallback implements Consumer<UUID> {
         throttleHelper.throttle(id, () -> {
             LOGGER.debug("Sending request info packet for {}", id);
 
-            PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
-            data.writeUuid(id);
-
-            ClientSidePacketRegistry.INSTANCE.sendToServer(StorageDiskInfoRequestPacket.ID, data);
+            PacketUtil.sendToServer(StorageDiskInfoRequestPacket.ID, data -> data.writeUuid(id));
         }, System.currentTimeMillis());
     }
 }

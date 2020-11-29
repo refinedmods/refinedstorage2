@@ -1,14 +1,15 @@
-package com.refinedmods.refinedstorage2.fabric.screen;
+package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.screen.handler.GridScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.History;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -26,7 +27,9 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
     private SearchFieldWidget searchField;
     private int visibleRows;
 
-    public GridScreen(GridScreenHandler handler, PlayerInventory inventory, Text title) {
+    private final GridEventHandler eventHandler;
+
+    public GridScreen(GridScreenHandler handler, PlayerInventory inventory, Text title, GridEventHandler eventHandler) {
         super(handler, inventory, title);
 
         this.titleX = 7;
@@ -35,6 +38,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         this.playerInventoryTitleY = 75;
         this.backgroundWidth = 227;
         this.backgroundHeight = 176;
+        this.eventHandler = eventHandler;
     }
 
     @Override
@@ -65,6 +69,14 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         int maxRows = Integer.MAX_VALUE;
 
         return Math.max(3, Math.min((screenSpaceAvailable / 18) - 3, maxRows));
+    }
+
+    private boolean isOverStorageArea(int mouseX, int mouseY) {
+        mouseX -= x;
+        mouseY -= y;
+
+        return mouseX >= 7 && mouseY >= 19
+            && mouseX <= 168 && mouseY <= 19 + (visibleRows * 18);
     }
 
     @Override
@@ -118,6 +130,13 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int clickedButton) {
         if (scrollbar.mouseClicked(mouseX, mouseY, clickedButton)) {
+            return true;
+        }
+
+        ItemStack cursorStack = playerInventory.getCursorStack();
+
+        if (isOverStorageArea((int) mouseX, (int) mouseY) && !cursorStack.isEmpty() && (clickedButton == 0 || clickedButton == 1)) {
+            eventHandler.onInsertFromCursor(clickedButton == 1);
             return true;
         }
 

@@ -3,10 +3,9 @@ package com.refinedmods.refinedstorage2.fabric.packet.c2s;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.StorageDiskInfoResponsePacket;
-import io.netty.buffer.Unpooled;
+import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import net.fabricmc.fabric.api.network.PacketConsumer;
 import net.fabricmc.fabric.api.network.PacketContext;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
@@ -24,12 +23,11 @@ public class StorageDiskInfoRequestPacket implements PacketConsumer {
                 .getStorageDiskManager(packetContext.getPlayer().getEntityWorld())
                 .getInfo(id);
 
-            PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
-            data.writeUuid(id);
-            data.writeInt(info.getStored());
-            data.writeInt(info.getCapacity());
-
-            ServerSidePacketRegistry.INSTANCE.sendToPlayer(packetContext.getPlayer(), StorageDiskInfoResponsePacket.ID, data);
+            PacketUtil.sendToPlayer(packetContext.getPlayer(), StorageDiskInfoResponsePacket.ID, buf -> {
+                buf.writeUuid(id);
+                buf.writeInt(info.getStored());
+                buf.writeInt(info.getCapacity());
+            });
         });
     }
 }

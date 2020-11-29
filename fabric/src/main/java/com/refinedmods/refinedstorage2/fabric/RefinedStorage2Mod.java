@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2BlockEntities;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2Blocks;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2Items;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2ScreenHandlers;
+import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.StorageDiskInfoRequestPacket;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -38,6 +39,7 @@ public class RefinedStorage2Mod implements ModInitializer {
         SCREEN_HANDLERS.register();
 
         ServerSidePacketRegistry.INSTANCE.register(StorageDiskInfoRequestPacket.ID, new StorageDiskInfoRequestPacket());
+        ServerSidePacketRegistry.INSTANCE.register(GridInsertFromCursorPacket.ID, new GridInsertFromCursorPacket());
 
         LOGGER.info("Refined Storage 2 has loaded.");
     }
