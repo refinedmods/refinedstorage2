@@ -12,7 +12,7 @@ public class StubNetworkNodeReference implements NetworkNodeReference {
 
     @Override
     public Optional<NetworkNode> get() {
-        return Optional.of(node);
+        return Optional.ofNullable(node);
     }
 
     @Override
