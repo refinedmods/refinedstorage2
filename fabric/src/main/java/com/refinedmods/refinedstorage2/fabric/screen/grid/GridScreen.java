@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.History;
@@ -11,6 +12,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -101,10 +103,26 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
         drawTexture(matrices, x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, backgroundWidth - 34, BOTTOM_HEIGHT);
 
-        for (int column = 0; column < 9; ++column) {
-            for (int row = 0; row < visibleRows; ++row) {
+        GridView view = getScreenHandler().getView();
+
+        int i = 0;
+        for (int row = 0; row < visibleRows; ++row) {
+            for (int column = 0; column < 9; ++column) {
                 int slotX = x + 8 + (column * 18);
                 int slotY = y + 20 + (row * 18);
+
+                if (i < view.getStacks().size()) {
+                    ItemStack stack = view.getStacks().get(i);
+
+                    setZOffset(100);
+                    itemRenderer.zOffset = 100.0F;
+
+                    itemRenderer.renderInGuiWithOverrides(client.player, stack, slotX, slotY);
+                    renderAmount(matrices, slotX, slotY, String.valueOf(stack.getCount()), Formatting.WHITE.getColorValue());
+
+                    setZOffset(0);
+                    itemRenderer.zOffset = 0.0F;
+                }
 
                 if (mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16) {
                     RenderSystem.disableDepthTest();
@@ -113,8 +131,25 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
                     RenderSystem.colorMask(true, true, true, true);
                     RenderSystem.enableDepthTest();
                 }
+
+                i++;
             }
         }
+    }
+
+    private void renderAmount(MatrixStack matrixStack, int x, int y, String amount, int color) {
+        boolean large = this.client.forcesUnicodeFont(); /* TODO RS large font config */
+
+        matrixStack.push();
+        matrixStack.translate(x, y, 300);
+
+        if (!large) {
+            matrixStack.scale(0.5F, 0.5F, 1);
+        }
+
+        textRenderer.drawWithShadow(matrixStack, amount, (large ? 16 : 30) - textRenderer.getWidth(amount), large ? 8 : 22, color);
+
+        matrixStack.pop();
     }
 
     @Override

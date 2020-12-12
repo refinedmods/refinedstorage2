@@ -13,7 +13,7 @@ public class RefinedStorage2ScreenHandlers {
 
     public void register() {
         diskDrive = ScreenHandlerRegistry.registerSimple(new Identifier(RefinedStorage2Mod.ID, "disk_drive"), DiskDriveScreenHandler::new);
-        grid = ScreenHandlerRegistry.registerSimple(new Identifier(RefinedStorage2Mod.ID, "grid"), GridScreenHandler::new);
+        grid = ScreenHandlerRegistry.registerExtended(new Identifier(RefinedStorage2Mod.ID, "grid"), GridScreenHandler::new);
     }
 
     public ScreenHandlerType<DiskDriveScreenHandler> getDiskDrive() {
