@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.fabric.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.DiskDriveScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
@@ -27,6 +28,7 @@ public class DiskDriveScreen extends HandledScreen<DiskDriveScreenHandler> {
     @Override
     protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        ScreenUtil.drawVersionInformation(matrices, textRenderer, delta);
         client.getTextureManager().bindTexture(TEXTURE);
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;

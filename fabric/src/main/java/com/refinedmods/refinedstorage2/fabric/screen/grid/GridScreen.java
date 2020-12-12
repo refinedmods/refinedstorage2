@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHand
 import com.refinedmods.refinedstorage2.fabric.screen.widget.History;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
+import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
@@ -84,6 +85,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
     @Override
     protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        ScreenUtil.drawVersionInformation(matrices, textRenderer, delta);
         client.getTextureManager().bindTexture(TEXTURE);
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;

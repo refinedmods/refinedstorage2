@@ -7,7 +7,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 group = 'com.refinedmods.refinedstorage2'
 archivesBaseName = 'core'
-version = '2.0-SNAPSHOT'
+version = '2.0.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
