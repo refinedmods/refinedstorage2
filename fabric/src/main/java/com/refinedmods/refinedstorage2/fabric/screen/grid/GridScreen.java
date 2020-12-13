@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.fabric.screen.grid;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.History;
@@ -31,6 +32,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
     private ScrollbarWidget scrollbar;
     private SearchFieldWidget searchField;
     private int visibleRows;
+    private int gridSlotNumber;
 
     public GridScreen(GridScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -106,6 +108,8 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
         GridView view = getScreenHandler().getView();
 
+        gridSlotNumber = -1;
+
         int i = 0;
         for (int row = 0; row < visibleRows; ++row) {
             for (int column = 0; column < 9; ++column) {
@@ -131,6 +135,8 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
                     fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, -2130706433, -2130706433);
                     RenderSystem.colorMask(true, true, true, true);
                     RenderSystem.enableDepthTest();
+
+                    gridSlotNumber = i;
                 }
 
                 i++;
@@ -170,6 +176,19 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         }
 
         ItemStack cursorStack = playerInventory.getCursorStack();
+
+        if (!getScreenHandler().getView().getStacks().isEmpty() && gridSlotNumber >= 0 && gridSlotNumber < getScreenHandler().getView().getStacks().size() && cursorStack.isEmpty()) {
+            ItemStack stack = getScreenHandler().getView().getStacks().get(gridSlotNumber);
+
+            PacketUtil.sendToServer(GridExtractPacket.ID, buf -> {
+                PacketUtil.writeItemStackWithoutCount(buf, stack);
+                buf.writeBoolean(false);
+                buf.writeBoolean(clickedButton == 1);
+                buf.writeBoolean(hasShiftDown());
+            });
+
+            return true;
+        }
 
         if (isOverStorageArea((int) mouseX, (int) mouseY) && !cursorStack.isEmpty() && (clickedButton == 0 || clickedButton == 1)) {
             PacketUtil.sendToServer(GridInsertFromCursorPacket.ID, buf -> buf.writeBoolean(clickedButton == 1));

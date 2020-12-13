@@ -1,7 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.packet.s2c;
 
+import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.screen.grid.GridEventHandler;
+import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import net.fabricmc.fabric.api.network.PacketConsumer;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.minecraft.item.ItemStack;
@@ -14,7 +15,7 @@ public class GridItemUpdatePacket implements PacketConsumer {
 
     @Override
     public void accept(PacketContext packetContext, PacketByteBuf buf) {
-        ItemStack template = buf.readItemStack();
+        ItemStack template = PacketUtil.readItemStackWithoutCount(buf);
         int amount = buf.readInt();
 
         packetContext.getTaskQueue().execute(() -> {

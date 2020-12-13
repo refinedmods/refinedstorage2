@@ -34,6 +34,7 @@ class ItemStackListTest {
         assertThat(result.getId()).isNotNull();
         assertThat(result.getChange()).isEqualTo(10);
         assertThat(result.getStack()).isNotSameAs(stack);
+        assertThat(result.isAvailable()).isTrue();
 
         assertItemStackListContents(list, new ItemStack(Items.DIRT, 10));
     }
@@ -52,10 +53,12 @@ class ItemStackListTest {
         assertThat(result1.getId()).isNotNull();
         assertThat(result1.getChange()).isEqualTo(10);
         assertThat(result1.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result1.isAvailable()).isTrue();
 
         assertThat(result2.getId()).isEqualTo(result1.getId());
         assertThat(result2.getChange()).isEqualTo(5);
         assertThat(result2.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result2.isAvailable()).isTrue();
 
         assertItemStackListContents(list, new ItemStack(Items.DIRT, 15));
     }
@@ -76,14 +79,17 @@ class ItemStackListTest {
         assertThat(result1.getId()).isNotNull();
         assertThat(result1.getChange()).isEqualTo(10);
         assertThat(result1.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result1.isAvailable()).isTrue();
 
         assertThat(result2.getId()).isEqualTo(result1.getId());
         assertThat(result2.getChange()).isEqualTo(5);
         assertThat(result2.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result2.isAvailable()).isTrue();
 
         assertThat(result3.getId()).isEqualTo(result3.getId());
         assertThat(result3.getChange()).isEqualTo(3);
         assertThat(result3.getStack()).isNotSameAs(stack3);
+        assertThat(result3.isAvailable()).isTrue();
 
         assertItemStackListContents(list, new ItemStack(Items.DIRT, 15), new ItemStack(Items.DIAMOND, 3));
     }
@@ -112,14 +118,17 @@ class ItemStackListTest {
         assertThat(result1.getId()).isNotNull();
         assertThat(result1.getChange()).isEqualTo(10);
         assertThat(result1.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result1.isAvailable()).isTrue();
 
         assertThat(result2.getId()).isNotNull();
         assertThat(result2.getChange()).isEqualTo(5);
         assertThat(result2.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result2.isAvailable()).isTrue();
 
         assertThat(result3.getId()).isNotNull();
         assertThat(result3.getChange()).isEqualTo(3);
         assertThat(result3.getStack()).isNotSameAs(stack3);
+        assertThat(result3.isAvailable()).isTrue();
 
         ItemStack expectedStack1 = new ItemStack(Items.DIRT, 10);
         expectedStack1.setTag(tag1.copy());
@@ -190,6 +199,7 @@ class ItemStackListTest {
         assertThat(result2.get().getId()).isEqualTo(result1.getId());
         assertThat(result2.get().getChange()).isEqualTo(-5);
         assertThat(result2.get().getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result2.get().isAvailable()).isTrue();
 
         assertItemStackListContents(list, new ItemStack(Items.DIRT, 15), new ItemStack(Items.DIAMOND, 6));
     }
@@ -211,6 +221,7 @@ class ItemStackListTest {
         assertThat(result2.get().getId()).isEqualTo(result1.getId());
         assertThat(result2.get().getChange()).isEqualTo(-20);
         assertThat(result2.get().getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result2.get().isAvailable()).isFalse();
 
         assertItemStackListContents(list, new ItemStack(Items.DIAMOND, 6));
     }
@@ -232,6 +243,7 @@ class ItemStackListTest {
         assertThat(result2.get().getId()).isEqualTo(result1.getId());
         assertThat(result2.get().getChange()).isEqualTo(-20);
         assertThat(result2.get().getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result2.get().isAvailable()).isFalse();
 
         assertItemStackListContents(list, new ItemStack(Items.DIAMOND, 6));
     }

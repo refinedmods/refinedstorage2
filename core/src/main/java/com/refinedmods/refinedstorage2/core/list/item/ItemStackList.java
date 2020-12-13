@@ -31,7 +31,7 @@ public class ItemStackList implements StackList<ItemStack> {
     private StackListResult<ItemStack> addToExisting(ItemStack stack, int amount) {
         stack.increment(amount);
 
-        return new StackListResult<>(stack, amount, index.inverse().get(stack));
+        return new StackListResult<>(stack, amount, index.inverse().get(stack), true);
     }
 
     private StackListResult<ItemStack> addNew(ListEntry entry, ItemStack template, int amount) {
@@ -43,7 +43,7 @@ public class ItemStackList implements StackList<ItemStack> {
         index.put(id, stack);
         entries.put(entry, stack);
 
-        return new StackListResult<>(stack, amount, id);
+        return new StackListResult<>(stack, amount, id, true);
     }
 
     @Override
@@ -71,14 +71,14 @@ public class ItemStackList implements StackList<ItemStack> {
     private Optional<StackListResult<ItemStack>> removePartly(int amount, ItemStack stack, UUID id) {
         stack.decrement(amount);
 
-        return Optional.of(new StackListResult<>(stack, -amount, id));
+        return Optional.of(new StackListResult<>(stack, -amount, id, true));
     }
 
     private Optional<StackListResult<ItemStack>> removeCompletely(ListEntry entry, ItemStack stack, UUID id) {
         index.remove(id);
         entries.remove(entry);
 
-        return Optional.of(new StackListResult<>(stack, -stack.getCount(), id));
+        return Optional.of(new StackListResult<>(stack, -stack.getCount(), id, false));
     }
 
     @Override

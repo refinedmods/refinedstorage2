@@ -9,24 +9,12 @@ import java.util.*;
 
 public class ItemStorageChannel implements StorageChannel<ItemStack> {
     private final Set<StorageChannelListener<ItemStack>> listeners = new HashSet<>();
+    private ItemStackList list;
     private CompositeItemStorage storage = CompositeItemStorage.emptyStorage();
 
     public void setSources(List<Storage<ItemStack>> sources) {
-        storage = new CompositeItemStorage(sources, new ItemStackList() {
-            @Override
-            public StackListResult<ItemStack> add(ItemStack template, int amount) {
-                StackListResult<ItemStack> result = super.add(template, amount);
-                listeners.forEach(listener -> listener.onChanged(result));
-                return result;
-            }
-
-            @Override
-            public Optional<StackListResult<ItemStack>> remove(ItemStack template, int amount) {
-                Optional<StackListResult<ItemStack>> resultMaybe = super.remove(template, amount);
-                resultMaybe.ifPresent(result -> listeners.forEach(listener -> listener.onChanged(result)));
-                return resultMaybe;
-            }
-        });
+        this.list = new StorageChannelItemStackList();
+        this.storage = new CompositeItemStorage(sources, list);
     }
 
     @Override
@@ -37,6 +25,12 @@ public class ItemStorageChannel implements StorageChannel<ItemStack> {
     @Override
     public void removeListener(StorageChannelListener<ItemStack> listener) {
         listeners.remove(listener);
+    }
+
+    // TODO - Add test for this.
+    @Override
+    public Optional<ItemStack> get(ItemStack template) {
+        return list.get(template);
     }
 
     @Override
@@ -57,5 +51,21 @@ public class ItemStorageChannel implements StorageChannel<ItemStack> {
     @Override
     public int getStored() {
         return storage.getStored();
+    }
+
+    private class StorageChannelItemStackList extends ItemStackList {
+        @Override
+        public StackListResult<ItemStack> add(ItemStack template, int amount) {
+            StackListResult<ItemStack> result = super.add(template, amount);
+            listeners.forEach(listener -> listener.onChanged(result));
+            return result;
+        }
+
+        @Override
+        public Optional<StackListResult<ItemStack>> remove(ItemStack template, int amount) {
+            Optional<StackListResult<ItemStack>> resultMaybe = super.remove(template, amount);
+            resultMaybe.ifPresent(result -> listeners.forEach(listener -> listener.onChanged(result)));
+            return resultMaybe;
+        }
     }
 }

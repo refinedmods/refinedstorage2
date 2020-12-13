@@ -4,6 +4,9 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
@@ -20,5 +23,33 @@ public class PacketUtil {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         bufConsumer.accept(buf);
         ServerSidePacketRegistry.INSTANCE.sendToPlayer(playerEntity, id, buf);
+    }
+
+    public static void writeItemStackWithoutCount(PacketByteBuf buf, ItemStack stack) {
+        if (stack.isEmpty()) {
+            buf.writeBoolean(false);
+        } else {
+            buf.writeBoolean(true);
+            Item item = stack.getItem();
+            buf.writeVarInt(Item.getRawId(item));
+
+            CompoundTag compoundTag = null;
+            if (item.isDamageable() || item.shouldSyncTagToClient()) {
+                compoundTag = stack.getTag();
+            }
+
+            buf.writeCompoundTag(compoundTag);
+        }
+    }
+
+    public static ItemStack readItemStackWithoutCount(PacketByteBuf buf) {
+        if (!buf.readBoolean()) {
+            return ItemStack.EMPTY;
+        } else {
+            int id = buf.readVarInt();
+            ItemStack itemStack = new ItemStack(Item.byRawId(id), 1);
+            itemStack.setTag(buf.readCompoundTag());
+            return itemStack;
+        }
     }
 }

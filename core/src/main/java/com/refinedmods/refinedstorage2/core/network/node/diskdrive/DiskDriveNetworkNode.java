@@ -53,6 +53,8 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
         }
 
         compositeStorage = new CompositeItemStorage(sources, new ItemStackList());
+
+        // TODO - We need to refresh the network list somehow.
     }
 
     public DiskDriveState createState() {

@@ -5,10 +5,7 @@ import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import net.minecraft.item.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 // TODO - Add tests.
@@ -30,10 +27,23 @@ public class GridView {
 
     public void onChange(ItemStack template, int amount) {
         if (amount < 0) {
-            boolean allRemoved = !list.remove(template, Math.abs(amount)).isPresent();
+            Optional<StackListResult<ItemStack>> result = list.remove(template, Math.abs(amount));
 
-            if (allRemoved) {
+            if (result.isPresent()) {
+                ItemStack resultingStack = result.get().getStack();
 
+                if (!result.get().isAvailable()) {
+                    stacks.remove(resultingStack);
+                } else {
+                    // TODO - Add test to ItemStackList that assert that the stack from #getAll() is the same as one in StackListResult#getStack
+                    int pos = Collections.binarySearch(stacks, resultingStack, getSorter());
+                    if (pos < 0) {
+                        pos = -pos - 1;
+                    }
+
+                    stacks.remove(resultingStack);
+                    stacks.add(pos, resultingStack);
+                }
             }
         } else {
             StackListResult<ItemStack> result = list.add(template, amount);
