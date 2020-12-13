@@ -3,10 +3,12 @@ package com.refinedmods.refinedstorage2.fabric.screen.grid;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.History;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
+import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;
@@ -30,9 +32,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
     private SearchFieldWidget searchField;
     private int visibleRows;
 
-    private final GridEventHandler eventHandler;
-
-    public GridScreen(GridScreenHandler handler, PlayerInventory inventory, Text title, GridEventHandler eventHandler) {
+    public GridScreen(GridScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
 
         this.titleX = 7;
@@ -41,7 +41,6 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         this.playerInventoryTitleY = 75;
         this.backgroundWidth = 227;
         this.backgroundHeight = 176;
-        this.eventHandler = eventHandler;
     }
 
     @Override
@@ -173,7 +172,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         ItemStack cursorStack = playerInventory.getCursorStack();
 
         if (isOverStorageArea((int) mouseX, (int) mouseY) && !cursorStack.isEmpty() && (clickedButton == 0 || clickedButton == 1)) {
-            eventHandler.onInsertFromCursor(clickedButton == 1);
+            PacketUtil.sendToServer(GridInsertFromCursorPacket.ID, buf -> buf.writeBoolean(clickedButton == 1));
             return true;
         }
 
