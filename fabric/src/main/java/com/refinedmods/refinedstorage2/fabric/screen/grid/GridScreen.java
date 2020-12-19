@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
@@ -116,8 +117,9 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
                 int slotX = x + 8 + (column * 18);
                 int slotY = y + 20 + (row * 18);
 
+                ItemStack stack = null;
                 if (i < view.getStacks().size()) {
-                    ItemStack stack = view.getStacks().get(i);
+                    stack = view.getStacks().get(i);
 
                     setZOffset(100);
                     itemRenderer.zOffset = 100.0F;
@@ -136,7 +138,10 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
                     RenderSystem.colorMask(true, true, true, true);
                     RenderSystem.enableDepthTest();
 
-                    gridSlotNumber = i;
+                    if (stack != null) {
+                        gridSlotNumber = i;
+                        renderTooltip(matrices, stack, mouseX, mouseY);
+                    }
                 }
 
                 i++;
@@ -177,14 +182,12 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
         ItemStack cursorStack = playerInventory.getCursorStack();
 
-        if (!getScreenHandler().getView().getStacks().isEmpty() && gridSlotNumber >= 0 && gridSlotNumber < getScreenHandler().getView().getStacks().size() && cursorStack.isEmpty()) {
+        if (!getScreenHandler().getView().getStacks().isEmpty() && gridSlotNumber >= 0 && cursorStack.isEmpty()) {
             ItemStack stack = getScreenHandler().getView().getStacks().get(gridSlotNumber);
 
             PacketUtil.sendToServer(GridExtractPacket.ID, buf -> {
                 PacketUtil.writeItemStackWithoutCount(buf, stack);
-                buf.writeBoolean(false);
-                buf.writeBoolean(clickedButton == 1);
-                buf.writeBoolean(hasShiftDown());
+                GridExtractPacket.writeMode(buf, getExtractMode(clickedButton));
             });
 
             return true;
@@ -196,6 +199,16 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         }
 
         return super.mouseClicked(mouseX, mouseY, clickedButton);
+    }
+
+    private GridExtractMode getExtractMode(int clickedButton) {
+        if (clickedButton == 1) {
+            return GridExtractMode.CURSOR_HALF;
+        }
+        if (hasShiftDown()) {
+            return GridExtractMode.PLAYER_INVENTORY_STACK;
+        }
+        return GridExtractMode.CURSOR_STACK;
     }
 
     @Override
