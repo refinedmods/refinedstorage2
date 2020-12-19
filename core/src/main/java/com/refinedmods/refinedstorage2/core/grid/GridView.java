@@ -32,21 +32,22 @@ public class GridView {
             if (result.isPresent()) {
                 ItemStack resultingStack = result.get().getStack();
 
-                if (!result.get().isAvailable()) {
-                    stacks.remove(resultingStack);
-                } else {
+                stacks.remove(resultingStack);
+
+                if (result.get().isAvailable()) {
                     // TODO - Add test to ItemStackList that assert that the stack from #getAll() is the same as one in StackListResult#getStack
                     int pos = Collections.binarySearch(stacks, resultingStack, getSorter());
                     if (pos < 0) {
                         pos = -pos - 1;
                     }
 
-                    stacks.remove(resultingStack);
                     stacks.add(pos, resultingStack);
                 }
             }
         } else {
             StackListResult<ItemStack> result = list.add(template, amount);
+
+            stacks.remove(result.getStack());
 
             // TODO - Add test to ItemStackList that assert that the stack from #getAll() is the same as one in StackListResult#getStack
             int pos = Collections.binarySearch(stacks, result.getStack(), getSorter());
@@ -54,7 +55,6 @@ public class GridView {
                 pos = -pos - 1;
             }
 
-            stacks.remove(result.getStack());
             stacks.add(pos, result.getStack());
         }
     }
