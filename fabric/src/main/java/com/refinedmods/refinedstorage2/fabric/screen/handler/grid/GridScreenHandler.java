@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.fabric.screen.handler.grid;
 
 import com.refinedmods.refinedstorage2.core.grid.*;
+import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
-import com.refinedmods.refinedstorage2.core.storage.StorageChannelListener;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
@@ -19,7 +19,7 @@ import net.minecraft.screen.slot.Slot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GridScreenHandler extends BaseScreenHandler implements GridEventHandler, StorageChannelListener<ItemStack> {
+public class GridScreenHandler extends BaseScreenHandler implements GridEventHandler, StackListListener<ItemStack> {
     private static final Logger LOGGER = LogManager.getLogger(GridScreenHandler.class);
 
     private final PlayerInventory playerInventory;

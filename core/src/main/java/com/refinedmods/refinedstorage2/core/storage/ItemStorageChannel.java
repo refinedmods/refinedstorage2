@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
-import com.refinedmods.refinedstorage2.core.list.StackListResult;
+import com.refinedmods.refinedstorage2.core.list.ListenableStackList;
+import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
@@ -8,26 +9,25 @@ import net.minecraft.item.ItemStack;
 import java.util.*;
 
 public class ItemStorageChannel implements StorageChannel<ItemStack> {
-    private final Set<StorageChannelListener<ItemStack>> listeners = new HashSet<>();
-    private ItemStackList list;
+    private final Set<StackListListener<ItemStack>> listeners = new HashSet<>();
+    private ListenableStackList<ItemStack> list;
     private CompositeItemStorage storage = CompositeItemStorage.emptyStorage();
 
     public void setSources(List<Storage<ItemStack>> sources) {
-        this.list = new StorageChannelItemStackList();
+        this.list = new ListenableStackList<>(new ItemStackList(), listeners);
         this.storage = new CompositeItemStorage(sources, list);
     }
 
     @Override
-    public void addListener(StorageChannelListener<ItemStack> listener) {
+    public void addListener(StackListListener<ItemStack> listener) {
         listeners.add(listener);
     }
 
     @Override
-    public void removeListener(StorageChannelListener<ItemStack> listener) {
+    public void removeListener(StackListListener<ItemStack> listener) {
         listeners.remove(listener);
     }
 
-    // TODO - Add test for this.
     @Override
     public Optional<ItemStack> get(ItemStack template) {
         return list.get(template);
@@ -51,21 +51,5 @@ public class ItemStorageChannel implements StorageChannel<ItemStack> {
     @Override
     public int getStored() {
         return storage.getStored();
-    }
-
-    private class StorageChannelItemStackList extends ItemStackList {
-        @Override
-        public StackListResult<ItemStack> add(ItemStack template, int amount) {
-            StackListResult<ItemStack> result = super.add(template, amount);
-            listeners.forEach(listener -> listener.onChanged(result));
-            return result;
-        }
-
-        @Override
-        public Optional<StackListResult<ItemStack>> remove(ItemStack template, int amount) {
-            Optional<StackListResult<ItemStack>> resultMaybe = super.remove(template, amount);
-            resultMaybe.ifPresent(result -> listeners.forEach(listener -> listener.onChanged(result)));
-            return resultMaybe;
-        }
     }
 }

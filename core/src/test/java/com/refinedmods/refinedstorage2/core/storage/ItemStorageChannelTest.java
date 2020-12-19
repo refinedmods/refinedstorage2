@@ -1,18 +1,22 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
+import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
+import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -25,7 +29,7 @@ class ItemStorageChannelTest {
         ItemStorageChannel channel = new ItemStorageChannel();
         channel.setSources(Arrays.asList(new ItemDiskStorage(10)));
 
-        StorageChannelListener<ItemStack> listener = mock(StorageChannelListener.class);
+        StackListListener<ItemStack> listener = mock(StackListListener.class);
         channel.addListener(listener);
 
         ArgumentCaptor<StackListResult<ItemStack>> givenStack = ArgumentCaptor.forClass(StackListResult.class);
@@ -54,7 +58,7 @@ class ItemStorageChannelTest {
         ItemStorageChannel channel = new ItemStorageChannel();
         channel.setSources(Arrays.asList(diskStorage));
 
-        StorageChannelListener<ItemStack> listener = mock(StorageChannelListener.class);
+        StackListListener<ItemStack> listener = mock(StackListListener.class);
         channel.addListener(listener);
 
         ArgumentCaptor<StackListResult<ItemStack>> givenStack = ArgumentCaptor.forClass(StackListResult.class);
@@ -71,5 +75,65 @@ class ItemStorageChannelTest {
         } else {
             verify(listener, never()).onChanged(any());
         }
+    }
+
+    @Test
+    void Test_inserting() {
+        // Arrange
+        ItemStorageChannel channel = new ItemStorageChannel();
+        channel.setSources(Arrays.asList(new ItemDiskStorage(10)));
+
+        // Act
+        channel.insert(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+        channel.insert(new ItemStack(Items.GLASS), 5, Action.EXECUTE);
+
+        // Assert
+        assertItemStackListContents(channel.getStacks(), new ItemStack(Items.DIRT, 5), new ItemStack(Items.GLASS, 5));
+    }
+
+    @Test
+    void Test_extracting() {
+        // Arrange
+        ItemDiskStorage diskStorage = new ItemDiskStorage(100);
+        diskStorage.insert(new ItemStack(Items.DIRT), 50, Action.EXECUTE);
+
+        ItemStorageChannel channel = new ItemStorageChannel();
+        channel.setSources(Arrays.asList(diskStorage));
+
+        // Act
+        channel.extract(new ItemStack(Items.DIRT), 49, Action.EXECUTE);
+
+        // Assert
+        assertItemStackListContents(channel.getStacks(), new ItemStack(Items.DIRT, 1));
+    }
+
+    @Test
+    void Test_getting_stack() {
+        // Arrange
+        ItemDiskStorage diskStorage = new ItemDiskStorage(100);
+        diskStorage.insert(new ItemStack(Items.DIRT), 50, Action.EXECUTE);
+
+        ItemStorageChannel channel = new ItemStorageChannel();
+        channel.setSources(Arrays.asList(diskStorage));
+
+        // Act
+        Optional<ItemStack> stack = channel.get(new ItemStack(Items.DIRT));
+
+        // Assert
+        assertThat(stack).isPresent();
+        assertItemStack(stack.get(), new ItemStack(Items.DIRT, 50));
+    }
+
+    @Test
+    void Test_getting_non_existent_stack() {
+        // Arrange
+        ItemStorageChannel channel = new ItemStorageChannel();
+        channel.setSources(Arrays.asList(new ItemDiskStorage(100)));
+
+        // Act
+        Optional<ItemStack> stack = channel.get(new ItemStack(Items.DIRT));
+
+        // Assert
+        assertThat(stack).isEmpty();
     }
 }
