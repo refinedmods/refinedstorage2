@@ -15,8 +15,14 @@ import java.util.stream.Stream;
 public class GridView {
     private final StackList<ItemStack> list = new ItemStackList();
     private List<ItemStack> stacks = Collections.emptyList();
-    private Comparator<ItemStack> sorter;
+    private Comparator<ItemStack> sorter = GridSorter.QUANTITY.getComparator();
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
+    private Runnable listener = () -> {
+    };
+
+    public void setListener(Runnable listener) {
+        this.listener = listener;
+    }
 
     public void setSorter(Comparator<ItemStack> sorter) {
         this.sorter = sorter;
@@ -43,6 +49,7 @@ public class GridView {
             newStacks = newStacks.sorted(getSorter());
         }
         this.stacks = newStacks.collect(Collectors.toList());
+        this.listener.run();
     }
 
     public void onChange(ItemStack template, int amount) {
@@ -58,6 +65,7 @@ public class GridView {
 
         stacks.remove(result.getStack());
         reposition(result.getStack());
+        listener.run();
     }
 
     private void remove(ItemStack template, int amount) {
@@ -70,6 +78,7 @@ public class GridView {
             if (result.get().isAvailable()) {
                 reposition(resultingStack);
             }
+            listener.run();
         }
     }
 

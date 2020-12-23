@@ -23,12 +23,15 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Re-add default sorters
+// TODO: Add test for listener in grid view
 public class GridScreen extends HandledScreen<GridScreenHandler> {
     private static final Identifier TEXTURE = new Identifier(RefinedStorage2Mod.ID, "textures/gui/grid.png");
 
     private static final int TOP_HEIGHT = 19;
     private static final int BOTTOM_HEIGHT = 99;
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
+    private static final int COLUMNS = 9;
 
     private ScrollbarWidget scrollbar;
     private SearchFieldWidget searchField;
@@ -64,9 +67,18 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         getScreenHandler().addSlots(backgroundHeight - BOTTOM_HEIGHT + 17);
 
         this.scrollbar = new ScrollbarWidget(client, x + 174, y + 20, 12, (visibleRows * 18) - 2);
+        this.getScreenHandler().getView().setListener(this::updateScrollbar);
+        updateScrollbar();
 
         children.add(scrollbar);
         addButton(searchField);
+    }
+
+    private void updateScrollbar() {
+        int rows = (int) Math.ceil((float) getScreenHandler().getView().getStacks().size() / (float) COLUMNS);
+
+        scrollbar.setEnabled(rows > visibleRows);
+        scrollbar.setMaxOffset(rows - visibleRows);
     }
 
     private int calculateVisibleRows() {
@@ -111,9 +123,9 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
         gridSlotNumber = -1;
 
-        int i = 0;
+        int i = scrollbar.getOffset() * COLUMNS;
         for (int row = 0; row < visibleRows; ++row) {
-            for (int column = 0; column < 9; ++column) {
+            for (int column = 0; column < COLUMNS; ++column) {
                 int slotX = x + 8 + (column * 18);
                 int slotY = y + 20 + (row * 18);
 

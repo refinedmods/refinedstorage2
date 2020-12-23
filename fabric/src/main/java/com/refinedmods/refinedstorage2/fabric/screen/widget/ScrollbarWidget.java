@@ -30,7 +30,10 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
         this.y = y;
         this.width = width;
         this.height = height;
-        maxOffset = 10;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
@@ -87,6 +90,10 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
         if (offset >= 0 && offset <= maxOffset) {
             this.offset = offset;
         }
+    }
+
+    public int getOffset() {
+        return offset;
     }
 
     private void updateOffset(double mouseY) {
