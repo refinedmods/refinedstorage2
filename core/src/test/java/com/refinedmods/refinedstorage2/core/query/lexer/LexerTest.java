@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static com.refinedmods.refinedstorage2.core.query.lexer.TokenAssertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -13,50 +14,60 @@ class LexerTest {
     private static final String SOURCE_NAME = "<test>";
 
     @Test
+    void Test_invalid_character() {
+        // Act
+        LexerException e = assertThrows(LexerException.class, () -> getTokens("$hello"));
+
+        // Assert
+        assertThat(e.getMessage()).isEqualTo("Unexpected '$'");
+        assertRange(e.getRange(), 1, 1, 1, 1);
+    }
+
+    @Test
     void Test_single_identifier() {
         // Act
-        List<Token> tokens = getTokens("$h_el1lo");
+        List<Token> tokens = getTokens("hel1lo");
 
         // Assert
         assertThat(tokens).hasSize(1);
 
         Token token = tokens.get(0);
-        verifyToken(token, "$h_el1lo", TokenType.IDENTIFIER);
-        verifyPosition(token.getPosition(), 1, 1, 1, 8);
+        assertToken(token, "hel1lo", TokenType.IDENTIFIER);
+        assertPosition(token.getPosition(), SOURCE_NAME, 1, 1, 1, 6);
     }
 
     @Test
     void Test_multiple_identifiers() {
         // Act
-        List<Token> tokens = getTokens("hello _World baz");
+        List<Token> tokens = getTokens("hello wo1rld baz");
 
         // Assert
         assertThat(tokens).hasSize(3);
 
         Token hello = tokens.get(0);
-        verifyToken(hello, "hello", TokenType.IDENTIFIER);
-        verifyPosition(hello.getPosition(), 1, 1, 1, 5);
+        assertToken(hello, "hello", TokenType.IDENTIFIER);
+        assertPosition(hello.getPosition(), SOURCE_NAME, 1, 1, 1, 5);
 
         Token world = tokens.get(1);
-        verifyToken(world, "_World", TokenType.IDENTIFIER);
-        verifyPosition(world.getPosition(), 1, 7, 1, 12);
+        assertToken(world, "wo1rld", TokenType.IDENTIFIER);
+        assertPosition(world.getPosition(), SOURCE_NAME, 1, 7, 1, 12);
 
         Token baz = tokens.get(2);
-        verifyToken(baz, "baz", TokenType.IDENTIFIER);
-        verifyPosition(baz.getPosition(), 1, 14, 1, 16);
+        assertToken(baz, "baz", TokenType.IDENTIFIER);
+        assertPosition(baz.getPosition(), SOURCE_NAME, 1, 14, 1, 16);
     }
 
     @Test
     void Test_single_string_identifier() {
         // Act
-        List<Token> tokens = getTokens("\"$h_el1lo\"");
+        List<Token> tokens = getTokens("\"h_el1lo\"");
 
         // Assert
         assertThat(tokens).hasSize(1);
 
         Token token = tokens.get(0);
-        verifyToken(token, "$h_el1lo", TokenType.IDENTIFIER);
-        verifyPosition(token.getPosition(), 1, 1, 1, 10);
+        assertToken(token, "h_el1lo", TokenType.IDENTIFIER);
+        assertPosition(token.getPosition(), SOURCE_NAME, 1, 1, 1, 9);
     }
 
     @Test
@@ -68,16 +79,16 @@ class LexerTest {
         assertThat(tokens).hasSize(3);
 
         Token hello = tokens.get(0);
-        verifyToken(hello, "hello", TokenType.IDENTIFIER);
-        verifyPosition(hello.getPosition(), 1, 1, 1, 7);
+        assertToken(hello, "hello", TokenType.IDENTIFIER);
+        assertPosition(hello.getPosition(), SOURCE_NAME, 1, 1, 1, 7);
 
         Token world = tokens.get(1);
-        verifyToken(world, "_World", TokenType.IDENTIFIER);
-        verifyPosition(world.getPosition(), 1, 9, 1, 16);
+        assertToken(world, "_World", TokenType.IDENTIFIER);
+        assertPosition(world.getPosition(), SOURCE_NAME, 1, 9, 1, 16);
 
         Token baz = tokens.get(2);
-        verifyToken(baz, "baz", TokenType.IDENTIFIER);
-        verifyPosition(baz.getPosition(), 1, 18, 1, 22);
+        assertToken(baz, "baz", TokenType.IDENTIFIER);
+        assertPosition(baz.getPosition(), SOURCE_NAME, 1, 18, 1, 22);
     }
 
     @Test
@@ -89,8 +100,8 @@ class LexerTest {
         assertThat(tokens).hasSize(1);
 
         Token text = tokens.get(0);
-        verifyToken(text, "", TokenType.IDENTIFIER);
-        verifyPosition(text.getPosition(), 1, 1, 1, 2);
+        assertToken(text, "", TokenType.IDENTIFIER);
+        assertPosition(text.getPosition(), SOURCE_NAME, 1, 1, 1, 2);
     }
 
     @Test
@@ -100,32 +111,32 @@ class LexerTest {
 
         // Assert
         assertThat(e.getMessage()).isEqualTo("Unexpected end of string");
-        verifyRange(e.getRange(), 1, 1, 1, 6);
+        assertRange(e.getRange(), 1, 1, 1, 6);
     }
 
     @Test
     void Test_new_lines() {
         // Act
-        List<Token> tokens = getTokens("hello _World\r\r\nbaz\n\n123");
+        List<Token> tokens = getTokens("hello world\r\r\nbaz\n\n123");
 
         // Assert
         assertThat(tokens).hasSize(4);
 
         Token hello = tokens.get(0);
-        verifyToken(hello, "hello", TokenType.IDENTIFIER);
-        verifyPosition(hello.getPosition(), 1, 1, 1, 5);
+        assertToken(hello, "hello", TokenType.IDENTIFIER);
+        assertPosition(hello.getPosition(), SOURCE_NAME, 1, 1, 1, 5);
 
         Token world = tokens.get(1);
-        verifyToken(world, "_World", TokenType.IDENTIFIER);
-        verifyPosition(world.getPosition(), 1, 7, 1, 12);
+        assertToken(world, "world", TokenType.IDENTIFIER);
+        assertPosition(world.getPosition(), SOURCE_NAME, 1, 7, 1, 11);
 
         Token baz = tokens.get(2);
-        verifyToken(baz, "baz", TokenType.IDENTIFIER);
-        verifyPosition(baz.getPosition(), 2, 1, 2, 3);
+        assertToken(baz, "baz", TokenType.IDENTIFIER);
+        assertPosition(baz.getPosition(), SOURCE_NAME, 2, 1, 2, 3);
 
         Token number = tokens.get(3);
-        verifyToken(number, "123", TokenType.INTEGER_NUMBER);
-        verifyPosition(number.getPosition(), 4, 1, 4, 3);
+        assertToken(number, "123", TokenType.INTEGER_NUMBER);
+        assertPosition(number.getPosition(), SOURCE_NAME, 4, 1, 4, 3);
     }
 
     @Test
@@ -137,8 +148,8 @@ class LexerTest {
         assertThat(tokens).hasSize(1);
 
         Token token = tokens.get(0);
-        verifyToken(token, "123", TokenType.INTEGER_NUMBER);
-        verifyPosition(token.getPosition(), 1, 1, 1, 3);
+        assertToken(token, "123", TokenType.INTEGER_NUMBER);
+        assertPosition(token.getPosition(), SOURCE_NAME, 1, 1, 1, 3);
     }
 
     @Test
@@ -150,8 +161,8 @@ class LexerTest {
         assertThat(tokens).hasSize(1);
 
         Token token = tokens.get(0);
-        verifyToken(token, "123.45", TokenType.FLOATING_NUMBER);
-        verifyPosition(token.getPosition(), 1, 1, 1, 6);
+        assertToken(token, "123.45", TokenType.FLOATING_NUMBER);
+        assertPosition(token.getPosition(), SOURCE_NAME, 1, 1, 1, 6);
     }
 
     @Test
@@ -161,7 +172,7 @@ class LexerTest {
 
         // Assert
         assertThat(e.getMessage()).isEqualTo("Unexpected end of number");
-        verifyRange(e.getRange(), 1, 1, 1, 4);
+        assertRange(e.getRange(), 1, 1, 1, 4);
     }
 
     @Test
@@ -171,54 +182,41 @@ class LexerTest {
 
         // Assert
         assertThat(e.getMessage()).isEqualTo("Invalid floating point number");
-        verifyRange(e.getRange(), 1, 1, 1, 4);
+        assertRange(e.getRange(), 1, 1, 1, 4);
     }
 
     @Test
     void Test_fixed_tokens() {
         // Act
-        List<Token> tokens = getTokens("()+-/*!");
+        List<Token> tokens = getTokens("()+-/*!&&||");
 
         // Assert
-        assertThat(tokens).hasSize(7);
+        assertThat(tokens).hasSize(9);
 
-        verifyToken(tokens.get(0), "(", TokenType.PAREN_OPEN);
-        verifyToken(tokens.get(1), ")", TokenType.PAREN_CLOSE);
-        verifyToken(tokens.get(2), "+", TokenType.BIN_OP);
-        verifyToken(tokens.get(3), "-", TokenType.BIN_OP);
-        verifyToken(tokens.get(4), "/", TokenType.BIN_OP);
-        verifyToken(tokens.get(5), "*", TokenType.BIN_OP);
-        verifyToken(tokens.get(6), "!", TokenType.UNARY_OP);
+        assertToken(tokens.get(0), "(", TokenType.PAREN_OPEN);
+        assertToken(tokens.get(1), ")", TokenType.PAREN_CLOSE);
+        assertToken(tokens.get(2), "+", TokenType.BIN_OP);
+        assertToken(tokens.get(3), "-", TokenType.BIN_OP);
+        assertToken(tokens.get(4), "/", TokenType.BIN_OP);
+        assertToken(tokens.get(5), "*", TokenType.BIN_OP);
+        assertToken(tokens.get(6), "!", TokenType.UNARY_OP);
+        assertToken(tokens.get(7), "&&", TokenType.BIN_OP);
+        assertToken(tokens.get(8), "||", TokenType.BIN_OP);
 
-        verifyPosition(tokens.get(0).getPosition(), 1, 1, 1, 1);
-        verifyPosition(tokens.get(1).getPosition(), 1, 2, 1, 2);
-        verifyPosition(tokens.get(2).getPosition(), 1, 3, 1, 3);
-        verifyPosition(tokens.get(3).getPosition(), 1, 4, 1, 4);
-        verifyPosition(tokens.get(4).getPosition(), 1, 5, 1, 5);
-        verifyPosition(tokens.get(5).getPosition(), 1, 6, 1, 6);
-        verifyPosition(tokens.get(6).getPosition(), 1, 7, 1, 7);
+        assertPosition(tokens.get(0).getPosition(), SOURCE_NAME, 1, 1, 1, 1);
+        assertPosition(tokens.get(1).getPosition(), SOURCE_NAME, 1, 2, 1, 2);
+        assertPosition(tokens.get(2).getPosition(), SOURCE_NAME, 1, 3, 1, 3);
+        assertPosition(tokens.get(3).getPosition(), SOURCE_NAME, 1, 4, 1, 4);
+        assertPosition(tokens.get(4).getPosition(), SOURCE_NAME, 1, 5, 1, 5);
+        assertPosition(tokens.get(5).getPosition(), SOURCE_NAME, 1, 6, 1, 6);
+        assertPosition(tokens.get(6).getPosition(), SOURCE_NAME, 1, 7, 1, 7);
+        assertPosition(tokens.get(7).getPosition(), SOURCE_NAME, 1, 8, 1, 9);
+        assertPosition(tokens.get(8).getPosition(), SOURCE_NAME, 1, 10, 1, 11);
     }
 
     private List<Token> getTokens(String content) {
         Lexer lexer = new Lexer(new Source(SOURCE_NAME, content));
         lexer.scan();
         return lexer.getTokens();
-    }
-
-    private void verifyToken(Token token, String content, TokenType type) {
-        assertThat(token.getContent()).isEqualTo(content);
-        assertThat(token.getType()).isEqualTo(type);
-    }
-
-    private void verifyPosition(TokenPosition position, int startLine, int startColumn, int endLine, int endColumn) {
-        assertThat(position.getSource().getName()).isEqualTo(SOURCE_NAME);
-        verifyRange(position.getRange(), startLine, startColumn, endLine, endColumn);
-    }
-
-    private void verifyRange(TokenRange range, int startLine, int startColumn, int endLine, int endColumn) {
-        assertThat(range.getStartLine()).isEqualTo(startLine);
-        assertThat(range.getStartColumn()).isEqualTo(startColumn);
-        assertThat(range.getEndLine()).isEqualTo(endLine);
-        assertThat(range.getEndColumn()).isEqualTo(endColumn);
     }
 }

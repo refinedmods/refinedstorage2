@@ -19,10 +19,14 @@ public class Parser {
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
 
-        precedenceMap.put("+", new Operator(1, Associativity.LEFT));
-        precedenceMap.put("*", new Operator(2, Associativity.LEFT));
-        precedenceMap.put("^", new Operator(3, Associativity.RIGHT));
         precedenceMap.put("=", new Operator(0, Associativity.RIGHT));
+        precedenceMap.put("||", new Operator(1, Associativity.LEFT));
+        precedenceMap.put("&&", new Operator(2, Associativity.LEFT));
+        precedenceMap.put("+", new Operator(3, Associativity.LEFT));
+        precedenceMap.put("-", new Operator(3, Associativity.LEFT));
+        precedenceMap.put("*", new Operator(4, Associativity.LEFT));
+        precedenceMap.put("/", new Operator(4, Associativity.LEFT));
+        precedenceMap.put("^", new Operator(5, Associativity.RIGHT));
     }
 
     public void parse() {
@@ -82,7 +86,11 @@ public class Parser {
         Token maybeUnaryOp = current();
         if (maybeUnaryOp.getType() == TokenType.UNARY_OP) {
             next();
-            return new UnaryOpNode(parseLiteral(), maybeUnaryOp, UnaryOpNode.Type.PREFIX);
+            if (!isNotEof()) {
+                throw new ParserException("Unary operator has no target", maybeUnaryOp);
+            }
+
+            return new UnaryOpNode(parseAtom(), maybeUnaryOp, UnaryOpNode.Type.PREFIX);
         }
 
         return parseSuffixedUnaryOp();

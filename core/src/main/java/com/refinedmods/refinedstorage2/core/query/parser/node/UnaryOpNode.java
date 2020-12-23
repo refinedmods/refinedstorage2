@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.core.query.parser.node;
 
 import com.refinedmods.refinedstorage2.core.query.lexer.Token;
+import com.refinedmods.refinedstorage2.core.query.lexer.TokenRange;
 import com.refinedmods.refinedstorage2.core.query.parser.ParserException;
 
 public class UnaryOpNode implements Node {
@@ -29,6 +30,18 @@ public class UnaryOpNode implements Node {
 
     public Type getType() {
         return type;
+    }
+
+    @Override
+    public TokenRange getRange() {
+        switch (type) {
+            case PREFIX:
+                return TokenRange.combine(operator.getPosition().getRange(), node.getRange());
+            case SUFFIX:
+                return TokenRange.combine(node.getRange(), operator.getPosition().getRange());
+            default:
+                throw new RuntimeException("Unexpected token range");
+        }
     }
 
     @Override

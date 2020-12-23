@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.core.query.lexer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -10,11 +10,14 @@ public class Lexer {
     private final Source source;
     private final List<Token> tokens = new ArrayList<>();
     private final LexerPosition position = new LexerPosition();
-    private final Map<String, TokenType> fixedTokens = new HashMap<>();
+    private final Map<String, TokenType> fixedTokens = new LinkedHashMap<>();
 
     public Lexer(Source source) {
         this.source = source;
 
+        fixedTokens.put("&&", TokenType.BIN_OP);
+        fixedTokens.put("||", TokenType.BIN_OP);
+        fixedTokens.put("@", TokenType.UNARY_OP);
         fixedTokens.put("(", TokenType.PAREN_OPEN);
         fixedTokens.put(")", TokenType.PAREN_CLOSE);
         fixedTokens.put("+", TokenType.BIN_OP);
@@ -43,10 +46,17 @@ public class Lexer {
                 scanNumber();
             } else if (current == '"') {
                 scanString();
-            } else {
+            } else if (isValidIdentifier(current)) {
                 scanIdentifier();
+            } else {
+                position.advance();
+                throw new LexerException(position.createRange(), "Unexpected '" + current + "'");
             }
         }
+    }
+
+    private boolean isValidIdentifier(char c) {
+        return Character.isLetterOrDigit(c);
     }
 
     private TokenType checkFixedToken() {
@@ -93,7 +103,7 @@ public class Lexer {
     }
 
     private void scanIdentifier() {
-        while (isNotEof() && (current() != ' ' && current() != '\n' && current() != '\r')) {
+        while (isNotEof() && isValidIdentifier(current())) {
             position.advance();
         }
         addToken(TokenType.IDENTIFIER);

@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.core.query.parser.node;
 
 import com.refinedmods.refinedstorage2.core.query.lexer.Token;
+import com.refinedmods.refinedstorage2.core.query.lexer.TokenRange;
 
 public class BinOpNode implements Node {
     private final Node left;
@@ -28,5 +29,10 @@ public class BinOpNode implements Node {
     @Override
     public String toString() {
         return "(" + left + " " + binOp.getContent() + " " + right + ")";
+    }
+
+    @Override
+    public TokenRange getRange() {
+        return TokenRange.combine(left.getRange(), right.getRange());
     }
 }

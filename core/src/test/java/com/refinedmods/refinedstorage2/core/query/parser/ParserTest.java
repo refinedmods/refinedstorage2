@@ -139,6 +139,24 @@ class ParserTest {
     }
 
     @Test
+    void Test_logical_operator_precedence() {
+        // Act
+        List<Node> nodes = builder
+            .token("x", TokenType.IDENTIFIER)
+            .token("&&", TokenType.BIN_OP)
+            .token("y", TokenType.IDENTIFIER)
+            .token("||", TokenType.BIN_OP)
+            .token("z", TokenType.IDENTIFIER)
+            .token("&&", TokenType.BIN_OP)
+            .token("a", TokenType.IDENTIFIER)
+            .getNodes();
+
+        // Assert
+        assertThat(nodes).hasSize(1);
+        assertThat(nodes.get(0)).hasToString("((x && y) || (z && a))");
+    }
+
+    @Test
     void Test_prefixed_unary_operator() {
         // Act
         List<Node> nodes = builder
@@ -147,14 +165,32 @@ class ParserTest {
             .token("++", TokenType.UNARY_OP)
             .token("x", TokenType.IDENTIFIER)
             .token("--", TokenType.UNARY_OP)
+            .token("!", TokenType.UNARY_OP)
+            .token("(", TokenType.PAREN_OPEN)
             .token("x", TokenType.IDENTIFIER)
+            .token("&&", TokenType.BIN_OP)
+            .token("y", TokenType.IDENTIFIER)
+            .token(")", TokenType.PAREN_CLOSE)
             .getNodes();
 
         // Assert
         assertThat(nodes).hasSize(3);
-        assertThat(nodes.get(0)).hasToString("!true");
-        assertThat(nodes.get(1)).hasToString("++x");
-        assertThat(nodes.get(2)).hasToString("--x");
+        assertThat(nodes.get(0)).hasToString("!true++");
+        assertThat(nodes.get(1)).hasToString("x--");
+        assertThat(nodes.get(2)).hasToString("!((x && y))");
+    }
+
+    @Test
+    void Test_prefix_unary_operator_with_no_target() {
+        // Arrange
+        builder.token("!", TokenType.UNARY_OP);
+
+        // Act
+        ParserException e = assertThrows(ParserException.class, () -> builder.getNodes());
+
+        // Assert
+        assertThat(e.getMessage()).isEqualTo("Unary operator has no target");
+        assertThat(e.getToken().getContent()).isEqualTo("!");
     }
 
     @Test
