@@ -5,58 +5,81 @@ import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import net.minecraft.item.ItemStack;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-// TODO - Add tests.
 public class GridView {
-    private StackList<ItemStack> list = new ItemStackList();
-    private List<ItemStack> stacks = new ArrayList<>();
+    private final StackList<ItemStack> list = new ItemStackList();
+    private List<ItemStack> stacks = Collections.emptyList();
+    private Comparator<ItemStack> sorter;
+    private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
 
-    public void sort() {
-        this.stacks = list.getAll().stream().sorted(getSorter()).collect(Collectors.toList());
+    public void setSorter(Comparator<ItemStack> sorter) {
+        this.sorter = sorter;
     }
 
     private Comparator<ItemStack> getSorter() {
-        return (a, b) -> Integer.compare(b.getCount(), a.getCount());
+        if (sortingDirection == GridSortingDirection.ASCENDING) {
+            return sorter;
+        }
+        return sorter.reversed();
+    }
+
+    public void setSortingDirection(GridSortingDirection sortingDirection) {
+        this.sortingDirection = sortingDirection;
     }
 
     public void loadStack(ItemStack template, int amount) {
         list.add(template, amount);
     }
 
+    public void sort() {
+        Stream<ItemStack> newStacks = list.getAll().stream();
+        if (sorter != null) {
+            newStacks = newStacks.sorted(getSorter());
+        }
+        this.stacks = newStacks.collect(Collectors.toList());
+    }
+
     public void onChange(ItemStack template, int amount) {
         if (amount < 0) {
-            Optional<StackListResult<ItemStack>> result = list.remove(template, Math.abs(amount));
-
-            if (result.isPresent()) {
-                ItemStack resultingStack = result.get().getStack();
-
-                stacks.remove(resultingStack);
-
-                if (result.get().isAvailable()) {
-                    // TODO - Add test to ItemStackList that assert that the stack from #getAll() is the same as one in StackListResult#getStack
-                    int pos = Collections.binarySearch(stacks, resultingStack, getSorter());
-                    if (pos < 0) {
-                        pos = -pos - 1;
-                    }
-
-                    stacks.add(pos, resultingStack);
-                }
-            }
+            remove(template, Math.abs(amount));
         } else {
-            StackListResult<ItemStack> result = list.add(template, amount);
-
-            stacks.remove(result.getStack());
-
-            // TODO - Add test to ItemStackList that assert that the stack from #getAll() is the same as one in StackListResult#getStack
-            int pos = Collections.binarySearch(stacks, result.getStack(), getSorter());
-            if (pos < 0) {
-                pos = -pos - 1;
-            }
-
-            stacks.add(pos, result.getStack());
+            add(template, amount);
         }
+    }
+
+    private void add(ItemStack template, int amount) {
+        StackListResult<ItemStack> result = list.add(template, amount);
+
+        stacks.remove(result.getStack());
+        reposition(result.getStack());
+    }
+
+    private void remove(ItemStack template, int amount) {
+        Optional<StackListResult<ItemStack>> result = list.remove(template, amount);
+
+        if (result.isPresent()) {
+            ItemStack resultingStack = result.get().getStack();
+
+            stacks.remove(resultingStack);
+            if (result.get().isAvailable()) {
+                reposition(resultingStack);
+            }
+        }
+    }
+
+    private void reposition(ItemStack stack) {
+        int pos = Collections.binarySearch(stacks, stack, getSorter());
+        if (pos < 0) {
+            pos = -pos - 1;
+        }
+
+        stacks.add(pos, stack);
     }
 
     public List<ItemStack> getStacks() {

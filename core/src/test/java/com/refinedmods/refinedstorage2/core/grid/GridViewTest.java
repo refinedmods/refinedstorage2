@@ -1,0 +1,468 @@
+package com.refinedmods.refinedstorage2.core.grid;
+
+import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+
+import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
+import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertOrderedItemStackListContents;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@RefinedStorage2Test
+class GridViewTest {
+    @ParameterizedTest
+    @EnumSource(GridSorter.class)
+    void Test_sorting_ascending(GridSorter sorter) {
+        // Arrange
+        GridView view = new GridView();
+        view.setSorter(sorter.getComparator());
+        view.setSortingDirection(GridSortingDirection.ASCENDING);
+
+        view.loadStack(new ItemStack(Items.DIRT), 10);
+        view.loadStack(new ItemStack(Items.DIRT), 5);
+        view.loadStack(new ItemStack(Items.GLASS), 1);
+        view.loadStack(new ItemStack(Items.BUCKET), 2);
+
+        // Act
+        view.sort();
+
+        // Assert
+        switch (sorter) {
+            case QUANTITY:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.GLASS, 1),
+                    new ItemStack(Items.BUCKET, 2),
+                    new ItemStack(Items.DIRT, 15)
+                );
+                break;
+            case NAME:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 2),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 1)
+                );
+                break;
+            case ID:
+                // Intended as unordered assert - we don't know the IDs before hand
+                assertItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 2),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 1)
+                );
+                break;
+            default:
+                fail();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(GridSorter.class)
+    void Test_sorting_descending(GridSorter sorter) {
+        // Arrange
+        GridView view = new GridView();
+        view.setSorter(sorter.getComparator());
+        view.setSortingDirection(GridSortingDirection.DESCENDING);
+
+        view.loadStack(new ItemStack(Items.DIRT), 10);
+        view.loadStack(new ItemStack(Items.DIRT), 5);
+        view.loadStack(new ItemStack(Items.GLASS), 1);
+        view.loadStack(new ItemStack(Items.BUCKET), 2);
+
+        // Act
+        view.sort();
+
+        // Assert
+        switch (sorter) {
+            case QUANTITY:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.BUCKET, 2),
+                    new ItemStack(Items.GLASS, 1)
+                );
+                break;
+            case NAME:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.GLASS, 1),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.BUCKET, 2)
+                );
+                break;
+            case ID:
+                // Intended as unordered assert - we don't know the IDs before hand
+                assertItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.GLASS, 1),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.BUCKET, 2)
+                );
+                break;
+            default:
+                fail();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(GridSorter.class)
+    void Test_sending_addition_with_ascending_sorting_direction_and_item_already_present(GridSorter sorter) {
+        // Arrange
+        GridView view = new GridView();
+        view.setSorter(sorter.getComparator());
+        view.setSortingDirection(GridSortingDirection.ASCENDING);
+
+        view.loadStack(new ItemStack(Items.DIRT), 10);
+        view.loadStack(new ItemStack(Items.DIRT), 5);
+        view.loadStack(new ItemStack(Items.GLASS), 1);
+        view.loadStack(new ItemStack(Items.BUCKET), 2);
+
+        view.sort();
+
+        // Act
+        view.onChange(new ItemStack(Items.BUCKET), 500);
+
+        // Assert
+        switch (sorter) {
+            case QUANTITY:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.GLASS, 1),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.BUCKET, 502)
+                );
+                break;
+            case NAME:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 502),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 1)
+                );
+                break;
+            case ID:
+                // Intended as unordered assert - we don't know the IDs before hand
+                assertItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 502),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 1)
+                );
+                break;
+            default:
+                fail();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(GridSorter.class)
+    void Test_sending_addition_with_descending_sorting_direction_and_item_already_present(GridSorter sorter) {
+        // Arrange
+        GridView view = new GridView();
+        view.setSorter(sorter.getComparator());
+        view.setSortingDirection(GridSortingDirection.DESCENDING);
+
+        view.loadStack(new ItemStack(Items.DIRT), 10);
+        view.loadStack(new ItemStack(Items.DIRT), 5);
+        view.loadStack(new ItemStack(Items.GLASS), 1);
+        view.loadStack(new ItemStack(Items.BUCKET), 2);
+
+        view.sort();
+
+        // Act
+        view.onChange(new ItemStack(Items.DIRT), 500);
+
+        // Assert
+        switch (sorter) {
+            case QUANTITY:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.DIRT, 515),
+                    new ItemStack(Items.BUCKET, 2),
+                    new ItemStack(Items.GLASS, 1)
+                );
+                break;
+            case NAME:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.GLASS, 1),
+                    new ItemStack(Items.DIRT, 515),
+                    new ItemStack(Items.BUCKET, 2)
+                );
+                break;
+            case ID:
+                // Intended as unordered assert - we don't know the IDs before hand
+                assertItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 2),
+                    new ItemStack(Items.DIRT, 515),
+                    new ItemStack(Items.GLASS, 1)
+                );
+                break;
+            default:
+                fail();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(GridSorter.class)
+    void Test_sending_addition_with_ascending_sorting_direction_and_item_not_yet_present(GridSorter sorter) {
+        // Arrange
+        GridView view = new GridView();
+        view.setSorter(sorter.getComparator());
+        view.setSortingDirection(GridSortingDirection.ASCENDING);
+
+        view.loadStack(new ItemStack(Items.DIRT), 10);
+        view.loadStack(new ItemStack(Items.DIRT), 5);
+        view.loadStack(new ItemStack(Items.GLASS), 1);
+        view.loadStack(new ItemStack(Items.BUCKET), 2);
+
+        view.sort();
+
+        // Act
+        view.onChange(new ItemStack(Items.SPONGE), 3);
+
+        // Assert
+        switch (sorter) {
+            case QUANTITY:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.GLASS, 1),
+                    new ItemStack(Items.BUCKET, 2),
+                    new ItemStack(Items.SPONGE, 3),
+                    new ItemStack(Items.DIRT, 15)
+                );
+                break;
+            case NAME:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 2),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 1),
+                    new ItemStack(Items.SPONGE, 3)
+                );
+                break;
+            case ID:
+                // Intended as unordered assert - we don't know the IDs before hand
+                assertItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 2),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 1),
+                    new ItemStack(Items.SPONGE, 3)
+                );
+                break;
+            default:
+                fail();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(GridSorter.class)
+    void Test_sending_addition_twice_with_ascending_sorting_direction_and_item_not_yet_present(GridSorter sorter) {
+        // Arrange
+        GridView view = new GridView();
+        view.setSorter(sorter.getComparator());
+        view.setSortingDirection(GridSortingDirection.ASCENDING);
+
+        view.loadStack(new ItemStack(Items.DIRT), 10);
+        view.loadStack(new ItemStack(Items.DIRT), 5);
+        view.loadStack(new ItemStack(Items.GLASS), 1);
+        view.loadStack(new ItemStack(Items.BUCKET), 2);
+
+        view.sort();
+
+        // Act
+        view.onChange(new ItemStack(Items.SPONGE), 3);
+        view.onChange(new ItemStack(Items.SPONGE), 1);
+
+        // Assert
+        switch (sorter) {
+            case QUANTITY:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.GLASS, 1),
+                    new ItemStack(Items.BUCKET, 2),
+                    new ItemStack(Items.SPONGE, 4),
+                    new ItemStack(Items.DIRT, 15)
+                );
+                break;
+            case NAME:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 2),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 1),
+                    new ItemStack(Items.SPONGE, 4)
+                );
+                break;
+            case ID:
+                // Intended as unordered assert - we don't know the IDs before hand
+                assertItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 2),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 1),
+                    new ItemStack(Items.SPONGE, 4)
+                );
+                break;
+            default:
+                fail();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(GridSorter.class)
+    void Test_sending_deletion_with_ascending_sorting_direction_and_item_already_present(GridSorter sorter) {
+        // Arrange
+        GridView view = new GridView();
+        view.setSorter(sorter.getComparator());
+        view.setSortingDirection(GridSortingDirection.ASCENDING);
+
+        view.loadStack(new ItemStack(Items.DIRT), 10);
+        view.loadStack(new ItemStack(Items.DIRT), 5);
+        view.loadStack(new ItemStack(Items.GLASS), 6);
+        view.loadStack(new ItemStack(Items.BUCKET), 5);
+
+        view.sort();
+
+        // Act
+        view.onChange(new ItemStack(Items.GLASS), -3);
+
+        // Assert
+        switch (sorter) {
+            case QUANTITY:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.GLASS, 3),
+                    new ItemStack(Items.BUCKET, 5),
+                    new ItemStack(Items.DIRT, 15)
+                );
+                break;
+            case NAME:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 5),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 3)
+                );
+                break;
+            case ID:
+                // Intended as unordered assert - we don't know the IDs before hand
+                assertItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 5),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 3)
+                );
+                break;
+            default:
+                fail();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(GridSorter.class)
+    void Test_sending_deletion_with_ascending_sorting_direction_and_item_not_yet_present(GridSorter sorter) {
+        // Arrange
+        GridView view = new GridView();
+        view.setSorter(sorter.getComparator());
+        view.setSortingDirection(GridSortingDirection.ASCENDING);
+
+        view.loadStack(new ItemStack(Items.DIRT), 10);
+        view.loadStack(new ItemStack(Items.DIRT), 5);
+        view.loadStack(new ItemStack(Items.GLASS), 6);
+        view.loadStack(new ItemStack(Items.BUCKET), 5);
+
+        view.sort();
+
+        // Act
+        view.onChange(new ItemStack(Items.SPONGE), 10);
+        view.onChange(new ItemStack(Items.SPONGE), -8);
+
+        // Assert
+        switch (sorter) {
+            case QUANTITY:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.SPONGE, 2),
+                    new ItemStack(Items.BUCKET, 5),
+                    new ItemStack(Items.GLASS, 6),
+                    new ItemStack(Items.DIRT, 15)
+                );
+                break;
+            case NAME:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 5),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 6),
+                    new ItemStack(Items.SPONGE, 2)
+                );
+                break;
+            case ID:
+                // Intended as unordered assert - we don't know the IDs before hand
+                assertItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 5),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 6),
+                    new ItemStack(Items.SPONGE, 2)
+                );
+                break;
+            default:
+                fail();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(GridSorter.class)
+    void Test_sending_complete_deletion_with_ascending_sorting_direction_and_item_already_present(GridSorter sorter) {
+        // Arrange
+        GridView view = new GridView();
+        view.setSorter(sorter.getComparator());
+        view.setSortingDirection(GridSortingDirection.ASCENDING);
+
+        view.loadStack(new ItemStack(Items.DIRT), 10);
+        view.loadStack(new ItemStack(Items.DIRT), 5);
+        view.loadStack(new ItemStack(Items.GLASS), 6);
+        view.loadStack(new ItemStack(Items.BUCKET), 5);
+
+        view.sort();
+
+        // Act
+        view.onChange(new ItemStack(Items.BUCKET), -5);
+
+        // Assert
+        switch (sorter) {
+            case QUANTITY:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.GLASS, 6),
+                    new ItemStack(Items.DIRT, 15)
+                );
+                break;
+            case NAME:
+                assertOrderedItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 6)
+                );
+                break;
+            case ID:
+                // Intended as unordered assert - we don't know the IDs before hand
+                assertItemStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 6)
+                );
+                break;
+            default:
+                fail();
+        }
+    }
+}

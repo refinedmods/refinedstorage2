@@ -23,9 +23,10 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private static final Logger LOGGER = LogManager.getLogger(GridScreenHandler.class);
 
     private final PlayerInventory playerInventory;
+    private final GridView view = new GridView();
+
     private StorageChannel<ItemStack> storageChannel; // TODO - Support changing of the channel.
     private GridEventHandler eventHandler;
-    private GridView view = new GridView();
 
     public GridScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
         super(RefinedStorage2Mod.SCREEN_HANDLERS.getGrid(), syncId);

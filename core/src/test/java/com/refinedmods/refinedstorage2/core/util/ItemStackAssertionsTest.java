@@ -9,8 +9,7 @@ import org.opentest4j.AssertionFailedError;
 
 import java.util.Arrays;
 
-import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
-import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
+import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RefinedStorage2Test
@@ -99,5 +98,18 @@ class ItemStackAssertionsTest {
         // Act
         assertThrows(AssertionError.class, () -> assertItemStackListContents(Arrays.asList(new ItemStack(Items.DIRT, 15), new ItemStack(Items.GOLD_BLOCK, 10)), new ItemStack(Items.DIRT, 14), new ItemStack(Items.GOLD_BLOCK, 10)));
         assertThrows(AssertionError.class, () -> assertItemStackListContents(Arrays.asList(new ItemStack(Items.DIRT, 14), new ItemStack(Items.GOLD_BLOCK, 10)), new ItemStack(Items.DIRT, 15), new ItemStack(Items.GOLD_BLOCK, 10)));
+    }
+
+    @Test
+    void Test_equal_ordered_item_stack_lists() {
+        // Act
+        assertOrderedItemStackListContents(Arrays.asList(new ItemStack(Items.DIRT, 15), new ItemStack(Items.GOLD_BLOCK, 10)), new ItemStack(Items.DIRT, 15), new ItemStack(Items.GOLD_BLOCK, 10));
+    }
+
+    @Test
+    void Test_not_equal_ordered_item_stack_lists() {
+        // Act
+        assertThrows(AssertionError.class, () -> assertOrderedItemStackListContents(Arrays.asList(new ItemStack(Items.DIRT, 15), new ItemStack(Items.GOLD_BLOCK, 10)), new ItemStack(Items.DIRT, 10), new ItemStack(Items.GOLD_BLOCK, 15)));
+        assertThrows(AssertionError.class, () -> assertOrderedItemStackListContents(Arrays.asList(new ItemStack(Items.DIRT, 14), new ItemStack(Items.GOLD_BLOCK, 10)), new ItemStack(Items.DIRT, 16), new ItemStack(Items.GOLD_BLOCK, 10)));
     }
 }
