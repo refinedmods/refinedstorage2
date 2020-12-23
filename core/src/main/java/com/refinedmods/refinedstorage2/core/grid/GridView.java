@@ -39,9 +39,9 @@ public class GridView {
         // If two grid stacks have the same quantity, their order would not be preserved.
         Comparator<ItemStack> identity = GridSorter.NAME.getComparator();
         if (sortingDirection == GridSortingDirection.ASCENDING) {
-            return identity.thenComparing(sorter);
+            return sorter.thenComparing(identity);
         }
-        return identity.thenComparing(sorter).reversed();
+        return sorter.thenComparing(identity).reversed();
     }
 
     public void setSortingDirection(GridSortingDirection sortingDirection) {

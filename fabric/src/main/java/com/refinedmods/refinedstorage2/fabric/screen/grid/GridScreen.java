@@ -26,8 +26,6 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Add test for listener in grid view
-// TODO: Add test for still visible checks in grid view
 public class GridScreen extends HandledScreen<GridScreenHandler> {
     private static final Identifier TEXTURE = new Identifier(RefinedStorage2Mod.ID, "textures/gui/grid.png");
 
@@ -35,14 +33,12 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
     private static final int BOTTOM_HEIGHT = 99;
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
     private static final int COLUMNS = 9;
-
     private static final GridQueryParser<ItemStack> QUERY_PARSER = new GridQueryParser<>(new FabricGridStackDetailsProvider());
 
     private ScrollbarWidget scrollbar;
     private SearchFieldWidget searchField;
     private int visibleRows;
     private int gridSlotNumber;
-    private boolean invalidQuery;
 
     public GridScreen(GridScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -72,10 +68,8 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         searchField.setChangedListener(text -> {
             try {
                 getScreenHandler().getView().setFilter(QUERY_PARSER.parse(text));
-                invalidQuery = false;
             } catch (GridQueryParserException e) {
                 getScreenHandler().getView().setFilter(stack -> false);
-                invalidQuery = true;
             }
             getScreenHandler().getView().sort();
         });

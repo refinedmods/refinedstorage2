@@ -3,12 +3,14 @@ package com.refinedmods.refinedstorage2.core.grid;
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertOrderedItemStackListContents;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.*;
 
 @RefinedStorage2Test
 class GridViewTest {
@@ -464,5 +466,65 @@ class GridViewTest {
             default:
                 fail();
         }
+    }
+
+    @Test
+    void Test_filter_should_filter_out_changes() {
+        // Arrange
+        GridView view = new GridView();
+        view.sort();
+
+        // Act & assert
+        view.onChange(new ItemStack(Items.DIRT), 10);
+        view.onChange(new ItemStack(Items.GLASS), 10);
+
+        assertItemStackListContents(view.getStacks(), new ItemStack(Items.DIRT, 10), new ItemStack(Items.GLASS, 10));
+
+        view.setFilter(stack -> stack.getItem() == Items.DIRT);
+        view.sort();
+
+        assertItemStackListContents(view.getStacks(), new ItemStack(Items.DIRT, 10));
+
+        view.onChange(new ItemStack(Items.DIRT), 5);
+        view.onChange(new ItemStack(Items.GLASS), 2);
+
+        assertItemStackListContents(view.getStacks(), new ItemStack(Items.DIRT, 15));
+
+        view.setFilter(stack -> true);
+        view.sort();
+
+        assertItemStackListContents(view.getStacks(), new ItemStack(Items.DIRT, 15), new ItemStack(Items.GLASS, 12));
+    }
+
+    @Test
+    void Test_listener_should_be_called_when_sorting() {
+        // Arrange
+        GridView view = new GridView();
+
+        Runnable listener = mock(Runnable.class);
+        view.setListener(listener);
+
+        // Act
+        view.sort();
+
+        // Assert
+        verify(listener, times(1)).run();
+    }
+
+    @Test
+    void Test_listener_should_be_called_when_applying_change() {
+        // Arrange
+        GridView view = new GridView();
+        view.sort();
+
+        Runnable listener = mock(Runnable.class);
+        view.setListener(listener);
+
+        // Act
+        view.onChange(new ItemStack(Items.DIRT), 10);
+        view.onChange(new ItemStack(Items.DIRT), -5);
+
+        // Assert
+        verify(listener, times(2)).run();
     }
 }
