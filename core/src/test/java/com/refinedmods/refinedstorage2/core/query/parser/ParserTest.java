@@ -282,4 +282,28 @@ class ParserTest {
         assertThat(e.getMessage()).isEqualTo("Expected ')'");
         assertThat(e.getToken().getContent()).isEqualTo(")");
     }
+
+    @Test
+    void Test_unclosed_parenthesis() {
+        // Act
+        builder.token("(", TokenType.PAREN_OPEN);
+
+        // Assert
+        ParserException e = assertThrows(ParserException.class, () -> builder.getNodes());
+        assertThat(e.getMessage()).isEqualTo("Unclosed parenthesis");
+        assertThat(e.getToken().getContent()).isEqualTo("(");
+    }
+
+    @Test
+    void Test_unfinished_binary_operator() {
+        // Act
+        builder
+            .token("1", TokenType.INTEGER_NUMBER)
+            .token("+", TokenType.BIN_OP);
+
+        // Assert
+        ParserException e = assertThrows(ParserException.class, () -> builder.getNodes());
+        assertThat(e.getMessage()).isEqualTo("Unfinished binary operator expression");
+        assertThat(e.getToken().getContent()).isEqualTo("+");
+    }
 }

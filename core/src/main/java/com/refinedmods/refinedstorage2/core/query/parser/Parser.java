@@ -46,6 +46,9 @@ public class Parser {
             int nextMinPrecedence = currentOp.getAssociativity() == Associativity.LEFT ? (currentOp.getLevel() + 1) : currentOp.getLevel();
 
             next();
+            if (!isNotEof()) {
+                throw new ParserException("Unfinished binary operator expression", cur);
+            }
 
             Node rhs = parseExpression(nextMinPrecedence);
 
@@ -70,6 +73,9 @@ public class Parser {
 
         if (current.getType() == TokenType.PAREN_OPEN) {
             next();
+            if (!isNotEof()) {
+                throw new ParserException("Unclosed parenthesis", current);
+            }
 
             Node node = parseExpression(0);
 

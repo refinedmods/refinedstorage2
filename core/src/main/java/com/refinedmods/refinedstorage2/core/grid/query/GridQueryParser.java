@@ -19,7 +19,7 @@ public class GridQueryParser<T> {
 
     public Predicate<T> parse(String query) throws GridQueryParserException {
         if ("".equals(query.trim())) {
-            return (stack) -> true;
+            return stack -> true;
         }
 
         List<Token> tokens = getTokens(query);

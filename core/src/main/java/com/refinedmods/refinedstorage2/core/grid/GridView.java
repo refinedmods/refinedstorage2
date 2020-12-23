@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,6 +17,7 @@ public class GridView {
     private final StackList<ItemStack> list = new ItemStackList();
     private List<ItemStack> stacks = Collections.emptyList();
     private Comparator<ItemStack> sorter = GridSorter.QUANTITY.getComparator();
+    private Predicate<ItemStack> filter = (stack) -> true;
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
     private Runnable listener = () -> {
     };
@@ -28,11 +30,18 @@ public class GridView {
         this.sorter = sorter;
     }
 
+    public void setFilter(Predicate<ItemStack> filter) {
+        this.filter = filter;
+    }
+
     private Comparator<ItemStack> getSorter() {
+        // An identity sort is necessary so the order of items is preserved in quantity sorting mode.
+        // If two grid stacks have the same quantity, their order would not be preserved.
+        Comparator<ItemStack> identity = GridSorter.NAME.getComparator();
         if (sortingDirection == GridSortingDirection.ASCENDING) {
-            return sorter;
+            return identity.thenComparing(sorter);
         }
-        return sorter.reversed();
+        return identity.thenComparing(sorter).reversed();
     }
 
     public void setSortingDirection(GridSortingDirection sortingDirection) {
@@ -48,7 +57,7 @@ public class GridView {
         if (sorter != null) {
             newStacks = newStacks.sorted(getSorter());
         }
-        this.stacks = newStacks.collect(Collectors.toList());
+        this.stacks = newStacks.filter(filter).collect(Collectors.toList());
         this.listener.run();
     }
 
@@ -63,9 +72,11 @@ public class GridView {
     private void add(ItemStack template, int amount) {
         StackListResult<ItemStack> result = list.add(template, amount);
 
-        stacks.remove(result.getStack());
-        reposition(result.getStack());
-        listener.run();
+        if (filter.test(template)) {
+            stacks.remove(result.getStack());
+            reposition(result.getStack());
+            listener.run();
+        }
     }
 
     private void remove(ItemStack template, int amount) {
@@ -74,11 +85,13 @@ public class GridView {
         if (result.isPresent()) {
             ItemStack resultingStack = result.get().getStack();
 
-            stacks.remove(resultingStack);
-            if (result.get().isAvailable()) {
-                reposition(resultingStack);
+            if (filter.test(resultingStack)) {
+                stacks.remove(resultingStack);
+                if (result.get().isAvailable()) {
+                    reposition(resultingStack);
+                }
+                listener.run();
             }
-            listener.run();
         }
     }
 

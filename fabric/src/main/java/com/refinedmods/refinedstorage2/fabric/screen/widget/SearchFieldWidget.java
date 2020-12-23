@@ -16,6 +16,7 @@ public class SearchFieldWidget extends TextFieldWidget {
 
         this.history = history;
         this.setHasBorder(false);
+        this.setMaxLength(256);
     }
 
     @Override
