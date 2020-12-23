@@ -81,7 +81,7 @@ class LexerTest {
     }
 
     @Test
-    void Test_empty_string() {
+    void Test_empty_string_identifier() {
         // Act
         List<Token> tokens = getTokens("\"\"");
 
