@@ -16,6 +16,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @RefinedStorage2Test
 class GridQueryParserTest {
     @ParameterizedTest
+    @ValueSource(strings = {"", "   "})
+    void Test_empty_query(String query) throws GridQueryParserException {
+        // Arrange
+        GridQueryParser<ItemStack> queryParser = new GridQueryParser<>(new FakeGridStackDetailsProvider());
+
+        // Act
+        Predicate<ItemStack> predicate = queryParser.parse(query);
+
+        // Assert
+        assertThat(predicate.test(new ItemStack(Items.DIRT))).isTrue();
+        assertThat(predicate.test(new ItemStack(Items.GLASS))).isTrue();
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"dirt", "Dirt", "DiRt", "Di", "irt"})
     void Test_name_query(String query) throws GridQueryParserException {
         // Arrange

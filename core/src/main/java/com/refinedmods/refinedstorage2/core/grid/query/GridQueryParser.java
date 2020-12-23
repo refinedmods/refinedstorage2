@@ -1,8 +1,6 @@
 package com.refinedmods.refinedstorage2.core.grid.query;
 
-import com.refinedmods.refinedstorage2.core.query.lexer.Lexer;
-import com.refinedmods.refinedstorage2.core.query.lexer.LexerException;
-import com.refinedmods.refinedstorage2.core.query.lexer.Source;
+import com.refinedmods.refinedstorage2.core.query.lexer.*;
 import com.refinedmods.refinedstorage2.core.query.parser.Parser;
 import com.refinedmods.refinedstorage2.core.query.parser.ParserException;
 import com.refinedmods.refinedstorage2.core.query.parser.node.*;
@@ -25,28 +23,41 @@ public class GridQueryParser<T> {
             return (stack) -> true;
         }
 
-        Lexer lexer;
+        List<Token> tokens = getTokens(query);
+        List<Node> nodes = getNodes(tokens);
+
+        List<Predicate<T>> conditions = new ArrayList<>();
+        for (Node node : nodes) {
+            conditions.add(parseNode(node));
+        }
+
+        return and(conditions);
+    }
+
+    private List<Token> getTokens(String query) throws GridQueryParserException {
         try {
-            lexer = new Lexer(new Source("Grid query input", query));
+            Lexer lexer = new Lexer(new Source("Grid query input", query));
+            lexer.registerTokenMapping("!", TokenType.UNARY_OP);
+            lexer.registerTokenMapping("@", TokenType.UNARY_OP);
+            lexer.registerTokenMapping("&&", TokenType.BIN_OP);
+            lexer.registerTokenMapping("||", TokenType.BIN_OP);
+            lexer.registerTokenMapping("(", TokenType.PAREN_OPEN);
+            lexer.registerTokenMapping(")", TokenType.PAREN_CLOSE);
             lexer.scan();
+            return lexer.getTokens();
         } catch (LexerException e) {
             throw new GridQueryParserException(e.getRange(), e.getMessage(), e);
         }
+    }
 
-        Parser parser;
+    private List<Node> getNodes(List<Token> tokens) throws GridQueryParserException {
         try {
-            parser = new Parser(lexer.getTokens());
+            Parser parser = new Parser(tokens);
             parser.parse();
+            return parser.getNodes();
         } catch (ParserException e) {
             throw new GridQueryParserException(e.getToken().getPosition().getRange(), e.getMessage(), e);
         }
-
-        List<Predicate<T>> predicates = new ArrayList<>();
-        for (Node node : parser.getNodes()) {
-            predicates.add(parseNode(node));
-        }
-
-        return and(predicates);
     }
 
     private Predicate<T> parseNode(Node node) throws GridQueryParserException {
@@ -54,37 +65,51 @@ public class GridQueryParser<T> {
             String content = ((LiteralNode) node).getToken().getContent();
             return name(content);
         } else if (node instanceof UnaryOpNode) {
-            String operator = ((UnaryOpNode) node).getOperator().getContent();
-            Node nodeInUnaryOp = ((UnaryOpNode) node).getNode();
-
-            if ("!".equals(operator)) {
-                return not(parseNode(nodeInUnaryOp));
-            } else if ("@".equals(operator)) {
-                if (nodeInUnaryOp instanceof LiteralNode) {
-                    return mod(((LiteralNode) nodeInUnaryOp).getToken().getContent());
-                } else {
-                    throw new GridQueryParserException(nodeInUnaryOp.getRange(), "Mod filtering expects a literal", null);
-                }
-            }
+            return parseUnaryOpNode((UnaryOpNode) node);
         } else if (node instanceof BinOpNode) {
             String operator = ((BinOpNode) node).getBinOp().getContent();
 
             if ("&&".equals(operator)) {
-                return and(Arrays.asList(
-                    parseNode(((BinOpNode) node).getLeft()),
-                    parseNode(((BinOpNode) node).getRight())
-                ));
+                return parseAndBinOpNode((BinOpNode) node);
             } else if ("||".equals(operator)) {
-                return or(Arrays.asList(
-                    parseNode(((BinOpNode) node).getLeft()),
-                    parseNode(((BinOpNode) node).getRight())
-                ));
+                return parseOrBinOpNode((BinOpNode) node);
             }
         } else if (node instanceof ParenNode) {
             return parseNode(((ParenNode) node).getNode());
         }
 
-        return (stack) -> false;
+        throw new GridQueryParserException(node.getRange(), "Unsupported node", null);
+    }
+
+    private Predicate<T> parseOrBinOpNode(BinOpNode node) throws GridQueryParserException {
+        return or(Arrays.asList(
+            parseNode(node.getLeft()),
+            parseNode(node.getRight())
+        ));
+    }
+
+    private Predicate<T> parseAndBinOpNode(BinOpNode node) throws GridQueryParserException {
+        return and(Arrays.asList(
+            parseNode(node.getLeft()),
+            parseNode(node.getRight())
+        ));
+    }
+
+    private Predicate<T> parseUnaryOpNode(UnaryOpNode node) throws GridQueryParserException {
+        String operator = node.getOperator().getContent();
+        Node content = node.getNode();
+
+        if ("!".equals(operator)) {
+            return not(parseNode(content));
+        } else if ("@".equals(operator)) {
+            if (content instanceof LiteralNode) {
+                return mod(((LiteralNode) content).getToken().getContent());
+            } else {
+                throw new GridQueryParserException(content.getRange(), "Mod filtering expects a literal", null);
+            }
+        } else {
+            throw new GridQueryParserException(content.getRange(), "Unsupported unary operator", null);
+        }
     }
 
     private Predicate<T> mod(String name) {

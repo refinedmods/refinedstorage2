@@ -1,37 +1,36 @@
 package com.refinedmods.refinedstorage2.core.query.lexer;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 public class Lexer {
     private final Source source;
     private final List<Token> tokens = new ArrayList<>();
     private final LexerPosition position = new LexerPosition();
-    private final Map<String, TokenType> fixedTokens = new LinkedHashMap<>();
+    private final Map<String, TokenType> tokenMappings = new TreeMap<>((a, b) -> {
+        int cmp = Integer.compare(b.length(), a.length());
+        if (cmp == 0) {
+            return b.compareTo(a);
+        }
+        return cmp;
+    });
 
     public Lexer(Source source) {
         this.source = source;
+    }
 
-        fixedTokens.put("&&", TokenType.BIN_OP);
-        fixedTokens.put("||", TokenType.BIN_OP);
-        fixedTokens.put("@", TokenType.UNARY_OP);
-        fixedTokens.put("(", TokenType.PAREN_OPEN);
-        fixedTokens.put(")", TokenType.PAREN_CLOSE);
-        fixedTokens.put("+", TokenType.BIN_OP);
-        fixedTokens.put("-", TokenType.BIN_OP);
-        fixedTokens.put("*", TokenType.BIN_OP);
-        fixedTokens.put("/", TokenType.BIN_OP);
-        fixedTokens.put("!", TokenType.UNARY_OP);
+    public void registerTokenMapping(String value, TokenType type) {
+        tokenMappings.put(value, type);
     }
 
     public void scan() {
         while (isNotEof()) {
             char current = current();
 
-            TokenType foundFixedToken;
+            TokenType mapping;
             if (current == '\r') {
                 position.advanceAndReset();
             } else if (current == '\n') {
@@ -40,8 +39,8 @@ public class Lexer {
                 position.reset();
             } else if (current == ' ') {
                 position.advanceAndReset();
-            } else if ((foundFixedToken = checkFixedToken()) != null) {
-                addToken(foundFixedToken);
+            } else if ((mapping = checkTokenMappings()) != null) {
+                addToken(mapping);
             } else if (Character.isDigit(current)) {
                 scanNumber();
             } else if (current == '"') {
@@ -59,8 +58,8 @@ public class Lexer {
         return Character.isLetterOrDigit(c);
     }
 
-    private TokenType checkFixedToken() {
-        for (Map.Entry<String, TokenType> entry : this.fixedTokens.entrySet()) {
+    private TokenType checkTokenMappings() {
+        for (Map.Entry<String, TokenType> entry : this.tokenMappings.entrySet()) {
             TokenType type = entry.getValue();
             String content = entry.getKey();
             int contentLength = content.length();

@@ -186,11 +186,26 @@ class LexerTest {
     }
 
     @Test
-    void Test_fixed_tokens() {
+    void Test_token_mappings() {
+        // Arrange
+        Lexer lexer = createLexer("()+-/*!&&||");
+
+        lexer.registerTokenMapping("&&", TokenType.BIN_OP);
+        lexer.registerTokenMapping("(", TokenType.PAREN_OPEN);
+        lexer.registerTokenMapping(")", TokenType.PAREN_CLOSE);
+        lexer.registerTokenMapping("+", TokenType.BIN_OP);
+        lexer.registerTokenMapping("-", TokenType.BIN_OP);
+        lexer.registerTokenMapping("||", TokenType.BIN_OP);
+        lexer.registerTokenMapping("*", TokenType.BIN_OP);
+        lexer.registerTokenMapping("/", TokenType.BIN_OP);
+        lexer.registerTokenMapping("!", TokenType.UNARY_OP);
+
         // Act
-        List<Token> tokens = getTokens("()+-/*!&&||");
+        lexer.scan();
 
         // Assert
+        List<Token> tokens = lexer.getTokens();
+
         assertThat(tokens).hasSize(9);
 
         assertToken(tokens.get(0), "(", TokenType.PAREN_OPEN);
@@ -214,8 +229,24 @@ class LexerTest {
         assertPosition(tokens.get(8).getPosition(), SOURCE_NAME, 1, 10, 1, 11);
     }
 
-    private List<Token> getTokens(String content) {
+    private Lexer createLexer(String content) {
         Lexer lexer = new Lexer(new Source(SOURCE_NAME, content));
+
+        lexer.registerTokenMapping("&&", TokenType.BIN_OP);
+        lexer.registerTokenMapping("(", TokenType.PAREN_OPEN);
+        lexer.registerTokenMapping(")", TokenType.PAREN_CLOSE);
+        lexer.registerTokenMapping("+", TokenType.BIN_OP);
+        lexer.registerTokenMapping("-", TokenType.BIN_OP);
+        lexer.registerTokenMapping("||", TokenType.BIN_OP);
+        lexer.registerTokenMapping("*", TokenType.BIN_OP);
+        lexer.registerTokenMapping("/", TokenType.BIN_OP);
+        lexer.registerTokenMapping("!", TokenType.UNARY_OP);
+
+        return lexer;
+    }
+
+    private List<Token> getTokens(String content) {
+        Lexer lexer = createLexer(content);
         lexer.scan();
         return lexer.getTokens();
     }
