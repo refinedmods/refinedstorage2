@@ -64,6 +64,25 @@ class GridQueryParserTest {
         assertThat(predicate.test(new ItemStack(Items.GLASS))).isFalse();
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"$underwater", "$UnDerWate", "$water", "$unrelated", "$UNREL", "$laTed"})
+    void Test_tag_query(String query) throws GridQueryParserException {
+        // Arrange
+        FakeGridStackDetailsProvider detailsProvider = new FakeGridStackDetailsProvider();
+
+        detailsProvider.setTags(Items.SPONGE, "underwater", "unrelated");
+        detailsProvider.setTags(Items.GLASS, "transparent");
+
+        GridQueryParser<ItemStack> queryParser = new GridQueryParser<>(detailsProvider);
+
+        // Act
+        Predicate<ItemStack> predicate = queryParser.parse(query);
+
+        // Assert
+        assertThat(predicate.test(new ItemStack(Items.SPONGE))).isTrue();
+        assertThat(predicate.test(new ItemStack(Items.GLASS))).isFalse();
+    }
+
     @Test
     void Test_mod_query_with_invalid_node() {
         // Arrange

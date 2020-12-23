@@ -38,6 +38,7 @@ public class GridQueryParser<T> {
             Lexer lexer = new Lexer(new Source("Grid query input", query));
             lexer.registerTokenMapping("!", TokenType.UNARY_OP);
             lexer.registerTokenMapping("@", TokenType.UNARY_OP);
+            lexer.registerTokenMapping("$", TokenType.UNARY_OP);
             lexer.registerTokenMapping("&&", TokenType.BIN_OP);
             lexer.registerTokenMapping("||", TokenType.BIN_OP);
             lexer.registerTokenMapping("(", TokenType.PAREN_OPEN);
@@ -57,6 +58,7 @@ public class GridQueryParser<T> {
 
             parser.registerUnaryOperator("!", UnaryOperatorPosition.PREFIX);
             parser.registerUnaryOperator("@", UnaryOperatorPosition.PREFIX);
+            parser.registerUnaryOperator("$", UnaryOperatorPosition.PREFIX);
 
             parser.parse();
             return parser.getNodes();
@@ -112,6 +114,12 @@ public class GridQueryParser<T> {
             } else {
                 throw new GridQueryParserException(content.getRange(), "Mod filtering expects a literal", null);
             }
+        } else if ("$".equals(operator)) {
+            if (content instanceof LiteralNode) {
+                return tag(((LiteralNode) content).getToken().getContent());
+            } else {
+                throw new GridQueryParserException(content.getRange(), "Tag filtering expects a literal", null);
+            }
         } else {
             throw new GridQueryParserException(content.getRange(), "Unsupported unary operator", null);
         }
@@ -123,6 +131,16 @@ public class GridQueryParser<T> {
 
             return details.getModName().trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT))
                 || details.getModId().trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT));
+        };
+    }
+
+    private Predicate<T> tag(String name) {
+        return (stack) -> {
+            GridStackDetails details = detailsProvider.getDetails(stack);
+
+            return details.getTags()
+                .stream()
+                .anyMatch(tag -> tag.trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT)));
         };
     }
 
