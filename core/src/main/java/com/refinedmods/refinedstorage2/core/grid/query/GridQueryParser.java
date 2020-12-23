@@ -1,8 +1,7 @@
 package com.refinedmods.refinedstorage2.core.grid.query;
 
 import com.refinedmods.refinedstorage2.core.query.lexer.*;
-import com.refinedmods.refinedstorage2.core.query.parser.Parser;
-import com.refinedmods.refinedstorage2.core.query.parser.ParserException;
+import com.refinedmods.refinedstorage2.core.query.parser.*;
 import com.refinedmods.refinedstorage2.core.query.parser.node.*;
 
 import java.util.ArrayList;
@@ -53,6 +52,12 @@ public class GridQueryParser<T> {
     private List<Node> getNodes(List<Token> tokens) throws GridQueryParserException {
         try {
             Parser parser = new Parser(tokens);
+            parser.registerBinaryOperator("||", new Operator(0, Associativity.LEFT));
+            parser.registerBinaryOperator("&&", new Operator(1, Associativity.LEFT));
+
+            parser.registerUnaryOperator("!", UnaryOperatorPosition.PREFIX);
+            parser.registerUnaryOperator("@", UnaryOperatorPosition.PREFIX);
+
             parser.parse();
             return parser.getNodes();
         } catch (ParserException e) {

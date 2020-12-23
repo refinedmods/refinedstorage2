@@ -18,6 +18,19 @@ class ParserBuilder {
 
     List<Node> getNodes() {
         Parser parser = new Parser(tokens);
+        parser.registerBinaryOperator("=", new Operator(0, Associativity.RIGHT));
+        parser.registerBinaryOperator("||", new Operator(1, Associativity.LEFT));
+        parser.registerBinaryOperator("&&", new Operator(2, Associativity.LEFT));
+        parser.registerBinaryOperator("+", new Operator(3, Associativity.LEFT));
+        parser.registerBinaryOperator("-", new Operator(3, Associativity.LEFT));
+        parser.registerBinaryOperator("*", new Operator(4, Associativity.LEFT));
+        parser.registerBinaryOperator("/", new Operator(4, Associativity.LEFT));
+        parser.registerBinaryOperator("^", new Operator(5, Associativity.RIGHT));
+
+        parser.registerUnaryOperator("!", UnaryOperatorPosition.PREFIX);
+        parser.registerUnaryOperator("++", UnaryOperatorPosition.BOTH);
+        parser.registerUnaryOperator("--", UnaryOperatorPosition.BOTH);
+
         parser.parse();
         return parser.getNodes();
     }

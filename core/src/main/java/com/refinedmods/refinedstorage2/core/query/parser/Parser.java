@@ -12,21 +12,21 @@ import java.util.Map;
 public class Parser {
     private final List<Token> tokens;
     private final List<Node> nodes = new ArrayList<>();
-    private final Map<String, Operator> precedenceMap = new HashMap<>();
+    private final Map<String, Operator> binaryOperatorPrecedenceMap = new HashMap<>();
+    private final Map<String, UnaryOperatorPosition> unaryOperatorPositions = new HashMap<>();
 
     private int position = 0;
 
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
+    }
 
-        precedenceMap.put("=", new Operator(0, Associativity.RIGHT));
-        precedenceMap.put("||", new Operator(1, Associativity.LEFT));
-        precedenceMap.put("&&", new Operator(2, Associativity.LEFT));
-        precedenceMap.put("+", new Operator(3, Associativity.LEFT));
-        precedenceMap.put("-", new Operator(3, Associativity.LEFT));
-        precedenceMap.put("*", new Operator(4, Associativity.LEFT));
-        precedenceMap.put("/", new Operator(4, Associativity.LEFT));
-        precedenceMap.put("^", new Operator(5, Associativity.RIGHT));
+    public void registerBinaryOperator(String content, Operator operator) {
+        binaryOperatorPrecedenceMap.put(content, operator);
+    }
+
+    public void registerUnaryOperator(String content, UnaryOperatorPosition position) {
+        unaryOperatorPositions.put(content, position);
     }
 
     public void parse() {
@@ -58,7 +58,7 @@ public class Parser {
     }
 
     private Operator getOperator(Token token) {
-        return precedenceMap.get(token.getContent());
+        return binaryOperatorPrecedenceMap.get(token.getContent());
     }
 
     private Node parseAtom() {
@@ -85,6 +85,11 @@ public class Parser {
     private Node parsePrefixedUnaryOp() {
         Token maybeUnaryOp = current();
         if (maybeUnaryOp.getType() == TokenType.UNARY_OP) {
+            UnaryOperatorPosition position = unaryOperatorPositions.get(maybeUnaryOp.getContent());
+            if (!position.canUseAsPrefix()) {
+                throw new ParserException("Cannot use '" + maybeUnaryOp.getContent() + "' as prefixed unary operator", maybeUnaryOp);
+            }
+
             next();
             if (!isNotEof()) {
                 throw new ParserException("Unary operator has no target", maybeUnaryOp);
@@ -101,8 +106,9 @@ public class Parser {
 
         Token maybeUnaryOp = currentOrNull();
         if (maybeUnaryOp != null && maybeUnaryOp.getType() == TokenType.UNARY_OP) {
-            if ("!".equals(maybeUnaryOp.getContent())) {
-                throw new ParserException("Cannot use '!' as a suffixed unary operator", maybeUnaryOp);
+            UnaryOperatorPosition position = unaryOperatorPositions.get(maybeUnaryOp.getContent());
+            if (!position.canUseAsSuffix()) {
+                throw new ParserException("Cannot use '" + maybeUnaryOp.getContent() + "' as suffixed unary operator", maybeUnaryOp);
             }
 
             next();

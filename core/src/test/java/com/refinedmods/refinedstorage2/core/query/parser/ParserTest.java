@@ -194,7 +194,7 @@ class ParserTest {
     }
 
     @Test
-    void Test_invalid_suffix_unary_operator() {
+    void Test_invalid_suffixed_unary_operator() {
         // Act
         builder
             .token("true", TokenType.IDENTIFIER)
@@ -202,7 +202,7 @@ class ParserTest {
 
         // Assert
         ParserException e = assertThrows(ParserException.class, () -> builder.getNodes());
-        assertThat(e.getMessage()).isEqualTo("Cannot use '!' as a suffixed unary operator");
+        assertThat(e.getMessage()).isEqualTo("Cannot use '!' as suffixed unary operator");
         assertThat(e.getToken().getContent()).isEqualTo("!");
     }
 
