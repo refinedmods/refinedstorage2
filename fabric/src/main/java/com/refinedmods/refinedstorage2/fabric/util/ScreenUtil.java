@@ -27,7 +27,7 @@ public class ScreenUtil {
     }
 
     private static void loadVersionInformationLines() {
-        VERSION_INFO_LINES.add("Refined Storage 2 for Fabric");
+        VERSION_INFO_LINES.add("Refined Storage for Fabric");
         VERSION_INFO_LINES.add("Milestone 1");
 
         FabricLoader.getInstance().getModContainer("refinedstorage2-fabric").ifPresent(platform -> VERSION_INFO_LINES.add("Platform " + getVersion(platform)));

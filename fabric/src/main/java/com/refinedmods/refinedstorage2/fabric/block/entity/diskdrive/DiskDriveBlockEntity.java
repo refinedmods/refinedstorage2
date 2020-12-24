@@ -6,6 +6,7 @@ import alexiil.mc.lib.attributes.item.ItemInvSlotChangeListener;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
+import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.BlockEntityWithDrops;
@@ -19,7 +20,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
@@ -99,7 +102,17 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     @Override
     public void fromClientTag(CompoundTag tag) {
         if (tag.contains("states")) {
-            driveState = new DiskDriveState(tag.getList("states", NbtType.BYTE));
+            ListTag statesList = tag.getList("states", NbtType.BYTE);
+
+            driveState = new DiskDriveState(statesList.size());
+
+            for (int i = 0; i < statesList.size(); ++i) {
+                int idx = ((ByteTag) statesList.get(i)).getInt();
+                if (idx < 0 || idx >= DiskState.values().length) {
+                    idx = DiskState.NONE.ordinal();
+                }
+                driveState.setState(i, DiskState.values()[idx]);
+            }
 
             BlockState state = world.getBlockState(pos);
             world.updateListeners(pos, state, state, 1 | 2);
@@ -108,7 +121,11 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
     @Override
     public CompoundTag toClientTag(CompoundTag tag) {
-        tag.put("states", node.createState().getTag());
+        ListTag statesList = new ListTag();
+        for (DiskState state : node.createState().getStates()) {
+            statesList.add(ByteTag.of((byte) state.ordinal()));
+        }
+        tag.put("states", statesList);
         return tag;
     }
 

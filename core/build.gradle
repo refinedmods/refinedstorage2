@@ -1,5 +1,6 @@
 plugins {
     id 'fabric-loom' version '0.5-SNAPSHOT'
+    id 'jacoco'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -38,4 +39,12 @@ processResources {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+jacoco {
+    toolVersion = "0.8.5"
+}
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
 }

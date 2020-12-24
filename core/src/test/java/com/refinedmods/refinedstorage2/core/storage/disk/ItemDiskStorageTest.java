@@ -6,6 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.Optional;
 
@@ -15,111 +17,66 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RefinedStorage2Test
-// TODO Improve tests to use parameterized.
 class ItemDiskStorageTest {
     private final ItemDiskStorage disk = new ItemDiskStorage(100);
 
-    @Test
-    void Test_adding_an_item() {
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void Test_adding_an_item(Action action) {
         // Arrange
         ItemStack stack = new ItemStack(Items.DIAMOND, 32);
 
         // Act
-        Optional<ItemStack> remainder = disk.insert(stack, 100, Action.EXECUTE);
+        Optional<ItemStack> remainder = disk.insert(stack, 64, action);
 
         // Assert
         assertThat(remainder).isEmpty();
 
-        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 100));
-
-        assertThat(disk.getStored()).isEqualTo(100);
+        if (action == Action.EXECUTE) {
+            assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 64));
+            assertThat(disk.getStored()).isEqualTo(64);
+        } else {
+            assertItemStackListContents(disk.getStacks());
+            assertThat(disk.getStored()).isZero();
+        }
     }
 
-    @Test
-    void Test_adding_an_item_simulated() {
-        // Arrange
-        ItemStack stack = new ItemStack(Items.DIAMOND, 32);
-
-        // Act
-        Optional<ItemStack> remainder = disk.insert(stack, 64, Action.SIMULATE);
-
-        // Assert
-        assertThat(remainder).isEmpty();
-
-        assertItemStackListContents(disk.getStacks());
-
-        assertThat(disk.getStored()).isZero();
-    }
-
-    @Test
-    void Test_adding_an_item_and_exceeding_capacity() {
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void Test_adding_an_item_and_exceeding_capacity(Action action) {
         // Arrange
         ItemStack stack1 = new ItemStack(Items.DIAMOND);
         ItemStack stack2 = new ItemStack(Items.DIRT);
 
         // Act
         Optional<ItemStack> remainder1 = disk.insert(stack1, 60, Action.EXECUTE);
-        Optional<ItemStack> remainder2 = disk.insert(stack2, 45, Action.EXECUTE);
+        Optional<ItemStack> remainder2 = disk.insert(stack2, 45, action);
 
         // Assert
         assertThat(remainder1).isEmpty();
+
         assertThat(remainder2).isNotEmpty();
         assertThat(remainder2.get()).isNotSameAs(stack1).isNotSameAs(stack2);
-
         assertItemStack(remainder2.get(), new ItemStack(Items.DIRT, 5));
-        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 60), new ItemStack(Items.DIRT, 40));
 
-        assertThat(disk.getStored()).isEqualTo(100);
+        if (action == Action.EXECUTE) {
+            assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 60), new ItemStack(Items.DIRT, 40));
+            assertThat(disk.getStored()).isEqualTo(100);
+        } else {
+            assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 60));
+            assertThat(disk.getStored()).isEqualTo(60);
+        }
     }
 
-    @Test
-    void Test_adding_an_item_and_exceeding_capacity_simulated() {
-        // Arrange
-        ItemStack stack1 = new ItemStack(Items.DIAMOND);
-        ItemStack stack2 = new ItemStack(Items.DIRT);
-
-        // Act
-        Optional<ItemStack> remainder1 = disk.insert(stack1, 60, Action.EXECUTE);
-        Optional<ItemStack> remainder2 = disk.insert(stack2, 45, Action.SIMULATE);
-
-        // Assert
-        assertThat(remainder1).isEmpty();
-        assertThat(remainder2).isNotEmpty();
-        assertThat(remainder2.get()).isNotSameAs(stack1).isNotSameAs(stack2);
-
-        assertItemStack(remainder2.get(), new ItemStack(Items.DIRT, 5));
-        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 60));
-
-        assertThat(disk.getStored()).isEqualTo(60);
-    }
-
-    @Test
-    void Test_adding_items_to_an_already_full_disk_and_exceeding_capacity() {
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void Test_adding_items_to_an_already_full_disk_and_exceeding_capacity(Action action) {
         // Arrange
         ItemStack stack = new ItemStack(Items.DIAMOND);
 
         // Act
         Optional<ItemStack> remainder1 = disk.insert(stack, 100, Action.EXECUTE);
-        Optional<ItemStack> remainder2 = disk.insert(stack, 101, Action.EXECUTE);
-
-        // Assert
-        assertThat(remainder1).isEmpty();
-
-        assertThat(remainder2).isPresent();
-        assertItemStack(remainder2.get(), new ItemStack(Items.DIAMOND, 101));
-
-        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 100));
-        assertThat(disk.getStored()).isEqualTo(100);
-    }
-
-    @Test
-    void Test_adding_items_to_an_already_full_disk_and_exceeding_capacity_simulated() {
-        // Arrange
-        ItemStack stack = new ItemStack(Items.DIAMOND);
-
-        // Act
-        Optional<ItemStack> remainder1 = disk.insert(stack, 100, Action.EXECUTE);
-        Optional<ItemStack> remainder2 = disk.insert(stack, 101, Action.SIMULATE);
+        Optional<ItemStack> remainder2 = disk.insert(stack, 101, action);
 
         // Assert
         assertThat(remainder1).isEmpty();
@@ -171,118 +128,79 @@ class ItemDiskStorageTest {
         assertThat(disk.getStored()).isZero();
     }
 
-    @Test
-    void Test_extracting_item_partly() {
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void Test_extracting_item_partly(Action action) {
         // Arrange
         ItemStack stack = new ItemStack(Items.DIAMOND);
 
         // Act
         disk.insert(stack, 32, Action.EXECUTE);
-        Optional<ItemStack> result = disk.extract(stack, 2, Action.EXECUTE);
+        Optional<ItemStack> result = disk.extract(stack, 2, action);
 
         // Assert
         assertThat(result).isNotEmpty();
         assertThat(result.get()).isNotSameAs(stack);
 
-        assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 2));
-        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 30));
-
-        assertThat(disk.getStored()).isEqualTo(30);
+        if (action == Action.EXECUTE) {
+            assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 2));
+            assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 30));
+            assertThat(disk.getStored()).isEqualTo(30);
+        } else {
+            assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 2));
+            assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 32));
+            assertThat(disk.getStored()).isEqualTo(32);
+        }
     }
 
-    @Test
-    void Test_extracting_item_completely() {
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void Test_extracting_item_completely(Action action) {
         // Arrange
         ItemStack stack = new ItemStack(Items.DIAMOND);
 
         // Act
         disk.insert(stack, 32, Action.EXECUTE);
-        Optional<ItemStack> result = disk.extract(stack, 32, Action.EXECUTE);
+        Optional<ItemStack> result = disk.extract(stack, 32, action);
 
         // Assert
         assertThat(result).isNotEmpty();
         assertThat(result.get()).isNotSameAs(stack);
 
-        assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 32));
-        assertItemStackListContents(disk.getStacks());
-
-        assertThat(disk.getStored()).isZero();
+        if (action == Action.EXECUTE) {
+            assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 32));
+            assertItemStackListContents(disk.getStacks());
+            assertThat(disk.getStored()).isZero();
+        } else {
+            assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 32));
+            assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 32));
+            assertThat(disk.getStored()).isEqualTo(32);
+        }
     }
 
-    @Test
-    void Test_extracting_item_more_than_is_available() {
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void Test_extracting_item_more_than_is_available(Action action) {
         // Arrange
         ItemStack stack = new ItemStack(Items.DIAMOND);
 
         // Act
         disk.insert(stack, 32, Action.EXECUTE);
-        Optional<ItemStack> result = disk.extract(stack, 33, Action.EXECUTE);
+        Optional<ItemStack> result = disk.extract(stack, 33, action);
 
         // Assert
         assertThat(result).isNotEmpty();
         assertThat(result.get()).isNotSameAs(stack);
 
-        assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 32));
-        assertItemStackListContents(disk.getStacks());
-
-        assertThat(disk.getStored()).isZero();
-    }
-
-    @Test
-    void Test_extracting_item_partly_simulated() {
-        // Arrange
-        ItemStack stack = new ItemStack(Items.DIAMOND);
-
-        // Act
-        disk.insert(stack, 32, Action.EXECUTE);
-        Optional<ItemStack> result = disk.extract(stack, 2, Action.SIMULATE);
-
-        // Assert
-        assertThat(result).isNotEmpty();
-        assertThat(result.get()).isNotSameAs(stack);
-
-        assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 2));
-        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 32));
-
-        assertThat(disk.getStored()).isEqualTo(32);
-    }
-
-    @Test
-    void Test_extracting_item_completely_simulated() {
-        // Arrange
-        ItemStack stack = new ItemStack(Items.DIAMOND);
-
-        // Act
-        disk.insert(stack, 32, Action.EXECUTE);
-        Optional<ItemStack> result = disk.extract(stack, 32, Action.SIMULATE);
-
-        // Assert
-        assertThat(result).isNotEmpty();
-        assertThat(result.get()).isNotSameAs(stack);
-
-        assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 32));
-        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 32));
-
-        assertThat(disk.getStored()).isEqualTo(32);
-    }
-
-    @Test
-    void Test_extracting_item_more_than_is_available_simulated() {
-        // Arrange
-        ItemStack stack = new ItemStack(Items.DIAMOND);
-
-        // Act
-        disk.insert(stack, 32, Action.EXECUTE);
-        Optional<ItemStack> result = disk.extract(stack, 33, Action.SIMULATE);
-
-        // Assert
-        assertThat(result).isNotEmpty();
-        assertThat(result.get()).isNotSameAs(stack);
-
-        assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 32));
-        assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 32));
-
-        assertThat(disk.getStored()).isEqualTo(32);
+        if (action == Action.EXECUTE) {
+            assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 32));
+            assertItemStackListContents(disk.getStacks());
+            assertThat(disk.getStored()).isZero();
+        } else {
+            assertItemStack(result.get(), new ItemStack(Items.DIAMOND, 32));
+            assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 32));
+            assertThat(disk.getStored()).isEqualTo(32);
+        }
     }
 
     @Test
