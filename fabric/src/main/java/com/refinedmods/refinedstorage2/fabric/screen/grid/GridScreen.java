@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserException;
+import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.query.FabricGridStackDetailsProvider;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
@@ -93,7 +94,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
     private int calculateVisibleRows() {
         int screenSpaceAvailable = height - TOP_HEIGHT - BOTTOM_HEIGHT;
-        int maxRows = Integer.MAX_VALUE;
+        int maxRows = RefinedStorage2Config.get().getGrid().getMaxRowsStretch();
 
         return Math.max(3, Math.min((screenSpaceAvailable / 18) - 3, maxRows));
     }
@@ -172,7 +173,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
     }
 
     private void renderAmount(MatrixStack matrixStack, int x, int y, String amount, int color) {
-        boolean large = this.client.forcesUnicodeFont(); /* TODO RS large font config */
+        boolean large = this.client.forcesUnicodeFont() || RefinedStorage2Config.get().getGrid().isLargeFont();
 
         matrixStack.push();
         matrixStack.translate(x, y, 300);
