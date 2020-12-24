@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.fabric.screen.widget;
+package com.refinedmods.refinedstorage2.core.util;
 
 import java.util.List;
 
