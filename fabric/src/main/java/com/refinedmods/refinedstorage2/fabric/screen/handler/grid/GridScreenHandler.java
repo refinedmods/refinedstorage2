@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.PlayerGridInteractor;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.query.FabricGridStackFactory;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridItemUpdatePacket;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.BaseScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
@@ -23,7 +24,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private static final Logger LOGGER = LogManager.getLogger(GridScreenHandler.class);
 
     private final PlayerInventory playerInventory;
-    private final GridView view = new GridView();
+    private final GridView view = new GridView(new FabricGridStackFactory());
 
     private StorageChannel<ItemStack> storageChannel; // TODO - Support changing of the channel.
     private GridEventHandler eventHandler;

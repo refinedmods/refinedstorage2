@@ -2,12 +2,12 @@ package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
+import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserException;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.query.FabricGridStackDetailsProvider;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
@@ -34,7 +34,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
     private static final int BOTTOM_HEIGHT = 99;
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
     private static final int COLUMNS = 9;
-    private static final GridQueryParser<ItemStack> QUERY_PARSER = new GridQueryParser<>(new FabricGridStackDetailsProvider());
+    private static final GridQueryParser<ItemStack> QUERY_PARSER = new GridQueryParser<>();
 
     private ScrollbarWidget scrollbar;
     private SearchFieldWidget searchField;
@@ -140,15 +140,19 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
                 int slotX = x + 8 + (column * 18);
                 int slotY = y + 20 + (row * 18);
 
-                ItemStack stack = null;
+                GridStack<ItemStack> stack = null;
                 if (i < view.getStacks().size()) {
                     stack = view.getStacks().get(i);
 
                     setZOffset(100);
                     itemRenderer.zOffset = 100.0F;
 
-                    itemRenderer.renderInGuiWithOverrides(client.player, stack, slotX, slotY);
-                    renderAmount(matrices, slotX, slotY, String.valueOf(stack.getCount()), Formatting.WHITE.getColorValue());
+                    itemRenderer.renderInGuiWithOverrides(client.player, stack.getStack(), slotX, slotY);
+
+                    String text = stack.isZeroed() ? "0" : String.valueOf(stack.getStack().getCount());
+                    Integer color = stack.isZeroed() ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue();
+
+                    renderAmount(matrices, slotX, slotY, text, color);
 
                     setZOffset(0);
                     itemRenderer.zOffset = 0.0F;
@@ -163,7 +167,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
                     if (stack != null) {
                         gridSlotNumber = i;
-                        renderTooltip(matrices, stack, mouseX, mouseY);
+                        renderTooltip(matrices, stack.getStack(), mouseX, mouseY);
                     }
                 }
 
@@ -206,10 +210,10 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         ItemStack cursorStack = playerInventory.getCursorStack();
 
         if (!getScreenHandler().getView().getStacks().isEmpty() && gridSlotNumber >= 0 && cursorStack.isEmpty()) {
-            ItemStack stack = getScreenHandler().getView().getStacks().get(gridSlotNumber);
+            GridStack<ItemStack> stack = getScreenHandler().getView().getStacks().get(gridSlotNumber);
 
             PacketUtil.sendToServer(GridExtractPacket.ID, buf -> {
-                PacketUtil.writeItemStackWithoutCount(buf, stack);
+                PacketUtil.writeItemStackWithoutCount(buf, stack.getStack());
                 GridExtractPacket.writeMode(buf, getExtractMode(clickedButton));
             });
 

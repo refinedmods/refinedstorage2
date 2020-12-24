@@ -6,17 +6,17 @@ import net.minecraft.item.ItemStack;
 import java.util.Comparator;
 
 public enum GridSorter {
-    QUANTITY((a, b) -> Integer.compare(a.getCount(), b.getCount())),
-    NAME((a, b) -> a.getName().getString().compareTo(b.getName().getString())),
-    ID((a, b) -> Integer.compare(Item.getRawId(a.getItem()), Item.getRawId(b.getItem())));
+    QUANTITY((a, b) -> Integer.compare(a.getStack().getCount(), b.getStack().getCount())),
+    NAME((a, b) -> a.getName().compareTo(b.getName())),
+    ID((a, b) -> Integer.compare(Item.getRawId(a.getStack().getItem()), Item.getRawId(b.getStack().getItem())));
 
-    private final Comparator<ItemStack> comparator;
+    private final Comparator<GridStack<ItemStack>> comparator;
 
-    GridSorter(Comparator<ItemStack> comparator) {
+    GridSorter(Comparator<GridStack<ItemStack>> comparator) {
         this.comparator = comparator;
     }
 
-    public Comparator<ItemStack> getComparator() {
+    public Comparator<GridStack<ItemStack>> getComparator() {
         return comparator;
     }
 }

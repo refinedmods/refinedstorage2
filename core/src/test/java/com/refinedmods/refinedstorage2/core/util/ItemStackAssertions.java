@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.core.util;
 
+import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import net.minecraft.item.ItemStack;
 
@@ -25,6 +26,10 @@ public class ItemStackAssertions {
         assertThat(actual.stream().map(ItemStackWrapper::new).collect(Collectors.toList())).containsExactlyInAnyOrder(wrappers);
     }
 
+    public static void assertItemGridStackListContents(Collection<GridStack<ItemStack>> actual, ItemStack... expected) {
+        assertItemStackListContents(actual.stream().map(GridStack::getStack).collect(Collectors.toList()), expected);
+    }
+
     public static void assertOrderedItemStackListContents(Collection<ItemStack> actual, ItemStack... expected) {
         ItemStackWrapper[] wrappers = new ItemStackWrapper[expected.length];
         for (int i = 0; i < expected.length; ++i) {
@@ -32,6 +37,10 @@ public class ItemStackAssertions {
         }
 
         assertThat(actual.stream().map(ItemStackWrapper::new).collect(Collectors.toList())).containsExactly(wrappers);
+    }
+
+    public static void assertOrderedItemGridStackListContents(Collection<GridStack<ItemStack>> actual, ItemStack... expected) {
+        assertOrderedItemStackListContents(actual.stream().map(GridStack::getStack).collect(Collectors.toList()), expected);
     }
 
     public static void assertItemStack(ItemStack actual, ItemStack expected) {

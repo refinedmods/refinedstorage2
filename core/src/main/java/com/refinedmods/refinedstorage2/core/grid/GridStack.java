@@ -1,18 +1,25 @@
-package com.refinedmods.refinedstorage2.core.grid.query;
+package com.refinedmods.refinedstorage2.core.grid;
 
 import java.util.Set;
 
-public class GridStackDetails {
+public class GridStack<T> {
+    private final T stack;
     private final String name;
     private final String modId;
     private final String modName;
     private final Set<String> tags;
+    private boolean zeroed;
 
-    public GridStackDetails(String name, String modId, String modName, Set<String> tags) {
+    public GridStack(T stack, String name, String modId, String modName, Set<String> tags) {
+        this.stack = stack;
         this.name = name;
         this.modId = modId;
         this.modName = modName;
         this.tags = tags;
+    }
+
+    public T getStack() {
+        return stack;
     }
 
     public String getName() {
@@ -29,5 +36,13 @@ public class GridStackDetails {
 
     public Set<String> getTags() {
         return tags;
+    }
+
+    public boolean isZeroed() {
+        return zeroed;
+    }
+
+    public void setZeroed(boolean zeroed) {
+        this.zeroed = zeroed;
     }
 }
