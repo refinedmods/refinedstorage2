@@ -13,8 +13,8 @@ public class RefinedStorage2Config implements ConfigData {
     public static class Grid {
         private boolean largeFont = false;
 
-        @ConfigEntry.BoundedDiscrete(min = 3L, max = Integer.MAX_VALUE)
-        private int maxRowsStretch = Integer.MAX_VALUE;
+        @ConfigEntry.BoundedDiscrete(min = 3L, max = 256)
+        private int maxRowsStretch = 256;
 
         public boolean isLargeFont() {
             return largeFont;

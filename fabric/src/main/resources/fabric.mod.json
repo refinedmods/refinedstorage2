@@ -21,6 +21,9 @@
     ],
     "client": [
       "com.refinedmods.refinedstorage2.fabric.RefinedStorage2ClientMod"
+    ],
+    "modmenu": [
+      "com.refinedmods.refinedstorage2.fabric.ModMenuIntegration"
     ]
   },
   "mixins": [
