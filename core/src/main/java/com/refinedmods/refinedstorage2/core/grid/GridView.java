@@ -5,10 +5,7 @@ import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import net.minecraft.item.ItemStack;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -17,7 +14,7 @@ public class GridView {
     private final StackList<ItemStack> list = new ItemStackList();
     private final Function<ItemStack, GridStack<ItemStack>> stackFactory;
 
-    private List<GridStack<ItemStack>> stacks = Collections.emptyList();
+    private List<GridStack<ItemStack>> stacks = new ArrayList<>();
     private Comparator<GridStack<ItemStack>> sorter = GridSorter.QUANTITY.getComparator();
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
     private Predicate<GridStack<ItemStack>> filter = stack -> true;
@@ -127,7 +124,6 @@ public class GridView {
         if (pos < 0) {
             pos = -pos - 1;
         }
-
         stacks.add(pos, stack);
     }
 
