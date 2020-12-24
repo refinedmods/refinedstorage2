@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
 
 public class GridView {
     private final StackList<ItemStack> list = new ItemStackList();
+    private final Function<ItemStack, GridStack<ItemStack>> stackFactory;
+
     private List<GridStack<ItemStack>> stacks = Collections.emptyList();
     private Comparator<GridStack<ItemStack>> sorter = GridSorter.QUANTITY.getComparator();
-    private Predicate<GridStack<ItemStack>> filter = stack -> true;
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
-    private Runnable listener = () -> {
-    };
+    private Predicate<GridStack<ItemStack>> filter = stack -> true;
+    private Runnable listener;
     private boolean preventSorting;
-    private final Function<ItemStack, GridStack<ItemStack>> stackFactory;
 
     public GridView(Function<ItemStack, GridStack<ItemStack>> stackFactory) {
         this.stackFactory = stackFactory;
@@ -55,6 +55,7 @@ public class GridView {
         if (sortingDirection == GridSortingDirection.ASCENDING) {
             return sorter.thenComparing(identity);
         }
+
         return sorter.thenComparing(identity).reversed();
     }
 
@@ -74,57 +75,50 @@ public class GridView {
             .sorted(getSorter())
             .filter(filter)
             .collect(Collectors.toList());
-        this.listener.run();
+
+        notifyListener();
     }
 
-    public Optional<GridStack<ItemStack>> onChange(ItemStack template, int amount) {
+    public void onChange(ItemStack template, int amount) {
+        StackListResult<ItemStack> stack;
         if (amount < 0) {
-            return remove(template, Math.abs(amount));
+            stack = list.remove(template, Math.abs(amount)).orElseThrow(RuntimeException::new);
         } else {
-            return add(template, amount);
+            stack = list.add(template, amount);
+        }
+
+        Optional<GridStack<ItemStack>> gridStack = findGridStack(stack.getStack());
+        if (gridStack.isPresent()) {
+            handleChangeForExistingStack(stack, gridStack.get());
+        } else {
+            handleChangeForNewStack(stack);
         }
     }
 
-    private Optional<GridStack<ItemStack>> add(ItemStack template, int amount) {
-        StackListResult<ItemStack> result = list.add(template, amount);
-
-        Optional<GridStack<ItemStack>> stack = findStack(result.getStack());
-        if (stack.isPresent()) {
-            if (!preventSorting) {
-                stacks.remove(stack.get());
-                addIntoView(stack.get());
-                listener.run();
-            }
-            return stack;
-        } else {
-            GridStack<ItemStack> newStack = stackFactory.apply(result.getStack());
-            if (filter.test(newStack)) {
-                addIntoView(newStack);
-                listener.run();
-                return Optional.of(newStack);
-            }
-            return Optional.empty();
+    private void handleChangeForNewStack(StackListResult<ItemStack> stack) {
+        GridStack<ItemStack> gridStack = stackFactory.apply(stack.getStack());
+        if (filter.test(gridStack)) {
+            addIntoView(gridStack);
+            notifyListener();
         }
     }
 
-    private Optional<GridStack<ItemStack>> remove(ItemStack template, int amount) {
-        return list.remove(template, amount).flatMap(result -> {
-            return findStack(result.getStack()).map(stack -> {
-                if (!preventSorting) {
-                    stacks.remove(stack);
-                    if (result.isAvailable()) {
-                        addIntoView(stack);
-                    }
-                    listener.run();
-                } else if (!result.isAvailable()) {
-                    stack.setZeroed(true);
-                }
-                return stack;
-            });
-        });
+    private void handleChangeForExistingStack(StackListResult<ItemStack> stack, GridStack<ItemStack> gridStack) {
+        if (!preventSorting) {
+            if (!filter.test(gridStack) || !stack.isAvailable()) {
+                stacks.remove(gridStack);
+                notifyListener();
+            } else if (stack.isAvailable()) {
+                stacks.remove(gridStack);
+                addIntoView(gridStack);
+                notifyListener();
+            }
+        } else if (!stack.isAvailable()) {
+            gridStack.setZeroed(true);
+        }
     }
 
-    private Optional<GridStack<ItemStack>> findStack(ItemStack stack) {
+    private Optional<GridStack<ItemStack>> findGridStack(ItemStack stack) {
         return stacks.stream().filter(s -> s.getStack() == stack).findFirst();
     }
 
@@ -135,6 +129,12 @@ public class GridView {
         }
 
         stacks.add(pos, stack);
+    }
+
+    private void notifyListener() {
+        if (listener != null) {
+            listener.run();
+        }
     }
 
     public List<GridStack<ItemStack>> getStacks() {

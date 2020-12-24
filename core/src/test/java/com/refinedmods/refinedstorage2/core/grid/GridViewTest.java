@@ -7,11 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.util.Optional;
-
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemGridStackListContents;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertOrderedItemGridStackListContents;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
@@ -130,12 +127,9 @@ class GridViewTest {
         view.sort();
 
         // Act
-        Optional<GridStack<ItemStack>> result = view.onChange(new ItemStack(Items.BUCKET), 500);
+        view.onChange(new ItemStack(Items.BUCKET), 500);
 
         // Assert
-        assertThat(result).isPresent();
-        assertThat(result.get().isZeroed()).isFalse();
-
         switch (sorter) {
             case QUANTITY:
                 assertOrderedItemGridStackListContents(
@@ -183,12 +177,9 @@ class GridViewTest {
         view.sort();
 
         // Act
-        Optional<GridStack<ItemStack>> result = view.onChange(new ItemStack(Items.DIRT), 500);
+        view.onChange(new ItemStack(Items.DIRT), 500);
 
         // Assert
-        assertThat(result).isPresent();
-        assertThat(result.get().isZeroed()).isFalse();
-
         switch (sorter) {
             case QUANTITY:
                 assertOrderedItemGridStackListContents(
@@ -236,12 +227,9 @@ class GridViewTest {
         view.sort();
 
         // Act
-        Optional<GridStack<ItemStack>> result = view.onChange(new ItemStack(Items.SPONGE), 3);
+        view.onChange(new ItemStack(Items.SPONGE), 3);
 
         // Assert
-        assertThat(result).isPresent();
-        assertThat(result.get().isZeroed()).isFalse();
-
         switch (sorter) {
             case QUANTITY:
                 assertOrderedItemGridStackListContents(
@@ -292,18 +280,10 @@ class GridViewTest {
         view.sort();
 
         // Act
-        Optional<GridStack<ItemStack>> result1 = view.onChange(new ItemStack(Items.SPONGE), 3);
-        Optional<GridStack<ItemStack>> result2 = view.onChange(new ItemStack(Items.SPONGE), 1);
+        view.onChange(new ItemStack(Items.SPONGE), 3);
+        view.onChange(new ItemStack(Items.SPONGE), 1);
 
         // Assert
-        assertThat(result1).isPresent();
-        assertThat(result2).isPresent();
-
-        assertThat(result1.get()).isSameAs(result2.get());
-
-        assertThat(result1.get().isZeroed()).isFalse();
-        assertThat(result2.get().isZeroed()).isFalse();
-
         switch (sorter) {
             case QUANTITY:
                 assertOrderedItemGridStackListContents(
@@ -354,12 +334,9 @@ class GridViewTest {
         view.sort();
 
         // Act
-        Optional<GridStack<ItemStack>> result = view.onChange(new ItemStack(Items.GLASS), -3);
+        view.onChange(new ItemStack(Items.GLASS), -3);
 
         // Assert
-        assertThat(result).isPresent();
-        assertThat(result.get().isZeroed()).isFalse();
-
         switch (sorter) {
             case QUANTITY:
                 assertOrderedItemGridStackListContents(
@@ -408,12 +385,9 @@ class GridViewTest {
 
         // Act
         view.onChange(new ItemStack(Items.SPONGE), 10);
-        Optional<GridStack<ItemStack>> result = view.onChange(new ItemStack(Items.SPONGE), -8);
+        view.onChange(new ItemStack(Items.SPONGE), -8);
 
         // Assert
-        assertThat(result).isPresent();
-        assertThat(result.get().isZeroed()).isFalse();
-
         switch (sorter) {
             case QUANTITY:
                 assertOrderedItemGridStackListContents(
@@ -464,12 +438,9 @@ class GridViewTest {
         view.sort();
 
         // Act
-        Optional<GridStack<ItemStack>> result = view.onChange(new ItemStack(Items.BUCKET), -5);
+        view.onChange(new ItemStack(Items.BUCKET), -5);
 
         // Assert
-        assertThat(result).isPresent();
-        assertThat(result.get().isZeroed()).isFalse();
-
         switch (sorter) {
             case QUANTITY:
                 assertOrderedItemGridStackListContents(
@@ -505,8 +476,8 @@ class GridViewTest {
         view.sort();
 
         // Act & assert
-        assertThat(view.onChange(new ItemStack(Items.DIRT), 10)).isPresent();
-        assertThat(view.onChange(new ItemStack(Items.GLASS), 10)).isPresent();
+        view.onChange(new ItemStack(Items.DIRT), 10);
+        view.onChange(new ItemStack(Items.GLASS), 10);
 
         assertItemGridStackListContents(view.getStacks(), new ItemStack(Items.DIRT, 10), new ItemStack(Items.GLASS, 10));
 
@@ -515,8 +486,8 @@ class GridViewTest {
 
         assertItemGridStackListContents(view.getStacks(), new ItemStack(Items.DIRT, 10));
 
-        assertThat(view.onChange(new ItemStack(Items.DIRT), 5)).isPresent();
-        assertThat(view.onChange(new ItemStack(Items.GLASS), 2)).isEmpty();
+        view.onChange(new ItemStack(Items.DIRT), 5);
+        view.onChange(new ItemStack(Items.GLASS), 2);
 
         assertItemGridStackListContents(view.getStacks(), new ItemStack(Items.DIRT, 15));
 
@@ -640,9 +611,7 @@ class GridViewTest {
 
         view.setPreventSorting(true);
 
-        Optional<GridStack<ItemStack>> result = view.onChange(new ItemStack(Items.GLASS), -8);
-        assertThat(result).isPresent();
-        assertThat(result.get().isZeroed()).isFalse();
+        view.onChange(new ItemStack(Items.GLASS), -8);
         assertOrderedItemGridStackListContents(view.getStacks(), new ItemStack(Items.GLASS, 7), new ItemStack(Items.DIRT, 10));
 
         view.setPreventSorting(false);
@@ -667,9 +636,7 @@ class GridViewTest {
 
         view.setPreventSorting(true);
 
-        Optional<GridStack<ItemStack>> result = view.onChange(new ItemStack(Items.GLASS), -15);
-        assertThat(result).isPresent();
-        assertThat(result.get().isZeroed()).isTrue();
+        view.onChange(new ItemStack(Items.GLASS), -15);
         assertOrderedItemGridStackListContents(view.getStacks(), new ItemStack(Items.GLASS, 15), new ItemStack(Items.DIRT, 10));
 
         view.setPreventSorting(false);

@@ -4,11 +4,13 @@ import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.query.lexer.*;
 import com.refinedmods.refinedstorage2.core.query.parser.*;
 import com.refinedmods.refinedstorage2.core.query.parser.node.*;
+import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 public class GridQueryParser<T> {
@@ -34,6 +36,11 @@ public class GridQueryParser<T> {
             lexer.registerTokenMapping("!", TokenType.UNARY_OP);
             lexer.registerTokenMapping("@", TokenType.UNARY_OP);
             lexer.registerTokenMapping("$", TokenType.UNARY_OP);
+            lexer.registerTokenMapping(">", TokenType.UNARY_OP);
+            lexer.registerTokenMapping(">=", TokenType.UNARY_OP);
+            lexer.registerTokenMapping("<", TokenType.UNARY_OP);
+            lexer.registerTokenMapping("<=", TokenType.UNARY_OP);
+            lexer.registerTokenMapping("=", TokenType.UNARY_OP);
             lexer.registerTokenMapping("&&", TokenType.BIN_OP);
             lexer.registerTokenMapping("||", TokenType.BIN_OP);
             lexer.registerTokenMapping("(", TokenType.PAREN_OPEN);
@@ -54,6 +61,11 @@ public class GridQueryParser<T> {
             parser.registerUnaryOperator("!", UnaryOperatorPosition.PREFIX);
             parser.registerUnaryOperator("@", UnaryOperatorPosition.PREFIX);
             parser.registerUnaryOperator("$", UnaryOperatorPosition.PREFIX);
+            parser.registerUnaryOperator(">", UnaryOperatorPosition.PREFIX);
+            parser.registerUnaryOperator(">=", UnaryOperatorPosition.PREFIX);
+            parser.registerUnaryOperator("<", UnaryOperatorPosition.PREFIX);
+            parser.registerUnaryOperator("<=", UnaryOperatorPosition.PREFIX);
+            parser.registerUnaryOperator("=", UnaryOperatorPosition.PREFIX);
 
             parser.parse();
             return parser.getNodes();
@@ -115,16 +127,38 @@ public class GridQueryParser<T> {
             } else {
                 throw new GridQueryParserException(content.getRange(), "Tag filtering expects a literal", null);
             }
+        } else if (">".equals(operator)) {
+            return count(content, (actualCount, wantedCount) -> actualCount > wantedCount);
+        } else if (">=".equals(operator)) {
+            return count(content, (actualCount, wantedCount) -> actualCount >= wantedCount);
+        } else if ("<".equals(operator)) {
+            return count(content, (actualCount, wantedCount) -> actualCount < wantedCount);
+        } else if ("<=".equals(operator)) {
+            return count(content, (actualCount, wantedCount) -> actualCount <= wantedCount);
+        } else if ("=".equals(operator)) {
+            return count(content, Integer::equals);
         } else {
             throw new GridQueryParserException(content.getRange(), "Unsupported unary operator", null);
         }
     }
 
+    private Predicate<GridStack<T>> count(Node node, BiPredicate<Integer, Integer> predicate) throws GridQueryParserException {
+        if (!(node instanceof LiteralNode)) {
+            throw new GridQueryParserException(node.getRange(), "Count filtering expects a literal", null);
+        }
+
+        if (((LiteralNode) node).getToken().getType() != TokenType.INTEGER_NUMBER) {
+            throw new GridQueryParserException(node.getRange(), "Count filtering expects an integer number", null);
+        }
+
+        int wantedCount = Integer.parseInt(((LiteralNode) node).getToken().getContent());
+
+        return stack -> predicate.test(((ItemStack) stack.getStack()).getCount(), wantedCount);
+    }
+
     private Predicate<GridStack<T>> mod(String name) {
-        return stack -> {
-            return stack.getModName().trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT))
-                || stack.getModId().trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT));
-        };
+        return stack -> stack.getModName().trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT))
+            || stack.getModId().trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT));
     }
 
     private Predicate<GridStack<T>> tag(String name) {

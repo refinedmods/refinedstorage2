@@ -149,6 +149,79 @@ class GridQueryParserTest {
         assertThat(predicate.test(stack(new ItemStack(Items.FURNACE), "mc", "Minecraft"))).isFalse();
     }
 
+    @Test
+    void Test_less_than_count_query() throws GridQueryParserException {
+        // Act
+        Predicate<GridStack<ItemStack>> predicate = queryParser.parse("<5");
+
+        // Assert
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 5)))).isFalse();
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 4)))).isTrue();
+    }
+
+    @Test
+    void Test_less_than_equals_count_query() throws GridQueryParserException {
+        // Act
+        Predicate<GridStack<ItemStack>> predicate = queryParser.parse("<=5");
+
+        // Assert
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 6)))).isFalse();
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 5)))).isTrue();
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 4)))).isTrue();
+    }
+
+    @Test
+    void Test_greater_than_count_query() throws GridQueryParserException {
+        // Act
+        Predicate<GridStack<ItemStack>> predicate = queryParser.parse(">5");
+
+        // Assert
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 5)))).isFalse();
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 6)))).isTrue();
+    }
+
+    @Test
+    void Test_greater_than_equals_count_query() throws GridQueryParserException {
+        // Act
+        Predicate<GridStack<ItemStack>> predicate = queryParser.parse(">=5");
+
+        // Assert
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 4)))).isFalse();
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 5)))).isTrue();
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 6)))).isTrue();
+    }
+
+    @Test
+    void Test_equals_count_query() throws GridQueryParserException {
+        // Act
+        Predicate<GridStack<ItemStack>> predicate = queryParser.parse("=5");
+
+        // Assert
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 4)))).isFalse();
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 5)))).isTrue();
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 6)))).isFalse();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {">", ">=", "<", "<=", "="})
+    void Test_invalid_node_in_unary_count_operator(String operator) {
+        // Act
+        GridQueryParserException e = assertThrows(GridQueryParserException.class, () -> queryParser.parse(operator + "(1 && 1)"));
+
+        // Assert
+        assertThat(e.getMessage()).isEqualTo("Count filtering expects a literal");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {">", ">=", "<", "<=", "="})
+    void Test_invalid_token_in_unary_count_operator_literal(String operator) {
+        // Act
+        GridQueryParserException e = assertThrows(GridQueryParserException.class, () -> queryParser.parse(operator + "hello"));
+
+        // Assert
+        assertThat(e.getMessage()).isEqualTo("Count filtering expects an integer number");
+    }
+
     private GridStack<ItemStack> stack(ItemStack stack) {
         return stack(stack, "mc", "Minecraft");
     }
@@ -162,6 +235,4 @@ class GridQueryParserTest {
             new HashSet<>(Arrays.asList(tags))
         );
     }
-
-    // TODO: Filter for >=X amount of items
 }
