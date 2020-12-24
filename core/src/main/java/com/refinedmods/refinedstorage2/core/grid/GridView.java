@@ -21,6 +21,7 @@ public class GridView {
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
     private Runnable listener = () -> {
     };
+    private boolean preventSorting;
 
     public void setListener(Runnable listener) {
         this.listener = listener;
@@ -32,6 +33,14 @@ public class GridView {
 
     public void setFilter(Predicate<ItemStack> filter) {
         this.filter = filter;
+    }
+
+    public void setPreventSorting(boolean preventSorting) {
+        this.preventSorting = preventSorting;
+    }
+
+    public boolean isPreventSorting() {
+        return preventSorting;
     }
 
     private Comparator<ItemStack> getSorter() {
@@ -73,9 +82,17 @@ public class GridView {
         StackListResult<ItemStack> result = list.add(template, amount);
 
         if (filter.test(template)) {
-            stacks.remove(result.getStack());
-            reposition(result.getStack());
-            listener.run();
+            if (preventSorting) {
+                boolean newStack = !stacks.contains(result.getStack());
+                if (newStack) {
+                    reposition(result.getStack());
+                    listener.run();
+                }
+            } else {
+                stacks.remove(result.getStack());
+                reposition(result.getStack());
+                listener.run();
+            }
         }
     }
 
@@ -86,11 +103,15 @@ public class GridView {
             ItemStack resultingStack = result.get().getStack();
 
             if (filter.test(resultingStack)) {
-                stacks.remove(resultingStack);
-                if (result.get().isAvailable()) {
-                    reposition(resultingStack);
+                if (!preventSorting) {
+                    stacks.remove(resultingStack);
+                    if (result.get().isAvailable()) {
+                        reposition(resultingStack);
+                    }
+                    listener.run();
+                } else if (!result.get().isAvailable()) {
+                    // TODO Zeroing.
                 }
-                listener.run();
             }
         }
     }

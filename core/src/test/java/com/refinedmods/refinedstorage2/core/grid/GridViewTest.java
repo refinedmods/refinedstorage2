@@ -527,4 +527,95 @@ class GridViewTest {
         // Assert
         verify(listener, times(2)).run();
     }
+
+    @Test
+    void Test_listener_should_not_be_called_when_applying_change_for_a_stack_that_is_not_visible() {
+        // Arrange
+        GridView view = new GridView();
+        view.sort();
+
+        Runnable listener = mock(Runnable.class);
+        view.setListener(listener);
+        view.setFilter(stack -> stack.getItem() == Items.DIRT);
+
+        // Act
+        view.onChange(new ItemStack(Items.DIRT), 10);
+        view.onChange(new ItemStack(Items.DIRT), -5);
+
+        view.onChange(new ItemStack(Items.SPONGE), 10);
+        view.onChange(new ItemStack(Items.SPONGE), -5);
+
+        // Assert
+        verify(listener, times(2)).run();
+    }
+
+    @Test
+    void Test_when_preventing_sorting_sending_addition_should_not_reorder_stacks_if_changed_stack_already_exists() {
+        // Arrange
+        GridView view = new GridView();
+        view.setSorter(GridSorter.QUANTITY.getComparator());
+        view.setSortingDirection(GridSortingDirection.DESCENDING);
+        view.sort();
+
+        view.onChange(new ItemStack(Items.DIRT), 10);
+        view.onChange(new ItemStack(Items.GLASS), 15);
+
+        // Act & assert
+        assertOrderedItemStackListContents(view.getStacks(), new ItemStack(Items.GLASS, 15), new ItemStack(Items.DIRT, 10));
+
+        view.setPreventSorting(true);
+
+        view.onChange(new ItemStack(Items.DIRT), 8);
+        assertOrderedItemStackListContents(view.getStacks(), new ItemStack(Items.GLASS, 15), new ItemStack(Items.DIRT, 18));
+
+        view.setPreventSorting(false);
+        view.sort();
+
+        assertOrderedItemStackListContents(view.getStacks(), new ItemStack(Items.DIRT, 18), new ItemStack(Items.GLASS, 15));
+    }
+
+    @Test
+    void Test_when_preventing_sorting_sending_addition_should_reorder_stacks_if_changed_stack_does_not_exists() {
+        // Arrange
+        GridView view = new GridView();
+        view.setSorter(GridSorter.QUANTITY.getComparator());
+        view.setSortingDirection(GridSortingDirection.DESCENDING);
+        view.sort();
+
+        view.onChange(new ItemStack(Items.DIRT), 10);
+        view.onChange(new ItemStack(Items.GLASS), 15);
+
+        // Act & assert
+        assertOrderedItemStackListContents(view.getStacks(), new ItemStack(Items.GLASS, 15), new ItemStack(Items.DIRT, 10));
+
+        view.setPreventSorting(true);
+
+        view.onChange(new ItemStack(Items.SPONGE), 12);
+        assertOrderedItemStackListContents(view.getStacks(), new ItemStack(Items.GLASS, 15), new ItemStack(Items.SPONGE, 12), new ItemStack(Items.DIRT, 10));
+    }
+
+    @Test
+    void Test_when_preventing_sorting_sending_removal_should_not_reorder_stacks() {
+        // Arrange
+        GridView view = new GridView();
+        view.setSorter(GridSorter.QUANTITY.getComparator());
+        view.setSortingDirection(GridSortingDirection.DESCENDING);
+        view.sort();
+
+        view.onChange(new ItemStack(Items.DIRT), 10);
+        view.onChange(new ItemStack(Items.GLASS), 15);
+
+        // Act & assert
+        assertOrderedItemStackListContents(view.getStacks(), new ItemStack(Items.GLASS, 15), new ItemStack(Items.DIRT, 10));
+
+        view.setPreventSorting(true);
+
+        view.onChange(new ItemStack(Items.GLASS), -8);
+        assertOrderedItemStackListContents(view.getStacks(), new ItemStack(Items.GLASS, 7), new ItemStack(Items.DIRT, 10));
+
+        view.setPreventSorting(false);
+        view.sort();
+
+        assertOrderedItemStackListContents(view.getStacks(), new ItemStack(Items.DIRT, 10), new ItemStack(Items.GLASS, 7));
+    }
 }

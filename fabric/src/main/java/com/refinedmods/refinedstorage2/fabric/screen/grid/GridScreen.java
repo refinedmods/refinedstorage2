@@ -262,6 +262,20 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
             return true;
         }
 
+        if (hasShiftDown()) {
+            getScreenHandler().getView().setPreventSorting(true);
+        }
+
         return super.keyPressed(key, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean keyReleased(int key, int scanCode, int modifiers) {
+        if (getScreenHandler().getView().isPreventSorting()) {
+            getScreenHandler().getView().setPreventSorting(false);
+            getScreenHandler().getView().sort();
+        }
+
+        return super.keyReleased(key, scanCode, modifiers);
     }
 }
