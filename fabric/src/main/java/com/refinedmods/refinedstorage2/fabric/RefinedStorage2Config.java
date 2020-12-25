@@ -16,12 +16,18 @@ public class RefinedStorage2Config implements ConfigData {
         @ConfigEntry.BoundedDiscrete(min = 3L, max = 256)
         private int maxRowsStretch = 256;
 
+        private boolean preventSortingWhileShiftIsDown = true;
+
         public boolean isLargeFont() {
             return largeFont;
         }
 
         public int getMaxRowsStretch() {
             return maxRowsStretch;
+        }
+
+        public boolean isPreventSortingWhileShiftIsDown() {
+            return preventSortingWhileShiftIsDown;
         }
     }
 

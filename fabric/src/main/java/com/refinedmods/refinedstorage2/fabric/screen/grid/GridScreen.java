@@ -266,7 +266,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
             return true;
         }
 
-        if (hasShiftDown()) {
+        if (hasShiftDown() && RefinedStorage2Config.get().getGrid().isPreventSortingWhileShiftIsDown()) {
             getScreenHandler().getItemView().setPreventSorting(true);
         }
 
