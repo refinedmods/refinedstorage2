@@ -1,8 +1,11 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
+import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -15,11 +18,96 @@ import static org.mockito.Mockito.*;
 
 @RefinedStorage2Test
 public class GridViewTest {
+    private GridView<ItemStack> view;
+
+    @BeforeEach
+    void setUp() {
+        view = new GridView<>(new FakeGridStackFactory(), GridSorter.NAME.getComparator(), new ItemStackList());
+        view.setSorter(GridSorter.QUANTITY.getComparator());
+    }
+
+    @Test
+    void Test_sorting_ascending_with_identity_sort() {
+        // Arrange
+        view.setSorter(null);
+        view.setSortingDirection(GridSortingDirection.ASCENDING);
+
+        view.loadStack(new ItemStack(Items.DIRT), 10);
+        view.loadStack(new ItemStack(Items.DIRT), 5);
+        view.loadStack(new ItemStack(Items.GLASS), 1);
+        view.loadStack(new ItemStack(Items.BUCKET), 2);
+
+        // Act
+        view.sort();
+
+        // Assert
+        assertOrderedItemGridStackListContents(
+            view.getStacks(),
+            new ItemStack(Items.BUCKET, 2),
+            new ItemStack(Items.DIRT, 15),
+            new ItemStack(Items.GLASS, 1)
+        );
+    }
+
+    @Test
+    void Test_sorting_descending_with_identity_sort() {
+        // Arrange
+        view.setSorter(null);
+        view.setSortingDirection(GridSortingDirection.DESCENDING);
+
+        view.loadStack(new ItemStack(Items.DIRT), 10);
+        view.loadStack(new ItemStack(Items.DIRT), 5);
+        view.loadStack(new ItemStack(Items.GLASS), 1);
+        view.loadStack(new ItemStack(Items.BUCKET), 2);
+
+        // Act
+        view.sort();
+
+        // Assert
+        assertOrderedItemGridStackListContents(
+            view.getStacks(),
+            new ItemStack(Items.GLASS, 1),
+            new ItemStack(Items.DIRT, 15),
+            new ItemStack(Items.BUCKET, 2)
+        );
+    }
+
+    @RepeatedTest(100)
+    void Test_sorting_when_both_stacks_match_should_preserve_order() {
+        // Arrange
+        view.setSortingDirection(GridSortingDirection.DESCENDING);
+
+        // Act & assert
+        view.onChange(new ItemStack(Items.DIRT), 10);
+        view.onChange(new ItemStack(Items.DIRT), 5);
+        view.onChange(new ItemStack(Items.GLASS), 15);
+        view.onChange(new ItemStack(Items.BUCKET), 2);
+
+        assertOrderedItemGridStackListContents(
+            view.getStacks(),
+            new ItemStack(Items.GLASS, 15),
+            new ItemStack(Items.DIRT, 15),
+            new ItemStack(Items.BUCKET, 2)
+        );
+
+        view.onChange(new ItemStack(Items.DIRT), -15);
+        view.onChange(new ItemStack(Items.DIRT), 15);
+
+        view.onChange(new ItemStack(Items.GLASS), -15);
+        view.onChange(new ItemStack(Items.GLASS), 15);
+
+        assertOrderedItemGridStackListContents(
+            view.getStacks(),
+            new ItemStack(Items.GLASS, 15),
+            new ItemStack(Items.DIRT, 15),
+            new ItemStack(Items.BUCKET, 2)
+        );
+    }
+
     @ParameterizedTest
     @EnumSource(GridSorter.class)
     void Test_sorting_ascending(GridSorter sorter) {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
         view.setSorter(sorter.getComparator());
         view.setSortingDirection(GridSortingDirection.ASCENDING);
 
@@ -67,7 +155,6 @@ public class GridViewTest {
     @EnumSource(GridSorter.class)
     void Test_sorting_descending(GridSorter sorter) {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
         view.setSorter(sorter.getComparator());
         view.setSortingDirection(GridSortingDirection.DESCENDING);
 
@@ -114,8 +201,6 @@ public class GridViewTest {
     @Test
     void Test_sending_addition_for_new_stack() {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
-
         view.loadStack(new ItemStack(Items.GLASS), 15);
         view.loadStack(new ItemStack(Items.SPONGE), 10);
         view.sort();
@@ -134,8 +219,6 @@ public class GridViewTest {
     @Test
     void Test_sending_addition_for_new_stack_when_filtering() {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
-
         view.loadStack(new ItemStack(Items.GLASS), 15);
         view.loadStack(new ItemStack(Items.SPONGE), 10);
         view.sort();
@@ -155,8 +238,6 @@ public class GridViewTest {
     @Test
     void Test_sending_addition_for_new_stack_when_preventing_sort() {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
-
         view.loadStack(new ItemStack(Items.GLASS), 15);
         view.loadStack(new ItemStack(Items.SPONGE), 10);
         view.sort();
@@ -176,8 +257,6 @@ public class GridViewTest {
     @Test
     void Test_sending_addition_for_existing_stack() {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
-
         view.loadStack(new ItemStack(Items.GLASS), 6);
         view.loadStack(new ItemStack(Items.DIRT), 15);
         view.loadStack(new ItemStack(Items.SPONGE), 10);
@@ -197,8 +276,6 @@ public class GridViewTest {
     @Test
     void Test_sending_addition_for_existing_stack_when_filtering() {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
-
         view.loadStack(new ItemStack(Items.GLASS), 6);
         view.loadStack(new ItemStack(Items.DIRT), 15);
         view.loadStack(new ItemStack(Items.SPONGE), 10);
@@ -219,8 +296,6 @@ public class GridViewTest {
     @Test
     void Test_sending_addition_for_existing_but_hidden_stack_when_filtering() {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
-
         view.loadStack(new ItemStack(Items.GLASS), 6);
         view.loadStack(new ItemStack(Items.DIRT), 15);
         view.loadStack(new ItemStack(Items.SPONGE), 10);
@@ -241,8 +316,6 @@ public class GridViewTest {
     @Test
     void Test_sending_addition_for_existing_stack_when_preventing_sort() {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
-
         view.loadStack(new ItemStack(Items.GLASS), 6);
         view.loadStack(new ItemStack(Items.DIRT), 15);
         view.loadStack(new ItemStack(Items.SPONGE), 10);
@@ -270,8 +343,6 @@ public class GridViewTest {
     @Test
     void Test_sending_removal() {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
-
         view.loadStack(new ItemStack(Items.GLASS), 20);
         view.loadStack(new ItemStack(Items.DIRT), 15);
         view.loadStack(new ItemStack(Items.SPONGE), 10);
@@ -291,8 +362,6 @@ public class GridViewTest {
     @Test
     void Test_sending_removal_when_filtering() {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
-
         view.loadStack(new ItemStack(Items.GLASS), 20);
         view.loadStack(new ItemStack(Items.DIRT), 15);
         view.loadStack(new ItemStack(Items.SPONGE), 10);
@@ -313,8 +382,6 @@ public class GridViewTest {
     @Test
     void Test_sending_removal_for_hidden_stack_when_filtering() {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
-
         view.loadStack(new ItemStack(Items.GLASS), 20);
         view.loadStack(new ItemStack(Items.DIRT), 15);
         view.loadStack(new ItemStack(Items.SPONGE), 10);
@@ -335,8 +402,6 @@ public class GridViewTest {
     @Test
     void Test_sending_removal_when_preventing_sort() {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
-
         view.loadStack(new ItemStack(Items.GLASS), 20);
         view.loadStack(new ItemStack(Items.DIRT), 15);
         view.loadStack(new ItemStack(Items.SPONGE), 10);
@@ -364,8 +429,6 @@ public class GridViewTest {
     @Test
     void Test_sending_complete_removal() {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
-
         view.loadStack(new ItemStack(Items.GLASS), 20);
         view.loadStack(new ItemStack(Items.DIRT), 15);
         view.loadStack(new ItemStack(Items.SPONGE), 10);
@@ -385,8 +448,6 @@ public class GridViewTest {
     @Test
     void Test_sending_complete_removal_when_preventing_sort() {
         // Arrange
-        GridView view = new GridView(new FakeGridStackFactory());
-
         view.loadStack(new ItemStack(Items.DIRT), 15);
         view.loadStack(new ItemStack(Items.GLASS), 20);
         view.loadStack(new ItemStack(Items.SPONGE), 10);

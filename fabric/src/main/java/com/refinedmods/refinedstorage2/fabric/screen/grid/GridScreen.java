@@ -68,17 +68,17 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         }
         searchField.setChangedListener(text -> {
             try {
-                getScreenHandler().getView().setFilter(QUERY_PARSER.parse(text));
+                getScreenHandler().getItemView().setFilter(QUERY_PARSER.parse(text));
             } catch (GridQueryParserException e) {
-                getScreenHandler().getView().setFilter(stack -> false);
+                getScreenHandler().getItemView().setFilter(stack -> false);
             }
-            getScreenHandler().getView().sort();
+            getScreenHandler().getItemView().sort();
         });
 
         getScreenHandler().addSlots(backgroundHeight - BOTTOM_HEIGHT + 17);
 
         this.scrollbar = new ScrollbarWidget(client, x + 174, y + 20, 12, (visibleRows * 18) - 2);
-        this.getScreenHandler().getView().setListener(this::updateScrollbar);
+        this.getScreenHandler().getItemView().setListener(this::updateScrollbar);
         updateScrollbar();
 
         children.add(scrollbar);
@@ -86,7 +86,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
     }
 
     private void updateScrollbar() {
-        int rows = (int) Math.ceil((float) getScreenHandler().getView().getStacks().size() / (float) COLUMNS);
+        int rows = (int) Math.ceil((float) getScreenHandler().getItemView().getStacks().size() / (float) COLUMNS);
 
         scrollbar.setEnabled(rows > visibleRows);
         scrollbar.setMaxOffset(rows - visibleRows);
@@ -130,7 +130,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
         drawTexture(matrices, x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, backgroundWidth - 34, BOTTOM_HEIGHT);
 
-        GridView view = getScreenHandler().getView();
+        GridView<ItemStack> view = getScreenHandler().getItemView();
 
         gridSlotNumber = -1;
 
@@ -149,7 +149,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
                     itemRenderer.renderInGuiWithOverrides(client.player, stack.getStack(), slotX, slotY);
 
-                    String text = stack.isZeroed() ? "0" : String.valueOf(stack.getStack().getCount());
+                    String text = stack.isZeroed() ? "0" : String.valueOf(stack.getCount());
                     Integer color = stack.isZeroed() ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue();
 
                     renderAmount(matrices, slotX, slotY, text, color);
@@ -209,8 +209,8 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
         ItemStack cursorStack = playerInventory.getCursorStack();
 
-        if (!getScreenHandler().getView().getStacks().isEmpty() && gridSlotNumber >= 0 && cursorStack.isEmpty()) {
-            GridStack<ItemStack> stack = getScreenHandler().getView().getStacks().get(gridSlotNumber);
+        if (!getScreenHandler().getItemView().getStacks().isEmpty() && gridSlotNumber >= 0 && cursorStack.isEmpty()) {
+            GridStack<ItemStack> stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber);
 
             PacketUtil.sendToServer(GridExtractPacket.ID, buf -> {
                 PacketUtil.writeItemStackWithoutCount(buf, stack.getStack());
@@ -267,7 +267,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         }
 
         if (hasShiftDown()) {
-            getScreenHandler().getView().setPreventSorting(true);
+            getScreenHandler().getItemView().setPreventSorting(true);
         }
 
         return super.keyPressed(key, scanCode, modifiers);
@@ -275,9 +275,9 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
     @Override
     public boolean keyReleased(int key, int scanCode, int modifiers) {
-        if (getScreenHandler().getView().isPreventSorting()) {
-            getScreenHandler().getView().setPreventSorting(false);
-            getScreenHandler().getView().sort();
+        if (getScreenHandler().getItemView().isPreventSorting()) {
+            getScreenHandler().getItemView().setPreventSorting(false);
+            getScreenHandler().getItemView().sort();
         }
 
         return super.keyReleased(key, scanCode, modifiers);

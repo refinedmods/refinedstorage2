@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.core.grid;
 
 import java.util.Set;
 
-public class GridStack<T> {
+public abstract class GridStack<T> {
     private final T stack;
     private final String name;
     private final String modId;
@@ -21,6 +21,10 @@ public class GridStack<T> {
     public T getStack() {
         return stack;
     }
+
+    public abstract int getId();
+
+    public abstract int getCount();
 
     public String getName() {
         return name;

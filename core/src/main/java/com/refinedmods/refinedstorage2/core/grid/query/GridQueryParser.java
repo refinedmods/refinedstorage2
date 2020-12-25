@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.query.lexer.*;
 import com.refinedmods.refinedstorage2.core.query.parser.*;
 import com.refinedmods.refinedstorage2.core.query.parser.node.*;
-import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -153,7 +152,7 @@ public class GridQueryParser<T> {
 
         int wantedCount = Integer.parseInt(((LiteralNode) node).getToken().getContent());
 
-        return stack -> predicate.test(((ItemStack) stack.getStack()).getCount(), wantedCount);
+        return stack -> predicate.test(stack.getCount(), wantedCount);
     }
 
     private Predicate<GridStack<T>> mod(String name) {

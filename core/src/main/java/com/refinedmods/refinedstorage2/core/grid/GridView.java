@@ -2,38 +2,39 @@ package com.refinedmods.refinedstorage2.core.grid;
 
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
-import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
-import net.minecraft.item.ItemStack;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class GridView {
-    private final StackList<ItemStack> list = new ItemStackList();
-    private final Function<ItemStack, GridStack<ItemStack>> stackFactory;
+public class GridView<T> {
+    private final StackList<T> list;
+    private final Comparator<GridStack<?>> identitySort;
+    private final Function<T, GridStack<T>> stackFactory;
 
-    private List<GridStack<ItemStack>> stacks = new ArrayList<>();
-    private Comparator<GridStack<ItemStack>> sorter = GridSorter.QUANTITY.getComparator();
+    private List<GridStack<T>> stacks = new ArrayList<>();
+    private Comparator<GridStack<?>> sorter;
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
-    private Predicate<GridStack<ItemStack>> filter = stack -> true;
+    private Predicate<GridStack<T>> filter = stack -> true;
     private Runnable listener;
     private boolean preventSorting;
 
-    public GridView(Function<ItemStack, GridStack<ItemStack>> stackFactory) {
+    public GridView(Function<T, GridStack<T>> stackFactory, Comparator<GridStack<?>> identitySort, StackList<T> list) {
         this.stackFactory = stackFactory;
+        this.identitySort = identitySort;
+        this.list = list;
     }
 
     public void setListener(Runnable listener) {
         this.listener = listener;
     }
 
-    public void setSorter(Comparator<GridStack<ItemStack>> sorter) {
+    public void setSorter(Comparator<GridStack<?>> sorter) {
         this.sorter = sorter;
     }
 
-    public void setFilter(Predicate<GridStack<ItemStack>> filter) {
+    public void setFilter(Predicate<GridStack<T>> filter) {
         this.filter = filter;
     }
 
@@ -45,22 +46,25 @@ public class GridView {
         return preventSorting;
     }
 
-    private Comparator<GridStack<ItemStack>> getSorter() {
-        // An identity sort is necessary so the order of items is preserved in quantity sorting mode.
-        // If two grid stacks have the same quantity, their order would not be preserved.
-        Comparator<GridStack<ItemStack>> identity = GridSorter.NAME.getComparator();
-        if (sortingDirection == GridSortingDirection.ASCENDING) {
-            return sorter.thenComparing(identity);
+    private Comparator<GridStack<?>> getSorter() {
+        if (sorter == null) {
+            return sortingDirection == GridSortingDirection.ASCENDING ? identitySort : identitySort.reversed();
         }
 
-        return sorter.thenComparing(identity).reversed();
+        // An identity sort is necessary so the order of items is preserved in quantity sorting mode.
+        // If two grid stacks have the same quantity, their order would not be preserved.
+        if (sortingDirection == GridSortingDirection.ASCENDING) {
+            return sorter.thenComparing(identitySort);
+        }
+
+        return sorter.thenComparing(identitySort).reversed();
     }
 
     public void setSortingDirection(GridSortingDirection sortingDirection) {
         this.sortingDirection = sortingDirection;
     }
 
-    public void loadStack(ItemStack template, int amount) {
+    public void loadStack(T template, int amount) {
         list.add(template, amount);
     }
 
@@ -76,15 +80,15 @@ public class GridView {
         notifyListener();
     }
 
-    public void onChange(ItemStack template, int amount) {
-        StackListResult<ItemStack> stack;
+    public void onChange(T template, int amount) {
+        StackListResult<T> stack;
         if (amount < 0) {
             stack = list.remove(template, Math.abs(amount)).orElseThrow(RuntimeException::new);
         } else {
             stack = list.add(template, amount);
         }
 
-        Optional<GridStack<ItemStack>> gridStack = findGridStack(stack.getStack());
+        Optional<GridStack<T>> gridStack = findGridStack(stack.getStack());
         if (gridStack.isPresent()) {
             handleChangeForExistingStack(stack, gridStack.get());
         } else {
@@ -92,15 +96,15 @@ public class GridView {
         }
     }
 
-    private void handleChangeForNewStack(StackListResult<ItemStack> stack) {
-        GridStack<ItemStack> gridStack = stackFactory.apply(stack.getStack());
+    private void handleChangeForNewStack(StackListResult<T> stack) {
+        GridStack<T> gridStack = stackFactory.apply(stack.getStack());
         if (filter.test(gridStack)) {
             addIntoView(gridStack);
             notifyListener();
         }
     }
 
-    private void handleChangeForExistingStack(StackListResult<ItemStack> stack, GridStack<ItemStack> gridStack) {
+    private void handleChangeForExistingStack(StackListResult<T> stack, GridStack<T> gridStack) {
         if (!preventSorting) {
             if (!filter.test(gridStack) || !stack.isAvailable()) {
                 stacks.remove(gridStack);
@@ -115,11 +119,11 @@ public class GridView {
         }
     }
 
-    private Optional<GridStack<ItemStack>> findGridStack(ItemStack stack) {
+    private Optional<GridStack<T>> findGridStack(T stack) {
         return stacks.stream().filter(s -> s.getStack() == stack).findFirst();
     }
 
-    private void addIntoView(GridStack<ItemStack> stack) {
+    private void addIntoView(GridStack<T> stack) {
         int pos = Collections.binarySearch(stacks, stack, getSorter());
         if (pos < 0) {
             pos = -pos - 1;
@@ -133,7 +137,7 @@ public class GridView {
         }
     }
 
-    public List<GridStack<ItemStack>> getStacks() {
+    public List<GridStack<T>> getStacks() {
         return stacks;
     }
 }

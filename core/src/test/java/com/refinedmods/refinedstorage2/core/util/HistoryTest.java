@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.core.util;
 
+import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@RefinedStorage2Test
 class HistoryTest {
     @Test
     void Test_older() {

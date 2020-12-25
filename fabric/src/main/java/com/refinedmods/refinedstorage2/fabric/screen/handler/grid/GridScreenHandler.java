@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.fabric.screen.handler.grid;
 import com.refinedmods.refinedstorage2.core.grid.*;
 import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
+import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
@@ -24,7 +25,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private static final Logger LOGGER = LogManager.getLogger(GridScreenHandler.class);
 
     private final PlayerInventory playerInventory;
-    private final GridView view = new GridView(new FabricGridStackFactory());
+    private final GridView<ItemStack> itemView = new GridView<>(new FabricGridStackFactory(), GridSorter.NAME.getComparator(), new ItemStackList());
 
     private StorageChannel<ItemStack> storageChannel; // TODO - Support changing of the channel.
     private GridEventHandler eventHandler;
@@ -40,9 +41,9 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         for (int i = 0; i < size; ++i) {
             ItemStack stack = buf.readItemStack();
             stack.setCount(buf.readInt());
-            view.loadStack(stack, stack.getCount());
+            itemView.loadStack(stack, stack.getCount());
         }
-        view.sort();
+        itemView.sort();
     }
 
     public GridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity grid) {
@@ -97,7 +98,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     public void onItemUpdate(ItemStack template, int amount) {
         LOGGER.info("Item {} got updated with {}", template, amount);
 
-        view.onChange(template, amount);
+        itemView.onChange(template, amount);
     }
 
     @Override
@@ -110,7 +111,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         });
     }
 
-    public GridView getView() {
-        return view;
+    public GridView<ItemStack> getItemView() {
+        return itemView;
     }
 }

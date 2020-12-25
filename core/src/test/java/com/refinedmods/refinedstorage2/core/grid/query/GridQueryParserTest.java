@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.core.grid.query;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
+import com.refinedmods.refinedstorage2.core.grid.ItemGridStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.junit.jupiter.api.Test;
@@ -227,7 +228,7 @@ class GridQueryParserTest {
     }
 
     private GridStack<ItemStack> stack(ItemStack stack, String modId, String modName, String... tags) {
-        return new GridStack<>(
+        return new ItemGridStack(
             stack,
             stack.getName().getString(),
             modId,
