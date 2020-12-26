@@ -59,20 +59,25 @@ public class GridEventHandlerImpl implements GridEventHandler {
 
         int size = getSize(totalSize, mode);
 
-        storageChannel.extract(stack, size, Action.EXECUTE).ifPresent(extracted -> handleExtracted(mode, extracted));
+        storageChannel.extract(stack, size, Action.EXECUTE)
+            .map(extracted -> handleExtracted(mode, extracted))
+            .ifPresent(remainder -> {
+                if (!remainder.isEmpty()) {
+                    storageChannel.insert(remainder, remainder.getCount(), Action.EXECUTE);
+                }
+            });
     }
 
-    private void handleExtracted(GridExtractMode mode, ItemStack extracted) {
+    private ItemStack handleExtracted(GridExtractMode mode, ItemStack extracted) {
         switch (mode) {
             case CURSOR_STACK:
-                interactor.setCursorStack(extracted);
-                break;
             case CURSOR_HALF:
                 interactor.setCursorStack(extracted);
-                break;
+                return ItemStack.EMPTY;
             case PLAYER_INVENTORY_STACK:
-                interactor.insertIntoInventory(extracted);
-                break;
+                return interactor.insertIntoInventory(extracted);
+            default:
+                return ItemStack.EMPTY;
         }
     }
 
@@ -91,5 +96,27 @@ public class GridEventHandlerImpl implements GridEventHandler {
     @Override
     public void onItemUpdate(ItemStack template, int amount) {
 
+    }
+
+    @Override
+    public void onScrollInGrid(ItemStack template, ScrollInGridMode mode) {
+        switch (mode) {
+            case EXTRACT_SINGLE_STACK_FROM_GRID:
+            case EXTRACT_STACK_FROM_GRID:
+                int size = mode == ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID ? 1 : template.getMaxCount();
+
+                storageChannel.extract(template, size, Action.EXECUTE).ifPresent(stack -> {
+                    ItemStack remainder = interactor.insertIntoInventory(stack);
+                    if (!remainder.isEmpty()) {
+                        storageChannel.insert(remainder, remainder.getCount(), Action.EXECUTE);
+                    }
+                });
+
+                break;
+            case INSERT_SINGLE_STACK_FROM_INVENTORY:
+                break;
+            case INSERT_STACK_FROM_INVENTORY:
+                break;
+        }
     }
 }

@@ -8,4 +8,6 @@ public interface GridEventHandler {
     void onExtract(ItemStack stack, GridExtractMode mode);
 
     void onItemUpdate(ItemStack template, int amount);
+
+    void onScrollInGrid(ItemStack template, ScrollInGridMode mode);
 }

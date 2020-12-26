@@ -8,6 +8,11 @@ import java.util.List;
 public class FakeGridInteractor implements GridInteractor {
     private ItemStack cursorStack = ItemStack.EMPTY;
     private List<ItemStack> inventory = new ArrayList<>();
+    private boolean full;
+
+    public void setFull(boolean full) {
+        this.full = full;
+    }
 
     @Override
     public ItemStack getCursorStack() {
@@ -21,6 +26,9 @@ public class FakeGridInteractor implements GridInteractor {
 
     @Override
     public ItemStack insertIntoInventory(ItemStack stack) {
+        if (full) {
+            return stack;
+        }
         inventory.add(stack);
         return ItemStack.EMPTY;
     }

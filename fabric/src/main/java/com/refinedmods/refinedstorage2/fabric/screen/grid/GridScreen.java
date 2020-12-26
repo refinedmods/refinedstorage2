@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
+import com.refinedmods.refinedstorage2.core.grid.ScrollInGridMode;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserException;
 import com.refinedmods.refinedstorage2.core.util.History;
@@ -11,6 +12,7 @@ import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
+import com.refinedmods.refinedstorage2.fabric.packet.c2s.ScrollInGridPacket;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
@@ -252,6 +254,20 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
     @Override
     public boolean mouseScrolled(double x, double y, double delta) {
+        boolean up = delta > 0;
+        boolean down = !up;
+
+        if (hasShiftDown() || hasControlDown()) {
+            if (isOverStorageArea((int) x, (int) y) && gridSlotNumber >= 0 && down) {
+                getScreenHandler().getItemView().setPreventSorting(true);
+
+                PacketUtil.sendToServer(ScrollInGridPacket.ID, buf -> {
+                    PacketUtil.writeItemStackWithoutCount(buf, getScreenHandler().getItemView().getStacks().get(gridSlotNumber).getStack());
+                    ScrollInGridPacket.writeMode(buf, hasShiftDown() ? ScrollInGridMode.EXTRACT_STACK_FROM_GRID : ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID);
+                });
+            }
+        }
+
         return this.scrollbar.mouseScrolled(x, y, delta) || super.mouseScrolled(x, y, delta);
     }
 

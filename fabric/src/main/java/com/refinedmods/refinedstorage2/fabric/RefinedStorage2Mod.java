@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2Items;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2ScreenHandlers;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
+import com.refinedmods.refinedstorage2.fabric.packet.c2s.ScrollInGridPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.StorageDiskInfoRequestPacket;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer;
@@ -46,6 +47,7 @@ public class RefinedStorage2Mod implements ModInitializer {
         ServerSidePacketRegistry.INSTANCE.register(StorageDiskInfoRequestPacket.ID, new StorageDiskInfoRequestPacket());
         ServerSidePacketRegistry.INSTANCE.register(GridInsertFromCursorPacket.ID, new GridInsertFromCursorPacket());
         ServerSidePacketRegistry.INSTANCE.register(GridExtractPacket.ID, new GridExtractPacket());
+        ServerSidePacketRegistry.INSTANCE.register(ScrollInGridPacket.ID, new ScrollInGridPacket());
 
         LOGGER.info("Refined Storage 2 has loaded.");
     }

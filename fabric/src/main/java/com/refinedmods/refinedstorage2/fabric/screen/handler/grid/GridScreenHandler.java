@@ -102,6 +102,11 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     }
 
     @Override
+    public void onScrollInGrid(ItemStack stack, ScrollInGridMode mode) {
+        eventHandler.onScrollInGrid(stack, mode);
+    }
+
+    @Override
     public void onChanged(StackListResult<ItemStack> change) {
         LOGGER.info("Received a change of {} for {}", change.getChange(), change.getStack());
 
