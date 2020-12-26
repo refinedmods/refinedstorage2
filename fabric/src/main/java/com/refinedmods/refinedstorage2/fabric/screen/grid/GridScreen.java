@@ -255,20 +255,29 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
     @Override
     public boolean mouseScrolled(double x, double y, double delta) {
         boolean up = delta > 0;
-        boolean down = !up;
+        boolean shift = hasShiftDown();
+        boolean ctrl = hasControlDown();
 
-        if (hasShiftDown() || hasControlDown()) {
-            if (isOverStorageArea((int) x, (int) y) && gridSlotNumber >= 0 && down) {
+        if (shift || ctrl) {
+            if (isOverStorageArea((int) x, (int) y) && gridSlotNumber >= 0) {
                 getScreenHandler().getItemView().setPreventSorting(true);
 
                 PacketUtil.sendToServer(ScrollInGridPacket.ID, buf -> {
                     PacketUtil.writeItemStackWithoutCount(buf, getScreenHandler().getItemView().getStacks().get(gridSlotNumber).getStack());
-                    ScrollInGridPacket.writeMode(buf, hasShiftDown() ? ScrollInGridMode.EXTRACT_STACK_FROM_GRID : ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID);
+                    ScrollInGridPacket.writeMode(buf, getScrollInGridMode(shift, up));
                 });
             }
         }
 
         return this.scrollbar.mouseScrolled(x, y, delta) || super.mouseScrolled(x, y, delta);
+    }
+
+    private ScrollInGridMode getScrollInGridMode(boolean shift, boolean up) {
+        if (up) {
+            return shift ? ScrollInGridMode.INSERT_STACK_FROM_INVENTORY : ScrollInGridMode.INSERT_SINGLE_STACK_FROM_INVENTORY;
+        } else {
+            return shift ? ScrollInGridMode.EXTRACT_STACK_FROM_GRID : ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID;
+        }
     }
 
     @Override

@@ -1,17 +1,18 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
+import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
+import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
+import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 public class FakeGridInteractor implements GridInteractor {
     private ItemStack cursorStack = ItemStack.EMPTY;
-    private List<ItemStack> inventory = new ArrayList<>();
-    private boolean full;
+    private StorageDisk<ItemStack> inventory = new ItemDiskStorage(1000);
 
-    public void setFull(boolean full) {
-        this.full = full;
+    public void resetInventoryAndSetCapacity(int capacity) {
+        inventory = new ItemDiskStorage(capacity);
     }
 
     @Override
@@ -26,14 +27,15 @@ public class FakeGridInteractor implements GridInteractor {
 
     @Override
     public ItemStack insertIntoInventory(ItemStack stack) {
-        if (full) {
-            return stack;
-        }
-        inventory.add(stack);
-        return ItemStack.EMPTY;
+        return inventory.insert(stack, stack.getCount(), Action.EXECUTE).orElse(ItemStack.EMPTY);
     }
 
-    public List<ItemStack> getInventory() {
-        return inventory;
+    @Override
+    public ItemStack extractFromInventory(ItemStack template, int count) {
+        return inventory.extract(template, count, Action.EXECUTE).orElse(ItemStack.EMPTY);
+    }
+
+    public Collection<ItemStack> getInventory() {
+        return inventory.getStacks();
     }
 }

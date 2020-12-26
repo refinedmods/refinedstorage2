@@ -8,9 +8,11 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 public class PlayerGridInteractor implements GridInteractor {
     private final PlayerEntity player;
+    private final FixedInventoryVanillaWrapper inventory;
 
     public PlayerGridInteractor(PlayerEntity player) {
         this.player = player;
+        this.inventory = new FixedInventoryVanillaWrapper(player.inventory);
     }
 
     @Override
@@ -26,6 +28,11 @@ public class PlayerGridInteractor implements GridInteractor {
 
     @Override
     public ItemStack insertIntoInventory(ItemStack stack) {
-        return new FixedInventoryVanillaWrapper(player.inventory).getInsertable().insert(stack);
+        return inventory.getInsertable().insert(stack);
+    }
+
+    @Override
+    public ItemStack extractFromInventory(ItemStack template, int count) {
+        return inventory.getExtractable().extract(template, count);
     }
 }

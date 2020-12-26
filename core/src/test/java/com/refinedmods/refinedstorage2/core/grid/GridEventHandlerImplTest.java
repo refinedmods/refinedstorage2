@@ -228,15 +228,15 @@ class GridEventHandlerImplTest {
 
         storageChannel.insert(new ItemStack(Items.DIRT), 64, Action.EXECUTE);
 
-        interactor.setFull(true);
+        interactor.resetInventoryAndSetCapacity(20);
 
         // Act
         eventHandler.onExtract(new ItemStack(Items.DIRT, 32), GridExtractMode.PLAYER_INVENTORY_STACK);
 
         // Assert
         assertThat(interactor.getCursorStack().isEmpty()).isTrue();
-        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 64));
-        assertItemStackListContents(interactor.getInventory());
+        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 64 - 20));
+        assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.DIRT, 20));
     }
 
     @Test
@@ -292,12 +292,15 @@ class GridEventHandlerImplTest {
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
         storageChannel.insert(new ItemStack(Items.DIRT), 32, Action.EXECUTE);
 
+        interactor.resetInventoryAndSetCapacity(32);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 20));
+
         // Act
         eventHandler.onScrollInGrid(new ItemStack(Items.DIRT), ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 31));
-        assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.DIRT, 1));
+        assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 20), new ItemStack(Items.DIRT, 1));
     }
 
     @Test
@@ -320,13 +323,73 @@ class GridEventHandlerImplTest {
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
         storageChannel.insert(new ItemStack(Items.DIRT), 32, Action.EXECUTE);
 
-        interactor.setFull(true);
+        interactor.resetInventoryAndSetCapacity(32);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 32));
 
         // Act
         eventHandler.onScrollInGrid(new ItemStack(Items.DIRT), ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 32));
+        assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 32));
+    }
+
+    @Test
+    void Test_extracting_stack_by_scrolling_in_grid() {
+        // Arrange
+        storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(300)));
+        storageChannel.insert(new ItemStack(Items.DIRT), 129, Action.EXECUTE);
+
+        // Act
+        eventHandler.onScrollInGrid(new ItemStack(Items.DIRT), ScrollInGridMode.EXTRACT_STACK_FROM_GRID);
+
+        // Assert
+        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 65));
+        assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.DIRT, 64));
+    }
+
+    @Test
+    void Test_extracting_stack_that_does_not_exist_by_scrolling_in_grid() {
+        // Arrange
+        storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+        storageChannel.insert(new ItemStack(Items.DIRT), 32, Action.EXECUTE);
+
+        // Act
+        eventHandler.onScrollInGrid(new ItemStack(Items.GLASS), ScrollInGridMode.EXTRACT_STACK_FROM_GRID);
+
+        // Assert
+        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 32));
         assertItemStackListContents(interactor.getInventory());
+    }
+
+    @Test
+    void Test_extracting_stack_that_has_no_space_in_inventory_should_return_to_storage_by_scrolling_in_grid() {
+        // Arrange
+        storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(300)));
+        storageChannel.insert(new ItemStack(Items.DIRT), 300, Action.EXECUTE);
+
+        interactor.resetInventoryAndSetCapacity(32);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 20));
+
+        // Act
+        eventHandler.onScrollInGrid(new ItemStack(Items.DIRT), ScrollInGridMode.EXTRACT_STACK_FROM_GRID);
+
+        // Assert
+        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 300 - 12));
+        assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 20), new ItemStack(Items.DIRT, 12));
+    }
+
+    @Test
+    void Test_extracting_stack_should_respect_max_stack_size_by_scrolling_in_grid() {
+        // Arrange
+        storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(300)));
+        storageChannel.insert(new ItemStack(Items.BUCKET), 300, Action.EXECUTE);
+
+        // Act
+        eventHandler.onScrollInGrid(new ItemStack(Items.BUCKET), ScrollInGridMode.EXTRACT_STACK_FROM_GRID);
+
+        // Assert
+        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.BUCKET, 300 - 16));
+        assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.BUCKET, 16));
     }
 }
