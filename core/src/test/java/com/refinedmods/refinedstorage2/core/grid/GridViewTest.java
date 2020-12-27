@@ -472,4 +472,32 @@ public class GridViewTest {
 
         assertOrderedItemGridStackListContents(view.getStacks(), new ItemStack(Items.SPONGE, 10), new ItemStack(Items.DIRT, 15));
     }
+
+    @Test
+    void Test_sending_complete_removal_and_reinserting_stack_should_reuse_same_stack_when_preventing_sort() {
+        // Arrange
+        view.loadStack(new ItemStack(Items.DIRT), 15);
+        view.loadStack(new ItemStack(Items.GLASS), 20);
+        view.loadStack(new ItemStack(Items.SPONGE), 10);
+        view.sort();
+
+        Runnable listener = mock(Runnable.class);
+        view.setListener(listener);
+
+        // Act & assert
+        assertOrderedItemGridStackListContents(view.getStacks(), new ItemStack(Items.SPONGE, 10), new ItemStack(Items.DIRT, 15), new ItemStack(Items.GLASS, 20));
+
+        view.setPreventSorting(true);
+        view.onChange(new ItemStack(Items.GLASS), -20);
+        verify(listener, never()).run();
+
+        assertOrderedItemGridStackListContents(view.getStacks(), new ItemStack(Items.SPONGE, 10), new ItemStack(Items.DIRT, 15), new ItemStack(Items.GLASS, 20));
+
+        assertThat(view.getStacks()).anyMatch(stack -> stack.getStack().getItem() == Items.GLASS && stack.isZeroed());
+
+        view.onChange(new ItemStack(Items.GLASS), 5);
+        // TODO R-enable verify(listener, never()).run();
+
+        assertOrderedItemGridStackListContents(view.getStacks(), new ItemStack(Items.GLASS, 5), new ItemStack(Items.SPONGE, 10), new ItemStack(Items.DIRT, 15));
+    }
 }

@@ -12,6 +12,7 @@ public class GridView<T> {
     private final StackList<T> list;
     private final Comparator<GridStack<?>> identitySort;
     private final Function<T, GridStack<T>> stackFactory;
+    private final Map<T, GridStack<T>> stackIndex = new HashMap<>();
 
     private List<GridStack<T>> stacks = new ArrayList<>();
     private Comparator<GridStack<?>> sorter;
@@ -69,12 +70,17 @@ public class GridView<T> {
     }
 
     public void sort() {
-        this.stacks = list
+        stackIndex.clear();
+        stacks = list
             .getAll()
             .stream()
             .map(stackFactory)
             .sorted(getSorter())
             .filter(filter)
+            .map(stack -> {
+                stackIndex.put(stack.getStack(), stack);
+                return stack;
+            })
             .collect(Collectors.toList());
 
         notifyListener();
@@ -88,9 +94,9 @@ public class GridView<T> {
             stack = list.add(template, amount);
         }
 
-        Optional<GridStack<T>> gridStack = findGridStack(stack.getStack());
-        if (gridStack.isPresent()) {
-            handleChangeForExistingStack(stack, gridStack.get());
+        GridStack<T> gridStack = stackIndex.get(stack.getStack());
+        if (gridStack != null) {
+            handleChangeForExistingStack(stack, gridStack);
         } else {
             handleChangeForNewStack(stack);
         }
@@ -99,6 +105,7 @@ public class GridView<T> {
     private void handleChangeForNewStack(StackListResult<T> stack) {
         GridStack<T> gridStack = stackFactory.apply(stack.getStack());
         if (filter.test(gridStack)) {
+            stackIndex.put(gridStack.getStack(), gridStack);
             addIntoView(gridStack);
             notifyListener();
         }
@@ -108,6 +115,7 @@ public class GridView<T> {
         if (!preventSorting) {
             if (!filter.test(gridStack) || !stack.isAvailable()) {
                 stacks.remove(gridStack);
+                stackIndex.remove(gridStack.getStack());
                 notifyListener();
             } else if (stack.isAvailable()) {
                 stacks.remove(gridStack);
@@ -117,10 +125,6 @@ public class GridView<T> {
         } else if (!stack.isAvailable()) {
             gridStack.setZeroed(true);
         }
-    }
-
-    private Optional<GridStack<T>> findGridStack(T stack) {
-        return stacks.stream().filter(s -> s.getStack() == stack).findFirst();
     }
 
     private void addIntoView(GridStack<T> stack) {
