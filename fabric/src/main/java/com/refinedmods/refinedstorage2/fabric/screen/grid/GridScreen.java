@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.core.grid.ScrollInGridMode;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserException;
 import com.refinedmods.refinedstorage2.core.util.History;
-import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
@@ -133,7 +132,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
         drawTexture(matrices, x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, backgroundWidth - 34, BOTTOM_HEIGHT);
 
-        GridView<ItemStack, ItemStackIdentifier> view = getScreenHandler().getItemView();
+        GridView<ItemStack> view = getScreenHandler().getItemView();
 
         gridSlotNumber = -1;
 

@@ -26,7 +26,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private static final Logger LOGGER = LogManager.getLogger(GridScreenHandler.class);
 
     private final PlayerInventory playerInventory;
-    private final GridView<ItemStack, ItemStackIdentifier> itemView = new GridViewImpl<>(new FabricGridStackFactory(), ItemStackIdentifier::new, GridSorter.NAME.getComparator(), new ItemStackList());
+    private final GridView<ItemStack> itemView = new GridViewImpl<>(new FabricGridStackFactory(), ItemStackIdentifier::new, GridSorter.NAME.getComparator(), new ItemStackList());
 
     private StorageChannel<ItemStack> storageChannel; // TODO - Support changing of the channel.
     private GridEventHandler eventHandler;
@@ -120,7 +120,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         });
     }
 
-    public GridView<ItemStack, ItemStackIdentifier> getItemView() {
+    public GridView<ItemStack> getItemView() {
         return itemView;
     }
 }

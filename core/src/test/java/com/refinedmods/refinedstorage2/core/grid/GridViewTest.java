@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 
 @RefinedStorage2Test
 public class GridViewTest {
-    private GridView<ItemStack, ItemStackIdentifier> view;
+    private GridView<ItemStack> view;
 
     @BeforeEach
     void setUp() {
