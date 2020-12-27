@@ -103,20 +103,33 @@ public class GridEventHandlerImpl implements GridEventHandler {
         switch (mode) {
             case EXTRACT_SINGLE_STACK_FROM_GRID:
             case EXTRACT_STACK_FROM_GRID:
-                int size = mode == ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID ? 1 : template.getMaxCount();
-
-                storageChannel.extract(template, size, Action.EXECUTE).ifPresent(stack -> {
-                    ItemStack remainder = interactor.insertIntoInventory(stack);
-                    if (!remainder.isEmpty()) {
-                        storageChannel.insert(remainder, remainder.getCount(), Action.EXECUTE);
-                    }
-                });
-
+                handleExtractFromGrid(template, mode);
                 break;
-            case INSERT_SINGLE_STACK_FROM_INVENTORY:
-                break;
-            case INSERT_STACK_FROM_INVENTORY:
+            case EXTRACT_SINGLE_STACK_FROM_INVENTORY:
+            case EXTRACT_STACK_FROM_INVENTORY:
+                handleExtractFromInventory(template, mode);
                 break;
         }
+    }
+
+    private void handleExtractFromInventory(ItemStack template, ScrollInGridMode mode) {
+        int size = mode == ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_INVENTORY ? 1 : template.getMaxCount();
+
+        ItemStack result = interactor.extractFromInventory(template, size);
+        if (!result.isEmpty()) {
+            storageChannel.insert(result, result.getCount(), Action.EXECUTE)
+                .ifPresent(interactor::insertIntoInventory);
+        }
+    }
+
+    private void handleExtractFromGrid(ItemStack template, ScrollInGridMode mode) {
+        int size = mode == ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID ? 1 : template.getMaxCount();
+
+        storageChannel.extract(template, size, Action.EXECUTE).ifPresent(stack -> {
+            ItemStack remainder = interactor.insertIntoInventory(stack);
+            if (!remainder.isEmpty()) {
+                storageChannel.insert(remainder, remainder.getCount(), Action.EXECUTE);
+            }
+        });
     }
 }

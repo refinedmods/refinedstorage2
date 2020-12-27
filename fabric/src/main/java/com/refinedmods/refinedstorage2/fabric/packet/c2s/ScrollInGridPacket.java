@@ -33,9 +33,9 @@ public class ScrollInGridPacket implements PacketConsumer {
         } else if (mode == 1) {
             return ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID;
         } else if (mode == 2) {
-            return ScrollInGridMode.INSERT_STACK_FROM_INVENTORY;
+            return ScrollInGridMode.EXTRACT_STACK_FROM_INVENTORY;
         }
-        return ScrollInGridMode.INSERT_SINGLE_STACK_FROM_INVENTORY;
+        return ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_INVENTORY;
     }
 
     public static void writeMode(PacketByteBuf buf, ScrollInGridMode mode) {
@@ -46,10 +46,10 @@ public class ScrollInGridPacket implements PacketConsumer {
             case EXTRACT_SINGLE_STACK_FROM_GRID:
                 buf.writeByte(1);
                 break;
-            case INSERT_STACK_FROM_INVENTORY:
+            case EXTRACT_STACK_FROM_INVENTORY:
                 buf.writeByte(2);
                 break;
-            case INSERT_SINGLE_STACK_FROM_INVENTORY:
+            case EXTRACT_SINGLE_STACK_FROM_INVENTORY:
                 buf.writeByte(3);
                 break;
         }

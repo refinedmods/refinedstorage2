@@ -274,7 +274,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
     private ScrollInGridMode getScrollInGridMode(boolean shift, boolean up) {
         if (up) {
-            return shift ? ScrollInGridMode.INSERT_STACK_FROM_INVENTORY : ScrollInGridMode.INSERT_SINGLE_STACK_FROM_INVENTORY;
+            return shift ? ScrollInGridMode.EXTRACT_STACK_FROM_INVENTORY : ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_INVENTORY;
         } else {
             return shift ? ScrollInGridMode.EXTRACT_STACK_FROM_GRID : ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID;
         }
