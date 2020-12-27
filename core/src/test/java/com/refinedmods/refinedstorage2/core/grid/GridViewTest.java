@@ -23,7 +23,7 @@ public class GridViewTest {
 
     @BeforeEach
     void setUp() {
-        view = new GridView<>(new FakeGridStackFactory(), ItemStackIdentifier::new, GridSorter.NAME.getComparator(), new ItemStackList());
+        view = new GridViewImpl<>(new FakeGridStackFactory(), ItemStackIdentifier::new, GridSorter.NAME.getComparator(), new ItemStackList());
         view.setSorter(GridSorter.QUANTITY.getComparator());
     }
 
