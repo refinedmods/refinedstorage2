@@ -296,7 +296,7 @@ class GridEventHandlerImplTest {
         interactor.insertIntoInventory(new ItemStack(Items.GLASS, 20));
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.DIRT), ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID);
+        eventHandler.onScroll(new ItemStack(Items.DIRT), GridScrollMode.GRID_TO_INVENTORY_SINGLE_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 31));
@@ -310,7 +310,7 @@ class GridEventHandlerImplTest {
         storageChannel.insert(new ItemStack(Items.DIRT), 32, Action.EXECUTE);
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.GLASS), ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID);
+        eventHandler.onScroll(new ItemStack(Items.GLASS), GridScrollMode.GRID_TO_INVENTORY_SINGLE_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 32));
@@ -327,7 +327,7 @@ class GridEventHandlerImplTest {
         interactor.insertIntoInventory(new ItemStack(Items.GLASS, 32));
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.DIRT), ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID);
+        eventHandler.onScroll(new ItemStack(Items.DIRT), GridScrollMode.GRID_TO_INVENTORY_SINGLE_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 32));
@@ -341,7 +341,7 @@ class GridEventHandlerImplTest {
         storageChannel.insert(new ItemStack(Items.DIRT), 129, Action.EXECUTE);
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.DIRT), ScrollInGridMode.EXTRACT_STACK_FROM_GRID);
+        eventHandler.onScroll(new ItemStack(Items.DIRT), GridScrollMode.GRID_TO_INVENTORY_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 65));
@@ -355,7 +355,7 @@ class GridEventHandlerImplTest {
         storageChannel.insert(new ItemStack(Items.DIRT), 32, Action.EXECUTE);
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.GLASS), ScrollInGridMode.EXTRACT_STACK_FROM_GRID);
+        eventHandler.onScroll(new ItemStack(Items.GLASS), GridScrollMode.GRID_TO_INVENTORY_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 32));
@@ -372,7 +372,7 @@ class GridEventHandlerImplTest {
         interactor.insertIntoInventory(new ItemStack(Items.GLASS, 20));
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.DIRT), ScrollInGridMode.EXTRACT_STACK_FROM_GRID);
+        eventHandler.onScroll(new ItemStack(Items.DIRT), GridScrollMode.GRID_TO_INVENTORY_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 300 - 12));
@@ -386,7 +386,7 @@ class GridEventHandlerImplTest {
         storageChannel.insert(new ItemStack(Items.BUCKET), 300, Action.EXECUTE);
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.BUCKET), ScrollInGridMode.EXTRACT_STACK_FROM_GRID);
+        eventHandler.onScroll(new ItemStack(Items.BUCKET), GridScrollMode.GRID_TO_INVENTORY_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.BUCKET, 300 - 16));
@@ -401,7 +401,7 @@ class GridEventHandlerImplTest {
         interactor.insertIntoInventory(new ItemStack(Items.GLASS, 128));
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.GLASS), ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_INVENTORY);
+        eventHandler.onScroll(new ItemStack(Items.GLASS), GridScrollMode.INVENTORY_TO_GRID_SINGLE_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.GLASS, 1));
@@ -416,7 +416,7 @@ class GridEventHandlerImplTest {
         interactor.insertIntoInventory(new ItemStack(Items.DIRT, 128));
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.GLASS), ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_INVENTORY);
+        eventHandler.onScroll(new ItemStack(Items.GLASS), GridScrollMode.INVENTORY_TO_GRID_SINGLE_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks());
@@ -433,7 +433,7 @@ class GridEventHandlerImplTest {
         interactor.insertIntoInventory(new ItemStack(Items.GLASS, 128));
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.GLASS), ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_INVENTORY);
+        eventHandler.onScroll(new ItemStack(Items.GLASS), GridScrollMode.INVENTORY_TO_GRID_SINGLE_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 2));
@@ -448,7 +448,7 @@ class GridEventHandlerImplTest {
         interactor.insertIntoInventory(new ItemStack(Items.GLASS, 129));
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.GLASS), ScrollInGridMode.EXTRACT_STACK_FROM_INVENTORY);
+        eventHandler.onScroll(new ItemStack(Items.GLASS), GridScrollMode.INVENTORY_TO_GRID_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.GLASS, 64));
@@ -463,7 +463,7 @@ class GridEventHandlerImplTest {
         interactor.insertIntoInventory(new ItemStack(Items.GLASS, 129));
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.DIRT), ScrollInGridMode.EXTRACT_STACK_FROM_INVENTORY);
+        eventHandler.onScroll(new ItemStack(Items.DIRT), GridScrollMode.INVENTORY_TO_GRID_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks());
@@ -480,7 +480,7 @@ class GridEventHandlerImplTest {
         interactor.insertIntoInventory(new ItemStack(Items.GLASS, 129));
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.GLASS), ScrollInGridMode.EXTRACT_STACK_FROM_INVENTORY);
+        eventHandler.onScroll(new ItemStack(Items.GLASS), GridScrollMode.INVENTORY_TO_GRID_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.SPONGE, 60), new ItemStack(Items.GLASS, 40));
@@ -495,7 +495,7 @@ class GridEventHandlerImplTest {
         interactor.insertIntoInventory(new ItemStack(Items.BUCKET, 129));
 
         // Act
-        eventHandler.onScrollInGrid(new ItemStack(Items.BUCKET), ScrollInGridMode.EXTRACT_STACK_FROM_INVENTORY);
+        eventHandler.onScroll(new ItemStack(Items.BUCKET), GridScrollMode.INVENTORY_TO_GRID_STACK);
 
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.BUCKET, 16));

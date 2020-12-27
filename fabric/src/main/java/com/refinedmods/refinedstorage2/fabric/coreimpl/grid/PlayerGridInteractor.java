@@ -28,6 +28,7 @@ public class PlayerGridInteractor implements GridInteractor {
 
     @Override
     public ItemStack insertIntoInventory(ItemStack stack) {
+        // TODO: Prevent this going into the armor slots.
         return inventory.getInsertable().insert(stack);
     }
 

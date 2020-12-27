@@ -9,5 +9,5 @@ public interface GridEventHandler {
 
     void onItemUpdate(ItemStack template, int amount);
 
-    void onScrollInGrid(ItemStack template, ScrollInGridMode mode);
+    void onScroll(ItemStack template, GridScrollMode mode);
 }

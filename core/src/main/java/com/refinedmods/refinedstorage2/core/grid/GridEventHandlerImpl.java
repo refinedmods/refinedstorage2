@@ -99,21 +99,21 @@ public class GridEventHandlerImpl implements GridEventHandler {
     }
 
     @Override
-    public void onScrollInGrid(ItemStack template, ScrollInGridMode mode) {
+    public void onScroll(ItemStack template, GridScrollMode mode) {
         switch (mode) {
-            case EXTRACT_SINGLE_STACK_FROM_GRID:
-            case EXTRACT_STACK_FROM_GRID:
+            case GRID_TO_INVENTORY_SINGLE_STACK:
+            case GRID_TO_INVENTORY_STACK:
                 handleExtractFromGrid(template, mode);
                 break;
-            case EXTRACT_SINGLE_STACK_FROM_INVENTORY:
-            case EXTRACT_STACK_FROM_INVENTORY:
+            case INVENTORY_TO_GRID_SINGLE_STACK:
+            case INVENTORY_TO_GRID_STACK:
                 handleExtractFromInventory(template, mode);
                 break;
         }
     }
 
-    private void handleExtractFromInventory(ItemStack template, ScrollInGridMode mode) {
-        int size = mode == ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_INVENTORY ? 1 : template.getMaxCount();
+    private void handleExtractFromInventory(ItemStack template, GridScrollMode mode) {
+        int size = mode == GridScrollMode.INVENTORY_TO_GRID_SINGLE_STACK ? 1 : template.getMaxCount();
 
         ItemStack result = interactor.extractFromInventory(template, size);
         if (!result.isEmpty()) {
@@ -122,8 +122,8 @@ public class GridEventHandlerImpl implements GridEventHandler {
         }
     }
 
-    private void handleExtractFromGrid(ItemStack template, ScrollInGridMode mode) {
-        int size = mode == ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID ? 1 : template.getMaxCount();
+    private void handleExtractFromGrid(ItemStack template, GridScrollMode mode) {
+        int size = mode == GridScrollMode.GRID_TO_INVENTORY_SINGLE_STACK ? 1 : template.getMaxCount();
 
         storageChannel.extract(template, size, Action.EXECUTE).ifPresent(stack -> {
             ItemStack remainder = interactor.insertIntoInventory(stack);

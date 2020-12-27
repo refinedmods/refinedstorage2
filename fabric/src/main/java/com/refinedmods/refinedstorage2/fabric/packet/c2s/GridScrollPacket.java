@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
-import com.refinedmods.refinedstorage2.core.grid.ScrollInGridMode;
+import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import net.fabricmc.fabric.api.network.PacketConsumer;
@@ -11,45 +11,45 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.util.Identifier;
 
-public class ScrollInGridPacket implements PacketConsumer {
-    public static final Identifier ID = new Identifier(RefinedStorage2Mod.ID, "scroll_in_grid");
+public class GridScrollPacket implements PacketConsumer {
+    public static final Identifier ID = new Identifier(RefinedStorage2Mod.ID, "grid_scroll");
 
     @Override
     public void accept(PacketContext packetContext, PacketByteBuf buf) {
         ItemStack stack = PacketUtil.readItemStackWithoutCount(buf);
-        ScrollInGridMode mode = getMode(buf.readByte());
+        GridScrollMode mode = getMode(buf.readByte());
 
         packetContext.getTaskQueue().execute(() -> {
             ScreenHandler handler = packetContext.getPlayer().currentScreenHandler;
             if (handler instanceof GridEventHandler) {
-                ((GridEventHandler) handler).onScrollInGrid(stack, mode);
+                ((GridEventHandler) handler).onScroll(stack, mode);
             }
         });
     }
 
-    private ScrollInGridMode getMode(byte mode) {
+    private GridScrollMode getMode(byte mode) {
         if (mode == 0) {
-            return ScrollInGridMode.EXTRACT_STACK_FROM_GRID;
+            return GridScrollMode.GRID_TO_INVENTORY_STACK;
         } else if (mode == 1) {
-            return ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID;
+            return GridScrollMode.GRID_TO_INVENTORY_SINGLE_STACK;
         } else if (mode == 2) {
-            return ScrollInGridMode.EXTRACT_STACK_FROM_INVENTORY;
+            return GridScrollMode.INVENTORY_TO_GRID_STACK;
         }
-        return ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_INVENTORY;
+        return GridScrollMode.INVENTORY_TO_GRID_SINGLE_STACK;
     }
 
-    public static void writeMode(PacketByteBuf buf, ScrollInGridMode mode) {
+    public static void writeMode(PacketByteBuf buf, GridScrollMode mode) {
         switch (mode) {
-            case EXTRACT_STACK_FROM_GRID:
+            case GRID_TO_INVENTORY_STACK:
                 buf.writeByte(0);
                 break;
-            case EXTRACT_SINGLE_STACK_FROM_GRID:
+            case GRID_TO_INVENTORY_SINGLE_STACK:
                 buf.writeByte(1);
                 break;
-            case EXTRACT_STACK_FROM_INVENTORY:
+            case INVENTORY_TO_GRID_STACK:
                 buf.writeByte(2);
                 break;
-            case EXTRACT_SINGLE_STACK_FROM_INVENTORY:
+            case INVENTORY_TO_GRID_SINGLE_STACK:
                 buf.writeByte(3);
                 break;
         }

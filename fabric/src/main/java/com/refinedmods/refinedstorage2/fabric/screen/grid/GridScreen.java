@@ -2,9 +2,9 @@ package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
+import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
-import com.refinedmods.refinedstorage2.core.grid.ScrollInGridMode;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserException;
 import com.refinedmods.refinedstorage2.core.util.History;
@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.ScrollInGridPacket;
+import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
@@ -262,9 +262,17 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
             if (isOverStorageArea((int) x, (int) y) && gridSlotNumber >= 0) {
                 getScreenHandler().getItemView().setPreventSorting(true);
 
-                PacketUtil.sendToServer(ScrollInGridPacket.ID, buf -> {
+                PacketUtil.sendToServer(GridScrollPacket.ID, buf -> {
                     PacketUtil.writeItemStackWithoutCount(buf, getScreenHandler().getItemView().getStacks().get(gridSlotNumber).getStack());
-                    ScrollInGridPacket.writeMode(buf, getScrollInGridMode(shift, up));
+                    GridScrollPacket.writeMode(buf, getScrollInGridMode(shift, up));
+                });
+            } else if (focusedSlot != null && focusedSlot.hasStack()) {
+                // TODO: Respect slot number.
+                getScreenHandler().getItemView().setPreventSorting(true);
+
+                PacketUtil.sendToServer(GridScrollPacket.ID, buf -> {
+                    PacketUtil.writeItemStackWithoutCount(buf, focusedSlot.getStack());
+                    GridScrollPacket.writeMode(buf, getScrollInGridMode(shift, up));
                 });
             }
         }
@@ -272,11 +280,11 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         return this.scrollbar.mouseScrolled(x, y, delta) || super.mouseScrolled(x, y, delta);
     }
 
-    private ScrollInGridMode getScrollInGridMode(boolean shift, boolean up) {
+    private GridScrollMode getScrollInGridMode(boolean shift, boolean up) {
         if (up) {
-            return shift ? ScrollInGridMode.EXTRACT_STACK_FROM_INVENTORY : ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_INVENTORY;
+            return shift ? GridScrollMode.INVENTORY_TO_GRID_STACK : GridScrollMode.INVENTORY_TO_GRID_SINGLE_STACK;
         } else {
-            return shift ? ScrollInGridMode.EXTRACT_STACK_FROM_GRID : ScrollInGridMode.EXTRACT_SINGLE_STACK_FROM_GRID;
+            return shift ? GridScrollMode.GRID_TO_INVENTORY_STACK : GridScrollMode.GRID_TO_INVENTORY_SINGLE_STACK;
         }
     }
 
