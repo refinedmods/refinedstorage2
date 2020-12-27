@@ -8,11 +8,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class GridView<T> {
+public class GridView<T, ID> {
     private final StackList<T> list;
     private final Comparator<GridStack<?>> identitySort;
     private final Function<T, GridStack<T>> stackFactory;
-    private final Map<T, GridStack<T>> stackIndex = new HashMap<>();
+    private final Function<T, ID> idFactory;
+    private final Map<ID, GridStack<T>> stackIndex = new HashMap<>();
 
     private List<GridStack<T>> stacks = new ArrayList<>();
     private Comparator<GridStack<?>> sorter;
@@ -21,8 +22,9 @@ public class GridView<T> {
     private Runnable listener;
     private boolean preventSorting;
 
-    public GridView(Function<T, GridStack<T>> stackFactory, Comparator<GridStack<?>> identitySort, StackList<T> list) {
+    public GridView(Function<T, GridStack<T>> stackFactory, Function<T, ID> idFactory, Comparator<GridStack<?>> identitySort, StackList<T> list) {
         this.stackFactory = stackFactory;
+        this.idFactory = idFactory;
         this.identitySort = identitySort;
         this.list = list;
     }
@@ -78,7 +80,7 @@ public class GridView<T> {
             .sorted(getSorter())
             .filter(filter)
             .map(stack -> {
-                stackIndex.put(stack.getStack(), stack);
+                stackIndex.put(idFactory.apply(stack.getStack()), stack);
                 return stack;
             })
             .collect(Collectors.toList());
@@ -94,28 +96,34 @@ public class GridView<T> {
             stack = list.add(template, amount);
         }
 
-        GridStack<T> gridStack = stackIndex.get(stack.getStack());
+        ID id = idFactory.apply(stack.getStack());
+
+        GridStack<T> gridStack = stackIndex.get(id);
         if (gridStack != null) {
-            handleChangeForExistingStack(stack, gridStack);
+            if (gridStack.isZeroed()) {
+                handleChangeForZeroedStack(id, stack, gridStack);
+            } else {
+                handleChangeForExistingStack(id, stack, gridStack);
+            }
         } else {
-            handleChangeForNewStack(stack);
+            handleChangeForNewStack(id, stack);
         }
     }
 
-    private void handleChangeForNewStack(StackListResult<T> stack) {
+    private void handleChangeForNewStack(ID id, StackListResult<T> stack) {
         GridStack<T> gridStack = stackFactory.apply(stack.getStack());
         if (filter.test(gridStack)) {
-            stackIndex.put(gridStack.getStack(), gridStack);
+            stackIndex.put(id, gridStack);
             addIntoView(gridStack);
             notifyListener();
         }
     }
 
-    private void handleChangeForExistingStack(StackListResult<T> stack, GridStack<T> gridStack) {
+    private void handleChangeForExistingStack(ID id, StackListResult<T> stack, GridStack<T> gridStack) {
         if (!preventSorting) {
             if (!filter.test(gridStack) || !stack.isAvailable()) {
                 stacks.remove(gridStack);
-                stackIndex.remove(gridStack.getStack());
+                stackIndex.remove(id);
                 notifyListener();
             } else if (stack.isAvailable()) {
                 stacks.remove(gridStack);
@@ -125,6 +133,15 @@ public class GridView<T> {
         } else if (!stack.isAvailable()) {
             gridStack.setZeroed(true);
         }
+    }
+
+    private void handleChangeForZeroedStack(ID id, StackListResult<T> stack, GridStack<T> oldGridStack) {
+        GridStack<T> newStack = stackFactory.apply(stack.getStack());
+
+        stackIndex.put(id, newStack);
+
+        int index = stacks.indexOf(oldGridStack);
+        stacks.set(index, newStack);
     }
 
     private void addIntoView(GridStack<T> stack) {

@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
 import com.refinedmods.refinedstorage2.core.util.Action;
+import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.PlayerGridInteractor;
@@ -25,7 +26,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private static final Logger LOGGER = LogManager.getLogger(GridScreenHandler.class);
 
     private final PlayerInventory playerInventory;
-    private final GridView<ItemStack> itemView = new GridView<>(new FabricGridStackFactory(), GridSorter.NAME.getComparator(), new ItemStackList());
+    private final GridView<ItemStack, ItemStackIdentifier> itemView = new GridView<>(new FabricGridStackFactory(), ItemStackIdentifier::new, GridSorter.NAME.getComparator(), new ItemStackList());
 
     private StorageChannel<ItemStack> storageChannel; // TODO - Support changing of the channel.
     private GridEventHandler eventHandler;
@@ -34,6 +35,9 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         super(RefinedStorage2Mod.SCREEN_HANDLERS.getGrid(), syncId);
 
         this.playerInventory = playerInventory;
+
+        itemView.setSorter(GridSorter.QUANTITY.getComparator());
+        itemView.setSortingDirection(GridSortingDirection.DESCENDING);
 
         addSlots(0);
 
@@ -116,7 +120,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         });
     }
 
-    public GridView<ItemStack> getItemView() {
+    public GridView<ItemStack, ItemStackIdentifier> getItemView() {
         return itemView;
     }
 }

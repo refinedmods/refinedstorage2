@@ -4,12 +4,13 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
+import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import net.minecraft.item.ItemStack;
 
 import java.util.*;
 
 public class ItemStackList implements StackList<ItemStack> {
-    private final Map<ListEntry, ItemStack> entries = new HashMap<>();
+    private final Map<ItemStackIdentifier, ItemStack> entries = new HashMap<>();
     private final BiMap<UUID, ItemStack> index = HashBiMap.create();
 
     @Override
@@ -18,7 +19,7 @@ public class ItemStackList implements StackList<ItemStack> {
             throw new IllegalArgumentException("Invalid stack");
         }
 
-        ListEntry entry = new ListEntry(template);
+        ItemStackIdentifier entry = new ItemStackIdentifier(template);
 
         ItemStack existing = entries.get(entry);
         if (existing != null) {
@@ -34,7 +35,7 @@ public class ItemStackList implements StackList<ItemStack> {
         return new StackListResult<>(stack, amount, index.inverse().get(stack), true);
     }
 
-    private StackListResult<ItemStack> addNew(ListEntry entry, ItemStack template, int amount) {
+    private StackListResult<ItemStack> addNew(ItemStackIdentifier entry, ItemStack template, int amount) {
         ItemStack stack = template.copy();
         stack.setCount(amount);
 
@@ -52,7 +53,7 @@ public class ItemStackList implements StackList<ItemStack> {
             throw new IllegalArgumentException("Invalid stack");
         }
 
-        ListEntry entry = new ListEntry(template);
+        ItemStackIdentifier entry = new ItemStackIdentifier(template);
 
         ItemStack existing = entries.get(entry);
         if (existing != null) {
@@ -74,7 +75,7 @@ public class ItemStackList implements StackList<ItemStack> {
         return Optional.of(new StackListResult<>(stack, -amount, id, true));
     }
 
-    private Optional<StackListResult<ItemStack>> removeCompletely(ListEntry entry, ItemStack stack, UUID id) {
+    private Optional<StackListResult<ItemStack>> removeCompletely(ItemStackIdentifier entry, ItemStack stack, UUID id) {
         index.remove(id);
         entries.remove(entry);
 
@@ -83,7 +84,7 @@ public class ItemStackList implements StackList<ItemStack> {
 
     @Override
     public Optional<ItemStack> get(ItemStack template) {
-        return Optional.ofNullable(entries.get(new ListEntry(template)));
+        return Optional.ofNullable(entries.get(new ItemStackIdentifier(template)));
     }
 
     @Override

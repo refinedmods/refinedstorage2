@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.core.grid;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
+import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,11 +19,11 @@ import static org.mockito.Mockito.*;
 
 @RefinedStorage2Test
 public class GridViewTest {
-    private GridView<ItemStack> view;
+    private GridView<ItemStack, ItemStackIdentifier> view;
 
     @BeforeEach
     void setUp() {
-        view = new GridView<>(new FakeGridStackFactory(), GridSorter.NAME.getComparator(), new ItemStackList());
+        view = new GridView<>(new FakeGridStackFactory(), ItemStackIdentifier::new, GridSorter.NAME.getComparator(), new ItemStackList());
         view.setSorter(GridSorter.QUANTITY.getComparator());
     }
 
@@ -487,17 +488,26 @@ public class GridViewTest {
         // Act & assert
         assertOrderedItemGridStackListContents(view.getStacks(), new ItemStack(Items.SPONGE, 10), new ItemStack(Items.DIRT, 15), new ItemStack(Items.GLASS, 20));
 
+        // Delete the item
         view.setPreventSorting(true);
         view.onChange(new ItemStack(Items.GLASS), -20);
         verify(listener, never()).run();
 
         assertOrderedItemGridStackListContents(view.getStacks(), new ItemStack(Items.SPONGE, 10), new ItemStack(Items.DIRT, 15), new ItemStack(Items.GLASS, 20));
-
         assertThat(view.getStacks()).anyMatch(stack -> stack.getStack().getItem() == Items.GLASS && stack.isZeroed());
 
+        // Re-insert the item
         view.onChange(new ItemStack(Items.GLASS), 5);
-        // TODO R-enable verify(listener, never()).run();
+        verify(listener, never()).run();
 
-        assertOrderedItemGridStackListContents(view.getStacks(), new ItemStack(Items.GLASS, 5), new ItemStack(Items.SPONGE, 10), new ItemStack(Items.DIRT, 15));
+        assertOrderedItemGridStackListContents(view.getStacks(), new ItemStack(Items.SPONGE, 10), new ItemStack(Items.DIRT, 15), new ItemStack(Items.GLASS, 5));
+        assertThat(view.getStacks()).noneMatch(GridStack::isZeroed);
+
+        // Re-insert the item again
+        view.onChange(new ItemStack(Items.GLASS), 3);
+        verify(listener, never()).run();
+
+        assertOrderedItemGridStackListContents(view.getStacks(), new ItemStack(Items.SPONGE, 10), new ItemStack(Items.DIRT, 15), new ItemStack(Items.GLASS, 8));
+        assertThat(view.getStacks()).noneMatch(GridStack::isZeroed);
     }
 }

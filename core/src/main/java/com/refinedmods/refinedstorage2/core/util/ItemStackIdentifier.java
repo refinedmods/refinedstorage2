@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.list.item;
+package com.refinedmods.refinedstorage2.core.util;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -6,11 +6,11 @@ import net.minecraft.nbt.CompoundTag;
 
 import java.util.Objects;
 
-class ListEntry {
+public class ItemStackIdentifier {
     private final Item item;
     private final CompoundTag tag;
 
-    ListEntry(ItemStack stack) {
+    public ItemStackIdentifier(ItemStack stack) {
         this.item = stack.getItem();
         this.tag = stack.getTag();
     }
@@ -19,7 +19,7 @@ class ListEntry {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ListEntry that = (ListEntry) o;
+        ItemStackIdentifier that = (ItemStackIdentifier) o;
         return Objects.equals(item, that.item) &&
                 Objects.equals(tag, that.tag);
     }
