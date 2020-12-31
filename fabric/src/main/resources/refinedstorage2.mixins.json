@@ -4,6 +4,7 @@
   "package": "com.refinedmods.refinedstorage2.fabric.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "SlotAccessor"
   ],
   "client": [
     "TextFieldWidgetAccessor",

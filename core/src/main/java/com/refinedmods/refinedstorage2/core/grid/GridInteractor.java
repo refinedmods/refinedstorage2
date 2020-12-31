@@ -7,7 +7,7 @@ public interface GridInteractor {
 
     void setCursorStack(ItemStack stack);
 
-    ItemStack insertIntoInventory(ItemStack stack);
+    ItemStack insertIntoInventory(ItemStack stack, int preferredSlot);
 
-    ItemStack extractFromInventory(ItemStack template, int count);
+    ItemStack extractFromInventory(ItemStack template, int slot, int count);
 }

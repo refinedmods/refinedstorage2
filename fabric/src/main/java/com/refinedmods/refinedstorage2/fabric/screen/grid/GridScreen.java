@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserException;
 import com.refinedmods.refinedstorage2.core.util.History;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
@@ -262,17 +263,19 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
             if (isOverStorageArea((int) x, (int) y) && gridSlotNumber >= 0) {
                 getScreenHandler().getItemView().setPreventSorting(true);
 
+                ItemStack stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber).getStack();
                 PacketUtil.sendToServer(GridScrollPacket.ID, buf -> {
-                    PacketUtil.writeItemStackWithoutCount(buf, getScreenHandler().getItemView().getStacks().get(gridSlotNumber).getStack());
+                    PacketUtil.writeItemStackWithoutCount(buf, stack);
                     GridScrollPacket.writeMode(buf, getScrollInGridMode(shift, up));
+                    buf.writeInt(playerInventory.getSlotWithStack(stack));
                 });
             } else if (focusedSlot != null && focusedSlot.hasStack()) {
-                // TODO: Respect slot number.
                 getScreenHandler().getItemView().setPreventSorting(true);
 
                 PacketUtil.sendToServer(GridScrollPacket.ID, buf -> {
                     PacketUtil.writeItemStackWithoutCount(buf, focusedSlot.getStack());
                     GridScrollPacket.writeMode(buf, getScrollInGridMode(shift, up));
+                    buf.writeInt(((SlotAccessor) focusedSlot).getIndex());
                 });
             }
         }

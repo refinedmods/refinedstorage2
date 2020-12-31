@@ -18,11 +18,12 @@ public class GridScrollPacket implements PacketConsumer {
     public void accept(PacketContext packetContext, PacketByteBuf buf) {
         ItemStack stack = PacketUtil.readItemStackWithoutCount(buf);
         GridScrollMode mode = getMode(buf.readByte());
+        int slot = buf.readInt();
 
         packetContext.getTaskQueue().execute(() -> {
             ScreenHandler handler = packetContext.getPlayer().currentScreenHandler;
             if (handler instanceof GridEventHandler) {
-                ((GridEventHandler) handler).onScroll(stack, mode);
+                ((GridEventHandler) handler).onScroll(stack, slot, mode);
             }
         });
     }

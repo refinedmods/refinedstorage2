@@ -11,6 +11,10 @@ public class History {
     }
 
     public String older() {
+        if (items.isEmpty()) {
+            return "";
+        }
+
         if (index == -1) {
             index = items.size() - 1;
             return items.get(index);

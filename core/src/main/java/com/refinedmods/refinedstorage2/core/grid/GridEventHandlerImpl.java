@@ -75,7 +75,7 @@ public class GridEventHandlerImpl implements GridEventHandler {
                 interactor.setCursorStack(extracted);
                 return ItemStack.EMPTY;
             case PLAYER_INVENTORY_STACK:
-                return interactor.insertIntoInventory(extracted);
+                return interactor.insertIntoInventory(extracted, -1);
             default:
                 return ItemStack.EMPTY;
         }
@@ -99,34 +99,34 @@ public class GridEventHandlerImpl implements GridEventHandler {
     }
 
     @Override
-    public void onScroll(ItemStack template, GridScrollMode mode) {
+    public void onScroll(ItemStack template, int slot, GridScrollMode mode) {
         switch (mode) {
             case GRID_TO_INVENTORY_SINGLE_STACK:
             case GRID_TO_INVENTORY_STACK:
-                handleExtractFromGrid(template, mode);
+                handleExtractFromGrid(template, slot, mode);
                 break;
             case INVENTORY_TO_GRID_SINGLE_STACK:
             case INVENTORY_TO_GRID_STACK:
-                handleExtractFromInventory(template, mode);
+                handleExtractFromInventory(template, slot, mode);
                 break;
         }
     }
 
-    private void handleExtractFromInventory(ItemStack template, GridScrollMode mode) {
+    private void handleExtractFromInventory(ItemStack template, int slot, GridScrollMode mode) {
         int size = mode == GridScrollMode.INVENTORY_TO_GRID_SINGLE_STACK ? 1 : template.getMaxCount();
 
-        ItemStack result = interactor.extractFromInventory(template, size);
+        ItemStack result = interactor.extractFromInventory(template, slot, size);
         if (!result.isEmpty()) {
             storageChannel.insert(result, result.getCount(), Action.EXECUTE)
-                .ifPresent(interactor::insertIntoInventory);
+                .ifPresent(remainder -> interactor.insertIntoInventory(remainder, -1));
         }
     }
 
-    private void handleExtractFromGrid(ItemStack template, GridScrollMode mode) {
+    private void handleExtractFromGrid(ItemStack template, int preferredSlot, GridScrollMode mode) {
         int size = mode == GridScrollMode.GRID_TO_INVENTORY_SINGLE_STACK ? 1 : template.getMaxCount();
 
         storageChannel.extract(template, size, Action.EXECUTE).ifPresent(stack -> {
-            ItemStack remainder = interactor.insertIntoInventory(stack);
+            ItemStack remainder = interactor.insertIntoInventory(stack, preferredSlot);
             if (!remainder.isEmpty()) {
                 storageChannel.insert(remainder, remainder.getCount(), Action.EXECUTE);
             }

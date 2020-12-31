@@ -26,12 +26,12 @@ public class FakeGridInteractor implements GridInteractor {
     }
 
     @Override
-    public ItemStack insertIntoInventory(ItemStack stack) {
+    public ItemStack insertIntoInventory(ItemStack stack, int preferredSlot) {
         return inventory.insert(stack, stack.getCount(), Action.EXECUTE).orElse(ItemStack.EMPTY);
     }
 
     @Override
-    public ItemStack extractFromInventory(ItemStack template, int count) {
+    public ItemStack extractFromInventory(ItemStack template, int slot, int count) {
         return inventory.extract(template, count, Action.EXECUTE).orElse(ItemStack.EMPTY);
     }
 

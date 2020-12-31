@@ -106,8 +106,8 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     }
 
     @Override
-    public void onScroll(ItemStack stack, GridScrollMode mode) {
-        eventHandler.onScroll(stack, mode);
+    public void onScroll(ItemStack stack, int slot, GridScrollMode mode) {
+        eventHandler.onScroll(stack, slot, mode);
     }
 
     @Override

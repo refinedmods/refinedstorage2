@@ -28,6 +28,15 @@ class HistoryTest {
     }
 
     @Test
+    void Test_older_with_no_items() {
+        // Arrange
+        History history = new History(new ArrayList<>());
+
+        // Act & assert
+        assertThat(history.older()).isEqualTo("");
+    }
+
+    @Test
     void Test_newer_initially() {
         // Arrange
         List<String> items = new ArrayList<>();
