@@ -10,4 +10,6 @@ public interface GridInteractor {
     ItemStack insertIntoInventory(ItemStack stack, int preferredSlot);
 
     ItemStack extractFromInventory(ItemStack template, int slot, int count);
+
+    String getName();
 }

@@ -8,6 +8,8 @@ import net.minecraft.item.ItemStack;
 import java.util.Collection;
 
 public class FakeGridInteractor implements GridInteractor {
+    public static final String NAME = "Fake interactor";
+
     private ItemStack cursorStack = ItemStack.EMPTY;
     private StorageDisk<ItemStack> inventory = new ItemDiskStorage(1000);
 
@@ -33,6 +35,11 @@ public class FakeGridInteractor implements GridInteractor {
     @Override
     public ItemStack extractFromInventory(ItemStack template, int slot, int count) {
         return inventory.extract(template, count, Action.EXECUTE).orElse(ItemStack.EMPTY);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 
     public Collection<ItemStack> getInventory() {

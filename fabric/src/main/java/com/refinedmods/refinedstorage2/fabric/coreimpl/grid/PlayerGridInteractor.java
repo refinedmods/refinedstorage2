@@ -47,4 +47,9 @@ public class PlayerGridInteractor implements GridInteractor {
             inventory.getExtractable().extract(template, count) :
             inventory.extractStack(slot, null, ItemStack.EMPTY, count, Simulation.ACTION);
     }
+
+    @Override
+    public String getName() {
+        return player.getGameProfile().getName();
+    }
 }

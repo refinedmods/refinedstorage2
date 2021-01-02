@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.core.grid;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.Slot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,6 +41,11 @@ public class GridEventHandlerImpl implements GridEventHandler {
         }
 
         interactor.setCursorStack(remainder);
+    }
+
+    @Override
+    public void onInsertFromTransfer(Slot slot) {
+        slot.setStack(storageChannel.insert(slot.getStack(), slot.getStack().getCount(), Action.EXECUTE).orElse(ItemStack.EMPTY));
     }
 
     @Override

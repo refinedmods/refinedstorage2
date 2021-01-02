@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
-import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
@@ -82,6 +81,11 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     }
 
     @Override
+    public void onInsertFromTransfer(Slot slot) {
+        eventHandler.onInsertFromTransfer(slot);
+    }
+
+    @Override
     public void onExtract(ItemStack stack, GridExtractMode mode) {
         eventHandler.onExtract(stack, mode);
     }
@@ -91,7 +95,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         if (!playerEntity.world.isClient()) {
             Slot slot = getSlot(slotIndex);
             if (slot.hasStack()) {
-                slot.setStack(storageChannel.insert(slot.getStack(), slot.getStack().getCount(), Action.EXECUTE).orElse(ItemStack.EMPTY));
+                eventHandler.onInsertFromTransfer(slot);
                 sendContentUpdates();
             }
         }

@@ -4,11 +4,13 @@ import com.refinedmods.refinedstorage2.core.list.ListenableStackList;
 import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.util.Action;
+import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import net.minecraft.item.ItemStack;
 
 import java.util.*;
 
 public class ItemStorageChannel implements StorageChannel<ItemStack> {
+    private final StorageTracker<ItemStack, ItemStackIdentifier> tracker = new StorageTracker<>(ItemStackIdentifier::new, System::currentTimeMillis);
     private final Set<StackListListener<ItemStack>> listeners = new HashSet<>();
     private ListenableStackList<ItemStack> list;
     private CompositeItemStorage storage = CompositeItemStorage.emptyStorage();
@@ -26,6 +28,11 @@ public class ItemStorageChannel implements StorageChannel<ItemStack> {
     @Override
     public void removeListener(StackListListener<ItemStack> listener) {
         listeners.remove(listener);
+    }
+
+    @Override
+    public StorageTracker<ItemStack, ?> getTracker() {
+        return tracker;
     }
 
     @Override
