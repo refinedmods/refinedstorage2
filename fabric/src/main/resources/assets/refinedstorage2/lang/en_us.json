@@ -27,11 +27,14 @@
   "item.refinedstorage2.storage_housing": "Storage Housing",
   "misc.refinedstorage2.stored": "Stored: %s",
   "misc.refinedstorage2.stored_with_capacity": "Stored: %s / %s",
+  "misc.refinedstorage2.total": "%d total",
   "key.refinedstorage2.focus_search_bar": "Focus Search Bar",
   "category.refinedstorage2.key_bindings": "Refined Storage 2",
   "text.autoconfig.refinedstorage2.title": "Refined Storage 2",
   "text.autoconfig.refinedstorage2.option.grid": "Grid",
   "text.autoconfig.refinedstorage2.option.grid.largeFont": "Large font",
   "text.autoconfig.refinedstorage2.option.grid.maxRowsStretch": "Maximum amount of rows when stretched",
-  "text.autoconfig.refinedstorage2.option.grid.preventSortingWhileShiftIsDown": "Prevent sorting while shift is down"
+  "text.autoconfig.refinedstorage2.option.grid.preventSortingWhileShiftIsDown": "Prevent sorting while shift is down",
+  ,
+  "text.autoconfig.refinedstorage2.option.grid.detailedTooltip": "Detailed tooltip"
 }

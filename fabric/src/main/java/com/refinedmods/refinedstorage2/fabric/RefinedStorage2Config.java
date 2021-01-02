@@ -18,6 +18,8 @@ public class RefinedStorage2Config implements ConfigData {
 
         private boolean preventSortingWhileShiftIsDown = true;
 
+        private boolean detailedTooltip = true;
+
         public boolean isLargeFont() {
             return largeFont;
         }
@@ -28,6 +30,10 @@ public class RefinedStorage2Config implements ConfigData {
 
         public boolean isPreventSortingWhileShiftIsDown() {
             return preventSortingWhileShiftIsDown;
+        }
+
+        public boolean isDetailedTooltip() {
+            return detailedTooltip;
         }
     }
 
