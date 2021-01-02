@@ -7,6 +7,8 @@ import net.minecraft.screen.slot.Slot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Optional;
+
 public class GridEventHandlerImpl implements GridEventHandler {
     private static final Logger LOGGER = LogManager.getLogger(GridEventHandlerImpl.class);
 
@@ -142,8 +144,17 @@ public class GridEventHandlerImpl implements GridEventHandler {
 
         ItemStack result = interactor.extractFromInventory(template, slot, size);
         if (!result.isEmpty()) {
-            storageChannel.insert(result, result.getCount(), Action.EXECUTE)
-                .ifPresent(remainder -> interactor.insertIntoInventory(remainder, -1));
+            Optional<ItemStack> remainder = storageChannel.insert(result, result.getCount(), Action.EXECUTE);
+
+            if (remainder.isPresent()) {
+                interactor.insertIntoInventory(remainder.get(), -1);
+
+                if (remainder.get().getCount() != size) {
+                    storageChannel.getTracker().onChanged(template, interactor.getName());
+                }
+            } else {
+                storageChannel.getTracker().onChanged(template, interactor.getName());
+            }
         }
     }
 
@@ -152,6 +163,10 @@ public class GridEventHandlerImpl implements GridEventHandler {
 
         storageChannel.extract(template, size, Action.EXECUTE).ifPresent(stack -> {
             ItemStack remainder = interactor.insertIntoInventory(stack, preferredSlot);
+            if (remainder.isEmpty() || remainder.getCount() != size) {
+                storageChannel.getTracker().onChanged(template, interactor.getName());
+            }
+
             if (!remainder.isEmpty()) {
                 storageChannel.insert(remainder, remainder.getCount(), Action.EXECUTE);
             }

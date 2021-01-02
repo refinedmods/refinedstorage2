@@ -438,6 +438,10 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 31));
         assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 20), new ItemStack(Items.DIRT, 1));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
     }
 
     @Test
@@ -452,6 +456,9 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 32));
         assertItemStackListContents(interactor.getInventory());
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.GLASS));
+        assertThat(entry).isEmpty();
     }
 
     @Test
@@ -469,6 +476,9 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 32));
         assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 32));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isEmpty();
     }
 
     @Test
@@ -483,6 +493,10 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 65));
         assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.DIRT, 64));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
     }
 
     @Test
@@ -497,10 +511,13 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 32));
         assertItemStackListContents(interactor.getInventory());
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.GLASS));
+        assertThat(entry).isEmpty();
     }
 
     @Test
-    void Test_extracting_stack_from_grid_that_has_no_space_in_inventory_should_return_to_storage_by_scrolling_in_grid() {
+    void Test_extracting_stack_from_grid_that_has_no_space_in_inventory_after_insert_should_return_remainder_to_storage_by_scrolling_in_grid() {
         // Arrange
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(300)));
         storageChannel.insert(new ItemStack(Items.DIRT), 300, Action.EXECUTE);
@@ -514,6 +531,30 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 300 - 12));
         assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 20), new ItemStack(Items.DIRT, 12));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+    }
+
+    @Test
+    void Test_extracting_stack_from_grid_that_has_no_space_in_inventory_before_insert_should_return_remainder_to_storage_by_scrolling_in_grid() {
+        // Arrange
+        storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(300)));
+        storageChannel.insert(new ItemStack(Items.DIRT), 300, Action.EXECUTE);
+
+        interactor.resetInventoryAndSetCapacity(32);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 32), -1);
+
+        // Act
+        eventHandler.onScroll(new ItemStack(Items.DIRT), -1, GridScrollMode.GRID_TO_INVENTORY_STACK);
+
+        // Assert
+        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 300));
+        assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 32));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isEmpty();
     }
 
     @Test
@@ -528,6 +569,10 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.BUCKET, 300 - 16));
         assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.BUCKET, 16));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.BUCKET));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
     }
 
     @Test
@@ -543,6 +588,10 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.GLASS, 1));
         assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 127));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.GLASS));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
     }
 
     @Test
@@ -558,8 +607,10 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks());
         assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.DIRT, 128));
-    }
 
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.GLASS));
+        assertThat(entry).isEmpty();
+    }
 
     @Test
     void Test_extracting_single_stack_from_inventory_that_has_no_space_in_storage_should_return_to_inventory_by_scrolling_in_grid() {
@@ -575,6 +626,9 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 2));
         assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 128));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.GLASS));
+        assertThat(entry).isEmpty();
     }
 
     @Test
@@ -590,6 +644,10 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.GLASS, 64));
         assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 65));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.GLASS));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
     }
 
     @Test
@@ -605,10 +663,13 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks());
         assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 129));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isEmpty();
     }
 
     @Test
-    void Test_extracting_stack_from_inventory_that_has_no_space_in_storage_by_scrolling_in_grid() {
+    void Test_extracting_stack_from_inventory_that_has_no_space_in_storage_after_insert_should_return_remainder_to_inventory_by_scrolling_in_grid() {
         // Arrange
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
 
@@ -622,6 +683,30 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.SPONGE, 60), new ItemStack(Items.GLASS, 40));
         assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 129 - 40));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.GLASS));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+    }
+
+    @Test
+    void Test_extracting_stack_from_inventory_that_has_no_space_in_storage_before_insert_should_return_remainder_to_inventory_by_scrolling_in_grid() {
+        // Arrange
+        storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+
+        storageChannel.insert(new ItemStack(Items.SPONGE), 100, Action.EXECUTE);
+
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 129), -1);
+
+        // Act
+        eventHandler.onScroll(new ItemStack(Items.GLASS), -1, GridScrollMode.INVENTORY_TO_GRID_STACK);
+
+        // Assert
+        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.SPONGE, 100));
+        assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 129));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.GLASS));
+        assertThat(entry).isEmpty();
     }
 
     @Test
@@ -637,5 +722,9 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.BUCKET, 16));
         assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.BUCKET, 129 - 16));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.BUCKET));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
     }
 }
