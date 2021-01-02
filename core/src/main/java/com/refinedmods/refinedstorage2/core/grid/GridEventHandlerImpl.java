@@ -30,14 +30,20 @@ public class GridEventHandlerImpl implements GridEventHandler {
         ItemStack remainder;
         if (mode == GridInsertMode.SINGLE) {
             if (!storageChannel.insert(cursorStack, 1, Action.SIMULATE).isPresent()) {
+                storageChannel.getTracker().onChanged(cursorStack, interactor.getName());
                 storageChannel.insert(cursorStack, 1, Action.EXECUTE);
                 cursorStack.decrement(1);
             }
             remainder = cursorStack;
         } else {
+            int count = cursorStack.getCount();
             remainder = storageChannel
-                .insert(cursorStack, cursorStack.getCount(), Action.EXECUTE)
+                .insert(cursorStack, count, Action.EXECUTE)
                 .orElse(ItemStack.EMPTY);
+
+            if (remainder.isEmpty() || remainder.getCount() != count) {
+                storageChannel.getTracker().onChanged(cursorStack, interactor.getName());
+            }
         }
 
         interactor.setCursorStack(remainder);
@@ -45,7 +51,15 @@ public class GridEventHandlerImpl implements GridEventHandler {
 
     @Override
     public void onInsertFromTransfer(Slot slot) {
-        slot.setStack(storageChannel.insert(slot.getStack(), slot.getStack().getCount(), Action.EXECUTE).orElse(ItemStack.EMPTY));
+        int count = slot.getStack().getCount();
+
+        ItemStack remainder = storageChannel.insert(slot.getStack(), count, Action.EXECUTE).orElse(ItemStack.EMPTY);
+
+        if (remainder.isEmpty() || remainder.getCount() != count) {
+            storageChannel.getTracker().onChanged(slot.getStack(), interactor.getName());
+        }
+
+        slot.setStack(remainder);
     }
 
     @Override

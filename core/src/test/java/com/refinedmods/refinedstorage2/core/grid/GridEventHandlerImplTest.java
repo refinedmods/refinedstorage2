@@ -2,16 +2,20 @@ package com.refinedmods.refinedstorage2.core.grid;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
+import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.screen.slot.Slot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
@@ -43,6 +47,10 @@ class GridEventHandlerImplTest {
         // Assert
         assertThat(interactor.getCursorStack().isEmpty()).isTrue();
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 25));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
     }
 
     @Test
@@ -58,6 +66,30 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStack(interactor.getCursorStack(), new ItemStack(Items.DIRT, 1));
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 30));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+    }
+
+    @Test
+    void Test_inserting_entire_stack_with_no_space_left_in_storage_from_cursor() {
+        // Arrange
+        storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+
+        storageChannel.insert(new ItemStack(Items.GLASS), 30, Action.EXECUTE);
+
+        interactor.setCursorStack(new ItemStack(Items.DIRT, 1));
+
+        // Act
+        eventHandler.onInsertFromCursor(GridInsertMode.ENTIRE_STACK);
+
+        // Assert
+        assertItemStack(interactor.getCursorStack(), new ItemStack(Items.DIRT, 1));
+        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.GLASS, 30));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isEmpty();
     }
 
     @Test
@@ -74,6 +106,10 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStack(interactor.getCursorStack(), new ItemStack(Items.DIRT, 29));
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 30));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
     }
 
     @Test
@@ -90,6 +126,72 @@ class GridEventHandlerImplTest {
         // Assert
         assertItemStack(interactor.getCursorStack(), new ItemStack(Items.DIRT, 64));
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 30));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isEmpty();
+    }
+
+    @Test
+    void Test_inserting_by_transferring() {
+        // Arrange
+        storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+
+        Slot slot = new Slot(new SimpleInventory(1), 0, 0, 0);
+        slot.setStack(new ItemStack(Items.GLASS, 30));
+
+        // Act
+        eventHandler.onInsertFromTransfer(slot);
+
+        // Assert
+        assertThat(slot.hasStack()).isFalse();
+        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.GLASS, 30));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.GLASS));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+    }
+
+    @Test
+    void Test_inserting_by_transferring_with_remainder() {
+        // Arrange
+        storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+
+        storageChannel.insert(new ItemStack(Items.GLASS), 15, Action.EXECUTE);
+
+        Slot slot = new Slot(new SimpleInventory(1), 0, 0, 0);
+        slot.setStack(new ItemStack(Items.DIRT, 64));
+
+        // Act
+        eventHandler.onInsertFromTransfer(slot);
+
+        // Assert
+        assertItemStack(slot.getStack(), new ItemStack(Items.DIRT, 64 - 15));
+        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.GLASS, 15), new ItemStack(Items.DIRT, 15));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+    }
+
+    @Test
+    void Test_inserting_by_transferring_when_storage_is_full() {
+        // Arrange
+        storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+
+        storageChannel.insert(new ItemStack(Items.GLASS), 30, Action.EXECUTE);
+
+        Slot slot = new Slot(new SimpleInventory(1), 0, 0, 0);
+        slot.setStack(new ItemStack(Items.DIRT, 64));
+
+        // Act
+        eventHandler.onInsertFromTransfer(slot);
+
+        // Assert
+        assertItemStack(slot.getStack(), new ItemStack(Items.DIRT, 64));
+        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.GLASS, 30));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isEmpty();
     }
 
     @Test
