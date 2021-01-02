@@ -236,6 +236,10 @@ class GridEventHandlerImplTest {
                 assertItemStackListContents(storageChannel.getStacks());
                 break;
         }
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
     }
 
     @ParameterizedTest
@@ -269,6 +273,10 @@ class GridEventHandlerImplTest {
                 assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 300 - 64));
                 break;
         }
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
     }
 
     @ParameterizedTest
@@ -288,6 +296,9 @@ class GridEventHandlerImplTest {
         assertThat(interactor.getCursorStack().isEmpty()).isTrue();
         assertItemStackListContents(interactor.getInventory());
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.GLASS, 30));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isEmpty();
     }
 
     @ParameterizedTest
@@ -321,10 +332,14 @@ class GridEventHandlerImplTest {
                 assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.BUCKET, 64 - 16));
                 break;
         }
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.BUCKET));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
     }
 
     @Test
-    void Test_extracting_item_when_inventory_is_full_should_return_to_storage() {
+    void Test_extracting_item_when_inventory_is_full_after_insert_should_return_remainder_to_storage() {
         // Arrange
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
 
@@ -339,6 +354,32 @@ class GridEventHandlerImplTest {
         assertThat(interactor.getCursorStack().isEmpty()).isTrue();
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 64 - 20));
         assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.DIRT, 20));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+    }
+
+    @Test
+    void Test_extracting_item_when_inventory_is_full_before_insert_should_return_everything_to_storage() {
+        // Arrange
+        storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+
+        storageChannel.insert(new ItemStack(Items.DIRT), 64, Action.EXECUTE);
+
+        interactor.resetInventoryAndSetCapacity(20);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 20), -1);
+
+        // Act
+        eventHandler.onExtract(new ItemStack(Items.DIRT, 32), GridExtractMode.PLAYER_INVENTORY_STACK);
+
+        // Assert
+        assertThat(interactor.getCursorStack().isEmpty()).isTrue();
+        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 64));
+        assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.GLASS, 20));
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isEmpty();
     }
 
     @Test
@@ -357,10 +398,14 @@ class GridEventHandlerImplTest {
         assertItemStack(interactor.getCursorStack(), new ItemStack(Items.DIRT, 1));
         assertItemStackListContents(interactor.getInventory());
         assertItemStackListContents(storageChannel.getStacks());
+
+        Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
+        assertThat(entry).isPresent();
+        assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
     }
 
     @ParameterizedTest
-    @EnumSource(GridExtractMode.class)
+    @EnumSource(value = GridExtractMode.class, names = {"CURSOR_STACK", "CURSOR_HALF"})
     void Test_extracting_from_cursor_should_not_perform_when_cursor_already_has_stack(GridExtractMode mode) {
         // Arrange
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
@@ -373,19 +418,9 @@ class GridEventHandlerImplTest {
         eventHandler.onExtract(new ItemStack(Items.DIRT), mode);
 
         // Assert
-        switch (mode) {
-            case CURSOR_STACK:
-            case CURSOR_HALF:
-                assertItemStack(interactor.getCursorStack(), new ItemStack(Items.DIRT, 3));
-                assertItemStackListContents(interactor.getInventory());
-                assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 65));
-                break;
-            case PLAYER_INVENTORY_STACK:
-                assertItemStack(interactor.getCursorStack(), new ItemStack(Items.DIRT, 3));
-                assertItemStackListContents(interactor.getInventory(), new ItemStack(Items.DIRT, 64));
-                assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 1));
-                break;
-        }
+        assertItemStack(interactor.getCursorStack(), new ItemStack(Items.DIRT, 3));
+        assertItemStackListContents(interactor.getInventory());
+        assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.DIRT, 65));
     }
 
     @Test

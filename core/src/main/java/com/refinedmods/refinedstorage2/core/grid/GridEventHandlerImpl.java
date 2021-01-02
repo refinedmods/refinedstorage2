@@ -93,9 +93,14 @@ public class GridEventHandlerImpl implements GridEventHandler {
             case CURSOR_STACK:
             case CURSOR_HALF:
                 interactor.setCursorStack(extracted);
+                storageChannel.getTracker().onChanged(extracted, interactor.getName());
                 return ItemStack.EMPTY;
             case PLAYER_INVENTORY_STACK:
-                return interactor.insertIntoInventory(extracted, -1);
+                ItemStack remainder = interactor.insertIntoInventory(extracted, -1);
+                if (remainder.isEmpty() || remainder.getCount() != extracted.getCount()) {
+                    storageChannel.getTracker().onChanged(extracted, interactor.getName());
+                }
+                return remainder;
             default:
                 return ItemStack.EMPTY;
         }
