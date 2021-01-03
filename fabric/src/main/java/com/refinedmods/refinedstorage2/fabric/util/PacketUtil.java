@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.util;
 
+import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
@@ -10,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class PacketUtil {
@@ -51,5 +53,24 @@ public class PacketUtil {
             itemStack.setTag(buf.readCompoundTag());
             return itemStack;
         }
+    }
+
+    public static void writeTrackerEntry(PacketByteBuf buf, Optional<StorageTracker.Entry> entry) {
+        if (!entry.isPresent()) {
+            buf.writeBoolean(false);
+        } else {
+            buf.writeBoolean(true);
+            buf.writeLong(entry.get().getTime());
+            buf.writeString(entry.get().getName());
+        }
+    }
+
+    public static StorageTracker.Entry readTrackerEntry(PacketByteBuf buf) {
+        if (!buf.readBoolean()) {
+            return null;
+        }
+        long time = buf.readLong();
+        String name = buf.readString(32767);
+        return new StorageTracker.Entry(time, name);
     }
 }

@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
+import com.refinedmods.refinedstorage2.fabric.util.LastModifiedUtil;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -34,7 +35,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix4f;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GridScreen extends HandledScreen<GridScreenHandler> {
@@ -140,54 +140,62 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
         drawTexture(matrices, x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, backgroundWidth - 34, BOTTOM_HEIGHT);
 
-        GridView<ItemStack> view = getScreenHandler().getItemView();
-
         gridSlotNumber = -1;
 
-        int i = scrollbar.getOffset() * COLUMNS;
+        int idx = scrollbar.getOffset() * COLUMNS;
         for (int row = 0; row < visibleRows; ++row) {
             for (int column = 0; column < COLUMNS; ++column) {
-                int slotX = x + 8 + (column * 18);
-                int slotY = y + 20 + (row * 18);
+                renderGridSlot(matrices, mouseX, mouseY, x, y, idx, row, column);
+                idx++;
+            }
+        }
+    }
 
-                GridStack<ItemStack> stack = null;
-                if (i < view.getStacks().size()) {
-                    stack = view.getStacks().get(i);
+    private void renderGridSlot(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int idx, int row, int column) {
+        GridView<ItemStack> view = getScreenHandler().getItemView();
 
-                    setZOffset(100);
-                    itemRenderer.zOffset = 100.0F;
+        int slotX = x + 8 + (column * 18);
+        int slotY = y + 20 + (row * 18);
 
-                    itemRenderer.renderInGuiWithOverrides(client.player, stack.getStack(), slotX, slotY);
+        GridStack<ItemStack> stack = null;
+        if (idx < view.getStacks().size()) {
+            stack = view.getStacks().get(idx);
 
-                    String text = stack.isZeroed() ? "0" : String.valueOf(stack.getCount());
-                    Integer color = stack.isZeroed() ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue();
+            setZOffset(100);
+            itemRenderer.zOffset = 100.0F;
 
-                    renderAmount(matrices, slotX, slotY, text, color);
+            itemRenderer.renderInGuiWithOverrides(client.player, stack.getStack(), slotX, slotY);
 
-                    setZOffset(0);
-                    itemRenderer.zOffset = 0.0F;
+            String text = stack.isZeroed() ? "0" : String.valueOf(stack.getCount());
+            Integer color = stack.isZeroed() ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue();
+
+            renderAmount(matrices, slotX, slotY, text, color);
+
+            setZOffset(0);
+            itemRenderer.zOffset = 0.0F;
+        }
+
+        if (mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16) {
+            RenderSystem.disableDepthTest();
+            RenderSystem.colorMask(true, true, true, false);
+            fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, -2130706433, -2130706433);
+            RenderSystem.colorMask(true, true, true, true);
+            RenderSystem.enableDepthTest();
+
+            if (stack != null) {
+                gridSlotNumber = idx;
+
+                if (!RefinedStorage2Config.get().getGrid().isDetailedTooltip()) {
+                    renderTooltip(matrices, stack.getStack(), mouseX, mouseY);
+                } else {
+                    List<OrderedText> lines = Lists.transform(getTooltipFromItem(stack.getStack()), Text::asOrderedText);
+                    List<OrderedText> smallLines = new ArrayList<>();
+                    smallLines.add(new TranslatableText("misc.refinedstorage2.total", stack.isZeroed() ? "0" : Quantities.format(stack.getCount())).formatted(Formatting.GRAY).asOrderedText());
+
+                    view.getTrackerEntry(stack.getStack()).ifPresent(entry -> smallLines.add(LastModifiedUtil.getText(entry.getTime(), entry.getName()).formatted(Formatting.GRAY).asOrderedText()));
+
+                    renderTooltipWithSmallText(matrices, lines, smallLines, mouseX, mouseY);
                 }
-
-                if (mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16) {
-                    RenderSystem.disableDepthTest();
-                    RenderSystem.colorMask(true, true, true, false);
-                    fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, -2130706433, -2130706433);
-                    RenderSystem.colorMask(true, true, true, true);
-                    RenderSystem.enableDepthTest();
-
-                    if (stack != null) {
-                        gridSlotNumber = i;
-
-                        List<? extends OrderedText> lines = Lists.transform(getTooltipFromItem(stack.getStack()), Text::asOrderedText);
-                        List<? extends OrderedText> smallLines = Lists.transform(Arrays.asList(
-                            new TranslatableText("misc.refinedstorage2.total", stack.isZeroed() ? "0" : Quantities.format(stack.getCount())).formatted(Formatting.GRAY)
-                        ), Text::asOrderedText);
-
-                        renderTooltipWithSmallText(matrices, lines, smallLines, RefinedStorage2Config.get().getGrid().isDetailedTooltip(), mouseX, mouseY);
-                    }
-                }
-
-                i++;
             }
         }
     }
@@ -207,7 +215,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
         matrixStack.pop();
     }
 
-    private void renderTooltipWithSmallText(MatrixStack matrixStack, List<? extends OrderedText> lines, List<? extends OrderedText> smallLines, boolean showSmallLines, int x, int y) {
+    private void renderTooltipWithSmallText(MatrixStack matrixStack, List<? extends OrderedText> lines, List<? extends OrderedText> smallLines, int x, int y) {
         if (lines.isEmpty()) {
             return;
         }
@@ -223,12 +231,10 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
             }
         }
 
-        if (showSmallLines) {
-            for (OrderedText text : smallLines) {
-                int textWidth = (int) (textRenderer.getWidth(text) * smallTextScale);
-                if (textWidth > tooltipWidth) {
-                    tooltipWidth = textWidth;
-                }
+        for (OrderedText text : smallLines) {
+            int textWidth = (int) (textRenderer.getWidth(text) * smallTextScale);
+            if (textWidth > tooltipWidth) {
+                tooltipWidth = textWidth;
             }
         }
 
@@ -240,9 +246,7 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
             tooltipHeight += 2 + (lines.size() - 1) * 10;
         }
 
-        if (showSmallLines) {
-            tooltipHeight += smallLines.size() * 10;
-        }
+        tooltipHeight += smallLines.size() * 10;
 
         if (tooltipX + tooltipWidth > width) {
             tooltipX -= 28 + tooltipWidth;
@@ -292,16 +296,14 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
             tooltipY += 10;
         }
 
-        if (showSmallLines) {
-            for (int i = 0; i < smallLines.size(); ++i) {
-                matrixStack.push();
-                matrixStack.scale(smallTextScale, smallTextScale, 1);
+        for (int i = 0; i < smallLines.size(); ++i) {
+            matrixStack.push();
+            matrixStack.scale(smallTextScale, smallTextScale, 1);
 
-                textRenderer.draw(smallLines.get(i), (float) tooltipX / smallTextScale, (float) tooltipY / smallTextScale, -1, true, matrixStack.peek().getModel(), immediate, false, 0, 15728880);
-                matrixStack.pop();
+            textRenderer.draw(smallLines.get(i), (float) tooltipX / smallTextScale, (float) tooltipY / smallTextScale, -1, true, matrixStack.peek().getModel(), immediate, false, 0, 15728880);
+            matrixStack.pop();
 
-                tooltipY += 9;
-            }
+            tooltipY += 9;
         }
 
         immediate.draw();

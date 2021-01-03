@@ -5,12 +5,12 @@ import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -49,6 +49,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         stacks.forEach(stack -> {
             buf.writeItemStack(stack);
             buf.writeInt(stack.getCount());
+            PacketUtil.writeTrackerEntry(buf, getNetwork().getItemStorageChannel().getTracker().getEntry(stack));
         });
     }
 }
