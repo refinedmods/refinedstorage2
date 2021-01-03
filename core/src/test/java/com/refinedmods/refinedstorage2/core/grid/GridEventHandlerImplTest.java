@@ -368,7 +368,7 @@ class GridEventHandlerImplTest {
         storageChannel.insert(new ItemStack(Items.DIRT), 64, Action.EXECUTE);
 
         interactor.resetInventoryAndSetCapacity(20);
-        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 20), -1);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 20), -1, Action.EXECUTE);
 
         // Act
         eventHandler.onExtract(new ItemStack(Items.DIRT, 32), GridExtractMode.PLAYER_INVENTORY_STACK);
@@ -430,7 +430,7 @@ class GridEventHandlerImplTest {
         storageChannel.insert(new ItemStack(Items.DIRT), 32, Action.EXECUTE);
 
         interactor.resetInventoryAndSetCapacity(32);
-        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 20), -1);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 20), -1, Action.EXECUTE);
 
         // Act
         eventHandler.onScroll(new ItemStack(Items.DIRT), -1, GridScrollMode.GRID_TO_INVENTORY_SINGLE_STACK);
@@ -468,7 +468,7 @@ class GridEventHandlerImplTest {
         storageChannel.insert(new ItemStack(Items.DIRT), 32, Action.EXECUTE);
 
         interactor.resetInventoryAndSetCapacity(32);
-        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 32), -1);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 32), -1, Action.EXECUTE);
 
         // Act
         eventHandler.onScroll(new ItemStack(Items.DIRT), -1, GridScrollMode.GRID_TO_INVENTORY_SINGLE_STACK);
@@ -523,7 +523,7 @@ class GridEventHandlerImplTest {
         storageChannel.insert(new ItemStack(Items.DIRT), 300, Action.EXECUTE);
 
         interactor.resetInventoryAndSetCapacity(32);
-        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 20), -1);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 20), -1, Action.EXECUTE);
 
         // Act
         eventHandler.onScroll(new ItemStack(Items.DIRT), -1, GridScrollMode.GRID_TO_INVENTORY_STACK);
@@ -544,7 +544,7 @@ class GridEventHandlerImplTest {
         storageChannel.insert(new ItemStack(Items.DIRT), 300, Action.EXECUTE);
 
         interactor.resetInventoryAndSetCapacity(32);
-        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 32), -1);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 32), -1, Action.EXECUTE);
 
         // Act
         eventHandler.onScroll(new ItemStack(Items.DIRT), -1, GridScrollMode.GRID_TO_INVENTORY_STACK);
@@ -580,7 +580,7 @@ class GridEventHandlerImplTest {
         // Arrange
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
 
-        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 128), -1);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 128), -1, Action.EXECUTE);
 
         // Act
         eventHandler.onScroll(new ItemStack(Items.GLASS), -1, GridScrollMode.INVENTORY_TO_GRID_SINGLE_STACK);
@@ -599,7 +599,7 @@ class GridEventHandlerImplTest {
         // Arrange
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
 
-        interactor.insertIntoInventory(new ItemStack(Items.DIRT, 128), -1);
+        interactor.insertIntoInventory(new ItemStack(Items.DIRT, 128), -1, Action.EXECUTE);
 
         // Act
         eventHandler.onScroll(new ItemStack(Items.GLASS), -1, GridScrollMode.INVENTORY_TO_GRID_SINGLE_STACK);
@@ -618,7 +618,7 @@ class GridEventHandlerImplTest {
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(2)));
         storageChannel.insert(new ItemStack(Items.DIRT), 2, Action.EXECUTE);
 
-        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 128), -1);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 128), -1, Action.EXECUTE);
 
         // Act
         eventHandler.onScroll(new ItemStack(Items.GLASS), -1, GridScrollMode.INVENTORY_TO_GRID_SINGLE_STACK);
@@ -636,7 +636,7 @@ class GridEventHandlerImplTest {
         // Arrange
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
 
-        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 129), -1);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 129), -1, Action.EXECUTE);
 
         // Act
         eventHandler.onScroll(new ItemStack(Items.GLASS), -1, GridScrollMode.INVENTORY_TO_GRID_STACK);
@@ -655,7 +655,7 @@ class GridEventHandlerImplTest {
         // Arrange
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
 
-        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 129), -1);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 129), -1, Action.EXECUTE);
 
         // Act
         eventHandler.onScroll(new ItemStack(Items.DIRT), -1, GridScrollMode.INVENTORY_TO_GRID_STACK);
@@ -675,7 +675,7 @@ class GridEventHandlerImplTest {
 
         storageChannel.insert(new ItemStack(Items.SPONGE), 60, Action.EXECUTE);
 
-        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 129), -1);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 129), -1, Action.EXECUTE);
 
         // Act
         eventHandler.onScroll(new ItemStack(Items.GLASS), -1, GridScrollMode.INVENTORY_TO_GRID_STACK);
@@ -696,7 +696,7 @@ class GridEventHandlerImplTest {
 
         storageChannel.insert(new ItemStack(Items.SPONGE), 100, Action.EXECUTE);
 
-        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 129), -1);
+        interactor.insertIntoInventory(new ItemStack(Items.GLASS, 129), -1, Action.EXECUTE);
 
         // Act
         eventHandler.onScroll(new ItemStack(Items.GLASS), -1, GridScrollMode.INVENTORY_TO_GRID_STACK);
@@ -714,7 +714,7 @@ class GridEventHandlerImplTest {
         // Arrange
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
 
-        interactor.insertIntoInventory(new ItemStack(Items.BUCKET, 129), -1);
+        interactor.insertIntoInventory(new ItemStack(Items.BUCKET, 129), -1, Action.EXECUTE);
 
         // Act
         eventHandler.onScroll(new ItemStack(Items.BUCKET), -1, GridScrollMode.INVENTORY_TO_GRID_STACK);
