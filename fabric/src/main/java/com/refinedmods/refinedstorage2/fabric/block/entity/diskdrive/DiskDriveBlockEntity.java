@@ -95,6 +95,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     public void onChange(FixedItemInvView view, int slot, ItemStack oldStack, ItemStack newStack) {
         if (!world.isClient()) {
             node.onDiskChanged(slot);
+            getNetwork().onNodesChanged();
             sync();
         }
     }
