@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
+import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
@@ -121,7 +122,7 @@ public class GridEventHandlerImpl implements GridEventHandler {
     }
 
     @Override
-    public void onItemUpdate(ItemStack template, int amount) {
+    public void onItemUpdate(ItemStack template, int amount, StorageTracker.Entry trackerEntry) {
 
     }
 
