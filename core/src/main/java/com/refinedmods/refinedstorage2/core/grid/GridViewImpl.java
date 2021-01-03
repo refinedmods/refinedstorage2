@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.core.grid;
 
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
+import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 
 import java.util.*;
 import java.util.function.Function;
@@ -13,6 +14,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     private final Comparator<GridStack<?>> identitySort;
     private final Function<T, GridStack<T>> stackFactory;
     private final Function<T, ID> idFactory;
+    private final Map<ID, StorageTracker.Entry> trackerEntries = new HashMap<>();
     private final Map<ID, GridStack<T>> stackIndex = new HashMap<>();
 
     private List<GridStack<T>> stacks = new ArrayList<>();
@@ -74,8 +76,14 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     }
 
     @Override
-    public void loadStack(T template, int amount) {
+    public void loadStack(T template, int amount, StorageTracker.Entry trackerEntry) {
         list.add(template, amount);
+        trackerEntries.put(idFactory.apply(template), trackerEntry);
+    }
+
+    @Override
+    public Optional<StorageTracker.Entry> getTrackerEntry(T template) {
+        return Optional.ofNullable(trackerEntries.get(idFactory.apply(template)));
     }
 
     @Override
@@ -87,17 +95,14 @@ public class GridViewImpl<T, ID> implements GridView<T> {
             .map(stackFactory)
             .sorted(getSorter())
             .filter(filter)
-            .map(stack -> {
-                stackIndex.put(idFactory.apply(stack.getStack()), stack);
-                return stack;
-            })
+            .peek(stack -> stackIndex.put(idFactory.apply(stack.getStack()), stack))
             .collect(Collectors.toList());
 
         notifyListener();
     }
 
     @Override
-    public void onChange(T template, int amount) {
+    public void onChange(T template, int amount, StorageTracker.Entry trackerEntry) {
         StackListResult<T> stack;
         if (amount < 0) {
             stack = list.remove(template, Math.abs(amount)).orElseThrow(RuntimeException::new);
@@ -106,6 +111,12 @@ public class GridViewImpl<T, ID> implements GridView<T> {
         }
 
         ID id = idFactory.apply(stack.getStack());
+
+        if (trackerEntry == null) {
+            trackerEntries.remove(id);
+        } else {
+            trackerEntries.put(id, trackerEntry);
+        }
 
         GridStack<T> gridStack = stackIndex.get(id);
         if (gridStack != null) {

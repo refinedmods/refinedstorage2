@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
+import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
@@ -20,6 +21,8 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.slot.Slot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Optional;
 
 public class GridScreenHandler extends BaseScreenHandler implements GridEventHandler, StackListListener<ItemStack> {
     private static final Logger LOGGER = LogManager.getLogger(GridScreenHandler.class);
@@ -44,7 +47,8 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         for (int i = 0; i < size; ++i) {
             ItemStack stack = buf.readItemStack();
             stack.setCount(buf.readInt());
-            itemView.loadStack(stack, stack.getCount());
+            StorageTracker.Entry trackerEntry = PacketUtil.readTrackerEntry(buf);
+            itemView.loadStack(stack, stack.getCount(), trackerEntry);
         }
         itemView.sort();
     }
@@ -103,10 +107,10 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     }
 
     @Override
-    public void onItemUpdate(ItemStack template, int amount) {
+    public void onItemUpdate(ItemStack template, int amount, StorageTracker.Entry trackerEntry) {
         LOGGER.info("Item {} got updated with {}", template, amount);
 
-        itemView.onChange(template, amount);
+        itemView.onChange(template, amount, trackerEntry);
     }
 
     @Override
@@ -121,6 +125,9 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         PacketUtil.sendToPlayer(playerInventory.player, GridItemUpdatePacket.ID, buf -> {
             PacketUtil.writeItemStackWithoutCount(buf, change.getStack());
             buf.writeInt(change.getChange());
+
+            Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(change.getStack());
+            PacketUtil.writeTrackerEntry(buf, entry);
         });
     }
 
