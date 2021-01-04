@@ -155,6 +155,52 @@ public class GridViewTest {
         }
     }
 
+    @Test
+    void Test_sorting_ascending_last_modified() {
+        // Arrange
+        view.setSorter(GridSorter.getLastModified(view));
+        view.setSortingDirection(GridSortingDirection.ASCENDING);
+
+        view.loadStack(new ItemStack(Items.DIRT), 10, null);
+        view.loadStack(new ItemStack(Items.DIRT), 5, new StorageTracker.Entry(3, "Raoul"));
+        view.loadStack(new ItemStack(Items.GLASS), 1, new StorageTracker.Entry(2, "VDB"));
+        view.loadStack(new ItemStack(Items.BUCKET), 2, null);
+
+        // Act
+        view.sort();
+
+        // Assert
+        assertOrderedItemGridStackListContents(
+            view.getStacks(),
+            new ItemStack(Items.BUCKET, 2),
+            new ItemStack(Items.GLASS, 1),
+            new ItemStack(Items.DIRT, 15)
+        );
+    }
+
+    @Test
+    void Test_sorting_descending_last_modified() {
+        // Arrange
+        view.setSorter(GridSorter.getLastModified(view));
+        view.setSortingDirection(GridSortingDirection.DESCENDING);
+
+        view.loadStack(new ItemStack(Items.DIRT), 10, null);
+        view.loadStack(new ItemStack(Items.DIRT), 5, new StorageTracker.Entry(3, "Raoul"));
+        view.loadStack(new ItemStack(Items.GLASS), 1, new StorageTracker.Entry(2, "VDB"));
+        view.loadStack(new ItemStack(Items.BUCKET), 2, null);
+
+        // Act
+        view.sort();
+
+        // Assert
+        assertOrderedItemGridStackListContents(
+            view.getStacks(),
+            new ItemStack(Items.DIRT, 15),
+            new ItemStack(Items.GLASS, 1),
+            new ItemStack(Items.BUCKET, 2)
+        );
+    }
+
     @ParameterizedTest
     @EnumSource(GridSorter.class)
     void Test_sorting_descending(GridSorter sorter) {
