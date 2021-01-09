@@ -31,7 +31,7 @@ class GridEventHandlerImplTest {
     void setUp() {
         interactor = new FakeGridInteractor();
         storageChannel = new ItemStorageChannel();
-        eventHandler = new GridEventHandlerImpl(storageChannel, interactor);
+        eventHandler = new GridEventHandlerImpl(new StorageTrackerEntryPresentAssertionItemStorageChannel(storageChannel), interactor);
     }
 
     @Test
@@ -98,6 +98,7 @@ class GridEventHandlerImplTest {
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
 
         storageChannel.insert(new ItemStack(Items.DIRT), 29, Action.EXECUTE);
+
         interactor.setCursorStack(new ItemStack(Items.DIRT, 30));
 
         // Act
@@ -118,6 +119,7 @@ class GridEventHandlerImplTest {
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
 
         storageChannel.insert(new ItemStack(Items.DIRT), 30, Action.EXECUTE);
+
         interactor.setCursorStack(new ItemStack(Items.DIRT, 64));
 
         // Act
