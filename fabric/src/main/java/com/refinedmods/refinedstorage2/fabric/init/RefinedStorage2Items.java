@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.init;
 
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.block.GridBlock;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.ItemStorageType;
 import com.refinedmods.refinedstorage2.fabric.item.*;
 import com.refinedmods.refinedstorage2.fabric.item.block.ColoredBlockItem;
@@ -9,7 +8,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -29,13 +27,7 @@ public class RefinedStorage2Items {
         Registry.register(Registry.ITEM, new Identifier(RefinedStorage2Mod.ID, "disk_drive"), new BlockItem(blocks.getDiskDrive(), createSettings(itemGroup)));
         storageHousing = Registry.register(Registry.ITEM, new Identifier(RefinedStorage2Mod.ID, "storage_housing"), new StorageHousingItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, new Identifier(RefinedStorage2Mod.ID, "machine_casing"), new BlockItem(blocks.getMachineCasing(), createSettings(itemGroup)));
-
-        for (Map.Entry<DyeColor, GridBlock> gridEntry : blocks.getGrid().entrySet()) {
-            GridBlock block = gridEntry.getValue();
-            DyeColor color = gridEntry.getKey();
-
-            Registry.register(Registry.ITEM, blocks.generateIdentifierForColoredBlock(color, "grid"), new ColoredBlockItem(block, createSettings(itemGroup), color, new TranslatableText("block.refinedstorage2.grid")));
-        }
+        blocks.getGrid().forEach((color, block, nameFactory) -> Registry.register(Registry.ITEM, new Identifier(RefinedStorage2Mod.ID, nameFactory.apply("grid")), new ColoredBlockItem(block, createSettings(itemGroup), color, new TranslatableText("block.refinedstorage2.grid"))));
 
         for (ProcessorItem.Type type : ProcessorItem.Type.values()) {
             Registry.register(Registry.ITEM, new Identifier(RefinedStorage2Mod.ID, type.getName() + "_processor"), new ProcessorItem(createSettings(itemGroup)));

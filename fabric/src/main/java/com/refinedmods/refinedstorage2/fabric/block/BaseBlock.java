@@ -87,7 +87,7 @@ public abstract class BaseBlock extends Block {
     @Override
     @SuppressWarnings("deprecation")
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (state.getBlock() != newState.getBlock()) {
+        if (state.getBlock() != newState.getBlock() && !state.getBlock().getClass().equals(newState.getBlock().getClass())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof BlockEntityWithDrops) {
                 ItemScatterer.spawn(world, pos, ((BlockEntityWithDrops) blockEntity).getDrops());
