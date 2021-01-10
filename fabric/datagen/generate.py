@@ -2,8 +2,9 @@ import os
 import json
 import shutil
 
-shutil.rmtree('output/')
+output_dir = '../src/generated/resources/'
 
+# shutil.rmtree(output_dir)
 
 def create_file(path, contents):
     print('Generating ' + path)
@@ -28,7 +29,7 @@ def get_color_key(color, name):
 def generate_north_cutout_block_model(name, particle, north, east, south, west, up, down, cutout, fullbright_cutout):
     parent = 'refinedstorage2:block/fullbright_north_cutout' if fullbright_cutout else 'refinedstorage2:block/north_cutout'
 
-    create_file('output/models/block/' + name + '.json', to_json({
+    create_file(output_dir + '/assets/refinedstorage2/models/block/' + name + '.json', to_json({
         'parent': parent,
         'textures': {
             'particle': particle,
@@ -44,7 +45,7 @@ def generate_north_cutout_block_model(name, particle, north, east, south, west, 
 
 
 def generate_referencing_item_model(name, reference):
-    create_file('output/models/item/' + name + '.json', to_json({
+    create_file(output_dir + '/assets/refinedstorage2/models/item/' + name + '.json', to_json({
         'parent': reference
     }))
 
@@ -106,18 +107,54 @@ def generate_blockstate_for_each_bi_direction(name, model_factory):
             'y': bi_direction_rotations[direction].get('y', 0)
         }
 
-    create_file('output/blockstates/' + name + '.json', to_json(result))
+    create_file(output_dir + '/assets/refinedstorage2/blockstates/' +
+                name + '.json', to_json(result))
+
+
+def generate_recipe(name, data):
+    create_file(output_dir + '/data/refinedstorage2/recipes/' +
+                name + '.json', to_json(data))
+
+
+def generate_item_tag(name, data):
+    create_file(output_dir + '/data/refinedstorage2/tags/items/' + name + '.json', to_json(data))
 
 
 with open('colors.txt') as colors_file:
-    colors = colors_file.read().splitlines()
-    for color in colors:
+    color_entries = colors_file.read().splitlines()
+    color_names = map(lambda color: color.split(';')[0], color_entries)
+
+    for color_entry in color_entries:
+        color = color_entry.split(';')[0]
+        dye = color_entry.split(';')[1]
+
         generate_north_cutout_block_model('grid/' + color, particle='refinedstorage2:block/grid/right', east='refinedstorage2:block/grid/right', south='refinedstorage2:block/grid/back', west='refinedstorage2:block/grid/left',
                                           up='refinedstorage2:block/grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/grid/front', cutout='refinedstorage2:block/grid/cutouts/' + color, fullbright_cutout=True)
         generate_referencing_item_model(
             get_color_key(color, 'grid'), 'refinedstorage2:block/grid/' + color)
         generate_blockstate_for_each_bi_direction(get_color_key(
             color, 'grid'), lambda direction: 'refinedstorage2:block/grid/' + color)
+
+        if color != 'light_blue':
+            generate_recipe('coloring/' + color + '_grid', {
+                'type': 'minecraft:crafting_shapeless',
+                'ingredients': [
+                    {
+                        'tag': 'refinedstorage2:grids'
+                    },
+                    {
+                        'item': 'minecraft:' + dye
+                    }
+                ],
+                'result': {
+                    'item': 'refinedstorage2:' + color + '_grid'
+                }
+            })
+        
+    generate_item_tag('grids', {
+        'replace': False,
+        'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'grid'), color_names))
+    })
 
     generate_north_cutout_block_model('grid/disconnected', particle='refinedstorage2:block/grid/right', east='refinedstorage2:block/grid/right', south='refinedstorage2:block/grid/back', west='refinedstorage2:block/grid/left',
                                       up='refinedstorage2:block/grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/grid/front', cutout='refinedstorage2:block/grid/cutouts/disconnected', fullbright_cutout=False)
