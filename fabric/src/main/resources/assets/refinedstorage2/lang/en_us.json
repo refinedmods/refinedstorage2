@@ -25,6 +25,8 @@
   "item.refinedstorage2.64k_storage_disk": "64k Storage Disk",
   "item.refinedstorage2.creative_storage_disk": "Creative Storage Disk",
   "item.refinedstorage2.storage_housing": "Storage Housing",
+  "item.refinedstorage2.construction_core": "Construction Core",
+  "item.refinedstorage2.destruction_core": "Destruction Core",
   "misc.refinedstorage2.stored": "Stored: %s",
   "misc.refinedstorage2.stored_with_capacity": "Stored: %s / %s",
   "misc.refinedstorage2.total": "%d total",

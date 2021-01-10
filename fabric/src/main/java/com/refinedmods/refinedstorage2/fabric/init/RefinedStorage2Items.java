@@ -50,6 +50,9 @@ public class RefinedStorage2Items {
         for (ItemStorageType type : ItemStorageType.values()) {
             Registry.register(Registry.ITEM, new Identifier(RefinedStorage2Mod.ID, type.getName() + "_storage_disk"), new StorageDiskItem(createSettings(itemGroup).maxCount(1).fireproof(), type));
         }
+
+        Registry.register(Registry.ITEM, new Identifier(RefinedStorage2Mod.ID, "construction_core"), new CoreItem(createSettings(itemGroup)));
+        Registry.register(Registry.ITEM, new Identifier(RefinedStorage2Mod.ID, "destruction_core"), new CoreItem(createSettings(itemGroup)));
     }
 
     private Item.Settings createSettings(ItemGroup itemGroup) {
