@@ -6,6 +6,7 @@ output_dir = '../src/generated/resources/'
 
 # shutil.rmtree(output_dir)
 
+
 def create_file(path, contents):
     print('Generating ' + path)
     try:
@@ -117,7 +118,30 @@ def generate_recipe(name, data):
 
 
 def generate_item_tag(name, data):
-    create_file(output_dir + '/data/refinedstorage2/tags/items/' + name + '.json', to_json(data))
+    create_file(output_dir + '/data/refinedstorage2/tags/items/' +
+                name + '.json', to_json(data))
+
+
+def generate_simple_loot_table(name, block):
+    create_file(output_dir + '/data/refinedstorage2/loot_tables/blocks/' + name + '.json', to_json({
+        'type': 'minecraft:block',
+        'pools': [
+            {
+                'rolls': 1,
+                'entries': [
+                    {
+                        'type': 'minecraft:item',
+                        'name': block
+                    }
+                ],
+                'conditions': [
+                    {
+                        'condition': 'minecraft:survives_explosion'
+                    }
+                ]
+            }
+        ]
+    }))
 
 
 with open('colors.txt') as colors_file:
@@ -135,6 +159,8 @@ with open('colors.txt') as colors_file:
         generate_blockstate_for_each_bi_direction(get_color_key(
             color, 'grid'), lambda direction: 'refinedstorage2:block/grid/' + color)
 
+        generate_simple_loot_table(get_color_key(color, 'grid'), 'refinedstorage2:' + get_color_key(color, 'grid'))
+
         if color != 'light_blue':
             generate_recipe('coloring/' + color + '_grid', {
                 'type': 'minecraft:crafting_shapeless',
@@ -150,7 +176,7 @@ with open('colors.txt') as colors_file:
                     'item': 'refinedstorage2:' + color + '_grid'
                 }
             })
-        
+
     generate_item_tag('grids', {
         'replace': False,
         'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'grid'), color_names))
