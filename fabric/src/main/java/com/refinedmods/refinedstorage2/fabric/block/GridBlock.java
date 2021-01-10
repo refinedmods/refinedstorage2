@@ -11,6 +11,11 @@ public class GridBlock extends NetworkNodeBlock {
     }
 
     @Override
+    protected boolean hasBiDirection() {
+        return true;
+    }
+
+    @Override
     public @Nullable BlockEntity createBlockEntity(BlockView world) {
         return new GridBlockEntity();
     }

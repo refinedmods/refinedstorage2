@@ -1,22 +1,67 @@
 package com.refinedmods.refinedstorage2.fabric.block;
 
 import com.refinedmods.refinedstorage2.fabric.block.entity.BlockEntityWithDrops;
+import com.refinedmods.refinedstorage2.fabric.util.BiDirection;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.EnumProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseBlock extends Block {
+    public static final EnumProperty<BiDirection> DIRECTION = EnumProperty.of("direction", BiDirection.class);
+
     public BaseBlock(Settings settings) {
         super(settings);
+
+        if (hasBiDirection()) {
+            setDefaultState(getStateManager().getDefaultState().with(DIRECTION, BiDirection.NORTH));
+        }
+    }
+
+    protected boolean hasBiDirection() {
+        return false;
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        super.appendProperties(builder);
+
+        if (hasBiDirection()) {
+            builder.add(DIRECTION);
+        }
+    }
+
+    private BiDirection getDirection(Direction playerFacing, float playerPitch) {
+        if (playerPitch > 65) {
+            return BiDirection.forUp(playerFacing);
+        } else if (playerPitch < -65) {
+            return BiDirection.forDown(playerFacing.getOpposite());
+        } else {
+            return BiDirection.forHorizontal(playerFacing.getOpposite());
+        }
+    }
+
+    @Override
+    public BlockState getPlacementState(ItemPlacementContext ctx) {
+        BlockState state = getDefaultState();
+
+        if (hasBiDirection()) {
+            state = state.with(DIRECTION, getDirection(ctx.getPlayerFacing(), ctx.getPlayer() != null ? ctx.getPlayer().pitch : 0));
+        }
+
+        return state;
     }
 
     @Override

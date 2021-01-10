@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.init;
 
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.block.GridBlock;
 import com.refinedmods.refinedstorage2.fabric.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
@@ -16,7 +17,7 @@ public class RefinedStorage2BlockEntities {
     public void register(RefinedStorage2Blocks blocks) {
         cable = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(RefinedStorage2Mod.ID, "cable"), BlockEntityType.Builder.create(CableBlockEntity::new, blocks.getCable()).build(null));
         diskDrive = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(RefinedStorage2Mod.ID, "disk_drive"), BlockEntityType.Builder.create(DiskDriveBlockEntity::new, blocks.getDiskDrive()).build(null));
-        grid = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(RefinedStorage2Mod.ID, "grid"), BlockEntityType.Builder.create(GridBlockEntity::new, blocks.getGrid()).build(null));
+        grid = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(RefinedStorage2Mod.ID, "grid"), BlockEntityType.Builder.create(GridBlockEntity::new, blocks.getGrid().values().toArray(new GridBlock[0])).build(null));
     }
 
     public BlockEntityType<CableBlockEntity> getCable() {
