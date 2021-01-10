@@ -8,7 +8,11 @@
   ],
   "client": [
     "TextFieldWidgetAccessor",
-    "KeyBindingAccessor"
+    "KeyBindingAccessor",
+    "BakedQuadAccessor",
+    "JsonUnbakedModelMixin",
+    "ModelElementFaceDeserializerMixin",
+    "ModelLoaderMixin"
   ],
   "injectors": {
     "defaultRequire": 1
