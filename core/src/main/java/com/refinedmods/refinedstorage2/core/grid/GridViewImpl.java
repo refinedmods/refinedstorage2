@@ -76,6 +76,11 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     }
 
     @Override
+    public GridSortingDirection getSortingDirection() {
+        return sortingDirection;
+    }
+
+    @Override
     public void loadStack(T template, int amount, StorageTracker.Entry trackerEntry) {
         list.add(template, amount);
         trackerEntries.put(idFactory.apply(template), trackerEntry);

@@ -6,10 +6,7 @@ import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2BlockEntities;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2Blocks;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2Items;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2ScreenHandlers;
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.StorageDiskInfoRequestPacket;
+import com.refinedmods.refinedstorage2.fabric.packet.c2s.*;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
@@ -48,6 +45,7 @@ public class RefinedStorage2Mod implements ModInitializer {
         ServerSidePacketRegistry.INSTANCE.register(GridInsertFromCursorPacket.ID, new GridInsertFromCursorPacket());
         ServerSidePacketRegistry.INSTANCE.register(GridExtractPacket.ID, new GridExtractPacket());
         ServerSidePacketRegistry.INSTANCE.register(GridScrollPacket.ID, new GridScrollPacket());
+        ServerSidePacketRegistry.INSTANCE.register(GridChangeSettingPacket.ID, new GridChangeSettingPacket());
 
         LOGGER.info("Refined Storage 2 has loaded.");
     }

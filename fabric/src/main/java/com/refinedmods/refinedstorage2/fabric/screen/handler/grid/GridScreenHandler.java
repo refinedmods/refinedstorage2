@@ -30,6 +30,8 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private final PlayerInventory playerInventory;
     private final GridView<ItemStack> itemView = new GridViewImpl<>(new FabricGridStackFactory(), ItemStackIdentifier::new, GridSorter.NAME.getComparator(), new ItemStackList());
 
+    private GridBlockEntity grid;
+
     private StorageChannel<ItemStack> storageChannel; // TODO - Support changing of the channel.
     private GridEventHandler eventHandler;
 
@@ -38,8 +40,10 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
 
         this.playerInventory = playerInventory;
 
+        GridSortingDirection sortingDirection = buf.readBoolean() ? GridSortingDirection.ASCENDING : GridSortingDirection.DESCENDING;
+
         itemView.setSorter(GridSorter.QUANTITY.getComparator());
-        itemView.setSortingDirection(GridSortingDirection.DESCENDING);
+        itemView.setSortingDirection(sortingDirection);
 
         addSlots(0);
 
@@ -60,8 +64,13 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         this.storageChannel = grid.getNetwork().getItemStorageChannel();
         this.storageChannel.addListener(this);
         this.eventHandler = new GridEventHandlerImpl(storageChannel, new PlayerGridInteractor(playerInventory.player));
+        this.grid = grid;
 
         addSlots(0);
+    }
+
+    public GridBlockEntity getGrid() {
+        return grid;
     }
 
     @Override

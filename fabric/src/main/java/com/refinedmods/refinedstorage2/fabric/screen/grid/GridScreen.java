@@ -2,10 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
-import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.core.grid.GridStack;
-import com.refinedmods.refinedstorage2.core.grid.GridView;
+import com.refinedmods.refinedstorage2.core.grid.*;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserException;
 import com.refinedmods.refinedstorage2.core.util.History;
@@ -13,16 +10,18 @@ import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.mixin.SlotAccessor;
+import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridChangeSettingPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
+import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.util.LastModifiedUtil;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
@@ -36,8 +35,9 @@ import net.minecraft.util.math.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class GridScreen extends HandledScreen<GridScreenHandler> {
+public class GridScreen extends BaseScreen<GridScreenHandler> {
     private static final Identifier TEXTURE = new Identifier(RefinedStorage2Mod.ID, "textures/gui/grid.png");
 
     private static final int TOP_HEIGHT = 19;
@@ -93,6 +93,32 @@ public class GridScreen extends HandledScreen<GridScreenHandler> {
 
         children.add(scrollbar);
         addButton(searchField);
+
+        addSideButton(new SideButtonWidget(btn -> {
+            GridSortingDirection sortingDirection = getScreenHandler().getItemView().getSortingDirection().toggle();
+            getScreenHandler().getItemView().setSortingDirection(sortingDirection);
+            getScreenHandler().getItemView().sort();
+
+            PacketUtil.sendToServer(GridChangeSettingPacket.ID, buf -> GridChangeSettingPacket.writeSortingDirection(buf, sortingDirection));
+        }) {
+            @Override
+            protected int getXTexture() {
+                return getScreenHandler().getItemView().getSortingDirection() == GridSortingDirection.ASCENDING ? 0 : 16;
+            }
+
+            @Override
+            protected int getYTexture() {
+                return 16;
+            }
+
+            @Override
+            public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int mouseX, int mouseY) {
+                List<Text> lines = new ArrayList<>();
+                lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction"));
+                lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction." + getScreenHandler().getItemView().getSortingDirection().toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
+                renderTooltip(matrixStack, lines, mouseX, mouseY);
+            }
+        });
     }
 
     private void updateScrollbar() {

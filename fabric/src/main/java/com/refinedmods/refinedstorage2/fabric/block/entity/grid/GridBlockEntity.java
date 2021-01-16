@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.grid;
 
+import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
@@ -7,9 +8,11 @@ import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetwor
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -22,6 +25,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> implements ExtendedScreenHandlerFactory {
+    private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
+
     public GridBlockEntity() {
         super(RefinedStorage2Mod.BLOCK_ENTITIES.getGrid());
     }
@@ -41,8 +46,32 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         return new GridScreenHandler(syncId, playerInventory, this);
     }
 
+    public void setSortingDirection(GridSortingDirection sortingDirection) {
+        this.sortingDirection = sortingDirection;
+        markDirty();
+    }
+
+    @Override
+    public void fromTag(BlockState blockState, CompoundTag tag) {
+        if (tag.getBoolean("sd")) {
+            sortingDirection = GridSortingDirection.ASCENDING;
+        } else {
+            sortingDirection = GridSortingDirection.DESCENDING;
+        }
+
+        super.fromTag(blockState, tag);
+    }
+
+    @Override
+    public CompoundTag toTag(CompoundTag tag) {
+        tag.putBoolean("sd", sortingDirection == GridSortingDirection.ASCENDING);
+        return super.toTag(tag);
+    }
+
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+        buf.writeBoolean(sortingDirection == GridSortingDirection.ASCENDING);
+
         Collection<ItemStack> stacks = getNetwork().getItemStorageChannel().getStacks();
 
         buf.writeInt(stacks.size());

@@ -20,6 +20,8 @@ public interface GridView<T> {
 
     void setSortingDirection(GridSortingDirection sortingDirection);
 
+    GridSortingDirection getSortingDirection();
+
     void loadStack(T template, int amount, StorageTracker.Entry trackerEntry);
 
     Optional<StorageTracker.Entry> getTrackerEntry(T template);
