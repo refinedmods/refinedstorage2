@@ -129,7 +129,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         }) {
             @Override
             protected int getXTexture() {
-                return;
+                return 0;
             }
 
             @Override
