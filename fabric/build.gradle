@@ -23,7 +23,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
     minecraft 'com.mojang:minecraft:1.16.5'
     mappings 'net.fabricmc:yarn:1.16.5+build.1:v2'
     modImplementation "net.fabricmc:fabric-loader:0.11.0"
