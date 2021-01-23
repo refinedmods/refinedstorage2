@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.packet.c2s;
 
-import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
 import net.fabricmc.fabric.api.network.PacketConsumer;
 import net.fabricmc.fabric.api.network.PacketContext;
@@ -26,13 +26,15 @@ public class GridChangeSettingPacket implements PacketConsumer {
         packetContext.getTaskQueue().execute(() -> {
             ScreenHandler screenHandler = packetContext.getPlayer().currentScreenHandler;
             if (screenHandler instanceof GridScreenHandler) {
-                ((GridScreenHandler) screenHandler).getGrid().setSortingDirection(value == 0 ? GridSortingDirection.ASCENDING : GridSortingDirection.DESCENDING);
+                GridBlockEntity grid = ((GridScreenHandler) screenHandler).getGrid();
+                grid.setSortingDirection(value);
+                grid.markDirty();
             }
         });
     }
 
-    public static void writeSortingDirection(PacketByteBuf buf, GridSortingDirection sortingDirection) {
+    public static void writeSortingDirection(PacketByteBuf buf, int sortingDirection) {
         buf.writeByte(0);
-        buf.writeInt(sortingDirection == GridSortingDirection.ASCENDING ? 0 : 1);
+        buf.writeInt(sortingDirection);
     }
 }

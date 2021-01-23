@@ -41,8 +41,9 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         this.playerInventory = playerInventory;
 
         GridSortingDirection sortingDirection = buf.readBoolean() ? GridSortingDirection.ASCENDING : GridSortingDirection.DESCENDING;
+        int sortingType = buf.readInt();
 
-        itemView.setSorter(GridSorter.QUANTITY.getComparator());
+        setSortingType(sortingType);
         itemView.setSortingDirection(sortingDirection);
 
         addSlots(0);
@@ -55,6 +56,23 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
             itemView.loadStack(stack, stack.getCount(), trackerEntry);
         }
         itemView.sort();
+    }
+
+    private void setSortingType(int type) {
+        switch (type) {
+            case 0:
+                itemView.setSorter(GridSorter.QUANTITY.getComparator());
+                break;
+            case 1:
+                itemView.setSorter(GridSorter.NAME.getComparator());
+                break;
+            case 2:
+                itemView.setSorter(GridSorter.ID.getComparator());
+                break;
+            case 3:
+                itemView.setSorter(GridSorter.getLastModified(itemView));
+                break;
+        }
     }
 
     public GridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity grid) {

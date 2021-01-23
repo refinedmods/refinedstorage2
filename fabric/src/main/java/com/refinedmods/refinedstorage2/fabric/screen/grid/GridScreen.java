@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.core.util.History;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridChangeSettingPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
@@ -99,7 +100,10 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             getScreenHandler().getItemView().setSortingDirection(sortingDirection);
             getScreenHandler().getItemView().sort();
 
-            PacketUtil.sendToServer(GridChangeSettingPacket.ID, buf -> GridChangeSettingPacket.writeSortingDirection(buf, sortingDirection));
+            PacketUtil.sendToServer(GridChangeSettingPacket.ID, buf -> GridChangeSettingPacket.writeSortingDirection(
+                buf,
+                sortingDirection == GridSortingDirection.ASCENDING ? GridBlockEntity.SORTING_ASCENDING : GridBlockEntity.SORTING_DESCENDING
+            ));
         }) {
             @Override
             protected int getXTexture() {
@@ -117,6 +121,25 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
                 lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction"));
                 lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction." + getScreenHandler().getItemView().getSortingDirection().toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
                 renderTooltip(matrixStack, lines, mouseX, mouseY);
+            }
+        });
+
+        addSideButton(new SideButtonWidget(btn -> {
+
+        }) {
+            @Override
+            protected int getXTexture() {
+                return;
+            }
+
+            @Override
+            protected int getYTexture() {
+                return 0;
+            }
+
+            @Override
+            public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int i, int j) {
+
             }
         });
     }
