@@ -16,7 +16,7 @@ public class SearchFieldWidget extends TextFieldWidget {
         super(textRenderer, x, y, width, textRenderer.fontHeight, new LiteralText(""));
 
         this.history = history;
-        this.setHasBorder(false);
+        this.setDrawsBackground(false);
         this.setMaxLength(256);
     }
 
