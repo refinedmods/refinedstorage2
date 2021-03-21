@@ -27,7 +27,7 @@ public class GridViewTest {
     @BeforeEach
     void setUp() {
         view = new GridViewImpl<>(new FakeGridStackFactory(), ItemStackIdentifier::new, new ItemStackList());
-        view.setSorter(GridSorter.QUANTITY.getComparator().apply(view));
+        view.setSorter(GridSorter.QUANTITY);
     }
 
     @Test
@@ -112,7 +112,7 @@ public class GridViewTest {
     @EnumSource(GridSorter.class)
     void Test_sorting_ascending(GridSorter sorter) {
         // Arrange
-        view.setSorter(sorter.getComparator().apply(view));
+        view.setSorter(sorter);
         view.setSortingDirection(GridSortingDirection.ASCENDING);
 
         view.loadStack(new ItemStack(Items.DIRT), 10, null);
@@ -167,7 +167,7 @@ public class GridViewTest {
     @EnumSource(GridSorter.class)
     void Test_sorting_descending(GridSorter sorter) {
         // Arrange
-        view.setSorter(sorter.getComparator().apply(view));
+        view.setSorter(sorter);
         view.setSortingDirection(GridSortingDirection.DESCENDING);
 
         view.loadStack(new ItemStack(Items.DIRT), 10, null);

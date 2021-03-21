@@ -24,7 +24,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     private final Map<ID, GridStack<T>> stackIndex = new HashMap<>();
 
     private List<GridStack<T>> stacks = new ArrayList<>();
-    private Comparator<GridStack<?>> sorter;
+    private GridSorter sorter;
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
     private Predicate<GridStack<T>> filter = stack -> true;
     private Runnable listener;
@@ -43,8 +43,13 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     }
 
     @Override
-    public void setSorter(Comparator<GridStack<?>> sorter) {
+    public void setSorter(GridSorter sorter) {
         this.sorter = sorter;
+    }
+
+    @Override
+    public GridSorter getSorter() {
+        return sorter;
     }
 
     @Override
@@ -62,7 +67,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
         return preventSorting;
     }
 
-    private Comparator<GridStack<?>> getSorter() {
+    private Comparator<GridStack<?>> getComparator() {
         if (sorter == null) {
             return sortingDirection == GridSortingDirection.ASCENDING ? identitySort : identitySort.reversed();
         }
@@ -70,10 +75,10 @@ public class GridViewImpl<T, ID> implements GridView<T> {
         // An identity sort is necessary so the order of items is preserved in quantity sorting mode.
         // If two grid stacks have the same quantity, their order would not be preserved.
         if (sortingDirection == GridSortingDirection.ASCENDING) {
-            return sorter.thenComparing(identitySort);
+            return sorter.getComparator().apply(this).thenComparing(identitySort);
         }
 
-        return sorter.thenComparing(identitySort).reversed();
+        return sorter.getComparator().apply(this).thenComparing(identitySort).reversed();
     }
 
     @Override
@@ -104,7 +109,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
             .getAll()
             .stream()
             .map(stackFactory)
-            .sorted(getSorter())
+            .sorted(getComparator())
             .filter(filter)
             .peek(stack -> stackIndex.put(idFactory.apply(stack.getStack()), stack))
             .collect(Collectors.toList());
@@ -176,7 +181,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     }
 
     private void addIntoView(GridStack<T> stack) {
-        int pos = Collections.binarySearch(stacks, stack, getSorter());
+        int pos = Collections.binarySearch(stacks, stack, getComparator());
         if (pos < 0) {
             pos = -pos - 1;
         }

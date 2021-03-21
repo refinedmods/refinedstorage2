@@ -98,6 +98,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         addButton(searchField);
 
         addSideButton(new SortingDirectionSideButtonWidget(getScreenHandler().getItemView(), this::renderTooltip));
+        addSideButton(new SortingTypeSideButtonWidget(getScreenHandler().getItemView(), this::renderTooltip));
     }
 
     private void updateScrollbar() {

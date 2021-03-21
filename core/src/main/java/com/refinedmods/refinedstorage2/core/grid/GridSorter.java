@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
-
 import java.util.Comparator;
 import java.util.function.Function;
+
+import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 
 public enum GridSorter {
     QUANTITY((view) -> (a, b) -> Integer.compare(a.getCount(), b.getCount())),
@@ -28,5 +28,20 @@ public enum GridSorter {
 
     public Function<GridView<?>, Comparator<GridStack<?>>> getComparator() {
         return comparator;
+    }
+
+    public GridSorter toggle() {
+        switch (this) {
+            case QUANTITY:
+                return NAME;
+            case NAME:
+                return ID;
+            case ID:
+                return LAST_MODIFIED;
+            case LAST_MODIFIED:
+                return QUANTITY;
+            default:
+                return QUANTITY;
+        }
     }
 }

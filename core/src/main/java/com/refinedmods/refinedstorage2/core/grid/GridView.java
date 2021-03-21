@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -10,7 +9,9 @@ import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 public interface GridView<T> {
     void setListener(Runnable listener);
 
-    void setSorter(Comparator<GridStack<?>> sorter);
+    void setSorter(GridSorter sorter);
+
+    GridSorter getSorter();
 
     void setFilter(Predicate<GridStack<T>> filter);
 

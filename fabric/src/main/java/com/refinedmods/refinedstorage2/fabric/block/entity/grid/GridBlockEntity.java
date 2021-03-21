@@ -1,5 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.grid;
 
+import java.util.Collection;
+
+import com.refinedmods.refinedstorage2.core.grid.GridSorter;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
@@ -22,10 +25,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-
 public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> implements ExtendedScreenHandlerFactory {
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
+    private GridSorter sortingType = GridSorter.QUANTITY;
 
     public GridBlockEntity() {
         super(RefinedStorage2Mod.BLOCK_ENTITIES.getGrid());
@@ -50,10 +52,18 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         this.sortingDirection = sortingDirection;
     }
 
+    public void setSortingType(GridSorter sortingType) {
+        this.sortingType = sortingType;
+    }
+
     @Override
     public void fromTag(BlockState blockState, CompoundTag tag) {
         if (tag.contains("sd")) {
             setSortingDirection(GridSettings.getSortingDirection(tag.getInt("sd")));
+        }
+
+        if (tag.contains("st")) {
+            setSortingType(GridSettings.getSortingType(tag.getInt("st")));
         }
 
         super.fromTag(blockState, tag);
@@ -62,6 +72,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
     @Override
     public CompoundTag toTag(CompoundTag tag) {
         tag.putInt("sd", GridSettings.getSortingDirection(sortingDirection));
+        tag.putInt("st", GridSettings.getSortingType(sortingType));
 
         return super.toTag(tag);
     }
@@ -69,7 +80,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
         buf.writeInt(GridSettings.getSortingDirection(sortingDirection));
-        buf.writeInt(0);
+        buf.writeInt(GridSettings.getSortingType(sortingType));
 
         Collection<ItemStack> stacks = getNetwork().getItemStorageChannel().getStacks();
 

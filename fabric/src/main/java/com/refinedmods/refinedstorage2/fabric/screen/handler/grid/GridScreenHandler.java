@@ -48,7 +48,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         this.playerInventory = playerInventory;
 
         itemView.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
-        itemView.setSorter(GridSettings.getSortingType(buf.readInt()).getComparator().apply(itemView));
+        itemView.setSorter(GridSettings.getSortingType(buf.readInt()));
 
         addSlots(0);
 
