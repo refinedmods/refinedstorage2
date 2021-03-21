@@ -28,7 +28,6 @@ public class ScreenUtil {
 
     private static void loadVersionInformationLines() {
         VERSION_INFO_LINES.add("Refined Storage for Fabric");
-        VERSION_INFO_LINES.add("Milestone 1");
 
         FabricLoader.getInstance().getModContainer("refinedstorage2-fabric").ifPresent(platform -> VERSION_INFO_LINES.add("Platform " + getVersion(platform)));
         FabricLoader.getInstance().getModContainer("refinedstorage2-core").ifPresent(core -> VERSION_INFO_LINES.add("Core " + getVersion(core)));
@@ -37,7 +36,7 @@ public class ScreenUtil {
     private static String getVersion(ModContainer platform) {
         String friendlyString = platform.getMetadata().getVersion().getFriendlyString();
         if ("${version}".equals(friendlyString)) {
-            friendlyString = "2.0.0";
+            friendlyString = "unknown";
         }
         return friendlyString;
     }
