@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.packet.c2s;
 
-import com.refinedmods.refinedstorage2.core.grid.GridSorter;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
+import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridSettings;
@@ -52,7 +52,7 @@ public class GridChangeSettingPacket implements PacketConsumer {
         buf.writeInt(GridSettings.getSortingDirection(sortingDirection));
     }
 
-    public static void writeSortingType(PacketByteBuf buf, GridSorter sortingType) {
+    public static void writeSortingType(PacketByteBuf buf, GridSortingType sortingType) {
         buf.writeByte(SORTING_TYPE);
         buf.writeInt(GridSettings.getSortingType(sortingType));
     }

@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 
-public enum GridSorter {
+public enum GridSortingType {
     QUANTITY((view) -> (a, b) -> Integer.compare(a.getCount(), b.getCount())),
     NAME((view) -> (a, b) -> a.getName().compareTo(b.getName())),
     ID((view) -> (a, b) -> Integer.compare(a.getId(), b.getId())),
@@ -22,7 +22,7 @@ public enum GridSorter {
 
     private final Function<GridView<?>, Comparator<GridStack<?>>> comparator;
 
-    GridSorter(Function<GridView<?>, Comparator<GridStack<?>>> comparator) {
+    GridSortingType(Function<GridView<?>, Comparator<GridStack<?>>> comparator) {
         this.comparator = comparator;
     }
 
@@ -30,7 +30,7 @@ public enum GridSorter {
         return comparator;
     }
 
-    public GridSorter toggle() {
+    public GridSortingType toggle() {
         switch (this) {
             case QUANTITY:
                 return NAME;

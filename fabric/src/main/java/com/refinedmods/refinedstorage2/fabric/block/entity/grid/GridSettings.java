@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.grid;
 
-import com.refinedmods.refinedstorage2.core.grid.GridSorter;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
+import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 
 public class GridSettings {
     private static final int SORTING_ASCENDING = 0;
@@ -34,23 +34,23 @@ public class GridSettings {
         }
     }
 
-    public static GridSorter getSortingType(int sortingType) {
+    public static GridSortingType getSortingType(int sortingType) {
         switch (sortingType) {
             case SORTING_TYPE_QUANTITY:
-                return GridSorter.QUANTITY;
+                return GridSortingType.QUANTITY;
             case SORTING_TYPE_NAME:
-                return GridSorter.NAME;
+                return GridSortingType.NAME;
             case SORTING_TYPE_ID:
-                return GridSorter.ID;
+                return GridSortingType.ID;
             case SORTING_TYPE_LAST_MODIFIED:
-                return GridSorter.LAST_MODIFIED;
+                return GridSortingType.LAST_MODIFIED;
             default:
-                return GridSorter.QUANTITY;
+                return GridSortingType.QUANTITY;
         }
     }
 
-    public static int getSortingType(GridSorter sorter) {
-        switch (sorter) {
+    public static int getSortingType(GridSortingType sortingType) {
+        switch (sortingType) {
             case QUANTITY:
                 return SORTING_TYPE_QUANTITY;
             case NAME:

@@ -9,9 +9,9 @@ import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 public interface GridView<T> {
     void setListener(Runnable listener);
 
-    void setSorter(GridSorter sorter);
+    void setSortingType(GridSortingType sortingType);
 
-    GridSorter getSorter();
+    GridSortingType getSortingType();
 
     void setFilter(Predicate<GridStack<T>> filter);
 

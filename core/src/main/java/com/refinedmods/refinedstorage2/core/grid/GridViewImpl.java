@@ -24,7 +24,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     private final Map<ID, GridStack<T>> stackIndex = new HashMap<>();
 
     private List<GridStack<T>> stacks = new ArrayList<>();
-    private GridSorter sorter;
+    private GridSortingType sortingType;
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
     private Predicate<GridStack<T>> filter = stack -> true;
     private Runnable listener;
@@ -33,7 +33,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     public GridViewImpl(Function<T, GridStack<T>> stackFactory, Function<T, ID> idFactory, StackList<T> list) {
         this.stackFactory = stackFactory;
         this.idFactory = idFactory;
-        this.identitySort = GridSorter.NAME.getComparator().apply(this);
+        this.identitySort = GridSortingType.NAME.getComparator().apply(this);
         this.list = list;
     }
 
@@ -43,13 +43,13 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     }
 
     @Override
-    public void setSorter(GridSorter sorter) {
-        this.sorter = sorter;
+    public void setSortingType(GridSortingType sortingType) {
+        this.sortingType = sortingType;
     }
 
     @Override
-    public GridSorter getSorter() {
-        return sorter;
+    public GridSortingType getSortingType() {
+        return sortingType;
     }
 
     @Override
@@ -68,17 +68,17 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     }
 
     private Comparator<GridStack<?>> getComparator() {
-        if (sorter == null) {
+        if (sortingType == null) {
             return sortingDirection == GridSortingDirection.ASCENDING ? identitySort : identitySort.reversed();
         }
 
         // An identity sort is necessary so the order of items is preserved in quantity sorting mode.
         // If two grid stacks have the same quantity, their order would not be preserved.
         if (sortingDirection == GridSortingDirection.ASCENDING) {
-            return sorter.getComparator().apply(this).thenComparing(identitySort);
+            return sortingType.getComparator().apply(this).thenComparing(identitySort);
         }
 
-        return sorter.getComparator().apply(this).thenComparing(identitySort).reversed();
+        return sortingType.getComparator().apply(this).thenComparing(identitySort).reversed();
     }
 
     @Override

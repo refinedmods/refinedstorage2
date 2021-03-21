@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.refinedmods.refinedstorage2.core.grid.GridSorter;
+import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridChangeSettingPacket;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
@@ -23,16 +23,16 @@ import net.minecraft.util.Formatting;
 public class SortingTypeSideButtonWidget extends SideButtonWidget {
     private final GridView<ItemStack> itemView;
     private final TooltipRenderer tooltipRenderer;
-    private final Map<GridSorter, List<Text>> tooltips = new EnumMap<>(GridSorter.class);
+    private final Map<GridSortingType, List<Text>> tooltips = new EnumMap<>(GridSortingType.class);
 
     public SortingTypeSideButtonWidget(GridView<ItemStack> itemView, TooltipRenderer tooltipRenderer) {
         super(createPressAction(itemView));
         this.itemView = itemView;
         this.tooltipRenderer = tooltipRenderer;
-        Arrays.stream(GridSorter.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
+        Arrays.stream(GridSortingType.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private List<Text> calculateTooltip(GridSorter type) {
+    private List<Text> calculateTooltip(GridSortingType type) {
         List<Text> lines = new ArrayList<>();
         lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.type"));
         lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.type." + type.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
@@ -41,8 +41,8 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
 
     private static PressAction createPressAction(GridView<ItemStack> itemView) {
         return btn -> {
-            GridSorter sortingType = itemView.getSorter().toggle();
-            itemView.setSorter(sortingType);
+            GridSortingType sortingType = itemView.getSortingType().toggle();
+            itemView.setSortingType(sortingType);
             itemView.sort();
 
             PacketUtil.sendToServer(GridChangeSettingPacket.ID, buf -> GridChangeSettingPacket.writeSortingType(buf, sortingType));
@@ -51,7 +51,7 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        switch (itemView.getSorter()) {
+        switch (itemView.getSortingType()) {
             case QUANTITY:
                 return 0;
             case NAME:
@@ -67,11 +67,11 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
 
     @Override
     protected int getYTexture() {
-        return itemView.getSorter() == GridSorter.LAST_MODIFIED ? 48 : 32;
+        return itemView.getSortingType() == GridSortingType.LAST_MODIFIED ? 48 : 32;
     }
 
     @Override
     public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrixStack, tooltips.get(itemView.getSorter()), mouseX, mouseY);
+        tooltipRenderer.render(matrixStack, tooltips.get(itemView.getSortingType()), mouseX, mouseY);
     }
 }

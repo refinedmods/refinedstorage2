@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
+import java.util.Optional;
+
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
@@ -12,13 +14,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.util.Optional;
-
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemGridStackListContents;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertOrderedItemGridStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RefinedStorage2Test
 public class GridViewTest {
@@ -27,13 +30,13 @@ public class GridViewTest {
     @BeforeEach
     void setUp() {
         view = new GridViewImpl<>(new FakeGridStackFactory(), ItemStackIdentifier::new, new ItemStackList());
-        view.setSorter(GridSorter.QUANTITY);
+        view.setSortingType(GridSortingType.QUANTITY);
     }
 
     @Test
     void Test_sorting_ascending_with_identity_sort() {
         // Arrange
-        view.setSorter(null);
+        view.setSortingType(null);
         view.setSortingDirection(GridSortingDirection.ASCENDING);
 
         view.loadStack(new ItemStack(Items.DIRT), 10, null);
@@ -56,7 +59,7 @@ public class GridViewTest {
     @Test
     void Test_sorting_descending_with_identity_sort() {
         // Arrange
-        view.setSorter(null);
+        view.setSortingType(null);
         view.setSortingDirection(GridSortingDirection.DESCENDING);
 
         view.loadStack(new ItemStack(Items.DIRT), 10, null);
@@ -109,10 +112,10 @@ public class GridViewTest {
     }
 
     @ParameterizedTest
-    @EnumSource(GridSorter.class)
-    void Test_sorting_ascending(GridSorter sorter) {
+    @EnumSource(GridSortingType.class)
+    void Test_sorting_ascending(GridSortingType sortingType) {
         // Arrange
-        view.setSorter(sorter);
+        view.setSortingType(sortingType);
         view.setSortingDirection(GridSortingDirection.ASCENDING);
 
         view.loadStack(new ItemStack(Items.DIRT), 10, null);
@@ -124,7 +127,7 @@ public class GridViewTest {
         view.sort();
 
         // Assert
-        switch (sorter) {
+        switch (sortingType) {
             case QUANTITY:
                 assertOrderedItemGridStackListContents(
                     view.getStacks(),
@@ -164,10 +167,10 @@ public class GridViewTest {
     }
 
     @ParameterizedTest
-    @EnumSource(GridSorter.class)
-    void Test_sorting_descending(GridSorter sorter) {
+    @EnumSource(GridSortingType.class)
+    void Test_sorting_descending(GridSortingType sortingType) {
         // Arrange
-        view.setSorter(sorter);
+        view.setSortingType(sortingType);
         view.setSortingDirection(GridSortingDirection.DESCENDING);
 
         view.loadStack(new ItemStack(Items.DIRT), 10, null);
@@ -179,7 +182,7 @@ public class GridViewTest {
         view.sort();
 
         // Assert
-        switch (sorter) {
+        switch (sortingType) {
             case QUANTITY:
                 assertOrderedItemGridStackListContents(
                     view.getStacks(),

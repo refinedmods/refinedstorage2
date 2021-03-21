@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.fabric.block.entity.grid;
 
 import java.util.Collection;
 
-import com.refinedmods.refinedstorage2.core.grid.GridSorter;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
+import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.core.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> implements ExtendedScreenHandlerFactory {
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
-    private GridSorter sortingType = GridSorter.QUANTITY;
+    private GridSortingType sortingType = GridSortingType.QUANTITY;
 
     public GridBlockEntity() {
         super(RefinedStorage2Mod.BLOCK_ENTITIES.getGrid());
@@ -53,7 +53,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         this.sortingDirection = sortingDirection;
     }
 
-    public void setSortingType(GridSorter sortingType) {
+    public void setSortingType(GridSortingType sortingType) {
         this.sortingType = sortingType;
     }
 
