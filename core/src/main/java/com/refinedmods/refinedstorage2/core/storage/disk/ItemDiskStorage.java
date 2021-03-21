@@ -59,7 +59,7 @@ public class ItemDiskStorage implements StorageDisk<ItemStack> {
             throw new IllegalArgumentException("Invalid stack");
         }
 
-        if (stored + amount > capacity) {
+        if (capacity >= 0 && stored + amount > capacity) {
             return insertPartly(template, capacity - stored, amount - (capacity - stored), action);
         } else {
             return insertCompletely(template, amount, action);

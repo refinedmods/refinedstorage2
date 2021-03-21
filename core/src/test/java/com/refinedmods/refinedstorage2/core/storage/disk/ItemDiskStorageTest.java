@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.core.storage.disk;
 
+import java.util.Optional;
+
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
@@ -8,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-
-import java.util.Optional;
 
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
@@ -86,6 +86,32 @@ class ItemDiskStorageTest {
 
         assertItemStackListContents(disk.getStacks(), new ItemStack(Items.DIAMOND, 100));
         assertThat(disk.getStored()).isEqualTo(100);
+    }
+
+    @Test
+    void Test_adding_with_negative_capacity() {
+        // Arrange
+        ItemDiskStorage diskStorage = new ItemDiskStorage(-1);
+
+        // Act
+        Optional<ItemStack> remainder = diskStorage.insert(new ItemStack(Items.DIRT), Integer.MAX_VALUE, Action.EXECUTE);
+
+        // Assert
+        assertThat(remainder).isEmpty();
+        assertItemStackListContents(diskStorage.getStacks(), new ItemStack(Items.DIRT, Integer.MAX_VALUE));
+    }
+
+    @Test
+    void Test_adding_with_zero_capacity() {
+        // Arrange
+        ItemDiskStorage diskStorage = new ItemDiskStorage(0);
+
+        // Act
+        Optional<ItemStack> remainder = diskStorage.insert(new ItemStack(Items.DIRT), 1, Action.EXECUTE);
+
+        // Assert
+        assertThat(remainder).isPresent();
+        assertItemStack(remainder.get(), new ItemStack(Items.DIRT, 1));
     }
 
     @Test
