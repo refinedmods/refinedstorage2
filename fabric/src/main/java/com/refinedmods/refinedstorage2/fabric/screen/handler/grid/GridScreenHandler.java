@@ -1,6 +1,14 @@
 package com.refinedmods.refinedstorage2.fabric.screen.handler.grid;
 
-import com.refinedmods.refinedstorage2.core.grid.*;
+import java.util.Optional;
+
+import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
+import com.refinedmods.refinedstorage2.core.grid.GridEventHandlerImpl;
+import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
+import com.refinedmods.refinedstorage2.core.grid.GridInsertMode;
+import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.core.grid.GridView;
+import com.refinedmods.refinedstorage2.core.grid.GridViewImpl;
 import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
@@ -9,6 +17,7 @@ import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
+import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridSettings;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.PlayerGridInteractor;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.query.FabricGridStackFactory;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridItemUpdatePacket;
@@ -22,13 +31,11 @@ import net.minecraft.screen.slot.Slot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Optional;
-
 public class GridScreenHandler extends BaseScreenHandler implements GridEventHandler, StackListListener<ItemStack> {
     private static final Logger LOGGER = LogManager.getLogger(GridScreenHandler.class);
 
     private final PlayerInventory playerInventory;
-    private final GridView<ItemStack> itemView = new GridViewImpl<>(new FabricGridStackFactory(), ItemStackIdentifier::new, GridSorter.NAME.getComparator(), new ItemStackList());
+    private final GridView<ItemStack> itemView = new GridViewImpl<>(new FabricGridStackFactory(), ItemStackIdentifier::new, new ItemStackList());
 
     private GridBlockEntity grid;
 
@@ -40,11 +47,8 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
 
         this.playerInventory = playerInventory;
 
-        GridSortingDirection sortingDirection = buf.readBoolean() ? GridSortingDirection.ASCENDING : GridSortingDirection.DESCENDING;
-        int sortingType = buf.readInt();
-
-        setSortingType(sortingType);
-        itemView.setSortingDirection(sortingDirection);
+        itemView.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
+        itemView.setSorter(GridSettings.getSortingType(buf.readInt()).getComparator().apply(itemView));
 
         addSlots(0);
 
@@ -56,23 +60,6 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
             itemView.loadStack(stack, stack.getCount(), trackerEntry);
         }
         itemView.sort();
-    }
-
-    private void setSortingType(int type) {
-        switch (type) {
-            case 0:
-                itemView.setSorter(GridSorter.QUANTITY.getComparator());
-                break;
-            case 1:
-                itemView.setSorter(GridSorter.NAME.getComparator());
-                break;
-            case 2:
-                itemView.setSorter(GridSorter.ID.getComparator());
-                break;
-            case 3:
-                itemView.setSorter(GridSorter.getLastModified(itemView));
-                break;
-        }
     }
 
     public GridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity grid) {

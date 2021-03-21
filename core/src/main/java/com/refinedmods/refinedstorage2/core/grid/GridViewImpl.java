@@ -1,13 +1,19 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import com.refinedmods.refinedstorage2.core.list.StackList;
-import com.refinedmods.refinedstorage2.core.list.StackListResult;
-import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import com.refinedmods.refinedstorage2.core.list.StackList;
+import com.refinedmods.refinedstorage2.core.list.StackListResult;
+import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 
 public class GridViewImpl<T, ID> implements GridView<T> {
     private final StackList<T> list;
@@ -24,10 +30,10 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     private Runnable listener;
     private boolean preventSorting;
 
-    public GridViewImpl(Function<T, GridStack<T>> stackFactory, Function<T, ID> idFactory, Comparator<GridStack<?>> identitySort, StackList<T> list) {
+    public GridViewImpl(Function<T, GridStack<T>> stackFactory, Function<T, ID> idFactory, StackList<T> list) {
         this.stackFactory = stackFactory;
         this.idFactory = idFactory;
-        this.identitySort = identitySort;
+        this.identitySort = GridSorter.NAME.getComparator().apply(this);
         this.list = list;
     }
 
@@ -87,8 +93,8 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     }
 
     @Override
-    public Optional<StorageTracker.Entry> getTrackerEntry(T template) {
-        return Optional.ofNullable(trackerEntries.get(idFactory.apply(template)));
+    public Optional<StorageTracker.Entry> getTrackerEntry(Object template) {
+        return Optional.ofNullable(trackerEntries.get(idFactory.apply((T) template)));
     }
 
     @Override

@@ -1,29 +1,35 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.refinedmods.refinedstorage2.core.grid.*;
+import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
+import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.core.grid.GridStack;
+import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserException;
 import com.refinedmods.refinedstorage2.core.util.History;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.mixin.SlotAccessor;
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridChangeSettingPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
-import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.util.LastModifiedUtil;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BufferRenderer;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -33,10 +39,6 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix4f;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public class GridScreen extends BaseScreen<GridScreenHandler> {
     private static final Identifier TEXTURE = new Identifier(RefinedStorage2Mod.ID, "textures/gui/grid.png");
@@ -95,53 +97,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         children.add(scrollbar);
         addButton(searchField);
 
-        addSideButton(new SideButtonWidget(btn -> {
-            GridSortingDirection sortingDirection = getScreenHandler().getItemView().getSortingDirection().toggle();
-            getScreenHandler().getItemView().setSortingDirection(sortingDirection);
-            getScreenHandler().getItemView().sort();
-
-            PacketUtil.sendToServer(GridChangeSettingPacket.ID, buf -> GridChangeSettingPacket.writeSortingDirection(
-                buf,
-                sortingDirection == GridSortingDirection.ASCENDING ? GridBlockEntity.SORTING_ASCENDING : GridBlockEntity.SORTING_DESCENDING
-            ));
-        }) {
-            @Override
-            protected int getXTexture() {
-                return getScreenHandler().getItemView().getSortingDirection() == GridSortingDirection.ASCENDING ? 0 : 16;
-            }
-
-            @Override
-            protected int getYTexture() {
-                return 16;
-            }
-
-            @Override
-            public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int mouseX, int mouseY) {
-                List<Text> lines = new ArrayList<>();
-                lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction"));
-                lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction." + getScreenHandler().getItemView().getSortingDirection().toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
-                renderTooltip(matrixStack, lines, mouseX, mouseY);
-            }
-        });
-
-        addSideButton(new SideButtonWidget(btn -> {
-
-        }) {
-            @Override
-            protected int getXTexture() {
-                return 0;
-            }
-
-            @Override
-            protected int getYTexture() {
-                return 0;
-            }
-
-            @Override
-            public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int i, int j) {
-
-            }
-        });
+        addSideButton(new SortingDirectionSideButtonWidget(getScreenHandler().getItemView(), this::renderTooltip));
     }
 
     private void updateScrollbar() {

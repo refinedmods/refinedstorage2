@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+
+import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 
 public interface GridView<T> {
     void setListener(Runnable listener);
@@ -24,7 +24,7 @@ public interface GridView<T> {
 
     void loadStack(T template, int amount, StorageTracker.Entry trackerEntry);
 
-    Optional<StorageTracker.Entry> getTrackerEntry(T template);
+    Optional<StorageTracker.Entry> getTrackerEntry(Object template);
 
     void sort();
 

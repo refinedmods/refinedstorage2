@@ -26,8 +26,8 @@ public class GridViewTest {
 
     @BeforeEach
     void setUp() {
-        view = new GridViewImpl<>(new FakeGridStackFactory(), ItemStackIdentifier::new, GridSorter.NAME.getComparator(), new ItemStackList());
-        view.setSorter(GridSorter.QUANTITY.getComparator());
+        view = new GridViewImpl<>(new FakeGridStackFactory(), ItemStackIdentifier::new, new ItemStackList());
+        view.setSorter(GridSorter.QUANTITY.getComparator().apply(view));
     }
 
     @Test
@@ -112,12 +112,12 @@ public class GridViewTest {
     @EnumSource(GridSorter.class)
     void Test_sorting_ascending(GridSorter sorter) {
         // Arrange
-        view.setSorter(sorter.getComparator());
+        view.setSorter(sorter.getComparator().apply(view));
         view.setSortingDirection(GridSortingDirection.ASCENDING);
 
         view.loadStack(new ItemStack(Items.DIRT), 10, null);
-        view.loadStack(new ItemStack(Items.DIRT), 5, null);
-        view.loadStack(new ItemStack(Items.GLASS), 1, null);
+        view.loadStack(new ItemStack(Items.DIRT), 5, new StorageTracker.Entry(3, "Raoul"));
+        view.loadStack(new ItemStack(Items.GLASS), 1, new StorageTracker.Entry(2, "VdB"));
         view.loadStack(new ItemStack(Items.BUCKET), 2, null);
 
         // Act
@@ -150,67 +150,29 @@ public class GridViewTest {
                     new ItemStack(Items.GLASS, 1)
                 );
                 break;
+            case LAST_MODIFIED:
+                assertOrderedItemGridStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.BUCKET, 2),
+                    new ItemStack(Items.GLASS, 1),
+                    new ItemStack(Items.DIRT, 15)
+                );
+                break;
             default:
                 fail();
         }
-    }
-
-    @Test
-    void Test_sorting_ascending_last_modified() {
-        // Arrange
-        view.setSorter(GridSorter.getLastModified(view));
-        view.setSortingDirection(GridSortingDirection.ASCENDING);
-
-        view.loadStack(new ItemStack(Items.DIRT), 10, null);
-        view.loadStack(new ItemStack(Items.DIRT), 5, new StorageTracker.Entry(3, "Raoul"));
-        view.loadStack(new ItemStack(Items.GLASS), 1, new StorageTracker.Entry(2, "VDB"));
-        view.loadStack(new ItemStack(Items.BUCKET), 2, null);
-
-        // Act
-        view.sort();
-
-        // Assert
-        assertOrderedItemGridStackListContents(
-            view.getStacks(),
-            new ItemStack(Items.BUCKET, 2),
-            new ItemStack(Items.GLASS, 1),
-            new ItemStack(Items.DIRT, 15)
-        );
-    }
-
-    @Test
-    void Test_sorting_descending_last_modified() {
-        // Arrange
-        view.setSorter(GridSorter.getLastModified(view));
-        view.setSortingDirection(GridSortingDirection.DESCENDING);
-
-        view.loadStack(new ItemStack(Items.DIRT), 10, null);
-        view.loadStack(new ItemStack(Items.DIRT), 5, new StorageTracker.Entry(3, "Raoul"));
-        view.loadStack(new ItemStack(Items.GLASS), 1, new StorageTracker.Entry(2, "VDB"));
-        view.loadStack(new ItemStack(Items.BUCKET), 2, null);
-
-        // Act
-        view.sort();
-
-        // Assert
-        assertOrderedItemGridStackListContents(
-            view.getStacks(),
-            new ItemStack(Items.DIRT, 15),
-            new ItemStack(Items.GLASS, 1),
-            new ItemStack(Items.BUCKET, 2)
-        );
     }
 
     @ParameterizedTest
     @EnumSource(GridSorter.class)
     void Test_sorting_descending(GridSorter sorter) {
         // Arrange
-        view.setSorter(sorter.getComparator());
+        view.setSorter(sorter.getComparator().apply(view));
         view.setSortingDirection(GridSortingDirection.DESCENDING);
 
         view.loadStack(new ItemStack(Items.DIRT), 10, null);
-        view.loadStack(new ItemStack(Items.DIRT), 5, null);
-        view.loadStack(new ItemStack(Items.GLASS), 1, null);
+        view.loadStack(new ItemStack(Items.DIRT), 5, new StorageTracker.Entry(3, "Raoul"));
+        view.loadStack(new ItemStack(Items.GLASS), 1, new StorageTracker.Entry(2, "VDB"));
         view.loadStack(new ItemStack(Items.BUCKET), 2, null);
 
         // Act
@@ -240,6 +202,14 @@ public class GridViewTest {
                     view.getStacks(),
                     new ItemStack(Items.GLASS, 1),
                     new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.BUCKET, 2)
+                );
+                break;
+            case LAST_MODIFIED:
+                assertOrderedItemGridStackListContents(
+                    view.getStacks(),
+                    new ItemStack(Items.DIRT, 15),
+                    new ItemStack(Items.GLASS, 1),
                     new ItemStack(Items.BUCKET, 2)
                 );
                 break;

@@ -3,33 +3,30 @@ package com.refinedmods.refinedstorage2.core.grid;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 
 import java.util.Comparator;
+import java.util.function.Function;
 
 public enum GridSorter {
-    QUANTITY((a, b) -> Integer.compare(a.getCount(), b.getCount())),
-    NAME((a, b) -> a.getName().compareTo(b.getName())),
-    ID((a, b) -> Integer.compare(a.getId(), b.getId()));
+    QUANTITY((view) -> (a, b) -> Integer.compare(a.getCount(), b.getCount())),
+    NAME((view) -> (a, b) -> a.getName().compareTo(b.getName())),
+    ID((view) -> (a, b) -> Integer.compare(a.getId(), b.getId())),
+    LAST_MODIFIED((view) -> (a, b) -> {
+        long lastModifiedA = view.getTrackerEntry(a.getStack()).map(StorageTracker.Entry::getTime).orElse(0L);
+        long lastModifiedB = view.getTrackerEntry(b.getStack()).map(StorageTracker.Entry::getTime).orElse(0L);
 
-    private final Comparator<GridStack<?>> comparator;
+        if (lastModifiedA != lastModifiedB) {
+            return Long.compare(lastModifiedA, lastModifiedB);
+        }
 
-    GridSorter(Comparator<GridStack<?>> comparator) {
+        return 0;
+    });
+
+    private final Function<GridView<?>, Comparator<GridStack<?>>> comparator;
+
+    GridSorter(Function<GridView<?>, Comparator<GridStack<?>>> comparator) {
         this.comparator = comparator;
     }
 
-    public Comparator<GridStack<?>> getComparator() {
+    public Function<GridView<?>, Comparator<GridStack<?>>> getComparator() {
         return comparator;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> Comparator<GridStack<?>> getLastModified(GridView<T> view) {
-        return (a, b) -> {
-            long lastModifiedA = view.getTrackerEntry((T) a.getStack()).map(StorageTracker.Entry::getTime).orElse(0L);
-            long lastModifiedB = view.getTrackerEntry((T) b.getStack()).map(StorageTracker.Entry::getTime).orElse(0L);
-
-            if (lastModifiedA != lastModifiedB) {
-                return Long.compare(lastModifiedA, lastModifiedB);
-            }
-
-            return 0;
-        };
     }
 }

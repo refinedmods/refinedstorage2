@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.grid;
 
+import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
@@ -24,16 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> implements ExtendedScreenHandlerFactory {
-    public static final int SORTING_ASCENDING = 0;
-    public static final int SORTING_DESCENDING = 1;
-
-    public static final int SORTING_TYPE_QUANTITY = 0;
-    public static final int SORTING_TYPE_NAME = 1;
-    public static final int SORTING_TYPE_ID = 2;
-    public static final int SORTING_TYPE_LAST_MODIFIED = 3;
-
-    private int sortingDirection = SORTING_ASCENDING;
-    private int sortingType = SORTING_TYPE_QUANTITY;
+    private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
 
     public GridBlockEntity() {
         super(RefinedStorage2Mod.BLOCK_ENTITIES.getGrid());
@@ -54,28 +46,14 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         return new GridScreenHandler(syncId, playerInventory, this);
     }
 
-    public void setSortingDirection(int sortingDirection) {
-        if (sortingDirection != 0 && sortingDirection != 1) {
-            throw new IllegalArgumentException("Invalid sorting direction: " + sortingDirection);
-        }
+    public void setSortingDirection(GridSortingDirection sortingDirection) {
         this.sortingDirection = sortingDirection;
-    }
-
-    public void setSortingType(int sortingType) {
-        if (sortingType < 0 || sortingType > 3) {
-            throw new IllegalArgumentException("Invalid sorting type: " + sortingType);
-        }
-        this.sortingType = sortingType;
     }
 
     @Override
     public void fromTag(BlockState blockState, CompoundTag tag) {
         if (tag.contains("sd")) {
-            setSortingDirection(tag.getInt("sd"));
-        }
-
-        if (tag.contains("st")) {
-            setSortingType(tag.getInt("st"));
+            setSortingDirection(GridSettings.getSortingDirection(tag.getInt("sd")));
         }
 
         super.fromTag(blockState, tag);
@@ -83,15 +61,15 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
 
     @Override
     public CompoundTag toTag(CompoundTag tag) {
-        tag.putInt("sd", sortingDirection);
-        tag.putInt("st", sortingType);
+        tag.putInt("sd", GridSettings.getSortingDirection(sortingDirection));
+
         return super.toTag(tag);
     }
 
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeInt(sortingDirection);
-        buf.writeInt(sortingType);
+        buf.writeInt(GridSettings.getSortingDirection(sortingDirection));
+        buf.writeInt(0);
 
         Collection<ItemStack> stacks = getNetwork().getItemStorageChannel().getStacks();
 
