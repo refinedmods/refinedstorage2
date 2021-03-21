@@ -1,8 +1,11 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
@@ -20,11 +23,20 @@ import net.minecraft.util.Formatting;
 public class SortingDirectionSideButtonWidget extends SideButtonWidget {
     private final GridView<ItemStack> itemView;
     private final TooltipRenderer tooltipRenderer;
+    private final Map<GridSortingDirection, List<Text>> tooltips = new EnumMap<>(GridSortingDirection.class);
 
     public SortingDirectionSideButtonWidget(GridView<ItemStack> itemView, TooltipRenderer tooltipRenderer) {
         super(createPressAction(itemView));
         this.itemView = itemView;
         this.tooltipRenderer = tooltipRenderer;
+        Arrays.stream(GridSortingDirection.values()).forEach(type -> tooltips.put(type, calculateType(type)));
+    }
+
+    private List<Text> calculateType(GridSortingDirection type) {
+        List<Text> lines = new ArrayList<>();
+        lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction"));
+        lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction." + type.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
+        return lines;
     }
 
     private static PressAction createPressAction(GridView<ItemStack> itemView) {
@@ -49,9 +61,6 @@ public class SortingDirectionSideButtonWidget extends SideButtonWidget {
 
     @Override
     public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int mouseX, int mouseY) {
-        List<Text> lines = new ArrayList<>();
-        lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction"));
-        lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction." + itemView.getSortingDirection().toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
-        tooltipRenderer.render(matrixStack, lines, mouseX, mouseY);
+        tooltipRenderer.render(matrixStack, tooltips.get(itemView.getSortingDirection()), mouseX, mouseY);
     }
 }
