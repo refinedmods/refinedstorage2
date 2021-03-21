@@ -1,5 +1,11 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import com.refinedmods.refinedstorage2.core.World;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
@@ -14,11 +20,6 @@ import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
 public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<ItemStack> {
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
 
@@ -30,8 +31,8 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
     private final StorageDisk[] disks = new StorageDisk[DISK_COUNT];
     private CompositeItemStorage compositeStorage = CompositeItemStorage.emptyStorage();
 
-    public DiskDriveNetworkNode(BlockPos pos, NetworkNodeReference ref, StorageDiskManager diskManager, StorageDiskProvider diskProvider) {
-        super(pos, ref);
+    public DiskDriveNetworkNode(World world, BlockPos pos, NetworkNodeReference ref, StorageDiskManager diskManager, StorageDiskProvider diskProvider) {
+        super(world, pos, ref);
 
         this.diskManager = diskManager;
         this.diskProvider = diskProvider;

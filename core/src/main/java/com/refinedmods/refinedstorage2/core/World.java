@@ -1,10 +1,12 @@
-package com.refinedmods.refinedstorage2.core.adapter;
+package com.refinedmods.refinedstorage2.core;
+
+import java.util.Optional;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.Optional;
-
-public interface WorldAdapter {
+public interface World {
     Optional<BlockEntity> getBlockEntity(BlockPos pos);
+
+    boolean isPowered(BlockPos pos);
 }

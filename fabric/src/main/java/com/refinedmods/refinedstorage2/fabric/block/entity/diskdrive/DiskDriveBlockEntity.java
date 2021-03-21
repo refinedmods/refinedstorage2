@@ -1,5 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive;
 
+import java.util.Collection;
+import java.util.Optional;
+
 import alexiil.mc.lib.attributes.item.FixedItemInv;
 import alexiil.mc.lib.attributes.item.FixedItemInvView;
 import alexiil.mc.lib.attributes.item.ItemInvSlotChangeListener;
@@ -11,6 +14,7 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricWorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.DiskDriveScreenHandler;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
@@ -31,9 +35,6 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.Optional;
 
 public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetworkNode> implements Storage<ItemStack>, RenderAttachmentBlockEntity, ItemInvSlotChangeListener, BlockEntityClientSerializable, NamedScreenHandlerFactory, BlockEntityWithDrops {
     private final DiskDriveInventory diskInventory = new DiskDriveInventory();
@@ -59,6 +60,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     @Override
     protected DiskDriveNetworkNode createNode(World world, BlockPos pos) {
         return new DiskDriveNetworkNode(
+            FabricWorldAdapter.of(world),
             pos,
             FabricNetworkNodeReference.of(world, pos),
             RefinedStorage2Mod.API.getStorageDiskManager(world),

@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricWorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
@@ -35,7 +36,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
 
     @Override
     protected GridNetworkNode createNode(World world, BlockPos pos) {
-        return new GridNetworkNode(pos, FabricNetworkNodeReference.of(world, pos));
+        return new GridNetworkNode(FabricWorldAdapter.of(world), pos, FabricNetworkNodeReference.of(world, pos));
     }
 
     @Override

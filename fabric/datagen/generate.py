@@ -96,17 +96,18 @@ bi_direction_rotations = {
 }
 
 
-def generate_blockstate_for_each_bi_direction(name, model_factory):
+def generate_blockstate_for_each_bi_direction_and_active(name, model_factory):
     result = {
         'variants': {}
     }
 
     for direction in bi_direction_rotations.keys():
-        result['variants']['direction=' + direction] = {
-            'model': model_factory(direction),
-            'x': bi_direction_rotations[direction].get('x', 0),
-            'y': bi_direction_rotations[direction].get('y', 0)
-        }
+        for active in [True, False]:
+            result['variants']['direction=' + direction + ',active=' + str(active).lower()] = {
+                'model': model_factory(direction, active),
+                'x': bi_direction_rotations[direction].get('x', 0),
+                'y': bi_direction_rotations[direction].get('y', 0)
+            }
 
     create_file(output_dir + '/assets/refinedstorage2/blockstates/' +
                 name + '.json', to_json(result))
@@ -156,8 +157,8 @@ with open('colors.txt') as colors_file:
                                           up='refinedstorage2:block/grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/grid/front', cutout='refinedstorage2:block/grid/cutouts/' + color, fullbright_cutout=True)
         generate_referencing_item_model(
             get_color_key(color, 'grid'), 'refinedstorage2:block/grid/' + color)
-        generate_blockstate_for_each_bi_direction(get_color_key(
-            color, 'grid'), lambda direction: 'refinedstorage2:block/grid/' + color)
+        generate_blockstate_for_each_bi_direction_and_active(get_color_key(
+            color, 'grid'), lambda direction, active: 'refinedstorage2:block/grid/' + color if active else 'refinedstorage2:block/grid/disconnected')
 
         generate_simple_loot_table(get_color_key(color, 'grid'), 'refinedstorage2:' + get_color_key(color, 'grid'))
 

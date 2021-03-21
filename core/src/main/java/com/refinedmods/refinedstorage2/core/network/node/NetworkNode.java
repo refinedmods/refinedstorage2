@@ -11,4 +11,8 @@ public interface NetworkNode {
     Network getNetwork();
 
     NetworkNodeReference createReference();
+
+    default boolean isActive() {
+        return true;
+    }
 }

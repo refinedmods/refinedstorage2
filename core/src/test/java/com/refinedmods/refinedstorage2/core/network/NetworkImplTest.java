@@ -1,6 +1,10 @@
 package com.refinedmods.refinedstorage2.core.network;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
+import com.refinedmods.refinedstorage2.core.adapter.FakeWorld;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
@@ -11,9 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
-
-import java.util.Optional;
-import java.util.UUID;
 
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +28,7 @@ class NetworkImplTest {
 
         NetworkNodeReference badRef = new StubNetworkNodeReference(null);
 
-        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(BlockPos.ORIGIN, null, diskProviderManager, diskProviderManager);
+        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(new FakeWorld(), BlockPos.ORIGIN, null, diskProviderManager, diskProviderManager);
         diskProviderManager.setDiskDrive(diskDrive);
         diskProviderManager.setDisk(0, new ItemDiskStorage(100));
         NetworkNodeReference diskDriveRef = new StubNetworkNodeReference(diskDrive);

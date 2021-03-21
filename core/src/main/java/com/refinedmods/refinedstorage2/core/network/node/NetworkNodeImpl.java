@@ -1,14 +1,17 @@
 package com.refinedmods.refinedstorage2.core.network.node;
 
+import com.refinedmods.refinedstorage2.core.World;
 import com.refinedmods.refinedstorage2.core.network.Network;
 import net.minecraft.util.math.BlockPos;
 
 public class NetworkNodeImpl implements NetworkNode {
+    protected final World world;
     private final BlockPos pos;
     private final NetworkNodeReference ref;
     protected Network network;
 
-    public NetworkNodeImpl(BlockPos pos, NetworkNodeReference ref) {
+    public NetworkNodeImpl(World world, BlockPos pos, NetworkNodeReference ref) {
+        this.world = world;
         this.pos = pos;
         this.ref = ref;
     }
