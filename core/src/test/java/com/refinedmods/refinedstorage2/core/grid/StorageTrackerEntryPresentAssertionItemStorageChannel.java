@@ -1,14 +1,15 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
+import java.util.Collection;
+import java.util.Optional;
+
 import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
+import com.refinedmods.refinedstorage2.core.storage.Source;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
-
-import java.util.Collection;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,6 +58,16 @@ public class StorageTrackerEntryPresentAssertionItemStorageChannel implements St
     @Override
     public void removeListener(StackListListener<ItemStack> listener) {
         parent.removeListener(listener);
+    }
+
+    @Override
+    public Optional<ItemStack> extract(ItemStack template, int amount, Source source) {
+        return parent.extract(template, amount, source);
+    }
+
+    @Override
+    public Optional<ItemStack> insert(ItemStack template, int amount, Source source) {
+        return parent.insert(template, amount, source);
     }
 
     @Override

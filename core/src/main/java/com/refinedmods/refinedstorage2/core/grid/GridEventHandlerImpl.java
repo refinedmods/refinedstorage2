@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
+import java.util.Optional;
+
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import com.refinedmods.refinedstorage2.core.util.Action;
@@ -7,8 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Optional;
 
 public class GridEventHandlerImpl implements GridEventHandler {
     private static final Logger LOGGER = LogManager.getLogger(GridEventHandlerImpl.class);
@@ -30,31 +30,40 @@ public class GridEventHandlerImpl implements GridEventHandler {
             return;
         }
 
-        ItemStack remainder;
         if (mode == GridInsertMode.SINGLE) {
-            if (!storageChannel.insert(cursorStack, 1, Action.SIMULATE).isPresent()) {
-                storageChannel.getTracker().onChanged(cursorStack, interactor.getName());
-                storageChannel.insert(cursorStack, 1, Action.EXECUTE);
-                cursorStack.decrement(1);
-            }
-            remainder = cursorStack;
-        } else {
-            int count = cursorStack.getCount();
-            ItemStack remainderSimulated = storageChannel
-                .insert(cursorStack, count, Action.SIMULATE)
-                .orElse(ItemStack.EMPTY);
-
-            if (remainderSimulated.isEmpty() || remainderSimulated.getCount() != count) {
-                storageChannel.getTracker().onChanged(cursorStack, interactor.getName());
-                remainder = storageChannel
-                    .insert(cursorStack, count, Action.EXECUTE)
-                    .orElse(ItemStack.EMPTY);
-            } else {
-                remainder = cursorStack;
-            }
+            ItemStack remainder = insertSingleItemFromCursor(cursorStack);
+            interactor.setCursorStack(remainder);
+        } else if (mode == GridInsertMode.ENTIRE_STACK) {
+            ItemStack remainder = insertEntireStackFromCursor(cursorStack);
+            interactor.setCursorStack(remainder);
         }
+    }
 
-        interactor.setCursorStack(remainder);
+    private ItemStack insertEntireStackFromCursor(ItemStack cursorStack) {
+        ItemStack remainder;
+        int count = cursorStack.getCount();
+        ItemStack remainderSimulated = storageChannel
+            .insert(cursorStack, count, Action.SIMULATE)
+            .orElse(ItemStack.EMPTY);
+
+        if (remainderSimulated.isEmpty() || remainderSimulated.getCount() != count) {
+            remainder = storageChannel
+                .insert(cursorStack, count, interactor)
+                .orElse(ItemStack.EMPTY);
+        } else {
+            remainder = cursorStack;
+        }
+        return remainder;
+    }
+
+    private ItemStack insertSingleItemFromCursor(ItemStack cursorStack) {
+        ItemStack remainder;
+        if (!storageChannel.insert(cursorStack, 1, Action.SIMULATE).isPresent()) {
+            storageChannel.insert(cursorStack, 1, interactor);
+            cursorStack.decrement(1);
+        }
+        remainder = cursorStack;
+        return remainder;
     }
 
     @Override
@@ -64,25 +73,19 @@ public class GridEventHandlerImpl implements GridEventHandler {
         ItemStack remainderSimulated = storageChannel.insert(slot.getStack(), count, Action.SIMULATE).orElse(ItemStack.EMPTY);
 
         if (remainderSimulated.isEmpty() || remainderSimulated.getCount() != count) {
-            storageChannel.getTracker().onChanged(slot.getStack(), interactor.getName());
-
-            ItemStack remainder = storageChannel.insert(slot.getStack(), count, Action.EXECUTE).orElse(ItemStack.EMPTY);
+            ItemStack remainder = storageChannel.insert(slot.getStack(), count, interactor).orElse(ItemStack.EMPTY);
             slot.setStack(remainder);
         }
     }
 
     @Override
     public void onExtract(ItemStack stack, GridExtractMode mode) {
-        int totalSize = storageChannel.get(stack).map(ItemStack::getCount).orElse(0);
-        if (totalSize == 0) {
+        if (mode.isCursorLike() && !interactor.getCursorStack().isEmpty()) {
             return;
         }
 
-        if (totalSize > stack.getMaxCount()) {
-            totalSize = stack.getMaxCount();
-        }
-
-        if (mode.isCursorLike() && !interactor.getCursorStack().isEmpty()) {
+        int totalSize = getTotalSize(stack);
+        if (totalSize == 0) {
             return;
         }
 
@@ -97,26 +100,42 @@ public class GridEventHandlerImpl implements GridEventHandler {
             });
     }
 
+    private int getTotalSize(ItemStack stack) {
+        int totalSize = storageChannel.get(stack).map(ItemStack::getCount).orElse(0);
+
+        if (totalSize > stack.getMaxCount()) {
+            totalSize = stack.getMaxCount();
+        }
+
+        return totalSize;
+    }
+
     private ItemStack handleExtracted(GridExtractMode mode, ItemStack extractedSimulated, ItemStack stack, int size) {
         switch (mode) {
             case CURSOR_STACK:
             case CURSOR_HALF:
-                storageChannel.getTracker().onChanged(extractedSimulated, interactor.getName());
-                storageChannel.extract(stack, size, Action.EXECUTE).ifPresent(interactor::setCursorStack);
-                return ItemStack.EMPTY;
+                return handleExtractToCursor(stack, size);
             case PLAYER_INVENTORY_STACK:
-                ItemStack remainderSimulated = interactor.insertIntoInventory(extractedSimulated, -1, Action.SIMULATE);
-                if (remainderSimulated.isEmpty() || remainderSimulated.getCount() != extractedSimulated.getCount()) {
-                    storageChannel.getTracker().onChanged(extractedSimulated, interactor.getName());
-                    return storageChannel
-                        .extract(extractedSimulated, extractedSimulated.getCount(), Action.EXECUTE)
-                        .map(extracted -> interactor.insertIntoInventory(extracted, -1, Action.EXECUTE))
-                        .orElse(ItemStack.EMPTY);
-                }
-                return ItemStack.EMPTY;
+                return handleExtractToPlayerInventory(extractedSimulated);
             default:
                 return ItemStack.EMPTY;
         }
+    }
+
+    private ItemStack handleExtractToPlayerInventory(ItemStack extractedSimulated) {
+        ItemStack remainderSimulated = interactor.insertIntoInventory(extractedSimulated, -1, Action.SIMULATE);
+        if (remainderSimulated.isEmpty() || remainderSimulated.getCount() != extractedSimulated.getCount()) {
+            return storageChannel
+                .extract(extractedSimulated, extractedSimulated.getCount(), interactor)
+                .map(extracted -> interactor.insertIntoInventory(extracted, -1, Action.EXECUTE))
+                .orElse(ItemStack.EMPTY);
+        }
+        return ItemStack.EMPTY;
+    }
+
+    private ItemStack handleExtractToCursor(ItemStack stack, int size) {
+        storageChannel.extract(stack, size, interactor).ifPresent(interactor::setCursorStack);
+        return ItemStack.EMPTY;
     }
 
     private int getSize(int totalSize, GridExtractMode mode) {
@@ -157,12 +176,10 @@ public class GridEventHandlerImpl implements GridEventHandler {
         if (!extractedSimulated.isEmpty()) {
             Optional<ItemStack> remainderSimulated = storageChannel.insert(extractedSimulated, extractedSimulated.getCount(), Action.SIMULATE);
             if (!remainderSimulated.isPresent() || remainderSimulated.get().getCount() != extractedSimulated.getCount()) {
-                storageChannel.getTracker().onChanged(template, interactor.getName());
-
                 ItemStack extracted = interactor.extractFromInventory(template, slot, size, Action.EXECUTE);
                 if (!extracted.isEmpty()) {
                     storageChannel
-                        .insert(extracted, extracted.getCount(), Action.EXECUTE)
+                        .insert(extracted, extracted.getCount(), interactor)
                         .ifPresent(remainder -> interactor.insertIntoInventory(remainder, -1, Action.EXECUTE));
                 }
             }
@@ -175,9 +192,8 @@ public class GridEventHandlerImpl implements GridEventHandler {
         storageChannel.extract(template, size, Action.SIMULATE).ifPresent(stack -> {
             ItemStack remainderSimulated = interactor.insertIntoInventory(stack, preferredSlot, Action.SIMULATE);
             if (remainderSimulated.isEmpty() || remainderSimulated.getCount() != size) {
-                storageChannel.getTracker().onChanged(template, interactor.getName());
                 storageChannel
-                    .extract(template, size, Action.EXECUTE)
+                    .extract(template, size, interactor)
                     .map(extracted -> interactor.insertIntoInventory(extracted, preferredSlot, Action.EXECUTE))
                     .ifPresent(remainder -> {
                         if (!remainder.isEmpty()) {

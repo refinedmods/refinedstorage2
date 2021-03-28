@@ -1,13 +1,17 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import com.refinedmods.refinedstorage2.core.list.ListenableStackList;
 import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import net.minecraft.item.ItemStack;
-
-import java.util.*;
 
 public class ItemStorageChannel implements StorageChannel<ItemStack> {
     private final StorageTracker<ItemStack, ItemStackIdentifier> tracker = new StorageTracker<>(ItemStackIdentifier::new, System::currentTimeMillis);
@@ -28,6 +32,18 @@ public class ItemStorageChannel implements StorageChannel<ItemStack> {
     @Override
     public void removeListener(StackListListener<ItemStack> listener) {
         listeners.remove(listener);
+    }
+
+    @Override
+    public Optional<ItemStack> extract(ItemStack template, int amount, Source source) {
+        tracker.onChanged(template, source.getName());
+        return extract(template, amount, Action.EXECUTE);
+    }
+
+    @Override
+    public Optional<ItemStack> insert(ItemStack template, int amount, Source source) {
+        tracker.onChanged(template, source.getName());
+        return insert(template, amount, Action.EXECUTE);
     }
 
     @Override
