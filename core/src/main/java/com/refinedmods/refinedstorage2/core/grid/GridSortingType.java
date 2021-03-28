@@ -12,12 +12,7 @@ public enum GridSortingType {
     LAST_MODIFIED((view) -> (a, b) -> {
         long lastModifiedA = view.getTrackerEntry(a.getStack()).map(StorageTracker.Entry::getTime).orElse(0L);
         long lastModifiedB = view.getTrackerEntry(b.getStack()).map(StorageTracker.Entry::getTime).orElse(0L);
-
-        if (lastModifiedA != lastModifiedB) {
-            return Long.compare(lastModifiedA, lastModifiedB);
-        }
-
-        return 0;
+        return Long.compare(lastModifiedA, lastModifiedB);
     });
 
     private final Function<GridView<?>, Comparator<GridStack<?>>> comparator;

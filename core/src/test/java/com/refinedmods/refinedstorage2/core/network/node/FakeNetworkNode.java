@@ -32,9 +32,14 @@ public class FakeNetworkNode implements NetworkNode {
     }
 
     @Override
+    public boolean isActive() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "FakeNetworkNode{" +
-                "pos=" + pos +
-                '}';
+            "pos=" + pos +
+            '}';
     }
 }

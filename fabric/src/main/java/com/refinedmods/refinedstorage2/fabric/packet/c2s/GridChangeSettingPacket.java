@@ -29,22 +29,12 @@ public class GridChangeSettingPacket implements PacketConsumer {
                 GridBlockEntity grid = ((GridScreenHandler) screenHandler).getGrid();
 
                 if (type == SORTING_DIRECTION) {
-                    handleSortingDirectionChange(grid, value);
+                    grid.setSortingDirection(GridSettings.getSortingDirection(value));
                 } else if (type == SORTING_TYPE) {
-                    handleSortingTypeChange(grid, value);
+                    grid.setSortingType(GridSettings.getSortingType(value));
                 }
             }
         });
-    }
-
-    private void handleSortingDirectionChange(GridBlockEntity grid, int value) {
-        grid.setSortingDirection(GridSettings.getSortingDirection(value));
-        grid.markDirty();
-    }
-
-    private void handleSortingTypeChange(GridBlockEntity grid, int value) {
-        grid.setSortingType(GridSettings.getSortingType(value));
-        grid.markDirty();
     }
 
     public static void writeSortingDirection(PacketByteBuf buf, GridSortingDirection sortingDirection) {

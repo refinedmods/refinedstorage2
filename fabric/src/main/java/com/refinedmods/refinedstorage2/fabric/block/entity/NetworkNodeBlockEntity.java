@@ -62,4 +62,9 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNode> extends Bloc
             }
         }
     }
+
+    @Override
+    public boolean isActive() {
+        return node.isActive();
+    }
 }

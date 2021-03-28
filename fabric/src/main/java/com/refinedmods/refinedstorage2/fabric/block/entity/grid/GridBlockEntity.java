@@ -27,9 +27,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> implements ExtendedScreenHandlerFactory {
-    private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
-    private GridSortingType sortingType = GridSortingType.QUANTITY;
-
     public GridBlockEntity() {
         super(RefinedStorage2Mod.BLOCK_ENTITIES.getGrid());
     }
@@ -49,22 +46,14 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         return new GridScreenHandler(syncId, playerInventory, this);
     }
 
-    public void setSortingDirection(GridSortingDirection sortingDirection) {
-        this.sortingDirection = sortingDirection;
-    }
-
-    public void setSortingType(GridSortingType sortingType) {
-        this.sortingType = sortingType;
-    }
-
     @Override
     public void fromTag(BlockState blockState, CompoundTag tag) {
         if (tag.contains("sd")) {
-            setSortingDirection(GridSettings.getSortingDirection(tag.getInt("sd")));
+            node.setSortingDirection(GridSettings.getSortingDirection(tag.getInt("sd")));
         }
 
         if (tag.contains("st")) {
-            setSortingType(GridSettings.getSortingType(tag.getInt("st")));
+            node.setSortingType(GridSettings.getSortingType(tag.getInt("st")));
         }
 
         super.fromTag(blockState, tag);
@@ -72,16 +61,16 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
 
     @Override
     public CompoundTag toTag(CompoundTag tag) {
-        tag.putInt("sd", GridSettings.getSortingDirection(sortingDirection));
-        tag.putInt("st", GridSettings.getSortingType(sortingType));
+        tag.putInt("sd", GridSettings.getSortingDirection(node.getSortingDirection()));
+        tag.putInt("st", GridSettings.getSortingType(node.getSortingType()));
 
         return super.toTag(tag);
     }
 
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeInt(GridSettings.getSortingDirection(sortingDirection));
-        buf.writeInt(GridSettings.getSortingType(sortingType));
+        buf.writeInt(GridSettings.getSortingDirection(node.getSortingDirection()));
+        buf.writeInt(GridSettings.getSortingType(node.getSortingType()));
 
         Collection<ItemStack> stacks = getNetwork().getItemStorageChannel().getStacks();
 
@@ -91,5 +80,15 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
             buf.writeInt(stack.getCount());
             PacketUtil.writeTrackerEntry(buf, getNetwork().getItemStorageChannel().getTracker().getEntry(stack));
         });
+    }
+
+    public void setSortingType(GridSortingType sortingType) {
+        node.setSortingType(sortingType);
+        markDirty();
+    }
+
+    public void setSortingDirection(GridSortingDirection sortingDirection) {
+        node.setSortingDirection(sortingDirection);
+        markDirty();
     }
 }

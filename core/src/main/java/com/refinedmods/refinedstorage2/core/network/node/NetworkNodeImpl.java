@@ -8,6 +8,7 @@ public class NetworkNodeImpl implements NetworkNode {
     protected final World world;
     private final BlockPos pos;
     private final NetworkNodeReference ref;
+    private RedstoneMode redstoneMode;
     protected Network network;
 
     public NetworkNodeImpl(World world, BlockPos pos, NetworkNodeReference ref) {
@@ -34,5 +35,18 @@ public class NetworkNodeImpl implements NetworkNode {
     @Override
     public NetworkNodeReference createReference() {
         return ref;
+    }
+
+    public RedstoneMode getRedstoneMode() {
+        return redstoneMode;
+    }
+
+    public void setRedstoneMode(RedstoneMode redstoneMode) {
+        this.redstoneMode = redstoneMode;
+    }
+
+    @Override
+    public boolean isActive() {
+        return redstoneMode.isActive(world.isPowered(pos));
     }
 }
