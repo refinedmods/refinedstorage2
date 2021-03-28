@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.fabric.block.entity.grid;
 import java.util.Collection;
 
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
+import com.refinedmods.refinedstorage2.core.grid.GridSize;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.core.network.node.grid.GridNetworkNode;
@@ -57,6 +58,10 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
             node.setSortingType(GridSettings.getSortingType(tag.getInt("st")));
         }
 
+        if (tag.contains("s")) {
+            node.setSize(GridSettings.getSize(tag.getInt("s")));
+        }
+
         super.fromTag(blockState, tag);
     }
 
@@ -64,6 +69,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
     public CompoundTag toTag(CompoundTag tag) {
         tag.putInt("sd", GridSettings.getSortingDirection(node.getSortingDirection()));
         tag.putInt("st", GridSettings.getSortingType(node.getSortingType()));
+        tag.putInt("s", GridSettings.getSize(node.getSize()));
 
         return super.toTag(tag);
     }
@@ -73,6 +79,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         buf.writeBoolean(isActive());
         buf.writeInt(GridSettings.getSortingDirection(getSortingDirection()));
         buf.writeInt(GridSettings.getSortingType(getSortingType()));
+        buf.writeInt(GridSettings.getSize(getSize()));
 
         Collection<ItemStack> stacks = getNetwork().getItemStorageChannel().getStacks();
 
@@ -92,6 +99,10 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         return node.getSortingDirection();
     }
 
+    public GridSize getSize() {
+        return node.getSize();
+    }
+
     public void setSortingType(GridSortingType sortingType) {
         node.setSortingType(sortingType);
         markDirty();
@@ -99,6 +110,11 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
 
     public void setSortingDirection(GridSortingDirection sortingDirection) {
         node.setSortingDirection(sortingDirection);
+        markDirty();
+    }
+
+    public void setSize(GridSize size) {
+        node.setSize(size);
         markDirty();
     }
 

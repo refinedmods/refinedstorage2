@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.core.grid.GridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.grid.GridInsertMode;
 import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.core.grid.GridSize;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
@@ -52,6 +53,11 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
     private final TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty;
     private final TwoWaySyncProperty<GridSortingType> sortingTypeProperty;
+    private final TwoWaySyncProperty<GridSize> sizeProperty;
+
+    private Runnable resizeScreenCallback;
+
+    private GridSize size;
 
     public GridScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
         super(RefinedStorage2Mod.SCREEN_HANDLERS.getGrid(), syncId);
@@ -83,10 +89,19 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
             this::onSortingTypeChanged
         ));
 
+        addProperty(sizeProperty = TwoWaySyncProperty.forClient(
+            3,
+            GridSettings::getSize,
+            GridSettings::getSize,
+            GridSize.STRETCH,
+            this::onSizeChanged
+        ));
+
         active = buf.readBoolean();
 
         itemView.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
         itemView.setSortingType(GridSettings.getSortingType(buf.readInt()));
+        size = GridSettings.getSize(buf.readInt());
 
         addSlots(0);
 
@@ -127,6 +142,14 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
             grid::setSortingType
         ));
 
+        addProperty(sizeProperty = TwoWaySyncProperty.forServer(
+            3,
+            GridSettings::getSize,
+            GridSettings::getSize,
+            grid::getSize,
+            grid::setSize
+        ));
+
         this.playerInventory = playerInventory;
         this.storageChannel = grid.getNetwork().getItemStorageChannel();
         this.storageChannel.addListener(this);
@@ -143,6 +166,10 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         addSlots(0);
     }
 
+    public void setResizeScreenCallback(Runnable resizeScreenCallback) {
+        this.resizeScreenCallback = resizeScreenCallback;
+    }
+
     public TwoWaySyncProperty<RedstoneMode> getRedstoneModeProperty() {
         return redstoneModeProperty;
     }
@@ -153,6 +180,10 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
 
     public TwoWaySyncProperty<GridSortingType> getSortingTypeProperty() {
         return sortingTypeProperty;
+    }
+
+    public TwoWaySyncProperty<GridSize> getSizeProperty() {
+        return sizeProperty;
     }
 
     private void onSortingTypeChanged(GridSortingType sortingType) {
@@ -167,6 +198,19 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
             itemView.setSortingDirection(sortingDirection);
             itemView.sort();
         }
+    }
+
+    private void onSizeChanged(GridSize size) {
+        if (this.size != size) {
+            this.size = size;
+            if (resizeScreenCallback != null) {
+                resizeScreenCallback.run();
+            }
+        }
+    }
+
+    public GridSize getSize() {
+        return size;
     }
 
     public GridBlockEntity getGrid() {

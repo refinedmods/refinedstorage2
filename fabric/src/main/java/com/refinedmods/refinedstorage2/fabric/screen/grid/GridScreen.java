@@ -40,8 +40,12 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix4f;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class GridScreen extends BaseScreen<GridScreenHandler> {
+    private static final Logger LOGGER = LogManager.getLogger(GridScreen.class);
+
     private static final Identifier TEXTURE = new Identifier(RefinedStorage2Mod.ID, "textures/gui/grid.png");
 
     private static final int TOP_HEIGHT = 19;
@@ -58,6 +62,8 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     public GridScreen(GridScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
 
+        handler.setResizeScreenCallback(this::init);
+
         this.titleX = 7;
         this.titleY = 7;
         this.playerInventoryTitleX = 7;
@@ -68,6 +74,8 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
 
     @Override
     protected void init() {
+        LOGGER.info("Initializing grid screen");
+
         this.visibleRows = calculateVisibleRows();
         this.backgroundHeight = TOP_HEIGHT + (visibleRows * 18) + BOTTOM_HEIGHT;
         this.playerInventoryTitleY = backgroundHeight - BOTTOM_HEIGHT + 4;
@@ -101,6 +109,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         addSideButton(new RedstoneModeSideButtonWidget(getScreenHandler().getRedstoneModeProperty(), this::renderTooltip));
         addSideButton(new SortingDirectionSideButtonWidget(getScreenHandler().getSortingDirectionProperty(), this::renderTooltip));
         addSideButton(new SortingTypeSideButtonWidget(getScreenHandler().getSortingTypeProperty(), this::renderTooltip));
+        addSideButton(new SizeSideButtonWidget(getScreenHandler().getSizeProperty(), this::renderTooltip));
     }
 
     private void updateScrollbar() {
@@ -112,9 +121,24 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
 
     private int calculateVisibleRows() {
         int screenSpaceAvailable = height - TOP_HEIGHT - BOTTOM_HEIGHT;
-        int maxRows = RefinedStorage2Config.get().getGrid().getMaxRowsStretch();
+        int maxRows = getMaxRows();
 
         return Math.max(3, Math.min((screenSpaceAvailable / 18) - 3, maxRows));
+    }
+
+    private int getMaxRows() {
+        switch (getScreenHandler().getSize()) {
+            case STRETCH:
+                return RefinedStorage2Config.get().getGrid().getMaxRowsStretch();
+            case SMALL:
+                return 3;
+            case MEDIUM:
+                return 5;
+            case LARGE:
+                return 8;
+            default:
+                return RefinedStorage2Config.get().getGrid().getMaxRowsStretch();
+        }
     }
 
     private boolean isOverStorageArea(int mouseX, int mouseY) {
