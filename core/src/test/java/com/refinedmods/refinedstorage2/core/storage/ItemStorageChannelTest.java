@@ -1,5 +1,8 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
+import java.util.Collections;
+import java.util.Optional;
+
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
@@ -12,13 +15,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 
-import java.util.Arrays;
-import java.util.Optional;
-
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @RefinedStorage2Test
 class ItemStorageChannelTest {
@@ -27,7 +31,7 @@ class ItemStorageChannelTest {
     void Test_listener_on_insertion(Action action) {
         // Arrange
         ItemStorageChannel channel = new ItemStorageChannel();
-        channel.setSources(Arrays.asList(new ItemDiskStorage(10)));
+        channel.setSources(Collections.singletonList(new ItemDiskStorage(10)));
 
         StackListListener<ItemStack> listener = mock(StackListListener.class);
         channel.addListener(listener);
@@ -56,7 +60,7 @@ class ItemStorageChannelTest {
         diskStorage.insert(new ItemStack(Items.GLASS), 10, Action.EXECUTE);
 
         ItemStorageChannel channel = new ItemStorageChannel();
-        channel.setSources(Arrays.asList(diskStorage));
+        channel.setSources(Collections.singletonList(diskStorage));
 
         StackListListener<ItemStack> listener = mock(StackListListener.class);
         channel.addListener(listener);
@@ -81,7 +85,7 @@ class ItemStorageChannelTest {
     void Test_inserting() {
         // Arrange
         ItemStorageChannel channel = new ItemStorageChannel();
-        channel.setSources(Arrays.asList(new ItemDiskStorage(10)));
+        channel.setSources(Collections.singletonList(new ItemDiskStorage(10)));
 
         // Act
         channel.insert(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
@@ -98,7 +102,7 @@ class ItemStorageChannelTest {
         diskStorage.insert(new ItemStack(Items.DIRT), 50, Action.EXECUTE);
 
         ItemStorageChannel channel = new ItemStorageChannel();
-        channel.setSources(Arrays.asList(diskStorage));
+        channel.setSources(Collections.singletonList(diskStorage));
 
         // Act
         channel.extract(new ItemStack(Items.DIRT), 49, Action.EXECUTE);
@@ -114,7 +118,7 @@ class ItemStorageChannelTest {
         diskStorage.insert(new ItemStack(Items.DIRT), 50, Action.EXECUTE);
 
         ItemStorageChannel channel = new ItemStorageChannel();
-        channel.setSources(Arrays.asList(diskStorage));
+        channel.setSources(Collections.singletonList(diskStorage));
 
         // Act
         Optional<ItemStack> stack = channel.get(new ItemStack(Items.DIRT));
@@ -128,7 +132,7 @@ class ItemStorageChannelTest {
     void Test_getting_non_existent_stack() {
         // Arrange
         ItemStorageChannel channel = new ItemStorageChannel();
-        channel.setSources(Arrays.asList(new ItemDiskStorage(100)));
+        channel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
 
         // Act
         Optional<ItemStack> stack = channel.get(new ItemStack(Items.DIRT));
