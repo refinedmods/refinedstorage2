@@ -8,7 +8,7 @@ public class NetworkNodeImpl implements NetworkNode {
     protected final World world;
     private final BlockPos pos;
     private final NetworkNodeReference ref;
-    private RedstoneMode redstoneMode;
+    private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
     protected Network network;
 
     public NetworkNodeImpl(World world, BlockPos pos, NetworkNodeReference ref) {

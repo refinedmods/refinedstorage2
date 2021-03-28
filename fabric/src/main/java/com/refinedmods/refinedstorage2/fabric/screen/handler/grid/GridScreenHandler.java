@@ -12,16 +12,19 @@ import com.refinedmods.refinedstorage2.core.grid.GridViewImpl;
 import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
+import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridSettings;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.PlayerGridInteractor;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.query.FabricGridStackFactory;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridItemUpdatePacket;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.BaseScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.screen.handler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -42,10 +45,19 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private StorageChannel<ItemStack> storageChannel; // TODO - Support changing of the channel.
     private GridEventHandler eventHandler;
 
+    private TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
+
     public GridScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
         super(RefinedStorage2Mod.SCREEN_HANDLERS.getGrid(), syncId);
 
         this.playerInventory = playerInventory;
+
+        addProperty(redstoneModeProperty = new TwoWaySyncProperty<>(
+            0,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneMode.IGNORE
+        ));
 
         itemView.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
         itemView.setSortingType(GridSettings.getSortingType(buf.readInt()));
@@ -65,6 +77,14 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     public GridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity grid) {
         super(RefinedStorage2Mod.SCREEN_HANDLERS.getGrid(), syncId);
 
+        addProperty(redstoneModeProperty = new TwoWaySyncProperty<>(
+            0,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneModeSettings::getRedstoneMode,
+            grid::getRedstoneMode,
+            grid::setRedstoneMode
+        ));
+
         this.playerInventory = playerInventory;
         this.storageChannel = grid.getNetwork().getItemStorageChannel();
         this.storageChannel.addListener(this);
@@ -72,6 +92,10 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         this.grid = grid;
 
         addSlots(0);
+    }
+
+    public TwoWaySyncProperty<RedstoneMode> getRedstoneModeProperty() {
+        return redstoneModeProperty;
     }
 
     public GridBlockEntity getGrid() {

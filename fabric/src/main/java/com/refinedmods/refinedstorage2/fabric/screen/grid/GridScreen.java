@@ -20,6 +20,7 @@ import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
 import com.refinedmods.refinedstorage2.fabric.util.LastModifiedUtil;
@@ -97,6 +98,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         children.add(scrollbar);
         addButton(searchField);
 
+        addSideButton(new RedstoneModeSideButtonWidget(getScreenHandler().getRedstoneModeProperty(), this::renderTooltip));
         addSideButton(new SortingDirectionSideButtonWidget(getScreenHandler().getItemView(), this::renderTooltip));
         addSideButton(new SortingTypeSideButtonWidget(getScreenHandler().getItemView(), this::renderTooltip));
     }

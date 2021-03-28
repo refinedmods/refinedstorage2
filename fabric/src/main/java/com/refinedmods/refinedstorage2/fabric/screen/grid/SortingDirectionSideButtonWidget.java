@@ -29,10 +29,10 @@ public class SortingDirectionSideButtonWidget extends SideButtonWidget {
         super(createPressAction(itemView));
         this.itemView = itemView;
         this.tooltipRenderer = tooltipRenderer;
-        Arrays.stream(GridSortingDirection.values()).forEach(type -> tooltips.put(type, calculateType(type)));
+        Arrays.stream(GridSortingDirection.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private List<Text> calculateType(GridSortingDirection type) {
+    private List<Text> calculateTooltip(GridSortingDirection type) {
         List<Text> lines = new ArrayList<>();
         lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction"));
         lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction." + type.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));

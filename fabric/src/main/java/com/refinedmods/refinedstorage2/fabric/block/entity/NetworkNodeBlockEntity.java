@@ -2,17 +2,20 @@ package com.refinedmods.refinedstorage2.fabric.block.entity;
 
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
+import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
+import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.fabric.block.GridBlock;
 import com.refinedmods.refinedstorage2.fabric.block.NetworkNodeBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public abstract class NetworkNodeBlockEntity<T extends NetworkNode> extends BlockEntity implements NetworkNode, Tickable {
+public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends BlockEntity implements NetworkNode, Tickable {
     protected T node;
     private long lastActiveChanged;
 
@@ -50,6 +53,22 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNode> extends Bloc
     }
 
     @Override
+    public CompoundTag toTag(CompoundTag tag) {
+        tag.putInt("rm", RedstoneModeSettings.getRedstoneMode(getRedstoneMode()));
+
+        return super.toTag(tag);
+    }
+
+    @Override
+    public void fromTag(BlockState blockState, CompoundTag tag) {
+        if (tag.contains("rm")) {
+            node.setRedstoneMode(RedstoneModeSettings.getRedstoneMode(tag.getInt("rm")));
+        }
+
+        super.fromTag(blockState, tag);
+    }
+
+    @Override
     public void tick() {
         if (world != null && !world.isClient() && node != null) {
             BlockState state = world.getBlockState(pos);
@@ -66,5 +85,14 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNode> extends Bloc
     @Override
     public boolean isActive() {
         return node.isActive();
+    }
+
+    public RedstoneMode getRedstoneMode() {
+        return node.getRedstoneMode();
+    }
+
+    public void setRedstoneMode(RedstoneMode redstoneMode) {
+        node.setRedstoneMode(redstoneMode);
+        markDirty();
     }
 }

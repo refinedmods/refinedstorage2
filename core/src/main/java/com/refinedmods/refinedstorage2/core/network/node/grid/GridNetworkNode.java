@@ -30,9 +30,4 @@ public class GridNetworkNode extends NetworkNodeImpl {
     public GridSortingType getSortingType() {
         return sortingType;
     }
-
-    @Override
-    public boolean isActive() {
-        return world.isPowered(getPosition());
-    }
 }
