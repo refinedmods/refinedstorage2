@@ -13,5 +13,7 @@ public interface GridEventHandler {
 
     void onItemUpdate(ItemStack template, int amount, StorageTracker.Entry trackerEntry);
 
+    void onActiveChanged(boolean active);
+
     void onScroll(ItemStack template, int slot, GridScrollMode mode);
 }

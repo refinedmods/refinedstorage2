@@ -33,7 +33,7 @@ public class TwoWaySyncProperty<T> extends Property {
         this.value = defaultValue;
     }
 
-    public void setOnClient(T newValue) {
+    public void syncToServer(T newValue) {
         PacketUtil.sendToServer(PropertyChangePacket.ID, buf -> {
             buf.writeInt(index);
             buf.writeInt(serializer.apply(newValue));
@@ -51,8 +51,8 @@ public class TwoWaySyncProperty<T> extends Property {
 
     @Override
     public void set(int value) {
-        changed.accept(deserializer.apply(value));
-
-        this.value = deserializer.apply(value);
+        T deserializedValue = deserializer.apply(value);
+        changed.accept(deserializedValue);
+        this.value = deserializedValue;
     }
 }

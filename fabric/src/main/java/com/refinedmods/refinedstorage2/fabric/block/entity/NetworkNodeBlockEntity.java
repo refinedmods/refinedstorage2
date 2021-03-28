@@ -77,9 +77,15 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
                 if (active != state.get(GridBlock.ACTIVE) && (lastActiveChanged == 0 || System.currentTimeMillis() - lastActiveChanged > 1000)) {
                     this.lastActiveChanged = System.currentTimeMillis();
                     world.setBlockState(pos, world.getBlockState(pos).with(GridBlock.ACTIVE, active));
+                    node.onActiveChanged(active);
                 }
             }
         }
+    }
+
+    @Override
+    public void onActiveChanged(boolean active) {
+
     }
 
     @Override

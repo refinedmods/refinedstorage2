@@ -37,6 +37,11 @@ public class FakeNetworkNode implements NetworkNode {
     }
 
     @Override
+    public void onActiveChanged(boolean active) {
+
+    }
+
+    @Override
     public String toString() {
         return "FakeNetworkNode{" +
             "pos=" + pos +

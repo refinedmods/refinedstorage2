@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.block.entity.grid;
 
 import java.util.Collection;
 
+import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.core.network.node.grid.GridNetworkNode;
@@ -69,6 +70,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
 
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+        buf.writeBoolean(isActive());
         buf.writeInt(GridSettings.getSortingDirection(getSortingDirection()));
         buf.writeInt(GridSettings.getSortingType(getSortingType()));
 
@@ -98,5 +100,13 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
     public void setSortingDirection(GridSortingDirection sortingDirection) {
         node.setSortingDirection(sortingDirection);
         markDirty();
+    }
+
+    public void addWatcher(GridEventHandler eventHandler) {
+        node.addWatcher(eventHandler);
+    }
+
+    public void removeWatcher(GridEventHandler eventHandler) {
+        node.removeWatcher(eventHandler);
     }
 }

@@ -24,6 +24,7 @@ import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridSettings;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.PlayerGridInteractor;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.query.FabricGridStackFactory;
+import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridItemUpdatePacket;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.BaseScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.property.TwoWaySyncProperty;
@@ -46,6 +47,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
 
     private StorageChannel<ItemStack> storageChannel; // TODO - Support changing of the channel.
     private GridEventHandler eventHandler;
+    private boolean active;
 
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
     private final TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty;
@@ -81,6 +83,8 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
             this::onSortingTypeChanged
         ));
 
+        active = buf.readBoolean();
+
         itemView.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
         itemView.setSortingType(GridSettings.getSortingType(buf.readInt()));
 
@@ -95,7 +99,6 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         }
         itemView.sort();
     }
-
 
     public GridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity grid) {
         super(RefinedStorage2Mod.SCREEN_HANDLERS.getGrid(), syncId);
@@ -127,8 +130,15 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         this.playerInventory = playerInventory;
         this.storageChannel = grid.getNetwork().getItemStorageChannel();
         this.storageChannel.addListener(this);
-        this.eventHandler = new GridEventHandlerImpl(storageChannel, new PlayerGridInteractor(playerInventory.player));
+        this.eventHandler = new GridEventHandlerImpl(grid.isActive(), storageChannel, new PlayerGridInteractor(playerInventory.player)) {
+            @Override
+            public void onActiveChanged(boolean active) {
+                super.onActiveChanged(active);
+                PacketUtil.sendToPlayer(playerInventory.player, GridActivePacket.ID, buf -> buf.writeBoolean(active));
+            }
+        };
         this.grid = grid;
+        this.grid.addWatcher(eventHandler);
 
         addSlots(0);
     }
@@ -170,6 +180,10 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         if (storageChannel != null) {
             storageChannel.removeListener(this);
         }
+
+        if (grid != null) {
+            grid.removeWatcher(eventHandler);
+        }
     }
 
     public void addSlots(int playerInventoryY) {
@@ -210,6 +224,15 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         LOGGER.info("Item {} got updated with {}", template, amount);
 
         itemView.onChange(template, amount, trackerEntry);
+    }
+
+    @Override
+    public void onActiveChanged(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     @Override

@@ -36,7 +36,7 @@ public class RedstoneModeSideButtonWidget extends SideButtonWidget {
     }
 
     private static PressAction createPressAction(TwoWaySyncProperty<RedstoneMode> redstoneModeProperty) {
-        return btn -> redstoneModeProperty.setOnClient(redstoneModeProperty.getDeserialized().toggle());
+        return btn -> redstoneModeProperty.syncToServer(redstoneModeProperty.getDeserialized().toggle());
     }
 
     @Override

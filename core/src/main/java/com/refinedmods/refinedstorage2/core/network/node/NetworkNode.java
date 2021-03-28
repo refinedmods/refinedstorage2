@@ -13,4 +13,6 @@ public interface NetworkNode {
     NetworkNodeReference createReference();
 
     boolean isActive();
+
+    void onActiveChanged(boolean active);
 }

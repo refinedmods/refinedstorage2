@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric;
 
+import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridItemUpdatePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.StorageDiskInfoResponsePacket;
 import com.refinedmods.refinedstorage2.fabric.render.entity.DiskDriveBlockEntityRenderer;
@@ -32,6 +33,7 @@ public class RefinedStorage2ClientMod implements ClientModInitializer {
 
         ClientSidePacketRegistry.INSTANCE.register(StorageDiskInfoResponsePacket.ID, new StorageDiskInfoResponsePacket());
         ClientSidePacketRegistry.INSTANCE.register(GridItemUpdatePacket.ID, new GridItemUpdatePacket());
+        ClientSidePacketRegistry.INSTANCE.register(GridActivePacket.ID, new GridActivePacket());
 
         BlockEntityRendererRegistry.INSTANCE.register(RefinedStorage2Mod.BLOCK_ENTITIES.getDiskDrive(), DiskDriveBlockEntityRenderer::new);
 

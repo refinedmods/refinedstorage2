@@ -49,4 +49,9 @@ public class NetworkNodeImpl implements NetworkNode {
     public boolean isActive() {
         return redstoneMode.isActive(world.isPowered(pos));
     }
+
+    @Override
+    public void onActiveChanged(boolean active) {
+
+    }
 }

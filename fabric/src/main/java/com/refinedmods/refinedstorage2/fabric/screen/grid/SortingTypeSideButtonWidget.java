@@ -37,7 +37,7 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
     }
 
     private static PressAction createPressAction(TwoWaySyncProperty<GridSortingType> sortingTypeProperty) {
-        return btn -> sortingTypeProperty.setOnClient(sortingTypeProperty.getDeserialized().toggle());
+        return btn -> sortingTypeProperty.syncToServer(sortingTypeProperty.getDeserialized().toggle());
     }
 
     @Override

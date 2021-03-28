@@ -13,16 +13,22 @@ import org.apache.logging.log4j.Logger;
 public class GridEventHandlerImpl implements GridEventHandler {
     private static final Logger LOGGER = LogManager.getLogger(GridEventHandlerImpl.class);
 
+    private boolean active;
     private final StorageChannel<ItemStack> storageChannel;
     private final GridInteractor interactor;
 
-    public GridEventHandlerImpl(StorageChannel<ItemStack> storageChannel, GridInteractor interactor) {
+    public GridEventHandlerImpl(boolean active, StorageChannel<ItemStack> storageChannel, GridInteractor interactor) {
+        this.active = active;
         this.storageChannel = storageChannel;
         this.interactor = interactor;
     }
 
     @Override
     public void onInsertFromCursor(GridInsertMode mode) {
+        if (!active) {
+            return;
+        }
+
         ItemStack cursorStack = interactor.getCursorStack();
         LOGGER.info("Inserting {} from cursor with mode {}", cursorStack, mode);
 
@@ -68,6 +74,10 @@ public class GridEventHandlerImpl implements GridEventHandler {
 
     @Override
     public void onInsertFromTransfer(Slot slot) {
+        if (!active) {
+            return;
+        }
+
         int count = slot.getStack().getCount();
 
         ItemStack remainderSimulated = storageChannel.insert(slot.getStack(), count, Action.SIMULATE).orElse(ItemStack.EMPTY);
@@ -80,7 +90,7 @@ public class GridEventHandlerImpl implements GridEventHandler {
 
     @Override
     public void onExtract(ItemStack stack, GridExtractMode mode) {
-        if (mode.isCursorLike() && !interactor.getCursorStack().isEmpty()) {
+        if ((mode.isCursorLike() && !interactor.getCursorStack().isEmpty()) || !active) {
             return;
         }
 
@@ -156,7 +166,16 @@ public class GridEventHandlerImpl implements GridEventHandler {
     }
 
     @Override
+    public void onActiveChanged(boolean active) {
+        this.active = active;
+    }
+
+    @Override
     public void onScroll(ItemStack template, int slot, GridScrollMode mode) {
+        if (!active) {
+            return;
+        }
+
         switch (mode) {
             case GRID_TO_INVENTORY_SINGLE_STACK:
             case GRID_TO_INVENTORY_STACK:

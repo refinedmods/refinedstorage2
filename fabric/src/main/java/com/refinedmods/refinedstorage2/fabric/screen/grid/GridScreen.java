@@ -183,7 +183,13 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             itemRenderer.zOffset = 0.0F;
         }
 
-        if (mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16) {
+        if (!getScreenHandler().isActive()) {
+            RenderSystem.disableDepthTest();
+            RenderSystem.colorMask(true, true, true, false);
+            fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, 0xFF5B5B5B, 0xFF5B5B5B);
+            RenderSystem.colorMask(true, true, true, true);
+            RenderSystem.enableDepthTest();
+        } else if (mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16) {
             RenderSystem.disableDepthTest();
             RenderSystem.colorMask(true, true, true, false);
             fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, -2130706433, -2130706433);
