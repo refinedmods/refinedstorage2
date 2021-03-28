@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version '0.5-SNAPSHOT'
     id 'jacoco'
+    id 'info.solidsoft.pitest' version '1.5.1'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -23,6 +24,7 @@ dependencies {
     testCompile 'org.assertj:assertj-core:3.17.2'
     testCompile 'org.mockito:mockito-core:2.1.0'
     testCompile "org.junit.jupiter:junit-jupiter-params:5.7.0"
+    testCompile "org.pitest:pitest-junit5-plugin:0.12"
 }
 
 test {
@@ -50,4 +52,12 @@ test {
     jacoco {
         excludes = ['net.minecraft.*']
     }
+}
+
+pitest {
+    targetClasses = ['com.refinedmods.refinedstorage2.core.*']
+    threads = 4
+    outputFormats = ['HTML']
+    timestampedReports = false
+    junit5PluginVersion = '0.12'
 }
