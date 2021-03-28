@@ -8,26 +8,23 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
-import com.refinedmods.refinedstorage2.core.grid.GridView;
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridChangeSettingPacket;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
+import com.refinedmods.refinedstorage2.fabric.screen.handler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
-import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 public class SortingDirectionSideButtonWidget extends SideButtonWidget {
-    private final GridView<ItemStack> itemView;
+    private final TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSortingDirection, List<Text>> tooltips = new EnumMap<>(GridSortingDirection.class);
 
-    public SortingDirectionSideButtonWidget(GridView<ItemStack> itemView, TooltipRenderer tooltipRenderer) {
-        super(createPressAction(itemView));
-        this.itemView = itemView;
+    public SortingDirectionSideButtonWidget(TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty, TooltipRenderer tooltipRenderer) {
+        super(createPressAction(sortingDirectionProperty));
+        this.sortingDirectionProperty = sortingDirectionProperty;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(GridSortingDirection.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
@@ -39,19 +36,13 @@ public class SortingDirectionSideButtonWidget extends SideButtonWidget {
         return lines;
     }
 
-    private static PressAction createPressAction(GridView<ItemStack> itemView) {
-        return btn -> {
-            GridSortingDirection sortingDirection = itemView.getSortingDirection().toggle();
-            itemView.setSortingDirection(sortingDirection);
-            itemView.sort();
-
-            PacketUtil.sendToServer(GridChangeSettingPacket.ID, buf -> GridChangeSettingPacket.writeSortingDirection(buf, sortingDirection));
-        };
+    private static PressAction createPressAction(TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty) {
+        return btn -> sortingDirectionProperty.setOnClient(sortingDirectionProperty.getDeserialized().toggle());
     }
 
     @Override
     protected int getXTexture() {
-        return itemView.getSortingDirection() == GridSortingDirection.ASCENDING ? 0 : 16;
+        return sortingDirectionProperty.getDeserialized() == GridSortingDirection.ASCENDING ? 0 : 16;
     }
 
     @Override
@@ -61,6 +52,6 @@ public class SortingDirectionSideButtonWidget extends SideButtonWidget {
 
     @Override
     public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrixStack, tooltips.get(itemView.getSortingDirection()), mouseX, mouseY);
+        tooltipRenderer.render(matrixStack, tooltips.get(sortingDirectionProperty.getDeserialized()), mouseX, mouseY);
     }
 }

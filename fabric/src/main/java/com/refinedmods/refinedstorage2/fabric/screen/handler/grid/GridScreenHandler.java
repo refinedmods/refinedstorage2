@@ -7,6 +7,8 @@ import com.refinedmods.refinedstorage2.core.grid.GridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.grid.GridInsertMode;
 import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
+import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.core.grid.GridViewImpl;
 import com.refinedmods.refinedstorage2.core.list.StackListListener;
@@ -45,18 +47,38 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private StorageChannel<ItemStack> storageChannel; // TODO - Support changing of the channel.
     private GridEventHandler eventHandler;
 
-    private TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
+    private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
+    private final TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty;
+    private final TwoWaySyncProperty<GridSortingType> sortingTypeProperty;
 
     public GridScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
         super(RefinedStorage2Mod.SCREEN_HANDLERS.getGrid(), syncId);
 
         this.playerInventory = playerInventory;
 
-        addProperty(redstoneModeProperty = new TwoWaySyncProperty<>(
+        addProperty(redstoneModeProperty = TwoWaySyncProperty.forClient(
             0,
             RedstoneModeSettings::getRedstoneMode,
             RedstoneModeSettings::getRedstoneMode,
-            RedstoneMode.IGNORE
+            RedstoneMode.IGNORE,
+            (redstoneMode) -> {
+            }
+        ));
+
+        addProperty(sortingDirectionProperty = TwoWaySyncProperty.forClient(
+            1,
+            GridSettings::getSortingDirection,
+            GridSettings::getSortingDirection,
+            GridSortingDirection.ASCENDING,
+            this::onSortingDirectionChanged
+        ));
+
+        addProperty(sortingTypeProperty = TwoWaySyncProperty.forClient(
+            2,
+            GridSettings::getSortingType,
+            GridSettings::getSortingType,
+            GridSortingType.QUANTITY,
+            this::onSortingTypeChanged
         ));
 
         itemView.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
@@ -74,15 +96,32 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         itemView.sort();
     }
 
+
     public GridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity grid) {
         super(RefinedStorage2Mod.SCREEN_HANDLERS.getGrid(), syncId);
 
-        addProperty(redstoneModeProperty = new TwoWaySyncProperty<>(
+        addProperty(redstoneModeProperty = TwoWaySyncProperty.forServer(
             0,
             RedstoneModeSettings::getRedstoneMode,
             RedstoneModeSettings::getRedstoneMode,
             grid::getRedstoneMode,
             grid::setRedstoneMode
+        ));
+
+        addProperty(sortingDirectionProperty = TwoWaySyncProperty.forServer(
+            1,
+            GridSettings::getSortingDirection,
+            GridSettings::getSortingDirection,
+            grid::getSortingDirection,
+            grid::setSortingDirection
+        ));
+
+        addProperty(sortingTypeProperty = TwoWaySyncProperty.forServer(
+            2,
+            GridSettings::getSortingType,
+            GridSettings::getSortingType,
+            grid::getSortingType,
+            grid::setSortingType
         ));
 
         this.playerInventory = playerInventory;
@@ -96,6 +135,28 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
 
     public TwoWaySyncProperty<RedstoneMode> getRedstoneModeProperty() {
         return redstoneModeProperty;
+    }
+
+    public TwoWaySyncProperty<GridSortingDirection> getSortingDirectionProperty() {
+        return sortingDirectionProperty;
+    }
+
+    public TwoWaySyncProperty<GridSortingType> getSortingTypeProperty() {
+        return sortingTypeProperty;
+    }
+
+    private void onSortingTypeChanged(GridSortingType sortingType) {
+        if (itemView.getSortingType() != sortingType) {
+            itemView.setSortingType(sortingType);
+            itemView.sort();
+        }
+    }
+
+    private void onSortingDirectionChanged(GridSortingDirection sortingDirection) {
+        if (itemView.getSortingDirection() != sortingDirection) {
+            itemView.setSortingDirection(sortingDirection);
+            itemView.sort();
+        }
     }
 
     public GridBlockEntity getGrid() {

@@ -16,21 +16,21 @@ public class TwoWaySyncProperty<T> extends Property {
     private final Consumer<T> changed;
     private T value;
 
-    public TwoWaySyncProperty(int index, Function<T, Integer> serializer, Function<Integer, T> deserializer, T defaultValue) {
-        this.index = index;
-        this.serializer = serializer;
-        this.deserializer = deserializer;
-        this.supplier = null;
-        this.changed = null;
-        this.value = defaultValue;
+    public static <T> TwoWaySyncProperty<T> forClient(int index, Function<T, Integer> serializer, Function<Integer, T> deserializer, T defaultValue, Consumer<T> changed) {
+        return new TwoWaySyncProperty<>(index, serializer, deserializer, null, changed, defaultValue);
     }
 
-    public TwoWaySyncProperty(int index, Function<T, Integer> serializer, Function<Integer, T> deserializer, Supplier<T> supplier, Consumer<T> changed) {
+    public static <T> TwoWaySyncProperty<T> forServer(int index, Function<T, Integer> serializer, Function<Integer, T> deserializer, Supplier<T> supplier, Consumer<T> changed) {
+        return new TwoWaySyncProperty<>(index, serializer, deserializer, supplier, changed, null);
+    }
+
+    private TwoWaySyncProperty(int index, Function<T, Integer> serializer, Function<Integer, T> deserializer, Supplier<T> supplier, Consumer<T> changed, T defaultValue) {
         this.index = index;
         this.serializer = serializer;
         this.deserializer = deserializer;
         this.supplier = supplier;
         this.changed = changed;
+        this.value = defaultValue;
     }
 
     public void setOnClient(T newValue) {
@@ -51,10 +51,8 @@ public class TwoWaySyncProperty<T> extends Property {
 
     @Override
     public void set(int value) {
-        if (changed != null) {
-            changed.accept(deserializer.apply(value));
-        } else {
-            this.value = deserializer.apply(value);
-        }
+        changed.accept(deserializer.apply(value));
+
+        this.value = deserializer.apply(value);
     }
 }

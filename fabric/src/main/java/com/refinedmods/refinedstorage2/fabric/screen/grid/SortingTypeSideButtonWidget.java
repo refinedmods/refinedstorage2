@@ -8,26 +8,23 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
-import com.refinedmods.refinedstorage2.core.grid.GridView;
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridChangeSettingPacket;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
+import com.refinedmods.refinedstorage2.fabric.screen.handler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
-import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 public class SortingTypeSideButtonWidget extends SideButtonWidget {
-    private final GridView<ItemStack> itemView;
+    private final TwoWaySyncProperty<GridSortingType> sortingTypeProperty;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSortingType, List<Text>> tooltips = new EnumMap<>(GridSortingType.class);
 
-    public SortingTypeSideButtonWidget(GridView<ItemStack> itemView, TooltipRenderer tooltipRenderer) {
-        super(createPressAction(itemView));
-        this.itemView = itemView;
+    public SortingTypeSideButtonWidget(TwoWaySyncProperty<GridSortingType> sortingTypeProperty, TooltipRenderer tooltipRenderer) {
+        super(createPressAction(sortingTypeProperty));
+        this.sortingTypeProperty = sortingTypeProperty;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(GridSortingType.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
@@ -39,19 +36,13 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
         return lines;
     }
 
-    private static PressAction createPressAction(GridView<ItemStack> itemView) {
-        return btn -> {
-            GridSortingType sortingType = itemView.getSortingType().toggle();
-            itemView.setSortingType(sortingType);
-            itemView.sort();
-
-            PacketUtil.sendToServer(GridChangeSettingPacket.ID, buf -> GridChangeSettingPacket.writeSortingType(buf, sortingType));
-        };
+    private static PressAction createPressAction(TwoWaySyncProperty<GridSortingType> sortingTypeProperty) {
+        return btn -> sortingTypeProperty.setOnClient(sortingTypeProperty.getDeserialized().toggle());
     }
 
     @Override
     protected int getXTexture() {
-        switch (itemView.getSortingType()) {
+        switch (sortingTypeProperty.getDeserialized()) {
             case QUANTITY:
                 return 0;
             case NAME:
@@ -67,11 +58,11 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
 
     @Override
     protected int getYTexture() {
-        return itemView.getSortingType() == GridSortingType.LAST_MODIFIED ? 48 : 32;
+        return sortingTypeProperty.getDeserialized() == GridSortingType.LAST_MODIFIED ? 48 : 32;
     }
 
     @Override
     public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrixStack, tooltips.get(itemView.getSortingType()), mouseX, mouseY);
+        tooltipRenderer.render(matrixStack, tooltips.get(sortingTypeProperty.getDeserialized()), mouseX, mouseY);
     }
 }

@@ -14,8 +14,12 @@ import java.util.stream.Collectors;
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class GridViewImpl<T, ID> implements GridView<T> {
+    private static final Logger LOGGER = LogManager.getLogger(GridViewImpl.class);
+
     private final StackList<T> list;
     private final Comparator<GridStack<?>> identitySort;
     private final Function<T, GridStack<T>> stackFactory;
@@ -104,6 +108,8 @@ public class GridViewImpl<T, ID> implements GridView<T> {
 
     @Override
     public void sort() {
+        LOGGER.info("Sorting grid view");
+
         stackIndex.clear();
         stacks = list
             .getAll()

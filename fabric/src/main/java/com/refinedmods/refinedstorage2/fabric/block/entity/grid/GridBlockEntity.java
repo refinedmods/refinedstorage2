@@ -69,8 +69,8 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
 
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeInt(GridSettings.getSortingDirection(node.getSortingDirection()));
-        buf.writeInt(GridSettings.getSortingType(node.getSortingType()));
+        buf.writeInt(GridSettings.getSortingDirection(getSortingDirection()));
+        buf.writeInt(GridSettings.getSortingType(getSortingType()));
 
         Collection<ItemStack> stacks = getNetwork().getItemStorageChannel().getStacks();
 
@@ -80,6 +80,14 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
             buf.writeInt(stack.getCount());
             PacketUtil.writeTrackerEntry(buf, getNetwork().getItemStorageChannel().getTracker().getEntry(stack));
         });
+    }
+
+    public GridSortingType getSortingType() {
+        return node.getSortingType();
+    }
+
+    public GridSortingDirection getSortingDirection() {
+        return node.getSortingDirection();
     }
 
     public void setSortingType(GridSortingType sortingType) {
