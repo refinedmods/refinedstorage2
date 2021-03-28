@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.core.network;
 
+import java.util.UUID;
+
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.network.node.FakeNetworkNodeRepository;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
@@ -7,8 +9,6 @@ import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReferenc
 import net.minecraft.util.math.BlockPos;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -173,8 +173,11 @@ class NetworkManagerImplTest {
         NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
         networkManager.onNodeAdded(repo, node01.getPosition());
 
-        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.north());
-        networkManager.onNodeAdded(repo, node02.getPosition());
+        NetworkNode node02a = repo.setNode(BlockPos.ORIGIN.north());
+        networkManager.onNodeAdded(repo, node02a.getPosition());
+
+        NetworkNode node02b = repo.setNode(BlockPos.ORIGIN.north().north());
+        networkManager.onNodeAdded(repo, node02b.getPosition());
 
         NetworkNode node03 = repo.setNode(BlockPos.ORIGIN.east());
         networkManager.onNodeAdded(repo, node03.getPosition());
@@ -189,8 +192,12 @@ class NetworkManagerImplTest {
 
         assertThat(networkManager.getNetworks()).hasSize(3);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
-            assertThat(network.getNodeReferences()).containsExactly(new StubNetworkNodeReference(node02));
-            assertThat(node02.getNetwork()).isSameAs(network);
+            assertThat(network.getNodeReferences()).containsExactlyInAnyOrder(
+                new StubNetworkNodeReference(node02a),
+                new StubNetworkNodeReference(node02b)
+            );
+            assertThat(node02a.getNetwork()).isSameAs(network);
+            assertThat(node02b.getNetwork()).isSameAs(network);
         });
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
             assertThat(network.getNodeReferences()).containsExactly(new StubNetworkNodeReference(node03));
