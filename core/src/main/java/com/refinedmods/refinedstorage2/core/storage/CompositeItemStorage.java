@@ -1,14 +1,14 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
-import com.refinedmods.refinedstorage2.core.list.StackList;
-import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
-import com.refinedmods.refinedstorage2.core.util.Action;
-import net.minecraft.item.ItemStack;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import com.refinedmods.refinedstorage2.core.list.StackList;
+import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
+import com.refinedmods.refinedstorage2.core.util.Action;
+import net.minecraft.item.ItemStack;
 
 public class CompositeItemStorage implements Storage<ItemStack> {
     private final List<Storage<ItemStack>> sources;
@@ -31,18 +31,7 @@ public class CompositeItemStorage implements Storage<ItemStack> {
 
     @Override
     public Optional<ItemStack> extract(ItemStack template, int amount, Action action) {
-        int remaining = amount;
-        for (Storage<ItemStack> source : sources) {
-            Optional<ItemStack> stack = source.extract(template, remaining, action);
-            if (stack.isPresent()) {
-                remaining -= stack.get().getCount();
-                if (remaining == 0) {
-                    break;
-                }
-            }
-        }
-
-        int extracted = amount - remaining;
+        int extracted = extractFromStorages(template, amount, action);
         if (action == Action.EXECUTE && extracted > 0) {
             list.remove(template, extracted);
         }
@@ -56,17 +45,24 @@ public class CompositeItemStorage implements Storage<ItemStack> {
         }
     }
 
+    private int extractFromStorages(ItemStack template, int amount, Action action) {
+        int remaining = amount;
+        for (Storage<ItemStack> source : sources) {
+            Optional<ItemStack> stack = source.extract(template, remaining, action);
+            if (stack.isPresent()) {
+                remaining -= stack.get().getCount();
+                if (remaining == 0) {
+                    break;
+                }
+            }
+        }
+
+        return amount - remaining;
+    }
+
     @Override
     public Optional<ItemStack> insert(ItemStack template, int amount, Action action) {
-        int remainder = amount;
-        for (Storage<ItemStack> source : sources) {
-            Optional<ItemStack> remainderStack = source.insert(template, remainder, action);
-            if (!remainderStack.isPresent()) {
-                remainder = 0;
-                break;
-            }
-            remainder = remainderStack.get().getCount();
-        }
+        int remainder = insertIntoStorages(template, amount, action);
 
         if (action == Action.EXECUTE) {
             int inserted = amount - remainder;
@@ -82,6 +78,19 @@ public class CompositeItemStorage implements Storage<ItemStack> {
             remainderStack.setCount(remainder);
             return Optional.of(remainderStack);
         }
+    }
+
+    private int insertIntoStorages(ItemStack template, int amount, Action action) {
+        int remainder = amount;
+        for (Storage<ItemStack> source : sources) {
+            Optional<ItemStack> remainderStack = source.insert(template, remainder, action);
+            if (!remainderStack.isPresent()) {
+                remainder = 0;
+                break;
+            }
+            remainder = remainderStack.get().getCount();
+        }
+        return remainder;
     }
 
     @Override
