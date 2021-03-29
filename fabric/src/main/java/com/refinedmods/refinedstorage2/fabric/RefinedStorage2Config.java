@@ -20,6 +20,8 @@ public class RefinedStorage2Config implements ConfigData {
 
         private boolean detailedTooltip = true;
 
+        private boolean rememberSearchQuery = false;
+
         public boolean isLargeFont() {
             return largeFont;
         }
@@ -34,6 +36,10 @@ public class RefinedStorage2Config implements ConfigData {
 
         public boolean isDetailedTooltip() {
             return detailedTooltip;
+        }
+
+        public boolean isRememberSearchQuery() {
+            return rememberSearchQuery;
         }
     }
 

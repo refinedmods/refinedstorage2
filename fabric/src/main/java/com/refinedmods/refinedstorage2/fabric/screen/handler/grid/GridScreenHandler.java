@@ -20,6 +20,7 @@ import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
+import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
@@ -42,6 +43,8 @@ import org.apache.logging.log4j.Logger;
 
 public class GridScreenHandler extends BaseScreenHandler implements GridEventHandler, StackListListener<ItemStack> {
     private static final Logger LOGGER = LogManager.getLogger(GridScreenHandler.class);
+
+    private static String lastSearchQuery = "";
 
     private final PlayerInventory playerInventory;
     private final GridView<ItemStack> itemView = new GridViewImpl<>(new FabricGridStackFactory(), ItemStackIdentifier::new, new ItemStackList());
@@ -245,11 +248,19 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     public void setSearchBox(GridSearchBox searchBox) {
         this.searchBox = searchBox;
         this.updateSearchBox();
+        if (RefinedStorage2Config.get().getGrid().isRememberSearchQuery()) {
+            this.searchBox.setText(lastSearchQuery);
+        }
     }
 
     private void updateSearchBox() {
         this.searchBox.setAutoSelected(searchBoxMode.shouldAutoSelect());
-        this.searchBox.setListener(text -> searchBoxMode.onTextChanged(itemView, text));
+        this.searchBox.setListener(text -> {
+            if (RefinedStorage2Config.get().getGrid().isRememberSearchQuery()) {
+                lastSearchQuery = text;
+            }
+            searchBoxMode.onTextChanged(itemView, text);
+        });
     }
 
     public GridSize getSize() {

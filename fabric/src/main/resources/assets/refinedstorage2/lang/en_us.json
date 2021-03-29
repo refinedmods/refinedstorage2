@@ -74,5 +74,6 @@
   "text.autoconfig.refinedstorage2.option.grid.largeFont": "Large font",
   "text.autoconfig.refinedstorage2.option.grid.maxRowsStretch": "Maximum amount of rows when stretched",
   "text.autoconfig.refinedstorage2.option.grid.preventSortingWhileShiftIsDown": "Prevent sorting while shift is down",
-  "text.autoconfig.refinedstorage2.option.grid.detailedTooltip": "Detailed tooltip"
+  "text.autoconfig.refinedstorage2.option.grid.detailedTooltip": "Detailed tooltip",
+  "text.autoconfig.refinedstorage2.option.grid.rememberSearchQuery": "Remember search query"
 }
