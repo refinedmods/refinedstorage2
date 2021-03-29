@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.fabric.coreimpl.grid;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeDisplayProperties;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
+import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import me.shedaniel.rei.api.REIHelper;
 import me.shedaniel.rei.gui.widget.TextFieldWidget;
@@ -15,8 +16,8 @@ import net.minecraft.util.Identifier;
 public class ReiGridSearchBoxMode extends GridSearchBoxModeImpl {
     private final boolean twoWay;
 
-    private ReiGridSearchBoxMode(boolean autoSelect, boolean twoWay, GridSearchBoxModeDisplayProperties displayProperties) {
-        super(autoSelect, displayProperties);
+    private ReiGridSearchBoxMode(GridQueryParser queryParser, boolean autoSelect, boolean twoWay, GridSearchBoxModeDisplayProperties displayProperties) {
+        super(queryParser, autoSelect, displayProperties);
         this.twoWay = twoWay;
     }
 
@@ -40,8 +41,8 @@ public class ReiGridSearchBoxMode extends GridSearchBoxModeImpl {
         return null;
     }
 
-    public static ReiGridSearchBoxMode create(boolean autoSelected, boolean twoWay) {
-        return new ReiGridSearchBoxMode(autoSelected, twoWay, new GridSearchBoxModeDisplayProperties(
+    public static ReiGridSearchBoxMode create(GridQueryParser queryParser, boolean autoSelected, boolean twoWay) {
+        return new ReiGridSearchBoxMode(queryParser, autoSelected, twoWay, new GridSearchBoxModeDisplayProperties(
             new Identifier(RefinedStorage2Mod.ID, "textures/icons.png"),
             autoSelected ? 16 : 0,
             96,

@@ -18,8 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RefinedStorage2Test
-class GridQueryParserTest {
-    private final GridQueryParser queryParser = new GridQueryParser();
+class GridQueryParserImplTest {
+    private final GridQueryParser queryParser = new GridQueryParserImpl();
 
     @ParameterizedTest
     @ValueSource(strings = {"", "   "})

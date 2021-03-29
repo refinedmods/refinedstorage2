@@ -24,7 +24,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RefinedStorage2Test
-public class GridViewTest {
+public class GridViewImplTest {
     private GridView<ItemStack> view;
 
     @BeforeEach
