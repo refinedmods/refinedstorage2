@@ -1,0 +1,9 @@
+{
+  "name": "itemGroup.refinedstorage2.general",
+  "landing_text": "book.landing_text",
+  "book_texture": "patchouli:textures/gui/book_blue.png",
+  "creative_tab": "refinedstorage2.general",
+  "show_progress": false,
+  "version": 1,
+  "i18n": true
+}

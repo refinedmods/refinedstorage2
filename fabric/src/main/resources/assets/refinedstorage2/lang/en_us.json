@@ -75,5 +75,6 @@
   "text.autoconfig.refinedstorage2.option.grid.maxRowsStretch": "Maximum amount of rows when stretched",
   "text.autoconfig.refinedstorage2.option.grid.preventSortingWhileShiftIsDown": "Prevent sorting while shift is down",
   "text.autoconfig.refinedstorage2.option.grid.detailedTooltip": "Detailed tooltip",
-  "text.autoconfig.refinedstorage2.option.grid.rememberSearchQuery": "Remember search query"
+  "text.autoconfig.refinedstorage2.option.grid.rememberSearchQuery": "Remember search query",
+  "book.landing_text": "The next generation of Refined Storage."
 }
