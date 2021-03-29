@@ -5,6 +5,8 @@ import java.util.Set;
 
 import com.refinedmods.refinedstorage2.core.World;
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
+import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
+import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.core.grid.GridSize;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
@@ -20,11 +22,13 @@ public class GridNetworkNode extends NetworkNodeImpl {
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
     private GridSortingType sortingType = GridSortingType.QUANTITY;
     private GridSize size = GridSize.STRETCH;
+    private GridSearchBoxMode searchBoxMode;
 
     private final Set<GridEventHandler> watchers = new HashSet<>();
 
-    public GridNetworkNode(World world, BlockPos pos, NetworkNodeReference ref) {
+    public GridNetworkNode(World world, BlockPos pos, NetworkNodeReference ref, GridSearchBoxModeRegistry searchBoxModeRegistry) {
         super(world, pos, ref);
+        this.searchBoxMode = searchBoxModeRegistry.getDefault();
     }
 
     public void setSortingDirection(GridSortingDirection sortingDirection) {
@@ -39,6 +43,10 @@ public class GridNetworkNode extends NetworkNodeImpl {
         this.size = size;
     }
 
+    public void setSearchBoxMode(GridSearchBoxMode searchBoxMode) {
+        this.searchBoxMode = searchBoxMode;
+    }
+
     public GridSortingDirection getSortingDirection() {
         return sortingDirection;
     }
@@ -49,6 +57,10 @@ public class GridNetworkNode extends NetworkNodeImpl {
 
     public GridSize getSize() {
         return size;
+    }
+
+    public GridSearchBoxMode getSearchBoxMode() {
+        return searchBoxMode;
     }
 
     public void addWatcher(GridEventHandler watcher) {

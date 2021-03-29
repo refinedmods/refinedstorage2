@@ -1,7 +1,10 @@
 package com.refinedmods.refinedstorage2.fabric;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2ApiFacade;
+import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeDisplayProperties;
+import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.FabricRefinedStorage2ApiFacade;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.ReiGridSearchBoxMode;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2BlockEntities;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2Blocks;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2Items;
@@ -19,6 +22,8 @@ import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,6 +50,21 @@ public class RefinedStorage2Mod implements ModInitializer {
         ITEMS.register(BLOCKS, ITEM_GROUP);
         BLOCK_ENTITIES.register(BLOCKS);
         SCREEN_HANDLERS.register();
+
+        for (boolean autoSelected : new boolean[]{false, true}) {
+            API.getGridSearchBoxModeRegistry().add(new GridSearchBoxModeImpl(autoSelected, new GridSearchBoxModeDisplayProperties(
+                new Identifier(ID, "textures/icons.png"),
+                autoSelected ? 16 : 0,
+                96,
+                new TranslatableText("gui.refinedstorage2.grid.search_box_mode.normal" + (autoSelected ? "_autoselected" : "")).formatted(Formatting.GRAY)
+            )));
+        }
+
+        API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(false, false)); // REI
+        API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(true, false)); // REI autoselected
+
+        API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(false, true)); // REI two-way
+        API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(true, true)); // REI two-way autoselected
 
         ServerSidePacketRegistry.INSTANCE.register(StorageDiskInfoRequestPacket.ID, new StorageDiskInfoRequestPacket());
         ServerSidePacketRegistry.INSTANCE.register(GridInsertFromCursorPacket.ID, new GridInsertFromCursorPacket());

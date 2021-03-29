@@ -1,5 +1,9 @@
 package com.refinedmods.refinedstorage2.core.grid.query;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.function.Predicate;
+
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.grid.ItemGridStack;
@@ -10,22 +14,18 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.function.Predicate;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RefinedStorage2Test
 class GridQueryParserTest {
-    private final GridQueryParser<ItemStack> queryParser = new GridQueryParser<>();
+    private final GridQueryParser queryParser = new GridQueryParser();
 
     @ParameterizedTest
     @ValueSource(strings = {"", "   "})
     void Test_empty_query(String query) throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse(query);
+        Predicate<GridStack<?>> predicate = queryParser.parse(query);
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.DIRT)))).isTrue();
@@ -36,7 +36,7 @@ class GridQueryParserTest {
     @ValueSource(strings = {"dirt", "Dirt", "DiRt", "Di", "irt"})
     void Test_name_query(String query) throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse(query);
+        Predicate<GridStack<?>> predicate = queryParser.parse(query);
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.DIRT)))).isTrue();
@@ -47,7 +47,7 @@ class GridQueryParserTest {
     @ValueSource(strings = {"@refined", "@\"Refined Storage\"", "@ReFiNe", "@Storage", "@rs", "@RS"})
     void Test_mod_query(String query) throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse(query);
+        Predicate<GridStack<?>> predicate = queryParser.parse(query);
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.SPONGE), "rs", "Refined Storage"))).isTrue();
@@ -58,7 +58,7 @@ class GridQueryParserTest {
     @ValueSource(strings = {"$underwater", "$UnDerWate", "$water", "$unrelated", "$UNREL", "$laTed"})
     void Test_tag_query(String query) throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse(query);
+        Predicate<GridStack<?>> predicate = queryParser.parse(query);
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.SPONGE), "mc", "Minecraft", "underwater", "unrelated"))).isTrue();
@@ -78,7 +78,7 @@ class GridQueryParserTest {
     @Test
     void Test_implicit_and_query() throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse("DirT di RT");
+        Predicate<GridStack<?>> predicate = queryParser.parse("DirT di RT");
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.DIRT)))).isTrue();
@@ -88,7 +88,7 @@ class GridQueryParserTest {
     @Test
     void Test_and_query() throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse("DirT && di && RT");
+        Predicate<GridStack<?>> predicate = queryParser.parse("DirT && di && RT");
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.DIRT)))).isTrue();
@@ -98,7 +98,7 @@ class GridQueryParserTest {
     @Test
     void Test_or_query() throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse("dir || glass || StoNe");
+        Predicate<GridStack<?>> predicate = queryParser.parse("dir || glass || StoNe");
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.DIRT)))).isTrue();
@@ -113,7 +113,7 @@ class GridQueryParserTest {
     @Test
     void Test_simple_not_query() throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse("!stone");
+        Predicate<GridStack<?>> predicate = queryParser.parse("!stone");
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.DIRT)))).isTrue();
@@ -126,7 +126,7 @@ class GridQueryParserTest {
     @Test
     void Test_not_query_with_multiple_and_parts() throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse("!(stone || dirt)");
+        Predicate<GridStack<?>> predicate = queryParser.parse("!(stone || dirt)");
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.SPONGE)))).isTrue();
@@ -139,7 +139,7 @@ class GridQueryParserTest {
     @Test
     void Test_complex_mod_query() throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse("((spo || buck) && @refined) || (glass && @mine)");
+        Predicate<GridStack<?>> predicate = queryParser.parse("((spo || buck) && @refined) || (glass && @mine)");
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.SPONGE), "rs", "Refined Storage"))).isTrue();
@@ -153,7 +153,7 @@ class GridQueryParserTest {
     @Test
     void Test_less_than_count_query() throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse("<5");
+        Predicate<GridStack<?>> predicate = queryParser.parse("<5");
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 5)))).isFalse();
@@ -163,7 +163,7 @@ class GridQueryParserTest {
     @Test
     void Test_less_than_equals_count_query() throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse("<=5");
+        Predicate<GridStack<?>> predicate = queryParser.parse("<=5");
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 6)))).isFalse();
@@ -174,7 +174,7 @@ class GridQueryParserTest {
     @Test
     void Test_greater_than_count_query() throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse(">5");
+        Predicate<GridStack<?>> predicate = queryParser.parse(">5");
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 5)))).isFalse();
@@ -184,7 +184,7 @@ class GridQueryParserTest {
     @Test
     void Test_greater_than_equals_count_query() throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse(">=5");
+        Predicate<GridStack<?>> predicate = queryParser.parse(">=5");
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 4)))).isFalse();
@@ -195,7 +195,7 @@ class GridQueryParserTest {
     @Test
     void Test_equals_count_query() throws GridQueryParserException {
         // Act
-        Predicate<GridStack<ItemStack>> predicate = queryParser.parse("=5");
+        Predicate<GridStack<?>> predicate = queryParser.parse("=5");
 
         // Assert
         assertThat(predicate.test(stack(new ItemStack(Items.GLASS, 4)))).isFalse();

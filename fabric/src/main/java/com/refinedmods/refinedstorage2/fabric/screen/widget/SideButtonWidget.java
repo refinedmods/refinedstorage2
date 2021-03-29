@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
 
 public abstract class SideButtonWidget extends ButtonWidget implements ButtonWidget.TooltipSupplier {
-    private static final Identifier TEXTURE = new Identifier(RefinedStorage2Mod.ID, "textures/icons.png");
+    private static final Identifier DEFAULT_SPRITE = new Identifier(RefinedStorage2Mod.ID, "textures/icons.png");
 
     private static final int WIDTH = 18;
     private static final int HEIGHT = 18;
@@ -23,10 +23,14 @@ public abstract class SideButtonWidget extends ButtonWidget implements ButtonWid
 
     protected abstract int getYTexture();
 
+    protected Identifier getSpriteIdentifier() {
+        return DEFAULT_SPRITE;
+    }
+
     @Override
     public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
         MinecraftClient client = MinecraftClient.getInstance();
-        client.getTextureManager().bindTexture(TEXTURE);
+        client.getTextureManager().bindTexture(getSpriteIdentifier());
 
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableAlphaTest();

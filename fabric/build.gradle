@@ -35,7 +35,7 @@ dependencies {
     modApi("me.shedaniel.cloth:config-2:4.8.3") {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    modRuntime "me.shedaniel:RoughlyEnoughItems:5.7.0"
+    modImplementation "me.shedaniel:RoughlyEnoughItems:5.7.0"
     modImplementation "io.github.prospector:modmenu:1.14.6+build.31"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'

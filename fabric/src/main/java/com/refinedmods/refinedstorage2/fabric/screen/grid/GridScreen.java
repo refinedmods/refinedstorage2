@@ -9,8 +9,6 @@ import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
-import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
-import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserException;
 import com.refinedmods.refinedstorage2.core.util.History;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
@@ -52,7 +50,6 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     private static final int BOTTOM_HEIGHT = 99;
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
     private static final int COLUMNS = 9;
-    private static final GridQueryParser<ItemStack> QUERY_PARSER = new GridQueryParser<>();
 
     private ScrollbarWidget scrollbar;
     private SearchFieldWidget searchField;
@@ -88,14 +85,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             searchField.x = x + 80 + 1;
             searchField.y = y + 6 + 1;
         }
-        searchField.setChangedListener(text -> {
-            try {
-                getScreenHandler().getItemView().setFilter(QUERY_PARSER.parse(text));
-            } catch (GridQueryParserException e) {
-                getScreenHandler().getItemView().setFilter(stack -> false);
-            }
-            getScreenHandler().getItemView().sort();
-        });
+        getScreenHandler().setSearchBox(searchField);
 
         getScreenHandler().addSlots(backgroundHeight - BOTTOM_HEIGHT + 17);
 
@@ -110,6 +100,17 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         addSideButton(new SortingDirectionSideButtonWidget(getScreenHandler().getSortingDirectionProperty(), this::renderTooltip));
         addSideButton(new SortingTypeSideButtonWidget(getScreenHandler().getSortingTypeProperty(), this::renderTooltip));
         addSideButton(new SizeSideButtonWidget(getScreenHandler().getSizeProperty(), this::renderTooltip));
+        addSideButton(new SearchBoxModeSideButtonWidget(getScreenHandler().getSearchBoxModeProperty(), this::renderTooltip));
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        String newValue = getScreenHandler().getSearchBoxModeProperty().getDeserialized().getSearchBoxValue();
+        if (searchField != null && newValue != null && !searchField.getText().equals(newValue)) {
+            searchField.setText(newValue);
+        }
     }
 
     private void updateScrollbar() {

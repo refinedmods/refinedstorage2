@@ -272,7 +272,7 @@ public class GridViewTest {
 
         Runnable listener = mock(Runnable.class);
         view.setListener(listener);
-        view.setFilter(stack -> stack.getStack().getItem() != Items.DIRT);
+        view.setFilter(stack -> ((ItemStack) stack.getStack()).getItem() != Items.DIRT);
 
         // Act
         view.onChange(new ItemStack(Items.DIRT), 12, null);
@@ -330,7 +330,7 @@ public class GridViewTest {
 
         Runnable listener = mock(Runnable.class);
         view.setListener(listener);
-        view.setFilter(stack -> stack.getStack().getItem() != Items.GLASS);
+        view.setFilter(stack -> ((ItemStack) stack.getStack()).getItem() != Items.GLASS);
 
         // Act
         view.onChange(new ItemStack(Items.GLASS), 5, null);
@@ -346,7 +346,7 @@ public class GridViewTest {
         view.loadStack(new ItemStack(Items.GLASS), 6, null);
         view.loadStack(new ItemStack(Items.DIRT), 15, null);
         view.loadStack(new ItemStack(Items.SPONGE), 10, null);
-        view.setFilter(stack -> stack.getStack().getItem() != Items.GLASS);
+        view.setFilter(stack -> ((ItemStack) stack.getStack()).getItem() != Items.GLASS);
         view.sort();
 
         Runnable listener = mock(Runnable.class);
@@ -440,7 +440,7 @@ public class GridViewTest {
 
         Runnable listener = mock(Runnable.class);
         view.setListener(listener);
-        view.setFilter(stack -> stack.getStack().getItem() != Items.GLASS);
+        view.setFilter(stack -> ((ItemStack) stack.getStack()).getItem() != Items.GLASS);
 
         // Act
         view.onChange(new ItemStack(Items.GLASS), -7, null);
@@ -456,7 +456,7 @@ public class GridViewTest {
         view.loadStack(new ItemStack(Items.GLASS), 20, null);
         view.loadStack(new ItemStack(Items.DIRT), 15, null);
         view.loadStack(new ItemStack(Items.SPONGE), 10, null);
-        view.setFilter(stack -> stack.getStack().getItem() != Items.GLASS);
+        view.setFilter(stack -> ((ItemStack) stack.getStack()).getItem() != Items.GLASS);
         view.sort();
 
         Runnable listener = mock(Runnable.class);

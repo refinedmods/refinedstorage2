@@ -30,7 +30,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     private List<GridStack<T>> stacks = new ArrayList<>();
     private GridSortingType sortingType;
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
-    private Predicate<GridStack<T>> filter = stack -> true;
+    private Predicate<GridStack<?>> filter = stack -> true;
     private Runnable listener;
     private boolean preventSorting;
 
@@ -57,7 +57,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     }
 
     @Override
-    public void setFilter(Predicate<GridStack<T>> filter) {
+    public void setFilter(Predicate<GridStack<?>> filter) {
         this.filter = filter;
     }
 

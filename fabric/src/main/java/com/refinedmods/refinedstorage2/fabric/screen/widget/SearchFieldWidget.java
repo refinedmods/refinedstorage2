@@ -1,15 +1,18 @@
 package com.refinedmods.refinedstorage2.fabric.screen.widget;
 
+import java.util.function.Consumer;
+
 import com.refinedmods.refinedstorage2.core.util.History;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2ClientMod;
 import com.refinedmods.refinedstorage2.fabric.mixin.TextFieldWidgetAccessor;
+import com.refinedmods.refinedstorage2.fabric.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.fabric.util.KeyBindingUtil;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.LiteralText;
 import org.lwjgl.glfw.GLFW;
 
-public class SearchFieldWidget extends TextFieldWidget {
+public class SearchFieldWidget extends TextFieldWidget implements GridSearchBox {
     private final History history;
 
     public SearchFieldWidget(TextRenderer textRenderer, int x, int y, int width, History history) {
@@ -18,6 +21,17 @@ public class SearchFieldWidget extends TextFieldWidget {
         this.history = history;
         this.setDrawsBackground(false);
         this.setMaxLength(256);
+    }
+
+    @Override
+    public void setAutoSelected(boolean autoSelected) {
+        setFocused(autoSelected);
+        setFocusUnlocked(!autoSelected);
+    }
+
+    @Override
+    public void setListener(Consumer<String> listener) {
+        setChangedListener(listener);
     }
 
     @Override

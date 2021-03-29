@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.coreimpl;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2ApiFacade;
+import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.core.network.NetworkManager;
 import com.refinedmods.refinedstorage2.core.network.NetworkManagerImpl;
 import com.refinedmods.refinedstorage2.core.storage.disk.ClientStorageDiskManager;
@@ -14,6 +15,7 @@ import net.minecraft.world.World;
 
 public class FabricRefinedStorage2ApiFacade implements RefinedStorage2ApiFacade {
     private final StorageDiskManager clientStorageDiskManager = new ClientStorageDiskManager(new FabricRequestInfoCallback());
+    private final GridSearchBoxModeRegistry gridSearchBoxModeRegistry = new GridSearchBoxModeRegistry();
 
     @Override
     public NetworkManager getNetworkManager(MinecraftServer server) {
@@ -34,5 +36,10 @@ public class FabricRefinedStorage2ApiFacade implements RefinedStorage2ApiFacade 
             .getWorld(World.OVERWORLD)
             .getPersistentStateManager()
             .getOrCreate(() -> new FabricStorageDiskManager(FabricStorageDiskManager.NAME, new StorageDiskManagerImpl()), FabricStorageDiskManager.NAME);
+    }
+
+    @Override
+    public GridSearchBoxModeRegistry getGridSearchBoxModeRegistry() {
+        return gridSearchBoxModeRegistry;
     }
 }

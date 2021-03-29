@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.fabric.block.entity.grid;
 import java.util.Collection;
 
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
+import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.core.grid.GridSize;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
@@ -35,7 +36,12 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
 
     @Override
     protected GridNetworkNode createNode(World world, BlockPos pos) {
-        return new GridNetworkNode(FabricWorldAdapter.of(world), pos, FabricNetworkNodeReference.of(world, pos));
+        return new GridNetworkNode(
+            FabricWorldAdapter.of(world),
+            pos,
+            FabricNetworkNodeReference.of(world, pos),
+            RefinedStorage2Mod.API.getGridSearchBoxModeRegistry()
+        );
     }
 
     @Override
@@ -62,6 +68,10 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
             node.setSize(GridSettings.getSize(tag.getInt("s")));
         }
 
+        if (tag.contains("sbm")) {
+            node.setSearchBoxMode(RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().get(tag.getInt("sbm")));
+        }
+
         super.fromTag(blockState, tag);
     }
 
@@ -70,6 +80,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         tag.putInt("sd", GridSettings.getSortingDirection(node.getSortingDirection()));
         tag.putInt("st", GridSettings.getSortingType(node.getSortingType()));
         tag.putInt("s", GridSettings.getSize(node.getSize()));
+        tag.putInt("sbm", RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().getId(node.getSearchBoxMode()));
 
         return super.toTag(tag);
     }
@@ -80,6 +91,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         buf.writeInt(GridSettings.getSortingDirection(getSortingDirection()));
         buf.writeInt(GridSettings.getSortingType(getSortingType()));
         buf.writeInt(GridSettings.getSize(getSize()));
+        buf.writeInt(RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().getId(getSearchBoxMode()));
 
         Collection<ItemStack> stacks = getNetwork().getItemStorageChannel().getStacks();
 
@@ -99,6 +111,10 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         return node.getSortingDirection();
     }
 
+    public GridSearchBoxMode getSearchBoxMode() {
+        return node.getSearchBoxMode();
+    }
+
     public GridSize getSize() {
         return node.getSize();
     }
@@ -115,6 +131,11 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
 
     public void setSize(GridSize size) {
         node.setSize(size);
+        markDirty();
+    }
+
+    public void setSearchBoxMode(GridSearchBoxMode searchBoxMode) {
+        node.setSearchBoxMode(searchBoxMode);
         markDirty();
     }
 

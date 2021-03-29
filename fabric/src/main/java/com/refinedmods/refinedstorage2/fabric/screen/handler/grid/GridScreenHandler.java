@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.core.grid.GridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.grid.GridInsertMode;
 import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.core.grid.GridSize;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
@@ -27,6 +28,7 @@ import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.PlayerGridInteractor
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.query.FabricGridStackFactory;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridItemUpdatePacket;
+import com.refinedmods.refinedstorage2.fabric.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.BaseScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screen.handler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
@@ -54,10 +56,13 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private final TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty;
     private final TwoWaySyncProperty<GridSortingType> sortingTypeProperty;
     private final TwoWaySyncProperty<GridSize> sizeProperty;
+    private final TwoWaySyncProperty<GridSearchBoxMode> searchBoxModeProperty;
 
     private Runnable resizeScreenCallback;
+    private GridSearchBox searchBox;
 
     private GridSize size;
+    private GridSearchBoxMode searchBoxMode;
 
     public GridScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
         super(RefinedStorage2Mod.SCREEN_HANDLERS.getGrid(), syncId);
@@ -97,11 +102,20 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
             this::onSizeChanged
         ));
 
+        addProperty(searchBoxModeProperty = TwoWaySyncProperty.forClient(
+            4,
+            searchBoxMode -> RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().getId(searchBoxMode),
+            searchBoxMode -> RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().get(searchBoxMode),
+            RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().getDefault(),
+            this::onSearchBoxModeChanged
+        ));
+
         active = buf.readBoolean();
 
         itemView.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
         itemView.setSortingType(GridSettings.getSortingType(buf.readInt()));
         size = GridSettings.getSize(buf.readInt());
+        searchBoxMode = RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().get(buf.readInt());
 
         addSlots(0);
 
@@ -150,6 +164,14 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
             grid::setSize
         ));
 
+        addProperty(searchBoxModeProperty = TwoWaySyncProperty.forServer(
+            4,
+            searchBoxMode -> RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().getId(searchBoxMode),
+            searchBoxMode -> RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().get(searchBoxMode),
+            grid::getSearchBoxMode,
+            grid::setSearchBoxMode
+        ));
+
         this.playerInventory = playerInventory;
         this.storageChannel = grid.getNetwork().getItemStorageChannel();
         this.storageChannel.addListener(this);
@@ -186,6 +208,10 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         return sizeProperty;
     }
 
+    public TwoWaySyncProperty<GridSearchBoxMode> getSearchBoxModeProperty() {
+        return searchBoxModeProperty;
+    }
+
     private void onSortingTypeChanged(GridSortingType sortingType) {
         if (itemView.getSortingType() != sortingType) {
             itemView.setSortingType(sortingType);
@@ -207,6 +233,23 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
                 resizeScreenCallback.run();
             }
         }
+    }
+
+    private void onSearchBoxModeChanged(GridSearchBoxMode searchBoxMode) {
+        if (this.searchBoxMode != searchBoxMode) {
+            this.searchBoxMode = searchBoxMode;
+            this.updateSearchBox();
+        }
+    }
+
+    public void setSearchBox(GridSearchBox searchBox) {
+        this.searchBox = searchBox;
+        this.updateSearchBox();
+    }
+
+    private void updateSearchBox() {
+        this.searchBox.setAutoSelected(searchBoxMode.shouldAutoSelect());
+        this.searchBox.setListener(text -> searchBoxMode.onTextChanged(itemView, text));
     }
 
     public GridSize getSize() {

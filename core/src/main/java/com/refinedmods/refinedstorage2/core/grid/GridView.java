@@ -13,7 +13,7 @@ public interface GridView<T> {
 
     GridSortingType getSortingType();
 
-    void setFilter(Predicate<GridStack<T>> filter);
+    void setFilter(Predicate<GridStack<?>> filter);
 
     void setPreventSorting(boolean preventSorting);
 
