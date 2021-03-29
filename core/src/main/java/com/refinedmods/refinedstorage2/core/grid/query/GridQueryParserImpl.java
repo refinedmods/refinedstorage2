@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.query.lexer.Lexer;
 import com.refinedmods.refinedstorage2.core.query.lexer.LexerException;
+import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.core.query.lexer.Source;
 import com.refinedmods.refinedstorage2.core.query.lexer.Token;
 import com.refinedmods.refinedstorage2.core.query.lexer.TokenType;
@@ -25,6 +26,12 @@ import com.refinedmods.refinedstorage2.core.query.parser.node.ParenNode;
 import com.refinedmods.refinedstorage2.core.query.parser.node.UnaryOpNode;
 
 public class GridQueryParserImpl implements GridQueryParser {
+    private final LexerTokenMappings tokenMappings;
+
+    public GridQueryParserImpl(LexerTokenMappings tokenMappings) {
+        this.tokenMappings = tokenMappings;
+    }
+
     @Override
     public Predicate<GridStack<?>> parse(String query) throws GridQueryParserException {
         if ("".equals(query.trim())) {
@@ -44,19 +51,7 @@ public class GridQueryParserImpl implements GridQueryParser {
 
     private List<Token> getTokens(String query) throws GridQueryParserException {
         try {
-            Lexer lexer = new Lexer(new Source("Grid query input", query));
-            lexer.registerTokenMapping("!", TokenType.UNARY_OP);
-            lexer.registerTokenMapping("@", TokenType.UNARY_OP);
-            lexer.registerTokenMapping("$", TokenType.UNARY_OP);
-            lexer.registerTokenMapping(">", TokenType.UNARY_OP);
-            lexer.registerTokenMapping(">=", TokenType.UNARY_OP);
-            lexer.registerTokenMapping("<", TokenType.UNARY_OP);
-            lexer.registerTokenMapping("<=", TokenType.UNARY_OP);
-            lexer.registerTokenMapping("=", TokenType.UNARY_OP);
-            lexer.registerTokenMapping("&&", TokenType.BIN_OP);
-            lexer.registerTokenMapping("||", TokenType.BIN_OP);
-            lexer.registerTokenMapping("(", TokenType.PAREN_OPEN);
-            lexer.registerTokenMapping(")", TokenType.PAREN_CLOSE);
+            Lexer lexer = new Lexer(new Source("Grid query input", query), tokenMappings);
             lexer.scan();
             return lexer.getTokens();
         } catch (LexerException e) {

@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeDisplayPropert
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserImpl;
+import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.FabricRefinedStorage2ApiFacade;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.ReiGridSearchBoxMode;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2BlockEntities;
@@ -53,7 +54,7 @@ public class RefinedStorage2Mod implements ModInitializer {
         BLOCK_ENTITIES.register(BLOCKS);
         SCREEN_HANDLERS.register();
 
-        GridQueryParser queryParser = new GridQueryParserImpl();
+        GridQueryParser queryParser = new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS);
 
         for (boolean autoSelected : new boolean[]{false, true}) {
             API.getGridSearchBoxModeRegistry().add(new GridSearchBoxModeImpl(queryParser, autoSelected, new GridSearchBoxModeDisplayProperties(

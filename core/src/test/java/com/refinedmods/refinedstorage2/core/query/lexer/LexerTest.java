@@ -1,16 +1,29 @@
 package com.refinedmods.refinedstorage2.core.query.lexer;
 
+import java.util.List;
+
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static com.refinedmods.refinedstorage2.core.query.lexer.TokenAssertions.*;
+import static com.refinedmods.refinedstorage2.core.query.lexer.TokenAssertions.assertPosition;
+import static com.refinedmods.refinedstorage2.core.query.lexer.TokenAssertions.assertRange;
+import static com.refinedmods.refinedstorage2.core.query.lexer.TokenAssertions.assertToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RefinedStorage2Test
 class LexerTest {
+    private static final LexerTokenMappings TEST_TOKEN_MAPPINGS = new LexerTokenMappings()
+        .addMapping(new LexerTokenMapping("&&", TokenType.BIN_OP))
+        .addMapping(new LexerTokenMapping("(", TokenType.PAREN_OPEN))
+        .addMapping(new LexerTokenMapping(")", TokenType.PAREN_CLOSE))
+        .addMapping(new LexerTokenMapping("+", TokenType.BIN_OP))
+        .addMapping(new LexerTokenMapping("-", TokenType.BIN_OP))
+        .addMapping(new LexerTokenMapping("||", TokenType.BIN_OP))
+        .addMapping(new LexerTokenMapping("*", TokenType.BIN_OP))
+        .addMapping(new LexerTokenMapping("/", TokenType.BIN_OP))
+        .addMapping(new LexerTokenMapping("!", TokenType.UNARY_OP));
+
     private static final String SOURCE_NAME = "<test>";
 
     @Test
@@ -190,16 +203,6 @@ class LexerTest {
         // Arrange
         Lexer lexer = createLexer("()+-/*!&&||");
 
-        lexer.registerTokenMapping("&&", TokenType.BIN_OP);
-        lexer.registerTokenMapping("(", TokenType.PAREN_OPEN);
-        lexer.registerTokenMapping(")", TokenType.PAREN_CLOSE);
-        lexer.registerTokenMapping("+", TokenType.BIN_OP);
-        lexer.registerTokenMapping("-", TokenType.BIN_OP);
-        lexer.registerTokenMapping("||", TokenType.BIN_OP);
-        lexer.registerTokenMapping("*", TokenType.BIN_OP);
-        lexer.registerTokenMapping("/", TokenType.BIN_OP);
-        lexer.registerTokenMapping("!", TokenType.UNARY_OP);
-
         // Act
         lexer.scan();
 
@@ -230,19 +233,7 @@ class LexerTest {
     }
 
     private Lexer createLexer(String content) {
-        Lexer lexer = new Lexer(new Source(SOURCE_NAME, content));
-
-        lexer.registerTokenMapping("&&", TokenType.BIN_OP);
-        lexer.registerTokenMapping("(", TokenType.PAREN_OPEN);
-        lexer.registerTokenMapping(")", TokenType.PAREN_CLOSE);
-        lexer.registerTokenMapping("+", TokenType.BIN_OP);
-        lexer.registerTokenMapping("-", TokenType.BIN_OP);
-        lexer.registerTokenMapping("||", TokenType.BIN_OP);
-        lexer.registerTokenMapping("*", TokenType.BIN_OP);
-        lexer.registerTokenMapping("/", TokenType.BIN_OP);
-        lexer.registerTokenMapping("!", TokenType.UNARY_OP);
-
-        return lexer;
+        return new Lexer(new Source(SOURCE_NAME, content), TEST_TOKEN_MAPPINGS);
     }
 
     private List<Token> getTokens(String content) {

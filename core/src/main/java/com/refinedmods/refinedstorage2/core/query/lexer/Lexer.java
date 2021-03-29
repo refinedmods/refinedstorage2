@@ -2,28 +2,17 @@ package com.refinedmods.refinedstorage2.core.query.lexer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Function;
 
 public class Lexer {
     private final Source source;
     private final List<Token> tokens = new ArrayList<>();
     private final LexerPosition position = new LexerPosition();
-    private final Map<String, TokenType> tokenMappings = new TreeMap<>((a, b) -> {
-        int cmp = Integer.compare(b.length(), a.length());
-        if (cmp == 0) {
-            return b.compareTo(a);
-        }
-        return cmp;
-    });
+    private final LexerTokenMappings tokenMappings;
 
-    public Lexer(Source source) {
+    public Lexer(Source source, LexerTokenMappings tokenMappings) {
         this.source = source;
-    }
-
-    public void registerTokenMapping(String value, TokenType type) {
-        tokenMappings.put(value, type);
+        this.tokenMappings = tokenMappings;
     }
 
     public void scan() {
@@ -39,7 +28,7 @@ public class Lexer {
                 position.reset();
             } else if (current == ' ') {
                 position.advanceAndReset();
-            } else if ((mapping = checkTokenMappings()) != null) {
+            } else if ((mapping = tokenMappings.findMapping(position, source)) != null) {
                 addToken(mapping);
             } else if (Character.isDigit(current)) {
                 scanNumber();
@@ -56,23 +45,6 @@ public class Lexer {
 
     private boolean isValidIdentifier(char c) {
         return Character.isLetterOrDigit(c);
-    }
-
-    private TokenType checkTokenMappings() {
-        for (Map.Entry<String, TokenType> entry : this.tokenMappings.entrySet()) {
-            TokenType type = entry.getValue();
-            String content = entry.getKey();
-            int contentLength = content.length();
-
-            if ((position.getEndIndex() + contentLength <= source.getContent().length()) &&
-                (content.equals(source.getContent().substring(position.getEndIndex(), position.getEndIndex() + contentLength)))) {
-                position.advance(contentLength);
-
-                return type;
-            }
-        }
-
-        return null;
     }
 
     private void scanNumber() {

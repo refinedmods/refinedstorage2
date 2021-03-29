@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.core.grid;
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
+import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -12,7 +13,7 @@ import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.asse
 
 @RefinedStorage2Test
 class GridSearchBoxModeImplTest {
-    private final GridSearchBoxMode searchBoxMode = new GridSearchBoxModeImpl(new GridQueryParserImpl(), true, null);
+    private final GridSearchBoxMode searchBoxMode = new GridSearchBoxModeImpl(new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS), true, null);
 
     @Test
     void Test_changing_text() {
