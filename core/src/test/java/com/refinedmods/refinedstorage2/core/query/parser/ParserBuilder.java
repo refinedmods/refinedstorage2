@@ -1,13 +1,30 @@
 package com.refinedmods.refinedstorage2.core.query.parser;
 
-import com.refinedmods.refinedstorage2.core.query.lexer.*;
-import com.refinedmods.refinedstorage2.core.query.parser.node.Node;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import com.refinedmods.refinedstorage2.core.query.lexer.Source;
+import com.refinedmods.refinedstorage2.core.query.lexer.Token;
+import com.refinedmods.refinedstorage2.core.query.lexer.TokenPosition;
+import com.refinedmods.refinedstorage2.core.query.lexer.TokenRange;
+import com.refinedmods.refinedstorage2.core.query.lexer.TokenType;
+import com.refinedmods.refinedstorage2.core.query.parser.node.Node;
+
 class ParserBuilder {
     private static final TokenPosition DUMMY_POSITION = new TokenPosition(new Source("<dummy>", null), new TokenRange(0, 0, 0, 0));
+
+    private static final ParserOperatorMappings OPERATOR_MAPPINGS = new ParserOperatorMappings()
+        .addBinaryOperator("=", new Operator(0, Associativity.RIGHT))
+        .addBinaryOperator("||", new Operator(1, Associativity.LEFT))
+        .addBinaryOperator("&&", new Operator(2, Associativity.LEFT))
+        .addBinaryOperator("+", new Operator(3, Associativity.LEFT))
+        .addBinaryOperator("-", new Operator(3, Associativity.LEFT))
+        .addBinaryOperator("*", new Operator(4, Associativity.LEFT))
+        .addBinaryOperator("/", new Operator(4, Associativity.LEFT))
+        .addBinaryOperator("^", new Operator(5, Associativity.RIGHT))
+        .addUnaryOperatorPosition("!", UnaryOperatorPosition.PREFIX)
+        .addUnaryOperatorPosition("++", UnaryOperatorPosition.BOTH)
+        .addUnaryOperatorPosition("--", UnaryOperatorPosition.BOTH);
 
     private final List<Token> tokens = new ArrayList<>();
 
@@ -17,20 +34,7 @@ class ParserBuilder {
     }
 
     List<Node> getNodes() {
-        Parser parser = new Parser(tokens);
-        parser.registerBinaryOperator("=", new Operator(0, Associativity.RIGHT));
-        parser.registerBinaryOperator("||", new Operator(1, Associativity.LEFT));
-        parser.registerBinaryOperator("&&", new Operator(2, Associativity.LEFT));
-        parser.registerBinaryOperator("+", new Operator(3, Associativity.LEFT));
-        parser.registerBinaryOperator("-", new Operator(3, Associativity.LEFT));
-        parser.registerBinaryOperator("*", new Operator(4, Associativity.LEFT));
-        parser.registerBinaryOperator("/", new Operator(4, Associativity.LEFT));
-        parser.registerBinaryOperator("^", new Operator(5, Associativity.RIGHT));
-
-        parser.registerUnaryOperator("!", UnaryOperatorPosition.PREFIX);
-        parser.registerUnaryOperator("++", UnaryOperatorPosition.BOTH);
-        parser.registerUnaryOperator("--", UnaryOperatorPosition.BOTH);
-
+        Parser parser = new Parser(tokens, OPERATOR_MAPPINGS);
         parser.parse();
         return parser.getNodes();
     }

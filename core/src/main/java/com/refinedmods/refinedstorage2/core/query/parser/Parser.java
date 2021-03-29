@@ -1,32 +1,26 @@
 package com.refinedmods.refinedstorage2.core.query.parser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.refinedmods.refinedstorage2.core.query.lexer.Token;
 import com.refinedmods.refinedstorage2.core.query.lexer.TokenType;
-import com.refinedmods.refinedstorage2.core.query.parser.node.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.refinedmods.refinedstorage2.core.query.parser.node.BinOpNode;
+import com.refinedmods.refinedstorage2.core.query.parser.node.LiteralNode;
+import com.refinedmods.refinedstorage2.core.query.parser.node.Node;
+import com.refinedmods.refinedstorage2.core.query.parser.node.ParenNode;
+import com.refinedmods.refinedstorage2.core.query.parser.node.UnaryOpNode;
 
 public class Parser {
     private final List<Token> tokens;
     private final List<Node> nodes = new ArrayList<>();
-    private final Map<String, Operator> binaryOperatorPrecedenceMap = new HashMap<>();
-    private final Map<String, UnaryOperatorPosition> unaryOperatorPositions = new HashMap<>();
+    private final ParserOperatorMappings operatorMappings;
 
     private int position = 0;
 
-    public Parser(List<Token> tokens) {
+    public Parser(List<Token> tokens, ParserOperatorMappings operatorMappings) {
         this.tokens = tokens;
-    }
-
-    public void registerBinaryOperator(String content, Operator operator) {
-        binaryOperatorPrecedenceMap.put(content, operator);
-    }
-
-    public void registerUnaryOperator(String content, UnaryOperatorPosition position) {
-        unaryOperatorPositions.put(content, position);
+        this.operatorMappings = operatorMappings;
     }
 
     public void parse() {
@@ -41,8 +35,8 @@ public class Parser {
         Node lhs = parseAtom();
 
         Token cur = currentOrNull();
-        while (cur != null && cur.getType() == TokenType.BIN_OP && getOperator(cur).getLevel() >= minPrecedence) {
-            Operator currentOp = getOperator(cur);
+        while (cur != null && cur.getType() == TokenType.BIN_OP && operatorMappings.getOperator(cur).getLevel() >= minPrecedence) {
+            Operator currentOp = operatorMappings.getOperator(cur);
             int nextMinPrecedence = currentOp.getAssociativity() == Associativity.LEFT ? (currentOp.getLevel() + 1) : currentOp.getLevel();
 
             next();
@@ -58,10 +52,6 @@ public class Parser {
         }
 
         return lhs;
-    }
-
-    private Operator getOperator(Token token) {
-        return binaryOperatorPrecedenceMap.get(token.getContent());
     }
 
     private Node parseAtom() {
@@ -91,7 +81,7 @@ public class Parser {
     private Node parsePrefixedUnaryOp() {
         Token maybeUnaryOp = current();
         if (maybeUnaryOp.getType() == TokenType.UNARY_OP) {
-            UnaryOperatorPosition position = unaryOperatorPositions.get(maybeUnaryOp.getContent());
+            UnaryOperatorPosition position = operatorMappings.getUnaryOperatorPosition(maybeUnaryOp);
             if (!position.canUseAsPrefix()) {
                 throw new ParserException("Cannot use '" + maybeUnaryOp.getContent() + "' as prefixed unary operator", maybeUnaryOp);
             }
@@ -112,7 +102,7 @@ public class Parser {
 
         Token maybeUnaryOp = currentOrNull();
         if (maybeUnaryOp != null && maybeUnaryOp.getType() == TokenType.UNARY_OP) {
-            UnaryOperatorPosition position = unaryOperatorPositions.get(maybeUnaryOp.getContent());
+            UnaryOperatorPosition position = operatorMappings.getUnaryOperatorPosition(maybeUnaryOp);
             if (!position.canUseAsSuffix()) {
                 throw new ParserException("Cannot use '" + maybeUnaryOp.getContent() + "' as suffixed unary operator", maybeUnaryOp);
             }

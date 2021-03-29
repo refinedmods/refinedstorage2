@@ -14,11 +14,9 @@ import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.core.query.lexer.Source;
 import com.refinedmods.refinedstorage2.core.query.lexer.Token;
 import com.refinedmods.refinedstorage2.core.query.lexer.TokenType;
-import com.refinedmods.refinedstorage2.core.query.parser.Associativity;
-import com.refinedmods.refinedstorage2.core.query.parser.Operator;
 import com.refinedmods.refinedstorage2.core.query.parser.Parser;
 import com.refinedmods.refinedstorage2.core.query.parser.ParserException;
-import com.refinedmods.refinedstorage2.core.query.parser.UnaryOperatorPosition;
+import com.refinedmods.refinedstorage2.core.query.parser.ParserOperatorMappings;
 import com.refinedmods.refinedstorage2.core.query.parser.node.BinOpNode;
 import com.refinedmods.refinedstorage2.core.query.parser.node.LiteralNode;
 import com.refinedmods.refinedstorage2.core.query.parser.node.Node;
@@ -27,9 +25,11 @@ import com.refinedmods.refinedstorage2.core.query.parser.node.UnaryOpNode;
 
 public class GridQueryParserImpl implements GridQueryParser {
     private final LexerTokenMappings tokenMappings;
+    private final ParserOperatorMappings operatorMappings;
 
-    public GridQueryParserImpl(LexerTokenMappings tokenMappings) {
+    public GridQueryParserImpl(LexerTokenMappings tokenMappings, ParserOperatorMappings operatorMappings) {
         this.tokenMappings = tokenMappings;
+        this.operatorMappings = operatorMappings;
     }
 
     @Override
@@ -61,19 +61,7 @@ public class GridQueryParserImpl implements GridQueryParser {
 
     private List<Node> getNodes(List<Token> tokens) throws GridQueryParserException {
         try {
-            Parser parser = new Parser(tokens);
-            parser.registerBinaryOperator("||", new Operator(0, Associativity.LEFT));
-            parser.registerBinaryOperator("&&", new Operator(1, Associativity.LEFT));
-
-            parser.registerUnaryOperator("!", UnaryOperatorPosition.PREFIX);
-            parser.registerUnaryOperator("@", UnaryOperatorPosition.PREFIX);
-            parser.registerUnaryOperator("$", UnaryOperatorPosition.PREFIX);
-            parser.registerUnaryOperator(">", UnaryOperatorPosition.PREFIX);
-            parser.registerUnaryOperator(">=", UnaryOperatorPosition.PREFIX);
-            parser.registerUnaryOperator("<", UnaryOperatorPosition.PREFIX);
-            parser.registerUnaryOperator("<=", UnaryOperatorPosition.PREFIX);
-            parser.registerUnaryOperator("=", UnaryOperatorPosition.PREFIX);
-
+            Parser parser = new Parser(tokens, operatorMappings);
             parser.parse();
             return parser.getNodes();
         } catch (ParserException e) {
@@ -81,7 +69,7 @@ public class GridQueryParserImpl implements GridQueryParser {
         }
     }
 
-    private Predicate<GridStack<?>> parseNode(Node node) throws GridQueryParserException {
+    private static Predicate<GridStack<?>> parseNode(Node node) throws GridQueryParserException {
         if (node instanceof LiteralNode) {
             String content = ((LiteralNode) node).getToken().getContent();
             return name(content);
@@ -102,21 +90,21 @@ public class GridQueryParserImpl implements GridQueryParser {
         throw new GridQueryParserException(node.getRange(), "Unsupported node", null);
     }
 
-    private Predicate<GridStack<?>> parseOrBinOpNode(BinOpNode node) throws GridQueryParserException {
+    private static Predicate<GridStack<?>> parseOrBinOpNode(BinOpNode node) throws GridQueryParserException {
         return or(Arrays.asList(
             parseNode(node.getLeft()),
             parseNode(node.getRight())
         ));
     }
 
-    private Predicate<GridStack<?>> parseAndBinOpNode(BinOpNode node) throws GridQueryParserException {
+    private static Predicate<GridStack<?>> parseAndBinOpNode(BinOpNode node) throws GridQueryParserException {
         return and(Arrays.asList(
             parseNode(node.getLeft()),
             parseNode(node.getRight())
         ));
     }
 
-    private Predicate<GridStack<?>> parseUnaryOpNode(UnaryOpNode node) throws GridQueryParserException {
+    private static Predicate<GridStack<?>> parseUnaryOpNode(UnaryOpNode node) throws GridQueryParserException {
         String operator = node.getOperator().getContent();
         Node content = node.getNode();
 
@@ -149,7 +137,7 @@ public class GridQueryParserImpl implements GridQueryParser {
         }
     }
 
-    private Predicate<GridStack<?>> count(Node node, BiPredicate<Integer, Integer> predicate) throws GridQueryParserException {
+    private static Predicate<GridStack<?>> count(Node node, BiPredicate<Integer, Integer> predicate) throws GridQueryParserException {
         if (!(node instanceof LiteralNode)) {
             throw new GridQueryParserException(node.getRange(), "Count filtering expects a literal", null);
         }
@@ -163,22 +151,22 @@ public class GridQueryParserImpl implements GridQueryParser {
         return stack -> predicate.test(stack.getCount(), wantedCount);
     }
 
-    private Predicate<GridStack<?>> mod(String name) {
+    private static Predicate<GridStack<?>> mod(String name) {
         return stack -> stack.getModName().trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT))
             || stack.getModId().trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT));
     }
 
-    private Predicate<GridStack<?>> tag(String name) {
+    private static Predicate<GridStack<?>> tag(String name) {
         return stack -> stack.getTags()
             .stream()
             .anyMatch(tag -> tag.trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT)));
     }
 
-    private Predicate<GridStack<?>> name(String name) {
+    private static Predicate<GridStack<?>> name(String name) {
         return stack -> stack.getName().trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT));
     }
 
-    private Predicate<GridStack<?>> and(List<Predicate<GridStack<?>>> predicates) {
+    private static Predicate<GridStack<?>> and(List<Predicate<GridStack<?>>> predicates) {
         return (stack) -> {
             for (Predicate<GridStack<?>> predicate : predicates) {
                 if (!predicate.test(stack)) {
@@ -189,7 +177,7 @@ public class GridQueryParserImpl implements GridQueryParser {
         };
     }
 
-    private Predicate<GridStack<?>> or(List<Predicate<GridStack<?>>> predicates) {
+    private static Predicate<GridStack<?>> or(List<Predicate<GridStack<?>>> predicates) {
         return (stack) -> {
             for (Predicate<GridStack<?>> predicate : predicates) {
                 if (predicate.test(stack)) {
@@ -200,7 +188,7 @@ public class GridQueryParserImpl implements GridQueryParser {
         };
     }
 
-    private Predicate<GridStack<?>> not(Predicate<GridStack<?>> predicate) {
+    private static Predicate<GridStack<?>> not(Predicate<GridStack<?>> predicate) {
         return (stack) -> !predicate.test(stack);
     }
 }

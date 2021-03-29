@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.grid.ItemGridStack;
 import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
+import com.refinedmods.refinedstorage2.core.query.parser.ParserOperatorMappings;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RefinedStorage2Test
 class GridQueryParserImplTest {
-    private final GridQueryParser queryParser = new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS);
+    private final GridQueryParser queryParser = new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS);
 
     @ParameterizedTest
     @ValueSource(strings = {"", "   "})
