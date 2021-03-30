@@ -1,0 +1,15 @@
+{
+  "name": "book.refinedstorage2.entry.grids.controls.title",
+  "category": "refinedstorage2:grids",
+  "icon": "refinedstorage2:grid",
+  "pages": [
+    {
+      "type": "text",
+      "text": "book.refinedstorage2.entry.grids.controls.line0"
+    },
+    {
+      "type": "text",
+      "text": "book.refinedstorage2.entry.grids.controls.line2"
+    }
+  ]
+}

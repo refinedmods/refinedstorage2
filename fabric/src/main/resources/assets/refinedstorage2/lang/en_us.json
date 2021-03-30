@@ -76,5 +76,12 @@
   "text.autoconfig.refinedstorage2.option.grid.preventSortingWhileShiftIsDown": "Prevent sorting while shift is down",
   "text.autoconfig.refinedstorage2.option.grid.detailedTooltip": "Detailed tooltip",
   "text.autoconfig.refinedstorage2.option.grid.rememberSearchQuery": "Remember search query",
-  "book.landing_text": "The next generation of Refined Storage."
+  "book.refinedstorage2.landing_text": "The next generation of Refined Storage.",
+  "book.refinedstorage2.category.grids": "Grids",
+  "book.refinedstorage2.category.grids.description": "The Grid allows access to items and fluids in your storage network.",
+  "book.refinedstorage2.entry.grids.intro.title": "Intro",
+  "book.refinedstorage2.entry.grids.intro.line0": "The Grid is the block that you'll use the most when interacting with your storage network.$(br2)It provides a view with all the items and fluids in a storage network.$(br2)You can insert and extract resources from the Grid.",
+  "book.refinedstorage2.entry.grids.controls.title": "Controls",
+  "book.refinedstorage2.entry.grids.controls.line0": "$(li) Left click$(br)Takes at most an entire stack of items.$(br2)$(li) Right click$(br)Takes at most half a stack.$(br2)$(li) SHIFT$(br)Pushes items to the player's inventory.$(br2)$(li) Right click on search bar$(br)Clears the search query.$(li) Tab$(br)Selects the search bar when the search box mode isn't in autoselected mode.",
+  "book.refinedstorage2.entry.grids.controls.line2": "$(li) SHIFT + SCROLL UP from the player inventory$(br)Inserts an entire stack from the highlighted slot to the storage network.$(br2)$(li) CTRL + SCROLL UP from the player inventory$(br)Inserts a single item from the highlighted slot to the storage network."
 }
