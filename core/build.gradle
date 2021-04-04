@@ -8,7 +8,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 group = 'com.refinedmods.refinedstorage2'
-archivesBaseName = 'core'
+archivesBaseName = 'refinedstorage2-core'
 version = '2.0.0-M1-SNAPSHOT'
 
 repositories {
