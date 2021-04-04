@@ -13,7 +13,6 @@ import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandl
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class SearchBoxModeSideButtonWidget extends SideButtonWidget {
@@ -29,7 +28,7 @@ public class SearchBoxModeSideButtonWidget extends SideButtonWidget {
 
     private List<Text> calculateTooltip(GridSearchBoxMode searchBoxMode) {
         List<Text> lines = new ArrayList<>();
-        lines.add(new TranslatableText("gui.refinedstorage2.grid.search_box_mode"));
+        lines.add(RefinedStorage2Mod.createTranslation("gui", "grid.search_box_mode"));
         lines.add(searchBoxMode.getDisplayProperties().getName());
         return lines;
     }

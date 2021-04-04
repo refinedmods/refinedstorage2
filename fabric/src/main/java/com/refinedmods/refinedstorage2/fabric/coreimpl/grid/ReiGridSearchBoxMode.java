@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import me.shedaniel.rei.api.REIHelper;
 import me.shedaniel.rei.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 // TODO - Investigate hard dep on REI
@@ -52,6 +51,6 @@ public class ReiGridSearchBoxMode extends GridSearchBoxModeImpl {
     private static Text createText(boolean autoSelected, boolean twoWay) {
         String twoWayText = twoWay ? "_two_way" : "";
         String autoSelectedText = autoSelected ? "_autoselected" : "";
-        return new TranslatableText("gui.refinedstorage2.grid.search_box_mode.rei" + twoWayText + autoSelectedText).formatted(Formatting.GRAY);
+        return RefinedStorage2Mod.createTranslation("gui", String.format("grid.search_box_mode.rei%s%s", twoWayText, autoSelectedText)).formatted(Formatting.GRAY);
     }
 }

@@ -8,12 +8,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.RedstoneModeAccessor;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 public class RedstoneModeSideButtonWidget extends SideButtonWidget {
@@ -30,8 +30,8 @@ public class RedstoneModeSideButtonWidget extends SideButtonWidget {
 
     private List<Text> calculateTooltip(RedstoneMode type) {
         List<Text> lines = new ArrayList<>();
-        lines.add(new TranslatableText("gui.refinedstorage2.redstone_mode"));
-        lines.add(new TranslatableText("gui.refinedstorage2.redstone_mode." + type.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
+        lines.add(RefinedStorage2Mod.createTranslation("gui", "redstone_mode"));
+        lines.add(RefinedStorage2Mod.createTranslation("gui", "redstone_mode." + type.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
         return lines;
     }
 

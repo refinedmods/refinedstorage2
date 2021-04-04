@@ -24,7 +24,6 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +45,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
 
     @Override
     public Text getDisplayName() {
-        return new TranslatableText("block.refinedstorage2.grid");
+        return RefinedStorage2Mod.createTranslation("block", "grid");
     }
 
     @Override

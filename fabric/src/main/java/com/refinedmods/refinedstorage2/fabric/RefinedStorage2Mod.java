@@ -79,7 +79,7 @@ public class RefinedStorage2Mod implements ModInitializer {
                 new Identifier(ID, "textures/icons.png"),
                 autoSelected ? 16 : 0,
                 96,
-                new TranslatableText("gui.refinedstorage2.grid.search_box_mode.normal" + (autoSelected ? "_autoselected" : "")).formatted(Formatting.GRAY)
+                createTranslation("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : "")).formatted(Formatting.GRAY)
             )));
         }
 
@@ -96,5 +96,9 @@ public class RefinedStorage2Mod implements ModInitializer {
 
     public static boolean isModIdentifier(Identifier identifier) {
         return ID.equals(identifier.getNamespace());
+    }
+
+    public static TranslatableText createTranslation(String category, String value, Object... args) {
+        return new TranslatableText(String.format("%s.%s.%s", category, ID, value), args);
     }
 }

@@ -33,7 +33,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix4f;
@@ -229,7 +228,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
                 } else {
                     List<OrderedText> lines = Lists.transform(getTooltipFromItem(stack.getStack()), Text::asOrderedText);
                     List<OrderedText> smallLines = new ArrayList<>();
-                    smallLines.add(new TranslatableText("misc.refinedstorage2.total", stack.isZeroed() ? "0" : Quantities.format(stack.getCount())).formatted(Formatting.GRAY).asOrderedText());
+                    smallLines.add(RefinedStorage2Mod.createTranslation("misc", "total", stack.isZeroed() ? "0" : Quantities.format(stack.getCount())).formatted(Formatting.GRAY).asOrderedText());
 
                     view.getTrackerEntry(stack.getStack()).ifPresent(entry -> smallLines.add(LastModifiedUtil.getText(entry.getTime(), entry.getName()).formatted(Formatting.GRAY).asOrderedText()));
 

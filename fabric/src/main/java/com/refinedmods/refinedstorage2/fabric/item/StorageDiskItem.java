@@ -1,5 +1,9 @@
 package com.refinedmods.refinedstorage2.fabric.item;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
@@ -15,16 +19,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 public class StorageDiskItem extends Item {
     private final ItemStorageType type;
@@ -41,9 +40,9 @@ public class StorageDiskItem extends Item {
         getId(stack).ifPresent(id -> {
             StorageDiskInfo info = RefinedStorage2Mod.API.getStorageDiskManager(world).getInfo(id);
             if (info.getCapacity() == -1) {
-                tooltip.add(new TranslatableText("misc.refinedstorage2.stored", Quantities.formatWithUnits(info.getStored())).formatted(Formatting.GRAY));
+                tooltip.add(RefinedStorage2Mod.createTranslation("misc", "stored", Quantities.formatWithUnits(info.getStored())).formatted(Formatting.GRAY));
             } else {
-                tooltip.add(new TranslatableText("misc.refinedstorage2.stored_with_capacity", Quantities.formatWithUnits(info.getStored()), Quantities.formatWithUnits(info.getCapacity())).formatted(Formatting.GRAY));
+                tooltip.add(RefinedStorage2Mod.createTranslation("misc", "stored_with_capacity", Quantities.formatWithUnits(info.getStored()), Quantities.formatWithUnits(info.getCapacity())).formatted(Formatting.GRAY));
             }
 
             if (context.isAdvanced()) {

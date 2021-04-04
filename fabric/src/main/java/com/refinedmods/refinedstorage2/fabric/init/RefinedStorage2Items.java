@@ -17,7 +17,6 @@ import com.refinedmods.refinedstorage2.fabric.item.block.ColoredBlockItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.registry.Registry;
 
 public class RefinedStorage2Items {
@@ -33,7 +32,7 @@ public class RefinedStorage2Items {
         Registry.register(Registry.ITEM, RefinedStorage2Mod.createIdentifier("disk_drive"), new BlockItem(blocks.getDiskDrive(), createSettings(itemGroup)));
         storageHousing = Registry.register(Registry.ITEM, RefinedStorage2Mod.createIdentifier("storage_housing"), new StorageHousingItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, RefinedStorage2Mod.createIdentifier("machine_casing"), new BlockItem(blocks.getMachineCasing(), createSettings(itemGroup)));
-        blocks.getGrid().forEach((color, block, nameFactory) -> Registry.register(Registry.ITEM, RefinedStorage2Mod.createIdentifier(nameFactory.apply("grid")), new ColoredBlockItem(block, createSettings(itemGroup), color, new TranslatableText("block.refinedstorage2.grid"))));
+        blocks.getGrid().forEach((color, block, nameFactory) -> Registry.register(Registry.ITEM, RefinedStorage2Mod.createIdentifier(nameFactory.apply("grid")), new ColoredBlockItem(block, createSettings(itemGroup), color, RefinedStorage2Mod.createTranslation("block", "grid"))));
 
         for (ProcessorItem.Type type : ProcessorItem.Type.values()) {
             Registry.register(Registry.ITEM, RefinedStorage2Mod.createIdentifier(type.getName() + "_processor"), new ProcessorItem(createSettings(itemGroup)));

@@ -13,6 +13,7 @@ import net.minecraft.util.Identifier;
 
 public class DiskDriveScreen extends HandledScreen<DiskDriveScreenHandler> {
     private static final Identifier TEXTURE = RefinedStorage2Mod.createIdentifier("textures/gui/disk_drive.png");
+    private static final TranslatableText DISKS_TEXT = RefinedStorage2Mod.createTranslation("gui", "disk_drive.disks");
 
     public DiskDriveScreen(DiskDriveScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -38,7 +39,7 @@ public class DiskDriveScreen extends HandledScreen<DiskDriveScreenHandler> {
     @Override
     protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
         super.drawForeground(matrices, mouseX, mouseY);
-        textRenderer.draw(matrices, new TranslatableText("gui.refinedstorage2.disk_drive.disks"), 79, 42, 4210752);
+        textRenderer.draw(matrices, DISKS_TEXT, 79, 42, 4210752);
     }
 
     @Override

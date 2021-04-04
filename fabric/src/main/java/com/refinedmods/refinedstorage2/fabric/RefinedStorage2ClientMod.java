@@ -20,6 +20,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class RefinedStorage2ClientMod implements ClientModInitializer {
@@ -45,8 +46,10 @@ public class RefinedStorage2ClientMod implements ClientModInitializer {
     }
 
     private void registerCustomModels() {
+        Identifier diskDriveIdentifier = RefinedStorage2Mod.createIdentifier("block/disk_drive");
+
         ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (identifier, modelProviderContext) -> {
-            if (identifier.equals(RefinedStorage2Mod.createIdentifier("block/disk_drive"))) {
+            if (identifier.equals(diskDriveIdentifier)) {
                 return new DiskDriveUnbakedModel();
             }
             return null;
@@ -61,10 +64,10 @@ public class RefinedStorage2ClientMod implements ClientModInitializer {
 
     private void registerKeyBindings() {
         focusSearchBar = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.refinedstorage2.focus_search_bar",
+            String.format("key.%s.focus_search_bar", RefinedStorage2Mod.ID),
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_TAB,
-            "category.refinedstorage2.key_bindings"
+            String.format("category.%s.key_bindings", RefinedStorage2Mod.ID)
         ));
     }
 

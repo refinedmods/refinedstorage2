@@ -8,13 +8,13 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
+import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 public class SortingDirectionSideButtonWidget extends SideButtonWidget {
@@ -31,8 +31,8 @@ public class SortingDirectionSideButtonWidget extends SideButtonWidget {
 
     private List<Text> calculateTooltip(GridSortingDirection type) {
         List<Text> lines = new ArrayList<>();
-        lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction"));
-        lines.add(new TranslatableText("gui.refinedstorage2.grid.sorting.direction." + type.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
+        lines.add(RefinedStorage2Mod.createTranslation("gui", "grid.sorting.direction"));
+        lines.add(RefinedStorage2Mod.createTranslation("gui", "grid.sorting.direction." + type.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
         return lines;
     }
 

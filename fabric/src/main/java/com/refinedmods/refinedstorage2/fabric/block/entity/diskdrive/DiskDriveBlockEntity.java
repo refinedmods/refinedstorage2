@@ -30,7 +30,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -134,7 +133,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
     @Override
     public Text getDisplayName() {
-        return new TranslatableText("block.refinedstorage2.disk_drive");
+        return RefinedStorage2Mod.createTranslation("block", "disk_drive");
     }
 
     @Override
