@@ -9,6 +9,10 @@
     },
     {
       "type": "text",
+      "text": "book.refinedstorage2.entry.grids.controls.line1"
+    },
+    {
+      "type": "text",
       "text": "book.refinedstorage2.entry.grids.controls.line2"
     }
   ]

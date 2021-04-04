@@ -1,11 +1,11 @@
 {
-  "name": "book.refinedstorage2.entry.grids.intro.title",
+  "name": "book.refinedstorage2.entry.grids.about.title",
   "category": "refinedstorage2:grids",
   "icon": "refinedstorage2:grid",
   "pages": [
     {
       "type": "text",
-      "text": "book.refinedstorage2.entry.grids.intro.line0"
+      "text": "book.refinedstorage2.entry.grids.about.line0"
     },
     {
       "type": "crafting",

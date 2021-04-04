@@ -1,0 +1,31 @@
+{
+  "name": "book.refinedstorage2.entry.grids.search_box.title",
+  "category": "refinedstorage2:grids",
+  "icon": "refinedstorage2:grid",
+  "pages": [
+    {
+      "type": "text",
+      "text": "book.refinedstorage2.entry.grids.search_box.line0"
+    },
+    {
+      "type": "text",
+      "text": "book.refinedstorage2.entry.grids.search_box.line1"
+    },
+    {
+      "type": "text",
+      "text": "book.refinedstorage2.entry.grids.search_box.line2"
+    },
+    {
+      "type": "text",
+      "text": "book.refinedstorage2.entry.grids.search_box.line3"
+    },
+    {
+      "type": "text",
+      "text": "book.refinedstorage2.entry.grids.search_box.line4"
+    },
+    {
+      "type": "text",
+      "text": "book.refinedstorage2.entry.grids.search_box.line5"
+    }
+  ]
+}

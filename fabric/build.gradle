@@ -60,6 +60,9 @@ processResources {
     filesMatching("fabric.mod.json") {
         expand "version": project.version
     }
+    filesMatching("data/refinedstorage2/patchouli_books/book/book.json") {
+        expand "version": project.version
+    }
 }
 
 tasks.withType(JavaCompile) {
