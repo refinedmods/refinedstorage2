@@ -15,7 +15,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandler {
-    public static final Identifier ID = new Identifier(RefinedStorage2Mod.ID, "grid_extract");
+    public static final Identifier ID = RefinedStorage2Mod.createIdentifier("grid_extract");
 
     @Override
     public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {

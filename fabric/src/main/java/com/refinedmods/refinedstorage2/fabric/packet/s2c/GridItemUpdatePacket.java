@@ -14,7 +14,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.util.Identifier;
 
 public class GridItemUpdatePacket implements ClientPlayNetworking.PlayChannelHandler {
-    public static final Identifier ID = new Identifier(RefinedStorage2Mod.ID, "grid_item_update");
+    public static final Identifier ID = RefinedStorage2Mod.createIdentifier("grid_item_update");
 
     @Override
     public void receive(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {

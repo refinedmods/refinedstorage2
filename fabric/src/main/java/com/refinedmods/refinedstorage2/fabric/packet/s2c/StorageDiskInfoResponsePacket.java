@@ -12,7 +12,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
 public class StorageDiskInfoResponsePacket implements ClientPlayNetworking.PlayChannelHandler {
-    public static final Identifier ID = new Identifier(RefinedStorage2Mod.ID, "storage_disk_info_response");
+    public static final Identifier ID = RefinedStorage2Mod.createIdentifier("storage_disk_info_response");
 
     @Override
     public void receive(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {

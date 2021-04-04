@@ -15,7 +15,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class StorageDiskInfoRequestPacket implements ServerPlayNetworking.PlayChannelHandler {
-    public static final Identifier ID = new Identifier(RefinedStorage2Mod.ID, "storage_disk_info_request");
+    public static final Identifier ID = RefinedStorage2Mod.createIdentifier("storage_disk_info_request");
 
     @Override
     public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {

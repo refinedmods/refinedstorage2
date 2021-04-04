@@ -13,7 +13,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class GridInsertFromCursorPacket implements ServerPlayNetworking.PlayChannelHandler {
-    public static final Identifier ID = new Identifier(RefinedStorage2Mod.ID, "grid_insert_from_cursor");
+    public static final Identifier ID = RefinedStorage2Mod.createIdentifier("grid_insert_from_cursor");
 
     @Override
     public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {

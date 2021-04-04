@@ -20,7 +20,6 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class RefinedStorage2ClientMod implements ClientModInitializer {
@@ -47,7 +46,7 @@ public class RefinedStorage2ClientMod implements ClientModInitializer {
 
     private void registerCustomModels() {
         ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (identifier, modelProviderContext) -> {
-            if (identifier.equals(new Identifier(RefinedStorage2Mod.ID, "block/disk_drive"))) {
+            if (identifier.equals(RefinedStorage2Mod.createIdentifier("block/disk_drive"))) {
                 return new DiskDriveUnbakedModel();
             }
             return null;

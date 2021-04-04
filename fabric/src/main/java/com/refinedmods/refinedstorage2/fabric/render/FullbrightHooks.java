@@ -27,8 +27,7 @@ public class FullbrightHooks {
     private static final ThreadLocal<Boolean> ENABLE_FULLBRIGHT_EXTENSIONS = new ThreadLocal<>();
 
     public static void beginDeserializingModel(Identifier location) {
-        String namespace = location.getNamespace();
-        if (namespace.equals(RefinedStorage2Mod.ID)) {
+        if (RefinedStorage2Mod.isModIdentifier(location)) {
             ENABLE_FULLBRIGHT_EXTENSIONS.set(true);
         }
     }

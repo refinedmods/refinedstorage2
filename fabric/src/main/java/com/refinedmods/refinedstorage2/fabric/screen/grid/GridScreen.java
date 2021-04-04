@@ -43,7 +43,7 @@ import org.apache.logging.log4j.Logger;
 public class GridScreen extends BaseScreen<GridScreenHandler> {
     private static final Logger LOGGER = LogManager.getLogger(GridScreen.class);
 
-    private static final Identifier TEXTURE = new Identifier(RefinedStorage2Mod.ID, "textures/gui/grid.png");
+    private static final Identifier TEXTURE = RefinedStorage2Mod.createIdentifier("textures/gui/grid.png");
 
     private static final int TOP_HEIGHT = 19;
     private static final int BOTTOM_HEIGHT = 99;

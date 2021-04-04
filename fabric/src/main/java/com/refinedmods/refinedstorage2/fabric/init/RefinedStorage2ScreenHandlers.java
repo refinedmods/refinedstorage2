@@ -5,15 +5,14 @@ import com.refinedmods.refinedstorage2.fabric.screenhandler.DiskDriveScreenHandl
 import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.Identifier;
 
 public class RefinedStorage2ScreenHandlers {
     private ScreenHandlerType<DiskDriveScreenHandler> diskDrive;
     private ScreenHandlerType<GridScreenHandler> grid;
 
     public void register() {
-        diskDrive = ScreenHandlerRegistry.registerSimple(new Identifier(RefinedStorage2Mod.ID, "disk_drive"), DiskDriveScreenHandler::new);
-        grid = ScreenHandlerRegistry.registerExtended(new Identifier(RefinedStorage2Mod.ID, "grid"), GridScreenHandler::new);
+        diskDrive = ScreenHandlerRegistry.registerSimple(RefinedStorage2Mod.createIdentifier("disk_drive"), DiskDriveScreenHandler::new);
+        grid = ScreenHandlerRegistry.registerExtended(RefinedStorage2Mod.createIdentifier("grid"), GridScreenHandler::new);
     }
 
     public ScreenHandlerType<DiskDriveScreenHandler> getDiskDrive() {

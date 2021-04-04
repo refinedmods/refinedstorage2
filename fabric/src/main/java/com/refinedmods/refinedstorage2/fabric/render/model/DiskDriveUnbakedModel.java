@@ -1,5 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.render.model;
 
+import java.util.Collection;
+import java.util.function.Function;
+
 import com.google.common.collect.ImmutableSet;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.render.model.baked.DiskDriveBakedModel;
@@ -11,12 +14,9 @@ import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.function.Function;
-
 public class DiskDriveUnbakedModel implements BasicUnbakedModel {
-    private static final Identifier BASE_MODEL = new Identifier(RefinedStorage2Mod.ID, "block/disk_drive_base");
-    private static final Identifier DISK_MODEL = new Identifier(RefinedStorage2Mod.ID, "block/disk");
+    private static final Identifier BASE_MODEL = RefinedStorage2Mod.createIdentifier("block/disk_drive_base");
+    private static final Identifier DISK_MODEL = RefinedStorage2Mod.createIdentifier("block/disk");
 
     @Override
     public Collection<Identifier> getModelDependencies() {

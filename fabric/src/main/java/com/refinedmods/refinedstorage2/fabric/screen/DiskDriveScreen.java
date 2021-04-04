@@ -12,7 +12,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class DiskDriveScreen extends HandledScreen<DiskDriveScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier(RefinedStorage2Mod.ID, "textures/gui/disk_drive.png");
+    private static final Identifier TEXTURE = RefinedStorage2Mod.createIdentifier("textures/gui/disk_drive.png");
 
     public DiskDriveScreen(DiskDriveScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);

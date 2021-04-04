@@ -10,7 +10,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 public class ScrollbarWidget extends DrawableHelper implements Element, Drawable {
-    private static final Identifier TEXTURE = new Identifier(RefinedStorage2Mod.ID, "textures/gui/widgets.png");
+    private static final Identifier TEXTURE = RefinedStorage2Mod.createIdentifier("textures/gui/widgets.png");
     private static final int SCROLLER_HEIGHT = 15;
 
     private final MinecraftClient client;

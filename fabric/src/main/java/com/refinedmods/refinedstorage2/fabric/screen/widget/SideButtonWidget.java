@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
 
 public abstract class SideButtonWidget extends ButtonWidget implements ButtonWidget.TooltipSupplier {
-    private static final Identifier DEFAULT_SPRITE = new Identifier(RefinedStorage2Mod.ID, "textures/icons.png");
+    private static final Identifier DEFAULT_SPRITE = RefinedStorage2Mod.createIdentifier("textures/icons.png");
 
     private static final int WIDTH = 18;
     private static final int HEIGHT = 18;

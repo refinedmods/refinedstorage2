@@ -1,11 +1,14 @@
 package com.refinedmods.refinedstorage2.fabric.init;
 
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.block.*;
+import com.refinedmods.refinedstorage2.fabric.block.CableBlock;
+import com.refinedmods.refinedstorage2.fabric.block.DiskDriveBlock;
+import com.refinedmods.refinedstorage2.fabric.block.GridBlock;
+import com.refinedmods.refinedstorage2.fabric.block.MachineCasingBlock;
+import com.refinedmods.refinedstorage2.fabric.block.QuartzEnrichedIronBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Material;
 import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class RefinedStorage2Blocks {
@@ -22,11 +25,11 @@ public class RefinedStorage2Blocks {
     private final BlockColorMap<GridBlock> grid = new BlockColorMap<>();
 
     public void register() {
-        cable = Registry.register(Registry.BLOCK, new Identifier(RefinedStorage2Mod.ID, "cable"), new CableBlock());
-        quartzEnrichedIron = Registry.register(Registry.BLOCK, new Identifier(RefinedStorage2Mod.ID, "quartz_enriched_iron_block"), new QuartzEnrichedIronBlock(STONE_SETTINGS));
-        diskDrive = Registry.register(Registry.BLOCK, new Identifier(RefinedStorage2Mod.ID, "disk_drive"), new DiskDriveBlock(STONE_SETTINGS));
-        machineCasing = Registry.register(Registry.BLOCK, new Identifier(RefinedStorage2Mod.ID, "machine_casing"), new MachineCasingBlock(STONE_SETTINGS));
-        grid.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, new Identifier(RefinedStorage2Mod.ID, nameFactory.apply("grid")), new GridBlock(STONE_SETTINGS)));
+        cable = Registry.register(Registry.BLOCK, RefinedStorage2Mod.createIdentifier("cable"), new CableBlock());
+        quartzEnrichedIron = Registry.register(Registry.BLOCK, RefinedStorage2Mod.createIdentifier("quartz_enriched_iron_block"), new QuartzEnrichedIronBlock(STONE_SETTINGS));
+        diskDrive = Registry.register(Registry.BLOCK, RefinedStorage2Mod.createIdentifier("disk_drive"), new DiskDriveBlock(STONE_SETTINGS));
+        machineCasing = Registry.register(Registry.BLOCK, RefinedStorage2Mod.createIdentifier("machine_casing"), new MachineCasingBlock(STONE_SETTINGS));
+        grid.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, RefinedStorage2Mod.createIdentifier(nameFactory.apply("grid")), new GridBlock(STONE_SETTINGS)));
     }
 
     public CableBlock getCable() {

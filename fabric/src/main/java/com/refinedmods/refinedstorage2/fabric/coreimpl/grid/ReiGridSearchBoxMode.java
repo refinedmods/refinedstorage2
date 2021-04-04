@@ -10,7 +10,6 @@ import me.shedaniel.rei.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 
 // TODO - Investigate hard dep on REI
 public class ReiGridSearchBoxMode extends GridSearchBoxModeImpl {
@@ -43,7 +42,7 @@ public class ReiGridSearchBoxMode extends GridSearchBoxModeImpl {
 
     public static ReiGridSearchBoxMode create(GridQueryParser queryParser, boolean autoSelected, boolean twoWay) {
         return new ReiGridSearchBoxMode(queryParser, autoSelected, twoWay, new GridSearchBoxModeDisplayProperties(
-            new Identifier(RefinedStorage2Mod.ID, "textures/icons.png"),
+            RefinedStorage2Mod.createIdentifier("textures/icons.png"),
             autoSelected ? 16 : 0,
             96,
             createText(autoSelected, twoWay)

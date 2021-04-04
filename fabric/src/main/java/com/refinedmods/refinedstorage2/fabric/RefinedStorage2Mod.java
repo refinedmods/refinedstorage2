@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Logger;
 public class RefinedStorage2Mod implements ModInitializer {
     private static final Logger LOGGER = LogManager.getLogger(RefinedStorage2Mod.class);
 
-    public static final String ID = "refinedstorage2";
+    static final String ID = "refinedstorage2";
 
     public static final RefinedStorage2ApiFacade API = new FabricRefinedStorage2ApiFacade();
 
@@ -88,5 +88,13 @@ public class RefinedStorage2Mod implements ModInitializer {
 
         API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(queryParser, false, true)); // REI two-way
         API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(queryParser, true, true)); // REI two-way autoselected
+    }
+
+    public static Identifier createIdentifier(String value) {
+        return new Identifier(ID, value);
+    }
+
+    public static boolean isModIdentifier(Identifier identifier) {
+        return ID.equals(identifier.getNamespace());
     }
 }
