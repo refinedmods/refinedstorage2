@@ -1,23 +1,27 @@
 package com.refinedmods.refinedstorage2.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import net.fabricmc.fabric.api.network.PacketConsumer;
-import net.fabricmc.fabric.api.network.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-public class PropertyChangePacket implements PacketConsumer {
+public class PropertyChangePacket implements ServerPlayNetworking.PlayChannelHandler {
     public static final Identifier ID = new Identifier(RefinedStorage2Mod.ID, "property_change");
 
     @Override
-    public void accept(PacketContext context, PacketByteBuf buffer) {
-        int id = buffer.readInt();
-        int value = buffer.readInt();
+    public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+        int id = buf.readInt();
+        int value = buf.readInt();
 
-        context.getTaskQueue().execute(() -> {
-            ScreenHandler screenHandler = context.getPlayer().currentScreenHandler;
+        server.execute(() -> {
+            ScreenHandler screenHandler = player.currentScreenHandler;
             if (screenHandler != null) {
+                // TODO - Check property type
                 screenHandler.setProperty(id, value);
             }
         });

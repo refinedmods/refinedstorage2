@@ -13,7 +13,6 @@ import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2BlockEntities;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2Blocks;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2Items;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2ScreenHandlers;
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridChangeSettingPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
@@ -23,7 +22,7 @@ import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TranslatableText;
@@ -72,12 +71,11 @@ public class RefinedStorage2Mod implements ModInitializer {
         API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(queryParser, false, true)); // REI two-way
         API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(queryParser, true, true)); // REI two-way autoselected
 
-        ServerSidePacketRegistry.INSTANCE.register(StorageDiskInfoRequestPacket.ID, new StorageDiskInfoRequestPacket());
-        ServerSidePacketRegistry.INSTANCE.register(GridInsertFromCursorPacket.ID, new GridInsertFromCursorPacket());
-        ServerSidePacketRegistry.INSTANCE.register(GridExtractPacket.ID, new GridExtractPacket());
-        ServerSidePacketRegistry.INSTANCE.register(GridScrollPacket.ID, new GridScrollPacket());
-        ServerSidePacketRegistry.INSTANCE.register(GridChangeSettingPacket.ID, new GridChangeSettingPacket());
-        ServerSidePacketRegistry.INSTANCE.register(PropertyChangePacket.ID, new PropertyChangePacket());
+        ServerPlayNetworking.registerGlobalReceiver(StorageDiskInfoRequestPacket.ID, new StorageDiskInfoRequestPacket());
+        ServerPlayNetworking.registerGlobalReceiver(GridInsertFromCursorPacket.ID, new GridInsertFromCursorPacket());
+        ServerPlayNetworking.registerGlobalReceiver(GridExtractPacket.ID, new GridExtractPacket());
+        ServerPlayNetworking.registerGlobalReceiver(GridScrollPacket.ID, new GridScrollPacket());
+        ServerPlayNetworking.registerGlobalReceiver(PropertyChangePacket.ID, new PropertyChangePacket());
 
         LOGGER.info("Refined Storage 2 has loaded.");
     }

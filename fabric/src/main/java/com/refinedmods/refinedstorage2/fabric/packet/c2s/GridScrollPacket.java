@@ -4,26 +4,29 @@ import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
-import net.fabricmc.fabric.api.network.PacketConsumer;
-import net.fabricmc.fabric.api.network.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-public class GridScrollPacket implements PacketConsumer {
+public class GridScrollPacket implements ServerPlayNetworking.PlayChannelHandler {
     public static final Identifier ID = new Identifier(RefinedStorage2Mod.ID, "grid_scroll");
 
     @Override
-    public void accept(PacketContext packetContext, PacketByteBuf buf) {
+    public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         ItemStack stack = PacketUtil.readItemStackWithoutCount(buf);
         GridScrollMode mode = getMode(buf.readByte());
         int slot = buf.readInt();
 
-        packetContext.getTaskQueue().execute(() -> {
-            ScreenHandler handler = packetContext.getPlayer().currentScreenHandler;
-            if (handler instanceof GridEventHandler) {
-                ((GridEventHandler) handler).onScroll(stack, slot, mode);
+        server.execute(() -> {
+            ScreenHandler screenHandler = player.currentScreenHandler;
+            if (screenHandler instanceof GridEventHandler) {
+                ((GridEventHandler) screenHandler).onScroll(stack, slot, mode);
             }
         });
     }

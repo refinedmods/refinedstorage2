@@ -12,9 +12,9 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.InputUtil;
@@ -31,9 +31,9 @@ public class RefinedStorage2ClientMod implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(RefinedStorage2Mod.BLOCKS.getCable(), RenderLayer.getCutout());
         RefinedStorage2Mod.BLOCKS.getGrid().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout()));
 
-        ClientSidePacketRegistry.INSTANCE.register(StorageDiskInfoResponsePacket.ID, new StorageDiskInfoResponsePacket());
-        ClientSidePacketRegistry.INSTANCE.register(GridItemUpdatePacket.ID, new GridItemUpdatePacket());
-        ClientSidePacketRegistry.INSTANCE.register(GridActivePacket.ID, new GridActivePacket());
+        ClientPlayNetworking.registerGlobalReceiver(StorageDiskInfoResponsePacket.ID, new StorageDiskInfoResponsePacket());
+        ClientPlayNetworking.registerGlobalReceiver(GridItemUpdatePacket.ID, new GridItemUpdatePacket());
+        ClientPlayNetworking.registerGlobalReceiver(GridActivePacket.ID, new GridActivePacket());
 
         BlockEntityRendererRegistry.INSTANCE.register(RefinedStorage2Mod.BLOCK_ENTITIES.getDiskDrive(), DiskDriveBlockEntityRenderer::new);
 

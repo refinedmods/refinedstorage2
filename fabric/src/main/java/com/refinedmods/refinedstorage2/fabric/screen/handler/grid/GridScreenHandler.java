@@ -38,6 +38,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -182,7 +183,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
             @Override
             public void onActiveChanged(boolean active) {
                 super.onActiveChanged(active);
-                PacketUtil.sendToPlayer(playerInventory.player, GridActivePacket.ID, buf -> buf.writeBoolean(active));
+                PacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, GridActivePacket.ID, buf -> buf.writeBoolean(active));
             }
         };
         this.grid = grid;
@@ -342,7 +343,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     public void onChanged(StackListResult<ItemStack> change) {
         LOGGER.info("Received a change of {} for {}", change.getChange(), change.getStack());
 
-        PacketUtil.sendToPlayer(playerInventory.player, GridItemUpdatePacket.ID, buf -> {
+        PacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, GridItemUpdatePacket.ID, buf -> {
             PacketUtil.writeItemStackWithoutCount(buf, change.getStack());
             buf.writeInt(change.getChange());
 

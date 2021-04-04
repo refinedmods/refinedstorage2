@@ -1,18 +1,18 @@
 package com.refinedmods.refinedstorage2.fabric.util;
 
+import java.util.Optional;
+import java.util.function.Consumer;
+
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.entity.player.PlayerEntity;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-
-import java.util.Optional;
-import java.util.function.Consumer;
 
 public class PacketUtil {
     public static void sendToServer(Identifier id, Consumer<PacketByteBuf> bufConsumer) {
@@ -21,10 +21,10 @@ public class PacketUtil {
         ClientSidePacketRegistry.INSTANCE.sendToServer(id, buf);
     }
 
-    public static void sendToPlayer(PlayerEntity playerEntity, Identifier id, Consumer<PacketByteBuf> bufConsumer) {
+    public static void sendToPlayer(ServerPlayerEntity playerEntity, Identifier id, Consumer<PacketByteBuf> bufConsumer) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         bufConsumer.accept(buf);
-        ServerSidePacketRegistry.INSTANCE.sendToPlayer(playerEntity, id, buf);
+        ServerPlayNetworking.send(playerEntity, id, buf);
     }
 
     public static void writeItemStackWithoutCount(PacketByteBuf buf, ItemStack stack) {
