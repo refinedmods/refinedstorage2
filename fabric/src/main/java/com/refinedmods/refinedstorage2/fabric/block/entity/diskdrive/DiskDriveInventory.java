@@ -1,5 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import alexiil.mc.lib.attributes.item.filter.ItemClassFilter;
 import alexiil.mc.lib.attributes.item.filter.ItemFilter;
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
@@ -7,9 +10,6 @@ import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetw
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.StorageDiskProvider;
 import com.refinedmods.refinedstorage2.fabric.item.StorageDiskItem;
 import net.minecraft.item.ItemStack;
-
-import java.util.Optional;
-import java.util.UUID;
 
 public class DiskDriveInventory extends FullFixedItemInv implements StorageDiskProvider {
     private static final ItemFilter DISK_FILTER = new ItemClassFilter(StorageDiskItem.class);

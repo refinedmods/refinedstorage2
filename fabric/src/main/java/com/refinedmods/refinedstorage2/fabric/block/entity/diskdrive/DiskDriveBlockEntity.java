@@ -16,7 +16,7 @@ import com.refinedmods.refinedstorage2.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricWorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
-import com.refinedmods.refinedstorage2.fabric.screenhandler.DiskDriveScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.fabricmc.fabric.api.util.NbtType;
@@ -138,7 +138,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
     @Override
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new DiskDriveScreenHandler(syncId, player, diskInventory);
+        return new DiskDriveScreenHandler(syncId, player, diskInventory, (stack) -> Optional.empty());
     }
 
     @Override

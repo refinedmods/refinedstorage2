@@ -37,18 +37,19 @@ public class StorageDiskItem extends Item {
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
 
-        getId(stack).ifPresent(id -> {
-            StorageDiskInfo info = RefinedStorage2Mod.API.getStorageDiskManager(world).getInfo(id);
+        getInfo(world, stack).ifPresent(info -> {
             if (info.getCapacity() == -1) {
                 tooltip.add(RefinedStorage2Mod.createTranslation("misc", "stored", Quantities.formatWithUnits(info.getStored())).formatted(Formatting.GRAY));
             } else {
                 tooltip.add(RefinedStorage2Mod.createTranslation("misc", "stored_with_capacity", Quantities.formatWithUnits(info.getStored()), Quantities.formatWithUnits(info.getCapacity())).formatted(Formatting.GRAY));
             }
-
-            if (context.isAdvanced()) {
-                tooltip.add(new LiteralText(id.toString()).formatted(Formatting.GRAY));
-            }
         });
+
+        if (context.isAdvanced()) {
+            getId(stack).ifPresent(id -> {
+                tooltip.add(new LiteralText(id.toString()).formatted(Formatting.GRAY));
+            });
+        }
     }
 
     @Override
@@ -99,5 +100,12 @@ public class StorageDiskItem extends Item {
             return Optional.of(stack.getTag().getUuid("id"));
         }
         return Optional.empty();
+    }
+
+    public static Optional<StorageDiskInfo> getInfo(@Nullable World world, ItemStack stack) {
+        if (world == null) {
+            return Optional.empty();
+        }
+        return getId(stack).map(RefinedStorage2Mod.API.getStorageDiskManager(world)::getInfo);
     }
 }

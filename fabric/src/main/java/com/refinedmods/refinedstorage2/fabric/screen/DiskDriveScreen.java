@@ -1,19 +1,27 @@
 package com.refinedmods.refinedstorage2.fabric.screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.screenhandler.DiskDriveScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.screen.widget.ProgressWidget;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 public class DiskDriveScreen extends HandledScreen<DiskDriveScreenHandler> {
     private static final Identifier TEXTURE = RefinedStorage2Mod.createIdentifier("textures/gui/disk_drive.png");
     private static final TranslatableText DISKS_TEXT = RefinedStorage2Mod.createTranslation("gui", "disk_drive.disks");
+
+    private final ProgressWidget progressWidget;
 
     public DiskDriveScreen(DiskDriveScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -24,6 +32,26 @@ public class DiskDriveScreen extends HandledScreen<DiskDriveScreenHandler> {
         this.playerInventoryTitleY = 129;
         this.backgroundWidth = 176;
         this.backgroundHeight = 223;
+
+        this.progressWidget = new ProgressWidget(99, 54, 16, 70, handler::getProgress, this::renderTooltip, this::createTooltip);
+        addChild(progressWidget);
+    }
+
+    private List<Text> createTooltip() {
+        List<Text> tooltip = new ArrayList<>();
+        int stored = getScreenHandler().getStored();
+
+        if (handler.hasInfiniteDisk()) {
+            tooltip.add(RefinedStorage2Mod.createTranslation("misc", "stored", Quantities.format(stored)));
+        } else {
+            int capacity = getScreenHandler().getCapacity();
+            double progress = getScreenHandler().getProgress();
+
+            tooltip.add(RefinedStorage2Mod.createTranslation("misc", "stored_with_capacity", Quantities.format(stored), Quantities.format(capacity)));
+            tooltip.add(RefinedStorage2Mod.createTranslation("misc", "full", (int) (progress * 100D)).formatted(Formatting.GRAY));
+        }
+
+        return tooltip;
     }
 
     @Override
@@ -39,7 +67,8 @@ public class DiskDriveScreen extends HandledScreen<DiskDriveScreenHandler> {
     @Override
     protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
         super.drawForeground(matrices, mouseX, mouseY);
-        textRenderer.draw(matrices, DISKS_TEXT, 79, 42, 4210752);
+        textRenderer.draw(matrices, DISKS_TEXT, 60, 42, 4210752);
+        progressWidget.render(matrices, mouseX - x, mouseY - y, 0);
     }
 
     @Override

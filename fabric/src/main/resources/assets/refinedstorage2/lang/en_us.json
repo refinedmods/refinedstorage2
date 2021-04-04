@@ -53,6 +53,7 @@
   "item.refinedstorage2.destruction_core": "Destruction Core",
   "misc.refinedstorage2.stored": "Stored: %s",
   "misc.refinedstorage2.stored_with_capacity": "Stored: %s / %s",
+  "misc.refinedstorage2.full": "%d%% full",
   "misc.refinedstorage2.total": "%d total",
   "misc.refinedstorage2.last_modified.just_now": "Last modified just now by %s",
   "misc.refinedstorage2.last_modified.second": "Last modified %d second ago by %s",

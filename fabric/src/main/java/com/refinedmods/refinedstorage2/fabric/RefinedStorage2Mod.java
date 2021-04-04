@@ -43,7 +43,7 @@ public class RefinedStorage2Mod implements ModInitializer {
     public static final RefinedStorage2BlockEntities BLOCK_ENTITIES = new RefinedStorage2BlockEntities();
     public static final RefinedStorage2ScreenHandlers SCREEN_HANDLERS = new RefinedStorage2ScreenHandlers();
 
-    private static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(new Identifier(ID, "general"), () -> new ItemStack(BLOCKS.getCable()));
+    private static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(createIdentifier("general"), () -> new ItemStack(BLOCKS.getCable()));
 
     @Override
     public void onInitialize() {
@@ -75,12 +75,7 @@ public class RefinedStorage2Mod implements ModInitializer {
         GridQueryParser queryParser = new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS);
 
         for (boolean autoSelected : new boolean[]{false, true}) {
-            API.getGridSearchBoxModeRegistry().add(new GridSearchBoxModeImpl(queryParser, autoSelected, new GridSearchBoxModeDisplayProperties(
-                new Identifier(ID, "textures/icons.png"),
-                autoSelected ? 16 : 0,
-                96,
-                createTranslation("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : "")).formatted(Formatting.GRAY)
-            )));
+            API.getGridSearchBoxModeRegistry().add(new GridSearchBoxModeImpl(queryParser, autoSelected, createSearchBoxModeDisplayProperties(autoSelected)));
         }
 
         API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(queryParser, false, false)); // REI
@@ -88,6 +83,15 @@ public class RefinedStorage2Mod implements ModInitializer {
 
         API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(queryParser, false, true)); // REI two-way
         API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(queryParser, true, true)); // REI two-way autoselected
+    }
+
+    private GridSearchBoxModeDisplayProperties createSearchBoxModeDisplayProperties(boolean autoSelected) {
+        return new GridSearchBoxModeDisplayProperties(
+            createIdentifier("textures/icons.png"),
+            autoSelected ? 16 : 0,
+            96,
+            createTranslation("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : "")).formatted(Formatting.GRAY)
+        );
     }
 
     public static Identifier createIdentifier(String value) {
