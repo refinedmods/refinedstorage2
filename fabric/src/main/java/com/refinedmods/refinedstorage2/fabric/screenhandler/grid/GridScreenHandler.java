@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.fabric.screen.handler.grid;
+package com.refinedmods.refinedstorage2.fabric.screenhandler.grid;
 
 import java.util.Optional;
 
@@ -30,8 +30,8 @@ import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.query.FabricGridStac
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridItemUpdatePacket;
 import com.refinedmods.refinedstorage2.fabric.screen.grid.GridSearchBox;
-import com.refinedmods.refinedstorage2.fabric.screen.handler.BaseScreenHandler;
-import com.refinedmods.refinedstorage2.fabric.screen.handler.property.TwoWaySyncProperty;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.BaseScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -62,7 +62,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private final TwoWaySyncProperty<GridSize> sizeProperty;
     private final TwoWaySyncProperty<GridSearchBoxMode> searchBoxModeProperty;
 
-    private Runnable resizeScreenCallback;
+    private Runnable sizeChangedListener;
     private GridSearchBox searchBox;
 
     private GridSize size;
@@ -192,8 +192,8 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         addSlots(0);
     }
 
-    public void setResizeScreenCallback(Runnable resizeScreenCallback) {
-        this.resizeScreenCallback = resizeScreenCallback;
+    public void setSizeChangedListener(Runnable sizeChangedListener) {
+        this.sizeChangedListener = sizeChangedListener;
     }
 
     public TwoWaySyncProperty<RedstoneMode> getRedstoneModeProperty() {
@@ -233,8 +233,8 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private void onSizeChanged(GridSize size) {
         if (this.size != size) {
             this.size = size;
-            if (resizeScreenCallback != null) {
-                resizeScreenCallback.run();
+            if (sizeChangedListener != null) {
+                sizeChangedListener.run();
             }
         }
     }

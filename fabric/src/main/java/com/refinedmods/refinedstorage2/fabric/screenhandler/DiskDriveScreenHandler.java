@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.fabric.screen.handler;
+package com.refinedmods.refinedstorage2.fabric.screenhandler;
 
 import alexiil.mc.lib.attributes.item.FixedItemInv;
 import alexiil.mc.lib.attributes.item.compat.SlotFixedItemInv;

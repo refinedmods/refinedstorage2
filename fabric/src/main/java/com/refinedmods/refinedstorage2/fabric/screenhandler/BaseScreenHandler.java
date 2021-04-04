@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.fabric.screen.handler;
+package com.refinedmods.refinedstorage2.fabric.screenhandler;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

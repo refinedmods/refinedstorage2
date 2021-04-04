@@ -49,11 +49,29 @@ public class RefinedStorage2Mod implements ModInitializer {
     public void onInitialize() {
         AutoConfig.register(RefinedStorage2Config.class, Toml4jConfigSerializer::new);
 
+        registerContent();
+        registerGridSearchBoxModes();
+        registerPackets();
+
+        LOGGER.info("Refined Storage 2 has loaded.");
+    }
+
+    private void registerContent() {
         BLOCKS.register();
         ITEMS.register(BLOCKS, ITEM_GROUP);
         BLOCK_ENTITIES.register(BLOCKS);
         SCREEN_HANDLERS.register();
+    }
 
+    private void registerPackets() {
+        ServerPlayNetworking.registerGlobalReceiver(StorageDiskInfoRequestPacket.ID, new StorageDiskInfoRequestPacket());
+        ServerPlayNetworking.registerGlobalReceiver(GridInsertFromCursorPacket.ID, new GridInsertFromCursorPacket());
+        ServerPlayNetworking.registerGlobalReceiver(GridExtractPacket.ID, new GridExtractPacket());
+        ServerPlayNetworking.registerGlobalReceiver(GridScrollPacket.ID, new GridScrollPacket());
+        ServerPlayNetworking.registerGlobalReceiver(PropertyChangePacket.ID, new PropertyChangePacket());
+    }
+
+    private void registerGridSearchBoxModes() {
         GridQueryParser queryParser = new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS);
 
         for (boolean autoSelected : new boolean[]{false, true}) {
@@ -70,13 +88,5 @@ public class RefinedStorage2Mod implements ModInitializer {
 
         API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(queryParser, false, true)); // REI two-way
         API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(queryParser, true, true)); // REI two-way autoselected
-
-        ServerPlayNetworking.registerGlobalReceiver(StorageDiskInfoRequestPacket.ID, new StorageDiskInfoRequestPacket());
-        ServerPlayNetworking.registerGlobalReceiver(GridInsertFromCursorPacket.ID, new GridInsertFromCursorPacket());
-        ServerPlayNetworking.registerGlobalReceiver(GridExtractPacket.ID, new GridExtractPacket());
-        ServerPlayNetworking.registerGlobalReceiver(GridScrollPacket.ID, new GridScrollPacket());
-        ServerPlayNetworking.registerGlobalReceiver(PropertyChangePacket.ID, new PropertyChangePacket());
-
-        LOGGER.info("Refined Storage 2 has loaded.");
     }
 }

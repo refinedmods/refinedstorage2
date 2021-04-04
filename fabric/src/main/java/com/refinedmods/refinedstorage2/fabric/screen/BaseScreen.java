@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.fabric.screen.grid;
+package com.refinedmods.refinedstorage2.fabric.screen;
 
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;

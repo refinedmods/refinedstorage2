@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.screen.handler.DiskDriveScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.DiskDriveScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;

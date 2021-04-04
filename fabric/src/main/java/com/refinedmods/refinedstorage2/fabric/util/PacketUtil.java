@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,10 +15,13 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class PacketUtil {
+    private PacketUtil() {
+    }
+
     public static void sendToServer(Identifier id, Consumer<PacketByteBuf> bufConsumer) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         bufConsumer.accept(buf);
-        ClientSidePacketRegistry.INSTANCE.sendToServer(id, buf);
+        ClientPlayNetworking.send(id, buf);
     }
 
     public static void sendToPlayer(ServerPlayerEntity playerEntity, Identifier id, Consumer<PacketByteBuf> bufConsumer) {

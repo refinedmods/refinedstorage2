@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.fabric.screen.handler.property;
+package com.refinedmods.refinedstorage2.fabric.screenhandler.property;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

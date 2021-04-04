@@ -1,16 +1,19 @@
 package com.refinedmods.refinedstorage2.fabric.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Formatting;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ScreenUtil {
     private static final List<String> VERSION_INFO_LINES = new ArrayList<>();
+
+    private ScreenUtil() {
+    }
 
     public static void drawVersionInformation(MatrixStack matrixStack, TextRenderer textRenderer, float delta) {
         if (VERSION_INFO_LINES.isEmpty()) {

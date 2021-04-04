@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
-import com.refinedmods.refinedstorage2.core.util.History;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
@@ -17,10 +16,10 @@ import com.refinedmods.refinedstorage2.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
-import com.refinedmods.refinedstorage2.fabric.screen.handler.grid.GridScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.screen.BaseScreen;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ScrollbarWidget;
-import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.LastModifiedUtil;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
@@ -48,18 +47,19 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
 
     private static final int TOP_HEIGHT = 19;
     private static final int BOTTOM_HEIGHT = 99;
-    private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
     private static final int COLUMNS = 9;
 
+    private static final int DISABLED_SLOT_COLOR = 0xFF5B5B5B;
+
     private ScrollbarWidget scrollbar;
-    private SearchFieldWidget searchField;
+    private GridSearchBoxWidget searchField;
     private int visibleRows;
     private int gridSlotNumber;
 
     public GridScreen(GridScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
 
-        handler.setResizeScreenCallback(this::init);
+        handler.setSizeChangedListener(this::init);
 
         this.titleX = 7;
         this.titleY = 7;
@@ -80,7 +80,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         super.init();
 
         if (searchField == null) {
-            searchField = new SearchFieldWidget(textRenderer, x + 80 + 1, y + 6 + 1, 88 - 6, new History(SEARCH_FIELD_HISTORY));
+            searchField = new GridSearchBoxWidget(textRenderer, x + 80 + 1, y + 6 + 1, 88 - 6);
         } else {
             searchField.x = x + 80 + 1;
             searchField.y = y + 6 + 1;
@@ -211,7 +211,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         if (!getScreenHandler().isActive()) {
             RenderSystem.disableDepthTest();
             RenderSystem.colorMask(true, true, true, false);
-            fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, 0xFF5B5B5B, 0xFF5B5B5B);
+            fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, DISABLED_SLOT_COLOR, DISABLED_SLOT_COLOR);
             RenderSystem.colorMask(true, true, true, true);
             RenderSystem.enableDepthTest();
         } else if (mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16) {
@@ -386,7 +386,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         return super.mouseClicked(mouseX, mouseY, clickedButton);
     }
 
-    private GridExtractMode getExtractMode(int clickedButton) {
+    private static GridExtractMode getExtractMode(int clickedButton) {
         if (clickedButton == 1) {
             return GridExtractMode.CURSOR_HALF;
         }
@@ -399,7 +399,6 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     @Override
     public void mouseMoved(double mx, double my) {
         scrollbar.mouseMoved(mx, my);
-
         super.mouseMoved(mx, my);
     }
 
