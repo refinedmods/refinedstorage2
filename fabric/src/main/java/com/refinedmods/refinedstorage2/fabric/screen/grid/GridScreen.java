@@ -96,18 +96,18 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         children.add(scrollbar);
         addButton(searchField);
 
-        addSideButton(new RedstoneModeSideButtonWidget(getScreenHandler().getRedstoneModeProperty(), this::renderTooltip));
-        addSideButton(new SortingDirectionSideButtonWidget(getScreenHandler().getSortingDirectionProperty(), this::renderTooltip));
-        addSideButton(new SortingTypeSideButtonWidget(getScreenHandler().getSortingTypeProperty(), this::renderTooltip));
-        addSideButton(new SizeSideButtonWidget(getScreenHandler().getSizeProperty(), this::renderTooltip));
-        addSideButton(new SearchBoxModeSideButtonWidget(getScreenHandler().getSearchBoxModeProperty(), this::renderTooltip));
+        addSideButton(new RedstoneModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
+        addSideButton(new SortingDirectionSideButtonWidget(getScreenHandler(), this::renderTooltip));
+        addSideButton(new SortingTypeSideButtonWidget(getScreenHandler(), this::renderTooltip));
+        addSideButton(new SizeSideButtonWidget(getScreenHandler(), this::renderTooltip));
+        addSideButton(new SearchBoxModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        String newValue = getScreenHandler().getSearchBoxModeProperty().getDeserialized().getSearchBoxValue();
+        String newValue = getScreenHandler().getSearchBoxMode().getSearchBoxValue();
         if (searchField != null && newValue != null && !searchField.getText().equals(newValue)) {
             searchField.setText(newValue);
         }

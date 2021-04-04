@@ -31,6 +31,7 @@ import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridItemUpdatePacket;
 import com.refinedmods.refinedstorage2.fabric.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.BaseScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,7 +43,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GridScreenHandler extends BaseScreenHandler implements GridEventHandler, StackListListener<ItemStack> {
+public class GridScreenHandler extends BaseScreenHandler implements GridEventHandler, StackListListener<ItemStack>, RedstoneModeAccessor {
     private static final Logger LOGGER = LogManager.getLogger(GridScreenHandler.class);
 
     private static String lastSearchQuery = "";
@@ -196,24 +197,36 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         this.sizeChangedListener = sizeChangedListener;
     }
 
-    public TwoWaySyncProperty<RedstoneMode> getRedstoneModeProperty() {
-        return redstoneModeProperty;
+    public void setSortingDirection(GridSortingDirection sortingDirection) {
+        sortingDirectionProperty.syncToServer(sortingDirection);
     }
 
-    public TwoWaySyncProperty<GridSortingDirection> getSortingDirectionProperty() {
-        return sortingDirectionProperty;
+    public GridSortingDirection getSortingDirection() {
+        return sortingDirectionProperty.getDeserialized();
     }
 
-    public TwoWaySyncProperty<GridSortingType> getSortingTypeProperty() {
-        return sortingTypeProperty;
+    public void setSortingType(GridSortingType sortingType) {
+        sortingTypeProperty.syncToServer(sortingType);
     }
 
-    public TwoWaySyncProperty<GridSize> getSizeProperty() {
-        return sizeProperty;
+    public GridSortingType getSortingType() {
+        return sortingTypeProperty.getDeserialized();
     }
 
-    public TwoWaySyncProperty<GridSearchBoxMode> getSearchBoxModeProperty() {
-        return searchBoxModeProperty;
+    public GridSize getSize() {
+        return size;
+    }
+
+    public void setSize(GridSize size) {
+        sizeProperty.syncToServer(size);
+    }
+
+    public GridSearchBoxMode getSearchBoxMode() {
+        return searchBoxModeProperty.getDeserialized();
+    }
+
+    public void setSearchBoxMode(GridSearchBoxMode searchBoxMode) {
+        searchBoxModeProperty.syncToServer(searchBoxMode);
     }
 
     private void onSortingTypeChanged(GridSortingType sortingType) {
@@ -262,14 +275,6 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
             }
             searchBoxMode.onTextChanged(itemView, text);
         });
-    }
-
-    public GridSize getSize() {
-        return size;
-    }
-
-    public GridBlockEntity getGrid() {
-        return grid;
     }
 
     @Override
@@ -354,5 +359,15 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
 
     public GridView<ItemStack> getItemView() {
         return itemView;
+    }
+
+    @Override
+    public RedstoneMode getRedstoneMode() {
+        return redstoneModeProperty.getDeserialized();
+    }
+
+    @Override
+    public void setRedstoneMode(RedstoneMode redstoneMode) {
+        redstoneModeProperty.syncToServer(redstoneMode);
     }
 }

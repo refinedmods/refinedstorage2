@@ -9,7 +9,7 @@ import java.util.Map;
 
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
-import com.refinedmods.refinedstorage2.fabric.screenhandler.property.TwoWaySyncProperty;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.RedstoneModeAccessor;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -19,12 +19,12 @@ import net.minecraft.util.Formatting;
 public class RedstoneModeSideButtonWidget extends SideButtonWidget {
     private final Map<RedstoneMode, List<Text>> tooltips = new EnumMap<>(RedstoneMode.class);
     private final TooltipRenderer tooltipRenderer;
-    private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
+    private final RedstoneModeAccessor redstoneModeAccessor;
 
-    public RedstoneModeSideButtonWidget(TwoWaySyncProperty<RedstoneMode> redstoneModeProperty, TooltipRenderer tooltipRenderer) {
-        super(createPressAction(redstoneModeProperty));
+    public RedstoneModeSideButtonWidget(RedstoneModeAccessor redstoneModeAccessor, TooltipRenderer tooltipRenderer) {
+        super(createPressAction(redstoneModeAccessor));
         this.tooltipRenderer = tooltipRenderer;
-        this.redstoneModeProperty = redstoneModeProperty;
+        this.redstoneModeAccessor = redstoneModeAccessor;
         Arrays.stream(RedstoneMode.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
@@ -35,13 +35,13 @@ public class RedstoneModeSideButtonWidget extends SideButtonWidget {
         return lines;
     }
 
-    private static PressAction createPressAction(TwoWaySyncProperty<RedstoneMode> redstoneModeProperty) {
-        return btn -> redstoneModeProperty.syncToServer(redstoneModeProperty.getDeserialized().toggle());
+    private static PressAction createPressAction(RedstoneModeAccessor redstoneModeAccessor) {
+        return btn -> redstoneModeAccessor.setRedstoneMode(redstoneModeAccessor.getRedstoneMode().toggle());
     }
 
     @Override
     protected int getXTexture() {
-        switch (redstoneModeProperty.getDeserialized()) {
+        switch (redstoneModeAccessor.getRedstoneMode()) {
             case IGNORE:
                 return 0;
             case HIGH:
@@ -60,6 +60,6 @@ public class RedstoneModeSideButtonWidget extends SideButtonWidget {
 
     @Override
     public void onTooltip(ButtonWidget button, MatrixStack matrixStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrixStack, tooltips.get(redstoneModeProperty.getDeserialized()), mouseX, mouseY);
+        tooltipRenderer.render(matrixStack, tooltips.get(redstoneModeAccessor.getRedstoneMode()), mouseX, mouseY);
     }
 }

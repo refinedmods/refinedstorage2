@@ -10,7 +10,7 @@ import java.util.Map;
 import com.refinedmods.refinedstorage2.core.grid.GridSize;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
-import com.refinedmods.refinedstorage2.fabric.screenhandler.property.TwoWaySyncProperty;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -18,13 +18,13 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 public class SizeSideButtonWidget extends SideButtonWidget {
-    private final TwoWaySyncProperty<GridSize> sizeProperty;
+    private final GridScreenHandler screenHandler;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSize, List<Text>> tooltips = new EnumMap<>(GridSize.class);
 
-    public SizeSideButtonWidget(TwoWaySyncProperty<GridSize> sizeProperty, TooltipRenderer tooltipRenderer) {
-        super(createPressAction(sizeProperty));
-        this.sizeProperty = sizeProperty;
+    public SizeSideButtonWidget(GridScreenHandler screenHandler, TooltipRenderer tooltipRenderer) {
+        super(createPressAction(screenHandler));
+        this.screenHandler = screenHandler;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(GridSize.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
@@ -36,13 +36,13 @@ public class SizeSideButtonWidget extends SideButtonWidget {
         return lines;
     }
 
-    private static PressAction createPressAction(TwoWaySyncProperty<GridSize> sizeProperty) {
-        return btn -> sizeProperty.syncToServer(sizeProperty.getDeserialized().toggle());
+    private static PressAction createPressAction(GridScreenHandler screenHandler) {
+        return btn -> screenHandler.setSize(screenHandler.getSize().toggle());
     }
 
     @Override
     protected int getXTexture() {
-        switch (sizeProperty.getDeserialized()) {
+        switch (screenHandler.getSize()) {
             case STRETCH:
                 return 64 + 48;
             case SMALL:
@@ -63,6 +63,6 @@ public class SizeSideButtonWidget extends SideButtonWidget {
 
     @Override
     public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrixStack, tooltips.get(sizeProperty.getDeserialized()), mouseX, mouseY);
+        tooltipRenderer.render(matrixStack, tooltips.get(screenHandler.getSize()), mouseX, mouseY);
     }
 }

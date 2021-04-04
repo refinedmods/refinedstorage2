@@ -10,7 +10,7 @@ import java.util.Map;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
-import com.refinedmods.refinedstorage2.fabric.screenhandler.property.TwoWaySyncProperty;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -18,13 +18,13 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 public class SortingTypeSideButtonWidget extends SideButtonWidget {
-    private final TwoWaySyncProperty<GridSortingType> sortingTypeProperty;
+    private final GridScreenHandler screenHandler;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSortingType, List<Text>> tooltips = new EnumMap<>(GridSortingType.class);
 
-    public SortingTypeSideButtonWidget(TwoWaySyncProperty<GridSortingType> sortingTypeProperty, TooltipRenderer tooltipRenderer) {
-        super(createPressAction(sortingTypeProperty));
-        this.sortingTypeProperty = sortingTypeProperty;
+    public SortingTypeSideButtonWidget(GridScreenHandler screenHandler, TooltipRenderer tooltipRenderer) {
+        super(createPressAction(screenHandler));
+        this.screenHandler = screenHandler;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(GridSortingType.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
@@ -36,13 +36,13 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
         return lines;
     }
 
-    private static PressAction createPressAction(TwoWaySyncProperty<GridSortingType> sortingTypeProperty) {
-        return btn -> sortingTypeProperty.syncToServer(sortingTypeProperty.getDeserialized().toggle());
+    private static PressAction createPressAction(GridScreenHandler screenHandler) {
+        return btn -> screenHandler.setSortingType(screenHandler.getSortingType().toggle());
     }
 
     @Override
     protected int getXTexture() {
-        switch (sortingTypeProperty.getDeserialized()) {
+        switch (screenHandler.getSortingType()) {
             case QUANTITY:
                 return 0;
             case NAME:
@@ -58,11 +58,11 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
 
     @Override
     protected int getYTexture() {
-        return sortingTypeProperty.getDeserialized() == GridSortingType.LAST_MODIFIED ? 48 : 32;
+        return screenHandler.getSortingType() == GridSortingType.LAST_MODIFIED ? 48 : 32;
     }
 
     @Override
     public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrixStack, tooltips.get(sortingTypeProperty.getDeserialized()), mouseX, mouseY);
+        tooltipRenderer.render(matrixStack, tooltips.get(screenHandler.getSortingType()), mouseX, mouseY);
     }
 }

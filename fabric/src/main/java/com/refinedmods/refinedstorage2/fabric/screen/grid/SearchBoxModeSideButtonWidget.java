@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
-import com.refinedmods.refinedstorage2.fabric.screenhandler.property.TwoWaySyncProperty;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -17,13 +17,13 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class SearchBoxModeSideButtonWidget extends SideButtonWidget {
-    private final TwoWaySyncProperty<GridSearchBoxMode> searchBoxModeProperty;
+    private final GridScreenHandler screenHandler;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSearchBoxMode, List<Text>> tooltips = new HashMap<>();
 
-    public SearchBoxModeSideButtonWidget(TwoWaySyncProperty<GridSearchBoxMode> searchBoxModeProperty, TooltipRenderer tooltipRenderer) {
-        super(createPressAction(searchBoxModeProperty));
-        this.searchBoxModeProperty = searchBoxModeProperty;
+    public SearchBoxModeSideButtonWidget(GridScreenHandler screenHandler, TooltipRenderer tooltipRenderer) {
+        super(createPressAction(screenHandler));
+        this.screenHandler = screenHandler;
         this.tooltipRenderer = tooltipRenderer;
     }
 
@@ -34,27 +34,27 @@ public class SearchBoxModeSideButtonWidget extends SideButtonWidget {
         return lines;
     }
 
-    private static PressAction createPressAction(TwoWaySyncProperty<GridSearchBoxMode> searchBoxModeProperty) {
-        return btn -> searchBoxModeProperty.syncToServer(RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().next(searchBoxModeProperty.getDeserialized()));
+    private static PressAction createPressAction(GridScreenHandler screenHandler) {
+        return btn -> screenHandler.setSearchBoxMode(RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().next(screenHandler.getSearchBoxMode()));
     }
 
     @Override
     protected Identifier getSpriteIdentifier() {
-        return searchBoxModeProperty.getDeserialized().getDisplayProperties().getSpriteIdentifier();
+        return screenHandler.getSearchBoxMode().getDisplayProperties().getSpriteIdentifier();
     }
 
     @Override
     protected int getXTexture() {
-        return searchBoxModeProperty.getDeserialized().getDisplayProperties().getX();
+        return screenHandler.getSearchBoxMode().getDisplayProperties().getX();
     }
 
     @Override
     protected int getYTexture() {
-        return searchBoxModeProperty.getDeserialized().getDisplayProperties().getY();
+        return screenHandler.getSearchBoxMode().getDisplayProperties().getY();
     }
 
     @Override
     public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrixStack, tooltips.computeIfAbsent(searchBoxModeProperty.getDeserialized(), this::calculateTooltip), mouseX, mouseY);
+        tooltipRenderer.render(matrixStack, tooltips.computeIfAbsent(screenHandler.getSearchBoxMode(), this::calculateTooltip), mouseX, mouseY);
     }
 }

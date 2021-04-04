@@ -10,7 +10,7 @@ import java.util.Map;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
-import com.refinedmods.refinedstorage2.fabric.screenhandler.property.TwoWaySyncProperty;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -18,13 +18,13 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 public class SortingDirectionSideButtonWidget extends SideButtonWidget {
-    private final TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty;
+    private final GridScreenHandler screenHandler;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSortingDirection, List<Text>> tooltips = new EnumMap<>(GridSortingDirection.class);
 
-    public SortingDirectionSideButtonWidget(TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty, TooltipRenderer tooltipRenderer) {
-        super(createPressAction(sortingDirectionProperty));
-        this.sortingDirectionProperty = sortingDirectionProperty;
+    public SortingDirectionSideButtonWidget(GridScreenHandler screenHandler, TooltipRenderer tooltipRenderer) {
+        super(createPressAction(screenHandler));
+        this.screenHandler = screenHandler;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(GridSortingDirection.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
@@ -36,13 +36,13 @@ public class SortingDirectionSideButtonWidget extends SideButtonWidget {
         return lines;
     }
 
-    private static PressAction createPressAction(TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty) {
-        return btn -> sortingDirectionProperty.syncToServer(sortingDirectionProperty.getDeserialized().toggle());
+    private static PressAction createPressAction(GridScreenHandler screenHandler) {
+        return btn -> screenHandler.setSortingDirection(screenHandler.getSortingDirection().toggle());
     }
 
     @Override
     protected int getXTexture() {
-        return sortingDirectionProperty.getDeserialized() == GridSortingDirection.ASCENDING ? 0 : 16;
+        return screenHandler.getSortingDirection() == GridSortingDirection.ASCENDING ? 0 : 16;
     }
 
     @Override
@@ -52,6 +52,6 @@ public class SortingDirectionSideButtonWidget extends SideButtonWidget {
 
     @Override
     public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrixStack, tooltips.get(sortingDirectionProperty.getDeserialized()), mouseX, mouseY);
+        tooltipRenderer.render(matrixStack, tooltips.get(screenHandler.getSortingDirection()), mouseX, mouseY);
     }
 }
