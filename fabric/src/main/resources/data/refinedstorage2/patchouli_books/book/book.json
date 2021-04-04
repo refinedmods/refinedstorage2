@@ -4,7 +4,11 @@
   "model": "refinedstorage2:book",
   "creative_tab": "refinedstorage2.general",
   "book_texture": "refinedstorage2:textures/gui/book.png",
+  "crafting_texture": "refinedstorage2:textures/gui/crafting.png",
   "show_progress": false,
   "version": 1,
-  "i18n": true
+  "i18n": true,
+  "text_color": "FFFFFF",
+  "header_color": "FFFFFF",
+  "nameplate_color": "29f7ff"
 }
