@@ -41,11 +41,14 @@ public class GridQueryParserImpl implements GridQueryParser {
         List<Token> tokens = getTokens(query);
         List<Node> nodes = getNodes(tokens);
 
+        return implicitAnd(nodes);
+    }
+
+    private static Predicate<GridStack<?>> implicitAnd(List<Node> nodes) throws GridQueryParserException {
         List<Predicate<GridStack<?>>> conditions = new ArrayList<>();
         for (Node node : nodes) {
             conditions.add(parseNode(node));
         }
-
         return and(conditions);
     }
 
@@ -84,7 +87,7 @@ public class GridQueryParserImpl implements GridQueryParser {
                 return parseOrBinOpNode((BinOpNode) node);
             }
         } else if (node instanceof ParenNode) {
-            return parseNode(((ParenNode) node).getNode());
+            return implicitAnd(((ParenNode) node).getNodes());
         }
 
         throw new GridQueryParserException(node.getRange(), "Unsupported node", null);

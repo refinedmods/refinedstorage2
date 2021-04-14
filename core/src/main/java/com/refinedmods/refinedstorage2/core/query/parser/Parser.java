@@ -67,12 +67,24 @@ public class Parser {
                 throw new ParserException("Unclosed parenthesis", current);
             }
 
-            Node node = parseExpression(0);
+            List<Node> nodes = new ArrayList<>();
 
-            expect(TokenType.PAREN_CLOSE, ")");
-            next();
+            while (true) {
+                Node node = parseExpression(0);
+                nodes.add(node);
 
-            return new ParenNode(node);
+                Token currentAfterExpression = currentOrNull();
+                if (currentAfterExpression == null) {
+                    throw new ParserException("Expected ')'", tokens.get(tokens.size() - 1));
+                }
+
+                if (currentAfterExpression.getType() == TokenType.PAREN_CLOSE && ")".equals(currentAfterExpression.getContent())) {
+                    next();
+                    break;
+                }
+            }
+
+            return new ParenNode(nodes);
         }
 
         return parsePrefixedUnaryOp();

@@ -88,6 +88,17 @@ class GridQueryParserImplTest {
     }
 
     @Test
+    void Test_implicit_and_query_in_parenthesis() throws GridQueryParserException {
+        // Act
+        Predicate<GridStack<?>> predicate = queryParser.parse("(DirT di RT) || (sto stone)");
+
+        // Assert
+        assertThat(predicate.test(stack(new ItemStack(Items.DIRT)))).isTrue();
+        assertThat(predicate.test(stack(new ItemStack(Items.GLASS)))).isFalse();
+        assertThat(predicate.test(stack(new ItemStack(Items.STONE)))).isTrue();
+    }
+
+    @Test
     void Test_and_query() throws GridQueryParserException {
         // Act
         Predicate<GridStack<?>> predicate = queryParser.parse("DirT && di && RT");

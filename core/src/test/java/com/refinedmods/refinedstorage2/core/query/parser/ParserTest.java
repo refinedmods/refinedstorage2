@@ -1,12 +1,12 @@
 package com.refinedmods.refinedstorage2.core.query.parser;
 
+import java.util.List;
+
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.query.lexer.TokenType;
 import com.refinedmods.refinedstorage2.core.query.parser.node.Node;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -295,11 +295,25 @@ class ParserTest {
     }
 
     @Test
+    void Test_multiple_expressions_in_parenthesis() {
+        // Act
+        builder.token("(", TokenType.PAREN_OPEN);
+        builder.token("a", TokenType.IDENTIFIER);
+        builder.token("b", TokenType.IDENTIFIER);
+        builder.token(")", TokenType.PAREN_CLOSE);
+
+        // Assert
+        List<Node> nodes = builder.getNodes();
+        assertThat(nodes).hasSize(1);
+        assertThat(nodes.get(0)).hasToString("(a b)");
+    }
+
+    @Test
     void Test_unfinished_binary_operator() {
         // Act
         builder
-            .token("1", TokenType.INTEGER_NUMBER)
-            .token("+", TokenType.BIN_OP);
+                .token("1", TokenType.INTEGER_NUMBER)
+                .token("+", TokenType.BIN_OP);
 
         // Assert
         ParserException e = assertThrows(ParserException.class, () -> builder.getNodes());
