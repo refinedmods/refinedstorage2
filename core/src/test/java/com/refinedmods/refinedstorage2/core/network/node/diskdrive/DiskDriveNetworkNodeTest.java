@@ -6,7 +6,10 @@ import java.util.UUID;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.adapter.FakeWorld;
+import com.refinedmods.refinedstorage2.core.network.Network;
+import com.refinedmods.refinedstorage2.core.network.NetworkImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
+import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
@@ -14,7 +17,9 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
@@ -29,17 +34,26 @@ class DiskDriveNetworkNodeTest {
 
     @BeforeEach
     void setUp() {
-        diskProviderManager = new FakeStorageDiskProviderManager();
+        Pair<DiskDriveNetworkNode, FakeStorageDiskProviderManager> sut = createSut();
 
-        diskDrive = new DiskDriveNetworkNode(
-            new FakeWorld(),
-            BlockPos.ORIGIN,
-            mock(NetworkNodeReference.class),
-            diskProviderManager,
-            diskProviderManager
+        diskDrive = sut.getKey();
+        diskProviderManager = sut.getValue();
+    }
+
+    private Pair<DiskDriveNetworkNode, FakeStorageDiskProviderManager> createSut() {
+        FakeStorageDiskProviderManager diskProviderManager = new FakeStorageDiskProviderManager();
+
+        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(
+                new FakeWorld(),
+                BlockPos.ORIGIN,
+                mock(NetworkNodeReference.class),
+                diskProviderManager,
+                diskProviderManager
         );
 
         diskProviderManager.setDiskDrive(diskDrive);
+
+        return Pair.of(diskDrive, diskProviderManager);
     }
 
     @Test
@@ -193,7 +207,6 @@ class DiskDriveNetworkNodeTest {
         Optional<ItemStack> remainder2 = diskDrive.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
         Optional<ItemStack> remainder3 = diskDrive.insert(new ItemStack(Items.GLASS), 300, Action.EXECUTE);
 
-
         // Assert
         assertThat(remainder1).isEmpty();
         assertThat(remainder2).isEmpty();
@@ -303,5 +316,45 @@ class DiskDriveNetworkNodeTest {
         assertItemStack(remainderBeforeInsertingDisk.get(), new ItemStack(Items.DIRT, 5));
 
         assertThat(remainderAfterInsertingDisk).isEmpty();
+    }
+
+    @RepeatedTest(100)
+    void Test_changing_priority_should_invalidate_storage_sources_in_network() {
+        // Arrange
+        Network network = new NetworkImpl(UUID.randomUUID());
+
+        Pair<DiskDriveNetworkNode, FakeStorageDiskProviderManager> sut1 = createSut();
+        Pair<DiskDriveNetworkNode, FakeStorageDiskProviderManager> sut2 = createSut();
+        Pair<DiskDriveNetworkNode, FakeStorageDiskProviderManager> sut3 = createSut();
+
+        sut1.getKey().setNetwork(network);
+        sut2.getKey().setNetwork(network);
+        sut3.getKey().setNetwork(network);
+
+        ItemDiskStorage disk1 = new ItemDiskStorage(10);
+        ItemDiskStorage disk2 = new ItemDiskStorage(10);
+        ItemDiskStorage disk3 = new ItemDiskStorage(10);
+
+        sut1.getValue().setDisk(0, disk1);
+        sut2.getValue().setDisk(0, disk2);
+        sut3.getValue().setDisk(0, disk3);
+
+        network.getNodeReferences().add(new StubNetworkNodeReference(sut1.getKey()));
+        network.getNodeReferences().add(new StubNetworkNodeReference(sut2.getKey()));
+        network.getNodeReferences().add(new StubNetworkNodeReference(sut3.getKey()));
+
+        network.invalidateStorageChannelSources();
+
+        // Act
+        sut1.getKey().setPriority(8);
+        sut2.getKey().setPriority(15);
+        sut3.getKey().setPriority(2);
+
+        network.getItemStorageChannel().insert(new ItemStack(Items.DIRT), 15, Action.EXECUTE);
+
+        // Assert
+        assertItemStackListContents(disk2.getStacks(), new ItemStack(Items.DIRT, 10));
+        assertItemStackListContents(disk1.getStacks(), new ItemStack(Items.DIRT, 5));
+        assertItemStackListContents(disk3.getStacks());
     }
 }

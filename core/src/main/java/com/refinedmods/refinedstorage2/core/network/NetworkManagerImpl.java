@@ -1,5 +1,15 @@
 package com.refinedmods.refinedstorage2.core.network;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import com.refinedmods.refinedstorage2.core.graph.GraphScanner;
 import com.refinedmods.refinedstorage2.core.graph.GraphScannerResult;
 import com.refinedmods.refinedstorage2.core.network.node.HidingNetworkNodeRepository;
@@ -12,9 +22,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class NetworkManagerImpl implements NetworkManager {
     private static final Logger LOGGER = LogManager.getLogger(NetworkManagerImpl.class);
@@ -60,7 +67,7 @@ public class NetworkManagerImpl implements NetworkManager {
             LOGGER.debug("Changing network of node {} to {}", node.getPosition(), pivotNetwork.getId());
         });
 
-        pivotNetwork.onNodesChanged();
+        pivotNetwork.invalidateStorageChannelSources();
 
         return pivotNetwork;
     }
@@ -76,7 +83,7 @@ public class NetworkManagerImpl implements NetworkManager {
             network.getNodeReferences().add(node.createReference());
         });
 
-        network.onNodesChanged();
+        network.invalidateStorageChannelSources();
 
         LOGGER.debug("Formed new network {} with {} references", network.getId(), network.getNodeReferences().size());
 
@@ -118,7 +125,7 @@ public class NetworkManagerImpl implements NetworkManager {
             pivotNetwork.getNodeReferences().add(node.createReference());
         }
 
-        pivotNetwork.onNodesChanged();
+        pivotNetwork.invalidateStorageChannelSources();
 
         LOGGER.debug("Network {} has lost {} references, forming new networks where necessary", pivotNetwork.getId(), result.getRemovedEntries().size());
 

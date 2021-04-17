@@ -8,33 +8,61 @@ import alexiil.mc.lib.attributes.item.FixedItemInv;
 import alexiil.mc.lib.attributes.item.compat.SlotFixedItemInv;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveInventory;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.BaseScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.PriorityAccessor;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.property.TwoWaySyncProperty;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 
-public class DiskDriveScreenHandler extends BaseScreenHandler {
+public class DiskDriveScreenHandler extends BaseScreenHandler implements PriorityAccessor {
     private static final int DISK_SLOT_X = 61;
     private static final int DISK_SLOT_Y = 54;
 
     private final StorageDiskInfoAccessor storageDiskInfoAccessor;
     private final List<Slot> diskSlots = new ArrayList<>();
+    private final TwoWaySyncProperty<Integer> priorityProperty;
 
     public DiskDriveScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory.player, new DiskDriveInventory(), new StorageDiskInfoAccessorImpl(playerInventory.player.getEntityWorld()));
+        super(RefinedStorage2Mod.SCREEN_HANDLERS.getDiskDrive(), syncId);
+
+        addProperty(priorityProperty = TwoWaySyncProperty.forClient(
+                0,
+                priority -> priority,
+                priority -> priority,
+                0,
+                (priority) -> {
+                }
+        ));
+
+        this.storageDiskInfoAccessor = new StorageDiskInfoAccessorImpl(playerInventory.player.getEntityWorld());
+
+        addSlots(playerInventory.player, new DiskDriveInventory());
     }
 
-    public DiskDriveScreenHandler(int syncId, PlayerEntity player, FixedItemInv diskInventory, StorageDiskInfoAccessor storageDiskInfoAccessor) {
+    public DiskDriveScreenHandler(int syncId, PlayerEntity player, FixedItemInv diskInventory, DiskDriveBlockEntity diskDrive, StorageDiskInfoAccessor storageDiskInfoAccessor) {
         super(RefinedStorage2Mod.SCREEN_HANDLERS.getDiskDrive(), syncId);
+
+        addProperty(priorityProperty = TwoWaySyncProperty.forServer(
+                0,
+                priority -> priority,
+                priority -> priority,
+                diskDrive::getPriority,
+                diskDrive::setPriority
+        ));
 
         this.storageDiskInfoAccessor = storageDiskInfoAccessor;
 
+        addSlots(player, diskInventory);
+    }
+
+    private void addSlots(PlayerEntity player, FixedItemInv diskInventory) {
         for (int i = 0; i < 8; ++i) {
             diskSlots.add(addSlot(createDiskSlot(player, diskInventory, i)));
         }
-
         addPlayerInventory(player.inventory, 8, 141);
     }
 
@@ -65,11 +93,11 @@ public class DiskDriveScreenHandler extends BaseScreenHandler {
 
     private Stream<StorageDiskInfo> getStorageDiskInfo() {
         return diskSlots
-            .stream()
-            .map(Slot::getStack)
-            .filter(stack -> !stack.isEmpty())
-            .map(storageDiskInfoAccessor::getDiskInfo)
-            .flatMap(info -> info.map(Stream::of).orElseGet(Stream::empty));
+                .stream()
+                .map(Slot::getStack)
+                .filter(stack -> !stack.isEmpty())
+                .map(storageDiskInfoAccessor::getDiskInfo)
+                .flatMap(info -> info.map(Stream::of).orElseGet(Stream::empty));
     }
 
     @Override
@@ -96,5 +124,15 @@ public class DiskDriveScreenHandler extends BaseScreenHandler {
         }
 
         return originalStack;
+    }
+
+    @Override
+    public int getPriority() {
+        return priorityProperty.getDeserialized();
+    }
+
+    @Override
+    public void setPriority(int priority) {
+        priorityProperty.syncToServer(priority);
     }
 }

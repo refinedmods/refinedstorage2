@@ -74,12 +74,17 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
         if (tag.contains("inv")) {
             diskInventory.fromTag(tag.getCompound("inv"));
         }
+
+        if (tag.contains("pri")) {
+            node.setPriority(tag.getInt("pri"));
+        }
     }
 
     @Override
     public CompoundTag toTag(CompoundTag tag) {
         tag = super.toTag(tag);
         tag.put("inv", diskInventory.toTag());
+        tag.putInt("pri", node.getPriority());
         return tag;
     }
 
@@ -96,7 +101,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     public void onChange(FixedItemInvView view, int slot, ItemStack oldStack, ItemStack newStack) {
         if (!world.isClient()) {
             node.onDiskChanged(slot);
-            getNetwork().onNodesChanged();
+            getNetwork().invalidateStorageChannelSources();
             sync();
         }
     }
@@ -138,7 +143,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
     @Override
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new DiskDriveScreenHandler(syncId, player, diskInventory, (stack) -> Optional.empty());
+        return new DiskDriveScreenHandler(syncId, player, diskInventory, this, (stack) -> Optional.empty());
     }
 
     @Override
@@ -166,5 +171,14 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     @Override
     public int getStored() {
         return node.getStored();
+    }
+
+    public int getPriority() {
+        return node.getPriority();
+    }
+
+    public void setPriority(int priority) {
+        node.setPriority(priority);
+        markDirty();
     }
 }

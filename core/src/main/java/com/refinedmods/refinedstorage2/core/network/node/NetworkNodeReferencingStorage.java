@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage2.core.network.node;
 
-import com.refinedmods.refinedstorage2.core.storage.Storage;
-import com.refinedmods.refinedstorage2.core.util.Action;
-
 import java.util.Collection;
 import java.util.Optional;
 
-public class NetworkNodeReferencingStorage<T> implements Storage<T> {
+import com.refinedmods.refinedstorage2.core.storage.Priority;
+import com.refinedmods.refinedstorage2.core.storage.Storage;
+import com.refinedmods.refinedstorage2.core.util.Action;
+
+public class NetworkNodeReferencingStorage<T> implements Storage<T>, Priority {
     private final NetworkNodeReference ref;
     private final Storage<T> fallback;
 
@@ -17,9 +18,9 @@ public class NetworkNodeReferencingStorage<T> implements Storage<T> {
 
     private Storage<T> getStorage() {
         return ref.get()
-            .filter(node -> node instanceof Storage)
-            .map(node -> (Storage<T>) node)
-            .orElse(fallback);
+                .filter(node -> node instanceof Storage)
+                .map(node -> (Storage<T>) node)
+                .orElse(fallback);
     }
 
     @Override
@@ -40,5 +41,14 @@ public class NetworkNodeReferencingStorage<T> implements Storage<T> {
     @Override
     public int getStored() {
         return getStorage().getStored();
+    }
+
+    @Override
+    public int getPriority() {
+        Storage<T> storage = getStorage();
+        if (storage instanceof Priority) {
+            return ((Priority) storage).getPriority();
+        }
+        return 0;
     }
 }

@@ -1,5 +1,9 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Optional;
+
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
@@ -9,10 +13,6 @@ import net.minecraft.item.Items;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
 
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
@@ -389,5 +389,40 @@ class CompositeItemStorageTest {
             assertItemStackListContents(storage.getStacks(), new ItemStack(Items.DIRT, 13));
             assertThat(storage.getStored()).isEqualTo(13);
         }
+    }
+
+    @Test
+    void Test_prioritizing_when_inserting() {
+        // Arrange
+        PrioritizedStorage<ItemStack> highestPriority = new PrioritizedStorage<>(10, new ItemDiskStorage(10));
+        PrioritizedStorage<ItemStack> lowestPriority = new PrioritizedStorage<>(5, new ItemDiskStorage(10));
+
+        // Act
+        CompositeItemStorage channel = new CompositeItemStorage(Arrays.asList(lowestPriority, highestPriority), new ItemStackList());
+
+        channel.insert(new ItemStack(Items.DIRT), 11, Action.EXECUTE);
+
+        // Assert
+        assertItemStackListContents(highestPriority.getStacks(), new ItemStack(Items.DIRT, 10));
+        assertItemStackListContents(lowestPriority.getStacks(), new ItemStack(Items.DIRT, 1));
+    }
+
+    @Test
+    void Test_prioritizing_when_extracting() {
+        // Arrange
+        PrioritizedStorage<ItemStack> highestPriority = new PrioritizedStorage<>(10, new ItemDiskStorage(10));
+        PrioritizedStorage<ItemStack> lowestPriority = new PrioritizedStorage<>(5, new ItemDiskStorage(10));
+
+        highestPriority.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        lowestPriority.insert(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+
+        // Act
+        CompositeItemStorage channel = new CompositeItemStorage(Arrays.asList(lowestPriority, highestPriority), new ItemStackList());
+
+        channel.extract(new ItemStack(Items.DIRT), 11, Action.EXECUTE);
+
+        // Assert
+        assertItemStackListContents(highestPriority.getStacks());
+        assertItemStackListContents(lowestPriority.getStacks(), new ItemStack(Items.DIRT, 4));
     }
 }

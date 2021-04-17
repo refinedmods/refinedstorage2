@@ -1,18 +1,18 @@
 package com.refinedmods.refinedstorage2.core.network;
 
+import java.util.Set;
+import java.util.UUID;
+
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
 import net.minecraft.item.ItemStack;
-
-import java.util.Set;
-import java.util.UUID;
 
 public interface Network {
     UUID getId();
 
     Set<NetworkNodeReference> getNodeReferences();
 
-    void onNodesChanged();
+    void invalidateStorageChannelSources();
 
     StorageChannel<ItemStack> getItemStorageChannel();
 }

@@ -6,10 +6,10 @@ import java.util.List;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.screen.widget.PrioritySideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ProgressWidget;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
@@ -17,7 +17,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
-public class DiskDriveScreen extends HandledScreen<DiskDriveScreenHandler> {
+public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
     private static final Identifier TEXTURE = RefinedStorage2Mod.createIdentifier("textures/gui/disk_drive.png");
     private static final TranslatableText DISKS_TEXT = RefinedStorage2Mod.createTranslation("gui", "disk_drive.disks");
 
@@ -35,6 +35,12 @@ public class DiskDriveScreen extends HandledScreen<DiskDriveScreenHandler> {
 
         this.progressWidget = new ProgressWidget(99, 54, 16, 70, handler::getProgress, this::renderTooltip, this::createTooltip);
         addChild(progressWidget);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        addSideButton(new PrioritySideButtonWidget(getScreenHandler(), this, this::renderTooltip));
     }
 
     private List<Text> createTooltip() {

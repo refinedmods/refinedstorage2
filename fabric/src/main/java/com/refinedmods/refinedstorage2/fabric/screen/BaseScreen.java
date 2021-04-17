@@ -17,9 +17,7 @@ public abstract class BaseScreen<T extends ScreenHandler> extends HandledScreen<
     protected void init() {
         children.clear();
         buttons.clear();
-
         super.init();
-
         sideButtonY = 6;
     }
 

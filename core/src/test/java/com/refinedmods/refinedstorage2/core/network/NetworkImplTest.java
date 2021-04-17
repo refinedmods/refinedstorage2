@@ -38,12 +38,12 @@ class NetworkImplTest {
         network.getNodeReferences().add(diskDriveRef);
 
         // Act
-        network.onNodesChanged();
+        network.invalidateStorageChannelSources();
 
         Optional<ItemStack> remainder1 = network.getItemStorageChannel().insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
 
         network.getNodeReferences().remove(diskDriveRef);
-        network.onNodesChanged();
+        network.invalidateStorageChannelSources();
 
         Optional<ItemStack> remainder2 = network.getItemStorageChannel().insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
 

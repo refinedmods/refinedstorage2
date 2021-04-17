@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.storage.CompositeItemStorage;
+import com.refinedmods.refinedstorage2.core.storage.Priority;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
@@ -20,7 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<ItemStack> {
+public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<ItemStack>, Priority {
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
 
     public static final int DISK_COUNT = 8;
@@ -30,6 +31,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
     private final StorageDiskProvider diskProvider;
     private final StorageDisk[] disks = new StorageDisk[DISK_COUNT];
     private CompositeItemStorage compositeStorage = CompositeItemStorage.emptyStorage();
+    private int priority;
 
     public DiskDriveNetworkNode(World world, BlockPos pos, NetworkNodeReference ref, StorageDiskManager diskManager, StorageDiskProvider diskProvider) {
         super(world, pos, ref);
@@ -79,6 +81,16 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
                 return DiskState.NORMAL;
             }
         }
+    }
+
+    @Override
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+        network.invalidateStorageChannelSources();
     }
 
     @Override
