@@ -79,4 +79,9 @@ public class StorageTrackerEntryPresentAssertionItemStorageChannel implements St
     public Optional<ItemStack> get(ItemStack template) {
         return parent.get(template);
     }
+
+    @Override
+    public void sortSources() {
+        parent.sortSources();
+    }
 }

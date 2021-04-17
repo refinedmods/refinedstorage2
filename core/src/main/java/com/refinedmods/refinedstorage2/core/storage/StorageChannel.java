@@ -16,4 +16,6 @@ public interface StorageChannel<T> extends Storage<T> {
     StorageTracker<T, ?> getTracker();
 
     Optional<T> get(T template);
+
+    void sortSources();
 }

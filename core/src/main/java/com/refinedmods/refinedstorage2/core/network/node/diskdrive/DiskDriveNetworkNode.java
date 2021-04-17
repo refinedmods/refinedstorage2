@@ -90,7 +90,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
 
     public void setPriority(int priority) {
         this.priority = priority;
-        network.invalidateStorageChannelSources();
+        network.getItemStorageChannel().sortSources();
     }
 
     @Override

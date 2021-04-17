@@ -22,6 +22,12 @@ public class ItemStorageChannel implements StorageChannel<ItemStack> {
     public void setSources(List<Storage<ItemStack>> sources) {
         this.list = new ListenableStackList<>(new ItemStackList(), listeners);
         this.storage = new CompositeItemStorage(sources, list);
+        sortSources();
+    }
+
+    @Override
+    public void sortSources() {
+        storage.sortSources();
     }
 
     @Override
