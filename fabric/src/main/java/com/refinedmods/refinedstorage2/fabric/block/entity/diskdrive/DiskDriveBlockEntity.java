@@ -63,6 +63,12 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     }
 
     @Override
+    public void onActiveChanged(boolean active) {
+        super.onActiveChanged(active);
+        sync();
+    }
+
+    @Override
     protected DiskDriveNetworkNode createNode(World world, BlockPos pos) {
         return new DiskDriveNetworkNode(
                 FabricWorldAdapter.of(world),

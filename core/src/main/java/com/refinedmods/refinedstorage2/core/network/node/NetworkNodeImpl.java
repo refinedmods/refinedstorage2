@@ -3,8 +3,12 @@ package com.refinedmods.refinedstorage2.core.network.node;
 import com.refinedmods.refinedstorage2.core.World;
 import com.refinedmods.refinedstorage2.core.network.Network;
 import net.minecraft.util.math.BlockPos;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class NetworkNodeImpl implements NetworkNode {
+    private static final Logger LOGGER = LogManager.getLogger(NetworkNodeImpl.class);
+
     protected final World world;
     private final BlockPos pos;
     private final NetworkNodeReference ref;
@@ -52,6 +56,6 @@ public class NetworkNodeImpl implements NetworkNode {
 
     @Override
     public void onActiveChanged(boolean active) {
-
+        LOGGER.info("Active changed to {} for node at {}", active, pos);
     }
 }

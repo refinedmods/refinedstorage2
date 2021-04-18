@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import alexiil.mc.lib.attributes.item.FixedItemInv;
 import alexiil.mc.lib.attributes.item.compat.SlotFixedItemInv;
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
+import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
@@ -14,6 +15,7 @@ import com.refinedmods.refinedstorage2.core.util.FilterMode;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.FilterModeSettings;
+import com.refinedmods.refinedstorage2.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveInventory;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.AccessModeAccessor;
@@ -21,6 +23,7 @@ import com.refinedmods.refinedstorage2.fabric.screenhandler.BaseScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.ExactModeAccessor;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.FilterModeAccessor;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.PriorityAccessor;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.slot.FilterSlot;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,7 +31,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 
-public class DiskDriveScreenHandler extends BaseScreenHandler implements PriorityAccessor, FilterModeAccessor, ExactModeAccessor, AccessModeAccessor {
+public class DiskDriveScreenHandler extends BaseScreenHandler implements PriorityAccessor, FilterModeAccessor, ExactModeAccessor, AccessModeAccessor, RedstoneModeAccessor {
     private static final int DISK_SLOT_X = 61;
     private static final int DISK_SLOT_Y = 54;
 
@@ -41,6 +44,7 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     private final TwoWaySyncProperty<FilterMode> filterModeProperty;
     private final TwoWaySyncProperty<Boolean> exactModeProperty;
     private final TwoWaySyncProperty<AccessMode> accessModeProperty;
+    private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
 
     public DiskDriveScreenHandler(int syncId, PlayerInventory playerInventory) {
         super(RefinedStorage2Mod.SCREEN_HANDLERS.getDiskDrive(), syncId);
@@ -78,6 +82,15 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
                 AccessModeSettings::getAccessMode,
                 AccessMode.INSERT_EXTRACT,
                 (accessMode) -> {
+                }
+        ));
+
+        addProperty(redstoneModeProperty = TwoWaySyncProperty.forClient(
+                4,
+                RedstoneModeSettings::getRedstoneMode,
+                RedstoneModeSettings::getRedstoneMode,
+                RedstoneMode.IGNORE,
+                (redstoneMode) -> {
                 }
         ));
 
@@ -119,6 +132,14 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
                 AccessModeSettings::getAccessMode,
                 diskDrive::getAccessMode,
                 diskDrive::setAccessMode
+        ));
+
+        addProperty(redstoneModeProperty = TwoWaySyncProperty.forServer(
+                4,
+                RedstoneModeSettings::getRedstoneMode,
+                RedstoneModeSettings::getRedstoneMode,
+                diskDrive::getRedstoneMode,
+                diskDrive::setRedstoneMode
         ));
 
         this.storageDiskInfoAccessor = storageDiskInfoAccessor;
@@ -239,5 +260,15 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     @Override
     public void setAccessMode(AccessMode accessMode) {
         accessModeProperty.syncToServer(accessMode);
+    }
+
+    @Override
+    public RedstoneMode getRedstoneMode() {
+        return redstoneModeProperty.getDeserialized();
+    }
+
+    @Override
+    public void setRedstoneMode(RedstoneMode redstoneMode) {
+        redstoneModeProperty.syncToServer(redstoneMode);
     }
 }

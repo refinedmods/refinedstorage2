@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.core.adapter.FakeWorld;
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.NetworkImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
+import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
@@ -79,9 +80,9 @@ class DiskDriveNetworkNodeTest {
         StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
         storageDisk.insert(new ItemStack(Items.DIRT), 74, Action.EXECUTE);
 
-        // Act
         diskProviderManager.setDisk(2, storageDisk);
 
+        // Act
         DiskDriveState state = diskDrive.createState();
 
         // Assert
@@ -101,9 +102,9 @@ class DiskDriveNetworkNodeTest {
         StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(10);
         storageDisk.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
 
-        // Act
         diskProviderManager.setDisk(7, storageDisk);
 
+        // Act
         DiskDriveState state = diskDrive.createState();
 
         // Assert
@@ -123,9 +124,9 @@ class DiskDriveNetworkNodeTest {
         StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
         storageDisk.insert(new ItemStack(Items.DIRT), 75, Action.EXECUTE);
 
-        // Act
         diskProviderManager.setDisk(3, storageDisk);
 
+        // Act
         DiskDriveState state = diskDrive.createState();
 
         // Assert
@@ -133,6 +134,30 @@ class DiskDriveNetworkNodeTest {
         assertThat(state.getState(1)).isEqualTo(DiskState.NONE);
         assertThat(state.getState(2)).isEqualTo(DiskState.NONE);
         assertThat(state.getState(3)).isEqualTo(DiskState.NEAR_CAPACITY);
+        assertThat(state.getState(4)).isEqualTo(DiskState.NONE);
+        assertThat(state.getState(5)).isEqualTo(DiskState.NONE);
+        assertThat(state.getState(6)).isEqualTo(DiskState.NONE);
+        assertThat(state.getState(7)).isEqualTo(DiskState.NONE);
+    }
+
+
+    @Test
+    void Test_state_when_inactive() {
+        // Arrange
+        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        storageDisk.insert(new ItemStack(Items.DIRT), 75, Action.EXECUTE);
+
+        diskProviderManager.setDisk(3, storageDisk);
+        diskDrive.setRedstoneMode(RedstoneMode.HIGH);
+
+        // Act
+        DiskDriveState state = diskDrive.createState();
+
+        // Assert
+        assertThat(state.getState(0)).isEqualTo(DiskState.NONE);
+        assertThat(state.getState(1)).isEqualTo(DiskState.NONE);
+        assertThat(state.getState(2)).isEqualTo(DiskState.NONE);
+        assertThat(state.getState(3)).isEqualTo(DiskState.DISCONNECTED);
         assertThat(state.getState(4)).isEqualTo(DiskState.NONE);
         assertThat(state.getState(5)).isEqualTo(DiskState.NONE);
         assertThat(state.getState(6)).isEqualTo(DiskState.NONE);
@@ -443,5 +468,86 @@ class DiskDriveNetworkNodeTest {
                 assertThat(extracted).isEmpty();
                 break;
         }
+    }
+
+    @Test
+    void Test_inserting_when_inactive() {
+        // Arrange
+        diskDrive.setRedstoneMode(RedstoneMode.HIGH);
+
+        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        diskProviderManager.setDisk(1, storageDisk);
+
+        // Act
+        Optional<ItemStack> remainder = diskDrive.insert(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+
+        // Assert
+        assertThat(remainder).isPresent();
+        assertItemStack(remainder.get(), new ItemStack(Items.DIRT, 5));
+    }
+
+    @Test
+    void Test_extracting_when_inactive() {
+        // Arrange
+        diskDrive.setRedstoneMode(RedstoneMode.HIGH);
+
+        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        diskProviderManager.setDisk(1, storageDisk);
+
+        storageDisk.insert(new ItemStack(Items.DIRT), 20, Action.EXECUTE);
+
+        // Act
+        Optional<ItemStack> extracted = diskDrive.extract(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+
+        // Assert
+        assertThat(extracted).isEmpty();
+    }
+
+    @Test
+    void Test_getting_stacks_when_inactive() {
+        // Arrange
+        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        diskProviderManager.setDisk(1, storageDisk);
+
+        diskDrive.insert(new ItemStack(Items.DIRT), 20, Action.EXECUTE);
+
+        // Act
+        Collection<ItemStack> stacksBeforeInactive = diskDrive.getStacks();
+
+        diskDrive.setRedstoneMode(RedstoneMode.HIGH);
+
+        Collection<ItemStack> stacksAfterInactive = diskDrive.getStacks();
+
+        // Assert
+        assertThat(stacksBeforeInactive).isNotEmpty();
+        assertThat(stacksAfterInactive).isEmpty();
+    }
+
+    @Test
+    void Test_changing_to_inactive_should_omit_items_from_storage_channel() {
+        // Arrange
+        Network network = new NetworkImpl(UUID.randomUUID());
+
+        Pair<DiskDriveNetworkNode, FakeStorageDiskProviderManager> diskDrive = createSut();
+
+        diskDrive.getKey().setNetwork(network);
+
+        ItemDiskStorage disk = new ItemDiskStorage(10);
+        diskDrive.getValue().setDisk(0, disk);
+        diskDrive.getKey().insert(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+
+        network.getNodeReferences().add(new StubNetworkNodeReference(diskDrive.getKey()));
+        network.invalidateStorageChannelSources();
+
+        diskDrive.getKey().setRedstoneMode(RedstoneMode.HIGH);
+
+        // Act
+        Collection<ItemStack> stacksBeforeStateChange = network.getItemStorageChannel().getStacks();
+        diskDrive.getKey().onActiveChanged(false);
+        Collection<ItemStack> stacksAfterStateChange = network.getItemStorageChannel().getStacks();
+
+        // Assert
+        assertThat(stacksBeforeStateChange).isNotEmpty();
+        assertThat(stacksAfterStateChange).isEmpty();
     }
 }

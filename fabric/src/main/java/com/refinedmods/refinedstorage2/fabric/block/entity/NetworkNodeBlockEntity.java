@@ -17,6 +17,7 @@ import net.minecraft.world.World;
 
 public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends BlockEntity implements NetworkNode, Tickable {
     protected T node;
+    private boolean lastActive;
     private long lastActiveChanged;
 
     public NetworkNodeBlockEntity(BlockEntityType<?> type) {
@@ -71,21 +72,27 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     @Override
     public void tick() {
         if (world != null && !world.isClient() && node != null) {
-            BlockState state = world.getBlockState(pos);
-            if (state.contains(NetworkNodeBlock.ACTIVE)) {
-                boolean active = node.isActive();
-                if (active != state.get(GridBlock.ACTIVE) && (lastActiveChanged == 0 || System.currentTimeMillis() - lastActiveChanged > 1000)) {
-                    this.lastActiveChanged = System.currentTimeMillis();
-                    world.setBlockState(pos, world.getBlockState(pos).with(GridBlock.ACTIVE, active));
-                    node.onActiveChanged(active);
-                }
+            boolean active = node.isActive();
+            if (active != lastActive && (lastActiveChanged == 0 || System.currentTimeMillis() - lastActiveChanged > 1000)) {
+                this.lastActiveChanged = System.currentTimeMillis();
+                this.lastActive = active;
+
+                onActiveChanged(active);
+                updateState(active);
             }
+        }
+    }
+
+    private void updateState(boolean active) {
+        BlockState state = world.getBlockState(pos);
+        if (state.contains(NetworkNodeBlock.ACTIVE)) {
+            world.setBlockState(pos, world.getBlockState(pos).with(GridBlock.ACTIVE, active));
         }
     }
 
     @Override
     public void onActiveChanged(boolean active) {
-
+        node.onActiveChanged(active);
     }
 
     @Override

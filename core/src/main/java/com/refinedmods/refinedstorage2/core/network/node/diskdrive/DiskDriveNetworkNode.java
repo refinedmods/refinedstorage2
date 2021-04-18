@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +47,12 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
         this.diskProvider = diskProvider;
     }
 
+    @Override
+    public void onActiveChanged(boolean active) {
+        super.onActiveChanged(active);
+        network.invalidateStorageChannelSources();
+    }
+
     public void onDiskChanged(int slot) {
         if (slot < 0 || slot >= disks.length) {
             LOGGER.warn("Tried to change disk in invalid slot {}", slot);
@@ -77,6 +84,10 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
         if (disk == null) {
             return DiskState.NONE;
         } else {
+            if (!isActive()) {
+                return DiskState.DISCONNECTED;
+            }
+
             double fullness = (double) disk.getStored() / (double) disk.getCapacity();
 
             if (fullness >= 1D) {
@@ -129,7 +140,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
 
     @Override
     public Optional<ItemStack> extract(ItemStack template, int amount, Action action) {
-        if (accessMode == AccessMode.INSERT) {
+        if (accessMode == AccessMode.INSERT || !isActive()) {
             return Optional.empty();
         }
         return compositeStorage.extract(template, amount, action);
@@ -137,7 +148,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
 
     @Override
     public Optional<ItemStack> insert(ItemStack template, int amount, Action action) {
-        if (!itemFilter.isAllowed(template) || accessMode == AccessMode.EXTRACT) {
+        if (!itemFilter.isAllowed(template) || accessMode == AccessMode.EXTRACT || !isActive()) {
             ItemStack remainder = template.copy();
             remainder.setCount(amount);
             return Optional.of(remainder);
@@ -147,6 +158,9 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
 
     @Override
     public Collection<ItemStack> getStacks() {
+        if (!isActive()) {
+            return Collections.emptyList();
+        }
         return compositeStorage.getStacks();
     }
 

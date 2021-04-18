@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.fabric.screen.widget.ExactModeSideButtonW
 import com.refinedmods.refinedstorage2.fabric.screen.widget.FilterModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.PrioritySideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ProgressWidget;
+import com.refinedmods.refinedstorage2.fabric.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
 import net.minecraft.client.util.math.MatrixStack;
@@ -43,6 +44,7 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
     @Override
     protected void init() {
         super.init();
+        addSideButton(new RedstoneModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
         addSideButton(new FilterModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
         addSideButton(new ExactModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
         addSideButton(new AccessModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
