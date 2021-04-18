@@ -90,6 +90,10 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
         if (tag.contains("fim")) {
             node.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt("fim")));
         }
+
+        if (tag.contains("em")) {
+            node.setExactMode(tag.getBoolean("em"));
+        }
     }
 
     @Override
@@ -99,6 +103,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
         tag.put("fi", filterInventory.toTag());
         tag.putInt("fim", FilterModeSettings.getFilterMode(node.getFilterMode()));
         tag.putInt("pri", node.getPriority());
+        tag.putBoolean("em", node.isExactMode());
         return tag;
     }
 
@@ -112,6 +117,15 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
     public void setFilterMode(FilterMode mode) {
         node.setFilterMode(mode);
+        markDirty();
+    }
+
+    public boolean isExactMode() {
+        return node.isExactMode();
+    }
+
+    public void setExactMode(boolean exactMode) {
+        node.setExactMode(exactMode);
         markDirty();
     }
 

@@ -6,6 +6,7 @@ import java.util.List;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.screen.widget.ExactModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.FilterModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.PrioritySideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ProgressWidget;
@@ -42,6 +43,7 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
     protected void init() {
         super.init();
         addSideButton(new FilterModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
+        addSideButton(new ExactModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
         addSideButton(new PrioritySideButtonWidget(getScreenHandler(), this, this::renderTooltip));
     }
 

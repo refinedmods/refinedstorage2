@@ -87,6 +87,14 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
         }
     }
 
+    public void setExactMode(boolean exactMode) {
+        itemFilter.setExact(exactMode);
+    }
+
+    public boolean isExactMode() {
+        return itemFilter.isExact();
+    }
+
     public void setFilterMode(FilterMode mode) {
         itemFilter.setMode(mode);
     }

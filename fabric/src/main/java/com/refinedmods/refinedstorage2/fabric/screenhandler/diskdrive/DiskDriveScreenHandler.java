@@ -15,6 +15,7 @@ import com.refinedmods.refinedstorage2.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveInventory;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.BaseScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.ExactModeAccessor;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.FilterModeAccessor;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.PriorityAccessor;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.property.TwoWaySyncProperty;
@@ -24,7 +25,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 
-public class DiskDriveScreenHandler extends BaseScreenHandler implements PriorityAccessor, FilterModeAccessor {
+public class DiskDriveScreenHandler extends BaseScreenHandler implements PriorityAccessor, FilterModeAccessor, ExactModeAccessor {
     private static final int DISK_SLOT_X = 61;
     private static final int DISK_SLOT_Y = 54;
 
@@ -35,6 +36,7 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     private final List<Slot> diskSlots = new ArrayList<>();
     private final TwoWaySyncProperty<Integer> priorityProperty;
     private final TwoWaySyncProperty<FilterMode> filterModeProperty;
+    private final TwoWaySyncProperty<Boolean> exactModeProperty;
 
     public DiskDriveScreenHandler(int syncId, PlayerInventory playerInventory) {
         super(RefinedStorage2Mod.SCREEN_HANDLERS.getDiskDrive(), syncId);
@@ -54,6 +56,15 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
                 FilterModeSettings::getFilterMode,
                 FilterMode.BLOCK,
                 (filterMode) -> {
+                }
+        ));
+
+        addProperty(exactModeProperty = TwoWaySyncProperty.forClient(
+                2,
+                value -> value ? 0 : 1,
+                value -> value == 0,
+                true,
+                (exactMode) -> {
                 }
         ));
 
@@ -79,6 +90,14 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
                 FilterModeSettings::getFilterMode,
                 diskDrive::getFilterMode,
                 diskDrive::setFilterMode
+        ));
+
+        addProperty(exactModeProperty = TwoWaySyncProperty.forServer(
+                2,
+                value -> value ? 0 : 1,
+                value -> value == 0,
+                diskDrive::isExactMode,
+                diskDrive::setExactMode
         ));
 
         this.storageDiskInfoAccessor = storageDiskInfoAccessor;
@@ -179,5 +198,15 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     @Override
     public void setFilterMode(FilterMode filterMode) {
         filterModeProperty.syncToServer(filterMode);
+    }
+
+    @Override
+    public boolean isExactMode() {
+        return exactModeProperty.getDeserialized();
+    }
+
+    @Override
+    public void setExactMode(boolean exactMode) {
+        exactModeProperty.syncToServer(exactMode);
     }
 }
