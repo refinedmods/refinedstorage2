@@ -1,16 +1,16 @@
 package com.refinedmods.refinedstorage2.core.storage.disk;
 
+import java.util.Collection;
+import java.util.Optional;
+
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Optional;
-
 public class ItemDiskStorage implements StorageDisk<ItemStack> {
-    private final StackList<ItemStack> list = new ItemStackList();
+    private final StackList<ItemStack> list = ItemStackList.create();
     private final int capacity;
     private int stored;
 

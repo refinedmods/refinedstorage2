@@ -19,7 +19,7 @@ class GridSearchBoxModeImplTest {
     @Test
     void Test_changing_text() {
         // Arrange
-        GridView<ItemStack> view = new GridViewImpl<>(new FakeGridStackFactory(), ItemStackIdentifier::new, new ItemStackList());
+        GridView<ItemStack> view = new GridViewImpl<>(new FakeGridStackFactory(), ItemStackIdentifier::new, ItemStackList.create());
 
         view.onChange(new ItemStack(Items.DIRT), 64, null);
         view.onChange(new ItemStack(Items.GLASS), 64, null);
@@ -34,7 +34,7 @@ class GridSearchBoxModeImplTest {
     @Test
     void Test_changing_text_for_invalid_query() {
         // Arrange
-        GridView<ItemStack> view = new GridViewImpl<>(new FakeGridStackFactory(), ItemStackIdentifier::new, new ItemStackList());
+        GridView<ItemStack> view = new GridViewImpl<>(new FakeGridStackFactory(), ItemStackIdentifier::new, ItemStackList.create());
 
         view.onChange(new ItemStack(Items.DIRT), 64, null);
         view.onChange(new ItemStack(Items.GLASS), 64, null);

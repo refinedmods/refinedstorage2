@@ -1,17 +1,18 @@
 package com.refinedmods.refinedstorage2.core.list.item;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.UUID;
+
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
+import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.UUID;
 
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RefinedStorage2Test
 class ItemStackListTest {
-    private final ItemStackList list = new ItemStackList();
+    private final ItemStackList<ItemStackIdentifier> list = ItemStackList.create();
 
     @Test
     void Test_adding_a_stack() {

@@ -17,10 +17,10 @@ public class ItemStorageChannel implements StorageChannel<ItemStack> {
     private final StorageTracker<ItemStack, ItemStackIdentifier> tracker = new StorageTracker<>(ItemStackIdentifier::new, System::currentTimeMillis);
     private final Set<StackListListener<ItemStack>> listeners = new HashSet<>();
     private ListenableStackList<ItemStack> list;
-    private CompositeItemStorage storage = CompositeItemStorage.emptyStorage();
+    private CompositeItemStorage storage = CompositeItemStorage.empty();
 
     public void setSources(List<Storage<ItemStack>> sources) {
-        this.list = new ListenableStackList<>(new ItemStackList(), listeners);
+        this.list = new ListenableStackList<>(ItemStackList.create(), listeners);
         this.storage = new CompositeItemStorage(sources, list);
         sortSources();
     }

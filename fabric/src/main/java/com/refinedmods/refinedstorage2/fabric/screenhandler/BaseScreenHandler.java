@@ -1,10 +1,13 @@
 package com.refinedmods.refinedstorage2.fabric.screenhandler;
 
+import com.refinedmods.refinedstorage2.fabric.screenhandler.slot.FilterSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.screen.slot.SlotActionType;
 import org.jetbrains.annotations.Nullable;
 
 public class BaseScreenHandler extends ScreenHandler {
@@ -29,6 +32,28 @@ public class BaseScreenHandler extends ScreenHandler {
 
             addSlot(new Slot(inventory, id++, x, y));
         }
+    }
+
+    @Override
+    public boolean canInsertIntoSlot(ItemStack stack, Slot slot) {
+        return !(slot instanceof FilterSlot);
+    }
+
+    @Override
+    public ItemStack onSlotClick(int id, int dragType, SlotActionType actionType, PlayerEntity player) {
+        Slot slot = id >= 0 ? getSlot(id) : null;
+
+        if (slot instanceof FilterSlot) {
+            ItemStack cursorStack = player.inventory.getCursorStack();
+            if (cursorStack.isEmpty()) {
+                slot.setStack(ItemStack.EMPTY);
+            } else {
+                slot.setStack(cursorStack.copy());
+            }
+            return cursorStack;
+        }
+
+        return super.onSlotClick(id, dragType, actionType, player);
     }
 
     @Override

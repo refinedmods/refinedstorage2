@@ -34,7 +34,7 @@ class CompositeItemStorageTest {
         diskStorage3.insert(new ItemStack(Items.DIRT), 3, Action.EXECUTE);
 
         // Act
-        CompositeItemStorage channel = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), new ItemStackList());
+        CompositeItemStorage channel = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), ItemStackList.create());
 
         // Assert
         assertItemStackListContents(channel.getStacks(), new ItemStack(Items.DIRT, 13), new ItemStack(Items.GLASS, 5), new ItemStack(Items.DIAMOND, 7));
@@ -43,7 +43,7 @@ class CompositeItemStorageTest {
     @Test
     void Test_inserting_without_any_sources_present() {
         // Arrange
-        CompositeItemStorage storage = new CompositeItemStorage(Collections.emptyList(), new ItemStackList());
+        CompositeItemStorage storage = new CompositeItemStorage(Collections.emptyList(), ItemStackList.create());
 
         // Act
         Optional<ItemStack> remainder = storage.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
@@ -59,7 +59,7 @@ class CompositeItemStorageTest {
         // Arrange
         ItemDiskStorage diskStorage = new ItemDiskStorage(20);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), new ItemStackList());
+        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
 
         // Act
         Optional<ItemStack> remainder = storage.insert(new ItemStack(Items.DIRT), 10, action);
@@ -86,7 +86,7 @@ class CompositeItemStorageTest {
         // Arrange
         ItemDiskStorage diskStorage = new ItemDiskStorage(20);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), new ItemStackList());
+        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
 
         // Act
         Optional<ItemStack> remainder = storage.insert(new ItemStack(Items.DIRT), 30, action);
@@ -116,7 +116,7 @@ class CompositeItemStorageTest {
         ItemDiskStorage diskStorage2 = new ItemDiskStorage(10);
         ItemDiskStorage diskStorage3 = new ItemDiskStorage(20);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), new ItemStackList());
+        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), ItemStackList.create());
 
         // Act
         Optional<ItemStack> remainder = storage.insert(new ItemStack(Items.DIRT), 17, action);
@@ -149,7 +149,7 @@ class CompositeItemStorageTest {
         ItemDiskStorage diskStorage2 = new ItemDiskStorage(10);
         ItemDiskStorage diskStorage3 = new ItemDiskStorage(20);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), new ItemStackList());
+        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), ItemStackList.create());
 
         // Act
         Optional<ItemStack> remainder = storage.insert(new ItemStack(Items.DIRT), 39, action);
@@ -178,7 +178,7 @@ class CompositeItemStorageTest {
     @Test
     void Test_extracting_without_any_sources_present() {
         // Arrange
-        CompositeItemStorage storage = new CompositeItemStorage(Collections.emptyList(), new ItemStackList());
+        CompositeItemStorage storage = new CompositeItemStorage(Collections.emptyList(), ItemStackList.create());
 
         // Act
         Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
@@ -193,7 +193,7 @@ class CompositeItemStorageTest {
         ItemDiskStorage diskStorage = new ItemDiskStorage(10);
         diskStorage.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), new ItemStackList());
+        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
 
         // Act
         Optional<ItemStack> result = storage.extract(new ItemStack(Items.GLASS), 10, Action.EXECUTE);
@@ -209,7 +209,7 @@ class CompositeItemStorageTest {
         ItemDiskStorage diskStorage = new ItemDiskStorage(10);
         diskStorage.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), new ItemStackList());
+        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
 
         // Act
         Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 3, action);
@@ -238,7 +238,7 @@ class CompositeItemStorageTest {
         ItemDiskStorage diskStorage = new ItemDiskStorage(10);
         diskStorage.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), new ItemStackList());
+        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
 
         // Act
         Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 10, action);
@@ -267,7 +267,7 @@ class CompositeItemStorageTest {
         ItemDiskStorage diskStorage = new ItemDiskStorage(10);
         diskStorage.insert(new ItemStack(Items.DIRT), 4, Action.EXECUTE);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), new ItemStackList());
+        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
 
         // Act
         Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 7, action);
@@ -299,7 +299,7 @@ class CompositeItemStorageTest {
         ItemDiskStorage diskStorage2 = new ItemDiskStorage(5);
         diskStorage2.insert(new ItemStack(Items.DIRT), 3, Action.EXECUTE);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2), new ItemStackList());
+        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2), ItemStackList.create());
 
         // Act
         Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 12, action);
@@ -333,7 +333,7 @@ class CompositeItemStorageTest {
         ItemDiskStorage diskStorage2 = new ItemDiskStorage(5);
         diskStorage2.insert(new ItemStack(Items.DIRT), 3, Action.EXECUTE);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2), new ItemStackList());
+        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2), ItemStackList.create());
 
         // Act
         Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 13, action);
@@ -367,7 +367,7 @@ class CompositeItemStorageTest {
         ItemDiskStorage diskStorage2 = new ItemDiskStorage(5);
         diskStorage2.insert(new ItemStack(Items.DIRT), 3, Action.EXECUTE);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2), new ItemStackList());
+        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2), ItemStackList.create());
 
         // Act
         Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 30, action);
@@ -398,7 +398,7 @@ class CompositeItemStorageTest {
         PrioritizedStorage<ItemStack> lowestPriority = new PrioritizedStorage<>(5, new ItemDiskStorage(10));
 
         // Act
-        CompositeItemStorage channel = new CompositeItemStorage(Arrays.asList(lowestPriority, highestPriority), new ItemStackList());
+        CompositeItemStorage channel = new CompositeItemStorage(Arrays.asList(lowestPriority, highestPriority), ItemStackList.create());
 
         channel.insert(new ItemStack(Items.DIRT), 11, Action.EXECUTE);
 
@@ -417,7 +417,7 @@ class CompositeItemStorageTest {
         lowestPriority.insert(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
 
         // Act
-        CompositeItemStorage channel = new CompositeItemStorage(Arrays.asList(lowestPriority, highestPriority), new ItemStackList());
+        CompositeItemStorage channel = new CompositeItemStorage(Arrays.asList(lowestPriority, highestPriority), ItemStackList.create());
 
         channel.extract(new ItemStack(Items.DIRT), 11, Action.EXECUTE);
 

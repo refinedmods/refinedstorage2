@@ -29,7 +29,7 @@ public class GridViewImplTest {
 
     @BeforeEach
     void setUp() {
-        view = new GridViewImpl<>(new FakeGridStackFactory(), ItemStackIdentifier::new, new ItemStackList());
+        view = new GridViewImpl<>(new FakeGridStackFactory(), ItemStackIdentifier::new, ItemStackList.create());
         view.setSortingType(GridSortingType.QUANTITY);
     }
 

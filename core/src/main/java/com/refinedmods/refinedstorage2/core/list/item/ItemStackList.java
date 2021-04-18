@@ -1,5 +1,12 @@
 package com.refinedmods.refinedstorage2.core.list.item;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Function;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.refinedmods.refinedstorage2.core.list.StackList;
@@ -7,11 +14,18 @@ import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import net.minecraft.item.ItemStack;
 
-import java.util.*;
-
-public class ItemStackList implements StackList<ItemStack> {
-    private final Map<ItemStackIdentifier, ItemStack> entries = new HashMap<>();
+public class ItemStackList<ID> implements StackList<ItemStack> {
+    private final Map<ID, ItemStack> entries = new HashMap<>();
     private final BiMap<UUID, ItemStack> index = HashBiMap.create();
+    private final Function<ItemStack, ID> idFactory;
+
+    public static ItemStackList<ItemStackIdentifier> create() {
+        return new ItemStackList<>(ItemStackIdentifier::new);
+    }
+
+    public ItemStackList(Function<ItemStack, ID> idFactory) {
+        this.idFactory = idFactory;
+    }
 
     @Override
     public StackListResult<ItemStack> add(ItemStack template, int amount) {
@@ -19,7 +33,7 @@ public class ItemStackList implements StackList<ItemStack> {
             throw new IllegalArgumentException("Invalid stack");
         }
 
-        ItemStackIdentifier entry = new ItemStackIdentifier(template);
+        ID entry = idFactory.apply(template);
 
         ItemStack existing = entries.get(entry);
         if (existing != null) {
@@ -35,7 +49,7 @@ public class ItemStackList implements StackList<ItemStack> {
         return new StackListResult<>(stack, amount, index.inverse().get(stack), true);
     }
 
-    private StackListResult<ItemStack> addNew(ItemStackIdentifier entry, ItemStack template, int amount) {
+    private StackListResult<ItemStack> addNew(ID entry, ItemStack template, int amount) {
         ItemStack stack = template.copy();
         stack.setCount(amount);
 
@@ -53,7 +67,7 @@ public class ItemStackList implements StackList<ItemStack> {
             throw new IllegalArgumentException("Invalid stack");
         }
 
-        ItemStackIdentifier entry = new ItemStackIdentifier(template);
+        ID entry = idFactory.apply(template);
 
         ItemStack existing = entries.get(entry);
         if (existing != null) {
@@ -75,7 +89,7 @@ public class ItemStackList implements StackList<ItemStack> {
         return Optional.of(new StackListResult<>(stack, -amount, id, true));
     }
 
-    private Optional<StackListResult<ItemStack>> removeCompletely(ItemStackIdentifier entry, ItemStack stack, UUID id) {
+    private Optional<StackListResult<ItemStack>> removeCompletely(ID entry, ItemStack stack, UUID id) {
         index.remove(id);
         entries.remove(entry);
 
@@ -84,7 +98,7 @@ public class ItemStackList implements StackList<ItemStack> {
 
     @Override
     public Optional<ItemStack> get(ItemStack template) {
-        return Optional.ofNullable(entries.get(new ItemStackIdentifier(template)));
+        return Optional.ofNullable(entries.get(idFactory.apply(template)));
     }
 
     @Override

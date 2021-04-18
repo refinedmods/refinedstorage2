@@ -14,8 +14,8 @@ public class CompositeItemStorage implements Storage<ItemStack> {
     private final List<Storage<ItemStack>> sources;
     private final StackList<ItemStack> list;
 
-    public static CompositeItemStorage emptyStorage() {
-        return new CompositeItemStorage(Collections.emptyList(), new ItemStackList());
+    public static CompositeItemStorage empty() {
+        return new CompositeItemStorage(Collections.emptyList(), ItemStackList.create());
     }
 
     public CompositeItemStorage(List<Storage<ItemStack>> sources, StackList<ItemStack> list) {

@@ -49,7 +49,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private static String lastSearchQuery = "";
 
     private final PlayerInventory playerInventory;
-    private final GridView<ItemStack> itemView = new GridViewImpl<>(new FabricGridStackFactory(), ItemStackIdentifier::new, new ItemStackList());
+    private final GridView<ItemStack> itemView = new GridViewImpl<>(new FabricGridStackFactory(), ItemStackIdentifier::new, ItemStackList.create());
 
     private GridBlockEntity grid;
 

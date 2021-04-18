@@ -16,6 +16,9 @@ import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskManager;
 import com.refinedmods.refinedstorage2.core.util.Action;
+import com.refinedmods.refinedstorage2.core.util.Filter;
+import com.refinedmods.refinedstorage2.core.util.FilterMode;
+import com.refinedmods.refinedstorage2.core.util.ItemFilter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +33,8 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
     private final StorageDiskManager diskManager;
     private final StorageDiskProvider diskProvider;
     private final StorageDisk[] disks = new StorageDisk[DISK_COUNT];
-    private CompositeItemStorage compositeStorage = CompositeItemStorage.emptyStorage();
+    private final Filter<ItemStack> itemFilter = new ItemFilter();
+    private CompositeItemStorage compositeStorage = CompositeItemStorage.empty();
     private int priority;
 
     public DiskDriveNetworkNode(World world, BlockPos pos, NetworkNodeReference ref, StorageDiskManager diskManager, StorageDiskProvider diskProvider) {
@@ -55,7 +59,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
             }
         }
 
-        compositeStorage = new CompositeItemStorage(sources, new ItemStackList());
+        compositeStorage = new CompositeItemStorage(sources, ItemStackList.create());
     }
 
     public DiskDriveState createState() {
@@ -83,6 +87,18 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
         }
     }
 
+    public void setFilterMode(FilterMode mode) {
+        itemFilter.setMode(mode);
+    }
+
+    public FilterMode getFilterMode() {
+        return itemFilter.getMode();
+    }
+
+    public void setFilterTemplates(List<ItemStack> templates) {
+        itemFilter.setTemplates(templates);
+    }
+
     @Override
     public int getPriority() {
         return priority;
@@ -100,6 +116,11 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
 
     @Override
     public Optional<ItemStack> insert(ItemStack template, int amount, Action action) {
+        if (!itemFilter.isAllowed(template)) {
+            ItemStack remainder = template.copy();
+            remainder.setCount(amount);
+            return Optional.of(remainder);
+        }
         return compositeStorage.insert(template, amount, action);
     }
 

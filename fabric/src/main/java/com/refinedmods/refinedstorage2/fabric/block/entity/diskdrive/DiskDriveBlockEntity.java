@@ -1,18 +1,20 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import alexiil.mc.lib.attributes.item.FixedItemInv;
-import alexiil.mc.lib.attributes.item.FixedItemInvView;
-import alexiil.mc.lib.attributes.item.ItemInvSlotChangeListener;
+import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.util.Action;
+import com.refinedmods.refinedstorage2.core.util.FilterMode;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.BlockEntityWithDrops;
+import com.refinedmods.refinedstorage2.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricWorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
@@ -35,14 +37,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetworkNode> implements Storage<ItemStack>, RenderAttachmentBlockEntity, ItemInvSlotChangeListener, BlockEntityClientSerializable, NamedScreenHandlerFactory, BlockEntityWithDrops {
+public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetworkNode> implements Storage<ItemStack>, RenderAttachmentBlockEntity, BlockEntityClientSerializable, NamedScreenHandlerFactory, BlockEntityWithDrops {
     private final DiskDriveInventory diskInventory = new DiskDriveInventory();
+    private final FullFixedItemInv filterInventory = new FullFixedItemInv(9);
     private DiskDriveState driveState;
 
     public DiskDriveBlockEntity() {
         super(RefinedStorage2Mod.BLOCK_ENTITIES.getDiskDrive());
 
-        diskInventory.setOwnerListener(this);
+        diskInventory.setOwnerListener(new DiskInventoryListener(this));
+        filterInventory.setOwnerListener(new FilterInventoryListener(this));
     }
 
     @Override
@@ -51,7 +55,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
         if (!world.isClient()) {
             for (int i = 0; i < diskInventory.getSlotCount(); ++i) {
-                node.onDiskChanged(i);
+                onDiskChanged(i);
             }
         }
     }
@@ -59,11 +63,11 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     @Override
     protected DiskDriveNetworkNode createNode(World world, BlockPos pos) {
         return new DiskDriveNetworkNode(
-            FabricWorldAdapter.of(world),
-            pos,
-            FabricNetworkNodeReference.of(world, pos),
-            RefinedStorage2Mod.API.getStorageDiskManager(world),
-            diskInventory
+                FabricWorldAdapter.of(world),
+                pos,
+                FabricNetworkNodeReference.of(world, pos),
+                RefinedStorage2Mod.API.getStorageDiskManager(world),
+                diskInventory
         );
     }
 
@@ -75,8 +79,16 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
             diskInventory.fromTag(tag.getCompound("inv"));
         }
 
+        if (tag.contains("fi")) {
+            filterInventory.fromTag(tag.getCompound("fi"));
+        }
+
         if (tag.contains("pri")) {
             node.setPriority(tag.getInt("pri"));
+        }
+
+        if (tag.contains("fim")) {
+            node.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt("fim")));
         }
     }
 
@@ -84,6 +96,8 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     public CompoundTag toTag(CompoundTag tag) {
         tag = super.toTag(tag);
         tag.put("inv", diskInventory.toTag());
+        tag.put("fi", filterInventory.toTag());
+        tag.putInt("fim", FilterModeSettings.getFilterMode(node.getFilterMode()));
         tag.putInt("pri", node.getPriority());
         return tag;
     }
@@ -92,18 +106,26 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
         return diskInventory;
     }
 
+    public FilterMode getFilterMode() {
+        return node.getFilterMode();
+    }
+
+    public void setFilterMode(FilterMode mode) {
+        node.setFilterMode(mode);
+        markDirty();
+    }
+
+    public void setFilterTemplates(List<ItemStack> templates) {
+        node.setFilterTemplates(templates);
+    }
+
     @Override
     public @Nullable Object getRenderAttachmentData() {
         return driveState;
     }
 
-    @Override
-    public void onChange(FixedItemInvView view, int slot, ItemStack oldStack, ItemStack newStack) {
-        if (!world.isClient()) {
-            node.onDiskChanged(slot);
-            getNetwork().invalidateStorageChannelSources();
-            sync();
-        }
+    void onDiskChanged(int slot) {
+        node.onDiskChanged(slot);
     }
 
     @Override
@@ -143,7 +165,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
     @Override
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new DiskDriveScreenHandler(syncId, player, diskInventory, this, (stack) -> Optional.empty());
+        return new DiskDriveScreenHandler(syncId, player, diskInventory, filterInventory, this, stack -> Optional.empty());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.util.Action;
+import com.refinedmods.refinedstorage2.core.util.FilterMode;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
@@ -63,8 +65,8 @@ class DiskDriveNetworkNodeTest {
 
         // Assert
         assertThat(states.getStates())
-            .hasSize(DiskDriveNetworkNode.DISK_COUNT)
-            .allMatch(state -> state == DiskState.NONE);
+                .hasSize(DiskDriveNetworkNode.DISK_COUNT)
+                .allMatch(state -> state == DiskState.NONE);
     }
 
     @Test
@@ -179,8 +181,8 @@ class DiskDriveNetworkNodeTest {
 
         // Assert
         assertThat(states.getStates())
-            .hasSize(DiskDriveNetworkNode.DISK_COUNT)
-            .allMatch(state -> state == DiskState.NONE);
+                .hasSize(DiskDriveNetworkNode.DISK_COUNT)
+                .allMatch(state -> state == DiskState.NONE);
     }
 
     @Test
@@ -356,5 +358,25 @@ class DiskDriveNetworkNodeTest {
         assertItemStackListContents(disk2.getStacks(), new ItemStack(Items.DIRT, 10));
         assertItemStackListContents(disk1.getStacks(), new ItemStack(Items.DIRT, 5));
         assertItemStackListContents(disk3.getStacks());
+    }
+
+    @Test
+    void Test_filtering() {
+        // Arrange
+        diskDrive.setFilterMode(FilterMode.BLOCK);
+        diskDrive.setFilterTemplates(Arrays.asList(new ItemStack(Items.GLASS), new ItemStack(Items.STONE)));
+
+        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        diskProviderManager.setDisk(1, storageDisk);
+
+        // Act
+        Optional<ItemStack> remainder1 = diskDrive.insert(new ItemStack(Items.GLASS), 12, Action.EXECUTE);
+        Optional<ItemStack> remainder2 = diskDrive.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+
+        // Assert
+        assertThat(remainder1).isPresent();
+        assertItemStack(remainder1.get(), new ItemStack(Items.GLASS, 12));
+
+        assertThat(remainder2).isEmpty();
     }
 }
