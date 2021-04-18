@@ -115,7 +115,6 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
 
     public void setAccessMode(AccessMode accessMode) {
         this.accessMode = accessMode;
-        network.invalidateStorageChannelSources();
     }
 
     @Override
