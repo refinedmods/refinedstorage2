@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.NetworkImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
+import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
@@ -18,11 +19,14 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.FilterMode;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
@@ -361,22 +365,83 @@ class DiskDriveNetworkNodeTest {
     }
 
     @Test
-    void Test_filtering() {
+    void Test_inserting_with_filter() {
         // Arrange
         diskDrive.setFilterMode(FilterMode.BLOCK);
+        diskDrive.setExactMode(false);
         diskDrive.setFilterTemplates(Arrays.asList(new ItemStack(Items.GLASS), new ItemStack(Items.STONE)));
 
         StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
         diskProviderManager.setDisk(1, storageDisk);
 
         // Act
+        ItemStack glassWithTag = new ItemStack(Items.GLASS, 12);
+        glassWithTag.setTag(new CompoundTag());
+        glassWithTag.getTag().putString("bla", "bla");
+
         Optional<ItemStack> remainder1 = diskDrive.insert(new ItemStack(Items.GLASS), 12, Action.EXECUTE);
-        Optional<ItemStack> remainder2 = diskDrive.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        Optional<ItemStack> remainder2 = diskDrive.insert(glassWithTag, 12, Action.EXECUTE);
+        Optional<ItemStack> remainder3 = diskDrive.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
 
         // Assert
         assertThat(remainder1).isPresent();
         assertItemStack(remainder1.get(), new ItemStack(Items.GLASS, 12));
 
-        assertThat(remainder2).isEmpty();
+        assertThat(remainder2).isPresent();
+        assertItemStack(remainder2.get(), glassWithTag);
+
+        assertThat(remainder3).isEmpty();
+    }
+
+    @ParameterizedTest
+    @EnumSource(AccessMode.class)
+    void Test_inserting_with_access_mode(AccessMode accessMode) {
+        // Arrange
+        diskDrive.setAccessMode(accessMode);
+
+        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        diskProviderManager.setDisk(1, storageDisk);
+
+        // Act
+        Optional<ItemStack> remainder = diskDrive.insert(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+
+        // Assert
+        switch (accessMode) {
+            case INSERT_EXTRACT:
+            case INSERT:
+                assertThat(remainder).isEmpty();
+                break;
+            case EXTRACT:
+                assertThat(remainder).isPresent();
+                assertItemStack(remainder.get(), new ItemStack(Items.DIRT, 5));
+                break;
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(AccessMode.class)
+    void Test_extracting_with_access_mode(AccessMode accessMode) {
+        // Arrange
+        diskDrive.setAccessMode(accessMode);
+
+        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        diskProviderManager.setDisk(1, storageDisk);
+
+        storageDisk.insert(new ItemStack(Items.DIRT), 20, Action.EXECUTE);
+
+        // Act
+        Optional<ItemStack> extracted = diskDrive.extract(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+
+        // Assert
+        switch (accessMode) {
+            case INSERT_EXTRACT:
+            case EXTRACT:
+                assertThat(extracted).isPresent();
+                assertItemStack(extracted.get(), new ItemStack(Items.DIRT, 5));
+                break;
+            case INSERT:
+                assertThat(extracted).isEmpty();
+                break;
+        }
     }
 }

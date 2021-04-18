@@ -8,11 +8,13 @@ import alexiil.mc.lib.attributes.item.FixedItemInv;
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveState;
+import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.FilterMode;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
@@ -94,6 +96,10 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
         if (tag.contains("em")) {
             node.setExactMode(tag.getBoolean("em"));
         }
+
+        if (tag.contains("am")) {
+            node.setAccessMode(AccessModeSettings.getAccessMode(tag.getInt("am")));
+        }
     }
 
     @Override
@@ -104,6 +110,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
         tag.putInt("fim", FilterModeSettings.getFilterMode(node.getFilterMode()));
         tag.putInt("pri", node.getPriority());
         tag.putBoolean("em", node.isExactMode());
+        tag.putInt("am", AccessModeSettings.getAccessMode(node.getAccessMode()));
         return tag;
     }
 
@@ -126,6 +133,15 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
     public void setExactMode(boolean exactMode) {
         node.setExactMode(exactMode);
+        markDirty();
+    }
+
+    public AccessMode getAccessMode() {
+        return node.getAccessMode();
+    }
+
+    public void setAccessMode(AccessMode accessMode) {
+        node.setAccessMode(accessMode);
         markDirty();
     }
 

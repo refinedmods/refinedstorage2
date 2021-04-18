@@ -1,0 +1,65 @@
+package com.refinedmods.refinedstorage2.fabric.screen.widget;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import com.refinedmods.refinedstorage2.core.storage.AccessMode;
+import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.AccessModeAccessor;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+
+public class AccessModeSideButtonWidget extends SideButtonWidget {
+    private final AccessModeAccessor accessModeAccessor;
+    private final TooltipRenderer tooltipRenderer;
+    private final Map<AccessMode, List<Text>> tooltips = new HashMap<>();
+
+    public AccessModeSideButtonWidget(AccessModeAccessor accessModeAccessor, TooltipRenderer tooltipRenderer) {
+        super(createPressAction(accessModeAccessor));
+        this.accessModeAccessor = accessModeAccessor;
+        this.tooltipRenderer = tooltipRenderer;
+        Arrays.stream(AccessMode.values()).forEach(accessMode -> tooltips.put(accessMode, calculateTooltip(accessMode)));
+    }
+
+    private List<Text> calculateTooltip(AccessMode accessMode) {
+        List<Text> lines = new ArrayList<>();
+        lines.add(RefinedStorage2Mod.createTranslation("gui", "access_mode"));
+        lines.add(RefinedStorage2Mod.createTranslation("gui", "access_mode." + accessMode.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
+        return lines;
+    }
+
+    private static PressAction createPressAction(AccessModeAccessor accessModeAccessor) {
+        return btn -> accessModeAccessor.setAccessMode(accessModeAccessor.getAccessMode().toggle());
+    }
+
+    @Override
+    protected int getXTexture() {
+        switch (accessModeAccessor.getAccessMode()) {
+            case INSERT_EXTRACT:
+                return 0;
+            case INSERT:
+                return 16;
+            case EXTRACT:
+                return 32;
+            default:
+                return 0;
+        }
+    }
+
+    @Override
+    protected int getYTexture() {
+        return 240;
+    }
+
+    @Override
+    public void onTooltip(ButtonWidget button, MatrixStack matrices, int mouseX, int mouseY) {
+        tooltipRenderer.render(matrices, tooltips.get(accessModeAccessor.getAccessMode()), mouseX, mouseY);
+    }
+}

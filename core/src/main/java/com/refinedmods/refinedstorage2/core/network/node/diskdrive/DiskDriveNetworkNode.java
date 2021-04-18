@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.core.World;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
+import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.CompositeItemStorage;
 import com.refinedmods.refinedstorage2.core.storage.Priority;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
@@ -34,6 +35,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
     private final StorageDiskProvider diskProvider;
     private final StorageDisk[] disks = new StorageDisk[DISK_COUNT];
     private final Filter<ItemStack> itemFilter = new ItemFilter();
+    private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
     private CompositeItemStorage compositeStorage = CompositeItemStorage.empty();
     private int priority;
 
@@ -107,6 +109,15 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
         itemFilter.setTemplates(templates);
     }
 
+    public AccessMode getAccessMode() {
+        return accessMode;
+    }
+
+    public void setAccessMode(AccessMode accessMode) {
+        this.accessMode = accessMode;
+        network.invalidateStorageChannelSources();
+    }
+
     @Override
     public int getPriority() {
         return priority;
@@ -119,12 +130,15 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
 
     @Override
     public Optional<ItemStack> extract(ItemStack template, int amount, Action action) {
+        if (accessMode == AccessMode.INSERT) {
+            return Optional.empty();
+        }
         return compositeStorage.extract(template, amount, action);
     }
 
     @Override
     public Optional<ItemStack> insert(ItemStack template, int amount, Action action) {
-        if (!itemFilter.isAllowed(template)) {
+        if (!itemFilter.isAllowed(template) || accessMode == AccessMode.EXTRACT) {
             ItemStack remainder = template.copy();
             remainder.setCount(amount);
             return Optional.of(remainder);
