@@ -115,5 +115,9 @@
   "book.refinedstorage2.entry.grids.searching.line1": "Chaining expressions with a space implicitly uses $(h)AND$().$(p)It's also possible to use an $(h)OR$() filter with $(h)||$().$(p)Using parenthesis is allowed as well to explicitly state order of operations, like $(h)(iron ore) || dirt$() will return items that contain iron and ore, or dirt.",
   "book.refinedstorage2.entry.grids.searching.line2": "Various unary operators are available as well. You can use the $(h)NOT$() unary operator with $(h)!$(). For example: $(h)!dirt$() returns all items that aren't dirt.$(p)You can use mod filtering as well with $(h)@$(). For example: $(h)@refined$() will return items from Refined Storage.$(p)You can use $(h)$$() to have item or fluid tag filtering.",
   "book.refinedstorage2.entry.grids.searching.line3": "You can filter on the item or fluid quantity as well with the $(h)>$(), $(h)>=$(), $(h)<$(), $(h)<=$() and $(h)=$() unary operators.$(p)For example: $(h)>=2$() will return items that you have at least 2 of.$(p)$(h)>=2 <5$() will return items that you have at least 2 of, but maximum 4 of.",
-  "book.refinedstorage2.entry.grids.searching.line4": "It's possible to do fairly complex queries like $(h)(@refined || @applied) >10 silicon$() which returns items from Refined Storage or Applied Energistics, which have \"silicon\" in the name and that you have at least 10 of."
+  "book.refinedstorage2.entry.grids.searching.line4": "It's possible to do fairly complex queries like $(h)(@refined || @applied) >10 silicon$() which returns items from Refined Storage or Applied Energistics, which have \"silicon\" in the name and that you have at least 10 of.",
+  "book.refinedstorage2.category.disks_and_drives": "Disks and Drives",
+  "book.refinedstorage2.category.disks_and_drives.description": "Refined Storage adds the ability to store your precious items on storage disks that live in a Disk Drive.",
+  "book.refinedstorage2.entry.disks_and_drives.disks.title": "Disks",
+  "book.refinedstorage2.entry.disks_and_drives.disks.line0": "Storage disks exist in different tiers. Depending on the tier, they have a different capacity."
 }
