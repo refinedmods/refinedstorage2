@@ -302,8 +302,8 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     }
 
     @Override
-    public void onInsertFromTransfer(Slot slot) {
-        eventHandler.onInsertFromTransfer(slot);
+    public ItemStack onInsertFromTransfer(ItemStack slotStack) {
+        return eventHandler.onInsertFromTransfer(slotStack);
     }
 
     @Override
@@ -316,7 +316,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         if (!playerEntity.world.isClient()) {
             Slot slot = getSlot(slotIndex);
             if (slot.hasStack()) {
-                eventHandler.onInsertFromTransfer(slot);
+                slot.setStack(eventHandler.onInsertFromTransfer(slot.getStack()));
                 sendContentUpdates();
             }
         }

@@ -160,10 +160,10 @@ class GridEventHandlerImplTest {
         slot.setStack(new ItemStack(Items.GLASS, 30));
 
         // Act
-        eventHandler.onInsertFromTransfer(slot);
+        ItemStack resultingStack = eventHandler.onInsertFromTransfer(new ItemStack(Items.GLASS, 30));
 
         // Assert
-        assertThat(slot.hasStack()).isFalse();
+        assertThat(resultingStack.isEmpty()).isTrue();
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.GLASS, 30));
 
         Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.GLASS));
@@ -178,14 +178,11 @@ class GridEventHandlerImplTest {
 
         storageChannel.insert(new ItemStack(Items.GLASS), 15, Action.EXECUTE);
 
-        Slot slot = new Slot(new SimpleInventory(1), 0, 0, 0);
-        slot.setStack(new ItemStack(Items.DIRT, 64));
-
         // Act
-        eventHandler.onInsertFromTransfer(slot);
+        ItemStack resultingStack = eventHandler.onInsertFromTransfer(new ItemStack(Items.DIRT, 64));
 
         // Assert
-        assertItemStack(slot.getStack(), new ItemStack(Items.DIRT, 64 - 15));
+        assertItemStack(resultingStack, new ItemStack(Items.DIRT, 64 - 15));
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.GLASS, 15), new ItemStack(Items.DIRT, 15));
 
         Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
@@ -200,14 +197,11 @@ class GridEventHandlerImplTest {
 
         storageChannel.insert(new ItemStack(Items.GLASS), 30, Action.EXECUTE);
 
-        Slot slot = new Slot(new SimpleInventory(1), 0, 0, 0);
-        slot.setStack(new ItemStack(Items.DIRT, 64));
-
         // Act
-        eventHandler.onInsertFromTransfer(slot);
+        ItemStack resultingStack = eventHandler.onInsertFromTransfer(new ItemStack(Items.DIRT, 64));
 
         // Assert
-        assertItemStack(slot.getStack(), new ItemStack(Items.DIRT, 64));
+        assertItemStack(resultingStack, new ItemStack(Items.DIRT, 64));
         assertItemStackListContents(storageChannel.getStacks(), new ItemStack(Items.GLASS, 30));
 
         Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
@@ -219,14 +213,11 @@ class GridEventHandlerImplTest {
         // Arrange
         eventHandler.onActiveChanged(false);
 
-        Slot slot = new Slot(new SimpleInventory(1), 0, 0, 0);
-        slot.setStack(new ItemStack(Items.DIRT, 64));
-
         // Act
-        eventHandler.onInsertFromTransfer(slot);
+        ItemStack resultingStack = eventHandler.onInsertFromTransfer(new ItemStack(Items.DIRT, 64));
 
         // Assert
-        assertItemStack(slot.getStack(), new ItemStack(Items.DIRT, 64));
+        assertItemStack(resultingStack, new ItemStack(Items.DIRT, 64));
 
         Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new ItemStack(Items.DIRT));
         assertThat(entry).isNotPresent();
