@@ -1,5 +1,9 @@
 # Contributing to Refined Storage
 
+## Versioning
+
+This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ## Pull requests
 
 - Keep your PR as small as possible, this makes reviewing easier.
