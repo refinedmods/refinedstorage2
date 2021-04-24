@@ -5,11 +5,11 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
-import com.refinedmods.refinedstorage2.core.adapter.FakeRs2World;
+import com.refinedmods.refinedstorage2.core.Rs2Test;
+import com.refinedmods.refinedstorage2.core.item.ItemStubs;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.NetworkImpl;
-import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
@@ -18,11 +18,6 @@ import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.FilterMode;
-import com.refinedmods.refinedstorage2.core.util.Position;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -32,35 +27,18 @@ import org.junit.jupiter.params.provider.EnumSource;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
-@RefinedStorage2Test
+@Rs2Test
 class DiskDriveNetworkNodeTest {
     private DiskDriveNetworkNode diskDrive;
     private FakeStorageDiskProviderManager diskProviderManager;
 
     @BeforeEach
     void setUp() {
-        Pair<DiskDriveNetworkNode, FakeStorageDiskProviderManager> sut = createSut();
+        DiskDriveSut sut = new DiskDriveSut();
 
-        diskDrive = sut.getKey();
-        diskProviderManager = sut.getValue();
-    }
-
-    private Pair<DiskDriveNetworkNode, FakeStorageDiskProviderManager> createSut() {
-        FakeStorageDiskProviderManager diskProviderManager = new FakeStorageDiskProviderManager();
-
-        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(
-                new FakeRs2World(),
-                Position.ORIGIN,
-                mock(NetworkNodeReference.class),
-                diskProviderManager,
-                diskProviderManager
-        );
-
-        diskProviderManager.setDiskDrive(diskDrive);
-
-        return Pair.of(diskDrive, diskProviderManager);
+        diskDrive = sut.getDiskDrive();
+        diskProviderManager = sut.getDiskProviderManager();
     }
 
     @Test
@@ -77,8 +55,8 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_state_with_an_empty_disk() {
         // Arrange
-        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
-        storageDisk.insert(new ItemStack(Items.DIRT), 74, Action.EXECUTE);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
+        storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 74, Action.EXECUTE);
 
         diskProviderManager.setDisk(2, storageDisk);
 
@@ -99,8 +77,8 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_state_with_a_full_disk() {
         // Arrange
-        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(10);
-        storageDisk.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(10);
+        storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         diskProviderManager.setDisk(7, storageDisk);
 
@@ -121,8 +99,8 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_state_with_a_nearly_full_disk() {
         // Arrange
-        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
-        storageDisk.insert(new ItemStack(Items.DIRT), 75, Action.EXECUTE);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
+        storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 75, Action.EXECUTE);
 
         diskProviderManager.setDisk(3, storageDisk);
 
@@ -144,8 +122,8 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_state_when_inactive() {
         // Arrange
-        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
-        storageDisk.insert(new ItemStack(Items.DIRT), 75, Action.EXECUTE);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
+        storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 75, Action.EXECUTE);
 
         diskProviderManager.setDisk(3, storageDisk);
         diskDrive.setRedstoneMode(RedstoneMode.HIGH);
@@ -167,8 +145,8 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_state_should_change_when_removing_disk() {
         // Arrange
-        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
-        storageDisk.insert(new ItemStack(Items.DIRT), 74, Action.EXECUTE);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
+        storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 74, Action.EXECUTE);
 
         // Act
         diskProviderManager.setDisk(2, storageDisk);
@@ -224,29 +202,29 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_inserting() {
         // Arrange
-        StorageDisk<ItemStack> storageDisk1 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemDiskStorage(100);
         diskProviderManager.setDisk(1, storageDisk1);
 
-        StorageDisk<ItemStack> storageDisk2 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk2 = new ItemDiskStorage(100);
         diskProviderManager.setDisk(2, storageDisk2);
 
-        StorageDisk<ItemStack> storageDisk3 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk3 = new ItemDiskStorage(100);
         diskProviderManager.setDisk(3, storageDisk3);
 
         // Act
-        Optional<ItemStack> remainder1 = diskDrive.insert(new ItemStack(Items.DIRT), 150, Action.EXECUTE);
-        Optional<ItemStack> remainder2 = diskDrive.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
-        Optional<ItemStack> remainder3 = diskDrive.insert(new ItemStack(Items.GLASS), 300, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder1 = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 150, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder2 = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder3 = diskDrive.insert(new Rs2ItemStack(ItemStubs.GLASS), 300, Action.EXECUTE);
 
         // Assert
         assertThat(remainder1).isEmpty();
         assertThat(remainder2).isEmpty();
         assertThat(remainder3).isPresent();
-        assertItemStack(remainder3.get(), new ItemStack(Items.GLASS, 160));
+        assertItemStack(remainder3.get(), new Rs2ItemStack(ItemStubs.GLASS, 160));
 
-        assertItemStackListContents(storageDisk1.getStacks(), new ItemStack(Items.DIRT, 100));
-        assertItemStackListContents(storageDisk2.getStacks(), new ItemStack(Items.DIRT, 60), new ItemStack(Items.GLASS, 40));
-        assertItemStackListContents(storageDisk3.getStacks(), new ItemStack(Items.GLASS, 100));
+        assertItemStackListContents(storageDisk1.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 100));
+        assertItemStackListContents(storageDisk2.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 60), new Rs2ItemStack(ItemStubs.GLASS, 40));
+        assertItemStackListContents(storageDisk3.getStacks(), new Rs2ItemStack(ItemStubs.GLASS, 100));
 
         assertThat(diskDrive.getStored()).isEqualTo(150 + 10 + 140);
     }
@@ -254,30 +232,30 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_extracting() {
         // Arrange
-        StorageDisk<ItemStack> storageDisk1 = new ItemDiskStorage(100);
-        StorageDisk<ItemStack> storageDisk2 = new ItemDiskStorage(100);
-        StorageDisk<ItemStack> storageDisk3 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk2 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk3 = new ItemDiskStorage(100);
 
-        storageDisk1.insert(new ItemStack(Items.DIRT), 50, Action.EXECUTE);
-        storageDisk1.insert(new ItemStack(Items.GLASS), 50, Action.EXECUTE);
+        storageDisk1.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
+        storageDisk1.insert(new Rs2ItemStack(ItemStubs.GLASS), 50, Action.EXECUTE);
         diskProviderManager.setDisk(1, storageDisk1);
 
-        storageDisk2.insert(new ItemStack(Items.DIRT), 50, Action.EXECUTE);
-        storageDisk2.insert(new ItemStack(Items.GLASS), 50, Action.EXECUTE);
+        storageDisk2.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
+        storageDisk2.insert(new Rs2ItemStack(ItemStubs.GLASS), 50, Action.EXECUTE);
         diskProviderManager.setDisk(2, storageDisk2);
 
-        storageDisk3.insert(new ItemStack(Items.SPONGE), 10, Action.EXECUTE);
+        storageDisk3.insert(new Rs2ItemStack(ItemStubs.SPONGE), 10, Action.EXECUTE);
         diskProviderManager.setDisk(3, storageDisk3);
 
         // Act & assert
-        Optional<ItemStack> stack1 = diskDrive.extract(new ItemStack(Items.DIRT), 85, Action.EXECUTE);
+        Optional<Rs2ItemStack> stack1 = diskDrive.extract(new Rs2ItemStack(ItemStubs.DIRT), 85, Action.EXECUTE);
 
         assertThat(stack1).isPresent();
-        assertItemStack(stack1.get(), new ItemStack(Items.DIRT, 85));
+        assertItemStack(stack1.get(), new Rs2ItemStack(ItemStubs.DIRT, 85));
 
-        assertItemStackListContents(storageDisk1.getStacks(), new ItemStack(Items.GLASS, 50));
-        assertItemStackListContents(storageDisk2.getStacks(), new ItemStack(Items.GLASS, 50), new ItemStack(Items.DIRT, 15));
-        assertItemStackListContents(storageDisk3.getStacks(), new ItemStack(Items.SPONGE, 10));
+        assertItemStackListContents(storageDisk1.getStacks(), new Rs2ItemStack(ItemStubs.GLASS, 50));
+        assertItemStackListContents(storageDisk2.getStacks(), new Rs2ItemStack(ItemStubs.GLASS, 50), new Rs2ItemStack(ItemStubs.DIRT, 15));
+        assertItemStackListContents(storageDisk3.getStacks(), new Rs2ItemStack(ItemStubs.SPONGE, 10));
 
         assertThat(diskDrive.getStored()).isEqualTo(125);
     }
@@ -285,66 +263,66 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_getting_stacks() {
         // Arrange
-        StorageDisk<ItemStack> storageDisk1 = new ItemDiskStorage(100);
-        StorageDisk<ItemStack> storageDisk2 = new ItemDiskStorage(100);
-        StorageDisk<ItemStack> storageDisk3 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk2 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk3 = new ItemDiskStorage(100);
 
-        storageDisk1.insert(new ItemStack(Items.DIRT), 50, Action.EXECUTE);
-        storageDisk1.insert(new ItemStack(Items.GLASS), 50, Action.EXECUTE);
+        storageDisk1.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
+        storageDisk1.insert(new Rs2ItemStack(ItemStubs.GLASS), 50, Action.EXECUTE);
         diskProviderManager.setDisk(1, storageDisk1);
 
-        storageDisk2.insert(new ItemStack(Items.DIRT), 50, Action.EXECUTE);
-        storageDisk2.insert(new ItemStack(Items.GLASS), 50, Action.EXECUTE);
+        storageDisk2.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
+        storageDisk2.insert(new Rs2ItemStack(ItemStubs.GLASS), 50, Action.EXECUTE);
         diskProviderManager.setDisk(2, storageDisk2);
 
-        storageDisk3.insert(new ItemStack(Items.SPONGE), 10, Action.EXECUTE);
+        storageDisk3.insert(new Rs2ItemStack(ItemStubs.SPONGE), 10, Action.EXECUTE);
         diskProviderManager.setDisk(3, storageDisk3);
 
         // Act
-        Collection<ItemStack> stacks = diskDrive.getStacks();
+        Collection<Rs2ItemStack> stacks = diskDrive.getStacks();
 
         // Assert
-        assertItemStackListContents(stacks, new ItemStack(Items.DIRT, 100), new ItemStack(Items.GLASS, 100), new ItemStack(Items.SPONGE, 10));
+        assertItemStackListContents(stacks, new Rs2ItemStack(ItemStubs.DIRT, 100), new Rs2ItemStack(ItemStubs.GLASS, 100), new Rs2ItemStack(ItemStubs.SPONGE, 10));
         assertThat(diskDrive.getStored()).isEqualTo(210);
     }
 
     @Test
     void Test_storage_should_change_when_removing_a_disk() {
         // Arrange
-        StorageDisk<ItemStack> storageDisk1 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemDiskStorage(100);
         diskProviderManager.setDisk(1, storageDisk1);
 
-        StorageDisk<ItemStack> storageDisk2 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk2 = new ItemDiskStorage(100);
         diskProviderManager.setDisk(2, storageDisk2);
 
         // Act
-        Optional<ItemStack> remainderBeforeRemovingDisk = diskDrive.insert(new ItemStack(Items.DIRT), 105, Action.SIMULATE);
+        Optional<Rs2ItemStack> remainderBeforeRemovingDisk = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 105, Action.SIMULATE);
         diskProviderManager.removeDiskInSlot(2);
-        Optional<ItemStack> remainderAfterRemovingDisk = diskDrive.insert(new ItemStack(Items.DIRT), 105, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainderAfterRemovingDisk = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 105, Action.EXECUTE);
 
         // Assert
         assertThat(remainderBeforeRemovingDisk).isEmpty();
 
         assertThat(remainderAfterRemovingDisk).isPresent();
-        assertItemStack(remainderAfterRemovingDisk.get(), new ItemStack(Items.DIRT, 5));
+        assertItemStack(remainderAfterRemovingDisk.get(), new Rs2ItemStack(ItemStubs.DIRT, 5));
     }
 
     @Test
     void Test_storage_should_change_when_inserting_a_disk() {
         // Arrange
-        StorageDisk<ItemStack> storageDisk1 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemDiskStorage(100);
         diskProviderManager.setDisk(1, storageDisk1);
 
-        StorageDisk<ItemStack> storageDisk2 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk2 = new ItemDiskStorage(100);
 
         // Act
-        Optional<ItemStack> remainderBeforeInsertingDisk = diskDrive.insert(new ItemStack(Items.DIRT), 105, Action.SIMULATE);
+        Optional<Rs2ItemStack> remainderBeforeInsertingDisk = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 105, Action.SIMULATE);
         diskProviderManager.setDisk(2, storageDisk2);
-        Optional<ItemStack> remainderAfterInsertingDisk = diskDrive.insert(new ItemStack(Items.DIRT), 105, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainderAfterInsertingDisk = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 105, Action.EXECUTE);
 
         // Assert
         assertThat(remainderBeforeInsertingDisk).isPresent();
-        assertItemStack(remainderBeforeInsertingDisk.get(), new ItemStack(Items.DIRT, 5));
+        assertItemStack(remainderBeforeInsertingDisk.get(), new Rs2ItemStack(ItemStubs.DIRT, 5));
 
         assertThat(remainderAfterInsertingDisk).isEmpty();
     }
@@ -354,38 +332,38 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         Network network = new NetworkImpl(UUID.randomUUID());
 
-        Pair<DiskDriveNetworkNode, FakeStorageDiskProviderManager> sut1 = createSut();
-        Pair<DiskDriveNetworkNode, FakeStorageDiskProviderManager> sut2 = createSut();
-        Pair<DiskDriveNetworkNode, FakeStorageDiskProviderManager> sut3 = createSut();
+        DiskDriveSut sut1 = new DiskDriveSut();
+        DiskDriveSut sut2 = new DiskDriveSut();
+        DiskDriveSut sut3 = new DiskDriveSut();
 
-        sut1.getKey().setNetwork(network);
-        sut2.getKey().setNetwork(network);
-        sut3.getKey().setNetwork(network);
+        sut1.getDiskDrive().setNetwork(network);
+        sut2.getDiskDrive().setNetwork(network);
+        sut3.getDiskDrive().setNetwork(network);
 
         ItemDiskStorage disk1 = new ItemDiskStorage(10);
         ItemDiskStorage disk2 = new ItemDiskStorage(10);
         ItemDiskStorage disk3 = new ItemDiskStorage(10);
 
-        sut1.getValue().setDisk(0, disk1);
-        sut2.getValue().setDisk(0, disk2);
-        sut3.getValue().setDisk(0, disk3);
+        sut1.getDiskProviderManager().setDisk(0, disk1);
+        sut2.getDiskProviderManager().setDisk(0, disk2);
+        sut3.getDiskProviderManager().setDisk(0, disk3);
 
-        network.getNodeReferences().add(new StubNetworkNodeReference(sut1.getKey()));
-        network.getNodeReferences().add(new StubNetworkNodeReference(sut2.getKey()));
-        network.getNodeReferences().add(new StubNetworkNodeReference(sut3.getKey()));
+        network.getNodeReferences().add(new StubNetworkNodeReference(sut1.getDiskDrive()));
+        network.getNodeReferences().add(new StubNetworkNodeReference(sut2.getDiskDrive()));
+        network.getNodeReferences().add(new StubNetworkNodeReference(sut3.getDiskDrive()));
 
         network.invalidateStorageChannelSources();
 
         // Act
-        sut1.getKey().setPriority(8);
-        sut2.getKey().setPriority(15);
-        sut3.getKey().setPriority(2);
+        sut1.getDiskDrive().setPriority(8);
+        sut2.getDiskDrive().setPriority(15);
+        sut3.getDiskDrive().setPriority(2);
 
-        network.getItemStorageChannel().insert(new ItemStack(Items.DIRT), 15, Action.EXECUTE);
+        network.getItemStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 15, Action.EXECUTE);
 
         // Assert
-        assertItemStackListContents(disk2.getStacks(), new ItemStack(Items.DIRT, 10));
-        assertItemStackListContents(disk1.getStacks(), new ItemStack(Items.DIRT, 5));
+        assertItemStackListContents(disk2.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
+        assertItemStackListContents(disk1.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 5));
         assertItemStackListContents(disk3.getStacks());
     }
 
@@ -394,23 +372,21 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setFilterMode(FilterMode.BLOCK);
         diskDrive.setExactMode(false);
-        diskDrive.setFilterTemplates(Arrays.asList(new ItemStack(Items.GLASS), new ItemStack(Items.STONE)));
+        diskDrive.setFilterTemplates(Arrays.asList(new Rs2ItemStack(ItemStubs.GLASS), new Rs2ItemStack(ItemStubs.STONE)));
 
-        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
         diskProviderManager.setDisk(1, storageDisk);
 
         // Act
-        ItemStack glassWithTag = new ItemStack(Items.GLASS, 12);
-        glassWithTag.setTag(new CompoundTag());
-        glassWithTag.getTag().putString("bla", "bla");
+        Rs2ItemStack glassWithTag = new Rs2ItemStack(ItemStubs.GLASS, 12, "myTag");
 
-        Optional<ItemStack> remainder1 = diskDrive.insert(new ItemStack(Items.GLASS), 12, Action.EXECUTE);
-        Optional<ItemStack> remainder2 = diskDrive.insert(glassWithTag, 12, Action.EXECUTE);
-        Optional<ItemStack> remainder3 = diskDrive.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder1 = diskDrive.insert(new Rs2ItemStack(ItemStubs.GLASS), 12, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder2 = diskDrive.insert(glassWithTag, 12, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder3 = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         // Assert
         assertThat(remainder1).isPresent();
-        assertItemStack(remainder1.get(), new ItemStack(Items.GLASS, 12));
+        assertItemStack(remainder1.get(), new Rs2ItemStack(ItemStubs.GLASS, 12));
 
         assertThat(remainder2).isPresent();
         assertItemStack(remainder2.get(), glassWithTag);
@@ -424,11 +400,11 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setAccessMode(accessMode);
 
-        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
         diskProviderManager.setDisk(1, storageDisk);
 
         // Act
-        Optional<ItemStack> remainder = diskDrive.insert(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
 
         // Assert
         switch (accessMode) {
@@ -438,7 +414,7 @@ class DiskDriveNetworkNodeTest {
                 break;
             case EXTRACT:
                 assertThat(remainder).isPresent();
-                assertItemStack(remainder.get(), new ItemStack(Items.DIRT, 5));
+                assertItemStack(remainder.get(), new Rs2ItemStack(ItemStubs.DIRT, 5));
                 break;
         }
     }
@@ -449,20 +425,20 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setAccessMode(accessMode);
 
-        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
         diskProviderManager.setDisk(1, storageDisk);
 
-        storageDisk.insert(new ItemStack(Items.DIRT), 20, Action.EXECUTE);
+        storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 20, Action.EXECUTE);
 
         // Act
-        Optional<ItemStack> extracted = diskDrive.extract(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+        Optional<Rs2ItemStack> extracted = diskDrive.extract(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
 
         // Assert
         switch (accessMode) {
             case INSERT_EXTRACT:
             case EXTRACT:
                 assertThat(extracted).isPresent();
-                assertItemStack(extracted.get(), new ItemStack(Items.DIRT, 5));
+                assertItemStack(extracted.get(), new Rs2ItemStack(ItemStubs.DIRT, 5));
                 break;
             case INSERT:
                 assertThat(extracted).isEmpty();
@@ -475,15 +451,15 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setRedstoneMode(RedstoneMode.HIGH);
 
-        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
         diskProviderManager.setDisk(1, storageDisk);
 
         // Act
-        Optional<ItemStack> remainder = diskDrive.insert(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
 
         // Assert
         assertThat(remainder).isPresent();
-        assertItemStack(remainder.get(), new ItemStack(Items.DIRT, 5));
+        assertItemStack(remainder.get(), new Rs2ItemStack(ItemStubs.DIRT, 5));
     }
 
     @Test
@@ -491,13 +467,13 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setRedstoneMode(RedstoneMode.HIGH);
 
-        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
         diskProviderManager.setDisk(1, storageDisk);
 
-        storageDisk.insert(new ItemStack(Items.DIRT), 20, Action.EXECUTE);
+        storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 20, Action.EXECUTE);
 
         // Act
-        Optional<ItemStack> extracted = diskDrive.extract(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+        Optional<Rs2ItemStack> extracted = diskDrive.extract(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
 
         // Assert
         assertThat(extracted).isEmpty();
@@ -506,17 +482,17 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_getting_stacks_when_inactive() {
         // Arrange
-        StorageDisk<ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
         diskProviderManager.setDisk(1, storageDisk);
 
-        diskDrive.insert(new ItemStack(Items.DIRT), 20, Action.EXECUTE);
+        diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 20, Action.EXECUTE);
 
         // Act
-        Collection<ItemStack> stacksBeforeInactive = diskDrive.getStacks();
+        Collection<Rs2ItemStack> stacksBeforeInactive = diskDrive.getStacks();
 
         diskDrive.setRedstoneMode(RedstoneMode.HIGH);
 
-        Collection<ItemStack> stacksAfterInactive = diskDrive.getStacks();
+        Collection<Rs2ItemStack> stacksAfterInactive = diskDrive.getStacks();
 
         // Assert
         assertThat(stacksBeforeInactive).isNotEmpty();
@@ -528,23 +504,23 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         Network network = new NetworkImpl(UUID.randomUUID());
 
-        Pair<DiskDriveNetworkNode, FakeStorageDiskProviderManager> diskDrive = createSut();
+        DiskDriveSut sut = new DiskDriveSut();
 
-        diskDrive.getKey().setNetwork(network);
+        sut.getDiskDrive().setNetwork(network);
 
         ItemDiskStorage disk = new ItemDiskStorage(10);
-        diskDrive.getValue().setDisk(0, disk);
-        diskDrive.getKey().insert(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+        sut.getDiskProviderManager().setDisk(0, disk);
+        sut.getDiskDrive().insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
 
-        network.getNodeReferences().add(new StubNetworkNodeReference(diskDrive.getKey()));
+        network.getNodeReferences().add(new StubNetworkNodeReference(sut.getDiskDrive()));
         network.invalidateStorageChannelSources();
 
-        diskDrive.getKey().setRedstoneMode(RedstoneMode.HIGH);
+        sut.getDiskDrive().setRedstoneMode(RedstoneMode.HIGH);
 
         // Act
-        Collection<ItemStack> stacksBeforeStateChange = network.getItemStorageChannel().getStacks();
-        diskDrive.getKey().onActiveChanged(false);
-        Collection<ItemStack> stacksAfterStateChange = network.getItemStorageChannel().getStacks();
+        Collection<Rs2ItemStack> stacksBeforeStateChange = network.getItemStorageChannel().getStacks();
+        sut.getDiskDrive().onActiveChanged(false);
+        Collection<Rs2ItemStack> stacksAfterStateChange = network.getItemStorageChannel().getStacks();
 
         // Assert
         assertThat(stacksBeforeStateChange).isNotEmpty();

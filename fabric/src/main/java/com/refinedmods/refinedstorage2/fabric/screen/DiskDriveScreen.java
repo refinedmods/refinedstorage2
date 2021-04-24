@@ -53,12 +53,12 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
 
     private List<Text> createTooltip() {
         List<Text> tooltip = new ArrayList<>();
-        int stored = getScreenHandler().getStored();
+        long stored = getScreenHandler().getStored();
 
         if (handler.hasInfiniteDisk()) {
             tooltip.add(RefinedStorage2Mod.createTranslation("misc", "stored", Quantities.format(stored)));
         } else {
-            int capacity = getScreenHandler().getCapacity();
+            long capacity = getScreenHandler().getCapacity();
             double progress = getScreenHandler().getProgress();
 
             tooltip.add(RefinedStorage2Mod.createTranslation("misc", "stored_with_capacity", Quantities.format(stored), Quantities.format(capacity)));

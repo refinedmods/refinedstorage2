@@ -4,7 +4,9 @@ import alexiil.mc.lib.attributes.Simulation;
 import alexiil.mc.lib.attributes.item.compat.FixedInventoryVanillaWrapper;
 import alexiil.mc.lib.attributes.item.filter.ExactItemStackFilter;
 import com.refinedmods.refinedstorage2.core.grid.GridInteractor;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.util.Action;
+import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -19,39 +21,41 @@ public class PlayerGridInteractor implements GridInteractor {
     }
 
     @Override
-    public ItemStack getCursorStack() {
-        return player.inventory.getCursorStack();
+    public Rs2ItemStack getCursorStack() {
+        return ItemStacks.ofItemStack(player.inventory.getCursorStack());
     }
 
     @Override
-    public void setCursorStack(ItemStack stack) {
-        player.inventory.setCursorStack(stack);
+    public void setCursorStack(Rs2ItemStack stack) {
+        player.inventory.setCursorStack(ItemStacks.toItemStack(stack));
         ((ServerPlayerEntity) player).updateCursorStack();
     }
 
     @Override
-    public ItemStack insertIntoInventory(ItemStack stack, int preferredSlot, Action action) {
+    public Rs2ItemStack insertIntoInventory(Rs2ItemStack stack, int preferredSlot, Action action) {
         Simulation simulation = getSimulation(action);
+        ItemStack mcStack = ItemStacks.toItemStack(stack);
 
         if (preferredSlot == -1) {
-            return inventory.getInsertable().attemptInsertion(stack, simulation);
+            return ItemStacks.ofItemStack(inventory.getInsertable().attemptInsertion(mcStack, simulation));
         }
 
         // TODO: Prevent this going into the armor slots.
-        ItemStack remainder = inventory.insertStack(preferredSlot, stack, simulation);
+        ItemStack remainder = inventory.insertStack(preferredSlot, mcStack, simulation);
         if (!remainder.isEmpty()) {
-            return inventory.getInsertable().attemptInsertion(remainder, simulation);
+            return ItemStacks.ofItemStack(inventory.getInsertable().attemptInsertion(remainder, simulation));
         }
-        return ItemStack.EMPTY;
+        return Rs2ItemStack.EMPTY;
     }
 
     @Override
-    public ItemStack extractFromInventory(ItemStack template, int slot, int count, Action action) {
+    public Rs2ItemStack extractFromInventory(Rs2ItemStack template, int slot, long count, Action action) {
         Simulation simulation = getSimulation(action);
+        ItemStack mcTemplate = ItemStacks.toItemStack(template);
 
         return slot == -1 ?
-            inventory.getExtractable().attemptExtraction(new ExactItemStackFilter(template), count, simulation) :
-            inventory.extractStack(slot, null, ItemStack.EMPTY, count, simulation);
+                ItemStacks.ofItemStack(inventory.getExtractable().attemptExtraction(new ExactItemStackFilter(mcTemplate), (int) count, simulation)) :
+                ItemStacks.ofItemStack(inventory.extractStack(slot, null, ItemStack.EMPTY, (int) count, simulation));
     }
 
     private Simulation getSimulation(Action action) {

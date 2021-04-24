@@ -2,11 +2,11 @@ package com.refinedmods.refinedstorage2.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
@@ -19,7 +19,7 @@ public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandle
 
     @Override
     public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        ItemStack stack = PacketUtil.readItemStackWithoutCount(buf);
+        Rs2ItemStack stack = PacketUtil.readItemStack(buf, false);
         GridExtractMode mode = getMode(buf.readByte());
 
         server.execute(() -> {

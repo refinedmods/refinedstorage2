@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.refinedmods.refinedstorage2.core.Rs2World;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
@@ -22,11 +23,10 @@ import com.refinedmods.refinedstorage2.core.util.Filter;
 import com.refinedmods.refinedstorage2.core.util.FilterMode;
 import com.refinedmods.refinedstorage2.core.util.ItemFilter;
 import com.refinedmods.refinedstorage2.core.util.Position;
-import net.minecraft.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<ItemStack>, Priority {
+public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2ItemStack>, Priority {
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
 
     public static final int DISK_COUNT = 8;
@@ -35,7 +35,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
     private final StorageDiskManager diskManager;
     private final StorageDiskProvider diskProvider;
     private final StorageDisk[] disks = new StorageDisk[DISK_COUNT];
-    private final Filter<ItemStack> itemFilter = new ItemFilter();
+    private final Filter<Rs2ItemStack> itemFilter = new ItemFilter();
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
     private CompositeItemStorage compositeStorage = CompositeItemStorage.empty();
     private int priority;
@@ -61,8 +61,8 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
 
         disks[slot] = diskProvider.getDiskId(slot).flatMap(diskManager::getDisk).orElse(null);
 
-        List<Storage<ItemStack>> sources = new ArrayList<>();
-        for (StorageDisk<ItemStack> disk : disks) {
+        List<Storage<Rs2ItemStack>> sources = new ArrayList<>();
+        for (StorageDisk<Rs2ItemStack> disk : disks) {
             if (disk != null) {
                 sources.add(disk);
             }
@@ -116,7 +116,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
         return itemFilter.getMode();
     }
 
-    public void setFilterTemplates(List<ItemStack> templates) {
+    public void setFilterTemplates(List<Rs2ItemStack> templates) {
         itemFilter.setTemplates(templates);
     }
 
@@ -139,7 +139,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
     }
 
     @Override
-    public Optional<ItemStack> extract(ItemStack template, int amount, Action action) {
+    public Optional<Rs2ItemStack> extract(Rs2ItemStack template, long amount, Action action) {
         if (accessMode == AccessMode.INSERT || !isActive()) {
             return Optional.empty();
         }
@@ -147,17 +147,17 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
     }
 
     @Override
-    public Optional<ItemStack> insert(ItemStack template, int amount, Action action) {
+    public Optional<Rs2ItemStack> insert(Rs2ItemStack template, long amount, Action action) {
         if (!itemFilter.isAllowed(template) || accessMode == AccessMode.EXTRACT || !isActive()) {
-            ItemStack remainder = template.copy();
-            remainder.setCount(amount);
+            Rs2ItemStack remainder = template.copy();
+            remainder.setAmount(amount);
             return Optional.of(remainder);
         }
         return compositeStorage.insert(template, amount, action);
     }
 
     @Override
-    public Collection<ItemStack> getStacks() {
+    public Collection<Rs2ItemStack> getStacks() {
         if (!isActive()) {
             return Collections.emptyList();
         }
@@ -165,7 +165,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
     }
 
     @Override
-    public int getStored() {
+    public long getStored() {
         return compositeStorage.getStored();
     }
 }

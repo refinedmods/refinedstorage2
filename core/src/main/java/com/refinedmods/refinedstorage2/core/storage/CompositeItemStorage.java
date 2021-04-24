@@ -5,20 +5,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.util.Action;
-import net.minecraft.item.ItemStack;
 
-public class CompositeItemStorage implements Storage<ItemStack> {
-    private final List<Storage<ItemStack>> sources;
-    private final StackList<ItemStack> list;
+public class CompositeItemStorage implements Storage<Rs2ItemStack> {
+    private final List<Storage<Rs2ItemStack>> sources;
+    private final StackList<Rs2ItemStack> list;
 
     public static CompositeItemStorage empty() {
         return new CompositeItemStorage(Collections.emptyList(), ItemStackList.create());
     }
 
-    public CompositeItemStorage(List<Storage<ItemStack>> sources, StackList<ItemStack> list) {
+    public CompositeItemStorage(List<Storage<Rs2ItemStack>> sources, StackList<Rs2ItemStack> list) {
         this.sources = sources;
         this.list = list;
 
@@ -31,12 +31,12 @@ public class CompositeItemStorage implements Storage<ItemStack> {
     }
 
     private void fillListFromSources() {
-        sources.forEach(source -> source.getStacks().forEach(stack -> list.add(stack, stack.getCount())));
+        sources.forEach(source -> source.getStacks().forEach(stack -> list.add(stack, stack.getAmount())));
     }
 
     @Override
-    public Optional<ItemStack> extract(ItemStack template, int amount, Action action) {
-        int extracted = extractFromStorages(template, amount, action);
+    public Optional<Rs2ItemStack> extract(Rs2ItemStack template, long amount, Action action) {
+        long extracted = extractFromStorages(template, amount, action);
         if (action == Action.EXECUTE && extracted > 0) {
             list.remove(template, extracted);
         }
@@ -44,18 +44,18 @@ public class CompositeItemStorage implements Storage<ItemStack> {
         if (extracted == 0) {
             return Optional.empty();
         } else {
-            ItemStack result = template.copy();
-            result.setCount(extracted);
+            Rs2ItemStack result = template.copy();
+            result.setAmount(extracted);
             return Optional.of(result);
         }
     }
 
-    private int extractFromStorages(ItemStack template, int amount, Action action) {
-        int remaining = amount;
-        for (Storage<ItemStack> source : sources) {
-            Optional<ItemStack> stack = source.extract(template, remaining, action);
+    private long extractFromStorages(Rs2ItemStack template, long amount, Action action) {
+        long remaining = amount;
+        for (Storage<Rs2ItemStack> source : sources) {
+            Optional<Rs2ItemStack> stack = source.extract(template, remaining, action);
             if (stack.isPresent()) {
-                remaining -= stack.get().getCount();
+                remaining -= stack.get().getAmount();
                 if (remaining == 0) {
                     break;
                 }
@@ -66,11 +66,11 @@ public class CompositeItemStorage implements Storage<ItemStack> {
     }
 
     @Override
-    public Optional<ItemStack> insert(ItemStack template, int amount, Action action) {
-        int remainder = insertIntoStorages(template, amount, action);
+    public Optional<Rs2ItemStack> insert(Rs2ItemStack template, long amount, Action action) {
+        long remainder = insertIntoStorages(template, amount, action);
 
         if (action == Action.EXECUTE) {
-            int inserted = amount - remainder;
+            long inserted = amount - remainder;
             if (inserted > 0) {
                 list.add(template, inserted);
             }
@@ -79,32 +79,32 @@ public class CompositeItemStorage implements Storage<ItemStack> {
         if (remainder == 0) {
             return Optional.empty();
         } else {
-            ItemStack remainderStack = template.copy();
-            remainderStack.setCount(remainder);
+            Rs2ItemStack remainderStack = template.copy();
+            remainderStack.setAmount(remainder);
             return Optional.of(remainderStack);
         }
     }
 
-    private int insertIntoStorages(ItemStack template, int amount, Action action) {
-        int remainder = amount;
-        for (Storage<ItemStack> source : sources) {
-            Optional<ItemStack> remainderStack = source.insert(template, remainder, action);
+    private long insertIntoStorages(Rs2ItemStack template, long amount, Action action) {
+        long remainder = amount;
+        for (Storage<Rs2ItemStack> source : sources) {
+            Optional<Rs2ItemStack> remainderStack = source.insert(template, remainder, action);
             if (!remainderStack.isPresent()) {
                 remainder = 0;
                 break;
             }
-            remainder = remainderStack.get().getCount();
+            remainder = remainderStack.get().getAmount();
         }
         return remainder;
     }
 
     @Override
-    public Collection<ItemStack> getStacks() {
+    public Collection<Rs2ItemStack> getStacks() {
         return list.getAll();
     }
 
     @Override
-    public int getStored() {
-        return sources.stream().mapToInt(Storage::getStored).sum();
+    public long getStored() {
+        return sources.stream().mapToLong(Storage::getStored).sum();
     }
 }

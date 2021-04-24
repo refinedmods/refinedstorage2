@@ -13,13 +13,14 @@ import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.core.grid.GridViewImpl;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
-import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.RedstoneModeSettings;
@@ -33,6 +34,7 @@ import com.refinedmods.refinedstorage2.fabric.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.BaseScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.property.TwoWaySyncProperty;
+import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -43,17 +45,17 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GridScreenHandler extends BaseScreenHandler implements GridEventHandler, StackListListener<ItemStack>, RedstoneModeAccessor {
+public class GridScreenHandler extends BaseScreenHandler implements GridEventHandler, StackListListener<Rs2ItemStack>, RedstoneModeAccessor {
     private static final Logger LOGGER = LogManager.getLogger(GridScreenHandler.class);
 
     private static String lastSearchQuery = "";
 
     private final PlayerInventory playerInventory;
-    private final GridView<ItemStack> itemView = new GridViewImpl<>(new FabricGridStackFactory(), ItemStackIdentifier::new, ItemStackList.create());
+    private final GridView<Rs2ItemStack> itemView = new GridViewImpl<>(new FabricGridStackFactory(), Rs2ItemStackIdentifier::new, ItemStackList.create());
 
     private GridBlockEntity grid;
 
-    private StorageChannel<ItemStack> storageChannel; // TODO - Support changing of the channel.
+    private StorageChannel<Rs2ItemStack> storageChannel; // TODO - Support changing of the channel.
     private GridEventHandler eventHandler;
     private boolean active;
 
@@ -126,10 +128,9 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
 
         int size = buf.readInt();
         for (int i = 0; i < size; ++i) {
-            ItemStack stack = buf.readItemStack();
-            stack.setCount(buf.readInt());
+            Rs2ItemStack stack = PacketUtil.readItemStack(buf, true);
             StorageTracker.Entry trackerEntry = PacketUtil.readTrackerEntry(buf);
-            itemView.loadStack(stack, stack.getCount(), trackerEntry);
+            itemView.loadStack(stack, stack.getAmount(), trackerEntry);
         }
         itemView.sort();
     }
@@ -302,12 +303,12 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     }
 
     @Override
-    public ItemStack onInsertFromTransfer(ItemStack slotStack) {
+    public Rs2ItemStack onInsertFromTransfer(Rs2ItemStack slotStack) {
         return eventHandler.onInsertFromTransfer(slotStack);
     }
 
     @Override
-    public void onExtract(ItemStack stack, GridExtractMode mode) {
+    public void onExtract(Rs2ItemStack stack, GridExtractMode mode) {
         eventHandler.onExtract(stack, mode);
     }
 
@@ -316,7 +317,9 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         if (!playerEntity.world.isClient()) {
             Slot slot = getSlot(slotIndex);
             if (slot.hasStack()) {
-                slot.setStack(eventHandler.onInsertFromTransfer(slot.getStack()));
+                Rs2ItemStack slotStack = ItemStacks.ofItemStack(slot.getStack());
+                ItemStack resultingStack = ItemStacks.toItemStack(eventHandler.onInsertFromTransfer(slotStack));
+                slot.setStack(resultingStack);
                 sendContentUpdates();
             }
         }
@@ -324,7 +327,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     }
 
     @Override
-    public void onItemUpdate(ItemStack template, int amount, StorageTracker.Entry trackerEntry) {
+    public void onItemUpdate(Rs2ItemStack template, long amount, StorageTracker.Entry trackerEntry) {
         LOGGER.info("Item {} got updated with {}", template, amount);
 
         itemView.onChange(template, amount, trackerEntry);
@@ -340,24 +343,24 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     }
 
     @Override
-    public void onScroll(ItemStack stack, int slot, GridScrollMode mode) {
+    public void onScroll(Rs2ItemStack stack, int slot, GridScrollMode mode) {
         eventHandler.onScroll(stack, slot, mode);
     }
 
     @Override
-    public void onChanged(StackListResult<ItemStack> change) {
+    public void onChanged(StackListResult<Rs2ItemStack> change) {
         LOGGER.info("Received a change of {} for {}", change.getChange(), change.getStack());
 
         PacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, GridItemUpdatePacket.ID, buf -> {
-            PacketUtil.writeItemStackWithoutCount(buf, change.getStack());
-            buf.writeInt(change.getChange());
+            PacketUtil.writeItemStack(buf, change.getStack(), false);
+            buf.writeLong(change.getChange());
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(change.getStack());
             PacketUtil.writeTrackerEntry(buf, entry);
         });
     }
 
-    public GridView<ItemStack> getItemView() {
+    public GridView<Rs2ItemStack> getItemView() {
         return itemView;
     }
 

@@ -16,19 +16,19 @@ public class ListenableStackList<T> implements StackList<T> {
     }
 
     @Override
-    public StackListResult<T> add(T template, int amount) {
+    public StackListResult<T> add(T template, long amount) {
         StackListResult<T> result = parent.add(template, amount);
         listeners.forEach(listener -> listener.onChanged(result));
         return result;
     }
 
     @Override
-    public Optional<StackListResult<T>> remove(T template, int amount) {
+    public Optional<StackListResult<T>> remove(T template, long amount) {
         return parent.remove(template, amount)
-            .map(result -> {
-                listeners.forEach(listener -> listener.onChanged(result));
-                return result;
-            });
+                .map(result -> {
+                    listeners.forEach(listener -> listener.onChanged(result));
+                    return result;
+                });
     }
 
     @Override

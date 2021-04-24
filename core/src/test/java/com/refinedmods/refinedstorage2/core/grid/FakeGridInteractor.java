@@ -1,40 +1,40 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
+import java.util.Collection;
+
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.util.Action;
-import net.minecraft.item.ItemStack;
-
-import java.util.Collection;
 
 public class FakeGridInteractor implements GridInteractor {
     public static final String NAME = "Fake interactor";
 
-    private ItemStack cursorStack = ItemStack.EMPTY;
-    private StorageDisk<ItemStack> inventory = new ItemDiskStorage(1000);
+    private Rs2ItemStack cursorStack = Rs2ItemStack.EMPTY;
+    private StorageDisk<Rs2ItemStack> inventory = new ItemDiskStorage(1000);
 
     public void resetInventoryAndSetCapacity(int capacity) {
         inventory = new ItemDiskStorage(capacity);
     }
 
     @Override
-    public ItemStack getCursorStack() {
+    public Rs2ItemStack getCursorStack() {
         return cursorStack;
     }
 
     @Override
-    public void setCursorStack(ItemStack stack) {
+    public void setCursorStack(Rs2ItemStack stack) {
         this.cursorStack = stack;
     }
 
     @Override
-    public ItemStack insertIntoInventory(ItemStack stack, int preferredSlot, Action action) {
-        return inventory.insert(stack, stack.getCount(), action).orElse(ItemStack.EMPTY);
+    public Rs2ItemStack insertIntoInventory(Rs2ItemStack stack, int preferredSlot, Action action) {
+        return inventory.insert(stack, stack.getAmount(), action).orElse(Rs2ItemStack.EMPTY);
     }
 
     @Override
-    public ItemStack extractFromInventory(ItemStack template, int slot, int count, Action action) {
-        return inventory.extract(template, count, action).orElse(ItemStack.EMPTY);
+    public Rs2ItemStack extractFromInventory(Rs2ItemStack template, int slot, long count, Action action) {
+        return inventory.extract(template, count, action).orElse(Rs2ItemStack.EMPTY);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class FakeGridInteractor implements GridInteractor {
         return NAME;
     }
 
-    public Collection<ItemStack> getInventory() {
+    public Collection<Rs2ItemStack> getInventory() {
         return inventory.getStacks();
     }
 }

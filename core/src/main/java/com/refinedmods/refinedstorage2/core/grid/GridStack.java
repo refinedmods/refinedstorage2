@@ -24,7 +24,7 @@ public abstract class GridStack<T> {
 
     public abstract int getId();
 
-    public abstract int getCount();
+    public abstract long getAmount();
 
     public String getName() {
         return name;

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.core.query.lexer;
 
 import java.util.List;
 
-import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
+import com.refinedmods.refinedstorage2.core.Rs2Test;
 import org.junit.jupiter.api.Test;
 
 import static com.refinedmods.refinedstorage2.core.query.lexer.TokenAssertions.assertPosition;
@@ -11,7 +11,7 @@ import static com.refinedmods.refinedstorage2.core.query.lexer.TokenAssertions.a
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RefinedStorage2Test
+@Rs2Test
 class LexerTest {
     private static final LexerTokenMappings TEST_TOKEN_MAPPINGS = new LexerTokenMappings()
         .addMapping(new LexerTokenMapping("&&", TokenType.BIN_OP))

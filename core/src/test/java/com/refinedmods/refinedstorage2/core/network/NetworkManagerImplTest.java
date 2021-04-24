@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.core.network;
 
 import java.util.UUID;
 
-import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
+import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.network.node.FakeNetworkNodeRepository;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.function.Executable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RefinedStorage2Test
+@Rs2Test
 class NetworkManagerImplTest {
     private final NetworkManager networkManager = new NetworkManagerImpl();
 

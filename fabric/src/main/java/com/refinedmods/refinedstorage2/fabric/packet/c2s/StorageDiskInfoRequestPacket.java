@@ -28,8 +28,8 @@ public class StorageDiskInfoRequestPacket implements ServerPlayNetworking.PlayCh
 
             PacketUtil.sendToPlayer(player, StorageDiskInfoResponsePacket.ID, bufToSend -> {
                 bufToSend.writeUuid(id);
-                bufToSend.writeInt(info.getStored());
-                bufToSend.writeInt(info.getCapacity());
+                bufToSend.writeLong(info.getStored());
+                bufToSend.writeLong(info.getCapacity());
             });
         });
     }

@@ -9,9 +9,11 @@ import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.FabricItemGridStack;
 import com.refinedmods.refinedstorage2.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
@@ -20,6 +22,7 @@ import com.refinedmods.refinedstorage2.fabric.screen.BaseScreen;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 import com.refinedmods.refinedstorage2.fabric.util.LastModifiedUtil;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
@@ -146,7 +149,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         mouseY -= y;
 
         return mouseX >= 7 && mouseY >= 19
-            && mouseX <= 168 && mouseY <= 19 + (visibleRows * 18);
+                && mouseX <= 168 && mouseY <= 19 + (visibleRows * 18);
     }
 
     @Override
@@ -184,21 +187,21 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     }
 
     private void renderGridSlot(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int idx, int row, int column) {
-        GridView<ItemStack> view = getScreenHandler().getItemView();
+        GridView<Rs2ItemStack> view = getScreenHandler().getItemView();
 
         int slotX = x + 8 + (column * 18);
         int slotY = y + 20 + (row * 18);
 
-        GridStack<ItemStack> stack = null;
+        FabricItemGridStack stack = null;
         if (idx < view.getStacks().size()) {
-            stack = view.getStacks().get(idx);
+            stack = (FabricItemGridStack) view.getStacks().get(idx);
 
             setZOffset(100);
             itemRenderer.zOffset = 100.0F;
 
-            itemRenderer.renderInGuiWithOverrides(client.player, stack.getStack(), slotX, slotY);
+            itemRenderer.renderInGuiWithOverrides(client.player, stack.getMcStack(), slotX, slotY);
 
-            String text = stack.isZeroed() ? "0" : String.valueOf(stack.getCount());
+            String text = stack.isZeroed() ? "0" : String.valueOf(stack.getAmount());
             Integer color = stack.isZeroed() ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue();
 
             renderAmount(matrices, slotX, slotY, text, color);
@@ -224,11 +227,11 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
                 gridSlotNumber = idx;
 
                 if (!RefinedStorage2Config.get().getGrid().isDetailedTooltip()) {
-                    renderTooltip(matrices, stack.getStack(), mouseX, mouseY);
+                    renderTooltip(matrices, stack.getMcStack(), mouseX, mouseY);
                 } else {
-                    List<OrderedText> lines = Lists.transform(getTooltipFromItem(stack.getStack()), Text::asOrderedText);
+                    List<OrderedText> lines = Lists.transform(getTooltipFromItem(stack.getMcStack()), Text::asOrderedText);
                     List<OrderedText> smallLines = new ArrayList<>();
-                    smallLines.add(RefinedStorage2Mod.createTranslation("misc", "total", stack.isZeroed() ? "0" : Quantities.format(stack.getCount())).formatted(Formatting.GRAY).asOrderedText());
+                    smallLines.add(RefinedStorage2Mod.createTranslation("misc", "total", stack.isZeroed() ? "0" : Quantities.format(stack.getAmount())).formatted(Formatting.GRAY).asOrderedText());
 
                     view.getTrackerEntry(stack.getStack()).ifPresent(entry -> smallLines.add(LastModifiedUtil.getText(entry.getTime(), entry.getName()).formatted(Formatting.GRAY).asOrderedText()));
 
@@ -367,10 +370,10 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         ItemStack cursorStack = playerInventory.getCursorStack();
 
         if (!getScreenHandler().getItemView().getStacks().isEmpty() && gridSlotNumber >= 0 && cursorStack.isEmpty()) {
-            GridStack<ItemStack> stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber);
+            GridStack<Rs2ItemStack> stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber);
 
             PacketUtil.sendToServer(GridExtractPacket.ID, buf -> {
-                PacketUtil.writeItemStackWithoutCount(buf, stack.getStack());
+                PacketUtil.writeItemStack(buf, stack.getStack(), false);
                 GridExtractPacket.writeMode(buf, getExtractMode(clickedButton));
             });
 
@@ -416,17 +419,17 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             if (isOverStorageArea((int) x, (int) y) && gridSlotNumber >= 0) {
                 getScreenHandler().getItemView().setPreventSorting(true);
 
-                ItemStack stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber).getStack();
+                Rs2ItemStack stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber).getStack();
                 PacketUtil.sendToServer(GridScrollPacket.ID, buf -> {
-                    PacketUtil.writeItemStackWithoutCount(buf, stack);
+                    PacketUtil.writeItemStack(buf, stack, false);
                     GridScrollPacket.writeMode(buf, getScrollInGridMode(shift, up));
-                    buf.writeInt(playerInventory.getSlotWithStack(stack));
+                    buf.writeInt(playerInventory.getSlotWithStack(ItemStacks.toItemStack(stack)));
                 });
             } else if (focusedSlot != null && focusedSlot.hasStack()) {
                 getScreenHandler().getItemView().setPreventSorting(true);
 
                 PacketUtil.sendToServer(GridScrollPacket.ID, buf -> {
-                    PacketUtil.writeItemStackWithoutCount(buf, focusedSlot.getStack());
+                    PacketUtil.writeItemStack(buf, ItemStacks.ofItemStack(focusedSlot.getStack()), false);
                     GridScrollPacket.writeMode(buf, getScrollInGridMode(shift, up));
                     buf.writeInt(((SlotAccessor) focusedSlot).getIndex());
                 });

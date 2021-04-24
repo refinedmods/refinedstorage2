@@ -96,7 +96,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     }
 
     @Override
-    public void loadStack(T template, int amount, StorageTracker.Entry trackerEntry) {
+    public void loadStack(T template, long amount, StorageTracker.Entry trackerEntry) {
         list.add(template, amount);
         trackerEntries.put(idFactory.apply(template), trackerEntry);
     }
@@ -124,7 +124,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     }
 
     @Override
-    public void onChange(T template, int amount, StorageTracker.Entry trackerEntry) {
+    public void onChange(T template, long amount, StorageTracker.Entry trackerEntry) {
         StackListResult<T> stack;
         if (amount < 0) {
             stack = list.remove(template, Math.abs(amount)).orElseThrow(RuntimeException::new);

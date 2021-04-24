@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReferencingStorage;
@@ -14,7 +15,6 @@ import com.refinedmods.refinedstorage2.core.storage.EmptyItemStorage;
 import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
-import net.minecraft.item.ItemStack;
 
 public class NetworkImpl implements Network {
     private final UUID id;
@@ -40,8 +40,8 @@ public class NetworkImpl implements Network {
         itemStorageChannel.setSources(createStorageSources());
     }
 
-    private List<Storage<ItemStack>> createStorageSources() {
-        List<Storage<ItemStack>> sources = new ArrayList<>();
+    private List<Storage<Rs2ItemStack>> createStorageSources() {
+        List<Storage<Rs2ItemStack>> sources = new ArrayList<>();
         for (NetworkNodeReference ref : nodeReferences) {
             Optional<NetworkNode> node = ref.get();
             if (node.isPresent() && node.get() instanceof Storage) {
@@ -53,7 +53,7 @@ public class NetworkImpl implements Network {
     }
 
     @Override
-    public StorageChannel<ItemStack> getItemStorageChannel() {
+    public StorageChannel<Rs2ItemStack> getItemStorageChannel() {
         return itemStorageChannel;
     }
 }

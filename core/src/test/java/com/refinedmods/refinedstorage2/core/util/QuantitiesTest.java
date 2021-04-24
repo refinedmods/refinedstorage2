@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.core.util;
 
-import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
+import com.refinedmods.refinedstorage2.core.Rs2Test;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RefinedStorage2Test
+@Rs2Test
 class QuantitiesTest {
     @Test
     void Test_formatting_with_units_for_small_number() {

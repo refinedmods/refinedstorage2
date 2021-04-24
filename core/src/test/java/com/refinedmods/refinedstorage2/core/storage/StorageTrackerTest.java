@@ -1,28 +1,28 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
-import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
-import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import org.apache.commons.lang3.mutable.MutableLong;
-import org.junit.jupiter.api.Test;
-
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
+
+import com.refinedmods.refinedstorage2.core.Rs2Test;
+import com.refinedmods.refinedstorage2.core.item.ItemStubs;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStackIdentifier;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RefinedStorage2Test
+@Rs2Test
 class StorageTrackerTest {
-    private final MutableLong clock = new MutableLong(0);
-    private final StorageTracker<ItemStack, ItemStackIdentifier> tracker = new StorageTracker<>(ItemStackIdentifier::new, clock::getValue);
+    private final AtomicLong clock = new AtomicLong(0);
+    private final StorageTracker<Rs2ItemStack, Rs2ItemStackIdentifier> tracker = new StorageTracker<>(Rs2ItemStackIdentifier::new, clock::get);
 
     @Test
     void Test_change() {
         // Act
-        clock.setValue(1000);
-        tracker.onChanged(new ItemStack(Items.DIRT), "Raoul");
+        clock.set(1000);
+        tracker.onChanged(new Rs2ItemStack(ItemStubs.DIRT), "Raoul");
 
-        Optional<StorageTracker.Entry> entry = tracker.getEntry(new ItemStack(Items.DIRT));
+        Optional<StorageTracker.Entry> entry = tracker.getEntry(new Rs2ItemStack(ItemStubs.DIRT));
 
         // Assert
         assertThat(entry).isPresent();
@@ -33,18 +33,18 @@ class StorageTrackerTest {
     @Test
     void Test_multiple_changes() {
         // Act
-        clock.setValue(1000);
-        tracker.onChanged(new ItemStack(Items.DIRT), "Raoul");
-        Optional<StorageTracker.Entry> entry1 = tracker.getEntry(new ItemStack(Items.DIRT));
+        clock.set(1000);
+        tracker.onChanged(new Rs2ItemStack(ItemStubs.DIRT), "Raoul");
+        Optional<StorageTracker.Entry> entry1 = tracker.getEntry(new Rs2ItemStack(ItemStubs.DIRT));
 
-        clock.setValue(2000);
-        tracker.onChanged(new ItemStack(Items.DIRT), "VdB");
-        Optional<StorageTracker.Entry> entry2 = tracker.getEntry(new ItemStack(Items.DIRT));
+        clock.set(2000);
+        tracker.onChanged(new Rs2ItemStack(ItemStubs.DIRT), "VdB");
+        Optional<StorageTracker.Entry> entry2 = tracker.getEntry(new Rs2ItemStack(ItemStubs.DIRT));
 
-        clock.setValue(3000);
-        tracker.onChanged(new ItemStack(Items.GLASS), "Robin");
+        clock.set(3000);
+        tracker.onChanged(new Rs2ItemStack(ItemStubs.GLASS), "Robin");
 
-        Optional<StorageTracker.Entry> entry3 = tracker.getEntry(new ItemStack(Items.DIRT));
+        Optional<StorageTracker.Entry> entry3 = tracker.getEntry(new Rs2ItemStack(ItemStubs.DIRT));
 
         // Assert
         assertThat(entry1).isPresent();
@@ -63,7 +63,7 @@ class StorageTrackerTest {
     @Test
     void Test_getting_non_existent_entry() {
         // Act
-        Optional<StorageTracker.Entry> entry = tracker.getEntry(new ItemStack(Items.SPONGE));
+        Optional<StorageTracker.Entry> entry = tracker.getEntry(new Rs2ItemStack(ItemStubs.SPONGE));
 
         // Act
         assertThat(entry).isEmpty();

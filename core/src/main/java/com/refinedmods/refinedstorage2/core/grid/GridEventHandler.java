@@ -1,18 +1,18 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
-import net.minecraft.item.ItemStack;
 
 public interface GridEventHandler {
     void onInsertFromCursor(GridInsertMode mode);
 
-    ItemStack onInsertFromTransfer(ItemStack slotStack);
+    Rs2ItemStack onInsertFromTransfer(Rs2ItemStack slotStack);
 
-    void onExtract(ItemStack stack, GridExtractMode mode);
+    void onExtract(Rs2ItemStack stack, GridExtractMode mode);
 
-    void onItemUpdate(ItemStack template, int amount, StorageTracker.Entry trackerEntry);
+    void onItemUpdate(Rs2ItemStack template, long amount, StorageTracker.Entry trackerEntry);
 
     void onActiveChanged(boolean active);
 
-    void onScroll(ItemStack template, int slot, GridScrollMode mode);
+    void onScroll(Rs2ItemStack template, int slot, GridScrollMode mode);
 }

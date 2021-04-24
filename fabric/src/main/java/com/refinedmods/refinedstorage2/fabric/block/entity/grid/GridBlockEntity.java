@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.core.grid.GridSize;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
@@ -19,7 +20,6 @@ import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
@@ -93,12 +93,11 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         buf.writeInt(GridSettings.getSize(getSize()));
         buf.writeInt(RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().getId(getSearchBoxMode()));
 
-        Collection<ItemStack> stacks = getNetwork().getItemStorageChannel().getStacks();
+        Collection<Rs2ItemStack> stacks = getNetwork().getItemStorageChannel().getStacks();
 
         buf.writeInt(stacks.size());
         stacks.forEach(stack -> {
-            buf.writeItemStack(stack);
-            buf.writeInt(stack.getCount());
+            PacketUtil.writeItemStack(buf, stack, true);
             PacketUtil.writeTrackerEntry(buf, getNetwork().getItemStorageChannel().getTracker().getEntry(stack));
         });
     }

@@ -1,12 +1,12 @@
 package com.refinedmods.refinedstorage2.core.network.node;
 
-import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
+import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.util.Position;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RefinedStorage2Test
+@Rs2Test
 class StubNetworkNodeReferenceTest {
     @Test
     void Test_equal() {

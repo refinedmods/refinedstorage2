@@ -6,7 +6,7 @@ import java.util.function.Function;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 
 public enum GridSortingType {
-    QUANTITY((view) -> (a, b) -> Integer.compare(a.getCount(), b.getCount())),
+    QUANTITY((view) -> (a, b) -> Long.compare(a.getAmount(), b.getAmount())),
     NAME((view) -> (a, b) -> a.getName().compareTo(b.getName())),
     ID((view) -> (a, b) -> Integer.compare(a.getId(), b.getId())),
     LAST_MODIFIED((view) -> (a, b) -> {

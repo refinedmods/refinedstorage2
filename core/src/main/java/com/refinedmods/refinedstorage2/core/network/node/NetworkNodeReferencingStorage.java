@@ -24,12 +24,12 @@ public class NetworkNodeReferencingStorage<T> implements Storage<T>, Priority {
     }
 
     @Override
-    public Optional<T> extract(T template, int amount, Action action) {
+    public Optional<T> extract(T template, long amount, Action action) {
         return getStorage().extract(template, amount, action);
     }
 
     @Override
-    public Optional<T> insert(T template, int amount, Action action) {
+    public Optional<T> insert(T template, long amount, Action action) {
         return getStorage().insert(template, amount, action);
     }
 
@@ -39,7 +39,7 @@ public class NetworkNodeReferencingStorage<T> implements Storage<T>, Priority {
     }
 
     @Override
-    public int getStored() {
+    public long getStored() {
         return getStorage().getStored();
     }
 

@@ -3,29 +3,28 @@ package com.refinedmods.refinedstorage2.core.storage.disk;
 import java.util.Collection;
 import java.util.Optional;
 
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.util.Action;
-import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
-public class ItemDiskStorage implements StorageDisk<ItemStack> {
-    private final StackList<ItemStack> list = ItemStackList.create();
-    private final int capacity;
-    private int stored;
+public class ItemDiskStorage implements StorageDisk<Rs2ItemStack> {
+    private final StackList<Rs2ItemStack> list = ItemStackList.create();
+    private final long capacity;
+    private long stored;
 
-    public ItemDiskStorage(int capacity) {
+    public ItemDiskStorage(long capacity) {
         this.capacity = capacity;
     }
 
     @Override
-    public Optional<ItemStack> extract(ItemStack template, int amount, Action action) {
+    public Optional<Rs2ItemStack> extract(Rs2ItemStack template, long amount, Action action) {
         if (template.isEmpty() || amount <= 0) {
             throw new IllegalArgumentException("Invalid stack");
         }
 
         return list.get(template).map(stack -> {
-            if (amount > stack.getCount()) {
+            if (amount > stack.getAmount()) {
                 return extractCompletely(stack, action);
             } else {
                 return extractPartly(stack, amount, action);
@@ -33,28 +32,28 @@ public class ItemDiskStorage implements StorageDisk<ItemStack> {
         });
     }
 
-    private ItemStack extractPartly(ItemStack stack, int amount, Action action) {
+    private Rs2ItemStack extractPartly(Rs2ItemStack stack, long amount, Action action) {
         if (action == Action.EXECUTE) {
             list.remove(stack, amount);
             stored -= amount;
         }
 
-        ItemStack extracted = stack.copy();
-        extracted.setCount(amount);
+        Rs2ItemStack extracted = stack.copy();
+        extracted.setAmount(amount);
         return extracted;
     }
 
-    private ItemStack extractCompletely(ItemStack stack, Action action) {
+    private Rs2ItemStack extractCompletely(Rs2ItemStack stack, Action action) {
         if (action == Action.EXECUTE) {
-            list.remove(stack, stack.getCount());
-            stored -= stack.getCount();
+            list.remove(stack, stack.getAmount());
+            stored -= stack.getAmount();
         }
 
         return stack;
     }
 
     @Override
-    public Optional<ItemStack> insert(ItemStack template, int amount, Action action) {
+    public Optional<Rs2ItemStack> insert(Rs2ItemStack template, long amount, Action action) {
         if (template.isEmpty() || amount <= 0) {
             throw new IllegalArgumentException("Invalid stack");
         }
@@ -67,23 +66,22 @@ public class ItemDiskStorage implements StorageDisk<ItemStack> {
     }
 
     @Override
-    public Collection<ItemStack> getStacks() {
+    public Collection<Rs2ItemStack> getStacks() {
         return list.getAll();
     }
 
-    private Optional<ItemStack> insertPartly(ItemStack template, int amount, int remainder, Action action) {
+    private Optional<Rs2ItemStack> insertPartly(Rs2ItemStack template, long amount, long remainder, Action action) {
         if (action == Action.EXECUTE && amount > 0) {
             stored += amount;
             list.add(template, amount);
         }
 
-        ItemStack remainderStack = template.copy();
-        remainderStack.setCount(remainder);
+        Rs2ItemStack remainderStack = template.copy();
+        remainderStack.setAmount(remainder);
         return Optional.of(remainderStack);
     }
 
-    @NotNull
-    private Optional<ItemStack> insertCompletely(ItemStack template, int amount, Action action) {
+    private Optional<Rs2ItemStack> insertCompletely(Rs2ItemStack template, long amount, Action action) {
         if (action == Action.EXECUTE) {
             stored += amount;
             list.add(template, amount);
@@ -93,12 +91,12 @@ public class ItemDiskStorage implements StorageDisk<ItemStack> {
     }
 
     @Override
-    public int getStored() {
+    public long getStored() {
         return stored;
     }
 
     @Override
-    public int getCapacity() {
+    public long getCapacity() {
         return capacity;
     }
 }

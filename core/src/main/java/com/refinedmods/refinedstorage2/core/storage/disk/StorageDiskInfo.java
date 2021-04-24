@@ -3,19 +3,19 @@ package com.refinedmods.refinedstorage2.core.storage.disk;
 public class StorageDiskInfo {
     public static final StorageDiskInfo UNKNOWN = new StorageDiskInfo(0, 0);
 
-    private final int stored;
-    private final int capacity;
+    private final long stored;
+    private final long capacity;
 
-    public StorageDiskInfo(int stored, int capacity) {
+    public StorageDiskInfo(long stored, long capacity) {
         this.stored = stored;
         this.capacity = capacity;
     }
 
-    public int getStored() {
+    public long getStored() {
         return stored;
     }
 
-    public int getCapacity() {
+    public long getCapacity() {
         return capacity;
     }
 }

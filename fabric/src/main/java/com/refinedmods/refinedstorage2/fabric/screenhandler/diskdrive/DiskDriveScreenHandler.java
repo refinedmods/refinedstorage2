@@ -179,12 +179,12 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
         return (double) getStored() / (double) getCapacity();
     }
 
-    public int getCapacity() {
-        return getStorageDiskInfo().mapToInt(StorageDiskInfo::getCapacity).sum();
+    public long getCapacity() {
+        return getStorageDiskInfo().mapToLong(StorageDiskInfo::getCapacity).sum();
     }
 
-    public int getStored() {
-        return getStorageDiskInfo().mapToInt(StorageDiskInfo::getStored).sum();
+    public long getStored() {
+        return getStorageDiskInfo().mapToLong(StorageDiskInfo::getStored).sum();
     }
 
     private Stream<StorageDiskInfo> getStorageDiskInfo() {

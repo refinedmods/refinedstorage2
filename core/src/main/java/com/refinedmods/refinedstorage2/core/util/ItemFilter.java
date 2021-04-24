@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage2.core.util;
 
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.item.Rs2TagInsensitiveItemStackIdentifier;
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
-import net.minecraft.item.ItemStack;
 
-public class ItemFilter extends Filter<ItemStack> {
+public class ItemFilter extends Filter<Rs2ItemStack> {
     @Override
-    protected StackList<ItemStack> createList(boolean exact) {
-        return exact ? ItemStackList.create() : new ItemStackList<>(TagInsensitiveItemStackIdentifier::new);
+    protected StackList<Rs2ItemStack> createList(boolean exact) {
+        return exact ? ItemStackList.create() : new ItemStackList<>(Rs2TagInsensitiveItemStackIdentifier::new);
     }
 }

@@ -1,12 +1,12 @@
 package com.refinedmods.refinedstorage2.core.util;
 
-import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
+import com.refinedmods.refinedstorage2.core.Rs2Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RefinedStorage2Test
+@Rs2Test
 class ThrottleHelperTest {
     @Test
     void Test_should_throttle_correctly_with_single_key() {

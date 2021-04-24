@@ -1,16 +1,12 @@
-package com.refinedmods.refinedstorage2.core.util;
-
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+package com.refinedmods.refinedstorage2.core.item;
 
 import java.util.Objects;
 
-public class ItemStackIdentifier {
-    private final Item item;
-    private final CompoundTag tag;
+public class Rs2ItemStackIdentifier {
+    private final Rs2Item item;
+    private final Object tag;
 
-    public ItemStackIdentifier(ItemStack stack) {
+    public Rs2ItemStackIdentifier(Rs2ItemStack stack) {
         this.item = stack.getItem();
         this.tag = stack.getTag();
     }
@@ -19,7 +15,7 @@ public class ItemStackIdentifier {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ItemStackIdentifier that = (ItemStackIdentifier) o;
+        Rs2ItemStackIdentifier that = (Rs2ItemStackIdentifier) o;
         return Objects.equals(item, that.item) &&
                 Objects.equals(tag, that.tag);
     }

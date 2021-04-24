@@ -4,12 +4,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
-import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
+import com.refinedmods.refinedstorage2.core.Rs2Test;
+import com.refinedmods.refinedstorage2.core.item.ItemStubs;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -18,26 +18,26 @@ import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.asse
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RefinedStorage2Test
+@Rs2Test
 class CompositeItemStorageTest {
     @Test
     void Test_setting_sources_should_fill_list() {
         // Arrange
         ItemDiskStorage diskStorage1 = new ItemDiskStorage(10);
-        diskStorage1.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        diskStorage1.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         ItemDiskStorage diskStorage2 = new ItemDiskStorage(10);
-        diskStorage2.insert(new ItemStack(Items.GLASS), 5, Action.EXECUTE);
+        diskStorage2.insert(new Rs2ItemStack(ItemStubs.GLASS), 5, Action.EXECUTE);
 
         ItemDiskStorage diskStorage3 = new ItemDiskStorage(10);
-        diskStorage3.insert(new ItemStack(Items.DIAMOND), 7, Action.EXECUTE);
-        diskStorage3.insert(new ItemStack(Items.DIRT), 3, Action.EXECUTE);
+        diskStorage3.insert(new Rs2ItemStack(ItemStubs.DIAMOND), 7, Action.EXECUTE);
+        diskStorage3.insert(new Rs2ItemStack(ItemStubs.DIRT), 3, Action.EXECUTE);
 
         // Act
         CompositeItemStorage channel = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), ItemStackList.create());
 
         // Assert
-        assertItemStackListContents(channel.getStacks(), new ItemStack(Items.DIRT, 13), new ItemStack(Items.GLASS, 5), new ItemStack(Items.DIAMOND, 7));
+        assertItemStackListContents(channel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 13), new Rs2ItemStack(ItemStubs.GLASS, 5), new Rs2ItemStack(ItemStubs.DIAMOND, 7));
     }
 
     @Test
@@ -46,11 +46,11 @@ class CompositeItemStorageTest {
         CompositeItemStorage storage = new CompositeItemStorage(Collections.emptyList(), ItemStackList.create());
 
         // Act
-        Optional<ItemStack> remainder = storage.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder = storage.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         // Assert
         assertThat(remainder).isPresent();
-        assertItemStack(remainder.get(), new ItemStack(Items.DIRT, 10));
+        assertItemStack(remainder.get(), new Rs2ItemStack(ItemStubs.DIRT, 10));
     }
 
     @ParameterizedTest
@@ -62,15 +62,15 @@ class CompositeItemStorageTest {
         CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
 
         // Act
-        Optional<ItemStack> remainder = storage.insert(new ItemStack(Items.DIRT), 10, action);
+        Optional<Rs2ItemStack> remainder = storage.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, action);
 
         // Assert
         assertThat(remainder).isEmpty();
 
         if (action == Action.EXECUTE) {
-            assertItemStackListContents(diskStorage.getStacks(), new ItemStack(Items.DIRT, 10));
+            assertItemStackListContents(diskStorage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
 
-            assertItemStackListContents(storage.getStacks(), new ItemStack(Items.DIRT, 10));
+            assertItemStackListContents(storage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
             assertThat(storage.getStored()).isEqualTo(10);
         } else {
             assertItemStackListContents(diskStorage.getStacks());
@@ -89,16 +89,16 @@ class CompositeItemStorageTest {
         CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
 
         // Act
-        Optional<ItemStack> remainder = storage.insert(new ItemStack(Items.DIRT), 30, action);
+        Optional<Rs2ItemStack> remainder = storage.insert(new Rs2ItemStack(ItemStubs.DIRT), 30, action);
 
         // Assert
         assertThat(remainder).isPresent();
-        assertItemStack(remainder.get(), new ItemStack(Items.DIRT, 10));
+        assertItemStack(remainder.get(), new Rs2ItemStack(ItemStubs.DIRT, 10));
 
         if (action == Action.EXECUTE) {
-            assertItemStackListContents(diskStorage.getStacks(), new ItemStack(Items.DIRT, 20));
+            assertItemStackListContents(diskStorage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 20));
 
-            assertItemStackListContents(storage.getStacks(), new ItemStack(Items.DIRT, 20));
+            assertItemStackListContents(storage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 20));
             assertThat(storage.getStored()).isEqualTo(20);
         } else {
             assertItemStackListContents(diskStorage.getStacks());
@@ -119,17 +119,17 @@ class CompositeItemStorageTest {
         CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), ItemStackList.create());
 
         // Act
-        Optional<ItemStack> remainder = storage.insert(new ItemStack(Items.DIRT), 17, action);
+        Optional<Rs2ItemStack> remainder = storage.insert(new Rs2ItemStack(ItemStubs.DIRT), 17, action);
 
         // Assert
         assertThat(remainder).isEmpty();
 
         if (action == Action.EXECUTE) {
-            assertItemStackListContents(diskStorage1.getStacks(), new ItemStack(Items.DIRT, 5));
-            assertItemStackListContents(diskStorage2.getStacks(), new ItemStack(Items.DIRT, 10));
-            assertItemStackListContents(diskStorage3.getStacks(), new ItemStack(Items.DIRT, 2));
+            assertItemStackListContents(diskStorage1.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 5));
+            assertItemStackListContents(diskStorage2.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
+            assertItemStackListContents(diskStorage3.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 2));
 
-            assertItemStackListContents(storage.getStacks(), new ItemStack(Items.DIRT, 17));
+            assertItemStackListContents(storage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 17));
             assertThat(storage.getStored()).isEqualTo(17);
         } else {
             assertItemStackListContents(diskStorage1.getStacks());
@@ -152,18 +152,18 @@ class CompositeItemStorageTest {
         CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), ItemStackList.create());
 
         // Act
-        Optional<ItemStack> remainder = storage.insert(new ItemStack(Items.DIRT), 39, action);
+        Optional<Rs2ItemStack> remainder = storage.insert(new Rs2ItemStack(ItemStubs.DIRT), 39, action);
 
         // Assert
         assertThat(remainder).isPresent();
-        assertItemStack(remainder.get(), new ItemStack(Items.DIRT, 4));
+        assertItemStack(remainder.get(), new Rs2ItemStack(ItemStubs.DIRT, 4));
 
         if (action == Action.EXECUTE) {
-            assertItemStackListContents(diskStorage1.getStacks(), new ItemStack(Items.DIRT, 5));
-            assertItemStackListContents(diskStorage2.getStacks(), new ItemStack(Items.DIRT, 10));
-            assertItemStackListContents(diskStorage3.getStacks(), new ItemStack(Items.DIRT, 20));
+            assertItemStackListContents(diskStorage1.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 5));
+            assertItemStackListContents(diskStorage2.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
+            assertItemStackListContents(diskStorage3.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 20));
 
-            assertItemStackListContents(storage.getStacks(), new ItemStack(Items.DIRT, 35));
+            assertItemStackListContents(storage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 35));
             assertThat(storage.getStored()).isEqualTo(35);
         } else {
             assertItemStackListContents(diskStorage1.getStacks());
@@ -181,7 +181,7 @@ class CompositeItemStorageTest {
         CompositeItemStorage storage = new CompositeItemStorage(Collections.emptyList(), ItemStackList.create());
 
         // Act
-        Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        Optional<Rs2ItemStack> result = storage.extract(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         // Assert
         assertThat(result).isEmpty();
@@ -191,12 +191,12 @@ class CompositeItemStorageTest {
     void Test_extracting_without_item_present() {
         // Arrange
         ItemDiskStorage diskStorage = new ItemDiskStorage(10);
-        diskStorage.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
 
         // Act
-        Optional<ItemStack> result = storage.extract(new ItemStack(Items.GLASS), 10, Action.EXECUTE);
+        Optional<Rs2ItemStack> result = storage.extract(new Rs2ItemStack(ItemStubs.GLASS), 10, Action.EXECUTE);
 
         // Assert
         assertThat(result).isEmpty();
@@ -207,26 +207,26 @@ class CompositeItemStorageTest {
     void Test_single_source_partial_extract(Action action) {
         // Arrange
         ItemDiskStorage diskStorage = new ItemDiskStorage(10);
-        diskStorage.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
 
         // Act
-        Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 3, action);
+        Optional<Rs2ItemStack> result = storage.extract(new Rs2ItemStack(ItemStubs.DIRT), 3, action);
 
         // Assert
         assertThat(result).isPresent();
-        assertItemStack(result.get(), new ItemStack(Items.DIRT, 3));
+        assertItemStack(result.get(), new Rs2ItemStack(ItemStubs.DIRT, 3));
 
         if (action == Action.EXECUTE) {
-            assertItemStackListContents(diskStorage.getStacks(), new ItemStack(Items.DIRT, 7));
+            assertItemStackListContents(diskStorage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 7));
 
-            assertItemStackListContents(storage.getStacks(), new ItemStack(Items.DIRT, 7));
+            assertItemStackListContents(storage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 7));
             assertThat(storage.getStored()).isEqualTo(7);
         } else {
-            assertItemStackListContents(diskStorage.getStacks(), new ItemStack(Items.DIRT, 10));
+            assertItemStackListContents(diskStorage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
 
-            assertItemStackListContents(storage.getStacks(), new ItemStack(Items.DIRT, 10));
+            assertItemStackListContents(storage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
             assertThat(storage.getStored()).isEqualTo(10);
         }
     }
@@ -236,16 +236,16 @@ class CompositeItemStorageTest {
     void Test_single_source_full_extract(Action action) {
         // Arrange
         ItemDiskStorage diskStorage = new ItemDiskStorage(10);
-        diskStorage.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
 
         // Act
-        Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 10, action);
+        Optional<Rs2ItemStack> result = storage.extract(new Rs2ItemStack(ItemStubs.DIRT), 10, action);
 
         // Assert
         assertThat(result).isPresent();
-        assertItemStack(result.get(), new ItemStack(Items.DIRT, 10));
+        assertItemStack(result.get(), new Rs2ItemStack(ItemStubs.DIRT, 10));
 
         if (action == Action.EXECUTE) {
             assertItemStackListContents(diskStorage.getStacks());
@@ -253,9 +253,9 @@ class CompositeItemStorageTest {
             assertItemStackListContents(storage.getStacks());
             assertThat(storage.getStored()).isZero();
         } else {
-            assertItemStackListContents(diskStorage.getStacks(), new ItemStack(Items.DIRT, 10));
+            assertItemStackListContents(diskStorage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
 
-            assertItemStackListContents(storage.getStacks(), new ItemStack(Items.DIRT, 10));
+            assertItemStackListContents(storage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
             assertThat(storage.getStored()).isEqualTo(10);
         }
     }
@@ -265,16 +265,16 @@ class CompositeItemStorageTest {
     void Test_single_source_more_than_is_available_extract(Action action) {
         // Arrange
         ItemDiskStorage diskStorage = new ItemDiskStorage(10);
-        diskStorage.insert(new ItemStack(Items.DIRT), 4, Action.EXECUTE);
+        diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 4, Action.EXECUTE);
 
         CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
 
         // Act
-        Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 7, action);
+        Optional<Rs2ItemStack> result = storage.extract(new Rs2ItemStack(ItemStubs.DIRT), 7, action);
 
         // Assert
         assertThat(result).isPresent();
-        assertItemStack(result.get(), new ItemStack(Items.DIRT, 4));
+        assertItemStack(result.get(), new Rs2ItemStack(ItemStubs.DIRT, 4));
 
         if (action == Action.EXECUTE) {
             assertItemStackListContents(diskStorage.getStacks());
@@ -282,9 +282,9 @@ class CompositeItemStorageTest {
             assertItemStackListContents(storage.getStacks());
             assertThat(storage.getStored()).isZero();
         } else {
-            assertItemStackListContents(diskStorage.getStacks(), new ItemStack(Items.DIRT, 4));
+            assertItemStackListContents(diskStorage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 4));
 
-            assertItemStackListContents(storage.getStacks(), new ItemStack(Items.DIRT, 4));
+            assertItemStackListContents(storage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 4));
             assertThat(storage.getStored()).isEqualTo(4);
         }
     }
@@ -294,31 +294,31 @@ class CompositeItemStorageTest {
     void Test_multiple_source_partial_extract(Action action) {
         // Arrange
         ItemDiskStorage diskStorage1 = new ItemDiskStorage(10);
-        diskStorage1.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        diskStorage1.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         ItemDiskStorage diskStorage2 = new ItemDiskStorage(5);
-        diskStorage2.insert(new ItemStack(Items.DIRT), 3, Action.EXECUTE);
+        diskStorage2.insert(new Rs2ItemStack(ItemStubs.DIRT), 3, Action.EXECUTE);
 
         CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2), ItemStackList.create());
 
         // Act
-        Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 12, action);
+        Optional<Rs2ItemStack> result = storage.extract(new Rs2ItemStack(ItemStubs.DIRT), 12, action);
 
         // Assert
         assertThat(result).isPresent();
-        assertItemStack(result.get(), new ItemStack(Items.DIRT, 12));
+        assertItemStack(result.get(), new Rs2ItemStack(ItemStubs.DIRT, 12));
 
         if (action == Action.EXECUTE) {
             assertItemStackListContents(diskStorage1.getStacks());
-            assertItemStackListContents(diskStorage2.getStacks(), new ItemStack(Items.DIRT, 1));
+            assertItemStackListContents(diskStorage2.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 1));
 
-            assertItemStackListContents(storage.getStacks(), new ItemStack(Items.DIRT, 1));
+            assertItemStackListContents(storage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 1));
             assertThat(storage.getStored()).isEqualTo(1);
         } else {
-            assertItemStackListContents(diskStorage1.getStacks(), new ItemStack(Items.DIRT, 10));
-            assertItemStackListContents(diskStorage2.getStacks(), new ItemStack(Items.DIRT, 3));
+            assertItemStackListContents(diskStorage1.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
+            assertItemStackListContents(diskStorage2.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 3));
 
-            assertItemStackListContents(storage.getStacks(), new ItemStack(Items.DIRT, 13));
+            assertItemStackListContents(storage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 13));
             assertThat(storage.getStored()).isEqualTo(13);
         }
     }
@@ -328,19 +328,19 @@ class CompositeItemStorageTest {
     void Test_multiple_source_full_extract(Action action) {
         // Arrange
         ItemDiskStorage diskStorage1 = new ItemDiskStorage(10);
-        diskStorage1.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        diskStorage1.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         ItemDiskStorage diskStorage2 = new ItemDiskStorage(5);
-        diskStorage2.insert(new ItemStack(Items.DIRT), 3, Action.EXECUTE);
+        diskStorage2.insert(new Rs2ItemStack(ItemStubs.DIRT), 3, Action.EXECUTE);
 
         CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2), ItemStackList.create());
 
         // Act
-        Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 13, action);
+        Optional<Rs2ItemStack> result = storage.extract(new Rs2ItemStack(ItemStubs.DIRT), 13, action);
 
         // Assert
         assertThat(result).isPresent();
-        assertItemStack(result.get(), new ItemStack(Items.DIRT, 13));
+        assertItemStack(result.get(), new Rs2ItemStack(ItemStubs.DIRT, 13));
 
         if (action == Action.EXECUTE) {
             assertItemStackListContents(diskStorage1.getStacks());
@@ -349,10 +349,10 @@ class CompositeItemStorageTest {
             assertItemStackListContents(storage.getStacks());
             assertThat(storage.getStored()).isZero();
         } else {
-            assertItemStackListContents(diskStorage1.getStacks(), new ItemStack(Items.DIRT, 10));
-            assertItemStackListContents(diskStorage2.getStacks(), new ItemStack(Items.DIRT, 3));
+            assertItemStackListContents(diskStorage1.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
+            assertItemStackListContents(diskStorage2.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 3));
 
-            assertItemStackListContents(storage.getStacks(), new ItemStack(Items.DIRT, 13));
+            assertItemStackListContents(storage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 13));
             assertThat(storage.getStored()).isEqualTo(13);
         }
     }
@@ -362,19 +362,19 @@ class CompositeItemStorageTest {
     void Test_multiple_source_more_than_is_available_extract(Action action) {
         // Arrange
         ItemDiskStorage diskStorage1 = new ItemDiskStorage(10);
-        diskStorage1.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
+        diskStorage1.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         ItemDiskStorage diskStorage2 = new ItemDiskStorage(5);
-        diskStorage2.insert(new ItemStack(Items.DIRT), 3, Action.EXECUTE);
+        diskStorage2.insert(new Rs2ItemStack(ItemStubs.DIRT), 3, Action.EXECUTE);
 
         CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage1, diskStorage2), ItemStackList.create());
 
         // Act
-        Optional<ItemStack> result = storage.extract(new ItemStack(Items.DIRT), 30, action);
+        Optional<Rs2ItemStack> result = storage.extract(new Rs2ItemStack(ItemStubs.DIRT), 30, action);
 
         // Assert
         assertThat(result).isPresent();
-        assertItemStack(result.get(), new ItemStack(Items.DIRT, 13));
+        assertItemStack(result.get(), new Rs2ItemStack(ItemStubs.DIRT, 13));
 
         if (action == Action.EXECUTE) {
             assertItemStackListContents(diskStorage1.getStacks());
@@ -383,10 +383,10 @@ class CompositeItemStorageTest {
             assertItemStackListContents(storage.getStacks());
             assertThat(storage.getStored()).isZero();
         } else {
-            assertItemStackListContents(diskStorage1.getStacks(), new ItemStack(Items.DIRT, 10));
-            assertItemStackListContents(diskStorage2.getStacks(), new ItemStack(Items.DIRT, 3));
+            assertItemStackListContents(diskStorage1.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
+            assertItemStackListContents(diskStorage2.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 3));
 
-            assertItemStackListContents(storage.getStacks(), new ItemStack(Items.DIRT, 13));
+            assertItemStackListContents(storage.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 13));
             assertThat(storage.getStored()).isEqualTo(13);
         }
     }
@@ -394,35 +394,35 @@ class CompositeItemStorageTest {
     @Test
     void Test_prioritizing_when_inserting() {
         // Arrange
-        PrioritizedStorage<ItemStack> highestPriority = new PrioritizedStorage<>(10, new ItemDiskStorage(10));
-        PrioritizedStorage<ItemStack> lowestPriority = new PrioritizedStorage<>(5, new ItemDiskStorage(10));
+        PrioritizedStorage<Rs2ItemStack> highestPriority = new PrioritizedStorage<>(10, new ItemDiskStorage(10));
+        PrioritizedStorage<Rs2ItemStack> lowestPriority = new PrioritizedStorage<>(5, new ItemDiskStorage(10));
 
         // Act
         CompositeItemStorage channel = new CompositeItemStorage(Arrays.asList(lowestPriority, highestPriority), ItemStackList.create());
 
-        channel.insert(new ItemStack(Items.DIRT), 11, Action.EXECUTE);
+        channel.insert(new Rs2ItemStack(ItemStubs.DIRT), 11, Action.EXECUTE);
 
         // Assert
-        assertItemStackListContents(highestPriority.getStacks(), new ItemStack(Items.DIRT, 10));
-        assertItemStackListContents(lowestPriority.getStacks(), new ItemStack(Items.DIRT, 1));
+        assertItemStackListContents(highestPriority.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
+        assertItemStackListContents(lowestPriority.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 1));
     }
 
     @Test
     void Test_prioritizing_when_extracting() {
         // Arrange
-        PrioritizedStorage<ItemStack> highestPriority = new PrioritizedStorage<>(10, new ItemDiskStorage(10));
-        PrioritizedStorage<ItemStack> lowestPriority = new PrioritizedStorage<>(5, new ItemDiskStorage(10));
+        PrioritizedStorage<Rs2ItemStack> highestPriority = new PrioritizedStorage<>(10, new ItemDiskStorage(10));
+        PrioritizedStorage<Rs2ItemStack> lowestPriority = new PrioritizedStorage<>(5, new ItemDiskStorage(10));
 
-        highestPriority.insert(new ItemStack(Items.DIRT), 10, Action.EXECUTE);
-        lowestPriority.insert(new ItemStack(Items.DIRT), 5, Action.EXECUTE);
+        highestPriority.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
+        lowestPriority.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
 
         // Act
         CompositeItemStorage channel = new CompositeItemStorage(Arrays.asList(lowestPriority, highestPriority), ItemStackList.create());
 
-        channel.extract(new ItemStack(Items.DIRT), 11, Action.EXECUTE);
+        channel.extract(new Rs2ItemStack(ItemStubs.DIRT), 11, Action.EXECUTE);
 
         // Assert
         assertItemStackListContents(highestPriority.getStacks());
-        assertItemStackListContents(lowestPriority.getStacks(), new ItemStack(Items.DIRT, 4));
+        assertItemStackListContents(lowestPriority.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 4));
     }
 }

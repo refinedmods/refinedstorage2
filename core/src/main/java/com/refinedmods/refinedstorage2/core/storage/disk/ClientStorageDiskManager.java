@@ -29,7 +29,7 @@ public class ClientStorageDiskManager implements StorageDiskManager {
         throw new IllegalStateException("Server-side only");
     }
 
-    public void setInfo(UUID id, int stored, int capacity) {
+    public void setInfo(UUID id, long stored, long capacity) {
         info.put(id, new StorageDiskInfo(stored, capacity));
     }
 

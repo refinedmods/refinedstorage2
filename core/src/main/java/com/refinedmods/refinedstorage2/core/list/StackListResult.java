@@ -4,11 +4,11 @@ import java.util.UUID;
 
 public class StackListResult<T> {
     private final T stack;
-    private final int change;
+    private final long change;
     private final UUID id;
     private final boolean available;
 
-    public StackListResult(T stack, int change, UUID id, boolean available) {
+    public StackListResult(T stack, long change, UUID id, boolean available) {
         this.stack = stack;
         this.change = change;
         this.id = id;
@@ -19,7 +19,7 @@ public class StackListResult<T> {
         return stack;
     }
 
-    public int getChange() {
+    public long getChange() {
         return change;
     }
 

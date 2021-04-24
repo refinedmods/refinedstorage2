@@ -17,10 +17,9 @@ public class StorageDiskInfoResponsePacket implements ClientPlayNetworking.PlayC
     @Override
     public void receive(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         UUID id = buf.readUuid();
-        int stored = buf.readInt();
-        int capacity = buf.readInt();
-        client.execute(() -> {
-            ((ClientStorageDiskManager) RefinedStorage2Mod.API.getStorageDiskManager(client.world)).setInfo(id, stored, capacity);
-        });
+        long stored = buf.readLong();
+        long capacity = buf.readLong();
+
+        client.execute(() -> ((ClientStorageDiskManager) RefinedStorage2Mod.API.getStorageDiskManager(client.world)).setInfo(id, stored, capacity));
     }
 }

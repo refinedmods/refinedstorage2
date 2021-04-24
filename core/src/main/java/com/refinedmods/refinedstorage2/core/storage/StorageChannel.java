@@ -9,9 +9,9 @@ public interface StorageChannel<T> extends Storage<T> {
 
     void removeListener(StackListListener<T> listener);
 
-    Optional<T> extract(T template, int amount, Source source);
+    Optional<T> extract(T template, long amount, Source source);
 
-    Optional<T> insert(T template, int amount, Source source);
+    Optional<T> insert(T template, long amount, Source source);
 
     StorageTracker<T, ?> getTracker();
 

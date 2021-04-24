@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.core.util;
 
 import java.util.Objects;
 
-public class Position {
+public final class Position {
     public static final Position ORIGIN = new Position(0, 0, 0);
 
     private final int x;

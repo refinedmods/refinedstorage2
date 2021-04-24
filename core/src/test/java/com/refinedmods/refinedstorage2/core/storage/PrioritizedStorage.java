@@ -20,12 +20,12 @@ public class PrioritizedStorage<T> implements Storage<T>, Priority {
     }
 
     @Override
-    public Optional<T> extract(T template, int amount, Action action) {
+    public Optional<T> extract(T template, long amount, Action action) {
         return parent.extract(template, amount, action);
     }
 
     @Override
-    public Optional<T> insert(T template, int amount, Action action) {
+    public Optional<T> insert(T template, long amount, Action action) {
         return parent.insert(template, amount, action);
     }
 
@@ -35,7 +35,7 @@ public class PrioritizedStorage<T> implements Storage<T>, Priority {
     }
 
     @Override
-    public int getStored() {
+    public long getStored() {
         return parent.getStored();
     }
 }

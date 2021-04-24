@@ -5,9 +5,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface StackList<T> {
-    StackListResult<T> add(T template, int amount);
+    StackListResult<T> add(T template, long amount);
 
-    Optional<StackListResult<T>> remove(T template, int amount);
+    Optional<StackListResult<T>> remove(T template, long amount);
 
     Optional<T> get(T template);
 

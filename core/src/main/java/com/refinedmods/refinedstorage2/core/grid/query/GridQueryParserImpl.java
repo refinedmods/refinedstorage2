@@ -95,15 +95,15 @@ public class GridQueryParserImpl implements GridQueryParser {
 
     private static Predicate<GridStack<?>> parseOrBinOpNode(BinOpNode node) throws GridQueryParserException {
         return or(Arrays.asList(
-            parseNode(node.getLeft()),
-            parseNode(node.getRight())
+                parseNode(node.getLeft()),
+                parseNode(node.getRight())
         ));
     }
 
     private static Predicate<GridStack<?>> parseAndBinOpNode(BinOpNode node) throws GridQueryParserException {
         return and(Arrays.asList(
-            parseNode(node.getLeft()),
-            parseNode(node.getRight())
+                parseNode(node.getLeft()),
+                parseNode(node.getRight())
         ));
     }
 
@@ -134,13 +134,13 @@ public class GridQueryParserImpl implements GridQueryParser {
         } else if ("<=".equals(operator)) {
             return count(content, (actualCount, wantedCount) -> actualCount <= wantedCount);
         } else if ("=".equals(operator)) {
-            return count(content, Integer::equals);
+            return count(content, Long::equals);
         } else {
             throw new GridQueryParserException(content.getRange(), "Unsupported unary operator", null);
         }
     }
 
-    private static Predicate<GridStack<?>> count(Node node, BiPredicate<Integer, Integer> predicate) throws GridQueryParserException {
+    private static Predicate<GridStack<?>> count(Node node, BiPredicate<Long, Long> predicate) throws GridQueryParserException {
         if (!(node instanceof LiteralNode)) {
             throw new GridQueryParserException(node.getRange(), "Count filtering expects a literal", null);
         }
@@ -149,20 +149,20 @@ public class GridQueryParserImpl implements GridQueryParser {
             throw new GridQueryParserException(node.getRange(), "Count filtering expects an integer number", null);
         }
 
-        int wantedCount = Integer.parseInt(((LiteralNode) node).getToken().getContent());
+        long wantedCount = Long.parseLong(((LiteralNode) node).getToken().getContent());
 
-        return stack -> predicate.test(stack.getCount(), wantedCount);
+        return stack -> predicate.test(stack.getAmount(), wantedCount);
     }
 
     private static Predicate<GridStack<?>> mod(String name) {
         return stack -> stack.getModName().trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT))
-            || stack.getModId().trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT));
+                || stack.getModId().trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT));
     }
 
     private static Predicate<GridStack<?>> tag(String name) {
         return stack -> stack.getTags()
-            .stream()
-            .anyMatch(tag -> tag.trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT)));
+                .stream()
+                .anyMatch(tag -> tag.trim().toLowerCase(Locale.ROOT).contains(name.trim().toLowerCase(Locale.ROOT)));
     }
 
     private static Predicate<GridStack<?>> name(String name) {

@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.core.util;
 
-import com.refinedmods.refinedstorage2.core.grid.GridStack;
-import com.refinedmods.refinedstorage2.core.list.StackList;
-import net.minecraft.item.ItemStack;
-
 import java.util.Collection;
 import java.util.stream.Collectors;
+
+import com.refinedmods.refinedstorage2.core.grid.GridStack;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.list.StackList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,37 +13,37 @@ public class ItemStackAssertions {
     private ItemStackAssertions() {
     }
 
-    public static void assertItemStackListContents(StackList<ItemStack> actual, ItemStack... expected) {
+    public static void assertItemStackListContents(StackList<Rs2ItemStack> actual, Rs2ItemStack... expected) {
         assertItemStackListContents(actual.getAll(), expected);
     }
 
-    public static void assertItemStackListContents(Collection<ItemStack> actual, ItemStack... expected) {
-        ItemStackWrapper[] wrappers = new ItemStackWrapper[expected.length];
+    public static void assertItemStackListContents(Collection<Rs2ItemStack> actual, Rs2ItemStack... expected) {
+        Rs2ItemStackWrapper[] wrappers = new Rs2ItemStackWrapper[expected.length];
         for (int i = 0; i < expected.length; ++i) {
-            wrappers[i] = new ItemStackWrapper(expected[i]);
+            wrappers[i] = new Rs2ItemStackWrapper(expected[i]);
         }
 
-        assertThat(actual.stream().map(ItemStackWrapper::new).collect(Collectors.toList())).containsExactlyInAnyOrder(wrappers);
+        assertThat(actual.stream().map(Rs2ItemStackWrapper::new).collect(Collectors.toList())).containsExactlyInAnyOrder(wrappers);
     }
 
-    public static void assertItemGridStackListContents(Collection<GridStack<ItemStack>> actual, ItemStack... expected) {
+    public static void assertItemGridStackListContents(Collection<GridStack<Rs2ItemStack>> actual, Rs2ItemStack... expected) {
         assertItemStackListContents(actual.stream().map(GridStack::getStack).collect(Collectors.toList()), expected);
     }
 
-    public static void assertOrderedItemStackListContents(Collection<ItemStack> actual, ItemStack... expected) {
-        ItemStackWrapper[] wrappers = new ItemStackWrapper[expected.length];
+    public static void assertOrderedItemStackListContents(Collection<Rs2ItemStack> actual, Rs2ItemStack... expected) {
+        Rs2ItemStackWrapper[] wrappers = new Rs2ItemStackWrapper[expected.length];
         for (int i = 0; i < expected.length; ++i) {
-            wrappers[i] = new ItemStackWrapper(expected[i]);
+            wrappers[i] = new Rs2ItemStackWrapper(expected[i]);
         }
 
-        assertThat(actual.stream().map(ItemStackWrapper::new).collect(Collectors.toList())).containsExactly(wrappers);
+        assertThat(actual.stream().map(Rs2ItemStackWrapper::new).collect(Collectors.toList())).containsExactly(wrappers);
     }
 
-    public static void assertOrderedItemGridStackListContents(Collection<GridStack<ItemStack>> actual, ItemStack... expected) {
+    public static void assertOrderedItemGridStackListContents(Collection<GridStack<Rs2ItemStack>> actual, Rs2ItemStack... expected) {
         assertOrderedItemStackListContents(actual.stream().map(GridStack::getStack).collect(Collectors.toList()), expected);
     }
 
-    public static void assertItemStack(ItemStack actual, ItemStack expected) {
-        assertThat(new ItemStackWrapper(actual)).isEqualTo(new ItemStackWrapper(expected));
+    public static void assertItemStack(Rs2ItemStack actual, Rs2ItemStack expected) {
+        assertThat(new Rs2ItemStackWrapper(actual)).isEqualTo(new Rs2ItemStackWrapper(expected));
     }
 }

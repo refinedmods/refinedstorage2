@@ -3,9 +3,11 @@ package com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import alexiil.mc.lib.attributes.item.FixedItemInv;
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
@@ -21,6 +23,7 @@ import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntit
 import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
@@ -40,7 +43,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetworkNode> implements Storage<ItemStack>, RenderAttachmentBlockEntity, BlockEntityClientSerializable, NamedScreenHandlerFactory, BlockEntityWithDrops {
+public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetworkNode> implements Storage<Rs2ItemStack>, RenderAttachmentBlockEntity, BlockEntityClientSerializable, NamedScreenHandlerFactory, BlockEntityWithDrops {
     private final DiskDriveInventory diskInventory = new DiskDriveInventory();
     private final FullFixedItemInv filterInventory = new FullFixedItemInv(9);
     private DiskDriveState driveState;
@@ -153,7 +156,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     }
 
     public void setFilterTemplates(List<ItemStack> templates) {
-        node.setFilterTemplates(templates);
+        node.setFilterTemplates(templates.stream().map(ItemStacks::ofItemStack).collect(Collectors.toList()));
     }
 
     @Override
@@ -213,22 +216,22 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     }
 
     @Override
-    public Optional<ItemStack> extract(ItemStack template, int amount, Action action) {
+    public Optional<Rs2ItemStack> extract(Rs2ItemStack template, long amount, Action action) {
         return node.extract(template, amount, action);
     }
 
     @Override
-    public Optional<ItemStack> insert(ItemStack template, int amount, Action action) {
+    public Optional<Rs2ItemStack> insert(Rs2ItemStack template, long amount, Action action) {
         return node.insert(template, amount, action);
     }
 
     @Override
-    public Collection<ItemStack> getStacks() {
+    public Collection<Rs2ItemStack> getStacks() {
         return node.getStacks();
     }
 
     @Override
-    public int getStored() {
+    public long getStored() {
         return node.getStored();
     }
 

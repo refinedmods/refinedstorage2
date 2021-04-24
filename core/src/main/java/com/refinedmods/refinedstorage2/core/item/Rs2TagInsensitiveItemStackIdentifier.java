@@ -1,14 +1,11 @@
-package com.refinedmods.refinedstorage2.core.util;
+package com.refinedmods.refinedstorage2.core.item;
 
 import java.util.Objects;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+public class Rs2TagInsensitiveItemStackIdentifier {
+    private final Rs2Item item;
 
-public class TagInsensitiveItemStackIdentifier {
-    private final Item item;
-
-    public TagInsensitiveItemStackIdentifier(ItemStack stack) {
+    public Rs2TagInsensitiveItemStackIdentifier(Rs2ItemStack stack) {
         this.item = stack.getItem();
     }
 
@@ -16,7 +13,7 @@ public class TagInsensitiveItemStackIdentifier {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TagInsensitiveItemStackIdentifier that = (TagInsensitiveItemStackIdentifier) o;
+        Rs2TagInsensitiveItemStackIdentifier that = (Rs2TagInsensitiveItemStackIdentifier) o;
         return Objects.equals(item, that.item);
     }
 

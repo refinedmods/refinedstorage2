@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.core.query.parser;
 
 import java.util.List;
 
-import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
+import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.query.lexer.TokenType;
 import com.refinedmods.refinedstorage2.core.query.parser.node.Node;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RefinedStorage2Test
+@Rs2Test
 class ParserTest {
     private ParserBuilder builder;
 

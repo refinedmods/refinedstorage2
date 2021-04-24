@@ -3,17 +3,17 @@ package com.refinedmods.refinedstorage2.core.grid;
 import java.util.Collection;
 import java.util.Optional;
 
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.Source;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import com.refinedmods.refinedstorage2.core.util.Action;
-import net.minecraft.item.ItemStack;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StorageTrackerEntryPresentAssertionItemStorageChannel implements StorageChannel<ItemStack> {
+public class StorageTrackerEntryPresentAssertionItemStorageChannel implements StorageChannel<Rs2ItemStack> {
     private final ItemStorageChannel parent;
 
     public StorageTrackerEntryPresentAssertionItemStorageChannel(ItemStorageChannel parent) {
@@ -21,7 +21,7 @@ public class StorageTrackerEntryPresentAssertionItemStorageChannel implements St
     }
 
     @Override
-    public Optional<ItemStack> extract(ItemStack template, int amount, Action action) {
+    public Optional<Rs2ItemStack> extract(Rs2ItemStack template, long amount, Action action) {
         if (action == Action.EXECUTE) {
             Optional<StorageTracker.Entry> entry = getTracker().getEntry(template);
             assertThat(entry).isPresent();
@@ -31,7 +31,7 @@ public class StorageTrackerEntryPresentAssertionItemStorageChannel implements St
     }
 
     @Override
-    public Optional<ItemStack> insert(ItemStack template, int amount, Action action) {
+    public Optional<Rs2ItemStack> insert(Rs2ItemStack template, long amount, Action action) {
         if (action == Action.EXECUTE) {
             Optional<StorageTracker.Entry> entry = getTracker().getEntry(template);
             assertThat(entry).isPresent();
@@ -41,42 +41,42 @@ public class StorageTrackerEntryPresentAssertionItemStorageChannel implements St
     }
 
     @Override
-    public Collection<ItemStack> getStacks() {
+    public Collection<Rs2ItemStack> getStacks() {
         return parent.getStacks();
     }
 
     @Override
-    public int getStored() {
+    public long getStored() {
         return parent.getStored();
     }
 
     @Override
-    public void addListener(StackListListener<ItemStack> listener) {
+    public void addListener(StackListListener<Rs2ItemStack> listener) {
         parent.addListener(listener);
     }
 
     @Override
-    public void removeListener(StackListListener<ItemStack> listener) {
+    public void removeListener(StackListListener<Rs2ItemStack> listener) {
         parent.removeListener(listener);
     }
 
     @Override
-    public Optional<ItemStack> extract(ItemStack template, int amount, Source source) {
+    public Optional<Rs2ItemStack> extract(Rs2ItemStack template, long amount, Source source) {
         return parent.extract(template, amount, source);
     }
 
     @Override
-    public Optional<ItemStack> insert(ItemStack template, int amount, Source source) {
+    public Optional<Rs2ItemStack> insert(Rs2ItemStack template, long amount, Source source) {
         return parent.insert(template, amount, source);
     }
 
     @Override
-    public StorageTracker<ItemStack, ?> getTracker() {
+    public StorageTracker<Rs2ItemStack, ?> getTracker() {
         return parent.getTracker();
     }
 
     @Override
-    public Optional<ItemStack> get(ItemStack template) {
+    public Optional<Rs2ItemStack> get(Rs2ItemStack template) {
         return parent.get(template);
     }
 

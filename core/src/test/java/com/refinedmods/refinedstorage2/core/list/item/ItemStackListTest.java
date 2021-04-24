@@ -5,12 +5,11 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
+import com.refinedmods.refinedstorage2.core.Rs2Test;
+import com.refinedmods.refinedstorage2.core.item.ItemStubs;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
-import com.refinedmods.refinedstorage2.core.util.ItemStackIdentifier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -19,17 +18,17 @@ import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.asse
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RefinedStorage2Test
+@Rs2Test
 class ItemStackListTest {
-    private final ItemStackList<ItemStackIdentifier> list = ItemStackList.create();
+    private final ItemStackList<Rs2ItemStackIdentifier> list = ItemStackList.create();
 
     @Test
     void Test_adding_a_stack() {
         // Arrange
-        ItemStack stack = new ItemStack(Items.DIRT);
+        Rs2ItemStack stack = new Rs2ItemStack(ItemStubs.DIRT);
 
         // Act
-        StackListResult<ItemStack> result = list.add(stack, 10);
+        StackListResult<Rs2ItemStack> result = list.add(stack, 10);
 
         // Assert
         assertThat(result.getId()).isNotNull();
@@ -37,18 +36,18 @@ class ItemStackListTest {
         assertThat(result.getStack()).isNotSameAs(stack);
         assertThat(result.isAvailable()).isTrue();
 
-        assertItemStackListContents(list, new ItemStack(Items.DIRT, 10));
+        assertItemStackListContents(list, new Rs2ItemStack(ItemStubs.DIRT, 10));
     }
 
     @Test
     void Test_adding_multiple_stacks_with_same_item() {
         // Arrange
-        ItemStack stack1 = new ItemStack(Items.DIRT, 10);
-        ItemStack stack2 = new ItemStack(Items.DIRT, 5);
+        Rs2ItemStack stack1 = new Rs2ItemStack(ItemStubs.DIRT, 10);
+        Rs2ItemStack stack2 = new Rs2ItemStack(ItemStubs.DIRT, 5);
 
         // Act
-        StackListResult<ItemStack> result1 = list.add(stack1, 10);
-        StackListResult<ItemStack> result2 = list.add(stack2, 5);
+        StackListResult<Rs2ItemStack> result1 = list.add(stack1, 10);
+        StackListResult<Rs2ItemStack> result2 = list.add(stack2, 5);
 
         // Assert
         assertThat(result1.getId()).isNotNull();
@@ -61,20 +60,20 @@ class ItemStackListTest {
         assertThat(result2.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
         assertThat(result2.isAvailable()).isTrue();
 
-        assertItemStackListContents(list, new ItemStack(Items.DIRT, 15));
+        assertItemStackListContents(list, new Rs2ItemStack(ItemStubs.DIRT, 15));
     }
 
     @Test
     void Test_adding_multiple_stacks_with_different_items() {
         // Arrange
-        ItemStack stack1 = new ItemStack(Items.DIRT, 10);
-        ItemStack stack2 = new ItemStack(Items.DIRT, 5);
-        ItemStack stack3 = new ItemStack(Items.DIAMOND, 3);
+        Rs2ItemStack stack1 = new Rs2ItemStack(ItemStubs.DIRT, 10);
+        Rs2ItemStack stack2 = new Rs2ItemStack(ItemStubs.DIRT, 5);
+        Rs2ItemStack stack3 = new Rs2ItemStack(ItemStubs.DIAMOND, 3);
 
         // Act
-        StackListResult<ItemStack> result1 = list.add(stack1, 10);
-        StackListResult<ItemStack> result2 = list.add(stack2, 5);
-        StackListResult<ItemStack> result3 = list.add(stack3, 3);
+        StackListResult<Rs2ItemStack> result1 = list.add(stack1, 10);
+        StackListResult<Rs2ItemStack> result2 = list.add(stack2, 5);
+        StackListResult<Rs2ItemStack> result3 = list.add(stack3, 3);
 
         // Assert
         assertThat(result1.getId()).isNotNull();
@@ -92,28 +91,20 @@ class ItemStackListTest {
         assertThat(result3.getStack()).isNotSameAs(stack3);
         assertThat(result3.isAvailable()).isTrue();
 
-        assertItemStackListContents(list, new ItemStack(Items.DIRT, 15), new ItemStack(Items.DIAMOND, 3));
+        assertItemStackListContents(list, new Rs2ItemStack(ItemStubs.DIRT, 15), new Rs2ItemStack(ItemStubs.DIAMOND, 3));
     }
 
     @Test
     void Test_adding_multiple_stacks_with_same_item_but_different_tag() {
         // Arrange
-        CompoundTag tag1 = new CompoundTag();
-        tag1.putInt("hello", 1);
-        ItemStack stack1 = new ItemStack(Items.DIRT, 10);
-        stack1.setTag(tag1);
-
-        CompoundTag tag2 = new CompoundTag();
-        tag2.putInt("hello", 2);
-        ItemStack stack2 = new ItemStack(Items.DIRT, 5);
-        stack2.setTag(tag2);
-
-        ItemStack stack3 = new ItemStack(Items.DIAMOND, 3);
+        Rs2ItemStack stack1 = new Rs2ItemStack(ItemStubs.DIRT, 10, "hello 1");
+        Rs2ItemStack stack2 = new Rs2ItemStack(ItemStubs.DIRT, 5, "hello 2");
+        Rs2ItemStack stack3 = new Rs2ItemStack(ItemStubs.DIAMOND, 3);
 
         // Act
-        StackListResult<ItemStack> result1 = list.add(stack1, 10);
-        StackListResult<ItemStack> result2 = list.add(stack2, 5);
-        StackListResult<ItemStack> result3 = list.add(stack3, 3);
+        StackListResult<Rs2ItemStack> result1 = list.add(stack1, 10);
+        StackListResult<Rs2ItemStack> result2 = list.add(stack2, 5);
+        StackListResult<Rs2ItemStack> result3 = list.add(stack3, 3);
 
         // Assert
         assertThat(result1.getId()).isNotNull();
@@ -131,24 +122,21 @@ class ItemStackListTest {
         assertThat(result3.getStack()).isNotSameAs(stack3);
         assertThat(result3.isAvailable()).isTrue();
 
-        ItemStack expectedStack1 = new ItemStack(Items.DIRT, 10);
-        expectedStack1.setTag(tag1.copy());
-
-        ItemStack expectedStack2 = new ItemStack(Items.DIRT, 5);
-        expectedStack2.setTag(tag2.copy());
+        Rs2ItemStack expectedStack1 = new Rs2ItemStack(ItemStubs.DIRT, 10, "hello 1");
+        Rs2ItemStack expectedStack2 = new Rs2ItemStack(ItemStubs.DIRT, 5, "hello 2");
 
         assertItemStackListContents(
                 list,
                 expectedStack1,
                 expectedStack2,
-                new ItemStack(Items.DIAMOND, 3)
+                new Rs2ItemStack(ItemStubs.DIAMOND, 3)
         );
     }
 
     @Test
     void Test_adding_an_empty_stack() {
         // Arrange
-        ItemStack stack = ItemStack.EMPTY;
+        Rs2ItemStack stack = Rs2ItemStack.EMPTY;
 
         // Act
         Executable action = () -> list.add(stack, 10);
@@ -160,7 +148,7 @@ class ItemStackListTest {
     @Test
     void Test_adding_an_invalid_amount() {
         // Arrange
-        ItemStack stack = new ItemStack(Items.DIRT);
+        Rs2ItemStack stack = new Rs2ItemStack(ItemStubs.DIRT);
 
         // Act
         Executable action1 = () -> list.add(stack, 0);
@@ -174,10 +162,10 @@ class ItemStackListTest {
     @Test
     void Test_removing_a_stack_when_item_is_not_available() {
         // Arrange
-        ItemStack stack = new ItemStack(Items.DIRT, 10);
+        Rs2ItemStack stack = new Rs2ItemStack(ItemStubs.DIRT, 10);
 
         // Act
-        Optional<StackListResult<ItemStack>> result = list.remove(stack, 10);
+        Optional<StackListResult<Rs2ItemStack>> result = list.remove(stack, 10);
 
         // Assert
         assertThat(result).isEmpty();
@@ -186,14 +174,14 @@ class ItemStackListTest {
     @Test
     void Test_removing_a_stack_partly() {
         // Arrange
-        ItemStack stack1 = new ItemStack(Items.DIRT);
-        ItemStack stack2 = new ItemStack(Items.DIRT);
-        ItemStack stack3 = new ItemStack(Items.DIAMOND);
+        Rs2ItemStack stack1 = new Rs2ItemStack(ItemStubs.DIRT);
+        Rs2ItemStack stack2 = new Rs2ItemStack(ItemStubs.DIRT);
+        Rs2ItemStack stack3 = new Rs2ItemStack(ItemStubs.DIAMOND);
 
         // Act
-        StackListResult<ItemStack> result1 = list.add(stack1, 20);
+        StackListResult<Rs2ItemStack> result1 = list.add(stack1, 20);
         list.add(stack3, 6);
-        Optional<StackListResult<ItemStack>> result2 = list.remove(stack2, 5);
+        Optional<StackListResult<Rs2ItemStack>> result2 = list.remove(stack2, 5);
 
         // Assert
         assertThat(result2).isPresent();
@@ -202,20 +190,20 @@ class ItemStackListTest {
         assertThat(result2.get().getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
         assertThat(result2.get().isAvailable()).isTrue();
 
-        assertItemStackListContents(list, new ItemStack(Items.DIRT, 15), new ItemStack(Items.DIAMOND, 6));
+        assertItemStackListContents(list, new Rs2ItemStack(ItemStubs.DIRT, 15), new Rs2ItemStack(ItemStubs.DIAMOND, 6));
     }
 
     @Test
     void Test_removing_a_stack_completely() {
         // Arrange
-        ItemStack stack1 = new ItemStack(Items.DIRT, 20);
-        ItemStack stack2 = new ItemStack(Items.DIRT, 20);
-        ItemStack stack3 = new ItemStack(Items.DIAMOND, 6);
+        Rs2ItemStack stack1 = new Rs2ItemStack(ItemStubs.DIRT, 20);
+        Rs2ItemStack stack2 = new Rs2ItemStack(ItemStubs.DIRT, 20);
+        Rs2ItemStack stack3 = new Rs2ItemStack(ItemStubs.DIAMOND, 6);
 
         // Act
-        StackListResult<ItemStack> result1 = list.add(stack1, 20);
+        StackListResult<Rs2ItemStack> result1 = list.add(stack1, 20);
         list.add(stack3, 6);
-        Optional<StackListResult<ItemStack>> result2 = list.remove(stack2, 20);
+        Optional<StackListResult<Rs2ItemStack>> result2 = list.remove(stack2, 20);
 
         // Assert
         assertThat(result2).isPresent();
@@ -224,20 +212,20 @@ class ItemStackListTest {
         assertThat(result2.get().getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
         assertThat(result2.get().isAvailable()).isFalse();
 
-        assertItemStackListContents(list, new ItemStack(Items.DIAMOND, 6));
+        assertItemStackListContents(list, new Rs2ItemStack(ItemStubs.DIAMOND, 6));
     }
 
     @Test
     void Test_removing_a_stack_with_more_than_is_available() {
         // Arrange
-        ItemStack stack1 = new ItemStack(Items.DIRT, 20);
-        ItemStack stack2 = new ItemStack(Items.DIRT, 21);
-        ItemStack stack3 = new ItemStack(Items.DIAMOND, 6);
+        Rs2ItemStack stack1 = new Rs2ItemStack(ItemStubs.DIRT, 20);
+        Rs2ItemStack stack2 = new Rs2ItemStack(ItemStubs.DIRT, 21);
+        Rs2ItemStack stack3 = new Rs2ItemStack(ItemStubs.DIAMOND, 6);
 
         // Act
-        StackListResult<ItemStack> result1 = list.add(stack1, 20);
+        StackListResult<Rs2ItemStack> result1 = list.add(stack1, 20);
         list.add(stack3, 6);
-        Optional<StackListResult<ItemStack>> result2 = list.remove(stack2, 21);
+        Optional<StackListResult<Rs2ItemStack>> result2 = list.remove(stack2, 21);
 
         // Assert
         assertThat(result2).isPresent();
@@ -246,13 +234,13 @@ class ItemStackListTest {
         assertThat(result2.get().getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
         assertThat(result2.get().isAvailable()).isFalse();
 
-        assertItemStackListContents(list, new ItemStack(Items.DIAMOND, 6));
+        assertItemStackListContents(list, new Rs2ItemStack(ItemStubs.DIAMOND, 6));
     }
 
     @Test
     void Test_removing_an_empty_stack() {
         // Arrange
-        ItemStack stack = ItemStack.EMPTY;
+        Rs2ItemStack stack = Rs2ItemStack.EMPTY;
 
         // Act
         Executable action = () -> list.remove(stack, 10);
@@ -264,7 +252,7 @@ class ItemStackListTest {
     @Test
     void Test_removing_an_invalid_amount() {
         // Arrange
-        ItemStack stack = new ItemStack(Items.DIRT);
+        Rs2ItemStack stack = new Rs2ItemStack(ItemStubs.DIRT);
 
         // Act
         Executable action1 = () -> list.remove(stack, 0);
@@ -278,11 +266,11 @@ class ItemStackListTest {
     @Test
     void Test_adding_a_stack_should_make_it_findable_by_template() {
         // Arrange
-        ItemStack stack = new ItemStack(Items.DIRT, 6);
+        Rs2ItemStack stack = new Rs2ItemStack(ItemStubs.DIRT, 6);
 
         // Act
         list.add(stack, 6);
-        Optional<ItemStack> stackInList = list.get(stack);
+        Optional<Rs2ItemStack> stackInList = list.get(stack);
 
         // Assert
         assertThat(stackInList).isPresent();
@@ -292,11 +280,11 @@ class ItemStackListTest {
     @Test
     void Test_adding_a_stack_should_make_it_findable_by_id() {
         // Arrange
-        ItemStack stack = new ItemStack(Items.DIRT, 3);
+        Rs2ItemStack stack = new Rs2ItemStack(ItemStubs.DIRT, 3);
 
         // Act
-        StackListResult<ItemStack> result = list.add(stack, 3);
-        Optional<ItemStack> stackInList = list.get(result.getId());
+        StackListResult<Rs2ItemStack> result = list.add(stack, 3);
+        Optional<Rs2ItemStack> stackInList = list.get(result.getId());
 
         // Assert
         assertThat(stackInList).isPresent();
@@ -306,48 +294,48 @@ class ItemStackListTest {
     @Test
     void Test_removing_a_stack_partly_should_keep_it_findable_by_id() {
         // Arrange
-        ItemStack stack1 = new ItemStack(Items.DIRT, 10);
-        ItemStack stack2 = new ItemStack(Items.DIRT, 3);
+        Rs2ItemStack stack1 = new Rs2ItemStack(ItemStubs.DIRT, 10);
+        Rs2ItemStack stack2 = new Rs2ItemStack(ItemStubs.DIRT, 3);
 
         // Act
-        StackListResult<ItemStack> result1 = list.add(stack1, 10);
+        StackListResult<Rs2ItemStack> result1 = list.add(stack1, 10);
         list.remove(stack2, 3);
 
-        Optional<ItemStack> stack1InList = list.get(result1.getId());
+        Optional<Rs2ItemStack> stack1InList = list.get(result1.getId());
 
         // Assert
         assertThat(stack1InList).isPresent();
-        assertItemStack(stack1InList.get(), new ItemStack(Items.DIRT, 7));
+        assertItemStack(stack1InList.get(), new Rs2ItemStack(ItemStubs.DIRT, 7));
     }
 
     @Test
     void Test_removing_a_stack_partly_should_keep_it_findable_by_template() {
         // Arrange
-        ItemStack stack1 = new ItemStack(Items.DIRT, 10);
-        ItemStack stack2 = new ItemStack(Items.DIRT, 3);
+        Rs2ItemStack stack1 = new Rs2ItemStack(ItemStubs.DIRT, 10);
+        Rs2ItemStack stack2 = new Rs2ItemStack(ItemStubs.DIRT, 3);
 
         // Act
         list.add(stack1, 10);
         list.remove(stack2, 3);
 
-        Optional<ItemStack> stack1InList = list.get(stack1);
+        Optional<Rs2ItemStack> stack1InList = list.get(stack1);
 
         // Assert
         assertThat(stack1InList).isPresent();
-        assertItemStack(stack1InList.get(), new ItemStack(Items.DIRT, 7));
+        assertItemStack(stack1InList.get(), new Rs2ItemStack(ItemStubs.DIRT, 7));
     }
 
     @Test
     void Test_removing_a_stack_completely_should_not_make_it_findable_by_template() {
         // Arrange
-        ItemStack stack1 = new ItemStack(Items.DIRT, 10);
-        ItemStack stack2 = new ItemStack(Items.DIRT, 10);
+        Rs2ItemStack stack1 = new Rs2ItemStack(ItemStubs.DIRT, 10);
+        Rs2ItemStack stack2 = new Rs2ItemStack(ItemStubs.DIRT, 10);
 
         // Act
         list.add(stack1, 10);
         list.remove(stack2, 10);
 
-        Optional<ItemStack> stack1InList = list.get(stack1);
+        Optional<Rs2ItemStack> stack1InList = list.get(stack1);
 
         // Assert
         assertThat(stack1InList).isNotPresent();
@@ -356,14 +344,14 @@ class ItemStackListTest {
     @Test
     void Test_removing_a_stack_completely_should_not_make_it_findable_by_id() {
         // Arrange
-        ItemStack stack1 = new ItemStack(Items.DIRT, 10);
-        ItemStack stack2 = new ItemStack(Items.DIRT, 10);
+        Rs2ItemStack stack1 = new Rs2ItemStack(ItemStubs.DIRT, 10);
+        Rs2ItemStack stack2 = new Rs2ItemStack(ItemStubs.DIRT, 10);
 
         // Act
-        StackListResult<ItemStack> result1 = list.add(stack1, 10);
+        StackListResult<Rs2ItemStack> result1 = list.add(stack1, 10);
         list.remove(stack2, 10);
 
-        Optional<ItemStack> stack1InList = list.get(result1.getId());
+        Optional<Rs2ItemStack> stack1InList = list.get(result1.getId());
 
         // Assert
         assertThat(stack1InList).isNotPresent();
@@ -372,22 +360,22 @@ class ItemStackListTest {
     @Test
     void Test_clearing_list() {
         // Arrange
-        ItemStack stack1 = new ItemStack(Items.DIRT, 10);
-        ItemStack stack2 = new ItemStack(Items.GLASS, 5);
+        Rs2ItemStack stack1 = new Rs2ItemStack(ItemStubs.DIRT, 10);
+        Rs2ItemStack stack2 = new Rs2ItemStack(ItemStubs.GLASS, 5);
 
         UUID id1 = list.add(stack1, 10).getId();
         UUID id2 = list.add(stack2, 5).getId();
 
-        Collection<ItemStack> listContentsBeforeClear = new ArrayList<>(list.getAll());
-        Optional<ItemStack> stack1ByIdBeforeClear = list.get(id1);
-        Optional<ItemStack> stack2ByIdBeforeClear = list.get(id2);
+        Collection<Rs2ItemStack> listContentsBeforeClear = new ArrayList<>(list.getAll());
+        Optional<Rs2ItemStack> stack1ByIdBeforeClear = list.get(id1);
+        Optional<Rs2ItemStack> stack2ByIdBeforeClear = list.get(id2);
 
         // Act
         list.clear();
 
-        Collection<ItemStack> listContentsAfterClear = list.getAll();
-        Optional<ItemStack> stack1ByIdAfterClear = list.get(id1);
-        Optional<ItemStack> stack2ByIdAfterClear = list.get(id2);
+        Collection<Rs2ItemStack> listContentsAfterClear = list.getAll();
+        Optional<Rs2ItemStack> stack1ByIdAfterClear = list.get(id1);
+        Optional<Rs2ItemStack> stack2ByIdAfterClear = list.get(id2);
 
         // Assert
         assertThat(listContentsBeforeClear).hasSize(2);

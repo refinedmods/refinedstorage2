@@ -3,12 +3,13 @@ package com.refinedmods.refinedstorage2.fabric.util;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import com.refinedmods.refinedstorage2.core.item.Rs2Item;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -30,31 +31,40 @@ public class PacketUtil {
         ServerPlayNetworking.send(playerEntity, id, buf);
     }
 
-    public static void writeItemStackWithoutCount(PacketByteBuf buf, ItemStack stack) {
+    public static void writeItemStack(PacketByteBuf buf, Rs2ItemStack stack, boolean withCount) {
         if (stack.isEmpty()) {
             buf.writeBoolean(false);
         } else {
             buf.writeBoolean(true);
-            Item item = stack.getItem();
-            buf.writeVarInt(Item.getRawId(item));
+
+            Rs2Item item = stack.getItem();
+            buf.writeVarInt(item.getId());
+
+            if (withCount) {
+                buf.writeLong(stack.getAmount());
+            }
 
             CompoundTag compoundTag = null;
-            if (item.isDamageable() || item.shouldSyncTagToClient()) {
-                compoundTag = stack.getTag();
+            if (stack.getTag() != null) {
+                compoundTag = (CompoundTag) stack.getTag();
             }
 
             buf.writeCompoundTag(compoundTag);
         }
     }
 
-    public static ItemStack readItemStackWithoutCount(PacketByteBuf buf) {
+    public static Rs2ItemStack readItemStack(PacketByteBuf buf, boolean withCount) {
         if (!buf.readBoolean()) {
-            return ItemStack.EMPTY;
+            return Rs2ItemStack.EMPTY;
         } else {
             int id = buf.readVarInt();
-            ItemStack itemStack = new ItemStack(Item.byRawId(id), 1);
-            itemStack.setTag(buf.readCompoundTag());
-            return itemStack;
+            long amount = 1;
+
+            if (withCount) {
+                amount = buf.readLong();
+            }
+
+            return new Rs2ItemStack(ItemStacks.ofItem(Item.byRawId(id)), amount, buf.readCompoundTag());
         }
     }
 

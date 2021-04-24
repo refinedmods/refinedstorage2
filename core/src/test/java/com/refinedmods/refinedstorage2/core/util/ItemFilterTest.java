@@ -3,15 +3,14 @@ package com.refinedmods.refinedstorage2.core.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import com.refinedmods.refinedstorage2.core.Rs2Test;
+import com.refinedmods.refinedstorage2.core.item.ItemStubs;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RefinedStorage2Test
+@Rs2Test
 class ItemFilterTest {
     @Test
     void Test_defaults() {
@@ -29,7 +28,7 @@ class ItemFilterTest {
         ItemFilter filter = new ItemFilter();
 
         // Act
-        boolean allowed = filter.isAllowed(new ItemStack(Items.DIRT));
+        boolean allowed = filter.isAllowed(new Rs2ItemStack(ItemStubs.DIRT));
 
         // Assert
         assertThat(allowed).isTrue();
@@ -43,7 +42,7 @@ class ItemFilterTest {
         filter.setMode(FilterMode.ALLOW);
 
         // Act
-        boolean allowed = filter.isAllowed(new ItemStack(Items.DIRT));
+        boolean allowed = filter.isAllowed(new Rs2ItemStack(ItemStubs.DIRT));
 
         // Assert
         assertThat(allowed).isFalse();
@@ -56,13 +55,13 @@ class ItemFilterTest {
 
         filter.setMode(FilterMode.ALLOW);
         filter.setExact(true);
-        setTemplates(filter, new ItemStack(Items.DIRT), new ItemStack(Items.STONE));
+        setTemplates(filter, new Rs2ItemStack(ItemStubs.DIRT), new Rs2ItemStack(ItemStubs.STONE));
 
         // Act
-        boolean allowsDirt = filter.isAllowed(new ItemStack(Items.DIRT));
-        boolean allowsDirtWithTag = filter.isAllowed(applyTag(new ItemStack(Items.DIRT)));
-        boolean allowsStone = filter.isAllowed(new ItemStack(Items.STONE));
-        boolean allowsSponge = filter.isAllowed(new ItemStack(Items.SPONGE));
+        boolean allowsDirt = filter.isAllowed(new Rs2ItemStack(ItemStubs.DIRT));
+        boolean allowsDirtWithTag = filter.isAllowed(applyTag(new Rs2ItemStack(ItemStubs.DIRT)));
+        boolean allowsStone = filter.isAllowed(new Rs2ItemStack(ItemStubs.STONE));
+        boolean allowsSponge = filter.isAllowed(new Rs2ItemStack(ItemStubs.SPONGE));
 
         // Assert
         assertThat(allowsDirt).isTrue();
@@ -77,13 +76,13 @@ class ItemFilterTest {
         ItemFilter filter = new ItemFilter();
 
         filter.setExact(true);
-        setTemplates(filter, new ItemStack(Items.DIRT), new ItemStack(Items.STONE));
+        setTemplates(filter, new Rs2ItemStack(ItemStubs.DIRT), new Rs2ItemStack(ItemStubs.STONE));
 
         // Act
-        boolean allowsDirt = filter.isAllowed(new ItemStack(Items.DIRT));
-        boolean allowsDirtWithTag = filter.isAllowed(applyTag(new ItemStack(Items.DIRT)));
-        boolean allowsStone = filter.isAllowed(new ItemStack(Items.STONE));
-        boolean allowsSponge = filter.isAllowed(new ItemStack(Items.SPONGE));
+        boolean allowsDirt = filter.isAllowed(new Rs2ItemStack(ItemStubs.DIRT));
+        boolean allowsDirtWithTag = filter.isAllowed(applyTag(new Rs2ItemStack(ItemStubs.DIRT)));
+        boolean allowsStone = filter.isAllowed(new Rs2ItemStack(ItemStubs.STONE));
+        boolean allowsSponge = filter.isAllowed(new Rs2ItemStack(ItemStubs.SPONGE));
 
         // Assert
         assertThat(allowsDirt).isFalse();
@@ -99,13 +98,13 @@ class ItemFilterTest {
 
         filter.setMode(FilterMode.ALLOW);
         filter.setExact(false);
-        setTemplates(filter, new ItemStack(Items.DIRT), new ItemStack(Items.STONE));
+        setTemplates(filter, new Rs2ItemStack(ItemStubs.DIRT), new Rs2ItemStack(ItemStubs.STONE));
 
         // Act
-        boolean allowsDirt = filter.isAllowed(new ItemStack(Items.DIRT));
-        boolean allowsDirtWithTag = filter.isAllowed(applyTag(new ItemStack(Items.DIRT)));
-        boolean allowsStone = filter.isAllowed(new ItemStack(Items.STONE));
-        boolean allowsSponge = filter.isAllowed(new ItemStack(Items.SPONGE));
+        boolean allowsDirt = filter.isAllowed(new Rs2ItemStack(ItemStubs.DIRT));
+        boolean allowsDirtWithTag = filter.isAllowed(applyTag(new Rs2ItemStack(ItemStubs.DIRT)));
+        boolean allowsStone = filter.isAllowed(new Rs2ItemStack(ItemStubs.STONE));
+        boolean allowsSponge = filter.isAllowed(new Rs2ItemStack(ItemStubs.SPONGE));
 
         // Assert
         assertThat(allowsDirt).isTrue();
@@ -120,13 +119,13 @@ class ItemFilterTest {
         ItemFilter filter = new ItemFilter();
 
         filter.setExact(false);
-        setTemplates(filter, new ItemStack(Items.DIRT), new ItemStack(Items.STONE));
+        setTemplates(filter, new Rs2ItemStack(ItemStubs.DIRT), new Rs2ItemStack(ItemStubs.STONE));
 
         // Act
-        boolean allowsDirt = filter.isAllowed(new ItemStack(Items.DIRT));
-        boolean allowsDirtWithTag = filter.isAllowed(applyTag(new ItemStack(Items.DIRT)));
-        boolean allowsStone = filter.isAllowed(new ItemStack(Items.STONE));
-        boolean allowsSponge = filter.isAllowed(new ItemStack(Items.SPONGE));
+        boolean allowsDirt = filter.isAllowed(new Rs2ItemStack(ItemStubs.DIRT));
+        boolean allowsDirtWithTag = filter.isAllowed(applyTag(new Rs2ItemStack(ItemStubs.DIRT)));
+        boolean allowsStone = filter.isAllowed(new Rs2ItemStack(ItemStubs.STONE));
+        boolean allowsSponge = filter.isAllowed(new Rs2ItemStack(ItemStubs.SPONGE));
 
         // Assert
         assertThat(allowsDirt).isFalse();
@@ -141,17 +140,17 @@ class ItemFilterTest {
         ItemFilter filter = new ItemFilter();
 
         // Act
-        setTemplates(filter, new ItemStack(Items.STONE));
+        setTemplates(filter, new Rs2ItemStack(ItemStubs.STONE));
 
-        boolean allowsDirt = filter.isAllowed(new ItemStack(Items.DIRT));
-        boolean allowsStone = filter.isAllowed(new ItemStack(Items.STONE));
-        boolean allowsSponge = filter.isAllowed(new ItemStack(Items.SPONGE));
+        boolean allowsDirt = filter.isAllowed(new Rs2ItemStack(ItemStubs.DIRT));
+        boolean allowsStone = filter.isAllowed(new Rs2ItemStack(ItemStubs.STONE));
+        boolean allowsSponge = filter.isAllowed(new Rs2ItemStack(ItemStubs.SPONGE));
 
-        setTemplates(filter, new ItemStack(Items.SPONGE), new ItemStack(Items.DIRT));
+        setTemplates(filter, new Rs2ItemStack(ItemStubs.SPONGE), new Rs2ItemStack(ItemStubs.DIRT));
 
-        boolean allowsDirtAfter = filter.isAllowed(new ItemStack(Items.DIRT));
-        boolean allowsStoneAfter = filter.isAllowed(new ItemStack(Items.STONE));
-        boolean allowsSpongeAfter = filter.isAllowed(new ItemStack(Items.SPONGE));
+        boolean allowsDirtAfter = filter.isAllowed(new Rs2ItemStack(ItemStubs.DIRT));
+        boolean allowsStoneAfter = filter.isAllowed(new Rs2ItemStack(ItemStubs.STONE));
+        boolean allowsSpongeAfter = filter.isAllowed(new Rs2ItemStack(ItemStubs.SPONGE));
 
         // Assert
         assertThat(allowsDirt).isTrue();
@@ -168,16 +167,16 @@ class ItemFilterTest {
         // Arrange
         ItemFilter filter = new ItemFilter();
 
-        setTemplates(filter, new ItemStack(Items.STONE));
+        setTemplates(filter, new Rs2ItemStack(ItemStubs.STONE));
 
         // Act
-        boolean allowsStone = filter.isAllowed(new ItemStack(Items.STONE));
-        boolean allowsStoneWithTag = filter.isAllowed(applyTag(new ItemStack(Items.STONE)));
+        boolean allowsStone = filter.isAllowed(new Rs2ItemStack(ItemStubs.STONE));
+        boolean allowsStoneWithTag = filter.isAllowed(applyTag(new Rs2ItemStack(ItemStubs.STONE)));
 
         filter.setExact(false);
 
-        boolean allowsStoneAfter = filter.isAllowed(new ItemStack(Items.STONE));
-        boolean allowsStoneWithTagAfter = filter.isAllowed(applyTag(new ItemStack(Items.STONE)));
+        boolean allowsStoneAfter = filter.isAllowed(new Rs2ItemStack(ItemStubs.STONE));
+        boolean allowsStoneWithTagAfter = filter.isAllowed(applyTag(new Rs2ItemStack(ItemStubs.STONE)));
 
         // Assert
         assertThat(allowsStone).isFalse();
@@ -187,13 +186,12 @@ class ItemFilterTest {
         assertThat(allowsStoneWithTagAfter).isFalse();
     }
 
-    private void setTemplates(ItemFilter filter, ItemStack... templates) {
+    private void setTemplates(ItemFilter filter, Rs2ItemStack... templates) {
         filter.setTemplates(new ArrayList<>(Arrays.asList(templates)));
     }
 
-    private ItemStack applyTag(ItemStack stack) {
-        stack.setTag(new CompoundTag());
-        stack.getTag().putString("bla", "bla");
+    private Rs2ItemStack applyTag(Rs2ItemStack stack) {
+        stack.setTag("bla");
         return stack;
     }
 }

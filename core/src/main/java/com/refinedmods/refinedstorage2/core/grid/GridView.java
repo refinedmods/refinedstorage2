@@ -23,13 +23,13 @@ public interface GridView<T> {
 
     GridSortingDirection getSortingDirection();
 
-    void loadStack(T template, int amount, StorageTracker.Entry trackerEntry);
+    void loadStack(T template, long amount, StorageTracker.Entry trackerEntry);
 
     Optional<StorageTracker.Entry> getTrackerEntry(Object template);
 
     void sort();
 
-    void onChange(T template, int amount, StorageTracker.Entry trackerEntry);
+    void onChange(T template, long amount, StorageTracker.Entry trackerEntry);
 
     List<GridStack<T>> getStacks();
 }
