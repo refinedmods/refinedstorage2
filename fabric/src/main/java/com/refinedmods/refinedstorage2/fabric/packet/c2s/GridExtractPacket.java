@@ -3,8 +3,9 @@ package com.refinedmods.refinedstorage2.fabric.packet.c2s;
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
+
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
@@ -15,7 +16,21 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandler {
-    public static final Identifier ID = RefinedStorage2Mod.createIdentifier("grid_extract");
+    public static final Identifier ID = Rs2Mod.createIdentifier("grid_extract");
+
+    public static void writeMode(PacketByteBuf buf, GridExtractMode mode) {
+        switch (mode) {
+            case CURSOR_HALF:
+                buf.writeByte(0);
+                break;
+            case CURSOR_STACK:
+                buf.writeByte(1);
+                break;
+            case PLAYER_INVENTORY_STACK:
+                buf.writeByte(2);
+                break;
+        }
+    }
 
     @Override
     public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
@@ -39,19 +54,5 @@ public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandle
             return GridExtractMode.PLAYER_INVENTORY_STACK;
         }
         return GridExtractMode.PLAYER_INVENTORY_STACK;
-    }
-
-    public static void writeMode(PacketByteBuf buf, GridExtractMode mode) {
-        switch (mode) {
-            case CURSOR_HALF:
-                buf.writeByte(0);
-                break;
-            case CURSOR_STACK:
-                buf.writeByte(1);
-                break;
-            case PLAYER_INVENTORY_STACK:
-                buf.writeByte(2);
-                break;
-        }
     }
 }

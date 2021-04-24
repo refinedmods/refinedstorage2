@@ -1,25 +1,25 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "SES",
-    "GRG",
-    "SGS"
-  ],
-  "key": {
-    "S": {
-      "item": "refinedstorage2:silicon"
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "SES",
+        "GRG",
+        "SGS"
+    ],
+    "key": {
+        "S": {
+            "item": "refinedstorage2:silicon"
+        },
+        "E": {
+            "item": "refinedstorage2:quartz_enriched_iron"
+        },
+        "G": {
+            "item": "minecraft:glass"
+        },
+        "R": {
+            "item": "minecraft:redstone"
+        }
     },
-    "E": {
-      "item": "refinedstorage2:quartz_enriched_iron"
-    },
-    "G": {
-      "item": "minecraft:glass"
-    },
-    "R": {
-      "item": "minecraft:redstone"
+    "result": {
+        "item": "refinedstorage2:1k_storage_part"
     }
-  },
-  "result": {
-    "item": "refinedstorage2:1k_storage_part"
-  }
 }

@@ -1,13 +1,14 @@
 package com.refinedmods.refinedstorage2.fabric.screen.widget;
 
+import com.refinedmods.refinedstorage2.core.util.FilterMode;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.FilterModeAccessor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import com.refinedmods.refinedstorage2.core.util.FilterMode;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
-import com.refinedmods.refinedstorage2.fabric.screenhandler.FilterModeAccessor;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -27,15 +28,15 @@ public class FilterModeSideButtonWidget extends SideButtonWidget {
         this.allowModeTooltip = calculateTooltip(FilterMode.ALLOW);
     }
 
-    private List<Text> calculateTooltip(FilterMode filterMode) {
-        List<Text> lines = new ArrayList<>();
-        lines.add(RefinedStorage2Mod.createTranslation("gui", "filter_mode"));
-        lines.add(RefinedStorage2Mod.createTranslation("gui", "filter_mode." + filterMode.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
-        return lines;
-    }
-
     private static PressAction createPressAction(FilterModeAccessor filterModeAccessor) {
         return btn -> filterModeAccessor.setFilterMode(filterModeAccessor.getFilterMode().toggle());
+    }
+
+    private List<Text> calculateTooltip(FilterMode filterMode) {
+        List<Text> lines = new ArrayList<>();
+        lines.add(Rs2Mod.createTranslation("gui", "filter_mode"));
+        lines.add(Rs2Mod.createTranslation("gui", "filter_mode." + filterMode.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
+        return lines;
     }
 
     @Override

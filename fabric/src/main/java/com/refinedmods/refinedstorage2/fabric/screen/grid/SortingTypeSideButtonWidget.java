@@ -1,5 +1,11 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
+import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
+import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -7,11 +13,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
-import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
-import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -29,15 +30,15 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
         Arrays.stream(GridSortingType.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private List<Text> calculateTooltip(GridSortingType type) {
-        List<Text> lines = new ArrayList<>();
-        lines.add(RefinedStorage2Mod.createTranslation("gui", "grid.sorting.type"));
-        lines.add(RefinedStorage2Mod.createTranslation("gui", "grid.sorting.type." + type.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
-        return lines;
-    }
-
     private static PressAction createPressAction(GridScreenHandler screenHandler) {
         return btn -> screenHandler.setSortingType(screenHandler.getSortingType().toggle());
+    }
+
+    private List<Text> calculateTooltip(GridSortingType type) {
+        List<Text> lines = new ArrayList<>();
+        lines.add(Rs2Mod.createTranslation("gui", "grid.sorting.type"));
+        lines.add(Rs2Mod.createTranslation("gui", "grid.sorting.type." + type.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
+        return lines;
     }
 
     @Override

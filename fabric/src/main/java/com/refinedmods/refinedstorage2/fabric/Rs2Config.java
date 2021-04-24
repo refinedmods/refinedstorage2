@@ -5,10 +5,18 @@ import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
 
-@Config(name = RefinedStorage2Mod.ID)
-public class RefinedStorage2Config implements ConfigData {
+@Config(name = Rs2Mod.ID)
+public class Rs2Config implements ConfigData {
     @ConfigEntry.Gui.CollapsibleObject
     private Grid grid = new Grid();
+
+    public static Rs2Config get() {
+        return AutoConfig.getConfigHolder(Rs2Config.class).getConfig();
+    }
+
+    public Grid getGrid() {
+        return grid;
+    }
 
     public static class Grid {
         private boolean largeFont = false;
@@ -41,13 +49,5 @@ public class RefinedStorage2Config implements ConfigData {
         public boolean isRememberSearchQuery() {
             return rememberSearchQuery;
         }
-    }
-
-    public Grid getGrid() {
-        return grid;
-    }
-
-    public static RefinedStorage2Config get() {
-        return AutoConfig.getConfigHolder(RefinedStorage2Config.class).getConfig();
     }
 }

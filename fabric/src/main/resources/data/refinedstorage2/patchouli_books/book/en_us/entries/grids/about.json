@@ -1,15 +1,15 @@
 {
-  "name": "book.refinedstorage2.entry.grids.about.title",
-  "category": "refinedstorage2:grids",
-  "icon": "refinedstorage2:grid",
-  "pages": [
-    {
-      "type": "text",
-      "text": "book.refinedstorage2.entry.grids.about.line0"
-    },
-    {
-      "type": "crafting",
-      "recipe": "refinedstorage2:grid"
-    }
-  ]
+    "name": "book.refinedstorage2.entry.grids.about.title",
+    "category": "refinedstorage2:grids",
+    "icon": "refinedstorage2:grid",
+    "pages": [
+        {
+            "type": "text",
+            "text": "book.refinedstorage2.entry.grids.about.line0"
+        },
+        {
+            "type": "crafting",
+            "recipe": "refinedstorage2:grid"
+        }
+    ]
 }

@@ -1,7 +1,7 @@
 {
-  "variants": {
-    "": {
-      "model": "refinedstorage2:block/disk_drive"
+    "variants": {
+        "": {
+            "model": "refinedstorage2:block/disk_drive"
+        }
     }
-  }
 }

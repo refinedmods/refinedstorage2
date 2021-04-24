@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.util;
 
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 
 import net.minecraft.text.MutableText;
 
@@ -19,20 +19,20 @@ public class LastModifiedUtil {
         long diff = System.currentTimeMillis() - time;
 
         if (diff < SECOND * 10) {
-            return RefinedStorage2Mod.createTranslation("misc", "last_modified.just_now", name);
+            return Rs2Mod.createTranslation("misc", "last_modified.just_now", name);
         } else if (diff < MINUTE) {
-            return RefinedStorage2Mod.createTranslation("misc", "last_modified.second" + ((diff / SECOND) > 1 ? "s" : ""), diff / SECOND, name);
+            return Rs2Mod.createTranslation("misc", "last_modified.second" + ((diff / SECOND) > 1 ? "s" : ""), diff / SECOND, name);
         } else if (diff < HOUR) {
-            return RefinedStorage2Mod.createTranslation("misc", "last_modified.minute" + ((diff / MINUTE) > 1 ? "s" : ""), diff / MINUTE, name);
+            return Rs2Mod.createTranslation("misc", "last_modified.minute" + ((diff / MINUTE) > 1 ? "s" : ""), diff / MINUTE, name);
         } else if (diff < DAY) {
-            return RefinedStorage2Mod.createTranslation("misc", "last_modified.hour" + ((diff / HOUR) > 1 ? "s" : ""), diff / HOUR, name);
+            return Rs2Mod.createTranslation("misc", "last_modified.hour" + ((diff / HOUR) > 1 ? "s" : ""), diff / HOUR, name);
         } else if (diff < WEEK) {
-            return RefinedStorage2Mod.createTranslation("misc", "last_modified.day" + ((diff / DAY) > 1 ? "s" : ""), diff / DAY, name);
+            return Rs2Mod.createTranslation("misc", "last_modified.day" + ((diff / DAY) > 1 ? "s" : ""), diff / DAY, name);
         } else if (diff < YEAR) {
-            return RefinedStorage2Mod.createTranslation("misc", "last_modified.week" + ((diff / WEEK) > 1 ? "s" : ""), diff / WEEK, name);
+            return Rs2Mod.createTranslation("misc", "last_modified.week" + ((diff / WEEK) > 1 ? "s" : ""), diff / WEEK, name);
         }
 
-        return RefinedStorage2Mod.createTranslation("misc", "last_modified.year" + ((diff / YEAR) > 1 ? "s" : ""), diff / YEAR, name);
+        return Rs2Mod.createTranslation("misc", "last_modified.year" + ((diff / YEAR) > 1 ? "s" : ""), diff / YEAR, name);
     }
 }
 

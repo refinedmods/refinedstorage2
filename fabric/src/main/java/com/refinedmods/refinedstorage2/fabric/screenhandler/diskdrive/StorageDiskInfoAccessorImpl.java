@@ -1,9 +1,10 @@
 package com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive;
 
-import java.util.Optional;
-
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.fabric.item.StorageDiskItem;
+
+import java.util.Optional;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 

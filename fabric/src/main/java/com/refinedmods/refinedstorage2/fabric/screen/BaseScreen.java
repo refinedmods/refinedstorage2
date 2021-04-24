@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.screen;
 
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
+
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;

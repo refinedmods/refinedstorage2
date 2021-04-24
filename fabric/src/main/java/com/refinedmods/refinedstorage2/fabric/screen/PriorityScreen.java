@@ -1,9 +1,10 @@
 package com.refinedmods.refinedstorage2.fabric.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.PriorityAccessor;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -19,7 +20,7 @@ import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class PriorityScreen extends HandledScreen<ScreenHandler> {
-    private static final Identifier TEXTURE = RefinedStorage2Mod.createIdentifier("textures/gui/priority.png");
+    private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/priority.png");
 
     private static final int ACTION_BUTTON_WIDTH = 50;
     private static final int ACTION_BUTTON_X = 107;
@@ -28,9 +29,9 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
     private static final int AMOUNT_X = 19;
     private static final int AMOUNT_Y = 48;
 
-    private static final TranslatableText PRIORITY_TEXT = RefinedStorage2Mod.createTranslation("gui", "priority");
-    private static final TranslatableText SET_TEXT = RefinedStorage2Mod.createTranslation("gui", "priority.set");
-    private static final TranslatableText RESET_TEXT = RefinedStorage2Mod.createTranslation("gui", "priority.reset");
+    private static final TranslatableText PRIORITY_TEXT = Rs2Mod.createTranslation("gui", "priority");
+    private static final TranslatableText SET_TEXT = Rs2Mod.createTranslation("gui", "priority.set");
+    private static final TranslatableText RESET_TEXT = Rs2Mod.createTranslation("gui", "priority.reset");
     private static final TranslatableText CANCEL_TEXT = new TranslatableText("gui.cancel");
 
     private static final int[] INCREMENTS_TOP = {1, 5, 10};

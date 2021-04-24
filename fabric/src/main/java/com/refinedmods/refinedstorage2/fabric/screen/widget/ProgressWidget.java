@@ -1,11 +1,12 @@
 package com.refinedmods.refinedstorage2.fabric.screen.widget;
 
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
+
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.DrawableHelper;
@@ -15,7 +16,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class ProgressWidget extends DrawableHelper implements Drawable, Element {
-    private static final Identifier SPRITE = RefinedStorage2Mod.createIdentifier("textures/gui/widgets.png");
+    private static final Identifier SPRITE = Rs2Mod.createIdentifier("textures/gui/widgets.png");
 
     private final int x;
     private final int y;

@@ -1,11 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.screen;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.AccessModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ExactModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.FilterModeSideButtonWidget;
@@ -14,6 +10,11 @@ import com.refinedmods.refinedstorage2.fabric.screen.widget.ProgressWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
@@ -22,8 +23,8 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
-    private static final Identifier TEXTURE = RefinedStorage2Mod.createIdentifier("textures/gui/disk_drive.png");
-    private static final TranslatableText DISKS_TEXT = RefinedStorage2Mod.createTranslation("gui", "disk_drive.disks");
+    private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/disk_drive.png");
+    private static final TranslatableText DISKS_TEXT = Rs2Mod.createTranslation("gui", "disk_drive.disks");
 
     private final ProgressWidget progressWidget;
 
@@ -56,13 +57,13 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
         long stored = getScreenHandler().getStored();
 
         if (handler.hasInfiniteDisk()) {
-            tooltip.add(RefinedStorage2Mod.createTranslation("misc", "stored", Quantities.format(stored)));
+            tooltip.add(Rs2Mod.createTranslation("misc", "stored", Quantities.format(stored)));
         } else {
             long capacity = getScreenHandler().getCapacity();
             double progress = getScreenHandler().getProgress();
 
-            tooltip.add(RefinedStorage2Mod.createTranslation("misc", "stored_with_capacity", Quantities.format(stored), Quantities.format(capacity)));
-            tooltip.add(RefinedStorage2Mod.createTranslation("misc", "full", (int) (progress * 100D)).formatted(Formatting.GRAY));
+            tooltip.add(Rs2Mod.createTranslation("misc", "stored_with_capacity", Quantities.format(stored), Quantities.format(capacity)));
+            tooltip.add(Rs2Mod.createTranslation("misc", "full", (int) (progress * 100D)).formatted(Formatting.GRAY));
         }
 
         return tooltip;

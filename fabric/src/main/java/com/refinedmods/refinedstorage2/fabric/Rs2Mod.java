@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPac
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.PropertyChangePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.StorageDiskInfoRequestPacket;
+
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
@@ -32,23 +33,35 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class RefinedStorage2Mod implements ModInitializer {
-    private static final Logger LOGGER = LogManager.getLogger(RefinedStorage2Mod.class);
-
-    static final String ID = "refinedstorage2";
-
+public class Rs2Mod implements ModInitializer {
     public static final Rs2ApiFacade<MinecraftServer, World> API = new FabricRs2ApiFacade();
-
     public static final RefinedStorage2Blocks BLOCKS = new RefinedStorage2Blocks();
     public static final RefinedStorage2Items ITEMS = new RefinedStorage2Items();
     public static final RefinedStorage2BlockEntities BLOCK_ENTITIES = new RefinedStorage2BlockEntities();
     public static final RefinedStorage2ScreenHandlers SCREEN_HANDLERS = new RefinedStorage2ScreenHandlers();
-
+    static final String ID = "refinedstorage2";
+    private static final Logger LOGGER = LogManager.getLogger(Rs2Mod.class);
     private static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(createIdentifier("general"), () -> new ItemStack(BLOCKS.getCable()));
+
+    public static Identifier createIdentifier(String value) {
+        return new Identifier(ID, value);
+    }
+
+    public static boolean isModIdentifier(Identifier identifier) {
+        return ID.equals(identifier.getNamespace());
+    }
+
+    public static String createTranslationKey(String category, String value) {
+        return String.format("%s.%s.%s", category, ID, value);
+    }
+
+    public static TranslatableText createTranslation(String category, String value, Object... args) {
+        return new TranslatableText(createTranslationKey(category, value), args);
+    }
 
     @Override
     public void onInitialize() {
-        AutoConfig.register(RefinedStorage2Config.class, Toml4jConfigSerializer::new);
+        AutoConfig.register(Rs2Config.class, Toml4jConfigSerializer::new);
 
         registerContent();
         registerGridSearchBoxModes();
@@ -93,21 +106,5 @@ public class RefinedStorage2Mod implements ModInitializer {
                 96,
                 createTranslationKey("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : ""))
         );
-    }
-
-    public static Identifier createIdentifier(String value) {
-        return new Identifier(ID, value);
-    }
-
-    public static boolean isModIdentifier(Identifier identifier) {
-        return ID.equals(identifier.getNamespace());
-    }
-
-    public static String createTranslationKey(String category, String value) {
-        return String.format("%s.%s.%s", category, ID, value);
-    }
-
-    public static TranslatableText createTranslation(String category, String value, Object... args) {
-        return new TranslatableText(createTranslationKey(category, value), args);
     }
 }

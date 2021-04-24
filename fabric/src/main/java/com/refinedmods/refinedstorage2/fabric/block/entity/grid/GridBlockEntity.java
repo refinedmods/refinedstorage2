@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.node.grid.GridNetworkNode;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> implements ExtendedScreenHandlerFactory {
     public GridBlockEntity() {
-        super(RefinedStorage2Mod.BLOCK_ENTITIES.getGrid());
+        super(Rs2Mod.BLOCK_ENTITIES.getGrid());
     }
 
     @Override
@@ -41,13 +41,13 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
                 FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
                 FabricNetworkNodeReference.of(world, pos),
-                RefinedStorage2Mod.API.getGridSearchBoxModeRegistry()
+                Rs2Mod.API.getGridSearchBoxModeRegistry()
         );
     }
 
     @Override
     public Text getDisplayName() {
-        return RefinedStorage2Mod.createTranslation("block", "grid");
+        return Rs2Mod.createTranslation("block", "grid");
     }
 
     @Override
@@ -70,7 +70,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         }
 
         if (tag.contains("sbm")) {
-            node.setSearchBoxMode(RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().get(tag.getInt("sbm")));
+            node.setSearchBoxMode(Rs2Mod.API.getGridSearchBoxModeRegistry().get(tag.getInt("sbm")));
         }
 
         super.fromTag(blockState, tag);
@@ -81,7 +81,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         tag.putInt("sd", GridSettings.getSortingDirection(node.getSortingDirection()));
         tag.putInt("st", GridSettings.getSortingType(node.getSortingType()));
         tag.putInt("s", GridSettings.getSize(node.getSize()));
-        tag.putInt("sbm", RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().getId(node.getSearchBoxMode()));
+        tag.putInt("sbm", Rs2Mod.API.getGridSearchBoxModeRegistry().getId(node.getSearchBoxMode()));
 
         return super.toTag(tag);
     }
@@ -92,7 +92,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         buf.writeInt(GridSettings.getSortingDirection(getSortingDirection()));
         buf.writeInt(GridSettings.getSortingType(getSortingType()));
         buf.writeInt(GridSettings.getSize(getSize()));
-        buf.writeInt(RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().getId(getSearchBoxMode()));
+        buf.writeInt(Rs2Mod.API.getGridSearchBoxModeRegistry().getId(getSearchBoxMode()));
 
         Collection<Rs2ItemStack> stacks = getNetwork().getItemStorageChannel().getStacks();
 

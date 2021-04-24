@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.FilterMode;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.fabric.block.entity.FilterModeSettings;
@@ -50,7 +50,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     private DiskDriveState driveState;
 
     public DiskDriveBlockEntity() {
-        super(RefinedStorage2Mod.BLOCK_ENTITIES.getDiskDrive());
+        super(Rs2Mod.BLOCK_ENTITIES.getDiskDrive());
 
         diskInventory.setOwnerListener(new DiskInventoryListener(this));
         filterInventory.setOwnerListener(new FilterInventoryListener(this));
@@ -79,7 +79,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
                 FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
                 FabricNetworkNodeReference.of(world, pos),
-                RefinedStorage2Mod.API.getStorageDiskManager(world),
+                Rs2Mod.API.getStorageDiskManager(world),
                 diskInventory
         );
     }
@@ -201,7 +201,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
     @Override
     public Text getDisplayName() {
-        return RefinedStorage2Mod.createTranslation("block", "disk_drive");
+        return Rs2Mod.createTranslation("block", "disk_drive");
     }
 
     @Override

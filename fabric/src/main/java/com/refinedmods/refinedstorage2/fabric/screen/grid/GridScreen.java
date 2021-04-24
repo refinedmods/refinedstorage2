@@ -1,18 +1,13 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Config;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.Rs2Config;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.FabricItemGridStack;
 import com.refinedmods.refinedstorage2.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
@@ -26,6 +21,12 @@ import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 import com.refinedmods.refinedstorage2.fabric.util.LastModifiedUtil;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.Tessellator;
@@ -45,7 +46,7 @@ import org.apache.logging.log4j.Logger;
 public class GridScreen extends BaseScreen<GridScreenHandler> {
     private static final Logger LOGGER = LogManager.getLogger(GridScreen.class);
 
-    private static final Identifier TEXTURE = RefinedStorage2Mod.createIdentifier("textures/gui/grid.png");
+    private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/grid.png");
 
     private static final int TOP_HEIGHT = 19;
     private static final int BOTTOM_HEIGHT = 99;
@@ -69,6 +70,16 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         this.playerInventoryTitleY = 75;
         this.backgroundWidth = 227;
         this.backgroundHeight = 176;
+    }
+
+    private static GridExtractMode getExtractMode(int clickedButton) {
+        if (clickedButton == 1) {
+            return GridExtractMode.CURSOR_HALF;
+        }
+        if (hasShiftDown()) {
+            return GridExtractMode.PLAYER_INVENTORY_STACK;
+        }
+        return GridExtractMode.CURSOR_STACK;
     }
 
     @Override
@@ -132,7 +143,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     private int getMaxRows() {
         switch (getScreenHandler().getSize()) {
             case STRETCH:
-                return RefinedStorage2Config.get().getGrid().getMaxRowsStretch();
+                return Rs2Config.get().getGrid().getMaxRowsStretch();
             case SMALL:
                 return 3;
             case MEDIUM:
@@ -140,7 +151,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             case LARGE:
                 return 8;
             default:
-                return RefinedStorage2Config.get().getGrid().getMaxRowsStretch();
+                return Rs2Config.get().getGrid().getMaxRowsStretch();
         }
     }
 
@@ -226,12 +237,12 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             if (stack != null) {
                 gridSlotNumber = idx;
 
-                if (!RefinedStorage2Config.get().getGrid().isDetailedTooltip()) {
+                if (!Rs2Config.get().getGrid().isDetailedTooltip()) {
                     renderTooltip(matrices, stack.getMcStack(), mouseX, mouseY);
                 } else {
                     List<OrderedText> lines = Lists.transform(getTooltipFromItem(stack.getMcStack()), Text::asOrderedText);
                     List<OrderedText> smallLines = new ArrayList<>();
-                    smallLines.add(RefinedStorage2Mod.createTranslation("misc", "total", stack.isZeroed() ? "0" : Quantities.format(stack.getAmount())).formatted(Formatting.GRAY).asOrderedText());
+                    smallLines.add(Rs2Mod.createTranslation("misc", "total", stack.isZeroed() ? "0" : Quantities.format(stack.getAmount())).formatted(Formatting.GRAY).asOrderedText());
 
                     view.getTrackerEntry(stack.getStack()).ifPresent(entry -> smallLines.add(LastModifiedUtil.getText(entry.getTime(), entry.getName()).formatted(Formatting.GRAY).asOrderedText()));
 
@@ -242,7 +253,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     }
 
     private void renderAmount(MatrixStack matrixStack, int x, int y, String amount, int color) {
-        boolean large = this.client.forcesUnicodeFont() || RefinedStorage2Config.get().getGrid().isLargeFont();
+        boolean large = this.client.forcesUnicodeFont() || Rs2Config.get().getGrid().isLargeFont();
 
         matrixStack.push();
         matrixStack.translate(x, y, 300);
@@ -388,16 +399,6 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         return super.mouseClicked(mouseX, mouseY, clickedButton);
     }
 
-    private static GridExtractMode getExtractMode(int clickedButton) {
-        if (clickedButton == 1) {
-            return GridExtractMode.CURSOR_HALF;
-        }
-        if (hasShiftDown()) {
-            return GridExtractMode.PLAYER_INVENTORY_STACK;
-        }
-        return GridExtractMode.CURSOR_STACK;
-    }
-
     @Override
     public void mouseMoved(double mx, double my) {
         scrollbar.mouseMoved(mx, my);
@@ -458,7 +459,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             return true;
         }
 
-        if (hasShiftDown() && RefinedStorage2Config.get().getGrid().isPreventSortingWhileShiftIsDown()) {
+        if (hasShiftDown() && Rs2Config.get().getGrid().isPreventSortingWhileShiftIsDown()) {
             getScreenHandler().getItemView().setPreventSorting(true);
         }
 

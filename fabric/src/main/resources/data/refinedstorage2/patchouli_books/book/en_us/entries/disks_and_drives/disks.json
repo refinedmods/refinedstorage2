@@ -1,31 +1,31 @@
 {
-  "name": "book.refinedstorage2.entry.disks_and_drives.disks.title",
-  "category": "refinedstorage2:disks_and_drives",
-  "icon": "refinedstorage2:1k_storage_disk",
-  "pages": [
-    {
-      "type": "text",
-      "text": "book.refinedstorage2.entry.disks_and_drives.disks.line0"
-    },
-    {
-      "type": "crafting",
-      "recipe": "refinedstorage2:1k_storage_part",
-      "recipe2": "refinedstorage2:1k_storage_disk"
-    },
-    {
-      "type": "crafting",
-      "recipe": "refinedstorage2:4k_storage_part",
-      "recipe2": "refinedstorage2:4k_storage_disk"
-    },
-    {
-      "type": "crafting",
-      "recipe": "refinedstorage2:16k_storage_part",
-      "recipe2": "refinedstorage2:16k_storage_disk"
-    },
-    {
-      "type": "crafting",
-      "recipe": "refinedstorage2:64k_storage_part",
-      "recipe2": "refinedstorage2:64k_storage_disk"
-    }
-  ]
+    "name": "book.refinedstorage2.entry.disks_and_drives.disks.title",
+    "category": "refinedstorage2:disks_and_drives",
+    "icon": "refinedstorage2:1k_storage_disk",
+    "pages": [
+        {
+            "type": "text",
+            "text": "book.refinedstorage2.entry.disks_and_drives.disks.line0"
+        },
+        {
+            "type": "crafting",
+            "recipe": "refinedstorage2:1k_storage_part",
+            "recipe2": "refinedstorage2:1k_storage_disk"
+        },
+        {
+            "type": "crafting",
+            "recipe": "refinedstorage2:4k_storage_part",
+            "recipe2": "refinedstorage2:4k_storage_disk"
+        },
+        {
+            "type": "crafting",
+            "recipe": "refinedstorage2:16k_storage_part",
+            "recipe2": "refinedstorage2:16k_storage_disk"
+        },
+        {
+            "type": "crafting",
+            "recipe": "refinedstorage2:64k_storage_part",
+            "recipe2": "refinedstorage2:64k_storage_disk"
+        }
+    ]
 }

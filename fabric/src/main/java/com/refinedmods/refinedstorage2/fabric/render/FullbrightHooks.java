@@ -1,9 +1,10 @@
 package com.refinedmods.refinedstorage2.fabric.render;
 
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.fabric.mixin.BakedQuadAccessor;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.mixin.BakedQuadAccessor;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormatElement;
@@ -27,7 +28,7 @@ public class FullbrightHooks {
     private static final ThreadLocal<Boolean> ENABLE_FULLBRIGHT_EXTENSIONS = new ThreadLocal<>();
 
     public static void beginDeserializingModel(Identifier location) {
-        if (RefinedStorage2Mod.isModIdentifier(location)) {
+        if (Rs2Mod.isModIdentifier(location)) {
             ENABLE_FULLBRIGHT_EXTENSIONS.set(true);
         }
     }
@@ -61,12 +62,6 @@ public class FullbrightHooks {
         return new BakedQuad(vertexData, quad.getColorIndex(), quad.getFace(), sprite, false);
     }
 
-    public static class FullbrightModelElementFace extends ModelElementFace {
-        public FullbrightModelElementFace(Direction cullFace, int tintIndex, String texture, ModelElementTexture blockFaceUV) {
-            super(cullFace, tintIndex, texture, blockFaceUV);
-        }
-    }
-
     private static int getLightOffset() {
         int offset = 0;
         for (VertexFormatElement element : VERTEX_FORMAT.getElements()) {
@@ -82,5 +77,11 @@ public class FullbrightHooks {
             offset += element.getSize();
         }
         throw new UnsupportedOperationException("Failed to find the lightmap index in the block vertex format");
+    }
+
+    public static class FullbrightModelElementFace extends ModelElementFace {
+        public FullbrightModelElementFace(Direction cullFace, int tintIndex, String texture, ModelElementTexture blockFaceUV) {
+            super(cullFace, tintIndex, texture, blockFaceUV);
+        }
     }
 }

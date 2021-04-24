@@ -1,62 +1,62 @@
 {
-  "multipart": [
-    {
-      "apply": {
-        "model": "refinedstorage2:block/cable_core"
-      }
-    },
-    {
-      "when": {
-        "north": true
-      },
-      "apply": {
-        "model": "refinedstorage2:block/cable_extension"
-      }
-    },
-    {
-      "when": {
-        "east": true
-      },
-      "apply": {
-        "model": "refinedstorage2:block/cable_extension",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "south": true
-      },
-      "apply": {
-        "model": "refinedstorage2:block/cable_extension",
-        "x": 180
-      }
-    },
-    {
-      "when": {
-        "west": true
-      },
-      "apply": {
-        "model": "refinedstorage2:block/cable_extension",
-        "y": 270
-      }
-    },
-    {
-      "when": {
-        "up": true
-      },
-      "apply": {
-        "model": "refinedstorage2:block/cable_extension",
-        "x": 270
-      }
-    },
-    {
-      "when": {
-        "down": true
-      },
-      "apply": {
-        "model": "refinedstorage2:block/cable_extension",
-        "x": 90
-      }
-    }
-  ]
+    "multipart": [
+        {
+            "apply": {
+                "model": "refinedstorage2:block/cable_core"
+            }
+        },
+        {
+            "when": {
+                "north": true
+            },
+            "apply": {
+                "model": "refinedstorage2:block/cable_extension"
+            }
+        },
+        {
+            "when": {
+                "east": true
+            },
+            "apply": {
+                "model": "refinedstorage2:block/cable_extension",
+                "y": 90
+            }
+        },
+        {
+            "when": {
+                "south": true
+            },
+            "apply": {
+                "model": "refinedstorage2:block/cable_extension",
+                "x": 180
+            }
+        },
+        {
+            "when": {
+                "west": true
+            },
+            "apply": {
+                "model": "refinedstorage2:block/cable_extension",
+                "y": 270
+            }
+        },
+        {
+            "when": {
+                "up": true
+            },
+            "apply": {
+                "model": "refinedstorage2:block/cable_extension",
+                "x": 270
+            }
+        },
+        {
+            "when": {
+                "down": true
+            },
+            "apply": {
+                "model": "refinedstorage2:block/cable_extension",
+                "x": 90
+            }
+        }
+    ]
 }

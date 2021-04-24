@@ -1,20 +1,20 @@
 {
-  "name": "itemGroup.refinedstorage2.general",
-  "landing_text": "book.refinedstorage2.landing_text",
-  "model": "refinedstorage2:book",
-  "creative_tab": "refinedstorage2.general",
-  "book_texture": "refinedstorage2:textures/gui/book.png",
-  "crafting_texture": "refinedstorage2:textures/gui/crafting.png",
-  "show_progress": false,
-  "version": 0,
-  "subtitle": "Version ${version}",
-  "i18n": true,
-  "text_color": "FFFFFF",
-  "header_color": "FFFFFF",
-  "nameplate_color": "29f7ff",
-  "link_color": "29f7ff",
-  "link_hover_color": "16B7BC",
-  "macros": {
-    "\$(h)": "\$(#29f7ff)"
-  }
+    "name": "itemGroup.refinedstorage2.general",
+    "landing_text": "book.refinedstorage2.landing_text",
+    "model": "refinedstorage2:book",
+    "creative_tab": "refinedstorage2.general",
+    "book_texture": "refinedstorage2:textures/gui/book.png",
+    "crafting_texture": "refinedstorage2:textures/gui/crafting.png",
+    "show_progress": false,
+    "version": 0,
+    "subtitle": "Version ${version}",
+    "i18n": true,
+    "text_color": "FFFFFF",
+    "header_color": "FFFFFF",
+    "nameplate_color": "29f7ff",
+    "link_color": "29f7ff",
+    "link_hover_color": "16B7BC",
+    "macros": {
+        "\$(h)": "\$(#29f7ff)"
+    }
 }

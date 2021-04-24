@@ -1,4 +1,6 @@
-package com.refinedmods.refinedstorage2.fabric;
+package com.refinedmods.refinedstorage2.fabric.integration;
+
+import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
 import io.github.prospector.modmenu.api.ModMenuApi;
@@ -10,6 +12,6 @@ import net.fabricmc.api.Environment;
 public class ModMenuIntegration implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> AutoConfig.getConfigScreen(RefinedStorage2Config.class, parent).get();
+        return parent -> AutoConfig.getConfigScreen(Rs2Config.class, parent).get();
     }
 }

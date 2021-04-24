@@ -1,20 +1,20 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "com.refinedmods.refinedstorage2.fabric.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "mixins": [
-    "SlotAccessor"
-  ],
-  "client": [
-    "TextFieldWidgetAccessor",
-    "KeyBindingAccessor",
-    "BakedQuadAccessor",
-    "JsonUnbakedModelMixin",
-    "ModelElementFaceDeserializerMixin",
-    "ModelLoaderMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.refinedmods.refinedstorage2.fabric.mixin",
+    "compatibilityLevel": "JAVA_8",
+    "mixins": [
+        "SlotAccessor"
+    ],
+    "client": [
+        "TextFieldWidgetAccessor",
+        "KeyBindingAccessor",
+        "BakedQuadAccessor",
+        "JsonUnbakedModelMixin",
+        "ModelElementFaceDeserializerMixin",
+        "ModelLoaderMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
 }

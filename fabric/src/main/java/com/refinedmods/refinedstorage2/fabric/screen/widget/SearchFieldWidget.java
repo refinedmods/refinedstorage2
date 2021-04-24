@@ -1,9 +1,10 @@
 package com.refinedmods.refinedstorage2.fabric.screen.widget;
 
 import com.refinedmods.refinedstorage2.core.util.History;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2ClientMod;
+import com.refinedmods.refinedstorage2.fabric.Rs2ClientMod;
 import com.refinedmods.refinedstorage2.fabric.mixin.TextFieldWidgetAccessor;
 import com.refinedmods.refinedstorage2.fabric.util.KeyBindingUtil;
+
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.LiteralText;
@@ -70,7 +71,7 @@ public class SearchFieldWidget extends TextFieldWidget {
             }
         }
 
-        if (KeyBindingUtil.isKeyDown(RefinedStorage2ClientMod.getFocusSearchBarKeyBinding()) && focusUnlocked) {
+        if (KeyBindingUtil.isKeyDown(Rs2ClientMod.getFocusSearchBarKeyBinding()) && focusUnlocked) {
             setFocused(!isFocused());
             saveHistory();
             result = true;

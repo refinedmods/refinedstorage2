@@ -1,7 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.screen.widget;
 
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
+
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.DrawableHelper;
@@ -10,7 +11,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 public class ScrollbarWidget extends DrawableHelper implements Element, Drawable {
-    private static final Identifier TEXTURE = RefinedStorage2Mod.createIdentifier("textures/gui/widgets.png");
+    private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/widgets.png");
     private static final int SCROLLER_HEIGHT = 15;
 
     private final MinecraftClient client;
@@ -86,14 +87,14 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
         }
     }
 
+    public int getOffset() {
+        return offset;
+    }
+
     public void setOffset(int offset) {
         if (offset >= 0 && offset <= maxOffset) {
             this.offset = offset;
         }
-    }
-
-    public int getOffset() {
-        return offset;
     }
 
     private void updateOffset(double mouseY) {

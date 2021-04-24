@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.fabric.item;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.ItemStorageType;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class StorageDiskItem extends Item {
         if (world == null) {
             return Optional.empty();
         }
-        return getId(stack).map(RefinedStorage2Mod.API.getStorageDiskManager(world)::getInfo);
+        return getId(stack).map(Rs2Mod.API.getStorageDiskManager(world)::getInfo);
     }
 
     @Override
@@ -54,9 +54,9 @@ public class StorageDiskItem extends Item {
 
         getInfo(world, stack).ifPresent(info -> {
             if (info.getCapacity() == -1) {
-                tooltip.add(RefinedStorage2Mod.createTranslation("misc", "stored", Quantities.formatWithUnits(info.getStored())).formatted(Formatting.GRAY));
+                tooltip.add(Rs2Mod.createTranslation("misc", "stored", Quantities.formatWithUnits(info.getStored())).formatted(Formatting.GRAY));
             } else {
-                tooltip.add(RefinedStorage2Mod.createTranslation("misc", "stored_with_capacity", Quantities.formatWithUnits(info.getStored()), Quantities.formatWithUnits(info.getCapacity())).formatted(Formatting.GRAY));
+                tooltip.add(Rs2Mod.createTranslation("misc", "stored_with_capacity", Quantities.formatWithUnits(info.getStored()), Quantities.formatWithUnits(info.getCapacity())).formatted(Formatting.GRAY));
             }
         });
 
@@ -79,7 +79,7 @@ public class StorageDiskItem extends Item {
         }
 
         return getId(stack)
-                .flatMap(id -> RefinedStorage2Mod.API.getStorageDiskManager(world).disassembleDisk(id))
+                .flatMap(id -> Rs2Mod.API.getStorageDiskManager(world).disassembleDisk(id))
                 .map(disk -> {
                     ItemStack storagePart = createStoragePart(stack.getCount());
 
@@ -87,13 +87,13 @@ public class StorageDiskItem extends Item {
                         world.spawnEntity(new ItemEntity(world, user.getX(), user.getY(), user.getZ(), storagePart));
                     }
 
-                    return TypedActionResult.success(new ItemStack(RefinedStorage2Mod.ITEMS.getStorageHousing()));
+                    return TypedActionResult.success(new ItemStack(Rs2Mod.ITEMS.getStorageHousing()));
                 })
                 .orElse(TypedActionResult.fail(stack));
     }
 
     private ItemStack createStoragePart(int count) {
-        return new ItemStack(RefinedStorage2Mod.ITEMS.getStoragePart(type), count);
+        return new ItemStack(Rs2Mod.ITEMS.getStoragePart(type), count);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class StorageDiskItem extends Item {
         if (!world.isClient() && !stack.hasTag() && entity instanceof PlayerEntity) {
             UUID id = UUID.randomUUID();
 
-            RefinedStorage2Mod.API.getStorageDiskManager(world).setDisk(id, new ItemDiskStorage(type.getCapacity()));
+            Rs2Mod.API.getStorageDiskManager(world).setDisk(id, new ItemDiskStorage(type.getCapacity()));
 
             stack.setTag(new CompoundTag());
             stack.getTag().putUuid("id", id);

@@ -1,11 +1,12 @@
 package com.refinedmods.refinedstorage2.fabric.coreimpl.network;
 
-import java.util.Collection;
-
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.NetworkManager;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeRepository;
 import com.refinedmods.refinedstorage2.core.util.Position;
+
+import java.util.Collection;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.PersistentState;
 

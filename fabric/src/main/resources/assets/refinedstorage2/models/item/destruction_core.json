@@ -1,6 +1,6 @@
 {
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "refinedstorage2:item/destruction_core"
-  }
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "refinedstorage2:item/destruction_core"
+    }
 }

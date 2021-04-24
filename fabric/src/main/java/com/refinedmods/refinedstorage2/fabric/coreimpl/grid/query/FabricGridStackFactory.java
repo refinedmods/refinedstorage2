@@ -1,13 +1,14 @@
 package com.refinedmods.refinedstorage2.fabric.coreimpl.grid.query;
 
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.FabricItemGridStack;
 import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
+
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;

@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.fabric.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.render.CubeBuilder;
+
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -57,19 +58,19 @@ public class DiskDriveBlockEntityRenderer extends BlockEntityRenderer<DiskDriveB
                     float y2 = LED_Y2 - (y * 3F);
 
                     CubeBuilder.INSTANCE.putCube(
-                        matrices,
-                        vertexConsumer,
-                        x1 / 16F,
-                        y1 / 16F,
-                        LED_Z1 / 16F,
-                        x2 / 16F,
-                        y2 / 16F,
-                        LED_Z2 / 16F,
-                        state.getColor() >> 16 & 0xFF,
-                        state.getColor() >> 8 & 0xFF,
-                        state.getColor() & 0xFF,
-                        255,
-                        Direction.SOUTH
+                            matrices,
+                            vertexConsumer,
+                            x1 / 16F,
+                            y1 / 16F,
+                            LED_Z1 / 16F,
+                            x2 / 16F,
+                            y2 / 16F,
+                            LED_Z2 / 16F,
+                            state.getColor() >> 16 & 0xFF,
+                            state.getColor() >> 8 & 0xFF,
+                            state.getColor() & 0xFF,
+                            255,
+                            Direction.SOUTH
                     );
                 }
             }

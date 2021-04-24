@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.init;
 
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.CableBlock;
 import com.refinedmods.refinedstorage2.fabric.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.fabric.block.GridBlock;
@@ -25,11 +25,11 @@ public class RefinedStorage2Blocks {
     private MachineCasingBlock machineCasing;
 
     public void register() {
-        cable = Registry.register(Registry.BLOCK, RefinedStorage2Mod.createIdentifier("cable"), new CableBlock());
-        quartzEnrichedIron = Registry.register(Registry.BLOCK, RefinedStorage2Mod.createIdentifier("quartz_enriched_iron_block"), new QuartzEnrichedIronBlock(STONE_SETTINGS));
-        diskDrive = Registry.register(Registry.BLOCK, RefinedStorage2Mod.createIdentifier("disk_drive"), new DiskDriveBlock(STONE_SETTINGS));
-        machineCasing = Registry.register(Registry.BLOCK, RefinedStorage2Mod.createIdentifier("machine_casing"), new MachineCasingBlock(STONE_SETTINGS));
-        grid.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, RefinedStorage2Mod.createIdentifier(nameFactory.apply("grid")), new GridBlock(STONE_SETTINGS)));
+        cable = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("cable"), new CableBlock());
+        quartzEnrichedIron = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("quartz_enriched_iron_block"), new QuartzEnrichedIronBlock(STONE_SETTINGS));
+        diskDrive = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("disk_drive"), new DiskDriveBlock(STONE_SETTINGS));
+        machineCasing = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("machine_casing"), new MachineCasingBlock(STONE_SETTINGS));
+        grid.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("grid")), new GridBlock(STONE_SETTINGS)));
     }
 
     public CableBlock getCable() {

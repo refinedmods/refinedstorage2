@@ -1,7 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.screen.widget;
 
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
+
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -10,7 +11,7 @@ import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
 
 public abstract class SideButtonWidget extends ButtonWidget implements ButtonWidget.TooltipSupplier {
-    private static final Identifier DEFAULT_TEXTURE = RefinedStorage2Mod.createIdentifier("textures/icons.png");
+    private static final Identifier DEFAULT_TEXTURE = Rs2Mod.createIdentifier("textures/icons.png");
 
     private static final int WIDTH = 18;
     private static final int HEIGHT = 18;

@@ -3,11 +3,12 @@ package com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk;
 import com.refinedmods.refinedstorage2.core.util.ThrottleHelper;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.StorageDiskInfoRequestPacket;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.UUID;
 import java.util.function.Consumer;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class FabricRequestInfoCallback implements Consumer<UUID> {
     private static final Logger LOGGER = LogManager.getLogger(FabricRequestInfoCallback.class);

@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.block;
 
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
 
 import net.minecraft.block.BlockState;
@@ -36,7 +36,7 @@ public class GridBlock extends NetworkNodeBlock {
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        ActionResult result = RefinedStorage2Mod.BLOCKS.getGrid().updateColor(state, player.getStackInHand(hand), world, pos, player);
+        ActionResult result = Rs2Mod.BLOCKS.getGrid().updateColor(state, player.getStackInHand(hand), world, pos, player);
         if (result != ActionResult.PASS) {
             return result;
         }

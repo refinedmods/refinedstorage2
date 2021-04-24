@@ -3,11 +3,12 @@ package com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskManager;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.PersistentState;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.PersistentState;
 
 public class FabricStorageDiskManager extends PersistentState implements StorageDiskManager {
     public static final String NAME = "refinedstorage2_disks";
@@ -33,10 +34,10 @@ public class FabricStorageDiskManager extends PersistentState implements Storage
     @Override
     public <T> Optional<StorageDisk<T>> disassembleDisk(UUID id) {
         return parent.disassembleDisk(id)
-            .map(disk -> {
-                markDirty();
-                return (StorageDisk<T>) disk;
-            });
+                .map(disk -> {
+                    markDirty();
+                    return (StorageDisk<T>) disk;
+                });
     }
 
     @Override

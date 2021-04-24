@@ -1,11 +1,12 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
+import com.refinedmods.refinedstorage2.core.util.History;
+import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.refinedmods.refinedstorage2.core.util.History;
-import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
 import net.minecraft.client.font.TextRenderer;
 
 public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {

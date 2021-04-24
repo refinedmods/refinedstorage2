@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.screenhandler;
 
 import com.refinedmods.refinedstorage2.fabric.screenhandler.slot.FilterSlot;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;

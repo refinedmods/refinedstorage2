@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage2.fabric.screen.widget;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.PriorityScreen;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.PriorityAccessor;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -42,7 +43,7 @@ public class PrioritySideButtonWidget extends SideButtonWidget {
     @Override
     public void onTooltip(ButtonWidget button, MatrixStack matrices, int mouseX, int mouseY) {
         List<Text> lines = new ArrayList<>();
-        lines.add(RefinedStorage2Mod.createTranslation("gui", "priority"));
+        lines.add(Rs2Mod.createTranslation("gui", "priority"));
         lines.add(new LiteralText(String.valueOf(priorityAccessor.getPriority())).formatted(Formatting.GRAY));
         tooltipRenderer.render(matrices, lines, mouseX, mouseY);
     }

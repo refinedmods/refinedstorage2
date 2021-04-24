@@ -1,11 +1,12 @@
 package com.refinedmods.refinedstorage2.fabric.packet.c2s;
 
-import java.util.UUID;
-
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.StorageDiskInfoResponsePacket;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
+
+import java.util.UUID;
+
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
@@ -15,16 +16,16 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class StorageDiskInfoRequestPacket implements ServerPlayNetworking.PlayChannelHandler {
-    public static final Identifier ID = RefinedStorage2Mod.createIdentifier("storage_disk_info_request");
+    public static final Identifier ID = Rs2Mod.createIdentifier("storage_disk_info_request");
 
     @Override
     public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         UUID id = buf.readUuid();
 
         server.execute(() -> {
-            StorageDiskInfo info = RefinedStorage2Mod.API
-                .getStorageDiskManager(player.getEntityWorld())
-                .getInfo(id);
+            StorageDiskInfo info = Rs2Mod.API
+                    .getStorageDiskManager(player.getEntityWorld())
+                    .getInfo(id);
 
             PacketUtil.sendToPlayer(player, StorageDiskInfoResponsePacket.ID, bufToSend -> {
                 bufToSend.writeUuid(id);

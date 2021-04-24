@@ -1,11 +1,12 @@
 package com.refinedmods.refinedstorage2.fabric.screenhandler.property;
 
+import com.refinedmods.refinedstorage2.fabric.packet.c2s.PropertyChangePacket;
+import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.PropertyChangePacket;
-import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import net.minecraft.screen.Property;
 
 public class TwoWaySyncProperty<T> extends Property {
@@ -16,14 +17,6 @@ public class TwoWaySyncProperty<T> extends Property {
     private final Consumer<T> changed;
     private T value;
 
-    public static <T> TwoWaySyncProperty<T> forClient(int index, Function<T, Integer> serializer, Function<Integer, T> deserializer, T defaultValue, Consumer<T> changed) {
-        return new TwoWaySyncProperty<>(index, serializer, deserializer, null, changed, defaultValue);
-    }
-
-    public static <T> TwoWaySyncProperty<T> forServer(int index, Function<T, Integer> serializer, Function<Integer, T> deserializer, Supplier<T> supplier, Consumer<T> changed) {
-        return new TwoWaySyncProperty<>(index, serializer, deserializer, supplier, changed, null);
-    }
-
     private TwoWaySyncProperty(int index, Function<T, Integer> serializer, Function<Integer, T> deserializer, Supplier<T> supplier, Consumer<T> changed, T defaultValue) {
         this.index = index;
         this.serializer = serializer;
@@ -31,6 +24,14 @@ public class TwoWaySyncProperty<T> extends Property {
         this.supplier = supplier;
         this.changed = changed;
         this.value = defaultValue;
+    }
+
+    public static <T> TwoWaySyncProperty<T> forClient(int index, Function<T, Integer> serializer, Function<Integer, T> deserializer, T defaultValue, Consumer<T> changed) {
+        return new TwoWaySyncProperty<>(index, serializer, deserializer, null, changed, defaultValue);
+    }
+
+    public static <T> TwoWaySyncProperty<T> forServer(int index, Function<T, Integer> serializer, Function<Integer, T> deserializer, Supplier<T> supplier, Consumer<T> changed) {
+        return new TwoWaySyncProperty<>(index, serializer, deserializer, supplier, changed, null);
     }
 
     public void syncToServer(T newValue) {

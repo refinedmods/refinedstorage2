@@ -1,22 +1,22 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "GRG",
-    "R R",
-    "EEE"
-  ],
-  "key": {
-    "G": {
-      "item": "minecraft:glass"
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "GRG",
+        "R R",
+        "EEE"
+    ],
+    "key": {
+        "G": {
+            "item": "minecraft:glass"
+        },
+        "R": {
+            "item": "minecraft:redstone"
+        },
+        "E": {
+            "item": "refinedstorage2:quartz_enriched_iron"
+        }
     },
-    "R": {
-      "item": "minecraft:redstone"
-    },
-    "E": {
-      "item": "refinedstorage2:quartz_enriched_iron"
+    "result": {
+        "item": "refinedstorage2:storage_housing"
     }
-  },
-  "result": {
-    "item": "refinedstorage2:storage_housing"
-  }
 }

@@ -1,15 +1,16 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
+import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
+import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
-import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;
-import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -29,15 +30,15 @@ public class SearchBoxModeSideButtonWidget extends SideButtonWidget {
         this.tooltipRenderer = tooltipRenderer;
     }
 
-    private List<Text> calculateTooltip(GridSearchBoxMode searchBoxMode) {
-        List<Text> lines = new ArrayList<>();
-        lines.add(RefinedStorage2Mod.createTranslation("gui", "grid.search_box_mode"));
-        lines.add(new TranslatableText(searchBoxMode.getDisplayProperties().getNameTranslationKey()).formatted(Formatting.GRAY));
-        return lines;
+    private static PressAction createPressAction(GridScreenHandler screenHandler) {
+        return btn -> screenHandler.setSearchBoxMode(Rs2Mod.API.getGridSearchBoxModeRegistry().next(screenHandler.getSearchBoxMode()));
     }
 
-    private static PressAction createPressAction(GridScreenHandler screenHandler) {
-        return btn -> screenHandler.setSearchBoxMode(RefinedStorage2Mod.API.getGridSearchBoxModeRegistry().next(screenHandler.getSearchBoxMode()));
+    private List<Text> calculateTooltip(GridSearchBoxMode searchBoxMode) {
+        List<Text> lines = new ArrayList<>();
+        lines.add(Rs2Mod.createTranslation("gui", "grid.search_box_mode"));
+        lines.add(new TranslatableText(searchBoxMode.getDisplayProperties().getNameTranslationKey()).formatted(Formatting.GRAY));
+        return lines;
     }
 
     @Override

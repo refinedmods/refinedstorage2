@@ -1,15 +1,16 @@
 package com.refinedmods.refinedstorage2.fabric.mixin;
 
+import com.refinedmods.refinedstorage2.fabric.render.FullbrightHooks;
+
+import java.lang.reflect.Type;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
-import com.refinedmods.refinedstorage2.fabric.render.FullbrightHooks;
 import net.minecraft.client.render.model.json.ModelElementFace;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.lang.reflect.Type;
 
 /**
  * @link https://github.com/AppliedEnergistics/Applied-Energistics-2/blob/fabric/master/src/main/java/appeng/mixins/unlitquad/ModelElementFaceDeserializerMixin.java

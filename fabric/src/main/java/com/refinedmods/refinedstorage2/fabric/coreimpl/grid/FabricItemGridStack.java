@@ -1,10 +1,11 @@
 package com.refinedmods.refinedstorage2.fabric.coreimpl.grid;
 
-import java.util.Set;
-
 import com.refinedmods.refinedstorage2.core.grid.ItemGridStack;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
+
+import java.util.Set;
+
 import net.minecraft.item.ItemStack;
 
 public class FabricItemGridStack extends ItemGridStack {

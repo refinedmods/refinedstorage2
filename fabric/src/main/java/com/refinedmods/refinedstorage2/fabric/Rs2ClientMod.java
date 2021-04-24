@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.fabric.render.model.DiskDriveUnbakedModel
 import com.refinedmods.refinedstorage2.fabric.screen.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.fabric.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
+
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -23,8 +24,12 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
-public class RefinedStorage2ClientMod implements ClientModInitializer {
+public class Rs2ClientMod implements ClientModInitializer {
     private static KeyBinding focusSearchBar;
+
+    public static KeyBinding getFocusSearchBarKeyBinding() {
+        return focusSearchBar;
+    }
 
     @Override
     public void onInitializeClient() {
@@ -37,16 +42,16 @@ public class RefinedStorage2ClientMod implements ClientModInitializer {
     }
 
     private void setRenderLayers() {
-        BlockRenderLayerMap.INSTANCE.putBlock(RefinedStorage2Mod.BLOCKS.getCable(), RenderLayer.getCutout());
-        RefinedStorage2Mod.BLOCKS.getGrid().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout()));
+        BlockRenderLayerMap.INSTANCE.putBlock(Rs2Mod.BLOCKS.getCable(), RenderLayer.getCutout());
+        Rs2Mod.BLOCKS.getGrid().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout()));
     }
 
     private void registerBlockEntityRenderers() {
-        BlockEntityRendererRegistry.INSTANCE.register(RefinedStorage2Mod.BLOCK_ENTITIES.getDiskDrive(), DiskDriveBlockEntityRenderer::new);
+        BlockEntityRendererRegistry.INSTANCE.register(Rs2Mod.BLOCK_ENTITIES.getDiskDrive(), DiskDriveBlockEntityRenderer::new);
     }
 
     private void registerCustomModels() {
-        Identifier diskDriveIdentifier = RefinedStorage2Mod.createIdentifier("block/disk_drive");
+        Identifier diskDriveIdentifier = Rs2Mod.createIdentifier("block/disk_drive");
 
         ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (identifier, modelProviderContext) -> {
             if (identifier.equals(diskDriveIdentifier)) {
@@ -64,24 +69,20 @@ public class RefinedStorage2ClientMod implements ClientModInitializer {
 
     private void registerKeyBindings() {
         focusSearchBar = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            String.format("key.%s.focus_search_bar", RefinedStorage2Mod.ID),
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_TAB,
-            String.format("category.%s.key_bindings", RefinedStorage2Mod.ID)
+                String.format("key.%s.focus_search_bar", Rs2Mod.ID),
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_TAB,
+                String.format("category.%s.key_bindings", Rs2Mod.ID)
         ));
     }
 
     private void registerScreens() {
-        ScreenRegistry.register(RefinedStorage2Mod.SCREEN_HANDLERS.getDiskDrive(), DiskDriveScreen::new);
-        ScreenRegistry.register(RefinedStorage2Mod.SCREEN_HANDLERS.getGrid(), new ScreenRegistry.Factory<GridScreenHandler, GridScreen>() {
+        ScreenRegistry.register(Rs2Mod.SCREEN_HANDLERS.getDiskDrive(), DiskDriveScreen::new);
+        ScreenRegistry.register(Rs2Mod.SCREEN_HANDLERS.getGrid(), new ScreenRegistry.Factory<GridScreenHandler, GridScreen>() {
             @Override
             public GridScreen create(GridScreenHandler screenHandler, PlayerInventory playerInventory, Text text) {
                 return new GridScreen(screenHandler, playerInventory, text);
             }
         });
-    }
-
-    public static KeyBinding getFocusSearchBarKeyBinding() {
-        return focusSearchBar;
     }
 }

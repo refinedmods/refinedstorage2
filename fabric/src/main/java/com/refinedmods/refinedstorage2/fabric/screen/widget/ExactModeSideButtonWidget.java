@@ -1,11 +1,12 @@
 package com.refinedmods.refinedstorage2.fabric.screen.widget;
 
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.ExactModeAccessor;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
-import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
-import com.refinedmods.refinedstorage2.fabric.screenhandler.ExactModeAccessor;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -25,15 +26,15 @@ public class ExactModeSideButtonWidget extends SideButtonWidget {
         this.offTooltip = calculateTooltip(false);
     }
 
-    private List<Text> calculateTooltip(boolean exactMode) {
-        List<Text> lines = new ArrayList<>();
-        lines.add(RefinedStorage2Mod.createTranslation("gui", "exact_mode"));
-        lines.add(RefinedStorage2Mod.createTranslation("gui", "exact_mode." + (exactMode ? "on" : "off")).formatted(Formatting.GRAY));
-        return lines;
-    }
-
     private static PressAction createPressAction(ExactModeAccessor exactModeAccessor) {
         return btn -> exactModeAccessor.setExactMode(!exactModeAccessor.isExactMode());
+    }
+
+    private List<Text> calculateTooltip(boolean exactMode) {
+        List<Text> lines = new ArrayList<>();
+        lines.add(Rs2Mod.createTranslation("gui", "exact_mode"));
+        lines.add(Rs2Mod.createTranslation("gui", "exact_mode." + (exactMode ? "on" : "off")).formatted(Formatting.GRAY));
+        return lines;
     }
 
     @Override

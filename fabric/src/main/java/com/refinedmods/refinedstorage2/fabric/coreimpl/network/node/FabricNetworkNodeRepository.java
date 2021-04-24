@@ -1,11 +1,12 @@
 package com.refinedmods.refinedstorage2.fabric.coreimpl.network.node;
 
-import java.util.Optional;
-
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeRepository;
 import com.refinedmods.refinedstorage2.core.util.Position;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
+
+import java.util.Optional;
+
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.world.World;
 

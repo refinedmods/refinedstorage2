@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.render.model.baked;
 
 import com.refinedmods.refinedstorage2.fabric.util.BiDirection;
+
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.util.math.Vector3f;
