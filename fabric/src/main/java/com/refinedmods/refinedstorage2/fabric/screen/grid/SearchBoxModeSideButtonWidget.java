@@ -13,12 +13,15 @@ import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandl
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 public class SearchBoxModeSideButtonWidget extends SideButtonWidget {
     private final GridScreenHandler screenHandler;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSearchBoxMode, List<Text>> tooltips = new HashMap<>();
+    private final Map<String, Identifier> identifiers = new HashMap<>();
 
     public SearchBoxModeSideButtonWidget(GridScreenHandler screenHandler, TooltipRenderer tooltipRenderer) {
         super(createPressAction(screenHandler));
@@ -29,7 +32,7 @@ public class SearchBoxModeSideButtonWidget extends SideButtonWidget {
     private List<Text> calculateTooltip(GridSearchBoxMode searchBoxMode) {
         List<Text> lines = new ArrayList<>();
         lines.add(RefinedStorage2Mod.createTranslation("gui", "grid.search_box_mode"));
-        lines.add(searchBoxMode.getDisplayProperties().getName());
+        lines.add(new TranslatableText(searchBoxMode.getDisplayProperties().getNameTranslationKey()).formatted(Formatting.GRAY));
         return lines;
     }
 
@@ -38,18 +41,18 @@ public class SearchBoxModeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    protected Identifier getSpriteIdentifier() {
-        return screenHandler.getSearchBoxMode().getDisplayProperties().getSpriteIdentifier();
+    protected Identifier getTextureIdentifier() {
+        return identifiers.computeIfAbsent(screenHandler.getSearchBoxMode().getDisplayProperties().getTextureIdentifier(), Identifier::new);
     }
 
     @Override
     protected int getXTexture() {
-        return screenHandler.getSearchBoxMode().getDisplayProperties().getX();
+        return screenHandler.getSearchBoxMode().getDisplayProperties().getTextureX();
     }
 
     @Override
     protected int getYTexture() {
-        return screenHandler.getSearchBoxMode().getDisplayProperties().getY();
+        return screenHandler.getSearchBoxMode().getDisplayProperties().getTextureY();
     }
 
     @Override

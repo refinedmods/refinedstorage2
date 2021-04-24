@@ -1,34 +1,31 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 public class GridSearchBoxModeDisplayProperties {
-    private final Identifier spriteIdentifier;
-    private final int x;
-    private final int y;
-    private final Text name;
+    private final String textureIdentifier;
+    private final int textureX;
+    private final int textureY;
+    private final String nameTranslationKey;
 
-    public GridSearchBoxModeDisplayProperties(Identifier spriteIdentifier, int x, int y, Text name) {
-        this.spriteIdentifier = spriteIdentifier;
-        this.x = x;
-        this.y = y;
-        this.name = name;
+    public GridSearchBoxModeDisplayProperties(String textureIdentifier, int textureX, int textureY, String nameTranslationKey) {
+        this.textureIdentifier = textureIdentifier;
+        this.textureX = textureX;
+        this.textureY = textureY;
+        this.nameTranslationKey = nameTranslationKey;
     }
 
-    public Identifier getSpriteIdentifier() {
-        return spriteIdentifier;
+    public String getTextureIdentifier() {
+        return textureIdentifier;
     }
 
-    public int getX() {
-        return x;
+    public int getTextureX() {
+        return textureX;
     }
 
-    public int getY() {
-        return y;
+    public int getTextureY() {
+        return textureY;
     }
 
-    public Text getName() {
-        return name;
+    public String getNameTranslationKey() {
+        return nameTranslationKey;
     }
 }

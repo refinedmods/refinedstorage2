@@ -7,8 +7,6 @@ import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import me.shedaniel.rei.api.REIHelper;
 import me.shedaniel.rei.gui.widget.TextFieldWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 // TODO - Investigate hard dep on REI
 public class ReiGridSearchBoxMode extends GridSearchBoxModeImpl {
@@ -41,16 +39,16 @@ public class ReiGridSearchBoxMode extends GridSearchBoxModeImpl {
 
     public static ReiGridSearchBoxMode create(GridQueryParser queryParser, boolean autoSelected, boolean twoWay) {
         return new ReiGridSearchBoxMode(queryParser, autoSelected, twoWay, new GridSearchBoxModeDisplayProperties(
-            RefinedStorage2Mod.createIdentifier("textures/icons.png"),
-            autoSelected ? 16 : 0,
-            96,
-            createText(autoSelected, twoWay)
+                RefinedStorage2Mod.createIdentifier("textures/icons.png").toString(),
+                autoSelected ? 16 : 0,
+                96,
+                createTranslationKey(autoSelected, twoWay)
         ));
     }
 
-    private static Text createText(boolean autoSelected, boolean twoWay) {
+    private static String createTranslationKey(boolean autoSelected, boolean twoWay) {
         String twoWayText = twoWay ? "_two_way" : "";
         String autoSelectedText = autoSelected ? "_autoselected" : "";
-        return RefinedStorage2Mod.createTranslation("gui", String.format("grid.search_box_mode.rei%s%s", twoWayText, autoSelectedText)).formatted(Formatting.GRAY);
+        return RefinedStorage2Mod.createTranslationKey("gui", String.format("grid.search_box_mode.rei%s%s", twoWayText, autoSelectedText));
     }
 }

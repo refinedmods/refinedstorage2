@@ -27,7 +27,6 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
@@ -89,10 +88,10 @@ public class RefinedStorage2Mod implements ModInitializer {
 
     private GridSearchBoxModeDisplayProperties createSearchBoxModeDisplayProperties(boolean autoSelected) {
         return new GridSearchBoxModeDisplayProperties(
-                createIdentifier("textures/icons.png"),
+                createIdentifier("textures/icons.png").toString(),
                 autoSelected ? 16 : 0,
                 96,
-                createTranslation("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : "")).formatted(Formatting.GRAY)
+                createTranslationKey("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : ""))
         );
     }
 
@@ -104,7 +103,11 @@ public class RefinedStorage2Mod implements ModInitializer {
         return ID.equals(identifier.getNamespace());
     }
 
+    public static String createTranslationKey(String category, String value) {
+        return String.format("%s.%s.%s", category, ID, value);
+    }
+
     public static TranslatableText createTranslation(String category, String value, Object... args) {
-        return new TranslatableText(String.format("%s.%s.%s", category, ID, value), args);
+        return new TranslatableText(createTranslationKey(category, value), args);
     }
 }
