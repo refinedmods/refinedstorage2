@@ -9,6 +9,10 @@ group = 'com.refinedmods.refinedstorage2'
 archivesBaseName = 'refinedstorage2-fabric'
 version = '2.0.0-milestone.1.0'
 
+if (System.getenv('GITHUB_SHA') != null) {
+    version += '+' + System.getenv('GITHUB_SHA').substring(0, 7)
+}
+
 repositories {
     mavenCentral()
     jcenter()
