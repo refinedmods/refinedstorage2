@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
-import com.refinedmods.refinedstorage2.core.adapter.FakeWorld;
+import com.refinedmods.refinedstorage2.core.adapter.FakeRs2World;
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.NetworkImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
@@ -51,7 +51,7 @@ class DiskDriveNetworkNodeTest {
         FakeStorageDiskProviderManager diskProviderManager = new FakeStorageDiskProviderManager();
 
         DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(
-                new FakeWorld(),
+                new FakeRs2World(),
                 Position.ORIGIN,
                 mock(NetworkNodeReference.class),
                 diskProviderManager,

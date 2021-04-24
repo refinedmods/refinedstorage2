@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import com.refinedmods.refinedstorage2.core.World;
+import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
@@ -40,7 +40,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
     private CompositeItemStorage compositeStorage = CompositeItemStorage.empty();
     private int priority;
 
-    public DiskDriveNetworkNode(World world, Position pos, NetworkNodeReference ref, StorageDiskManager diskManager, StorageDiskProvider diskProvider) {
+    public DiskDriveNetworkNode(Rs2World world, Position pos, NetworkNodeReference ref, StorageDiskManager diskManager, StorageDiskProvider diskProvider) {
         super(world, pos, ref);
 
         this.diskManager = diskManager;

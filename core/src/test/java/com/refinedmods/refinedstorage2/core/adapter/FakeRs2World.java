@@ -3,10 +3,10 @@ package com.refinedmods.refinedstorage2.core.adapter;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.refinedmods.refinedstorage2.core.World;
+import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
-public class FakeWorld implements World {
+public class FakeRs2World implements Rs2World {
     private final Map<Position, String> types = new HashMap<>();
 
     public Position setType(Position position, String type) {

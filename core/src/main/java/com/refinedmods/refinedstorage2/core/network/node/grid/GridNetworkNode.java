@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.core.network.node.grid;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.refinedmods.refinedstorage2.core.World;
+import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeRegistry;
@@ -26,7 +26,7 @@ public class GridNetworkNode extends NetworkNodeImpl {
 
     private final Set<GridEventHandler> watchers = new HashSet<>();
 
-    public GridNetworkNode(World world, Position pos, NetworkNodeReference ref, GridSearchBoxModeRegistry searchBoxModeRegistry) {
+    public GridNetworkNode(Rs2World world, Position pos, NetworkNodeReference ref, GridSearchBoxModeRegistry searchBoxModeRegistry) {
         super(world, pos, ref);
         this.searchBoxMode = searchBoxModeRegistry.getDefault();
     }

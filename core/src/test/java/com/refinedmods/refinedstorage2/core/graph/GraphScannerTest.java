@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.core.graph;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
-import com.refinedmods.refinedstorage2.core.adapter.FakeWorld;
+import com.refinedmods.refinedstorage2.core.adapter.FakeRs2World;
 import com.refinedmods.refinedstorage2.core.util.Position;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ class GraphScannerTest {
     @Test
     void Test_scanning_from_origin_contains_origin() {
         // Arrange
-        FakeWorld world = new FakeWorld();
+        FakeRs2World world = new FakeRs2World();
 
         Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
 
@@ -33,7 +33,7 @@ class GraphScannerTest {
     @Test
     void Test_scanning_does_not_connect_to_incompatible_neighbor() {
         // Arrange
-        FakeWorld world = new FakeWorld();
+        FakeRs2World world = new FakeRs2World();
 
         Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
         world.setType(Position.ORIGIN.down(), TYPE_CHEST);
@@ -50,7 +50,7 @@ class GraphScannerTest {
     @Test
     void Test_scanning_does_connect_to_compatible_neighbor() {
         // Arrange
-        FakeWorld world = new FakeWorld();
+        FakeRs2World world = new FakeRs2World();
 
         Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
         Position b02 = world.setType(Position.ORIGIN.down(), TYPE_FURNACE);
@@ -68,7 +68,7 @@ class GraphScannerTest {
     @Test
     void Test_scanning_blocks_compatible_neighbors_if_incompatible_neighbor_is_in_between() {
         // Arrange
-        FakeWorld world = new FakeWorld();
+        FakeRs2World world = new FakeRs2World();
 
         Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
         world.setType(Position.ORIGIN.down(), TYPE_CHEST);
@@ -86,7 +86,7 @@ class GraphScannerTest {
     @Test
     void Test_scanning_can_still_find_neighbor_with_alternate_route_if_is_blocked() {
         // Arrange
-        FakeWorld world = new FakeWorld();
+        FakeRs2World world = new FakeRs2World();
 
         Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
         world.setType(Position.ORIGIN.down(), TYPE_CHEST);
@@ -107,7 +107,7 @@ class GraphScannerTest {
     @Test
     void Test_scanner_can_detect_new_entries() {
         // Arrange
-        FakeWorld world = new FakeWorld();
+        FakeRs2World world = new FakeRs2World();
 
         Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
 
@@ -131,7 +131,7 @@ class GraphScannerTest {
     @Test
     void Test_scanner_can_detect_removed_entries() {
         // Arrange
-        FakeWorld world = new FakeWorld();
+        FakeRs2World world = new FakeRs2World();
 
         Position b00 = world.setType(Position.ORIGIN.up(), TYPE_FURNACE);
         Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
@@ -158,7 +158,7 @@ class GraphScannerTest {
     @Test
     void Test_scanner_can_detect_new_and_removed_entries() {
         // Arrange
-        FakeWorld world = new FakeWorld();
+        FakeRs2World world = new FakeRs2World();
 
         Position b00 = world.setType(Position.ORIGIN.up(), TYPE_FURNACE);
         Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);

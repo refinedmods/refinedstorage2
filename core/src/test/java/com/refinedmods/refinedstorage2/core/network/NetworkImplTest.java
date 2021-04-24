@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
-import com.refinedmods.refinedstorage2.core.adapter.FakeWorld;
+import com.refinedmods.refinedstorage2.core.adapter.FakeRs2World;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
@@ -28,7 +28,7 @@ class NetworkImplTest {
 
         NetworkNodeReference badRef = new StubNetworkNodeReference(null);
 
-        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(new FakeWorld(), Position.ORIGIN, null, diskProviderManager, diskProviderManager);
+        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(new FakeRs2World(), Position.ORIGIN, null, diskProviderManager, diskProviderManager);
         diskProviderManager.setDiskDrive(diskDrive);
         diskProviderManager.setDisk(0, new ItemDiskStorage(100));
         NetworkNodeReference diskDriveRef = new StubNetworkNodeReference(diskDrive);

@@ -18,7 +18,7 @@ import com.refinedmods.refinedstorage2.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricWorldAdapter;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
@@ -72,7 +72,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     @Override
     protected DiskDriveNetworkNode createNode(World world, BlockPos pos) {
         return new DiskDriveNetworkNode(
-                FabricWorldAdapter.of(world),
+                FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
                 FabricNetworkNodeReference.of(world, pos),
                 RefinedStorage2Mod.API.getStorageDiskManager(world),

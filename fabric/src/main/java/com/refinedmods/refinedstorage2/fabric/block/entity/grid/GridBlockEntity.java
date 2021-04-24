@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.core.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricWorldAdapter;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
@@ -37,7 +37,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
     @Override
     protected GridNetworkNode createNode(World world, BlockPos pos) {
         return new GridNetworkNode(
-                FabricWorldAdapter.of(world),
+                FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
                 FabricNetworkNodeReference.of(world, pos),
                 RefinedStorage2Mod.API.getGridSearchBoxModeRegistry()
