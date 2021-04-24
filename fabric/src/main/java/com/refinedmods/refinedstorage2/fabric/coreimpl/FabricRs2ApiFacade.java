@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.coreimpl;
 
-import com.refinedmods.refinedstorage2.core.RefinedStorage2ApiFacade;
+import com.refinedmods.refinedstorage2.core.Rs2ApiFacade;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.core.network.NetworkManager;
 import com.refinedmods.refinedstorage2.core.network.NetworkManagerImpl;
@@ -13,16 +13,16 @@ import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.FabricStorag
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
-public class FabricRefinedStorage2ApiFacade implements RefinedStorage2ApiFacade {
+public class FabricRs2ApiFacade implements Rs2ApiFacade<MinecraftServer, World> {
     private final StorageDiskManager clientStorageDiskManager = new ClientStorageDiskManager(new FabricRequestInfoCallback());
     private final GridSearchBoxModeRegistry gridSearchBoxModeRegistry = new GridSearchBoxModeRegistry();
 
     @Override
     public NetworkManager getNetworkManager(MinecraftServer server) {
         return server
-            .getWorld(World.OVERWORLD)
-            .getPersistentStateManager()
-            .getOrCreate(() -> new FabricNetworkManager(FabricNetworkManager.NAME, new NetworkManagerImpl()), FabricNetworkManager.NAME);
+                .getWorld(World.OVERWORLD)
+                .getPersistentStateManager()
+                .getOrCreate(() -> new FabricNetworkManager(FabricNetworkManager.NAME, new NetworkManagerImpl()), FabricNetworkManager.NAME);
     }
 
     @Override
@@ -32,10 +32,10 @@ public class FabricRefinedStorage2ApiFacade implements RefinedStorage2ApiFacade 
         }
 
         return world
-            .getServer()
-            .getWorld(World.OVERWORLD)
-            .getPersistentStateManager()
-            .getOrCreate(() -> new FabricStorageDiskManager(FabricStorageDiskManager.NAME, new StorageDiskManagerImpl()), FabricStorageDiskManager.NAME);
+                .getServer()
+                .getWorld(World.OVERWORLD)
+                .getPersistentStateManager()
+                .getOrCreate(() -> new FabricStorageDiskManager(FabricStorageDiskManager.NAME, new StorageDiskManagerImpl()), FabricStorageDiskManager.NAME);
     }
 
     @Override

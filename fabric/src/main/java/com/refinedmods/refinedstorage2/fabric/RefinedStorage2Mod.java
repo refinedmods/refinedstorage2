@@ -1,13 +1,13 @@
 package com.refinedmods.refinedstorage2.fabric;
 
-import com.refinedmods.refinedstorage2.core.RefinedStorage2ApiFacade;
+import com.refinedmods.refinedstorage2.core.Rs2ApiFacade;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeDisplayProperties;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.core.query.parser.ParserOperatorMappings;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.FabricRefinedStorage2ApiFacade;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.FabricRs2ApiFacade;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.ReiGridSearchBoxMode;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2BlockEntities;
 import com.refinedmods.refinedstorage2.fabric.init.RefinedStorage2Blocks;
@@ -25,9 +25,11 @@ import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,7 +38,7 @@ public class RefinedStorage2Mod implements ModInitializer {
 
     static final String ID = "refinedstorage2";
 
-    public static final RefinedStorage2ApiFacade API = new FabricRefinedStorage2ApiFacade();
+    public static final Rs2ApiFacade<MinecraftServer, World> API = new FabricRs2ApiFacade();
 
     public static final RefinedStorage2Blocks BLOCKS = new RefinedStorage2Blocks();
     public static final RefinedStorage2Items ITEMS = new RefinedStorage2Items();
@@ -87,10 +89,10 @@ public class RefinedStorage2Mod implements ModInitializer {
 
     private GridSearchBoxModeDisplayProperties createSearchBoxModeDisplayProperties(boolean autoSelected) {
         return new GridSearchBoxModeDisplayProperties(
-            createIdentifier("textures/icons.png"),
-            autoSelected ? 16 : 0,
-            96,
-            createTranslation("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : "")).formatted(Formatting.GRAY)
+                createIdentifier("textures/icons.png"),
+                autoSelected ? 16 : 0,
+                96,
+                createTranslation("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : "")).formatted(Formatting.GRAY)
         );
     }
 
