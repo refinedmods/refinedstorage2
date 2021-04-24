@@ -1,8 +1,5 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
@@ -10,6 +7,9 @@ import com.refinedmods.refinedstorage2.core.storage.Source;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import com.refinedmods.refinedstorage2.core.util.Action;
+
+import java.util.Collection;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

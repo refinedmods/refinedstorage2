@@ -3,6 +3,10 @@ package com.refinedmods.refinedstorage2.fabric.item;
 import net.minecraft.item.Item;
 
 public class ProcessorItem extends Item {
+    public ProcessorItem(Settings settings) {
+        super(settings);
+    }
+
     public enum Type {
         RAW_BASIC("raw_basic"),
         RAW_IMPROVED("raw_improved"),
@@ -20,9 +24,5 @@ public class ProcessorItem extends Item {
         public String getName() {
             return name;
         }
-    }
-
-    public ProcessorItem(Settings settings) {
-        super(settings);
     }
 }

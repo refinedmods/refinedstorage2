@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.core.util.Position;
 import com.refinedmods.refinedstorage2.fabric.block.GridBlock;
 import com.refinedmods.refinedstorage2.fabric.block.NetworkNodeBlock;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -40,13 +41,13 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     }
 
     @Override
-    public void setNetwork(Network network) {
-        node.setNetwork(network);
+    public Network getNetwork() {
+        return node.getNetwork();
     }
 
     @Override
-    public Network getNetwork() {
-        return node.getNetwork();
+    public void setNetwork(Network network) {
+        node.setNetwork(network);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.core.util;
 
-import java.util.Objects;
-
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
+
+import java.util.Objects;
 
 class Rs2ItemStackWrapper {
     private final Rs2ItemStack stack;

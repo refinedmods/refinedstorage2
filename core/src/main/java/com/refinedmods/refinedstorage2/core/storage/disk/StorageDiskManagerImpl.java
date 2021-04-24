@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.core.storage.disk;
 
-import com.google.common.base.Preconditions;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.google.common.base.Preconditions;
 
 public class StorageDiskManagerImpl implements StorageDiskManager {
     private final Map<UUID, StorageDisk<?>> disks = new HashMap<>();
@@ -30,19 +30,19 @@ public class StorageDiskManagerImpl implements StorageDiskManager {
     @Override
     public <T> Optional<StorageDisk<T>> disassembleDisk(UUID id) {
         return getDisk(id)
-            .map(disk -> {
-                if (disk.getStored() == 0) {
-                    disks.remove(id);
-                    return (StorageDisk<T>) disk;
-                }
-                return null;
-            });
+                .map(disk -> {
+                    if (disk.getStored() == 0) {
+                        disks.remove(id);
+                        return (StorageDisk<T>) disk;
+                    }
+                    return null;
+                });
     }
 
     @Override
     public StorageDiskInfo getInfo(UUID id) {
         return getDisk(id)
-            .map(disk -> new StorageDiskInfo(disk.getStored(), disk.getCapacity()))
-            .orElse(StorageDiskInfo.UNKNOWN);
+                .map(disk -> new StorageDiskInfo(disk.getStored(), disk.getCapacity()))
+                .orElse(StorageDiskInfo.UNKNOWN);
     }
 }

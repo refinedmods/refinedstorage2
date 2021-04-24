@@ -1,5 +1,9 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
+import com.refinedmods.refinedstorage2.core.list.StackList;
+import com.refinedmods.refinedstorage2.core.list.StackListResult;
+import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,9 +15,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.refinedmods.refinedstorage2.core.list.StackList;
-import com.refinedmods.refinedstorage2.core.list.StackListResult;
-import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,13 +48,13 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     }
 
     @Override
-    public void setSortingType(GridSortingType sortingType) {
-        this.sortingType = sortingType;
+    public GridSortingType getSortingType() {
+        return sortingType;
     }
 
     @Override
-    public GridSortingType getSortingType() {
-        return sortingType;
+    public void setSortingType(GridSortingType sortingType) {
+        this.sortingType = sortingType;
     }
 
     @Override
@@ -62,13 +63,13 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     }
 
     @Override
-    public void setPreventSorting(boolean preventSorting) {
-        this.preventSorting = preventSorting;
+    public boolean isPreventSorting() {
+        return preventSorting;
     }
 
     @Override
-    public boolean isPreventSorting() {
-        return preventSorting;
+    public void setPreventSorting(boolean preventSorting) {
+        this.preventSorting = preventSorting;
     }
 
     private Comparator<GridStack<?>> getComparator() {
@@ -86,13 +87,13 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     }
 
     @Override
-    public void setSortingDirection(GridSortingDirection sortingDirection) {
-        this.sortingDirection = sortingDirection;
+    public GridSortingDirection getSortingDirection() {
+        return sortingDirection;
     }
 
     @Override
-    public GridSortingDirection getSortingDirection() {
-        return sortingDirection;
+    public void setSortingDirection(GridSortingDirection sortingDirection) {
+        this.sortingDirection = sortingDirection;
     }
 
     @Override
@@ -112,13 +113,13 @@ public class GridViewImpl<T, ID> implements GridView<T> {
 
         stackIndex.clear();
         stacks = list
-            .getAll()
-            .stream()
-            .map(stackFactory)
-            .sorted(getComparator())
-            .filter(filter)
-            .peek(stack -> stackIndex.put(idFactory.apply(stack.getStack()), stack))
-            .collect(Collectors.toList());
+                .getAll()
+                .stream()
+                .map(stackFactory)
+                .sorted(getComparator())
+                .filter(filter)
+                .peek(stack -> stackIndex.put(idFactory.apply(stack.getStack()), stack))
+                .collect(Collectors.toList());
 
         notifyListener();
     }

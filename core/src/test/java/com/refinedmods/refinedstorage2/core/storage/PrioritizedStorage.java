@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
+import com.refinedmods.refinedstorage2.core.util.Action;
+
 import java.util.Collection;
 import java.util.Optional;
-
-import com.refinedmods.refinedstorage2.core.util.Action;
 
 public class PrioritizedStorage<T> implements Storage<T>, Priority {
     private final int priority;

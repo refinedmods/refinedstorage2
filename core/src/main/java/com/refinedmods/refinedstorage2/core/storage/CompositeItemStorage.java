@@ -1,22 +1,18 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.util.Action;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 public class CompositeItemStorage implements Storage<Rs2ItemStack> {
     private final List<Storage<Rs2ItemStack>> sources;
     private final StackList<Rs2ItemStack> list;
-
-    public static CompositeItemStorage empty() {
-        return new CompositeItemStorage(Collections.emptyList(), ItemStackList.create());
-    }
 
     public CompositeItemStorage(List<Storage<Rs2ItemStack>> sources, StackList<Rs2ItemStack> list) {
         this.sources = sources;
@@ -24,6 +20,10 @@ public class CompositeItemStorage implements Storage<Rs2ItemStack> {
 
         fillListFromSources();
         sortSources();
+    }
+
+    public static CompositeItemStorage empty() {
+        return new CompositeItemStorage(Collections.emptyList(), ItemStackList.create());
     }
 
     public void sortSources() {

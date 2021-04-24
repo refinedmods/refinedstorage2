@@ -1,12 +1,5 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import alexiil.mc.lib.attributes.item.FixedItemInv;
-import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveState;
@@ -25,6 +18,14 @@ import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetwor
 import com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import alexiil.mc.lib.attributes.item.FixedItemInv;
+import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.fabricmc.fabric.api.util.NbtType;

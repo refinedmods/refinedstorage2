@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage2.core.storage.disk;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.item.ItemStubs;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.util.Action;
+
+import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 

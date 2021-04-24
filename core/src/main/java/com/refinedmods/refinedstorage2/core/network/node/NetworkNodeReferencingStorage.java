@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.core.network.node;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import com.refinedmods.refinedstorage2.core.storage.Priority;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.util.Action;
+
+import java.util.Collection;
+import java.util.Optional;
 
 public class NetworkNodeReferencingStorage<T> implements Storage<T>, Priority {
     private final NetworkNodeReference ref;

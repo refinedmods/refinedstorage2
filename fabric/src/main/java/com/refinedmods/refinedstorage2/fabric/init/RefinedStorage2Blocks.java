@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.fabric.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.fabric.block.GridBlock;
 import com.refinedmods.refinedstorage2.fabric.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.fabric.block.QuartzEnrichedIronBlock;
+
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Material;
 import net.minecraft.sound.BlockSoundGroup;
@@ -13,16 +14,15 @@ import net.minecraft.util.registry.Registry;
 
 public class RefinedStorage2Blocks {
     private static final FabricBlockSettings STONE_SETTINGS = FabricBlockSettings
-        .of(Material.STONE)
-        .hardness(1.9F)
-        .resistance(1.9F)
-        .sounds(BlockSoundGroup.STONE);
-
+            .of(Material.STONE)
+            .hardness(1.9F)
+            .resistance(1.9F)
+            .sounds(BlockSoundGroup.STONE);
+    private final BlockColorMap<GridBlock> grid = new BlockColorMap<>();
     private CableBlock cable;
     private QuartzEnrichedIronBlock quartzEnrichedIron;
     private DiskDriveBlock diskDrive;
     private MachineCasingBlock machineCasing;
-    private final BlockColorMap<GridBlock> grid = new BlockColorMap<>();
 
     public void register() {
         cable = Registry.register(Registry.BLOCK, RefinedStorage2Mod.createIdentifier("cable"), new CableBlock());

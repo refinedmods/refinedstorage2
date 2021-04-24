@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import java.util.Set;
-
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
+
+import java.util.Set;
 
 public class ItemGridStack extends GridStack<Rs2ItemStack> {
     public ItemGridStack(Rs2ItemStack stack, String name, String modId, String modName, Set<String> tags) {

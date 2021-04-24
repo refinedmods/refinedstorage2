@@ -1,9 +1,6 @@
 package com.refinedmods.refinedstorage2.core.item;
 
 public final class ItemStubs {
-    private ItemStubs() {
-    }
-
     public static final Rs2Item DIRT = new ItemStub(1, "Dirt", 64);
     public static final Rs2Item FURNACE = new ItemStub(2, "Furnace", 64);
     public static final Rs2Item GLASS = new ItemStub(3, "Glass", 64);
@@ -14,4 +11,7 @@ public final class ItemStubs {
     public static final Rs2Item STONE = new ItemStub(8, "Stone", 64);
     public static final Rs2Item SADDLE = new ItemStub(9, "Saddle", 1);
     public static final Rs2Item GOLD_BLOCK = new ItemStub(10, "Gold Block", 64);
+
+    private ItemStubs() {
+    }
 }

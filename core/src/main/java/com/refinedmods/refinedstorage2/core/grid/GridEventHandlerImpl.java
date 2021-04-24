@@ -1,20 +1,20 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import java.util.Optional;
-
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import com.refinedmods.refinedstorage2.core.util.Action;
+
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class GridEventHandlerImpl implements GridEventHandler {
     private static final Logger LOGGER = LogManager.getLogger(GridEventHandlerImpl.class);
-
-    private boolean active;
     private final StorageChannel<Rs2ItemStack> storageChannel;
     private final GridInteractor interactor;
+    private boolean active;
 
     public GridEventHandlerImpl(boolean active, StorageChannel<Rs2ItemStack> storageChannel, GridInteractor interactor) {
         this.active = active;

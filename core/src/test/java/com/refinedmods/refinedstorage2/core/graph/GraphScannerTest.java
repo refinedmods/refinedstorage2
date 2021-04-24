@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.core.graph;
 import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.adapter.FakeRs2World;
 import com.refinedmods.refinedstorage2.core.util.Position;
+
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

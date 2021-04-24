@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
+import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
+
 import java.util.Comparator;
 import java.util.function.Function;
-
-import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 
 public enum GridSortingType {
     QUANTITY((view) -> (a, b) -> Long.compare(a.getAmount(), b.getAmount())),

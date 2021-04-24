@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.core.network.node;
 
+import com.refinedmods.refinedstorage2.core.util.Position;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import com.refinedmods.refinedstorage2.core.util.Position;
 
 public class FakeNetworkNodeRepository implements NetworkNodeRepository {
     private final Map<Position, NetworkNode> nodes = new HashMap<>();

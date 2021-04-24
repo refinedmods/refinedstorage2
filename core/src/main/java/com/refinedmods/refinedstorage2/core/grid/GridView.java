@@ -1,27 +1,27 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
+import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
-
 public interface GridView<T> {
     void setListener(Runnable listener);
 
-    void setSortingType(GridSortingType sortingType);
-
     GridSortingType getSortingType();
+
+    void setSortingType(GridSortingType sortingType);
 
     void setFilter(Predicate<GridStack<?>> filter);
 
-    void setPreventSorting(boolean preventSorting);
-
     boolean isPreventSorting();
 
-    void setSortingDirection(GridSortingDirection sortingDirection);
+    void setPreventSorting(boolean preventSorting);
 
     GridSortingDirection getSortingDirection();
+
+    void setSortingDirection(GridSortingDirection sortingDirection);
 
     void loadStack(T template, long amount, StorageTracker.Entry trackerEntry);
 

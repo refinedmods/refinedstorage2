@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.core.network;
 
-import java.util.Collection;
-
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeRepository;
 import com.refinedmods.refinedstorage2.core.util.Position;
+
+import java.util.Collection;
 
 public interface NetworkManager {
     Network onNodeAdded(NetworkNodeRepository nodeRepository, Position pos);

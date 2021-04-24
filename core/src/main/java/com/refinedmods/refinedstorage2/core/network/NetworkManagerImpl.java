@@ -1,15 +1,5 @@
 package com.refinedmods.refinedstorage2.core.network;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import com.refinedmods.refinedstorage2.core.graph.GraphScanner;
 import com.refinedmods.refinedstorage2.core.graph.GraphScannerResult;
 import com.refinedmods.refinedstorage2.core.network.node.HidingNetworkNodeRepository;
@@ -20,6 +10,17 @@ import com.refinedmods.refinedstorage2.core.network.node.graph.NetworkNodeReques
 import com.refinedmods.refinedstorage2.core.network.node.graph.NetworkNodeRequestHandler;
 import com.refinedmods.refinedstorage2.core.util.Direction;
 import com.refinedmods.refinedstorage2.core.util.Position;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

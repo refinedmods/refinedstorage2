@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.mixin;
 
 import com.refinedmods.refinedstorage2.fabric.render.FullbrightHooks;
+
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.util.Identifier;

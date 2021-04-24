@@ -1,11 +1,5 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
@@ -23,13 +17,19 @@ import com.refinedmods.refinedstorage2.core.util.Filter;
 import com.refinedmods.refinedstorage2.core.util.FilterMode;
 import com.refinedmods.refinedstorage2.core.util.ItemFilter;
 import com.refinedmods.refinedstorage2.core.util.Position;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2ItemStack>, Priority {
-    private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
-
     public static final int DISK_COUNT = 8;
+    private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
     private static final double DISK_NEAR_CAPACITY_THRESHOLD = .75;
 
     private final StorageDiskManager diskManager;
@@ -100,20 +100,20 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
         }
     }
 
-    public void setExactMode(boolean exactMode) {
-        itemFilter.setExact(exactMode);
-    }
-
     public boolean isExactMode() {
         return itemFilter.isExact();
     }
 
-    public void setFilterMode(FilterMode mode) {
-        itemFilter.setMode(mode);
+    public void setExactMode(boolean exactMode) {
+        itemFilter.setExact(exactMode);
     }
 
     public FilterMode getFilterMode() {
         return itemFilter.getMode();
+    }
+
+    public void setFilterMode(FilterMode mode) {
+        itemFilter.setMode(mode);
     }
 
     public void setFilterTemplates(List<Rs2ItemStack> templates) {

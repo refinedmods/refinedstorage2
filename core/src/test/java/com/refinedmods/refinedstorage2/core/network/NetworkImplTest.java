@@ -1,8 +1,5 @@
 package com.refinedmods.refinedstorage2.core.network;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.adapter.FakeRs2World;
 import com.refinedmods.refinedstorage2.core.item.ItemStubs;
@@ -14,6 +11,10 @@ import com.refinedmods.refinedstorage2.core.network.node.diskdrive.FakeStorageDi
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.Position;
+
+import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;

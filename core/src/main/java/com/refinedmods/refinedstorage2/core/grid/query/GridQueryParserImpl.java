@@ -1,12 +1,5 @@
 package com.refinedmods.refinedstorage2.core.grid.query;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
-
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.query.lexer.Lexer;
 import com.refinedmods.refinedstorage2.core.query.lexer.LexerException;
@@ -23,6 +16,13 @@ import com.refinedmods.refinedstorage2.core.query.parser.node.Node;
 import com.refinedmods.refinedstorage2.core.query.parser.node.ParenNode;
 import com.refinedmods.refinedstorage2.core.query.parser.node.UnaryOpNode;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
+
 public class GridQueryParserImpl implements GridQueryParser {
     private final LexerTokenMappings tokenMappings;
     private final ParserOperatorMappings operatorMappings;
@@ -32,44 +32,12 @@ public class GridQueryParserImpl implements GridQueryParser {
         this.operatorMappings = operatorMappings;
     }
 
-    @Override
-    public Predicate<GridStack<?>> parse(String query) throws GridQueryParserException {
-        if ("".equals(query.trim())) {
-            return stack -> true;
-        }
-
-        List<Token> tokens = getTokens(query);
-        List<Node> nodes = getNodes(tokens);
-
-        return implicitAnd(nodes);
-    }
-
     private static Predicate<GridStack<?>> implicitAnd(List<Node> nodes) throws GridQueryParserException {
         List<Predicate<GridStack<?>>> conditions = new ArrayList<>();
         for (Node node : nodes) {
             conditions.add(parseNode(node));
         }
         return and(conditions);
-    }
-
-    private List<Token> getTokens(String query) throws GridQueryParserException {
-        try {
-            Lexer lexer = new Lexer(new Source("Grid query input", query), tokenMappings);
-            lexer.scan();
-            return lexer.getTokens();
-        } catch (LexerException e) {
-            throw new GridQueryParserException(e.getRange(), e.getMessage(), e);
-        }
-    }
-
-    private List<Node> getNodes(List<Token> tokens) throws GridQueryParserException {
-        try {
-            Parser parser = new Parser(tokens, operatorMappings);
-            parser.parse();
-            return parser.getNodes();
-        } catch (ParserException e) {
-            throw new GridQueryParserException(e.getToken().getPosition().getRange(), e.getMessage(), e);
-        }
     }
 
     private static Predicate<GridStack<?>> parseNode(Node node) throws GridQueryParserException {
@@ -193,5 +161,37 @@ public class GridQueryParserImpl implements GridQueryParser {
 
     private static Predicate<GridStack<?>> not(Predicate<GridStack<?>> predicate) {
         return (stack) -> !predicate.test(stack);
+    }
+
+    @Override
+    public Predicate<GridStack<?>> parse(String query) throws GridQueryParserException {
+        if ("".equals(query.trim())) {
+            return stack -> true;
+        }
+
+        List<Token> tokens = getTokens(query);
+        List<Node> nodes = getNodes(tokens);
+
+        return implicitAnd(nodes);
+    }
+
+    private List<Token> getTokens(String query) throws GridQueryParserException {
+        try {
+            Lexer lexer = new Lexer(new Source("Grid query input", query), tokenMappings);
+            lexer.scan();
+            return lexer.getTokens();
+        } catch (LexerException e) {
+            throw new GridQueryParserException(e.getRange(), e.getMessage(), e);
+        }
+    }
+
+    private List<Node> getNodes(List<Token> tokens) throws GridQueryParserException {
+        try {
+            Parser parser = new Parser(tokens, operatorMappings);
+            parser.parse();
+            return parser.getNodes();
+        } catch (ParserException e) {
+            throw new GridQueryParserException(e.getToken().getPosition().getRange(), e.getMessage(), e);
+        }
     }
 }

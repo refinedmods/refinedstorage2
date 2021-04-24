@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.item;
 
 import com.refinedmods.refinedstorage2.core.item.Rs2Item;
+
 import net.minecraft.item.Item;
 
 public class FabricRs2Item implements Rs2Item {

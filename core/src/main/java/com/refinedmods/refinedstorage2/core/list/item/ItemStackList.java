@@ -1,5 +1,10 @@
 package com.refinedmods.refinedstorage2.core.list.item;
 
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStackIdentifier;
+import com.refinedmods.refinedstorage2.core.list.StackList;
+import com.refinedmods.refinedstorage2.core.list.StackListResult;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,22 +14,18 @@ import java.util.function.Function;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStackIdentifier;
-import com.refinedmods.refinedstorage2.core.list.StackList;
-import com.refinedmods.refinedstorage2.core.list.StackListResult;
 
 public class ItemStackList<ID> implements StackList<Rs2ItemStack> {
     private final Map<ID, Rs2ItemStack> entries = new HashMap<>();
     private final BiMap<UUID, Rs2ItemStack> index = HashBiMap.create();
     private final Function<Rs2ItemStack, ID> idFactory;
 
-    public static ItemStackList<Rs2ItemStackIdentifier> create() {
-        return new ItemStackList<>(Rs2ItemStackIdentifier::new);
-    }
-
     public ItemStackList(Function<Rs2ItemStack, ID> idFactory) {
         this.idFactory = idFactory;
+    }
+
+    public static ItemStackList<Rs2ItemStackIdentifier> create() {
+        return new ItemStackList<>(Rs2ItemStackIdentifier::new);
     }
 
     @Override

@@ -1,14 +1,15 @@
 package com.refinedmods.refinedstorage2.fabric.item;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.ItemStorageType;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
@@ -33,6 +34,20 @@ public class StorageDiskItem extends Item {
         this.type = type;
     }
 
+    public static Optional<UUID> getId(ItemStack stack) {
+        if (stack.hasTag() && stack.getTag().containsUuid("id")) {
+            return Optional.of(stack.getTag().getUuid("id"));
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<StorageDiskInfo> getInfo(@Nullable World world, ItemStack stack) {
+        if (world == null) {
+            return Optional.empty();
+        }
+        return getId(stack).map(RefinedStorage2Mod.API.getStorageDiskManager(world)::getInfo);
+    }
+
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
@@ -52,6 +67,9 @@ public class StorageDiskItem extends Item {
         }
     }
 
+    // TODO immunity for despawning
+    // TODO tags in recipes
+
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
@@ -61,25 +79,22 @@ public class StorageDiskItem extends Item {
         }
 
         return getId(stack)
-            .flatMap(id -> RefinedStorage2Mod.API.getStorageDiskManager(world).disassembleDisk(id))
-            .map(disk -> {
-                ItemStack storagePart = createStoragePart(stack.getCount());
+                .flatMap(id -> RefinedStorage2Mod.API.getStorageDiskManager(world).disassembleDisk(id))
+                .map(disk -> {
+                    ItemStack storagePart = createStoragePart(stack.getCount());
 
-                if (!user.inventory.insertStack(storagePart.copy())) {
-                    world.spawnEntity(new ItemEntity(world, user.getX(), user.getY(), user.getZ(), storagePart));
-                }
+                    if (!user.inventory.insertStack(storagePart.copy())) {
+                        world.spawnEntity(new ItemEntity(world, user.getX(), user.getY(), user.getZ(), storagePart));
+                    }
 
-                return TypedActionResult.success(new ItemStack(RefinedStorage2Mod.ITEMS.getStorageHousing()));
-            })
-            .orElse(TypedActionResult.fail(stack));
+                    return TypedActionResult.success(new ItemStack(RefinedStorage2Mod.ITEMS.getStorageHousing()));
+                })
+                .orElse(TypedActionResult.fail(stack));
     }
 
     private ItemStack createStoragePart(int count) {
         return new ItemStack(RefinedStorage2Mod.ITEMS.getStoragePart(type), count);
     }
-
-    // TODO immunity for despawning
-    // TODO tags in recipes
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
@@ -93,19 +108,5 @@ public class StorageDiskItem extends Item {
             stack.setTag(new CompoundTag());
             stack.getTag().putUuid("id", id);
         }
-    }
-
-    public static Optional<UUID> getId(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().containsUuid("id")) {
-            return Optional.of(stack.getTag().getUuid("id"));
-        }
-        return Optional.empty();
-    }
-
-    public static Optional<StorageDiskInfo> getInfo(@Nullable World world, ItemStack stack) {
-        if (world == null) {
-            return Optional.empty();
-        }
-        return getId(stack).map(RefinedStorage2Mod.API.getStorageDiskManager(world)::getInfo);
     }
 }

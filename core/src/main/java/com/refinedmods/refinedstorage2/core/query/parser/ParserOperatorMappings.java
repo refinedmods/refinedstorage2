@@ -1,22 +1,22 @@
 package com.refinedmods.refinedstorage2.core.query.parser;
 
+import com.refinedmods.refinedstorage2.core.query.lexer.Token;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import com.refinedmods.refinedstorage2.core.query.lexer.Token;
-
 public class ParserOperatorMappings {
     public static final ParserOperatorMappings DEFAULT_MAPPINGS = new ParserOperatorMappings()
-        .addBinaryOperator("||", new Operator(0, Associativity.LEFT))
-        .addBinaryOperator("&&", new Operator(1, Associativity.LEFT))
-        .addUnaryOperatorPosition("!", UnaryOperatorPosition.PREFIX)
-        .addUnaryOperatorPosition("@", UnaryOperatorPosition.PREFIX)
-        .addUnaryOperatorPosition("$", UnaryOperatorPosition.PREFIX)
-        .addUnaryOperatorPosition(">", UnaryOperatorPosition.PREFIX)
-        .addUnaryOperatorPosition(">=", UnaryOperatorPosition.PREFIX)
-        .addUnaryOperatorPosition("<", UnaryOperatorPosition.PREFIX)
-        .addUnaryOperatorPosition("<=", UnaryOperatorPosition.PREFIX)
-        .addUnaryOperatorPosition("=", UnaryOperatorPosition.PREFIX);
+            .addBinaryOperator("||", new Operator(0, Associativity.LEFT))
+            .addBinaryOperator("&&", new Operator(1, Associativity.LEFT))
+            .addUnaryOperatorPosition("!", UnaryOperatorPosition.PREFIX)
+            .addUnaryOperatorPosition("@", UnaryOperatorPosition.PREFIX)
+            .addUnaryOperatorPosition("$", UnaryOperatorPosition.PREFIX)
+            .addUnaryOperatorPosition(">", UnaryOperatorPosition.PREFIX)
+            .addUnaryOperatorPosition(">=", UnaryOperatorPosition.PREFIX)
+            .addUnaryOperatorPosition("<", UnaryOperatorPosition.PREFIX)
+            .addUnaryOperatorPosition("<=", UnaryOperatorPosition.PREFIX)
+            .addUnaryOperatorPosition("=", UnaryOperatorPosition.PREFIX);
 
     private final Map<String, Operator> binaryOperatorPrecedenceMap = new HashMap<>();
     private final Map<String, UnaryOperatorPosition> unaryOperatorPositions = new HashMap<>();

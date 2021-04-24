@@ -13,6 +13,10 @@ public class TokenRange {
         this.endColumn = endColumn;
     }
 
+    public static TokenRange combine(TokenRange low, TokenRange high) {
+        return new TokenRange(low.startLine, low.startColumn, high.endLine, high.endColumn);
+    }
+
     public int getStartLine() {
         return startLine;
     }
@@ -32,9 +36,5 @@ public class TokenRange {
     @Override
     public String toString() {
         return startLine + ":" + startColumn + " - " + endLine + ":" + endColumn;
-    }
-
-    public static TokenRange combine(TokenRange low, TokenRange high) {
-        return new TokenRange(low.startLine, low.startColumn, high.endLine, high.endColumn);
     }
 }

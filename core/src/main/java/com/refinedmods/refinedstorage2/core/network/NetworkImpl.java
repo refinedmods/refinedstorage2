@@ -1,12 +1,5 @@
 package com.refinedmods.refinedstorage2.core.network;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
@@ -15,6 +8,13 @@ import com.refinedmods.refinedstorage2.core.storage.EmptyItemStorage;
 import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 public class NetworkImpl implements Network {
     private final UUID id;

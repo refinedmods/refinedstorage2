@@ -5,18 +5,18 @@ import java.util.TreeSet;
 
 public class LexerTokenMappings {
     public static final LexerTokenMappings DEFAULT_MAPPINGS = new LexerTokenMappings()
-        .addMapping(new LexerTokenMapping("!", TokenType.UNARY_OP))
-        .addMapping(new LexerTokenMapping("@", TokenType.UNARY_OP))
-        .addMapping(new LexerTokenMapping("$", TokenType.UNARY_OP))
-        .addMapping(new LexerTokenMapping(">", TokenType.UNARY_OP))
-        .addMapping(new LexerTokenMapping(">=", TokenType.UNARY_OP))
-        .addMapping(new LexerTokenMapping("<", TokenType.UNARY_OP))
-        .addMapping(new LexerTokenMapping("<=", TokenType.UNARY_OP))
-        .addMapping(new LexerTokenMapping("=", TokenType.UNARY_OP))
-        .addMapping(new LexerTokenMapping("&&", TokenType.BIN_OP))
-        .addMapping(new LexerTokenMapping("||", TokenType.BIN_OP))
-        .addMapping(new LexerTokenMapping("(", TokenType.PAREN_OPEN))
-        .addMapping(new LexerTokenMapping(")", TokenType.PAREN_CLOSE));
+            .addMapping(new LexerTokenMapping("!", TokenType.UNARY_OP))
+            .addMapping(new LexerTokenMapping("@", TokenType.UNARY_OP))
+            .addMapping(new LexerTokenMapping("$", TokenType.UNARY_OP))
+            .addMapping(new LexerTokenMapping(">", TokenType.UNARY_OP))
+            .addMapping(new LexerTokenMapping(">=", TokenType.UNARY_OP))
+            .addMapping(new LexerTokenMapping("<", TokenType.UNARY_OP))
+            .addMapping(new LexerTokenMapping("<=", TokenType.UNARY_OP))
+            .addMapping(new LexerTokenMapping("=", TokenType.UNARY_OP))
+            .addMapping(new LexerTokenMapping("&&", TokenType.BIN_OP))
+            .addMapping(new LexerTokenMapping("||", TokenType.BIN_OP))
+            .addMapping(new LexerTokenMapping("(", TokenType.PAREN_OPEN))
+            .addMapping(new LexerTokenMapping(")", TokenType.PAREN_CLOSE));
 
     private final Set<LexerTokenMapping> mappings = new TreeSet<>((a, b) -> {
         int cmp = Integer.compare(b.getValue().length(), a.getValue().length());
@@ -37,7 +37,7 @@ public class LexerTokenMappings {
             int contentLength = mapping.getValue().length();
 
             if ((position.getEndIndex() + contentLength <= source.getContent().length()) &&
-                (content.equals(source.getContent().substring(position.getEndIndex(), position.getEndIndex() + contentLength)))) {
+                    (content.equals(source.getContent().substring(position.getEndIndex(), position.getEndIndex() + contentLength)))) {
                 position.advance(contentLength);
 
                 return mapping.getType();

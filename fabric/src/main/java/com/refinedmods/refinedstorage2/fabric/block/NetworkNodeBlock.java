@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.fabric.block;
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeRepository;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;

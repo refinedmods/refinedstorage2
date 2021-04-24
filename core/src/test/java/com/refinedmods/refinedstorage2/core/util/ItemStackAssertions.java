@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.core.util;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
-
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.list.StackList;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

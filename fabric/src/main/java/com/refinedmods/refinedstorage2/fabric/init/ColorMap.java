@@ -1,13 +1,13 @@
 package com.refinedmods.refinedstorage2.fabric.init;
 
-import net.minecraft.util.DyeColor;
-import org.apache.logging.log4j.util.TriConsumer;
-
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+
+import net.minecraft.util.DyeColor;
+import org.apache.logging.log4j.util.TriConsumer;
 
 public class ColorMap<T> {
     protected final Map<DyeColor, T> map = new EnumMap<>(DyeColor.class);

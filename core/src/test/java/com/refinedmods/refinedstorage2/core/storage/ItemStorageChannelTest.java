@@ -1,8 +1,5 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
-import java.util.Collections;
-import java.util.Optional;
-
 import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.item.ItemStubs;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
@@ -10,6 +7,10 @@ import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
+
+import java.util.Collections;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;

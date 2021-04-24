@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.util;
 
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
+
 import net.minecraft.text.MutableText;
 
 public class LastModifiedUtil {

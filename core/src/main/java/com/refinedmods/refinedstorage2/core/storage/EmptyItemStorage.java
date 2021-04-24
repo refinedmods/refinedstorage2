@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
+import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.util.Action;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
-
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.util.Action;
 
 public class EmptyItemStorage implements Storage<Rs2ItemStack> {
     @Override

@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.mixin;
 
 import com.refinedmods.refinedstorage2.fabric.render.FullbrightHooks;
+
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;

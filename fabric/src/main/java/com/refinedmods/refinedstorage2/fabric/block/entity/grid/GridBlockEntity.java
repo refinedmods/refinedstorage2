@@ -1,7 +1,5 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.grid;
 
-import java.util.Collection;
-
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.core.grid.GridSize;
@@ -16,6 +14,9 @@ import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetwor
 import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
+
+import java.util.Collection;
+
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -106,21 +107,13 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         return node.getSortingType();
     }
 
-    public GridSortingDirection getSortingDirection() {
-        return node.getSortingDirection();
-    }
-
-    public GridSearchBoxMode getSearchBoxMode() {
-        return node.getSearchBoxMode();
-    }
-
-    public GridSize getSize() {
-        return node.getSize();
-    }
-
     public void setSortingType(GridSortingType sortingType) {
         node.setSortingType(sortingType);
         markDirty();
+    }
+
+    public GridSortingDirection getSortingDirection() {
+        return node.getSortingDirection();
     }
 
     public void setSortingDirection(GridSortingDirection sortingDirection) {
@@ -128,13 +121,21 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         markDirty();
     }
 
-    public void setSize(GridSize size) {
-        node.setSize(size);
-        markDirty();
+    public GridSearchBoxMode getSearchBoxMode() {
+        return node.getSearchBoxMode();
     }
 
     public void setSearchBoxMode(GridSearchBoxMode searchBoxMode) {
         node.setSearchBoxMode(searchBoxMode);
+        markDirty();
+    }
+
+    public GridSize getSize() {
+        return node.getSize();
+    }
+
+    public void setSize(GridSize size) {
+        node.setSize(size);
         markDirty();
     }
 

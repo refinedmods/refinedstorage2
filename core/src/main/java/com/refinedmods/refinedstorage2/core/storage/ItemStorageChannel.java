@@ -1,17 +1,17 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.core.list.ListenableStackList;
 import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.util.Action;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public class ItemStorageChannel implements StorageChannel<Rs2ItemStack> {
     private final StorageTracker<Rs2ItemStack, Rs2ItemStackIdentifier> tracker = new StorageTracker<>(Rs2ItemStackIdentifier::new, System::currentTimeMillis);

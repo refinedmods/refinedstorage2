@@ -5,15 +5,9 @@ import com.refinedmods.refinedstorage2.core.query.lexer.TokenRange;
 import com.refinedmods.refinedstorage2.core.query.parser.ParserException;
 
 public class UnaryOpNode implements Node {
-    public enum Type {
-        PREFIX,
-        SUFFIX
-    }
-
     private final Node node;
     private final Token operator;
     private final Type type;
-
     public UnaryOpNode(Node node, Token operator, Type type) {
         this.node = node;
         this.operator = operator;
@@ -54,5 +48,10 @@ public class UnaryOpNode implements Node {
             default:
                 throw new ParserException("Unhandled unary operator type " + type, operator);
         }
+    }
+
+    public enum Type {
+        PREFIX,
+        SUFFIX
     }
 }

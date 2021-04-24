@@ -20,7 +20,7 @@ public class Source {
     @Override
     public String toString() {
         return "Source{" +
-            "name='" + name + '\'' +
-            '}';
+                "name='" + name + '\'' +
+                '}';
     }
 }

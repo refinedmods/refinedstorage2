@@ -1,8 +1,5 @@
 package com.refinedmods.refinedstorage2.core.query.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.refinedmods.refinedstorage2.core.query.lexer.Token;
 import com.refinedmods.refinedstorage2.core.query.lexer.TokenType;
 import com.refinedmods.refinedstorage2.core.query.parser.node.BinOpNode;
@@ -10,6 +7,9 @@ import com.refinedmods.refinedstorage2.core.query.parser.node.LiteralNode;
 import com.refinedmods.refinedstorage2.core.query.parser.node.Node;
 import com.refinedmods.refinedstorage2.core.query.parser.node.ParenNode;
 import com.refinedmods.refinedstorage2.core.query.parser.node.UnaryOpNode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Parser {
     private final List<Token> tokens;
@@ -141,8 +141,8 @@ public class Parser {
         Token current = current();
 
         if (current.getType() == TokenType.IDENTIFIER ||
-            current.getType() == TokenType.FLOATING_NUMBER ||
-            current.getType() == TokenType.INTEGER_NUMBER) {
+                current.getType() == TokenType.FLOATING_NUMBER ||
+                current.getType() == TokenType.INTEGER_NUMBER) {
             next();
             return new LiteralNode(current);
         } else {

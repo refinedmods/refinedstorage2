@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.block;
 
 import com.refinedmods.refinedstorage2.fabric.block.entity.CableBlockEntity;
+
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -39,12 +40,12 @@ public class CableBlock extends NetworkNodeBlock {
         super(FabricBlockSettings.of(Material.GLASS).sounds(BlockSoundGroup.GLASS).strength(0.35F, 0.35F));
 
         setDefaultState(getStateManager().getDefaultState()
-            .with(NORTH, false)
-            .with(EAST, false)
-            .with(SOUTH, false)
-            .with(WEST, false)
-            .with(UP, false)
-            .with(DOWN, false));
+                .with(NORTH, false)
+                .with(EAST, false)
+                .with(SOUTH, false)
+                .with(WEST, false)
+                .with(UP, false)
+                .with(DOWN, false));
     }
 
     @Override
@@ -110,12 +111,12 @@ public class CableBlock extends NetworkNodeBlock {
         boolean down = hasConnection(world, pos.offset(Direction.DOWN));
 
         return currentState
-            .with(NORTH, north)
-            .with(EAST, east)
-            .with(SOUTH, south)
-            .with(WEST, west)
-            .with(UP, up)
-            .with(DOWN, down);
+                .with(NORTH, north)
+                .with(EAST, east)
+                .with(SOUTH, south)
+                .with(WEST, west)
+                .with(UP, up)
+                .with(DOWN, down);
     }
 
     @Override

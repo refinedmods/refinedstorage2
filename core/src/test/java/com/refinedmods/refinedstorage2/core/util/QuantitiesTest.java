@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.core.util;
 
 import com.refinedmods.refinedstorage2.core.Rs2Test;
+
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

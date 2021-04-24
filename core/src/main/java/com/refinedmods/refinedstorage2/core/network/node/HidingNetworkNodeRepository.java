@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.core.network.node;
 
-import java.util.Optional;
-
 import com.refinedmods.refinedstorage2.core.util.Position;
+
+import java.util.Optional;
 
 public class HidingNetworkNodeRepository implements NetworkNodeRepository {
     private final NetworkNodeRepository parent;

@@ -1,8 +1,5 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import java.util.Collections;
-import java.util.Optional;
-
 import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.item.ItemStubs;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
@@ -10,6 +7,10 @@ import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
+
+import java.util.Collections;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

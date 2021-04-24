@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.core.network.node;
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.util.Position;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,8 +13,8 @@ public class NetworkNodeImpl implements NetworkNode {
     protected final Rs2World world;
     private final Position pos;
     private final NetworkNodeReference ref;
-    private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
     protected Network network;
+    private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
 
     public NetworkNodeImpl(Rs2World world, Position pos, NetworkNodeReference ref) {
         this.world = world;
@@ -27,13 +28,13 @@ public class NetworkNodeImpl implements NetworkNode {
     }
 
     @Override
-    public void setNetwork(Network network) {
-        this.network = network;
+    public Network getNetwork() {
+        return network;
     }
 
     @Override
-    public Network getNetwork() {
-        return network;
+    public void setNetwork(Network network) {
+        this.network = network;
     }
 
     @Override

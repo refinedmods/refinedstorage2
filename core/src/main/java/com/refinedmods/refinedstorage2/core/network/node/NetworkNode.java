@@ -6,9 +6,9 @@ import com.refinedmods.refinedstorage2.core.util.Position;
 public interface NetworkNode {
     Position getPosition();
 
-    void setNetwork(Network network);
-
     Network getNetwork();
+
+    void setNetwork(Network network);
 
     NetworkNodeReference createReference();
 

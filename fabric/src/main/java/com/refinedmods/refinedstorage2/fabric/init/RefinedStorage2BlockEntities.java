@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
+
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.registry.Registry;
 

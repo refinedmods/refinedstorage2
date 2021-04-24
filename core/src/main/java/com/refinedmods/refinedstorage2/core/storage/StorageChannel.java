@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
-import java.util.Optional;
-
 import com.refinedmods.refinedstorage2.core.list.StackListListener;
+
+import java.util.Optional;
 
 public interface StorageChannel<T> extends Storage<T> {
     void addListener(StackListListener<T> listener);

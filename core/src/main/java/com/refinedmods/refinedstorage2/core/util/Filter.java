@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.core.util;
 
-import java.util.List;
-
 import com.refinedmods.refinedstorage2.core.list.StackList;
+
+import java.util.List;
 
 public abstract class Filter<T> {
     private boolean exact = true;

@@ -1,14 +1,15 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive;
 
+import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
+import com.refinedmods.refinedstorage2.core.network.node.diskdrive.StorageDiskProvider;
+import com.refinedmods.refinedstorage2.fabric.item.StorageDiskItem;
+
 import java.util.Optional;
 import java.util.UUID;
 
 import alexiil.mc.lib.attributes.item.filter.ItemClassFilter;
 import alexiil.mc.lib.attributes.item.filter.ItemFilter;
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
-import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
-import com.refinedmods.refinedstorage2.core.network.node.diskdrive.StorageDiskProvider;
-import com.refinedmods.refinedstorage2.fabric.item.StorageDiskItem;
 import net.minecraft.item.ItemStack;
 
 public class DiskDriveInventory extends FullFixedItemInv implements StorageDiskProvider {

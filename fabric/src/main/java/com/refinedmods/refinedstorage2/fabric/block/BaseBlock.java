@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.block;
 
 import com.refinedmods.refinedstorage2.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.fabric.util.BiDirection;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;

@@ -4,8 +4,8 @@ import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 public class FakeNetworkNode implements NetworkNode {
-    private Network network;
     private final Position pos;
+    private Network network;
 
     public FakeNetworkNode(Position pos) {
         this.pos = pos;
@@ -17,13 +17,13 @@ public class FakeNetworkNode implements NetworkNode {
     }
 
     @Override
-    public void setNetwork(Network network) {
-        this.network = network;
+    public Network getNetwork() {
+        return network;
     }
 
     @Override
-    public Network getNetwork() {
-        return network;
+    public void setNetwork(Network network) {
+        this.network = network;
     }
 
     @Override

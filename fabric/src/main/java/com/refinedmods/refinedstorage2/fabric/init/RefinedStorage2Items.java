@@ -1,8 +1,5 @@
 package com.refinedmods.refinedstorage2.fabric.init;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.refinedmods.refinedstorage2.fabric.RefinedStorage2Mod;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.ItemStorageType;
 import com.refinedmods.refinedstorage2.fabric.item.CoreItem;
@@ -14,14 +11,18 @@ import com.refinedmods.refinedstorage2.fabric.item.StorageDiskItem;
 import com.refinedmods.refinedstorage2.fabric.item.StorageHousingItem;
 import com.refinedmods.refinedstorage2.fabric.item.StoragePartItem;
 import com.refinedmods.refinedstorage2.fabric.item.block.ColoredBlockItem;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.registry.Registry;
 
 public class RefinedStorage2Items {
-    private StorageHousingItem storageHousing;
     private final Map<ItemStorageType, StoragePartItem> storageParts = new HashMap<>();
+    private StorageHousingItem storageHousing;
 
     public void register(RefinedStorage2Blocks blocks, ItemGroup itemGroup) {
         Registry.register(Registry.ITEM, RefinedStorage2Mod.createIdentifier("cable"), new BlockItem(blocks.getCable(), createSettings(itemGroup)));

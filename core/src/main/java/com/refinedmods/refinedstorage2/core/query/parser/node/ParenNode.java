@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.core.query.parser.node;
 
+import com.refinedmods.refinedstorage2.core.query.lexer.TokenRange;
+
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.refinedmods.refinedstorage2.core.query.lexer.TokenRange;
 
 public class ParenNode implements Node {
     private final List<Node> nodes;

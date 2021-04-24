@@ -1,10 +1,5 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.UUID;
-
 import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.item.ItemStubs;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
@@ -18,6 +13,12 @@ import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.FilterMode;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;

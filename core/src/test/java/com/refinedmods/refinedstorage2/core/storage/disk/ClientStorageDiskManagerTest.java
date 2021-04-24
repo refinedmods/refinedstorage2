@@ -1,9 +1,10 @@
 package com.refinedmods.refinedstorage2.core.storage.disk;
 
+import com.refinedmods.refinedstorage2.core.Rs2Test;
+
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import com.refinedmods.refinedstorage2.core.Rs2Test;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

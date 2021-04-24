@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.core.item.Rs2ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.core.query.parser.ParserOperatorMappings;
+
 import org.junit.jupiter.api.Test;
 
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemGridStackListContents;

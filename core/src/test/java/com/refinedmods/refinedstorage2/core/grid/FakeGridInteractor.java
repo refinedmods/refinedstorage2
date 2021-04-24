@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import java.util.Collection;
-
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.util.Action;
+
+import java.util.Collection;
 
 public class FakeGridInteractor implements GridInteractor {
     public static final String NAME = "Fake interactor";

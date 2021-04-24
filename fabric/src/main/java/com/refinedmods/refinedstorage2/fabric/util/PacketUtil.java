@@ -1,11 +1,12 @@
 package com.refinedmods.refinedstorage2.fabric.util;
 
-import java.util.Optional;
-import java.util.function.Consumer;
-
 import com.refinedmods.refinedstorage2.core.item.Rs2Item;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
+
+import java.util.Optional;
+import java.util.function.Consumer;
+
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage2.core.network;
 
-import java.util.UUID;
-
 import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.network.node.FakeNetworkNodeRepository;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.util.Position;
+
+import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -80,8 +81,8 @@ class NetworkManagerImplTest {
         assertThat(networkManager.getNetworks()).hasSize(1);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
             assertThat(network.getNodeReferences()).containsExactlyInAnyOrder(
-                new StubNetworkNodeReference(node01),
-                new StubNetworkNodeReference(node02)
+                    new StubNetworkNodeReference(node01),
+                    new StubNetworkNodeReference(node02)
             );
             assertThat(network02).isSameAs(network);
             assertThat(node01.getNetwork()).isSameAs(network);
@@ -122,9 +123,9 @@ class NetworkManagerImplTest {
         assertThat(networkManager.getNetworks()).hasSize(1);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
             assertThat(network.getNodeReferences()).containsExactlyInAnyOrder(
-                new StubNetworkNodeReference(node01),
-                new StubNetworkNodeReference(node02),
-                new StubNetworkNodeReference(node03)
+                    new StubNetworkNodeReference(node01),
+                    new StubNetworkNodeReference(node02),
+                    new StubNetworkNodeReference(node03)
             );
             assertThat(network03).isSameAs(network);
             assertThat(node01.getNetwork()).isSameAs(network);
@@ -193,8 +194,8 @@ class NetworkManagerImplTest {
         assertThat(networkManager.getNetworks()).hasSize(3);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
             assertThat(network.getNodeReferences()).containsExactlyInAnyOrder(
-                new StubNetworkNodeReference(node02a),
-                new StubNetworkNodeReference(node02b)
+                    new StubNetworkNodeReference(node02a),
+                    new StubNetworkNodeReference(node02b)
             );
             assertThat(node02a.getNetwork()).isSameAs(network);
             assertThat(node02b.getNetwork()).isSameAs(network);
