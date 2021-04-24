@@ -1,26 +1,26 @@
 package com.refinedmods.refinedstorage2.core.network.node;
 
-import net.minecraft.util.math.BlockPos;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class FakeNetworkNodeRepository implements NetworkNodeRepository {
-    private final Map<BlockPos, NetworkNode> nodes = new HashMap<>();
+import com.refinedmods.refinedstorage2.core.util.Position;
 
-    public NetworkNode setNode(BlockPos pos) {
+public class FakeNetworkNodeRepository implements NetworkNodeRepository {
+    private final Map<Position, NetworkNode> nodes = new HashMap<>();
+
+    public NetworkNode setNode(Position pos) {
         NetworkNode node = new FakeNetworkNode(pos);
         nodes.put(pos, node);
         return node;
     }
 
-    public void removeNode(BlockPos pos) {
+    public void removeNode(Position pos) {
         nodes.remove(pos);
     }
 
     @Override
-    public Optional<NetworkNode> getNode(BlockPos pos) {
+    public Optional<NetworkNode> getNode(Position pos) {
         return Optional.ofNullable(nodes.get(pos));
     }
 }

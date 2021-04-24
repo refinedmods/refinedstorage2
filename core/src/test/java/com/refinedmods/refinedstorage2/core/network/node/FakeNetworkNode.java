@@ -1,18 +1,18 @@
 package com.refinedmods.refinedstorage2.core.network.node;
 
 import com.refinedmods.refinedstorage2.core.network.Network;
-import net.minecraft.util.math.BlockPos;
+import com.refinedmods.refinedstorage2.core.util.Position;
 
 public class FakeNetworkNode implements NetworkNode {
     private Network network;
-    private final BlockPos pos;
+    private final Position pos;
 
-    public FakeNetworkNode(BlockPos pos) {
+    public FakeNetworkNode(Position pos) {
         this.pos = pos;
     }
 
     @Override
-    public BlockPos getPosition() {
+    public Position getPosition() {
         return pos;
     }
 
@@ -44,7 +44,7 @@ public class FakeNetworkNode implements NetworkNode {
     @Override
     public String toString() {
         return "FakeNetworkNode{" +
-            "pos=" + pos +
-            '}';
+                "pos=" + pos +
+                '}';
     }
 }

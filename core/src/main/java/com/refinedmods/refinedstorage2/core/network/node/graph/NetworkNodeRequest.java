@@ -1,13 +1,13 @@
 package com.refinedmods.refinedstorage2.core.network.node.graph;
 
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeRepository;
-import net.minecraft.util.math.BlockPos;
+import com.refinedmods.refinedstorage2.core.util.Position;
 
 public class NetworkNodeRequest {
     private final NetworkNodeRepository repository;
-    private final BlockPos pos;
+    private final Position pos;
 
-    public NetworkNodeRequest(NetworkNodeRepository repository, BlockPos pos) {
+    public NetworkNodeRequest(NetworkNodeRepository repository, Position pos) {
         this.repository = repository;
         this.pos = pos;
     }
@@ -16,7 +16,7 @@ public class NetworkNodeRequest {
         return repository;
     }
 
-    public BlockPos getPos() {
+    public Position getPos() {
         return pos;
     }
 }

@@ -18,10 +18,10 @@ import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.FilterMode;
+import com.refinedmods.refinedstorage2.core.util.Position;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
@@ -52,7 +52,7 @@ class DiskDriveNetworkNodeTest {
 
         DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(
                 new FakeWorld(),
-                BlockPos.ORIGIN,
+                Position.ORIGIN,
                 mock(NetworkNodeReference.class),
                 diskProviderManager,
                 diskProviderManager

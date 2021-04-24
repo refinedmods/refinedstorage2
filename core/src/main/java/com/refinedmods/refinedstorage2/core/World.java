@@ -1,12 +1,7 @@
 package com.refinedmods.refinedstorage2.core;
 
-import java.util.Optional;
-
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.util.math.BlockPos;
+import com.refinedmods.refinedstorage2.core.util.Position;
 
 public interface World {
-    Optional<BlockEntity> getBlockEntity(BlockPos pos);
-
-    boolean isPowered(BlockPos pos);
+    boolean isPowered(Position position);
 }

@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricWorldAdapte
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
+import com.refinedmods.refinedstorage2.fabric.util.Positions;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -36,10 +37,10 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
     @Override
     protected GridNetworkNode createNode(World world, BlockPos pos) {
         return new GridNetworkNode(
-            FabricWorldAdapter.of(world),
-            pos,
-            FabricNetworkNodeReference.of(world, pos),
-            RefinedStorage2Mod.API.getGridSearchBoxModeRegistry()
+                FabricWorldAdapter.of(world),
+                Positions.ofBlockPos(pos),
+                FabricNetworkNodeReference.of(world, pos),
+                RefinedStorage2Mod.API.getGridSearchBoxModeRegistry()
         );
     }
 

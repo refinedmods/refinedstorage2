@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.core.network.node.graph;
 import com.refinedmods.refinedstorage2.core.graph.GraphScannerContext;
 import com.refinedmods.refinedstorage2.core.graph.RequestHandler;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
-import net.minecraft.util.math.Direction;
+import com.refinedmods.refinedstorage2.core.util.Direction;
 
 public class NetworkNodeRequestHandler implements RequestHandler<NetworkNode, NetworkNodeRequest> {
     @Override

@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.network.node.FakeNetworkNodeRepository;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
-import net.minecraft.util.math.BlockPos;
+import com.refinedmods.refinedstorage2.core.util.Position;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -23,11 +23,11 @@ class NetworkManagerImplTest {
         FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        Executable action = () -> networkManager.onNodeAdded(repo, BlockPos.ORIGIN);
+        Executable action = () -> networkManager.onNodeAdded(repo, Position.ORIGIN);
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
-        assertThat(e.getMessage()).isEqualTo("Could not find added node at position BlockPos{x=0, y=0, z=0}");
+        assertThat(e.getMessage()).isEqualTo("Could not find added node at position Position{x=0, y=0, z=0}");
     }
 
     @Test
@@ -36,7 +36,7 @@ class NetworkManagerImplTest {
         FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        NetworkNode node01 = repo.setNode(Position.ORIGIN);
         Network network01 = networkManager.onNodeAdded(repo, node01.getPosition());
 
         // Assert
@@ -54,14 +54,14 @@ class NetworkManagerImplTest {
         FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
-        repo.setNode(BlockPos.ORIGIN.down());
+        NetworkNode node01 = repo.setNode(Position.ORIGIN);
+        repo.setNode(Position.ORIGIN.down());
 
         Executable action = () -> networkManager.onNodeAdded(repo, node01.getPosition());
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
-        assertThat(e.getMessage()).isEqualTo("The network manager was left in an invalid state. Network node at BlockPos{x=0, y=-1, z=0} has no network!");
+        assertThat(e.getMessage()).isEqualTo("The network manager was left in an invalid state. Network node at Position{x=0, y=-1, z=0} has no network!");
     }
 
     @Test
@@ -70,10 +70,10 @@ class NetworkManagerImplTest {
         FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        NetworkNode node01 = repo.setNode(Position.ORIGIN);
         networkManager.onNodeAdded(repo, node01.getPosition());
 
-        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.down());
+        NetworkNode node02 = repo.setNode(Position.ORIGIN.down());
         Network network02 = networkManager.onNodeAdded(repo, node02.getPosition());
 
         // Assert
@@ -95,7 +95,7 @@ class NetworkManagerImplTest {
         FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act & assert
-        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        NetworkNode node01 = repo.setNode(Position.ORIGIN);
         Network network01 = networkManager.onNodeAdded(repo, node01.getPosition());
 
         assertThat(networkManager.getNetworks()).hasSize(1);
@@ -105,7 +105,7 @@ class NetworkManagerImplTest {
             assertThat(node01.getNetwork()).isSameAs(network);
         });
 
-        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.down().down());
+        NetworkNode node02 = repo.setNode(Position.ORIGIN.down().down());
         Network network02 = networkManager.onNodeAdded(repo, node02.getPosition());
 
         assertThat(networkManager.getNetworks()).hasSize(2);
@@ -116,7 +116,7 @@ class NetworkManagerImplTest {
             assertThat(node02.getNetwork()).isSameAs(network);
         });
 
-        NetworkNode node03 = repo.setNode(BlockPos.ORIGIN.down());
+        NetworkNode node03 = repo.setNode(Position.ORIGIN.down());
         Network network03 = networkManager.onNodeAdded(repo, node03.getPosition());
 
         assertThat(networkManager.getNetworks()).hasSize(1);
@@ -139,19 +139,19 @@ class NetworkManagerImplTest {
         FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act & assert
-        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        NetworkNode node01 = repo.setNode(Position.ORIGIN);
         networkManager.onNodeAdded(repo, node01.getPosition());
 
-        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.down());
+        NetworkNode node02 = repo.setNode(Position.ORIGIN.down());
         networkManager.onNodeAdded(repo, node02.getPosition());
 
-        NetworkNode node03 = repo.setNode(BlockPos.ORIGIN.down().down());
+        NetworkNode node03 = repo.setNode(Position.ORIGIN.down().down());
         networkManager.onNodeAdded(repo, node03.getPosition());
 
         assertThat(networkManager.getNetworks()).hasSize(1);
 
         networkManager.onNodeRemoved(repo, node02.getPosition());
-        repo.removeNode(BlockPos.ORIGIN.down());
+        repo.removeNode(Position.ORIGIN.down());
 
         assertThat(networkManager.getNetworks()).hasSize(2);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
@@ -170,25 +170,25 @@ class NetworkManagerImplTest {
         FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act & assert
-        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        NetworkNode node01 = repo.setNode(Position.ORIGIN);
         networkManager.onNodeAdded(repo, node01.getPosition());
 
-        NetworkNode node02a = repo.setNode(BlockPos.ORIGIN.north());
+        NetworkNode node02a = repo.setNode(Position.ORIGIN.north());
         networkManager.onNodeAdded(repo, node02a.getPosition());
 
-        NetworkNode node02b = repo.setNode(BlockPos.ORIGIN.north().north());
+        NetworkNode node02b = repo.setNode(Position.ORIGIN.north().north());
         networkManager.onNodeAdded(repo, node02b.getPosition());
 
-        NetworkNode node03 = repo.setNode(BlockPos.ORIGIN.east());
+        NetworkNode node03 = repo.setNode(Position.ORIGIN.east());
         networkManager.onNodeAdded(repo, node03.getPosition());
 
-        NetworkNode node04 = repo.setNode(BlockPos.ORIGIN.up());
+        NetworkNode node04 = repo.setNode(Position.ORIGIN.up());
         networkManager.onNodeAdded(repo, node04.getPosition());
 
         assertThat(networkManager.getNetworks()).hasSize(1);
 
         networkManager.onNodeRemoved(repo, node01.getPosition());
-        repo.removeNode(BlockPos.ORIGIN);
+        repo.removeNode(Position.ORIGIN);
 
         assertThat(networkManager.getNetworks()).hasSize(3);
         assertThat(networkManager.getNetworks()).anySatisfy(network -> {
@@ -215,10 +215,10 @@ class NetworkManagerImplTest {
         FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        NetworkNode node01 = repo.setNode(Position.ORIGIN);
         networkManager.onNodeAdded(repo, node01.getPosition());
 
-        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.down());
+        NetworkNode node02 = repo.setNode(Position.ORIGIN.down());
         networkManager.onNodeAdded(repo, node02.getPosition());
 
         node02.setNetwork(null);
@@ -227,7 +227,7 @@ class NetworkManagerImplTest {
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
-        assertThat(e.getMessage()).isEqualTo("The network manager was left in an invalid state. Network node at BlockPos{x=0, y=-1, z=0} has no network!");
+        assertThat(e.getMessage()).isEqualTo("The network manager was left in an invalid state. Network node at Position{x=0, y=-1, z=0} has no network!");
     }
 
     @Test
@@ -236,19 +236,19 @@ class NetworkManagerImplTest {
         FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        NetworkNode node01 = repo.setNode(Position.ORIGIN);
         networkManager.onNodeAdded(repo, node01.getPosition());
 
-        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.down());
+        NetworkNode node02 = repo.setNode(Position.ORIGIN.down());
         networkManager.onNodeAdded(repo, node02.getPosition());
         int sizeBeforeRemoving = networkManager.getNetworks().size();
 
         networkManager.onNodeRemoved(repo, node01.getPosition());
-        repo.removeNode(BlockPos.ORIGIN);
+        repo.removeNode(Position.ORIGIN);
         int sizeAfterRemovingFirst = networkManager.getNetworks().size();
 
         networkManager.onNodeRemoved(repo, node02.getPosition());
-        repo.removeNode(BlockPos.ORIGIN.down());
+        repo.removeNode(Position.ORIGIN.down());
         int sizeAfterRemovingLast = networkManager.getNetworks().size();
 
         // Assert
@@ -263,10 +263,10 @@ class NetworkManagerImplTest {
         FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        NetworkNode node01 = repo.setNode(BlockPos.ORIGIN);
+        NetworkNode node01 = repo.setNode(Position.ORIGIN);
         networkManager.onNodeAdded(repo, node01.getPosition());
 
-        NetworkNode node02 = repo.setNode(BlockPos.ORIGIN.down());
+        NetworkNode node02 = repo.setNode(Position.ORIGIN.down());
         networkManager.onNodeAdded(repo, node02.getPosition());
 
         node02.setNetwork(new NetworkImpl(UUID.randomUUID()));
@@ -275,7 +275,7 @@ class NetworkManagerImplTest {
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
-        assertThat(e.getMessage()).isEqualTo("The network manager was left in invalid state. The network of a neighboring node doesn't match the origin node. The origin node is located at BlockPos{x=0, y=0, z=0}");
+        assertThat(e.getMessage()).isEqualTo("The network manager was left in invalid state. The network of a neighboring node doesn't match the origin node. The origin node is located at Position{x=0, y=0, z=0}");
     }
 
     @Test
@@ -284,10 +284,10 @@ class NetworkManagerImplTest {
         FakeNetworkNodeRepository repo = new FakeNetworkNodeRepository();
 
         // Act
-        Executable action = () -> networkManager.onNodeRemoved(repo, BlockPos.ORIGIN);
+        Executable action = () -> networkManager.onNodeRemoved(repo, Position.ORIGIN);
 
         // Assert
         NetworkManagerException e = assertThrows(NetworkManagerException.class, action);
-        assertThat(e.getMessage()).isEqualTo("The node at BlockPos{x=0, y=0, z=0} is not present");
+        assertThat(e.getMessage()).isEqualTo("The node at Position{x=0, y=0, z=0} is not present");
     }
 }

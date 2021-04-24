@@ -21,6 +21,7 @@ import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntit
 import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricWorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
+import com.refinedmods.refinedstorage2.fabric.util.Positions;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.fabricmc.fabric.api.util.NbtType;
@@ -72,7 +73,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     protected DiskDriveNetworkNode createNode(World world, BlockPos pos) {
         return new DiskDriveNetworkNode(
                 FabricWorldAdapter.of(world),
-                pos,
+                Positions.ofBlockPos(pos),
                 FabricNetworkNodeReference.of(world, pos),
                 RefinedStorage2Mod.API.getStorageDiskManager(world),
                 diskInventory

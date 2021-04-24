@@ -1,13 +1,13 @@
 package com.refinedmods.refinedstorage2.core.graph;
 
 import com.refinedmods.refinedstorage2.core.World;
-import net.minecraft.util.math.BlockPos;
+import com.refinedmods.refinedstorage2.core.util.Position;
 
-public class BlockEntityRequest {
+public class FakeRequest {
     private final World world;
-    private final BlockPos pos;
+    private final Position pos;
 
-    public BlockEntityRequest(World world, BlockPos pos) {
+    public FakeRequest(World world, Position pos) {
         this.world = world;
         this.pos = pos;
     }
@@ -16,7 +16,7 @@ public class BlockEntityRequest {
         return world;
     }
 
-    public BlockPos getPos() {
+    public Position getPos() {
         return pos;
     }
 }

@@ -2,28 +2,29 @@ package com.refinedmods.refinedstorage2.core.graph;
 
 import com.refinedmods.refinedstorage2.core.RefinedStorage2Test;
 import com.refinedmods.refinedstorage2.core.adapter.FakeWorld;
-import net.minecraft.block.entity.BeehiveBlockEntity;
-import net.minecraft.block.entity.FurnaceBlockEntity;
-import net.minecraft.util.math.BlockPos;
+import com.refinedmods.refinedstorage2.core.util.Position;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RefinedStorage2Test
 class GraphScannerTest {
-    private final GraphScanner<FurnaceBlockEntity, BlockEntityRequest> scanner = new GraphScanner<>(new BlockEntityRequestHandler<>(FurnaceBlockEntity.class));
+    private static final String TYPE_FURNACE = "furnace";
+    private static final String TYPE_CHEST = "chest";
+
+    private final GraphScanner<Position, FakeRequest> scanner = new GraphScanner<>(new FakeRequestHandler(TYPE_FURNACE));
 
     @Test
     void Test_scanning_from_origin_contains_origin() {
         // Arrange
         FakeWorld world = new FakeWorld();
 
-        FurnaceBlockEntity b01 = world.setBlockEntity(BlockPos.ORIGIN, new FurnaceBlockEntity());
+        Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
 
-        world.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
+        world.setType(new Position(10, 10, 10), TYPE_FURNACE);
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(world, BlockPos.ORIGIN));
+        GraphScannerResult<Position> result = scanner.scanAt(new FakeRequest(world, Position.ORIGIN));
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(b01);
@@ -34,13 +35,13 @@ class GraphScannerTest {
         // Arrange
         FakeWorld world = new FakeWorld();
 
-        FurnaceBlockEntity b01 = world.setBlockEntity(BlockPos.ORIGIN, new FurnaceBlockEntity());
-        world.setBlockEntity(BlockPos.ORIGIN.down(), new BeehiveBlockEntity());
+        Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
+        world.setType(Position.ORIGIN.down(), TYPE_CHEST);
 
-        world.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
+        world.setType(new Position(10, 10, 10), TYPE_FURNACE);
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(world, BlockPos.ORIGIN));
+        GraphScannerResult<Position> result = scanner.scanAt(new FakeRequest(world, Position.ORIGIN));
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(b01);
@@ -51,14 +52,14 @@ class GraphScannerTest {
         // Arrange
         FakeWorld world = new FakeWorld();
 
-        FurnaceBlockEntity b01 = world.setBlockEntity(BlockPos.ORIGIN, new FurnaceBlockEntity());
-        FurnaceBlockEntity b02 = world.setBlockEntity(BlockPos.ORIGIN.down(), new FurnaceBlockEntity());
-        FurnaceBlockEntity b03 = world.setBlockEntity(BlockPos.ORIGIN.up(), new FurnaceBlockEntity());
+        Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
+        Position b02 = world.setType(Position.ORIGIN.down(), TYPE_FURNACE);
+        Position b03 = world.setType(Position.ORIGIN.up(), TYPE_FURNACE);
 
-        world.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
+        world.setType(new Position(10, 10, 10), TYPE_FURNACE);
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(world, BlockPos.ORIGIN));
+        GraphScannerResult<Position> result = scanner.scanAt(new FakeRequest(world, Position.ORIGIN));
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(b01, b02, b03);
@@ -69,14 +70,14 @@ class GraphScannerTest {
         // Arrange
         FakeWorld world = new FakeWorld();
 
-        FurnaceBlockEntity b01 = world.setBlockEntity(BlockPos.ORIGIN, new FurnaceBlockEntity());
-        world.setBlockEntity(BlockPos.ORIGIN.down(), new BeehiveBlockEntity());
-        world.setBlockEntity(BlockPos.ORIGIN.down().down(), new FurnaceBlockEntity());
+        Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
+        world.setType(Position.ORIGIN.down(), TYPE_CHEST);
+        world.setType(Position.ORIGIN.down().down(), TYPE_FURNACE);
 
-        world.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
+        world.setType(new Position(10, 10, 10), TYPE_FURNACE);
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(world, BlockPos.ORIGIN));
+        GraphScannerResult<Position> result = scanner.scanAt(new FakeRequest(world, Position.ORIGIN));
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(b01);
@@ -87,17 +88,17 @@ class GraphScannerTest {
         // Arrange
         FakeWorld world = new FakeWorld();
 
-        FurnaceBlockEntity b01 = world.setBlockEntity(BlockPos.ORIGIN, new FurnaceBlockEntity());
-        world.setBlockEntity(BlockPos.ORIGIN.down(), new BeehiveBlockEntity());
-        FurnaceBlockEntity b02 = world.setBlockEntity(BlockPos.ORIGIN.down().down(), new FurnaceBlockEntity());
-        FurnaceBlockEntity b03 = world.setBlockEntity(BlockPos.ORIGIN.north(), new FurnaceBlockEntity());
-        FurnaceBlockEntity b04 = world.setBlockEntity(BlockPos.ORIGIN.north().down(), new FurnaceBlockEntity());
-        FurnaceBlockEntity b05 = world.setBlockEntity(BlockPos.ORIGIN.north().down().down(), new FurnaceBlockEntity());
+        Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
+        world.setType(Position.ORIGIN.down(), TYPE_CHEST);
+        Position b02 = world.setType(Position.ORIGIN.down().down(), TYPE_FURNACE);
+        Position b03 = world.setType(Position.ORIGIN.north(), TYPE_FURNACE);
+        Position b04 = world.setType(Position.ORIGIN.north().down(), TYPE_FURNACE);
+        Position b05 = world.setType(Position.ORIGIN.north().down().down(), TYPE_FURNACE);
 
-        world.setBlockEntity(new BlockPos(10, 10, 10), new FurnaceBlockEntity());
+        world.setType(new Position(10, 10, 10), TYPE_FURNACE);
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result = scanner.scanAt(new BlockEntityRequest(world, BlockPos.ORIGIN));
+        GraphScannerResult<Position> result = scanner.scanAt(new FakeRequest(world, Position.ORIGIN));
 
         // Assert
         assertThat(result.getAllEntries()).containsExactlyInAnyOrder(b01, b02, b03, b04, b05);
@@ -108,14 +109,14 @@ class GraphScannerTest {
         // Arrange
         FakeWorld world = new FakeWorld();
 
-        FurnaceBlockEntity b01 = world.setBlockEntity(BlockPos.ORIGIN, new FurnaceBlockEntity());
+        Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(new BlockEntityRequest(world, BlockPos.ORIGIN));
+        GraphScannerResult<Position> result1 = scanner.scanAt(new FakeRequest(world, Position.ORIGIN));
 
-        FurnaceBlockEntity b02 = world.setBlockEntity(BlockPos.ORIGIN.down(), new FurnaceBlockEntity());
+        Position b02 = world.setType(Position.ORIGIN.down(), TYPE_FURNACE);
 
-        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(world, BlockPos.ORIGIN), result1.getAllEntries());
+        GraphScannerResult<Position> result2 = scanner.scanAt(new FakeRequest(world, Position.ORIGIN), result1.getAllEntries());
 
         // Assert
         assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(b01);
@@ -132,17 +133,17 @@ class GraphScannerTest {
         // Arrange
         FakeWorld world = new FakeWorld();
 
-        FurnaceBlockEntity b00 = world.setBlockEntity(BlockPos.ORIGIN.up(), new FurnaceBlockEntity());
-        FurnaceBlockEntity b01 = world.setBlockEntity(BlockPos.ORIGIN, new FurnaceBlockEntity());
-        FurnaceBlockEntity b02 = world.setBlockEntity(BlockPos.ORIGIN.down(), new FurnaceBlockEntity());
-        FurnaceBlockEntity b03 = world.setBlockEntity(BlockPos.ORIGIN.down().down(), new FurnaceBlockEntity());
+        Position b00 = world.setType(Position.ORIGIN.up(), TYPE_FURNACE);
+        Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
+        Position b02 = world.setType(Position.ORIGIN.down(), TYPE_FURNACE);
+        Position b03 = world.setType(Position.ORIGIN.down().down(), TYPE_FURNACE);
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(new BlockEntityRequest(world, BlockPos.ORIGIN));
+        GraphScannerResult<Position> result1 = scanner.scanAt(new FakeRequest(world, Position.ORIGIN));
 
-        world.removeBlockEntity(BlockPos.ORIGIN.down());
+        world.removeType(Position.ORIGIN.down());
 
-        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(world, BlockPos.ORIGIN), result1.getAllEntries());
+        GraphScannerResult<Position> result2 = scanner.scanAt(new FakeRequest(world, Position.ORIGIN), result1.getAllEntries());
 
         // Assert
         assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(b00, b01, b02, b03);
@@ -159,17 +160,17 @@ class GraphScannerTest {
         // Arrange
         FakeWorld world = new FakeWorld();
 
-        FurnaceBlockEntity b00 = world.setBlockEntity(BlockPos.ORIGIN.up(), new FurnaceBlockEntity());
-        FurnaceBlockEntity b01 = world.setBlockEntity(BlockPos.ORIGIN, new FurnaceBlockEntity());
-        FurnaceBlockEntity b02 = world.setBlockEntity(BlockPos.ORIGIN.down().down(), new FurnaceBlockEntity());
+        Position b00 = world.setType(Position.ORIGIN.up(), TYPE_FURNACE);
+        Position b01 = world.setType(Position.ORIGIN, TYPE_FURNACE);
+        Position b02 = world.setType(Position.ORIGIN.down().down(), TYPE_FURNACE);
 
         // Act
-        GraphScannerResult<FurnaceBlockEntity> result1 = scanner.scanAt(new BlockEntityRequest(world, BlockPos.ORIGIN));
+        GraphScannerResult<Position> result1 = scanner.scanAt(new FakeRequest(world, Position.ORIGIN));
 
-        world.removeBlockEntity(BlockPos.ORIGIN.up());
-        FurnaceBlockEntity b03 = world.setBlockEntity(BlockPos.ORIGIN.down(), new FurnaceBlockEntity());
+        world.removeType(Position.ORIGIN.up());
+        Position b03 = world.setType(Position.ORIGIN.down(), TYPE_FURNACE);
 
-        GraphScannerResult<FurnaceBlockEntity> result2 = scanner.scanAt(new BlockEntityRequest(world, BlockPos.ORIGIN), result1.getAllEntries());
+        GraphScannerResult<Position> result2 = scanner.scanAt(new FakeRequest(world, Position.ORIGIN), result1.getAllEntries());
 
         // Assert
         assertThat(result1.getAllEntries()).containsExactlyInAnyOrder(b00, b01);

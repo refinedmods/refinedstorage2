@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.core.network.node;
 
 import com.refinedmods.refinedstorage2.core.World;
 import com.refinedmods.refinedstorage2.core.network.Network;
-import net.minecraft.util.math.BlockPos;
+import com.refinedmods.refinedstorage2.core.util.Position;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,19 +10,19 @@ public class NetworkNodeImpl implements NetworkNode {
     private static final Logger LOGGER = LogManager.getLogger(NetworkNodeImpl.class);
 
     protected final World world;
-    private final BlockPos pos;
+    private final Position pos;
     private final NetworkNodeReference ref;
     private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
     protected Network network;
 
-    public NetworkNodeImpl(World world, BlockPos pos, NetworkNodeReference ref) {
+    public NetworkNodeImpl(World world, Position pos, NetworkNodeReference ref) {
         this.world = world;
         this.pos = pos;
         this.ref = ref;
     }
 
     @Override
-    public BlockPos getPosition() {
+    public Position getPosition() {
         return pos;
     }
 

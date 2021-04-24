@@ -1,11 +1,9 @@
 package com.refinedmods.refinedstorage2.fabric.coreimpl.adapter;
 
-import java.util.Optional;
-
 import com.refinedmods.refinedstorage2.core.World;
-import net.minecraft.block.entity.BlockEntity;
+import com.refinedmods.refinedstorage2.core.util.Position;
+import com.refinedmods.refinedstorage2.fabric.util.Positions;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.RegistryKey;
 
 public class FabricWorldAdapter implements World {
@@ -22,19 +20,10 @@ public class FabricWorldAdapter implements World {
     }
 
     @Override
-    public Optional<BlockEntity> getBlockEntity(BlockPos pos) {
+    public boolean isPowered(Position pos) {
         net.minecraft.world.World world = server.getWorld(dimension);
         if (world != null) {
-            return Optional.ofNullable(world.getBlockEntity(pos));
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public boolean isPowered(BlockPos pos) {
-        net.minecraft.world.World world = server.getWorld(dimension);
-        if (world != null) {
-            return world.isReceivingRedstonePower(pos);
+            return world.isReceivingRedstonePower(Positions.toBlockPos(pos));
         }
         return false;
     }

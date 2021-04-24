@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
-import net.minecraft.util.math.BlockPos;
+import com.refinedmods.refinedstorage2.core.util.Position;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +26,7 @@ public class GridNetworkNode extends NetworkNodeImpl {
 
     private final Set<GridEventHandler> watchers = new HashSet<>();
 
-    public GridNetworkNode(World world, BlockPos pos, NetworkNodeReference ref, GridSearchBoxModeRegistry searchBoxModeRegistry) {
+    public GridNetworkNode(World world, Position pos, NetworkNodeReference ref, GridSearchBoxModeRegistry searchBoxModeRegistry) {
         super(world, pos, ref);
         this.searchBoxMode = searchBoxModeRegistry.getDefault();
     }

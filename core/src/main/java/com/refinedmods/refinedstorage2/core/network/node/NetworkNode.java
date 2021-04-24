@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.core.network.node;
 
 import com.refinedmods.refinedstorage2.core.network.Network;
-import net.minecraft.util.math.BlockPos;
+import com.refinedmods.refinedstorage2.core.util.Position;
 
 public interface NetworkNode {
-    BlockPos getPosition();
+    Position getPosition();
 
     void setNetwork(Network network);
 

@@ -21,8 +21,8 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.Filter;
 import com.refinedmods.refinedstorage2.core.util.FilterMode;
 import com.refinedmods.refinedstorage2.core.util.ItemFilter;
+import com.refinedmods.refinedstorage2.core.util.Position;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,7 +40,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Ite
     private CompositeItemStorage compositeStorage = CompositeItemStorage.empty();
     private int priority;
 
-    public DiskDriveNetworkNode(World world, BlockPos pos, NetworkNodeReference ref, StorageDiskManager diskManager, StorageDiskProvider diskProvider) {
+    public DiskDriveNetworkNode(World world, Position pos, NetworkNodeReference ref, StorageDiskManager diskManager, StorageDiskProvider diskProvider) {
         super(world, pos, ref);
 
         this.diskManager = diskManager;

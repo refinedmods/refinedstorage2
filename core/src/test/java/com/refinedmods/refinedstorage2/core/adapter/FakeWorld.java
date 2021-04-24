@@ -2,31 +2,28 @@ package com.refinedmods.refinedstorage2.core.adapter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import com.refinedmods.refinedstorage2.core.World;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.util.math.BlockPos;
+import com.refinedmods.refinedstorage2.core.util.Position;
 
 public class FakeWorld implements World {
-    private final Map<BlockPos, BlockEntity> blockEntities = new HashMap<>();
+    private final Map<Position, String> types = new HashMap<>();
 
-    @Override
-    public Optional<BlockEntity> getBlockEntity(BlockPos pos) {
-        return Optional.ofNullable(blockEntities.get(pos));
+    public Position setType(Position position, String type) {
+        types.put(position, type);
+        return position;
+    }
+
+    public void removeType(Position position) {
+        types.remove(position);
+    }
+
+    public String getType(Position position) {
+        return types.get(position);
     }
 
     @Override
-    public boolean isPowered(BlockPos pos) {
+    public boolean isPowered(Position position) {
         return false;
-    }
-
-    public <T extends BlockEntity> T setBlockEntity(BlockPos pos, T blockEntity) {
-        blockEntities.put(pos, blockEntity);
-        return blockEntity;
-    }
-
-    public void removeBlockEntity(BlockPos pos) {
-        blockEntities.remove(pos);
     }
 }

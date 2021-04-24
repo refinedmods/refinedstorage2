@@ -18,8 +18,8 @@ import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeRepository;
 import com.refinedmods.refinedstorage2.core.network.node.graph.NetworkNodeRequest;
 import com.refinedmods.refinedstorage2.core.network.node.graph.NetworkNodeRequestHandler;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import com.refinedmods.refinedstorage2.core.util.Direction;
+import com.refinedmods.refinedstorage2.core.util.Position;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,7 +34,7 @@ public class NetworkManagerImpl implements NetworkManager {
     }
 
     @Override
-    public Network onNodeAdded(NetworkNodeRepository nodeRepository, BlockPos pos) {
+    public Network onNodeAdded(NetworkNodeRepository nodeRepository, Position pos) {
         if (!nodeRepository.getNode(pos).isPresent()) {
             throw new NetworkManagerException(String.format("Could not find added node at position %s", pos));
         }
@@ -49,7 +49,7 @@ public class NetworkManagerImpl implements NetworkManager {
         }
     }
 
-    private Network mergeNetworks(NetworkNodeRepository nodeRepository, Set<Network> neighboringNetworks, BlockPos pos) {
+    private Network mergeNetworks(NetworkNodeRepository nodeRepository, Set<Network> neighboringNetworks, Position pos) {
         GraphScannerResult<NetworkNode> result = graphScanner.scanAt(new NetworkNodeRequest(nodeRepository, pos));
 
         Iterator<Network> it = neighboringNetworks.iterator();
@@ -72,7 +72,7 @@ public class NetworkManagerImpl implements NetworkManager {
         return pivotNetwork;
     }
 
-    private Network formNetwork(NetworkNodeRepository nodeRepository, BlockPos pos) {
+    private Network formNetwork(NetworkNodeRepository nodeRepository, Position pos) {
         Network network = new NetworkImpl(UUID.randomUUID());
         addNetwork(network);
 
@@ -91,7 +91,7 @@ public class NetworkManagerImpl implements NetworkManager {
     }
 
     @Override
-    public void onNodeRemoved(NetworkNodeRepository nodeRepository, BlockPos pos) {
+    public void onNodeRemoved(NetworkNodeRepository nodeRepository, Position pos) {
         NetworkNode node = nodeRepository.getNode(pos).orElseThrow(() -> new NetworkManagerException(String.format("The node at %s is not present", pos)));
 
         for (Network neighboringNetwork : getNeighboringNetworks(nodeRepository, pos)) {
@@ -108,7 +108,7 @@ public class NetworkManagerImpl implements NetworkManager {
         }
     }
 
-    private void splitNetworks(NetworkNodeRepository nodeRepository, NetworkNode pivot, BlockPos removedPos) {
+    private void splitNetworks(NetworkNodeRepository nodeRepository, NetworkNode pivot, Position removedPos) {
         Network pivotNetwork = pivot.getNetwork();
         Set<NetworkNode> pivotNodes = getNodesInNetwork(pivotNetwork);
 
@@ -154,16 +154,16 @@ public class NetworkManagerImpl implements NetworkManager {
 
     private Set<NetworkNode> getNodesInNetwork(Network network) {
         return network.getNodeReferences()
-            .stream()
-            .map(NetworkNodeReference::get)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .collect(Collectors.toSet());
+                .stream()
+                .map(NetworkNodeReference::get)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
     }
 
-    private Optional<NetworkNode> getFirstNeighboringNode(NetworkNodeRepository nodeRepository, BlockPos pos) {
+    private Optional<NetworkNode> getFirstNeighboringNode(NetworkNodeRepository nodeRepository, Position pos) {
         for (Direction dir : Direction.values()) {
-            BlockPos offsetPos = pos.offset(dir);
+            Position offsetPos = pos.offset(dir);
 
             Optional<NetworkNode> node = nodeRepository.getNode(offsetPos);
             if (node.isPresent()) {
@@ -174,10 +174,10 @@ public class NetworkManagerImpl implements NetworkManager {
         return Optional.empty();
     }
 
-    private Set<Network> getNeighboringNetworks(NetworkNodeRepository nodeRepository, BlockPos pos) {
+    private Set<Network> getNeighboringNetworks(NetworkNodeRepository nodeRepository, Position pos) {
         Set<Network> neighboringNetworks = new HashSet<>();
         for (Direction dir : Direction.values()) {
-            BlockPos offsetPos = pos.offset(dir);
+            Position offsetPos = pos.offset(dir);
 
             nodeRepository.getNode(offsetPos).ifPresent(node -> {
                 Network network = node.getNetwork();
