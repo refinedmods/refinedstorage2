@@ -9,7 +9,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Keep your PR as small as possible, this makes reviewing easier.
 - Commits serve a clear purpose and have a fitting commit message.
 - Branches are kept up to date by rebasing, preferably.
-- Changes are added in `CHANGELOG.md`. Please refrain from using technical terminology, keep it user-friendly.
+- Changes are added in `CHANGELOG.md`. Please refrain from using technical terminology, keep it user-friendly. The
+  format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Branching
 
@@ -20,7 +21,7 @@ For bugfixes, use `fix/`as a prefix.
 
 ## Documentation
 
-If you are adding functionality or changing behavior, please update the Patchouli documentation.
+If you are adding functionality or are changing behavior, please update the Patchouli documentation.
 
 ## Code style
 

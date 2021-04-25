@@ -9,6 +9,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.0.0-milestone.1.0]
 
+Currently, this version only works on Fabric.
+
 ### Added
 
 - Grid
@@ -28,7 +30,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Silicon
 - Processor Binding
 - "Reset" button on the storage priority screen.
-- Integration with REI in the form of a REI search box mode.
+- Integration with Roughly Enough Items in the form of a REI search box mode.
 - Integration with ModMenu.
 - Integration with Patchouli.
 - Integration with AutoConfig1u.
@@ -40,4 +42,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - "Whitelist" has been renamed to "Allowlist".
 - "Blacklist" has been renamed to "Blocklist".
 - Contents of storages in "insert-only" mode are now visible in the Grid.
-- The Grid keybindings got changed slightly. Consult the Patchouli documentation to check the new keybindings.
+- The Grid keybindings got changed slightly. Consult the Patchouli documentation.
+- The Grid search bar now has much more powerful searching, supporting expressions. Consult the Patchouli documentation.
+- A single item in storage can now be larger than 2,147,483,647.
