@@ -45,3 +45,4 @@ Currently, this version only works on Fabric.
 - The Grid keybindings got changed slightly. Consult the Patchouli documentation.
 - The Grid search bar now has much more powerful searching, supporting expressions. Consult the Patchouli documentation.
 - A single item in storage can now be larger than 2,147,483,647.
+- You can now place directional blocks facing up/down.
