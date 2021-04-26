@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.core.item;
 public final class Rs2ItemStack {
     public static final Rs2ItemStack EMPTY = new Rs2ItemStack(null, 0, null);
 
-    private Rs2Item item;
+    private final Rs2Item item;
     private long amount;
     private Object tag;
     private boolean empty;
@@ -27,10 +27,6 @@ public final class Rs2ItemStack {
         return item;
     }
 
-    public void setItem(Rs2Item item) {
-        this.item = item;
-    }
-
     public long getAmount() {
         return amount;
     }
@@ -49,6 +45,9 @@ public final class Rs2ItemStack {
     }
 
     public Rs2ItemStack copy() {
+        if (isEmpty()) {
+            return EMPTY;
+        }
         return new Rs2ItemStack(item, amount, tag);
     }
 

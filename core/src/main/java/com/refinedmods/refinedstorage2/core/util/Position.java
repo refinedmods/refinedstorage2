@@ -31,7 +31,7 @@ public final class Position {
         return offset(direction.getPosition());
     }
 
-    public Position offset(Position position) {
+    private Position offset(Position position) {
         return new Position(x + position.getX(), y + position.getY(), z + position.getZ());
     }
 

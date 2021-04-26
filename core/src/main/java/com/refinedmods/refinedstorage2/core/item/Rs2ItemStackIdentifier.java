@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.core.item;
 
 import java.util.Objects;
 
-public class Rs2ItemStackIdentifier {
+public final class Rs2ItemStackIdentifier {
     private final Rs2Item item;
     private final Object tag;
 
