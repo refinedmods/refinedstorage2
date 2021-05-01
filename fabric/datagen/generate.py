@@ -4,7 +4,7 @@ import shutil
 
 output_dir = '../src/generated/resources/'
 
-# shutil.rmtree(output_dir)
+shutil.rmtree(output_dir)
 
 
 def create_file(path, contents):
@@ -25,6 +25,42 @@ def get_color_key(color, name):
     if color == 'light_blue':
         return name
     return color + '_' + name
+
+
+def generate_controller_block_model(color):
+    create_file(output_dir + '/assets/refinedstorage2/models/block/controller/' + color + '.json', to_json({
+        'parent': 'refinedstorage2:block/fullbright_all_cutout',
+        'textures': {
+            'particle': 'refinedstorage2:block/controller/off',
+            'all': 'refinedstorage2:block/controller/on',
+            'cutout': 'refinedstorage2:block/controller/cutouts/' + color
+        }
+    }))
+
+
+def generate_controller_blockstate(name, color):
+        create_file(output_dir + '/assets/refinedstorage2/blockstates/' + name + '.json', to_json({
+          'variants': {
+            'energy_type=off': {
+              'model': 'refinedstorage2:block/controller/off'
+            },
+            'energy_type=nearly_off': {
+              'model': 'refinedstorage2:block/controller/nearly_off'
+            },
+            'energy_type=nearly_on': {
+              'model': 'refinedstorage2:block/controller/nearly_on'
+            },
+            'energy_type=on': {
+              'model': 'refinedstorage2:block/controller/' + color
+            }
+          }
+        }))
+
+
+def generate_controller_item(name, color):
+        create_file(output_dir + '/assets/refinedstorage2/models/item/' + name + '.json', to_json({
+          'parent': 'refinedstorage2:block/controller/' + color
+        }))
 
 
 def generate_north_cutout_block_model(name, particle, north, east, south, west, up, down, cutout, fullbright_cutout):
@@ -147,11 +183,15 @@ def generate_simple_loot_table(name, block):
 
 with open('colors.txt') as colors_file:
     color_entries = colors_file.read().splitlines()
-    color_names = map(lambda color: color.split(';')[0], color_entries)
+    color_names = list(map(lambda color: color.split(';')[0], color_entries))
 
     for color_entry in color_entries:
         color = color_entry.split(';')[0]
         dye = color_entry.split(';')[1]
+
+        generate_controller_block_model(color)
+        generate_controller_blockstate(get_color_key(color, 'controller'), color)
+        generate_controller_item(get_color_key(color, 'controller'), color)
 
         generate_north_cutout_block_model('grid/' + color, particle='refinedstorage2:block/grid/right', east='refinedstorage2:block/grid/right', south='refinedstorage2:block/grid/back', west='refinedstorage2:block/grid/left',
                                           up='refinedstorage2:block/grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/grid/front', cutout='refinedstorage2:block/grid/cutouts/' + color, fullbright_cutout=True)
@@ -161,6 +201,7 @@ with open('colors.txt') as colors_file:
             color, 'grid'), lambda direction, active: 'refinedstorage2:block/grid/' + color if active else 'refinedstorage2:block/grid/disconnected')
 
         generate_simple_loot_table(get_color_key(color, 'grid'), 'refinedstorage2:' + get_color_key(color, 'grid'))
+        generate_simple_loot_table(get_color_key(color, 'controller'), 'refinedstorage2:' + get_color_key(color, 'controller'))
 
         if color != 'light_blue':
             generate_recipe('coloring/' + color + '_grid', {
@@ -178,9 +219,29 @@ with open('colors.txt') as colors_file:
                 }
             })
 
+            generate_recipe('coloring/' + color + '_controller', {
+                'type': 'minecraft:crafting_shapeless',
+                'ingredients': [
+                    {
+                        'tag': 'refinedstorage2:controllers'
+                    },
+                    {
+                        'item': 'minecraft:' + dye
+                    }
+                ],
+                'result': {
+                    'item': 'refinedstorage2:' + color + '_controller'
+                }
+            })
+
     generate_item_tag('grids', {
         'replace': False,
         'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'grid'), color_names))
+    })
+
+    generate_item_tag('controllers', {
+        'replace': False,
+        'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'controller'), color_names))
     })
 
     generate_north_cutout_block_model('grid/disconnected', particle='refinedstorage2:block/grid/right', east='refinedstorage2:block/grid/right', south='refinedstorage2:block/grid/back', west='refinedstorage2:block/grid/left',

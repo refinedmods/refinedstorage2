@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.init;
 
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.CableBlock;
+import com.refinedmods.refinedstorage2.fabric.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.fabric.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.fabric.block.GridBlock;
 import com.refinedmods.refinedstorage2.fabric.block.MachineCasingBlock;
@@ -12,7 +13,7 @@ import net.minecraft.block.Material;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.registry.Registry;
 
-public class RefinedStorage2Blocks {
+public class Rs2Blocks {
     private static final FabricBlockSettings STONE_SETTINGS = FabricBlockSettings
             .of(Material.STONE)
             .hardness(1.9F)
@@ -23,6 +24,7 @@ public class RefinedStorage2Blocks {
     private QuartzEnrichedIronBlock quartzEnrichedIron;
     private DiskDriveBlock diskDrive;
     private MachineCasingBlock machineCasing;
+    private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
 
     public void register() {
         cable = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("cable"), new CableBlock());
@@ -30,6 +32,7 @@ public class RefinedStorage2Blocks {
         diskDrive = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("disk_drive"), new DiskDriveBlock(STONE_SETTINGS));
         machineCasing = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("machine_casing"), new MachineCasingBlock(STONE_SETTINGS));
         grid.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("grid")), new GridBlock(STONE_SETTINGS)));
+        controller.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("controller")), new ControllerBlock(STONE_SETTINGS)));
     }
 
     public CableBlock getCable() {
@@ -50,5 +53,9 @@ public class RefinedStorage2Blocks {
 
     public BlockColorMap<GridBlock> getGrid() {
         return grid;
+    }
+
+    public BlockColorMap<ControllerBlock> getController() {
+        return controller;
     }
 }

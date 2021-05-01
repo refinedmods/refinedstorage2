@@ -20,11 +20,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.registry.Registry;
 
-public class RefinedStorage2Items {
+public class Rs2Items {
     private final Map<ItemStorageType, StoragePartItem> storageParts = new HashMap<>();
     private StorageHousingItem storageHousing;
 
-    public void register(RefinedStorage2Blocks blocks, ItemGroup itemGroup) {
+    public void register(Rs2Blocks blocks, ItemGroup itemGroup) {
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("cable"), new BlockItem(blocks.getCable(), createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("quartz_enriched_iron"), new QuartzEnrichedIronItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("quartz_enriched_iron_block"), new BlockItem(blocks.getQuartzEnrichedIron(), createSettings(itemGroup)));
@@ -34,6 +34,7 @@ public class RefinedStorage2Items {
         storageHousing = Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("storage_housing"), new StorageHousingItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("machine_casing"), new BlockItem(blocks.getMachineCasing(), createSettings(itemGroup)));
         blocks.getGrid().forEach((color, block, nameFactory) -> Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(nameFactory.apply("grid")), new ColoredBlockItem(block, createSettings(itemGroup), color, Rs2Mod.createTranslation("block", "grid"))));
+        blocks.getController().forEach((color, block, nameFactory) -> Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(nameFactory.apply("controller")), new ColoredBlockItem(block, createSettings(itemGroup).maxCount(1), color, Rs2Mod.createTranslation("block", "controller"))));
 
         for (ProcessorItem.Type type : ProcessorItem.Type.values()) {
             Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_processor"), new ProcessorItem(createSettings(itemGroup)));

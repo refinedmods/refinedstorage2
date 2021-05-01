@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "EPE",
+        "SMS",
+        "ESE"
+    ],
+    "key": {
+        "E": {
+            "item": "refinedstorage2:quartz_enriched_iron"
+        },
+        "P": {
+            "item": "refinedstorage2:advanced_processor"
+        },
+        "S": {
+            "item": "refinedstorage2:silicon"
+        },
+        "M": {
+            "item": "refinedstorage2:machine_casing"
+        }
+    },
+    "result": {
+        "item": "refinedstorage2:controller"
+    }
+}

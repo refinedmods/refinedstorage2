@@ -1,0 +1,87 @@
+{
+    "parent": "block/cube",
+    "elements": [
+        {
+            "from": [
+                0,
+                0,
+                0
+            ],
+            "to": [
+                16,
+                16,
+                16
+            ],
+            "faces": {
+                "down": {
+                    "texture": "#all",
+                    "cullface": "down"
+                },
+                "up": {
+                    "texture": "#all",
+                    "cullface": "up"
+                },
+                "north": {
+                    "texture": "#all",
+                    "cullface": "north"
+                },
+                "south": {
+                    "texture": "#all",
+                    "cullface": "south"
+                },
+                "west": {
+                    "texture": "#all",
+                    "cullface": "west"
+                },
+                "east": {
+                    "texture": "#all",
+                    "cullface": "east"
+                }
+            }
+        },
+        {
+            "from": [
+                0,
+                0,
+                0
+            ],
+            "to": [
+                16,
+                16,
+                16
+            ],
+            "faces": {
+                "down": {
+                    "texture": "#cutout",
+                    "cullface": "down",
+                    "fullbright": true
+                },
+                "up": {
+                    "texture": "#cutout",
+                    "cullface": "up",
+                    "fullbright": true
+                },
+                "north": {
+                    "texture": "#cutout",
+                    "cullface": "north",
+                    "fullbright": true
+                },
+                "south": {
+                    "texture": "#cutout",
+                    "cullface": "south",
+                    "fullbright": true
+                },
+                "west": {
+                    "texture": "#cutout",
+                    "cullface": "west",
+                    "fullbright": true
+                },
+                "east": {
+                    "texture": "#cutout",
+                    "cullface": "east",
+                    "fullbright": true
+                }
+            }
+        }
+    ]
+}

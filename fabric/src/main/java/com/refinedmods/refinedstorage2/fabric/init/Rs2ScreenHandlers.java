@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandl
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.screen.ScreenHandlerType;
 
-public class RefinedStorage2ScreenHandlers {
+public class Rs2ScreenHandlers {
     private ScreenHandlerType<DiskDriveScreenHandler> diskDrive;
     private ScreenHandlerType<GridScreenHandler> grid;
 
