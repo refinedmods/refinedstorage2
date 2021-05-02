@@ -10,13 +10,22 @@ import com.refinedmods.refinedstorage2.fabric.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.fabric.block.ControllerEnergyType;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
+import com.refinedmods.refinedstorage2.fabric.screenhandler.ControllerScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
-public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetworkNode> implements EnergyStorage {
+public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetworkNode> implements EnergyStorage, ExtendedScreenHandlerFactory {
     private final ControllerType type;
 
     private long lastTypeChanged;
@@ -84,5 +93,22 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     @Override
     public long extract(long amount, Action action) {
         return node.extract(amount, action);
+    }
+
+    @Override
+    public Text getDisplayName() {
+        return Rs2Mod.createTranslation("block", type == ControllerType.CREATIVE ? "creative_controller" : "controller");
+    }
+
+    @Nullable
+    @Override
+    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+        return new ControllerScreenHandler(syncId, inv, this, player);
+    }
+
+    @Override
+    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+        buf.writeLong(getStored());
+        buf.writeLong(getCapacity());
     }
 }

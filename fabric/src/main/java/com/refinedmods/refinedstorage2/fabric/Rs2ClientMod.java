@@ -1,10 +1,12 @@
 package com.refinedmods.refinedstorage2.fabric;
 
+import com.refinedmods.refinedstorage2.fabric.packet.s2c.ControllerEnergyPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridItemUpdatePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.StorageDiskInfoResponsePacket;
 import com.refinedmods.refinedstorage2.fabric.render.entity.DiskDriveBlockEntityRenderer;
 import com.refinedmods.refinedstorage2.fabric.render.model.DiskDriveUnbakedModel;
+import com.refinedmods.refinedstorage2.fabric.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.fabric.screen.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.fabric.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
@@ -67,6 +69,7 @@ public class Rs2ClientMod implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(StorageDiskInfoResponsePacket.ID, new StorageDiskInfoResponsePacket());
         ClientPlayNetworking.registerGlobalReceiver(GridItemUpdatePacket.ID, new GridItemUpdatePacket());
         ClientPlayNetworking.registerGlobalReceiver(GridActivePacket.ID, new GridActivePacket());
+        ClientPlayNetworking.registerGlobalReceiver(ControllerEnergyPacket.ID, new ControllerEnergyPacket());
     }
 
     private void registerKeyBindings() {
@@ -86,5 +89,6 @@ public class Rs2ClientMod implements ClientModInitializer {
                 return new GridScreen(screenHandler, playerInventory, text);
             }
         });
+        ScreenRegistry.register(Rs2Mod.SCREEN_HANDLERS.getController(), ControllerScreen::new);
     }
 }

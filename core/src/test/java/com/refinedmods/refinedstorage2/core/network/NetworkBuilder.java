@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerNetworkNode;
+import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
@@ -39,7 +40,7 @@ public class NetworkBuilder {
     }
 
     public NetworkBuilder energy(long stored, long capacity) {
-        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, capacity);
+        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, capacity, ControllerType.NORMAL);
         controller.receive(stored, Action.EXECUTE);
         node(controller);
         return this;
