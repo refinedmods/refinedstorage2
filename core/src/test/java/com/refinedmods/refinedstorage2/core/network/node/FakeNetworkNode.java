@@ -12,6 +12,11 @@ public class FakeNetworkNode implements NetworkNode {
     }
 
     @Override
+    public void update() {
+
+    }
+
+    @Override
     public Position getPosition() {
         return pos;
     }

@@ -82,7 +82,14 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
                 onActiveChanged(active);
                 updateState(active);
             }
+
+            update();
         }
+    }
+
+    @Override
+    public void update() {
+        node.update();
     }
 
     private void updateState(boolean active) {

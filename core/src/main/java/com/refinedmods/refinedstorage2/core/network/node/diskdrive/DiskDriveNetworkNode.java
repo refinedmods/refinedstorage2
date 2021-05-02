@@ -19,9 +19,11 @@ import com.refinedmods.refinedstorage2.core.util.ItemFilter;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -35,22 +37,32 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
     private final StorageDiskManager diskManager;
     private final StorageDiskProvider diskProvider;
     private final StorageDisk[] disks = new StorageDisk[DISK_COUNT];
+    private int diskCount;
     private final Filter<Rs2ItemStack> itemFilter = new ItemFilter();
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
     private CompositeItemStorage compositeStorage = CompositeItemStorage.empty();
     private int priority;
+    private final long energyUsage;
+    private final long energyUsagePerDisk;
 
-    public DiskDriveNetworkNode(Rs2World world, Position pos, NetworkNodeReference ref, StorageDiskManager diskManager, StorageDiskProvider diskProvider) {
+    public DiskDriveNetworkNode(Rs2World world, Position pos, NetworkNodeReference ref, StorageDiskManager diskManager, StorageDiskProvider diskProvider, long energyUsage, long energyUsagePerDisk) {
         super(world, pos, ref);
 
         this.diskManager = diskManager;
         this.diskProvider = diskProvider;
+        this.energyUsage = energyUsage;
+        this.energyUsagePerDisk = energyUsagePerDisk;
     }
 
     @Override
     public void onActiveChanged(boolean active) {
         super.onActiveChanged(active);
         network.invalidateStorageChannelSources();
+    }
+
+    @Override
+    public long getEnergyUsage() {
+        return energyUsage + (energyUsagePerDisk * diskCount);
     }
 
     public void onDiskChanged(int slot) {
@@ -60,6 +72,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
         }
 
         disks[slot] = diskProvider.getDiskId(slot).flatMap(diskManager::getDisk).orElse(null);
+        diskCount = (int) Arrays.stream(disks).filter(Objects::nonNull).count();
 
         List<Storage<Rs2ItemStack>> sources = new ArrayList<>();
         for (StorageDisk<Rs2ItemStack> disk : disks) {

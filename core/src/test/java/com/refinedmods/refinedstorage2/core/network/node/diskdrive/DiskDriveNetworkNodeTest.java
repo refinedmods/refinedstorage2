@@ -4,9 +4,8 @@ import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.item.ItemStubs;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.Network;
-import com.refinedmods.refinedstorage2.core.network.NetworkImpl;
+import com.refinedmods.refinedstorage2.core.network.NetworkBuilder;
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
-import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
@@ -31,15 +30,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
 class DiskDriveNetworkNodeTest {
-    private DiskDriveNetworkNode diskDrive;
-    private FakeStorageDiskProviderManager diskProviderManager;
+    private static final long BASE_USAGE = 10;
+    private static final long USAGE_PER_DISK = 3;
+
+    private DiskDriveNetworkNodeWrapper diskDrive;
+    private Network network;
 
     @BeforeEach
     void setUp() {
-        DiskDriveSut sut = new DiskDriveSut();
-
-        diskDrive = sut.getDiskDrive();
-        diskProviderManager = sut.getDiskProviderManager();
+        network = NetworkBuilder.create()
+                .node(diskDrive = DiskDriveNetworkNodeWrapper.create(BASE_USAGE, USAGE_PER_DISK))
+                .infiniteEnergy()
+                .build();
     }
 
     @Test
@@ -59,7 +61,7 @@ class DiskDriveNetworkNodeTest {
         StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
         storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 74, Action.EXECUTE);
 
-        diskProviderManager.setDisk(2, storageDisk);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(2, storageDisk);
 
         // Act
         DiskDriveState state = diskDrive.createState();
@@ -81,7 +83,7 @@ class DiskDriveNetworkNodeTest {
         StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(10);
         storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
-        diskProviderManager.setDisk(7, storageDisk);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(7, storageDisk);
 
         // Act
         DiskDriveState state = diskDrive.createState();
@@ -103,7 +105,7 @@ class DiskDriveNetworkNodeTest {
         StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
         storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 75, Action.EXECUTE);
 
-        diskProviderManager.setDisk(3, storageDisk);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(3, storageDisk);
 
         // Act
         DiskDriveState state = diskDrive.createState();
@@ -126,7 +128,7 @@ class DiskDriveNetworkNodeTest {
         StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
         storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 75, Action.EXECUTE);
 
-        diskProviderManager.setDisk(3, storageDisk);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(3, storageDisk);
         diskDrive.setRedstoneMode(RedstoneMode.HIGH);
 
         // Act
@@ -150,11 +152,11 @@ class DiskDriveNetworkNodeTest {
         storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 74, Action.EXECUTE);
 
         // Act
-        diskProviderManager.setDisk(2, storageDisk);
-        diskProviderManager.setDisk(4, storageDisk);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(2, storageDisk);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(4, storageDisk);
         DiskDriveState stateBeforeRemoval = diskDrive.createState();
 
-        diskProviderManager.removeDiskInSlot(2);
+        diskDrive.getFakeStorageDiskProviderManager().removeDiskInSlot(2);
         DiskDriveState stateAfterRemoval = diskDrive.createState();
 
         // Assert
@@ -180,7 +182,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_state_with_a_disk_that_does_not_exist() {
         // Arrange
-        diskProviderManager.setDisk(3, UUID.randomUUID());
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(3, UUID.randomUUID());
 
         // Act
         diskDrive.onDiskChanged(3);
@@ -204,13 +206,13 @@ class DiskDriveNetworkNodeTest {
     void Test_inserting() {
         // Arrange
         StorageDisk<Rs2ItemStack> storageDisk1 = new ItemDiskStorage(100);
-        diskProviderManager.setDisk(1, storageDisk1);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(1, storageDisk1);
 
         StorageDisk<Rs2ItemStack> storageDisk2 = new ItemDiskStorage(100);
-        diskProviderManager.setDisk(2, storageDisk2);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(2, storageDisk2);
 
         StorageDisk<Rs2ItemStack> storageDisk3 = new ItemDiskStorage(100);
-        diskProviderManager.setDisk(3, storageDisk3);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(3, storageDisk3);
 
         // Act
         Optional<Rs2ItemStack> remainder1 = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 150, Action.EXECUTE);
@@ -239,14 +241,14 @@ class DiskDriveNetworkNodeTest {
 
         storageDisk1.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
         storageDisk1.insert(new Rs2ItemStack(ItemStubs.GLASS), 50, Action.EXECUTE);
-        diskProviderManager.setDisk(1, storageDisk1);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(1, storageDisk1);
 
         storageDisk2.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
         storageDisk2.insert(new Rs2ItemStack(ItemStubs.GLASS), 50, Action.EXECUTE);
-        diskProviderManager.setDisk(2, storageDisk2);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(2, storageDisk2);
 
         storageDisk3.insert(new Rs2ItemStack(ItemStubs.SPONGE), 10, Action.EXECUTE);
-        diskProviderManager.setDisk(3, storageDisk3);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(3, storageDisk3);
 
         // Act & assert
         Optional<Rs2ItemStack> stack1 = diskDrive.extract(new Rs2ItemStack(ItemStubs.DIRT), 85, Action.EXECUTE);
@@ -270,14 +272,14 @@ class DiskDriveNetworkNodeTest {
 
         storageDisk1.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
         storageDisk1.insert(new Rs2ItemStack(ItemStubs.GLASS), 50, Action.EXECUTE);
-        diskProviderManager.setDisk(1, storageDisk1);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(1, storageDisk1);
 
         storageDisk2.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
         storageDisk2.insert(new Rs2ItemStack(ItemStubs.GLASS), 50, Action.EXECUTE);
-        diskProviderManager.setDisk(2, storageDisk2);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(2, storageDisk2);
 
         storageDisk3.insert(new Rs2ItemStack(ItemStubs.SPONGE), 10, Action.EXECUTE);
-        diskProviderManager.setDisk(3, storageDisk3);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(3, storageDisk3);
 
         // Act
         Collection<Rs2ItemStack> stacks = diskDrive.getStacks();
@@ -291,14 +293,14 @@ class DiskDriveNetworkNodeTest {
     void Test_storage_should_change_when_removing_a_disk() {
         // Arrange
         StorageDisk<Rs2ItemStack> storageDisk1 = new ItemDiskStorage(100);
-        diskProviderManager.setDisk(1, storageDisk1);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(1, storageDisk1);
 
         StorageDisk<Rs2ItemStack> storageDisk2 = new ItemDiskStorage(100);
-        diskProviderManager.setDisk(2, storageDisk2);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(2, storageDisk2);
 
         // Act
         Optional<Rs2ItemStack> remainderBeforeRemovingDisk = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 105, Action.SIMULATE);
-        diskProviderManager.removeDiskInSlot(2);
+        diskDrive.getFakeStorageDiskProviderManager().removeDiskInSlot(2);
         Optional<Rs2ItemStack> remainderAfterRemovingDisk = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 105, Action.EXECUTE);
 
         // Assert
@@ -312,13 +314,13 @@ class DiskDriveNetworkNodeTest {
     void Test_storage_should_change_when_inserting_a_disk() {
         // Arrange
         StorageDisk<Rs2ItemStack> storageDisk1 = new ItemDiskStorage(100);
-        diskProviderManager.setDisk(1, storageDisk1);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(1, storageDisk1);
 
         StorageDisk<Rs2ItemStack> storageDisk2 = new ItemDiskStorage(100);
 
         // Act
         Optional<Rs2ItemStack> remainderBeforeInsertingDisk = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 105, Action.SIMULATE);
-        diskProviderManager.setDisk(2, storageDisk2);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(2, storageDisk2);
         Optional<Rs2ItemStack> remainderAfterInsertingDisk = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 105, Action.EXECUTE);
 
         // Assert
@@ -331,34 +333,31 @@ class DiskDriveNetworkNodeTest {
     @RepeatedTest(100)
     void Test_changing_priority_should_invalidate_storage_sources_in_network() {
         // Arrange
-        Network network = new NetworkImpl(UUID.randomUUID());
+        NetworkBuilder builder = NetworkBuilder.create();
+        builder.infiniteEnergy();
 
-        DiskDriveSut sut1 = new DiskDriveSut();
-        DiskDriveSut sut2 = new DiskDriveSut();
-        DiskDriveSut sut3 = new DiskDriveSut();
+        DiskDriveNetworkNodeWrapper sut1 = DiskDriveNetworkNodeWrapper.create();
+        DiskDriveNetworkNodeWrapper sut2 = DiskDriveNetworkNodeWrapper.create();
+        DiskDriveNetworkNodeWrapper sut3 = DiskDriveNetworkNodeWrapper.create();
 
-        sut1.getDiskDrive().setNetwork(network);
-        sut2.getDiskDrive().setNetwork(network);
-        sut3.getDiskDrive().setNetwork(network);
+        builder.node(sut1);
+        builder.node(sut2);
+        builder.node(sut3);
 
         ItemDiskStorage disk1 = new ItemDiskStorage(10);
         ItemDiskStorage disk2 = new ItemDiskStorage(10);
         ItemDiskStorage disk3 = new ItemDiskStorage(10);
 
-        sut1.getDiskProviderManager().setDisk(0, disk1);
-        sut2.getDiskProviderManager().setDisk(0, disk2);
-        sut3.getDiskProviderManager().setDisk(0, disk3);
+        sut1.getFakeStorageDiskProviderManager().setDisk(0, disk1);
+        sut2.getFakeStorageDiskProviderManager().setDisk(0, disk2);
+        sut3.getFakeStorageDiskProviderManager().setDisk(0, disk3);
 
-        network.getNodeReferences().add(new StubNetworkNodeReference(sut1.getDiskDrive()));
-        network.getNodeReferences().add(new StubNetworkNodeReference(sut2.getDiskDrive()));
-        network.getNodeReferences().add(new StubNetworkNodeReference(sut3.getDiskDrive()));
-
-        network.invalidateStorageChannelSources();
+        Network network = builder.build();
 
         // Act
-        sut1.getDiskDrive().setPriority(8);
-        sut2.getDiskDrive().setPriority(15);
-        sut3.getDiskDrive().setPriority(2);
+        sut1.setPriority(8);
+        sut2.setPriority(15);
+        sut3.setPriority(2);
 
         network.getItemStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 15, Action.EXECUTE);
 
@@ -376,7 +375,7 @@ class DiskDriveNetworkNodeTest {
         diskDrive.setFilterTemplates(Arrays.asList(new Rs2ItemStack(ItemStubs.GLASS), new Rs2ItemStack(ItemStubs.STONE)));
 
         StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
-        diskProviderManager.setDisk(1, storageDisk);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(1, storageDisk);
 
         // Act
         Rs2ItemStack glassWithTag = new Rs2ItemStack(ItemStubs.GLASS, 12, "myTag");
@@ -402,7 +401,7 @@ class DiskDriveNetworkNodeTest {
         diskDrive.setAccessMode(accessMode);
 
         StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
-        diskProviderManager.setDisk(1, storageDisk);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(1, storageDisk);
 
         // Act
         Optional<Rs2ItemStack> remainder = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
@@ -427,7 +426,7 @@ class DiskDriveNetworkNodeTest {
         diskDrive.setAccessMode(accessMode);
 
         StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
-        diskProviderManager.setDisk(1, storageDisk);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(1, storageDisk);
 
         storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 20, Action.EXECUTE);
 
@@ -453,7 +452,7 @@ class DiskDriveNetworkNodeTest {
         diskDrive.setRedstoneMode(RedstoneMode.HIGH);
 
         StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
-        diskProviderManager.setDisk(1, storageDisk);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(1, storageDisk);
 
         // Act
         Optional<Rs2ItemStack> remainder = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
@@ -469,7 +468,7 @@ class DiskDriveNetworkNodeTest {
         diskDrive.setRedstoneMode(RedstoneMode.HIGH);
 
         StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
-        diskProviderManager.setDisk(1, storageDisk);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(1, storageDisk);
 
         storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 20, Action.EXECUTE);
 
@@ -484,7 +483,7 @@ class DiskDriveNetworkNodeTest {
     void Test_getting_stacks_when_inactive() {
         // Arrange
         StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
-        diskProviderManager.setDisk(1, storageDisk);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(1, storageDisk);
 
         diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 20, Action.EXECUTE);
 
@@ -503,28 +502,35 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_changing_to_inactive_should_omit_items_from_storage_channel() {
         // Arrange
-        Network network = new NetworkImpl(UUID.randomUUID());
+        StorageDisk<Rs2ItemStack> disk = new ItemDiskStorage(10);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(0, disk);
 
-        DiskDriveSut sut = new DiskDriveSut();
+        network.getItemStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
 
-        sut.getDiskDrive().setNetwork(network);
-
-        ItemDiskStorage disk = new ItemDiskStorage(10);
-        sut.getDiskProviderManager().setDisk(0, disk);
-        sut.getDiskDrive().insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
-
-        network.getNodeReferences().add(new StubNetworkNodeReference(sut.getDiskDrive()));
-        network.invalidateStorageChannelSources();
-
-        sut.getDiskDrive().setRedstoneMode(RedstoneMode.HIGH);
+        diskDrive.setRedstoneMode(RedstoneMode.HIGH);
 
         // Act
         Collection<Rs2ItemStack> stacksBeforeStateChange = network.getItemStorageChannel().getStacks();
-        sut.getDiskDrive().onActiveChanged(false);
+        diskDrive.onActiveChanged(false);
         Collection<Rs2ItemStack> stacksAfterStateChange = network.getItemStorageChannel().getStacks();
 
         // Assert
         assertThat(stacksBeforeStateChange).isNotEmpty();
         assertThat(stacksAfterStateChange).isEmpty();
+    }
+
+    @Test
+    void Test_calculating_energy_usage() {
+        // Arrange
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(0, new ItemDiskStorage(1));
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(1, new ItemDiskStorage(1));
+        diskDrive.getFakeStorageDiskProviderManager().removeDiskInSlot(1);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(2, new ItemDiskStorage(1));
+
+        // Act
+        long energyUsage = diskDrive.getEnergyUsage();
+
+        // Assert
+        assertThat(energyUsage).isEqualTo(BASE_USAGE + (USAGE_PER_DISK * 2));
     }
 }

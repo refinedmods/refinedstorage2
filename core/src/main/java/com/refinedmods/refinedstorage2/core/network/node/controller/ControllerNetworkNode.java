@@ -52,4 +52,9 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
     public long extract(long amount, Action action) {
         return energyStorage.extract(amount, action);
     }
+
+    @Override
+    public long getEnergyUsage() {
+        return 0;
+    }
 }

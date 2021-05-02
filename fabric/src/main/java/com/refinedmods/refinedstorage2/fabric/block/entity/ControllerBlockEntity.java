@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity;
 
+import com.refinedmods.refinedstorage2.core.network.EnergyStorage;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
@@ -13,7 +14,7 @@ import com.refinedmods.refinedstorage2.fabric.util.Positions;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetworkNode> {
+public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetworkNode> implements EnergyStorage {
     private long lastTypeChanged;
     private ControllerEnergyType lastType = ControllerEnergyType.OFF;
 
@@ -48,5 +49,30 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
         if (node != null) {
             node.receive(5, Action.EXECUTE);
         }
+    }
+
+    @Override
+    public long getStored() {
+        return node.getStored();
+    }
+
+    @Override
+    public long getCapacity() {
+        return node.getCapacity();
+    }
+
+    @Override
+    public void setCapacity(long capacity) {
+        node.setCapacity(capacity);
+    }
+
+    @Override
+    public long receive(long amount, Action action) {
+        return node.receive(amount, action);
+    }
+
+    @Override
+    public long extract(long amount, Action action) {
+        return node.extract(amount, action);
     }
 }

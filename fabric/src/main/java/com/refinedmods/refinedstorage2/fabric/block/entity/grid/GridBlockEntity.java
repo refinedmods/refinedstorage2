@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.node.grid.GridNetworkNode;
+import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
@@ -41,7 +42,8 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
                 FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
                 FabricNetworkNodeReference.of(world, pos),
-                Rs2Mod.API.getGridSearchBoxModeRegistry()
+                Rs2Mod.API.getGridSearchBoxModeRegistry(),
+                Rs2Config.get().getGrid().getEnergyUsage()
         );
     }
 

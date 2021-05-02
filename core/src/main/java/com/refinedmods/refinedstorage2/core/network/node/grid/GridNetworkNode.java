@@ -24,10 +24,12 @@ public class GridNetworkNode extends NetworkNodeImpl {
     private GridSortingType sortingType = GridSortingType.QUANTITY;
     private GridSize size = GridSize.STRETCH;
     private GridSearchBoxMode searchBoxMode;
+    private final long energyUsage;
 
-    public GridNetworkNode(Rs2World world, Position pos, NetworkNodeReference ref, GridSearchBoxModeRegistry searchBoxModeRegistry) {
+    public GridNetworkNode(Rs2World world, Position pos, NetworkNodeReference ref, GridSearchBoxModeRegistry searchBoxModeRegistry, long energyUsage) {
         super(world, pos, ref);
         this.searchBoxMode = searchBoxModeRegistry.getDefault();
+        this.energyUsage = energyUsage;
     }
 
     public GridSortingDirection getSortingDirection() {
@@ -65,6 +67,11 @@ public class GridNetworkNode extends NetworkNodeImpl {
     public void addWatcher(GridEventHandler watcher) {
         watchers.add(watcher);
         LOGGER.info("Watcher was added, new count is {}", watchers.size());
+    }
+
+    @Override
+    public long getEnergyUsage() {
+        return energyUsage;
     }
 
     public void removeWatcher(GridEventHandler watcher) {

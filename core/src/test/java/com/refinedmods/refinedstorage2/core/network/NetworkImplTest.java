@@ -7,8 +7,7 @@ import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerNetworkNode;
-import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
-import com.refinedmods.refinedstorage2.core.network.node.diskdrive.FakeStorageDiskProviderManager;
+import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNodeWrapper;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.Position;
@@ -26,32 +25,29 @@ class NetworkImplTest {
     @Test
     void Test_node_change_should_rebuild_storage_sources() {
         // Arrange
-        FakeStorageDiskProviderManager diskProviderManager = new FakeStorageDiskProviderManager();
+        DiskDriveNetworkNodeWrapper diskDrive = DiskDriveNetworkNodeWrapper.create();
 
-        NetworkNodeReference badRef = new StubNetworkNodeReference(null);
+        Network network = NetworkBuilder.create()
+                .nodeRef(new StubNetworkNodeReference(null))
+                .node(diskDrive)
+                .infiniteEnergy()
+                .build();
 
-        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(new FakeRs2World(), Position.ORIGIN, null, diskProviderManager, diskProviderManager);
-        diskProviderManager.setDiskDrive(diskDrive);
-        diskProviderManager.setDisk(0, new ItemDiskStorage(100));
-        NetworkNodeReference diskDriveRef = new StubNetworkNodeReference(diskDrive);
-
-        Network network = new NetworkImpl(UUID.randomUUID());
-        network.getNodeReferences().add(badRef);
-        network.getNodeReferences().add(diskDriveRef);
+        diskDrive.getFakeStorageDiskProviderManager().setDisk(0, new ItemDiskStorage(100));
 
         // Act
         network.onNodesChanged();
 
-        Optional<Rs2ItemStack> remainder1 = network.getItemStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainderBeforeRemoval = network.getItemStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
-        network.getNodeReferences().remove(diskDriveRef);
+        network.getNodeReferences().remove(new StubNetworkNodeReference(diskDrive));
         network.onNodesChanged();
 
-        Optional<Rs2ItemStack> remainder2 = network.getItemStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainderAfterRemoval = network.getItemStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         // Assert
-        assertThat(remainder1).isEmpty();
-        assertThat(remainder2).isPresent();
+        assertThat(remainderBeforeRemoval).isEmpty();
+        assertThat(remainderAfterRemoval).isPresent();
         assertItemStackListContents(diskDrive.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
     }
 

@@ -4,6 +4,8 @@ import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 public interface NetworkNode {
+    void update();
+
     Position getPosition();
 
     Network getNetwork();
