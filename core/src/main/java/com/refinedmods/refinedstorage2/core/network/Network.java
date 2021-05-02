@@ -12,6 +12,10 @@ public interface Network {
 
     Set<NetworkNodeReference> getNodeReferences();
 
+    void onNodesChanged();
+
+    EnergyStorage getEnergyStorage();
+
     void invalidateStorageChannelSources();
 
     StorageChannel<Rs2ItemStack> getItemStorageChannel();

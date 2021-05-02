@@ -10,12 +10,19 @@ public class Rs2Config implements ConfigData {
     @ConfigEntry.Gui.CollapsibleObject
     private Grid grid = new Grid();
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private Controller controller = new Controller();
+
     public static Rs2Config get() {
         return AutoConfig.getConfigHolder(Rs2Config.class).getConfig();
     }
 
     public Grid getGrid() {
         return grid;
+    }
+
+    public Controller getController() {
+        return controller;
     }
 
     public static class Grid {
@@ -48,6 +55,14 @@ public class Rs2Config implements ConfigData {
 
         public boolean isRememberSearchQuery() {
             return rememberSearchQuery;
+        }
+    }
+
+    public static class Controller {
+        private long capacity = 500;
+
+        public long getCapacity() {
+            return capacity;
         }
     }
 }

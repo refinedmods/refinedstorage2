@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.block;
 
+import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerEnergyState;
+
 import net.minecraft.util.StringIdentifiable;
 
 public enum ControllerEnergyType implements StringIdentifiable {
@@ -17,5 +19,20 @@ public enum ControllerEnergyType implements StringIdentifiable {
     @Override
     public String asString() {
         return name;
+    }
+
+    public static ControllerEnergyType ofState(ControllerEnergyState state) {
+        switch (state) {
+            case OFF:
+                return OFF;
+            case NEARLY_ON:
+                return NEARLY_ON;
+            case ON:
+                return ON;
+            case NEARLY_OFF:
+                return NEARLY_OFF;
+            default:
+                return OFF;
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.core.item.ItemStubs;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
+import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.FakeStorageDiskProviderManager;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
@@ -39,12 +40,12 @@ class NetworkImplTest {
         network.getNodeReferences().add(diskDriveRef);
 
         // Act
-        network.invalidateStorageChannelSources();
+        network.onNodesChanged();
 
         Optional<Rs2ItemStack> remainder1 = network.getItemStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         network.getNodeReferences().remove(diskDriveRef);
-        network.invalidateStorageChannelSources();
+        network.onNodesChanged();
 
         Optional<Rs2ItemStack> remainder2 = network.getItemStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
@@ -52,5 +53,30 @@ class NetworkImplTest {
         assertThat(remainder1).isEmpty();
         assertThat(remainder2).isPresent();
         assertItemStackListContents(diskDrive.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
+    }
+
+    @Test
+    void Test_node_change_should_rebuild_energy_storage_sources() {
+        // Arrange
+        NetworkNodeReference badRef = new StubNetworkNodeReference(null);
+        NetworkNodeReference controllerRef = new StubNetworkNodeReference(new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 5));
+
+        Network network = new NetworkImpl(UUID.randomUUID());
+        network.getNodeReferences().add(badRef);
+        network.getNodeReferences().add(controllerRef);
+
+        // Act
+        network.onNodesChanged();
+
+        long capacityBeforeRemove = network.getEnergyStorage().getCapacity();
+
+        network.getNodeReferences().remove(controllerRef);
+        network.onNodesChanged();
+
+        long capacityAfterRemove = network.getEnergyStorage().getCapacity();
+
+        // Assert
+        assertThat(capacityBeforeRemove).isEqualTo(5);
+        assertThat(capacityAfterRemove).isZero();
     }
 }

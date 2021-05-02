@@ -68,7 +68,7 @@ public class NetworkManagerImpl implements NetworkManager {
             LOGGER.debug("Changing network of node {} to {}", node.getPosition(), pivotNetwork.getId());
         });
 
-        pivotNetwork.invalidateStorageChannelSources();
+        pivotNetwork.onNodesChanged();
 
         return pivotNetwork;
     }
@@ -84,7 +84,7 @@ public class NetworkManagerImpl implements NetworkManager {
             network.getNodeReferences().add(node.createReference());
         });
 
-        network.invalidateStorageChannelSources();
+        network.onNodesChanged();
 
         LOGGER.debug("Formed new network {} with {} references", network.getId(), network.getNodeReferences().size());
 
@@ -126,7 +126,7 @@ public class NetworkManagerImpl implements NetworkManager {
             pivotNetwork.getNodeReferences().add(node.createReference());
         }
 
-        pivotNetwork.invalidateStorageChannelSources();
+        pivotNetwork.onNodesChanged();
 
         LOGGER.debug("Network {} has lost {} references, forming new networks where necessary", pivotNetwork.getId(), result.getRemovedEntries().size());
 

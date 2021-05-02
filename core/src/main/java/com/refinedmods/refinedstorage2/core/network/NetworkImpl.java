@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.core.network;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
+import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReferencingEnergyStorage;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReferencingStorage;
 import com.refinedmods.refinedstorage2.core.storage.EmptyItemStorage;
 import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
@@ -15,11 +16,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class NetworkImpl implements Network {
     private final UUID id;
     private final Set<NetworkNodeReference> nodeReferences = new HashSet<>();
     private final ItemStorageChannel itemStorageChannel = new ItemStorageChannel();
+    private final CompositeEnergyStorage energyStorage = new CompositeEnergyStorage();
 
     public NetworkImpl(UUID id) {
         this.id = id;
@@ -36,20 +40,42 @@ public class NetworkImpl implements Network {
     }
 
     @Override
-    public void invalidateStorageChannelSources() {
-        itemStorageChannel.setSources(createStorageSources());
+    public void onNodesChanged() {
+        invalidateStorageChannelSources();
+        invalidateEnergySources();
     }
 
-    private List<Storage<Rs2ItemStack>> createStorageSources() {
-        List<Storage<Rs2ItemStack>> sources = new ArrayList<>();
+    @Override
+    public EnergyStorage getEnergyStorage() {
+        return energyStorage;
+    }
+
+    private void invalidateEnergySources() {
+        List<EnergyStorage> sources = mapReferences(
+                node -> node instanceof EnergyStorage,
+                NetworkNodeReferencingEnergyStorage::new
+        );
+        energyStorage.setSources(sources);
+    }
+
+    @Override
+    public void invalidateStorageChannelSources() {
+        List<Storage<Rs2ItemStack>> sources = mapReferences(
+                node -> node instanceof Storage,
+                ref -> new NetworkNodeReferencingStorage<>(ref, new EmptyItemStorage())
+        );
+        itemStorageChannel.setSources(sources);
+    }
+
+    private <T> List<T> mapReferences(Predicate<NetworkNode> filter, Function<NetworkNodeReference, T> transformer) {
+        List<T> result = new ArrayList<>();
         for (NetworkNodeReference ref : nodeReferences) {
             Optional<NetworkNode> node = ref.get();
-            if (node.isPresent() && node.get() instanceof Storage) {
-                sources.add(new NetworkNodeReferencingStorage<>(ref, new EmptyItemStorage()));
+            if (node.isPresent() && filter.test(node.get())) {
+                result.add(transformer.apply(ref));
             }
         }
-
-        return sources;
+        return result;
     }
 
     @Override

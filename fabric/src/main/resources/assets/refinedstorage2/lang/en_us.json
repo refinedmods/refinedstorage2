@@ -91,6 +91,7 @@
     "text.autoconfig.refinedstorage2.option.grid.preventSortingWhileShiftIsDown": "Prevent sorting while shift is down",
     "text.autoconfig.refinedstorage2.option.grid.detailedTooltip": "Detailed tooltip",
     "text.autoconfig.refinedstorage2.option.grid.rememberSearchQuery": "Remember search query",
+    "text.autoconfig.refinedstorage2.option.controller.capacity": "Controller energy capacity",
     "book.refinedstorage2.landing_text": "Refined Storage is a mass storage mod for Minecraft that offers the player a network-based storage system, allowing them to store items and fluids on a massively expandable device network.",
     "book.refinedstorage2.category.grids": "Grids",
     "book.refinedstorage2.category.grids.description": "The Grid allows access to items and fluids in your storage network.",
