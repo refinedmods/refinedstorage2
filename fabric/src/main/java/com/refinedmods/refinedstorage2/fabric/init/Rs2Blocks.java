@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.init;
 
+import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.CableBlock;
 import com.refinedmods.refinedstorage2.fabric.block.ControllerBlock;
@@ -25,6 +26,7 @@ public class Rs2Blocks {
     private DiskDriveBlock diskDrive;
     private MachineCasingBlock machineCasing;
     private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
+    private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
 
     public void register() {
         cable = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("cable"), new CableBlock());
@@ -32,7 +34,8 @@ public class Rs2Blocks {
         diskDrive = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("disk_drive"), new DiskDriveBlock(STONE_SETTINGS));
         machineCasing = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("machine_casing"), new MachineCasingBlock(STONE_SETTINGS));
         grid.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("grid")), new GridBlock(STONE_SETTINGS)));
-        controller.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("controller")), new ControllerBlock(STONE_SETTINGS)));
+        controller.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("controller")), new ControllerBlock(STONE_SETTINGS, ControllerType.NORMAL)));
+        creativeController.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("creative_controller")), new ControllerBlock(STONE_SETTINGS, ControllerType.CREATIVE)));
     }
 
     public CableBlock getCable() {
@@ -57,5 +60,9 @@ public class Rs2Blocks {
 
     public BlockColorMap<ControllerBlock> getController() {
         return controller;
+    }
+
+    public BlockColorMap<ControllerBlock> getCreativeController() {
+        return creativeController;
     }
 }

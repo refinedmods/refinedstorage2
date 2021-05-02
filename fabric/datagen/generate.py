@@ -191,7 +191,9 @@ with open('colors.txt') as colors_file:
 
         generate_controller_block_model(color)
         generate_controller_blockstate(get_color_key(color, 'controller'), color)
+        generate_controller_blockstate(get_color_key(color, 'creative_controller'), color)
         generate_controller_item(get_color_key(color, 'controller'), color)
+        generate_controller_item(get_color_key(color, 'creative_controller'), color)
 
         generate_north_cutout_block_model('grid/' + color, particle='refinedstorage2:block/grid/right', east='refinedstorage2:block/grid/right', south='refinedstorage2:block/grid/back', west='refinedstorage2:block/grid/left',
                                           up='refinedstorage2:block/grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/grid/front', cutout='refinedstorage2:block/grid/cutouts/' + color, fullbright_cutout=True)
@@ -202,6 +204,7 @@ with open('colors.txt') as colors_file:
 
         generate_simple_loot_table(get_color_key(color, 'grid'), 'refinedstorage2:' + get_color_key(color, 'grid'))
         generate_simple_loot_table(get_color_key(color, 'controller'), 'refinedstorage2:' + get_color_key(color, 'controller'))
+        generate_simple_loot_table(get_color_key(color, 'creative_controller'), 'refinedstorage2:' + get_color_key(color, 'creative_controller'))
 
         if color != 'light_blue':
             generate_recipe('coloring/' + color + '_grid', {

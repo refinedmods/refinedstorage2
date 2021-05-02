@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.StubNetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerNetworkNode;
+import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNodeWrapper;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
@@ -55,7 +56,7 @@ class NetworkImplTest {
     void Test_node_change_should_rebuild_energy_storage_sources() {
         // Arrange
         NetworkNodeReference badRef = new StubNetworkNodeReference(null);
-        NetworkNodeReference controllerRef = new StubNetworkNodeReference(new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 5));
+        NetworkNodeReference controllerRef = new StubNetworkNodeReference(new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 5, ControllerType.NORMAL));
 
         Network network = new NetworkImpl(UUID.randomUUID());
         network.getNodeReferences().add(badRef);

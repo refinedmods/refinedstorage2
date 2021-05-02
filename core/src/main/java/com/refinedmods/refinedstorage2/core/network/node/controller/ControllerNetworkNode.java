@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.core.network.node.controller;
 
 import com.refinedmods.refinedstorage2.core.Rs2World;
+import com.refinedmods.refinedstorage2.core.network.CreativeEnergyStorage;
 import com.refinedmods.refinedstorage2.core.network.EnergyStorage;
 import com.refinedmods.refinedstorage2.core.network.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
@@ -11,9 +12,13 @@ import com.refinedmods.refinedstorage2.core.util.Position;
 public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStorage {
     private final EnergyStorage energyStorage;
 
-    public ControllerNetworkNode(Rs2World world, Position pos, NetworkNodeReference ref, long capacity) {
+    public ControllerNetworkNode(Rs2World world, Position pos, NetworkNodeReference ref, long capacity, ControllerType type) {
         super(world, pos, ref);
-        this.energyStorage = new EnergyStorageImpl(capacity);
+        this.energyStorage = buildEnergyStorage(capacity, type);
+    }
+
+    private static EnergyStorage buildEnergyStorage(long capacity, ControllerType type) {
+        return type == ControllerType.CREATIVE ? new CreativeEnergyStorage() : new EnergyStorageImpl(capacity);
     }
 
     public ControllerEnergyState getState() {

@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.item.block;
 
+import com.refinedmods.refinedstorage2.fabric.init.ColorMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -12,7 +14,7 @@ public class ColoredBlockItem extends BlockItem {
 
     public ColoredBlockItem(Block block, Settings settings, DyeColor color, Text displayName) {
         super(block, settings);
-        if (color != DyeColor.LIGHT_BLUE) {
+        if (color != ColorMap.NORMAL_COLOR) {
             this.displayName = new TranslatableText("color.minecraft." + color.getName()).append(" ").append(displayName);
         } else {
             this.displayName = displayName;

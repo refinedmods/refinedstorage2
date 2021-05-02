@@ -35,6 +35,7 @@ public class Rs2Items {
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("machine_casing"), new BlockItem(blocks.getMachineCasing(), createSettings(itemGroup)));
         blocks.getGrid().forEach((color, block, nameFactory) -> Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(nameFactory.apply("grid")), new ColoredBlockItem(block, createSettings(itemGroup), color, Rs2Mod.createTranslation("block", "grid"))));
         blocks.getController().forEach((color, block, nameFactory) -> Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(nameFactory.apply("controller")), new ColoredBlockItem(block, createSettings(itemGroup).maxCount(1), color, Rs2Mod.createTranslation("block", "controller"))));
+        blocks.getCreativeController().forEach((color, block, nameFactory) -> Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(nameFactory.apply("creative_controller")), new ColoredBlockItem(block, createSettings(itemGroup).maxCount(1), color, Rs2Mod.createTranslation("block", "creative_controller"))));
 
         for (ProcessorItem.Type type : ProcessorItem.Type.values()) {
             Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_processor"), new ProcessorItem(createSettings(itemGroup)));

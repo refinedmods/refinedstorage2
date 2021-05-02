@@ -41,7 +41,7 @@ public class Rs2Mod implements ModInitializer {
     public static final Rs2ScreenHandlers SCREEN_HANDLERS = new Rs2ScreenHandlers();
     static final String ID = "refinedstorage2";
     private static final Logger LOGGER = LogManager.getLogger(Rs2Mod.class);
-    private static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(createIdentifier("general"), () -> new ItemStack(BLOCKS.getCable()));
+    private static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(createIdentifier("general"), () -> new ItemStack(BLOCKS.getController().getNormal()));
 
     public static Identifier createIdentifier(String value) {
         return new Identifier(ID, value);

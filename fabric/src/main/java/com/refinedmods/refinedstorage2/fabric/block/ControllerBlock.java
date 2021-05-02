@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.block;
 
+import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.ControllerBlockEntity;
 
@@ -20,8 +21,12 @@ import org.jetbrains.annotations.Nullable;
 public class ControllerBlock extends NetworkNodeBlock {
     public static final EnumProperty<ControllerEnergyType> ENERGY_TYPE = EnumProperty.of("energy_type", ControllerEnergyType.class);
 
-    public ControllerBlock(Settings settings) {
+    private final ControllerType type;
+
+    public ControllerBlock(Settings settings, ControllerType type) {
         super(settings);
+
+        this.type = type;
 
         setDefaultState(getStateManager().getDefaultState().with(ENERGY_TYPE, ControllerEnergyType.OFF));
     }
@@ -53,6 +58,6 @@ public class ControllerBlock extends NetworkNodeBlock {
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockView world) {
-        return new ControllerBlockEntity();
+        return new ControllerBlockEntity(type);
     }
 }

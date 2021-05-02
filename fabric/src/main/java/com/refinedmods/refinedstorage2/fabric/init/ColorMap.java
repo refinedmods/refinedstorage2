@@ -10,6 +10,8 @@ import net.minecraft.util.DyeColor;
 import org.apache.logging.log4j.util.TriConsumer;
 
 public class ColorMap<T> {
+    public static final DyeColor NORMAL_COLOR = DyeColor.LIGHT_BLUE;
+
     protected final Map<DyeColor, T> map = new EnumMap<>(DyeColor.class);
 
     public void putAll(BiFunction<DyeColor, Function<String, String>, T> factory) {
@@ -19,7 +21,7 @@ public class ColorMap<T> {
     }
 
     private String getName(DyeColor color, String name) {
-        if (color == DyeColor.LIGHT_BLUE) {
+        if (color == NORMAL_COLOR) {
             return name;
         }
         return color.asString() + "_" + name;
@@ -27,6 +29,14 @@ public class ColorMap<T> {
 
     public void forEach(TriConsumer<DyeColor, T, Function<String, String>> consumer) {
         map.forEach((color, obj) -> consumer.accept(color, obj, name -> getName(color, name)));
+    }
+
+    public T get(DyeColor color) {
+        return map.get(color);
+    }
+
+    public T getNormal() {
+        return get(NORMAL_COLOR);
     }
 
     public Collection<T> values() {

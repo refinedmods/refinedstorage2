@@ -30,7 +30,7 @@ class ControllerNetworkNodeTest {
     @MethodSource("states")
     void Test_percentages(long stored, ControllerEnergyState expectedState) {
         // Arrange
-        ControllerNetworkNode networkNode = new ControllerNetworkNode(null, null, null, 100);
+        ControllerNetworkNode networkNode = new ControllerNetworkNode(null, null, null, 100, ControllerType.NORMAL);
 
         networkNode.receive(stored, Action.EXECUTE);
 

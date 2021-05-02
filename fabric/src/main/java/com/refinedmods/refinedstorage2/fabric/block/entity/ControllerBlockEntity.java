@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.block.entity;
 
 import com.refinedmods.refinedstorage2.core.network.EnergyStorage;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerNetworkNode;
+import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
@@ -11,15 +12,23 @@ import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAda
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetworkNode> implements EnergyStorage {
+    private final ControllerType type;
+
     private long lastTypeChanged;
     private ControllerEnergyType lastType = ControllerEnergyType.OFF;
 
-    public ControllerBlockEntity() {
-        super(Rs2Mod.BLOCK_ENTITIES.getController());
+    public ControllerBlockEntity(ControllerType type) {
+        super(getBlockEntityType(type));
+        this.type = type;
+    }
+
+    private static BlockEntityType<ControllerBlockEntity> getBlockEntityType(ControllerType type) {
+        return type == ControllerType.CREATIVE ? Rs2Mod.BLOCK_ENTITIES.getCreativeController() : Rs2Mod.BLOCK_ENTITIES.getController();
     }
 
     @Override
@@ -41,13 +50,14 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
                 FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
                 FabricNetworkNodeReference.of(world, pos),
-                Rs2Config.get().getController().getCapacity()
+                Rs2Config.get().getController().getCapacity(),
+                type
         );
     }
 
     public void receive() {
-        if (node != null) {
-            node.receive(5, Action.EXECUTE);
+        if (node != null && type == ControllerType.NORMAL) {
+            node.receive(10, Action.EXECUTE);
         }
     }
 
