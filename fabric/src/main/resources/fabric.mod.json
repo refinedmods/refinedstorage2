@@ -34,7 +34,8 @@
         "fabric": "*",
         "minecraft": "1.16.x",
         "libblockattributes": ">=0.8.4",
-        "autoconfig1u": "*"
+        "autoconfig1u": "*",
+        "team_reborn_energy": "*"
     },
     "suggests": {
         "patchouli": "*",
