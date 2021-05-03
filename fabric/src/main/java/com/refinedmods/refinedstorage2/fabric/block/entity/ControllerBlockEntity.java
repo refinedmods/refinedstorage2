@@ -108,7 +108,15 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
 
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeLong(getStored());
-        buf.writeLong(getCapacity());
+        buf.writeLong(getActualStored());
+        buf.writeLong(getActualCapacity());
+    }
+
+    public long getActualStored() {
+        return node.getActualStored();
+    }
+
+    public long getActualCapacity() {
+        return node.getActualCapacity();
     }
 }

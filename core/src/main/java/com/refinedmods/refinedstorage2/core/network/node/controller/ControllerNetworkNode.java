@@ -22,6 +22,9 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
     }
 
     public ControllerEnergyState getState() {
+        if (!isActive()) {
+            return ControllerEnergyState.OFF;
+        }
         double pct = (double) energyStorage.getStored() / (double) energyStorage.getCapacity();
         if (pct == 0) {
             return ControllerEnergyState.OFF;
@@ -34,12 +37,31 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
     }
 
     @Override
+    public boolean isActive() {
+        return getRedstoneMode().isActive(world.isPowered(getPosition()));
+    }
+
+    public long getActualStored() {
+        return energyStorage.getStored();
+    }
+
+    public long getActualCapacity() {
+        return energyStorage.getCapacity();
+    }
+
+    @Override
     public long getStored() {
+        if (!isActive()) {
+            return 0;
+        }
         return energyStorage.getStored();
     }
 
     @Override
     public long getCapacity() {
+        if (!isActive()) {
+            return 0;
+        }
         return energyStorage.getCapacity();
     }
 
@@ -50,11 +72,17 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
 
     @Override
     public long receive(long amount, Action action) {
+        if (!isActive()) {
+            return amount;
+        }
         return energyStorage.receive(amount, action);
     }
 
     @Override
     public long extract(long amount, Action action) {
+        if (!isActive()) {
+            return 0;
+        }
         return energyStorage.extract(amount, action);
     }
 

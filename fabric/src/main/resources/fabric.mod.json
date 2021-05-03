@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "id": "refinedstorage2",
     "version": "${version}",
-    "name": "Refined Storage 2 Fabric",
+    "name": "Refined Storage 2",
     "description": "An elegant solution to your hoarding problem.",
     "authors": [
         "Refined Mods"

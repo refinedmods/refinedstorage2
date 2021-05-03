@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.fabric.screen;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ProgressWidget;
+import com.refinedmods.refinedstorage2.fabric.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.ControllerScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
 
@@ -32,6 +33,12 @@ public class ControllerScreen extends BaseScreen<ControllerScreenHandler> {
 
         this.progressWidget = new ProgressWidget(80, 20, 16, 70, this::getPercentageFull, this::renderTooltip, this::createTooltip);
         addChild(progressWidget);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        addSideButton(new RedstoneModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
     }
 
     private double getPercentageFull() {

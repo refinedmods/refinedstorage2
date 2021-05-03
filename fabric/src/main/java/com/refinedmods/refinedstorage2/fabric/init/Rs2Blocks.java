@@ -20,6 +20,7 @@ public class Rs2Blocks {
             .hardness(1.9F)
             .resistance(1.9F)
             .sounds(BlockSoundGroup.STONE);
+
     private final BlockColorMap<GridBlock> grid = new BlockColorMap<>();
     private CableBlock cable;
     private QuartzEnrichedIronBlock quartzEnrichedIron;
