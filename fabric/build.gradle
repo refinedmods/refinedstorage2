@@ -42,6 +42,8 @@ dependencies {
     modApi("me.shedaniel.cloth:config-2:4.8.3") {
         exclude(group: "net.fabricmc.fabric-api")
     }
+    modApi 'teamreborn:energy:0.1.1'
+    include 'teamreborn:energy:0.1.1'
     modImplementation "me.shedaniel:RoughlyEnoughItems:5.8.9"
     modImplementation "io.github.prospector:modmenu:1.15.0+build.1"
     modImplementation "vazkii.patchouli:Patchouli:1.16.4-50-FABRIC"

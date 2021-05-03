@@ -24,8 +24,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import team.reborn.energy.EnergySide;
+import team.reborn.energy.EnergyTier;
 
-public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetworkNode> implements EnergyStorage, ExtendedScreenHandlerFactory {
+public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetworkNode> implements EnergyStorage, ExtendedScreenHandlerFactory, team.reborn.energy.EnergyStorage {
     private final ControllerType type;
 
     private long lastTypeChanged;
@@ -118,5 +120,30 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
 
     public long getActualCapacity() {
         return node.getActualCapacity();
+    }
+
+    @Override
+    public double getStored(EnergySide face) {
+        return node.getStored();
+    }
+
+    @Override
+    public void setStored(double amount) {
+        long difference = (long) amount - node.getStored();
+        if (difference > 0) {
+            node.receive(difference, Action.EXECUTE);
+        } else {
+            node.extract(Math.abs(difference), Action.EXECUTE);
+        }
+    }
+
+    @Override
+    public double getMaxStoredPower() {
+        return node.getCapacity();
+    }
+
+    @Override
+    public EnergyTier getTier() {
+        return EnergyTier.INFINITE;
     }
 }
