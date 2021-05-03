@@ -36,6 +36,7 @@ dependencies {
     modImplementation 'net.fabricmc.fabric-api:fabric-api:0.32.5+1.16'
 
     implementation project(':core')
+    include project(':core')
 
     modImplementation 'alexiil.mc.lib:libblockattributes-all:0.8.8'
     include 'alexiil.mc.lib:libblockattributes-all:0.8.8'
@@ -87,5 +88,4 @@ java {
 jar {
     from '../LICENSE.md'
     baseName 'refinedstorage2-fabric'
-    from project(':core').sourceSets.main.output
 }
