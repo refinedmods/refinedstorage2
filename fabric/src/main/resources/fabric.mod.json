@@ -33,10 +33,13 @@
         "fabricloader": ">=0.7.4",
         "fabric": "*",
         "minecraft": "1.16.x",
-        "libblockattributes": ">=0.8.4"
+        "libblockattributes": ">=0.8.4",
+        "autoconfig1u": "*"
     },
     "suggests": {
         "patchouli": "*",
-        "roughlyenoughitems": "*"
+        "roughlyenoughitems": "*",
+        "modmenu": "*",
+        "cloth-config2": "*"
     }
 }
