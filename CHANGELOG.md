@@ -36,6 +36,7 @@ Currently, this version only works on Fabric.
 - Integration with Patchouli.
 - Integration with AutoConfig1u.
 - Integration with ClothConfig.
+- Integration with Team Reborn Energy.
 
 ### Changed
 
