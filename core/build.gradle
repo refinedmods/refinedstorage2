@@ -36,14 +36,6 @@ test {
     finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
-processResources {
-    inputs.property "version", project.version
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
-    }
-}
-
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }

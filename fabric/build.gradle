@@ -80,4 +80,5 @@ java {
 jar {
     from "../LICENSE.md"
     baseName "refinedstorage2-fabric"
+    from project(':core').sourceSets.main.output
 }
