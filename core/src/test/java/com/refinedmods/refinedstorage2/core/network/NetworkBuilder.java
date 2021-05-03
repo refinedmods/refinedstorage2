@@ -29,6 +29,7 @@ public class NetworkBuilder {
     }
 
     public NetworkBuilder nodeRef(NetworkNodeReference ref) {
+        ref.get().ifPresent(node -> node.setNetwork(network));
         network.getNodeReferences().add(ref);
         network.onNodesChanged();
         return this;

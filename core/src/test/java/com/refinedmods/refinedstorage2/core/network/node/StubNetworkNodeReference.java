@@ -4,9 +4,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class StubNetworkNodeReference implements NetworkNodeReference {
-    private final NetworkNode node;
+    private NetworkNode node;
 
     public StubNetworkNodeReference(NetworkNode node) {
+        this.node = node;
+    }
+
+    public void setNode(NetworkNode node) {
         this.node = node;
     }
 
