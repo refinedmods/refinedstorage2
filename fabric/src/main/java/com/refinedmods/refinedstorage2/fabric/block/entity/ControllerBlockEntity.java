@@ -83,11 +83,6 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     }
 
     @Override
-    public void setCapacity(long capacity) {
-        node.setCapacity(capacity);
-    }
-
-    @Override
     public long receive(long amount, Action action) {
         return node.receive(amount, action);
     }

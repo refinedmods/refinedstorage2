@@ -23,11 +23,6 @@ public class CompositeEnergyStorage implements EnergyStorage {
     }
 
     @Override
-    public void setCapacity(long capacity) {
-        throw new UnsupportedOperationException("Modify the capacity of an individual storage instead");
-    }
-
-    @Override
     public long receive(long amount, Action action) {
         long remainder = amount;
         for (EnergyStorage source : sources) {

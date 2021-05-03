@@ -22,47 +22,6 @@ class EnergyStorageImplTest {
         assertThrows(Exception.class, action);
     }
 
-    @Test
-    void Test_changing_to_invalid_capacity() {
-        // Arrange
-        EnergyStorage energyStorage = new EnergyStorageImpl(10);
-
-        // Act
-        Executable action = () -> energyStorage.setCapacity(-1);
-
-        // Assert
-        assertThrows(Exception.class, action);
-        assertThat(energyStorage.getCapacity()).isEqualTo(10);
-    }
-
-    @Test
-    void Test_changing_capacity() {
-        // Arrange
-        EnergyStorage energyStorage = new EnergyStorageImpl(10);
-        energyStorage.receive(3, Action.EXECUTE);
-
-        // Act
-        energyStorage.setCapacity(5);
-
-        // Assert
-        assertThat(energyStorage.getCapacity()).isEqualTo(5);
-        assertThat(energyStorage.getStored()).isEqualTo(3);
-    }
-
-    @Test
-    void Test_changing_capacity_should_shrink_existing_stored() {
-        // Arrange
-        EnergyStorage energyStorage = new EnergyStorageImpl(10);
-        energyStorage.receive(5, Action.EXECUTE);
-
-        // Act
-        energyStorage.setCapacity(4);
-
-        // Assert
-        assertThat(energyStorage.getCapacity()).isEqualTo(4);
-        assertThat(energyStorage.getStored()).isEqualTo(4);
-    }
-
     @ParameterizedTest
     @EnumSource(Action.class)
     void Test_receiving_energy_on_zero_capacity_storage(Action action) {

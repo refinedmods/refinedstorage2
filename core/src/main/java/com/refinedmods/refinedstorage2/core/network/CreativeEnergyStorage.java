@@ -14,11 +14,6 @@ public class CreativeEnergyStorage implements EnergyStorage {
     }
 
     @Override
-    public void setCapacity(long capacity) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public long receive(long amount, Action action) {
         return amount;
     }

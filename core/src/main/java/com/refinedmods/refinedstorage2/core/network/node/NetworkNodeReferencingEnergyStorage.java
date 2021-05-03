@@ -23,11 +23,6 @@ public class NetworkNodeReferencingEnergyStorage implements EnergyStorage {
     }
 
     @Override
-    public void setCapacity(long capacity) {
-        getStorage().ifPresent(energyStorage -> energyStorage.setCapacity(capacity));
-    }
-
-    @Override
     public long receive(long amount, Action action) {
         return getStorage().map(energyStorage -> energyStorage.receive(amount, action)).orElse(amount);
     }

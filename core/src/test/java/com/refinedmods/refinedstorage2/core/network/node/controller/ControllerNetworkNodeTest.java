@@ -9,14 +9,12 @@ import com.refinedmods.refinedstorage2.core.util.Position;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
 class ControllerNetworkNodeTest {
@@ -140,18 +138,5 @@ class ControllerNetworkNodeTest {
         assertThat(controller.getCapacity()).isZero();
         assertThat(controller.getActualStored()).isEqualTo(20);
         assertThat(controller.getActualCapacity()).isEqualTo(100);
-    }
-
-    @ParameterizedTest
-    @EnumSource(ControllerType.class)
-    void Test_setting_capacity(ControllerType type) {
-        // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 100, type);
-
-        // Act
-        Executable action = () -> controller.setCapacity(200);
-
-        // Assert
-        assertThrows(UnsupportedOperationException.class, action);
     }
 }

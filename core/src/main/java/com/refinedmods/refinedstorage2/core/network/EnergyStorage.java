@@ -7,8 +7,6 @@ public interface EnergyStorage {
 
     long getCapacity();
 
-    void setCapacity(long capacity);
-
     long receive(long amount, Action action);
 
     long extract(long amount, Action action);

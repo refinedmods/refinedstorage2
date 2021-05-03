@@ -5,32 +5,13 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 
 import java.util.Arrays;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
 class CompositeEnergyStorageTest {
-    @Test
-    void Test_setting_capacity() {
-        // Arrange
-        EnergyStorage a = new EnergyStorageImpl(10);
-        EnergyStorage b = new EnergyStorageImpl(5);
-
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
-        sut.setSources(Arrays.asList(a, b));
-
-        // Act
-        Executable action = () -> sut.setCapacity(1);
-
-        // Assert
-        assertThrows(UnsupportedOperationException.class, action);
-    }
-
     @ParameterizedTest
     @EnumSource(Action.class)
     void Test_filling_when_no_sources_are_present(Action action) {

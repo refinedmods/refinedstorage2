@@ -66,11 +66,6 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
     }
 
     @Override
-    public void setCapacity(long capacity) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public long receive(long amount, Action action) {
         if (!isActive()) {
             return amount;

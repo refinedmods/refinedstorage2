@@ -5,11 +5,12 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 import com.google.common.base.Preconditions;
 
 public class EnergyStorageImpl implements EnergyStorage {
-    private long capacity;
+    private final long capacity;
     private long stored;
 
     public EnergyStorageImpl(long capacity) {
-        setCapacity(capacity);
+        Preconditions.checkArgument(capacity >= 0, "Capacity must be 0 or larger than 0");
+        this.capacity = capacity;
     }
 
     @Override
@@ -20,15 +21,6 @@ public class EnergyStorageImpl implements EnergyStorage {
     @Override
     public long getCapacity() {
         return capacity;
-    }
-
-    @Override
-    public void setCapacity(long capacity) {
-        Preconditions.checkArgument(capacity >= 0, "Capacity must be 0 or larger than 0");
-        this.capacity = capacity;
-        if (this.stored > capacity) {
-            this.stored = capacity;
-        }
     }
 
     @Override
