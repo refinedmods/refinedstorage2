@@ -8,11 +8,11 @@ import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.core.query.parser.ParserOperatorMappings;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.FabricRs2ApiFacade;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.ReiGridSearchBoxMode;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2BlockEntities;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2Blocks;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2Items;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2ScreenHandlers;
+import com.refinedmods.refinedstorage2.fabric.integration.ReiIntegration;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
@@ -92,11 +92,9 @@ public class Rs2Mod implements ModInitializer {
             API.getGridSearchBoxModeRegistry().add(new GridSearchBoxModeImpl(queryParser, autoSelected, createSearchBoxModeDisplayProperties(autoSelected)));
         }
 
-        API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(queryParser, false, false)); // REI
-        API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(queryParser, true, false)); // REI autoselected
-
-        API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(queryParser, false, true)); // REI two-way
-        API.getGridSearchBoxModeRegistry().add(ReiGridSearchBoxMode.create(queryParser, true, true)); // REI two-way autoselected
+        if (ReiIntegration.isLoaded()) {
+            ReiIntegration.registerGridSearchBoxModes(queryParser);
+        }
     }
 
     private GridSearchBoxModeDisplayProperties createSearchBoxModeDisplayProperties(boolean autoSelected) {

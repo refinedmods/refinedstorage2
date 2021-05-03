@@ -33,7 +33,6 @@ public class ScreenUtil {
         VERSION_INFO_LINES.add("Refined Storage for Fabric");
 
         FabricLoader.getInstance().getModContainer("refinedstorage2").ifPresent(platform -> VERSION_INFO_LINES.add("Platform " + getVersion(platform)));
-        FabricLoader.getInstance().getModContainer("refinedstorage2-core").ifPresent(core -> VERSION_INFO_LINES.add("Core " + getVersion(core)));
     }
 
     private static String getVersion(ModContainer platform) {

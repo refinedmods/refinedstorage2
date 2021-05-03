@@ -5,26 +5,25 @@ import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.fabric.integration.rei.ReiProxy;
 
-import me.shedaniel.rei.api.REIHelper;
-import me.shedaniel.rei.gui.widget.TextFieldWidget;
-
-// TODO - Investigate hard dep on REI
 public class ReiGridSearchBoxMode extends GridSearchBoxModeImpl {
     private final boolean twoWay;
+    private final ReiProxy reiProxy;
 
-    private ReiGridSearchBoxMode(GridQueryParser queryParser, boolean autoSelect, boolean twoWay, GridSearchBoxModeDisplayProperties displayProperties) {
+    private ReiGridSearchBoxMode(GridQueryParser queryParser, boolean autoSelect, boolean twoWay, GridSearchBoxModeDisplayProperties displayProperties, ReiProxy reiProxy) {
         super(queryParser, autoSelect, displayProperties);
         this.twoWay = twoWay;
+        this.reiProxy = reiProxy;
     }
 
-    public static ReiGridSearchBoxMode create(GridQueryParser queryParser, boolean autoSelected, boolean twoWay) {
+    public static ReiGridSearchBoxMode create(GridQueryParser queryParser, boolean autoSelected, boolean twoWay, ReiProxy reiProxy) {
         return new ReiGridSearchBoxMode(queryParser, autoSelected, twoWay, new GridSearchBoxModeDisplayProperties(
                 Rs2Mod.createIdentifier("textures/icons.png").toString(),
                 autoSelected ? 16 : 0,
                 96,
                 createTranslationKey(autoSelected, twoWay)
-        ));
+        ), reiProxy);
     }
 
     private static String createTranslationKey(boolean autoSelected, boolean twoWay) {
@@ -36,19 +35,13 @@ public class ReiGridSearchBoxMode extends GridSearchBoxModeImpl {
     @Override
     public void onTextChanged(GridView<?> view, String text) {
         super.onTextChanged(view, text);
-        TextFieldWidget textField = REIHelper.getInstance().getSearchTextField();
-        if (textField != null) {
-            textField.setText(text);
-        }
+        reiProxy.setSearchFieldText(text);
     }
 
     @Override
     public String getSearchBoxValue() {
         if (twoWay) {
-            TextFieldWidget textField = REIHelper.getInstance().getSearchTextField();
-            if (textField != null) {
-                return textField.getText();
-            }
+            return reiProxy.getSearchFieldText();
         }
         return null;
     }
