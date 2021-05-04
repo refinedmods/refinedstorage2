@@ -41,12 +41,18 @@ dependencies {
     modImplementation 'alexiil.mc.lib:libblockattributes-all:0.8.8'
     include 'alexiil.mc.lib:libblockattributes-all:0.8.8'
 
-    modApi 'me.sargunvohra.mcmods:autoconfig1u:3.3.1'
+    modApi('me.sargunvohra.mcmods:autoconfig1u:3.3.1') {
+        exclude(group: 'net.fabricmc.fabric-api')
+    }
     include 'me.sargunvohra.mcmods:autoconfig1u:3.3.1'
 
-    modApi 'me.shedaniel.cloth:config-2:4.8.3'
+    modApi('me.shedaniel.cloth:config-2:4.8.3') {
+        exclude(group: 'net.fabricmc.fabric-api')
+    }
 
-    modApi 'teamreborn:energy:0.1.1'
+    modApi('teamreborn:energy:0.1.1') {
+        exclude(group: 'net.fabricmc.fabric-api')
+    }
     include 'teamreborn:energy:0.1.1'
 
     modImplementation 'me.shedaniel:RoughlyEnoughItems:5.8.9'
