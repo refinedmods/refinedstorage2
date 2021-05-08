@@ -59,6 +59,38 @@ def generate_controller_blockstate(name, color):
 
 def generate_controller_item(name, color):
         create_file(output_dir + '/assets/refinedstorage2/models/item/' + name + '.json', to_json({
+          'parent': 'block/cube',
+          'overrides': [
+            {
+              'predicate': {
+                'refinedstorage2:stored_in_controller': 0,
+              },
+              'model': 'refinedstorage2:block/controller/off'
+            },
+            {
+              'predicate': {
+                'refinedstorage2:stored_in_controller': 0.01,
+              },
+              'model': 'refinedstorage2:block/controller/nearly_off'
+            },
+            {
+              'predicate': {
+                'refinedstorage2:stored_in_controller': 0.3,
+              },
+              'model': 'refinedstorage2:block/controller/nearly_on'
+            },
+            {
+              'predicate': {
+                'refinedstorage2:stored_in_controller': 0.4,
+              },
+              'model': 'refinedstorage2:block/controller/' + color
+            }
+          ]
+        }))
+
+
+def generate_creative_controller_item(name, color):
+        create_file(output_dir + '/assets/refinedstorage2/models/item/' + name + '.json', to_json({
           'parent': 'refinedstorage2:block/controller/' + color
         }))
 
@@ -159,7 +191,7 @@ def generate_item_tag(name, data):
                 name + '.json', to_json(data))
 
 
-def generate_simple_loot_table(name, block):
+def generate_simple_loot_table(name, block, functions=[]):
     create_file(output_dir + '/data/refinedstorage2/loot_tables/blocks/' + name + '.json', to_json({
         'type': 'minecraft:block',
         'pools': [
@@ -168,6 +200,7 @@ def generate_simple_loot_table(name, block):
                 'entries': [
                     {
                         'type': 'minecraft:item',
+                        'functions': functions,
                         'name': block
                     }
                 ],
@@ -193,7 +226,7 @@ with open('colors.txt') as colors_file:
         generate_controller_blockstate(get_color_key(color, 'controller'), color)
         generate_controller_blockstate(get_color_key(color, 'creative_controller'), color)
         generate_controller_item(get_color_key(color, 'controller'), color)
-        generate_controller_item(get_color_key(color, 'creative_controller'), color)
+        generate_creative_controller_item(get_color_key(color, 'creative_controller'), color)
 
         generate_north_cutout_block_model('grid/' + color, particle='refinedstorage2:block/grid/right', east='refinedstorage2:block/grid/right', south='refinedstorage2:block/grid/back', west='refinedstorage2:block/grid/left',
                                           up='refinedstorage2:block/grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/grid/front', cutout='refinedstorage2:block/grid/cutouts/' + color, fullbright_cutout=True)
@@ -203,7 +236,7 @@ with open('colors.txt') as colors_file:
             color, 'grid'), lambda direction, active: 'refinedstorage2:block/grid/' + color if active else 'refinedstorage2:block/grid/disconnected')
 
         generate_simple_loot_table(get_color_key(color, 'grid'), 'refinedstorage2:' + get_color_key(color, 'grid'))
-        generate_simple_loot_table(get_color_key(color, 'controller'), 'refinedstorage2:' + get_color_key(color, 'controller'))
+        generate_simple_loot_table(get_color_key(color, 'controller'), 'refinedstorage2:' + get_color_key(color, 'controller'), [{'function': 'refinedstorage2:controller'}])
         generate_simple_loot_table(get_color_key(color, 'creative_controller'), 'refinedstorage2:' + get_color_key(color, 'creative_controller'))
 
         if color != 'light_blue':

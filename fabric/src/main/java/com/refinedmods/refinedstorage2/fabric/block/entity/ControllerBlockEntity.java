@@ -14,9 +14,11 @@ import com.refinedmods.refinedstorage2.fabric.screenhandler.ControllerScreenHand
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -68,7 +70,7 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
 
     public void receive() {
         if (node != null && type == ControllerType.NORMAL) {
-            node.receive(10, Action.EXECUTE);
+            node.receive(50, Action.EXECUTE);
         }
     }
 
@@ -84,12 +86,36 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
 
     @Override
     public long receive(long amount, Action action) {
-        return node.receive(amount, action);
+        long remainder = node.receive(amount, action);
+        if (remainder != amount && action == Action.EXECUTE) {
+            markDirty();
+        }
+        return remainder;
     }
 
     @Override
     public long extract(long amount, Action action) {
-        return node.extract(amount, action);
+        long extracted = node.extract(amount, action);
+        if (extracted > 0 && action == Action.EXECUTE) {
+            markDirty();
+        }
+        return extracted;
+    }
+
+    @Override
+    public void fromTag(BlockState state, CompoundTag tag) {
+        super.fromTag(state, tag);
+
+        if (tag.contains("stored")) {
+            node.receive(tag.getLong("stored"), Action.EXECUTE);
+        }
+    }
+
+    @Override
+    public CompoundTag toTag(CompoundTag tag) {
+        tag = super.toTag(tag);
+        tag.putLong("stored", node.getActualStored());
+        return tag;
     }
 
     @Override

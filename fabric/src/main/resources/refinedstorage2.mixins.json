@@ -12,7 +12,8 @@
         "BakedQuadAccessor",
         "JsonUnbakedModelMixin",
         "ModelElementFaceDeserializerMixin",
-        "ModelLoaderMixin"
+        "ModelLoaderMixin",
+        "ModelPredicateProviderRegistryAccessor"
     ],
     "injectors": {
         "defaultRequire": 1

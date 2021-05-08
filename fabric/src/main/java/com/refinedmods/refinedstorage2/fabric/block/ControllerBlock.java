@@ -38,10 +38,11 @@ public class ControllerBlock extends NetworkNodeBlock {
             return result;
         }
 
-        if (!world.isClient()) {
+        if (!world.isClient() && player.isSneaking()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof ControllerBlockEntity) {
                 ((ControllerBlockEntity) blockEntity).receive();
+                return ActionResult.SUCCESS;
             }
         }
 

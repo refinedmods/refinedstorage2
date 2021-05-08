@@ -1,10 +1,12 @@
 package com.refinedmods.refinedstorage2.fabric;
 
+import com.refinedmods.refinedstorage2.fabric.mixin.ModelPredicateProviderRegistryAccessor;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.ControllerEnergyPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridItemUpdatePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.StorageDiskInfoResponsePacket;
 import com.refinedmods.refinedstorage2.fabric.render.entity.DiskDriveBlockEntityRenderer;
+import com.refinedmods.refinedstorage2.fabric.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.fabric.render.model.DiskDriveUnbakedModel;
 import com.refinedmods.refinedstorage2.fabric.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.fabric.screen.DiskDriveScreen;
@@ -41,6 +43,15 @@ public class Rs2ClientMod implements ClientModInitializer {
         registerCustomModels();
         registerScreens();
         registerKeyBindings();
+        registerModelPredicates();
+    }
+
+    private void registerModelPredicates() {
+        Rs2Mod.ITEMS.getControllers().forEach(controllerBlockItem -> ModelPredicateProviderRegistryAccessor.register(
+                controllerBlockItem,
+                Rs2Mod.createIdentifier("stored_in_controller"),
+                new ControllerModelPredicateProvider()
+        ));
     }
 
     private void setRenderLayers() {

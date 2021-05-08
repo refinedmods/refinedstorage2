@@ -39,6 +39,7 @@ public class Rs2Mod implements ModInitializer {
     public static final Rs2Items ITEMS = new Rs2Items();
     public static final Rs2BlockEntities BLOCK_ENTITIES = new Rs2BlockEntities();
     public static final Rs2ScreenHandlers SCREEN_HANDLERS = new Rs2ScreenHandlers();
+    public static final Rs2LootFunctions LOOT_FUNCTIONS = new Rs2LootFunctions();
     static final String ID = "refinedstorage2";
     private static final Logger LOGGER = LogManager.getLogger(Rs2Mod.class);
     private static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(createIdentifier("general"), () -> new ItemStack(BLOCKS.getController().getNormal()));
@@ -75,6 +76,7 @@ public class Rs2Mod implements ModInitializer {
         ITEMS.register(BLOCKS, ITEM_GROUP);
         BLOCK_ENTITIES.register(BLOCKS);
         SCREEN_HANDLERS.register();
+        LOOT_FUNCTIONS.register();
     }
 
     private void registerPackets() {

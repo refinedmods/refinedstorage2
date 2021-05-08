@@ -6,6 +6,7 @@
             "entries": [
                 {
                     "type": "minecraft:item",
+                    "functions": [],
                     "name": "refinedstorage2:yellow_grid"
                 }
             ],

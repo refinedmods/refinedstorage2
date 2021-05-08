@@ -22,10 +22,10 @@ class ControllerNetworkNodeTest {
         return Stream.of(
                 Arguments.of(0, ControllerEnergyState.OFF),
                 Arguments.of(1, ControllerEnergyState.NEARLY_OFF),
-                Arguments.of(10, ControllerEnergyState.NEARLY_OFF),
-                Arguments.of(11, ControllerEnergyState.NEARLY_ON),
+                Arguments.of(29, ControllerEnergyState.NEARLY_OFF),
                 Arguments.of(30, ControllerEnergyState.NEARLY_ON),
-                Arguments.of(31, ControllerEnergyState.ON),
+                Arguments.of(39, ControllerEnergyState.NEARLY_ON),
+                Arguments.of(40, ControllerEnergyState.ON),
                 Arguments.of(50, ControllerEnergyState.ON),
                 Arguments.of(100, ControllerEnergyState.ON)
         );
