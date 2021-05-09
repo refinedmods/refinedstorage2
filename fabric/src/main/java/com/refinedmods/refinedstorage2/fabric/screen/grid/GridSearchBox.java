@@ -8,4 +8,6 @@ public interface GridSearchBox {
     void setText(String text);
 
     void setListener(Consumer<String> listener);
+
+    void setError(boolean error);
 }

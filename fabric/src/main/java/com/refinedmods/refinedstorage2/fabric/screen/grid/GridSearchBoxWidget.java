@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.util.Formatting;
 
 public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
@@ -25,5 +26,10 @@ public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearch
     @Override
     public void setListener(Consumer<String> listener) {
         setChangedListener(listener);
+    }
+
+    @Override
+    public void setError(boolean error) {
+        setEditableColor(error ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue());
     }
 }

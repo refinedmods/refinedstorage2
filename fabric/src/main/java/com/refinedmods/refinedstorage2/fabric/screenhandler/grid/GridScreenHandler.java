@@ -271,7 +271,8 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
             if (Rs2Config.get().getGrid().isRememberSearchQuery()) {
                 lastSearchQuery = text;
             }
-            searchBoxMode.onTextChanged(itemView, text);
+            boolean success = searchBoxMode.onTextChanged(itemView, text);
+            searchBox.setError(!success);
         });
     }
 

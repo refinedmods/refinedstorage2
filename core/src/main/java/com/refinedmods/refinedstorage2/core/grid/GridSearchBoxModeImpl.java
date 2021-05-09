@@ -15,13 +15,16 @@ public class GridSearchBoxModeImpl implements GridSearchBoxMode {
     }
 
     @Override
-    public void onTextChanged(GridView<?> view, String text) {
+    public boolean onTextChanged(GridView<?> view, String text) {
+        boolean success = true;
         try {
             view.setFilter(queryParser.parse(text));
         } catch (GridQueryParserException e) {
             view.setFilter(stack -> false);
+            success = false;
         }
         view.sort();
+        return success;
     }
 
     @Override

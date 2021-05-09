@@ -33,9 +33,10 @@ public class ReiGridSearchBoxMode extends GridSearchBoxModeImpl {
     }
 
     @Override
-    public void onTextChanged(GridView<?> view, String text) {
-        super.onTextChanged(view, text);
+    public boolean onTextChanged(GridView<?> view, String text) {
+        boolean success = super.onTextChanged(view, text);
         reiProxy.setSearchFieldText(text);
+        return success;
     }
 
     @Override
