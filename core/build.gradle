@@ -20,7 +20,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
+    /* Use the same Log4j API as MC to not break logging in the development environment. */
+    implementation 'org.apache.logging.log4j:log4j-api:2.8.1'
     implementation 'com.google.guava:guava:30.1.1-jre'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
     testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.6'
