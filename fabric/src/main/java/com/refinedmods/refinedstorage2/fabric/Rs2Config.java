@@ -53,6 +53,8 @@ public class Rs2Config implements ConfigData {
 
         private boolean rememberSearchQuery = false;
 
+        private boolean smoothScrolling = true;
+
         public boolean isLargeFont() {
             return largeFont;
         }
@@ -76,10 +78,15 @@ public class Rs2Config implements ConfigData {
         public long getEnergyUsage() {
             return energyUsage;
         }
+
+        public boolean isSmoothScrolling() {
+            return smoothScrolling;
+        }
     }
 
     public static class DiskDrive {
         private long energyUsage = 100;
+
         private long energyUsagePerDisk = 10;
 
         public long getEnergyUsage() {

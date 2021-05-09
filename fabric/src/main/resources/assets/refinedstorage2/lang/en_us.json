@@ -93,6 +93,7 @@
     "text.autoconfig.refinedstorage2.option.grid.detailedTooltip": "Detailed tooltip",
     "text.autoconfig.refinedstorage2.option.grid.rememberSearchQuery": "Remember search query",
     "text.autoconfig.refinedstorage2.option.grid.energyUsage": "Energy usage",
+    "text.autoconfig.refinedstorage2.option.grid.smoothScrolling": "Smooth scrollling",
     "text.autoconfig.refinedstorage2.option.controller": "Controller",
     "text.autoconfig.refinedstorage2.option.controller.capacity": "Energy capacity",
     "text.autoconfig.refinedstorage2.option.cable": "Cable",

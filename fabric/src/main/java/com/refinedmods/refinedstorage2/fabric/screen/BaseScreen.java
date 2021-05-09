@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
+import org.lwjgl.opengl.GL11;
 
 public abstract class BaseScreen<T extends ScreenHandler> extends HandledScreen<T> {
     private int sideButtonY;
@@ -29,5 +30,20 @@ public abstract class BaseScreen<T extends ScreenHandler> extends HandledScreen<
         sideButtonY += button.getHeight() + 2;
 
         addButton(button);
+    }
+
+    protected void setScissor(int x, int y, int w, int h) {
+        double scale = client.getWindow().getScaleFactor();
+        int sx = (int) (x * scale);
+        int sy = (int) ((client.getWindow().getScaledHeight() - (y + h)) * scale);
+        int sw = (int) (w * scale);
+        int sh = (int) (h * scale);
+
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(sx, sy, sw, sh);
+    }
+
+    protected void disableScissor() {
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 }

@@ -56,6 +56,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
 
     private ScrollbarWidget scrollbar;
     private GridSearchBoxWidget searchField;
+    private int totalRows;
     private int visibleRows;
     private int gridSlotNumber;
 
@@ -103,8 +104,9 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         getScreenHandler().addSlots(backgroundHeight - BOTTOM_HEIGHT + 17);
 
         this.scrollbar = new ScrollbarWidget(client, x + 174, y + 20, 12, (visibleRows * 18) - 2);
-        this.getScreenHandler().getItemView().setListener(this::updateScrollbar);
-        updateScrollbar();
+        this.scrollbar.setScrollAnimation(Rs2Config.get().getGrid().isSmoothScrolling());
+        this.getScreenHandler().getItemView().setListener(this::stacksChanged);
+        stacksChanged();
 
         children.add(scrollbar);
         addButton(searchField);
@@ -126,11 +128,13 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         }
     }
 
-    private void updateScrollbar() {
-        int rows = (int) Math.ceil((float) getScreenHandler().getItemView().getStacks().size() / (float) COLUMNS);
+    private void stacksChanged() {
+        totalRows = (int) Math.ceil((float) getScreenHandler().getItemView().getStacks().size() / (float) COLUMNS);
 
-        scrollbar.setEnabled(rows > visibleRows);
-        scrollbar.setMaxOffset(rows - visibleRows);
+        scrollbar.setEnabled(totalRows > visibleRows);
+
+        int rowsExcludingVisibleOnes = totalRows - visibleRows;
+        scrollbar.setMaxOffset(scrollbar.isScrollAnimation() ? ((rowsExcludingVisibleOnes) * 18) : rowsExcludingVisibleOnes);
     }
 
     private int calculateVisibleRows() {
@@ -159,8 +163,8 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         mouseX -= x;
         mouseY -= y;
 
-        return mouseX >= 7 && mouseY >= 19
-                && mouseX <= 168 && mouseY <= 19 + (visibleRows * 18);
+        return mouseX >= 7 && mouseY >= TOP_HEIGHT
+                && mouseX <= 168 && mouseY <= TOP_HEIGHT + (visibleRows * 18);
     }
 
     @Override
@@ -188,67 +192,106 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
 
         gridSlotNumber = -1;
 
-        int idx = scrollbar.getOffset() * COLUMNS;
-        for (int row = 0; row < visibleRows; ++row) {
-            for (int column = 0; column < COLUMNS; ++column) {
-                renderGridSlot(matrices, mouseX, mouseY, x, y, idx, row, column);
-                idx++;
-            }
+        setScissor(x + 7, y + TOP_HEIGHT, 18 * COLUMNS, visibleRows * 18);
+        for (int row = 0; row < Math.max(totalRows, visibleRows); ++row) {
+            renderRow(matrices, mouseX, mouseY, x, y, row);
+        }
+        disableScissor();
+
+        if (gridSlotNumber != -1 && isOverStorageArea(mouseX, mouseY)) {
+            renderTooltip(matrices, mouseX, mouseY);
         }
     }
 
-    private void renderGridSlot(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int idx, int row, int column) {
+    private void renderRow(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int row) {
+        int scrollbarOffset = (int) scrollbar.getOffset();
+        if (!scrollbar.isScrollAnimation()) {
+            scrollbarOffset *= 18;
+        }
+
+        int rowX = x + 7;
+        int rowY = y + TOP_HEIGHT + (row * 18) - scrollbarOffset;
+
+        boolean isOutOfFrame = (rowY < y + TOP_HEIGHT - 18) || (rowY > y + TOP_HEIGHT + (visibleRows * 18));
+        if (isOutOfFrame) {
+            return;
+        }
+
+        client.getTextureManager().bindTexture(TEXTURE);
+        drawTexture(matrices, rowX, rowY, 0, 238, 162, 18);
+
+        for (int column = 0; column < COLUMNS; ++column) {
+            renderColumnInRow(matrices, mouseX, mouseY, rowX, rowY, (row * COLUMNS) + column, column);
+        }
+    }
+
+    private void renderColumnInRow(MatrixStack matrices, int mouseX, int mouseY, int rowX, int rowY, int idx, int column) {
         GridView<Rs2ItemStack> view = getScreenHandler().getItemView();
 
-        int slotX = x + 8 + (column * 18);
-        int slotY = y + 20 + (row * 18);
+        int slotX = rowX + 1 + (column * 18);
+        int slotY = rowY + 1;
 
         FabricItemGridStack stack = null;
         if (idx < view.getStacks().size()) {
             stack = (FabricItemGridStack) view.getStacks().get(idx);
-
-            setZOffset(100);
-            itemRenderer.zOffset = 100.0F;
-
-            itemRenderer.renderInGuiWithOverrides(client.player, stack.getMcStack(), slotX, slotY);
-
-            String text = stack.isZeroed() ? "0" : String.valueOf(stack.getAmount());
-            Integer color = stack.isZeroed() ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue();
-
-            renderAmount(matrices, slotX, slotY, text, color);
-
-            setZOffset(0);
-            itemRenderer.zOffset = 0.0F;
+            renderStack(matrices, slotX, slotY, stack);
         }
 
         if (!getScreenHandler().isActive()) {
-            RenderSystem.disableDepthTest();
-            RenderSystem.colorMask(true, true, true, false);
-            fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, DISABLED_SLOT_COLOR, DISABLED_SLOT_COLOR);
-            RenderSystem.colorMask(true, true, true, true);
-            RenderSystem.enableDepthTest();
-        } else if (mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16) {
-            RenderSystem.disableDepthTest();
-            RenderSystem.colorMask(true, true, true, false);
-            fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, -2130706433, -2130706433);
-            RenderSystem.colorMask(true, true, true, true);
-            RenderSystem.enableDepthTest();
-
+            renderDisabledSlot(matrices, slotX, slotY);
+        } else if (mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16 && isOverStorageArea(mouseX, mouseY)) {
+            renderSelection(matrices, idx, slotX, slotY, stack);
             if (stack != null) {
                 gridSlotNumber = idx;
-
-                if (!Rs2Config.get().getGrid().isDetailedTooltip()) {
-                    renderTooltip(matrices, stack.getMcStack(), mouseX, mouseY);
-                } else {
-                    List<OrderedText> lines = Lists.transform(getTooltipFromItem(stack.getMcStack()), Text::asOrderedText);
-                    List<OrderedText> smallLines = new ArrayList<>();
-                    smallLines.add(Rs2Mod.createTranslation("misc", "total", stack.isZeroed() ? "0" : Quantities.format(stack.getAmount())).formatted(Formatting.GRAY).asOrderedText());
-
-                    view.getTrackerEntry(stack.getStack()).ifPresent(entry -> smallLines.add(LastModifiedUtil.getText(entry.getTime(), entry.getName()).formatted(Formatting.GRAY).asOrderedText()));
-
-                    renderTooltipWithSmallText(matrices, lines, smallLines, mouseX, mouseY);
-                }
             }
+        }
+    }
+
+    private void renderDisabledSlot(MatrixStack matrices, int slotX, int slotY) {
+        RenderSystem.disableDepthTest();
+        RenderSystem.colorMask(true, true, true, false);
+        fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, DISABLED_SLOT_COLOR, DISABLED_SLOT_COLOR);
+        RenderSystem.colorMask(true, true, true, true);
+        RenderSystem.enableDepthTest();
+    }
+
+    private void renderSelection(MatrixStack matrices, int idx, int slotX, int slotY, FabricItemGridStack stack) {
+        RenderSystem.disableDepthTest();
+        RenderSystem.colorMask(true, true, true, false);
+        fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, -2130706433, -2130706433);
+        RenderSystem.colorMask(true, true, true, true);
+        RenderSystem.enableDepthTest();
+    }
+
+    private void renderStack(MatrixStack matrices, int slotX, int slotY, FabricItemGridStack stack) {
+        setZOffset(100);
+        itemRenderer.zOffset = 100.0F;
+
+        itemRenderer.renderInGuiWithOverrides(client.player, stack.getMcStack(), slotX, slotY);
+
+        String text = stack.isZeroed() ? "0" : String.valueOf(stack.getAmount());
+        Integer color = stack.isZeroed() ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue();
+
+        renderAmount(matrices, slotX, slotY, text, color);
+
+        setZOffset(0);
+        itemRenderer.zOffset = 0.0F;
+    }
+
+    private void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
+        GridView<Rs2ItemStack> view = getScreenHandler().getItemView();
+        FabricItemGridStack stack = (FabricItemGridStack) view.getStacks().get(gridSlotNumber);
+
+        if (!Rs2Config.get().getGrid().isDetailedTooltip()) {
+            renderTooltip(matrices, stack.getMcStack(), mouseX, mouseY);
+        } else {
+            List<OrderedText> lines = Lists.transform(getTooltipFromItem(stack.getMcStack()), Text::asOrderedText);
+            List<OrderedText> smallLines = new ArrayList<>();
+            smallLines.add(Rs2Mod.createTranslation("misc", "total", stack.isZeroed() ? "0" : Quantities.format(stack.getAmount())).formatted(Formatting.GRAY).asOrderedText());
+
+            view.getTrackerEntry(stack.getStack()).ifPresent(entry -> smallLines.add(LastModifiedUtil.getText(entry.getTime(), entry.getName()).formatted(Formatting.GRAY).asOrderedText()));
+
+            renderTooltipWithSmallText(matrices, lines, smallLines, mouseX, mouseY);
         }
     }
 

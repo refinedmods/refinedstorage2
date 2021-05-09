@@ -14,16 +14,25 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
     private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/widgets.png");
     private static final int SCROLLER_HEIGHT = 15;
 
+    private static final int ANIMATION_SCROLL_DURATION_IN_TICKS = 10;
+    private static final double ANIMATION_SCROLL_HEIGHT_IN_PIXELS = 30;
+
     private final MinecraftClient client;
     private final int x;
     private final int y;
     private final int width;
     private final int height;
 
-    private int offset;
-    private int maxOffset;
+    private double offset;
+    private double maxOffset;
     private boolean enabled = true;
     private boolean clicked;
+    private boolean scrollAnimation;
+
+    private int animationScrollDirection = 0;
+    private double animationStartOffset;
+    private double animationTickCounter;
+    private int animationSpeed;
 
     public ScrollbarWidget(MinecraftClient client, int x, int y, int width, int height) {
         this.client = client;
@@ -33,15 +42,53 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
         this.height = height;
     }
 
+    public void setScrollAnimation(boolean scrollAnimation) {
+        this.scrollAnimation = scrollAnimation;
+    }
+
+    public boolean isScrollAnimation() {
+        return scrollAnimation;
+    }
+
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        if (isAnimatingScroll()) {
+            updateScrollingAnimation(partialTicks);
+        }
+
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         client.getTextureManager().bindTexture(TEXTURE);
         drawTexture(matrixStack, x, y + (int) ((float) offset / (float) maxOffset * (float) (height - SCROLLER_HEIGHT)), enabled ? 232 : 244, 0, 12, 15);
+    }
+
+    private boolean isAnimatingScroll() {
+        return animationScrollDirection != 0;
+    }
+
+    private void updateScrollingAnimation(float partialTicks) {
+        double absoluteAnimationProgress = animationTickCounter / ANIMATION_SCROLL_DURATION_IN_TICKS;
+        double relativeAnimationProgress = easeOutQuint(absoluteAnimationProgress);
+
+        double scrollHeight = ANIMATION_SCROLL_HEIGHT_IN_PIXELS + ((animationSpeed + 1) * 4D);
+        double newOffset = animationStartOffset + (relativeAnimationProgress * scrollHeight * (double) animationScrollDirection);
+        setOffset(newOffset);
+
+        animationTickCounter += partialTicks;
+
+        if (absoluteAnimationProgress > 1) {
+            animationStartOffset = 0;
+            animationScrollDirection = 0;
+            animationTickCounter = 0;
+            animationSpeed = 0;
+        }
+    }
+
+    private double easeOutQuint(double absoluteProgress) {
+        return 1D - Math.pow(1D - absoluteProgress, 5D);
     }
 
     @Override
@@ -73,31 +120,44 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollDelta) {
         if (enabled) {
-            setOffset(offset + Math.max(Math.min(-(int) scrollDelta, 1), -1));
+            int scrollDirection = Math.max(Math.min(-(int) scrollDelta, 1), -1);
+            if (scrollAnimation) {
+                startScrollAnimation(scrollDirection);
+            } else {
+                setOffset(offset + scrollDirection);
+            }
             return true;
         }
         return false;
     }
 
-    public void setMaxOffset(int maxOffset) {
-        this.maxOffset = maxOffset;
+    private void startScrollAnimation(int scrollDirection) {
+        if (isAnimatingScroll()) {
+            animationSpeed++;
+        } else {
+            animationSpeed = 0;
+        }
+        animationStartOffset = offset;
+        animationScrollDirection = scrollDirection;
+        animationTickCounter = 0;
+    }
 
+    public void setMaxOffset(double maxOffset) {
+        this.maxOffset = maxOffset;
         if (offset > maxOffset) {
             this.offset = Math.max(0, maxOffset);
         }
     }
 
-    public int getOffset() {
+    public double getOffset() {
         return offset;
     }
 
-    public void setOffset(int offset) {
-        if (offset >= 0 && offset <= maxOffset) {
-            this.offset = offset;
-        }
+    public void setOffset(double offset) {
+        this.offset = Math.min(Math.max(0, offset), maxOffset);
     }
 
     private void updateOffset(double mouseY) {
-        setOffset((int) Math.floor((float) (mouseY - y) / (float) (height - SCROLLER_HEIGHT) * (float) maxOffset));
+        setOffset(Math.floor((mouseY - y) / (height - SCROLLER_HEIGHT) * maxOffset));
     }
 }
