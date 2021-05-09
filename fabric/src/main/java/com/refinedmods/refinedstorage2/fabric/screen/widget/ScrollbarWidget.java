@@ -62,7 +62,8 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
 
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         client.getTextureManager().bindTexture(TEXTURE);
-        drawTexture(matrixStack, x, y + (int) ((float) offset / (float) maxOffset * (float) (height - SCROLLER_HEIGHT)), enabled ? 232 : 244, 0, 12, 15);
+        int u = enabled ? (clicked ? 220 : 232) : 244;
+        drawTexture(matrixStack, x, y + (int) ((float) offset / (float) maxOffset * (float) (height - SCROLLER_HEIGHT)), u, 0, 12, 15);
     }
 
     private boolean isAnimatingScroll() {
