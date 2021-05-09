@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -32,14 +33,18 @@ public class ScreenUtil {
     private static void loadVersionInformationLines() {
         VERSION_INFO_LINES.add("Refined Storage for Fabric");
 
-        FabricLoader.getInstance().getModContainer("refinedstorage2").ifPresent(platform -> VERSION_INFO_LINES.add("Platform " + getVersion(platform)));
+        FabricLoader
+                .getInstance()
+                .getModContainer("refinedstorage2")
+                .flatMap(ScreenUtil::getVersion)
+                .ifPresent(version -> VERSION_INFO_LINES.add("v" + version));
     }
 
-    private static String getVersion(ModContainer platform) {
+    private static Optional<String> getVersion(ModContainer platform) {
         String friendlyString = platform.getMetadata().getVersion().getFriendlyString();
         if ("${version}".equals(friendlyString)) {
-            friendlyString = "unknown";
+            return Optional.empty();
         }
-        return friendlyString;
+        return Optional.of(friendlyString);
     }
 }
