@@ -59,7 +59,7 @@ def generate_controller_blockstate(name, color):
 
 def generate_controller_item(name, color):
         create_file(output_dir + '/assets/refinedstorage2/models/item/' + name + '.json', to_json({
-          'parent': 'block/cube',
+          'parent': 'item/generated',
           'overrides': [
             {
               'predicate': {
