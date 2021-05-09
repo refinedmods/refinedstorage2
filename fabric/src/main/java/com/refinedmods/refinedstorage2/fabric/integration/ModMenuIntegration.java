@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.fabric.integration;
 
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 
-import io.github.prospector.modmenu.api.ConfigScreenFactory;
-import io.github.prospector.modmenu.api.ModMenuApi;
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import com.terraformersmc.modmenu.api.ModMenuApi;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

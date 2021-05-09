@@ -15,7 +15,6 @@ if (System.getenv('GITHUB_SHA') != null) {
 
 repositories {
     mavenCentral()
-    jcenter()
     // Required for libblockattributes
     maven {
         name = 'BuildCraft'
@@ -27,13 +26,19 @@ repositories {
     maven {
         url 'https://maven.blamejared.com'
     }
+    maven {
+        url 'https://maven.terraformersmc.com/'
+    }
+    maven {
+        url 'https://maven.shedaniel.me/'
+    }
 }
 
 dependencies {
     minecraft 'com.mojang:minecraft:1.16.5'
-    mappings 'net.fabricmc:yarn:1.16.5+build.6:v2'
+    mappings 'net.fabricmc:yarn:1.16.5+build.8:v2'
     modImplementation 'net.fabricmc:fabric-loader:0.11.3'
-    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.32.5+1.16'
+    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.34.1+1.16'
 
     implementation project(':core')
     include project(':core')
@@ -46,7 +51,7 @@ dependencies {
     }
     include 'me.sargunvohra.mcmods:autoconfig1u:3.3.1'
 
-    modApi('me.shedaniel.cloth:config-2:4.8.3') {
+    modApi('me.shedaniel.cloth:cloth-config-fabric:4.11.19') {
         exclude(group: 'net.fabricmc.fabric-api')
     }
 
@@ -55,13 +60,10 @@ dependencies {
     }
     include 'teamreborn:energy:0.1.1'
 
-    modImplementation 'me.shedaniel:RoughlyEnoughItems:5.8.9'
-    modImplementation 'io.github.prospector:modmenu:1.15.0+build.1'
+    modCompileOnly 'me.shedaniel:RoughlyEnoughItems-api:5.11.218'
+    modRuntime 'me.shedaniel:RoughlyEnoughItems:5.11.218'
+    modImplementation 'com.terraformersmc:modmenu:1.16.9'
     modImplementation 'vazkii.patchouli:Patchouli:1.16.4-50-FABRIC'
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    testCompile 'org.assertj:assertj-core:3.19.0'
 }
 
 test {
