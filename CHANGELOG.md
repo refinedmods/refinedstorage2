@@ -52,3 +52,4 @@ Currently, this version only works on Fabric.
 - You can now add multiple controllers to a network to meet the energy requirements of your network.
 - The Priority screen now has a "Reset" button.
 - The Grid can now use smooth scrolling.
+- The Grid now has syntax highlighting for the search query.

@@ -5,6 +5,8 @@ import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.query.lexer.SyntaxHighlighter;
+import com.refinedmods.refinedstorage2.core.query.lexer.SyntaxHighlighterColors;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
@@ -94,7 +96,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         super.init();
 
         if (searchField == null) {
-            searchField = new GridSearchBoxWidget(textRenderer, x + 80 + 1, y + 6 + 1, 88 - 6);
+            searchField = new GridSearchBoxWidget(textRenderer, x + 80 + 1, y + 6 + 1, 88 - 6, new SyntaxHighlighter(SyntaxHighlighterColors.DEFAULT_COLORS));
         } else {
             searchField.x = x + 80 + 1;
             searchField.y = y + 6 + 1;
