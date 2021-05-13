@@ -144,9 +144,9 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
     }
 
     public void setMaxOffset(double maxOffset) {
-        this.maxOffset = maxOffset;
-        if (offset > maxOffset) {
-            this.offset = Math.max(0, maxOffset);
+        this.maxOffset = Math.max(0, maxOffset);
+        if (this.offset > this.maxOffset) {
+            this.offset = this.maxOffset;
         }
     }
 
