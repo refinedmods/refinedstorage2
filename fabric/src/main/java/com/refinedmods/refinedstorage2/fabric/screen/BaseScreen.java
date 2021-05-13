@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 public abstract class BaseScreen<T extends ScreenHandler> extends HandledScreen<T> {
     private int sideButtonY;
 
-    public BaseScreen(T screenHandler, PlayerInventory playerInventory, Text text) {
+    protected BaseScreen(T screenHandler, PlayerInventory playerInventory, Text text) {
         super(screenHandler, playerInventory, text);
     }
 

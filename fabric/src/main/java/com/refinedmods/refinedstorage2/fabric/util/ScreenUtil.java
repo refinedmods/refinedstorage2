@@ -16,7 +16,7 @@ public class ScreenUtil {
     private ScreenUtil() {
     }
 
-    public static void drawVersionInformation(MatrixStack matrixStack, TextRenderer textRenderer, float delta) {
+    public static void drawVersionInformation(MatrixStack matrixStack, TextRenderer textRenderer) {
         if (VERSION_INFO_LINES.isEmpty()) {
             loadVersionInformationLines();
         }

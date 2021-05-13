@@ -34,7 +34,7 @@ class HistoryTest {
         History history = new History(new ArrayList<>());
 
         // Act & assert
-        assertThat(history.older()).isEqualTo("");
+        assertThat(history.older()).isEmpty();
     }
 
     @Test
@@ -48,7 +48,7 @@ class HistoryTest {
         History history = new History(items);
 
         // Act & assert
-        assertThat(history.newer()).isEqualTo("");
+        assertThat(history.newer()).isEmpty();
     }
 
     @Test
@@ -68,19 +68,19 @@ class HistoryTest {
 
         assertThat(history.newer()).isEqualTo("B");
         assertThat(history.newer()).isEqualTo("C");
-        assertThat(history.newer()).isEqualTo("");
-        assertThat(history.newer()).isEqualTo("");
-        assertThat(history.newer()).isEqualTo("");
+        assertThat(history.newer()).isEmpty();
+        assertThat(history.newer()).isEmpty();
+        assertThat(history.newer()).isEmpty();
 
         assertThat(history.older()).isEqualTo("C");
 
-        assertThat(history.newer()).isEqualTo("");
+        assertThat(history.newer()).isEmpty();
 
         assertThat(history.older()).isEqualTo("C");
         assertThat(history.older()).isEqualTo("B");
 
         assertThat(history.newer()).isEqualTo("C");
-        assertThat(history.newer()).isEqualTo("");
+        assertThat(history.newer()).isEmpty();
     }
 
     @Test

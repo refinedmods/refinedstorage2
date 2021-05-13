@@ -66,11 +66,11 @@ public class Parser {
                 throw new ParserException("Unclosed parenthesis", current);
             }
 
-            List<Node> nodes = new ArrayList<>();
+            List<Node> nodesInParen = new ArrayList<>();
 
             while (true) {
                 Node node = parseExpression(0);
-                nodes.add(node);
+                nodesInParen.add(node);
 
                 Token currentAfterExpression = currentOrNull();
                 if (currentAfterExpression == null) {
@@ -83,7 +83,7 @@ public class Parser {
                 }
             }
 
-            return new ParenNode(nodes);
+            return new ParenNode(nodesInParen);
         }
 
         return parseUnaryOp();
@@ -97,7 +97,7 @@ public class Parser {
                 throw new ParserException("Unary operator has no target", maybeUnaryOp);
             }
 
-            return new UnaryOpNode(parseAtom(), maybeUnaryOp, UnaryOpNode.Type.PREFIX);
+            return new UnaryOpNode(parseAtom(), maybeUnaryOp);
         }
 
         return parseLiteral();

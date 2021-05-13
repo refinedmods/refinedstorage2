@@ -10,7 +10,7 @@ public abstract class GridStack<T> {
     private final Set<String> tags;
     private boolean zeroed;
 
-    public GridStack(T stack, String name, String modId, String modName, Set<String> tags) {
+    protected GridStack(T stack, String name, String modId, String modName, Set<String> tags) {
         this.stack = stack;
         this.name = name;
         this.modId = modId;

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.core.query.lexer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public class Lexer {
     private final Source source;
@@ -108,7 +108,7 @@ public class Lexer {
         addToken(type, content -> content);
     }
 
-    private void addToken(TokenType type, Function<String, String> contentModifier) {
+    private void addToken(TokenType type, UnaryOperator<String> contentModifier) {
         String tokenContent = source.getContent().substring(position.getStartIndex(), position.getEndIndex());
         tokenContent = contentModifier.apply(tokenContent);
 

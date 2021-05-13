@@ -35,7 +35,7 @@ class Rs2ItemStackTest {
 
         // Assert
         assertThat(stack.getItem()).isSameAs(item);
-        assertThat(stack.getAmount()).isEqualTo(0);
+        assertThat(stack.getAmount()).isZero();
         assertThat(stack.getTag()).isEqualTo("tag");
         assertThat(stack.getMaxCount()).isEqualTo(64);
         assertThat(stack.getName()).isEqualTo("Test");
@@ -129,7 +129,7 @@ class Rs2ItemStackTest {
         stack.decrement(10);
 
         // Assert
-        assertThat(stack.getAmount()).isEqualTo(0);
+        assertThat(stack.getAmount()).isZero();
         assertThat(stack.isEmpty()).isTrue();
     }
 
@@ -181,7 +181,7 @@ class Rs2ItemStackTest {
         stack.setAmount(0);
 
         // Assert
-        assertThat(stack.getAmount()).isEqualTo(0);
+        assertThat(stack.getAmount()).isZero();
         assertThat(stack.isEmpty()).isTrue();
     }
 }

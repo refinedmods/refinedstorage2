@@ -6,12 +6,12 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class StorageTracker<T, ID> {
-    private final Function<T, ID> idFactory;
+public class StorageTracker<T, I> {
+    private final Function<T, I> idFactory;
     private final Supplier<Long> clock;
-    private final Map<ID, Entry> entries = new HashMap<>();
+    private final Map<I, Entry> entries = new HashMap<>();
 
-    public StorageTracker(Function<T, ID> idFactory, Supplier<Long> clock) {
+    public StorageTracker(Function<T, I> idFactory, Supplier<Long> clock) {
         this.idFactory = idFactory;
         this.clock = clock;
     }

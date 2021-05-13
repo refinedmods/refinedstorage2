@@ -40,7 +40,7 @@ public class ControllerLootFunction implements LootFunction {
     public static class Serializer implements JsonSerializer<ControllerLootFunction> {
         @Override
         public void toJson(JsonObject json, ControllerLootFunction object, JsonSerializationContext context) {
-
+            // no serialization necessary
         }
 
         @Override

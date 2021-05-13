@@ -31,14 +31,16 @@ public class ControllerScreenHandler extends BaseScreenHandler implements Redsto
         this.stored = buf.readLong();
         this.capacity = buf.readLong();
 
-        addProperty(redstoneModeProperty = TwoWaySyncProperty.forClient(
+        this.redstoneModeProperty = TwoWaySyncProperty.forClient(
                 0,
                 RedstoneModeSettings::getRedstoneMode,
                 RedstoneModeSettings::getRedstoneMode,
                 RedstoneMode.IGNORE,
-                (redstoneMode) -> {
+                redstoneMode -> {
                 }
-        ));
+        );
+
+        addProperty(redstoneModeProperty);
     }
 
     public ControllerScreenHandler(int syncId, PlayerInventory playerInventory, ControllerBlockEntity controller, PlayerEntity playerEntity) {
@@ -49,13 +51,15 @@ public class ControllerScreenHandler extends BaseScreenHandler implements Redsto
         this.playerEntity = playerEntity;
         addPlayerInventory(playerInventory, 8, 107);
 
-        addProperty(redstoneModeProperty = TwoWaySyncProperty.forServer(
+        this.redstoneModeProperty = TwoWaySyncProperty.forServer(
                 0,
                 RedstoneModeSettings::getRedstoneMode,
                 RedstoneModeSettings::getRedstoneMode,
                 controller::getRedstoneMode,
                 controller::setRedstoneMode
-        ));
+        );
+
+        addProperty(redstoneModeProperty);
     }
 
     @Override

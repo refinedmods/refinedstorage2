@@ -17,7 +17,7 @@ public abstract class NetworkNodeImpl implements NetworkNode {
     protected Network network;
     private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
 
-    public NetworkNodeImpl(Rs2World world, Position pos, NetworkNodeReference ref) {
+    protected NetworkNodeImpl(Rs2World world, Position pos, NetworkNodeReference ref) {
         this.world = world;
         this.pos = pos;
         this.ref = ref;

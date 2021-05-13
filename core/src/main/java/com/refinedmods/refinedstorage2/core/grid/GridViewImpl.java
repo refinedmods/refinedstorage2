@@ -18,15 +18,15 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GridViewImpl<T, ID> implements GridView<T> {
+public class GridViewImpl<T, I> implements GridView<T> {
     private static final Logger LOGGER = LogManager.getLogger(GridViewImpl.class);
 
     private final StackList<T> list;
     private final Comparator<GridStack<?>> identitySort;
     private final Function<T, GridStack<T>> stackFactory;
-    private final Function<T, ID> idFactory;
-    private final Map<ID, StorageTracker.Entry> trackerEntries = new HashMap<>();
-    private final Map<ID, GridStack<T>> stackIndex = new HashMap<>();
+    private final Function<T, I> idFactory;
+    private final Map<I, StorageTracker.Entry> trackerEntries = new HashMap<>();
+    private final Map<I, GridStack<T>> stackIndex = new HashMap<>();
 
     private List<GridStack<T>> stacks = new ArrayList<>();
     private GridSortingType sortingType;
@@ -35,7 +35,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
     private Runnable listener;
     private boolean preventSorting;
 
-    public GridViewImpl(Function<T, GridStack<T>> stackFactory, Function<T, ID> idFactory, StackList<T> list) {
+    public GridViewImpl(Function<T, GridStack<T>> stackFactory, Function<T, I> idFactory, StackList<T> list) {
         this.stackFactory = stackFactory;
         this.idFactory = idFactory;
         this.identitySort = GridSortingType.NAME.getComparator().apply(this);
@@ -118,8 +118,9 @@ public class GridViewImpl<T, ID> implements GridView<T> {
                 .map(stackFactory)
                 .sorted(getComparator())
                 .filter(filter)
-                .peek(stack -> stackIndex.put(idFactory.apply(stack.getStack()), stack))
                 .collect(Collectors.toList());
+
+        stacks.forEach(stack -> stackIndex.put(idFactory.apply(stack.getStack()), stack));
 
         notifyListener();
     }
@@ -133,7 +134,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
             stack = list.add(template, amount);
         }
 
-        ID id = idFactory.apply(stack.getStack());
+        I id = idFactory.apply(stack.getStack());
 
         if (trackerEntry == null) {
             trackerEntries.remove(id);
@@ -153,7 +154,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
         }
     }
 
-    private void handleChangeForNewStack(ID id, StackListResult<T> stack) {
+    private void handleChangeForNewStack(I id, StackListResult<T> stack) {
         GridStack<T> gridStack = stackFactory.apply(stack.getStack());
         if (filter.test(gridStack)) {
             stackIndex.put(id, gridStack);
@@ -162,7 +163,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
         }
     }
 
-    private void handleChangeForExistingStack(ID id, StackListResult<T> stack, GridStack<T> gridStack) {
+    private void handleChangeForExistingStack(I id, StackListResult<T> stack, GridStack<T> gridStack) {
         if (!preventSorting) {
             if (!filter.test(gridStack) || !stack.isAvailable()) {
                 stacks.remove(gridStack);
@@ -178,7 +179,7 @@ public class GridViewImpl<T, ID> implements GridView<T> {
         }
     }
 
-    private void handleChangeForZeroedStack(ID id, StackListResult<T> stack, GridStack<T> oldGridStack) {
+    private void handleChangeForZeroedStack(I id, StackListResult<T> stack, GridStack<T> oldGridStack) {
         GridStack<T> newStack = stackFactory.apply(stack.getStack());
 
         stackIndex.put(id, newStack);

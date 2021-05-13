@@ -14,7 +14,7 @@ import com.refinedmods.refinedstorage2.fabric.item.block.ColoredBlockItem;
 import com.refinedmods.refinedstorage2.fabric.item.block.ControllerBlockItem;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +24,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.util.registry.Registry;
 
 public class Rs2Items {
-    private final Map<ItemStorageType, StoragePartItem> storageParts = new HashMap<>();
+    private final Map<ItemStorageType, StoragePartItem> storageParts = new EnumMap<>(ItemStorageType.class);
     private final List<ControllerBlockItem> controllers = new ArrayList<>();
     private StorageHousingItem storageHousing;
 

@@ -19,7 +19,7 @@ class GridSearchBoxModeRegistryTest {
         Executable action = gridSearchBoxModeRegistry::getDefault;
 
         // Assert
-        Exception e = assertThrows(RuntimeException.class, action);
+        Exception e = assertThrows(IllegalStateException.class, action);
         assertThat(e.getMessage()).isEqualTo("No search box modes are available");
     }
 
@@ -82,7 +82,7 @@ class GridSearchBoxModeRegistryTest {
         int index2 = gridSearchBoxModeRegistry.getId(searchBoxMode2);
 
         // Assert
-        assertThat(index1).isEqualTo(0);
+        assertThat(index1).isZero();
         assertThat(index2).isEqualTo(1);
     }
 

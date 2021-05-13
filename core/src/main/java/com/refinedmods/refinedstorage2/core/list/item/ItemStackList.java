@@ -15,12 +15,12 @@ import java.util.function.Function;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-public class ItemStackList<ID> implements StackList<Rs2ItemStack> {
-    private final Map<ID, Rs2ItemStack> entries = new HashMap<>();
+public class ItemStackList<I> implements StackList<Rs2ItemStack> {
+    private final Map<I, Rs2ItemStack> entries = new HashMap<>();
     private final BiMap<UUID, Rs2ItemStack> index = HashBiMap.create();
-    private final Function<Rs2ItemStack, ID> idFactory;
+    private final Function<Rs2ItemStack, I> idFactory;
 
-    public ItemStackList(Function<Rs2ItemStack, ID> idFactory) {
+    public ItemStackList(Function<Rs2ItemStack, I> idFactory) {
         this.idFactory = idFactory;
     }
 
@@ -34,7 +34,7 @@ public class ItemStackList<ID> implements StackList<Rs2ItemStack> {
             throw new IllegalArgumentException("Invalid stack");
         }
 
-        ID entry = idFactory.apply(template);
+        I entry = idFactory.apply(template);
 
         Rs2ItemStack existing = entries.get(entry);
         if (existing != null) {
@@ -50,7 +50,7 @@ public class ItemStackList<ID> implements StackList<Rs2ItemStack> {
         return new StackListResult<>(stack, amount, index.inverse().get(stack), true);
     }
 
-    private StackListResult<Rs2ItemStack> addNew(ID entry, Rs2ItemStack template, long amount) {
+    private StackListResult<Rs2ItemStack> addNew(I entry, Rs2ItemStack template, long amount) {
         Rs2ItemStack stack = template.copy();
         stack.setAmount(amount);
 
@@ -68,7 +68,7 @@ public class ItemStackList<ID> implements StackList<Rs2ItemStack> {
             throw new IllegalArgumentException("Invalid stack");
         }
 
-        ID entry = idFactory.apply(template);
+        I entry = idFactory.apply(template);
 
         Rs2ItemStack existing = entries.get(entry);
         if (existing != null) {
@@ -90,7 +90,7 @@ public class ItemStackList<ID> implements StackList<Rs2ItemStack> {
         return Optional.of(new StackListResult<>(stack, -amount, id, true));
     }
 
-    private Optional<StackListResult<Rs2ItemStack>> removeCompletely(ID entry, Rs2ItemStack stack, UUID id) {
+    private Optional<StackListResult<Rs2ItemStack>> removeCompletely(I entry, Rs2ItemStack stack, UUID id) {
         index.remove(id);
         entries.remove(entry);
 

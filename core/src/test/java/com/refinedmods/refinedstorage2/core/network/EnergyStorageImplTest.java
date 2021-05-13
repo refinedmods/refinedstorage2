@@ -127,7 +127,7 @@ class EnergyStorageImplTest {
         assertThat(extracted).isEqualTo(50);
 
         if (action == Action.EXECUTE) {
-            assertThat(energyStorage.getStored()).isEqualTo(0);
+            assertThat(energyStorage.getStored()).isZero();
         } else {
             assertThat(energyStorage.getStored()).isEqualTo(50);
         }

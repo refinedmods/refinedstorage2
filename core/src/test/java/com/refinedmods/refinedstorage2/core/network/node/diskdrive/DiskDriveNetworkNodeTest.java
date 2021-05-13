@@ -200,6 +200,13 @@ class DiskDriveNetworkNodeTest {
         // Act
         diskDrive.onDiskChanged(-1);
         diskDrive.onDiskChanged(DiskDriveNetworkNode.DISK_COUNT);
+
+        DiskDriveState states = diskDrive.createState();
+
+        // Assert
+        assertThat(states.getStates())
+                .hasSize(DiskDriveNetworkNode.DISK_COUNT)
+                .allMatch(state -> state == DiskState.NONE);
     }
 
     @Test

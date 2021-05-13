@@ -34,7 +34,7 @@ public class NetworkNodeReferencingEnergyStorage implements EnergyStorage {
 
     private Optional<EnergyStorage> getStorage() {
         return ref.get()
-                .filter(node -> node instanceof EnergyStorage)
-                .map(node -> (EnergyStorage) node);
+                .filter(EnergyStorage.class::isInstance)
+                .map(EnergyStorage.class::cast);
     }
 }

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.render.entity;
 
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
-import com.refinedmods.refinedstorage2.fabric.block.DiskDriveBlock;
+import com.refinedmods.refinedstorage2.fabric.block.BaseBlock;
 import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.render.CubeBuilder;
 
@@ -40,7 +40,7 @@ public class DiskDriveBlockEntityRenderer extends BlockEntityRenderer<DiskDriveB
         matrices.push();
 
         matrices.translate(0.5F, 0.5F, 0.5F);
-        matrices.multiply(entity.getWorld().getBlockState(entity.getPos()).get(DiskDriveBlock.DIRECTION).getQuaternion());
+        matrices.multiply(entity.getWorld().getBlockState(entity.getPos()).get(BaseBlock.DIRECTION).getQuaternion());
         matrices.translate(-0.5F, -0.5F, -0.5F);
 
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RENDER_LAYER);

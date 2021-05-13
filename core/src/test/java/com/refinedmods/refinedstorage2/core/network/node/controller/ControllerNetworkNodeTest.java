@@ -133,7 +133,7 @@ class ControllerNetworkNodeTest {
         long extracted = controller.extract(10, Action.EXECUTE);
 
         // Assert
-        assertThat(extracted).isEqualTo(0);
+        assertThat(extracted).isZero();
         assertThat(controller.getStored()).isZero();
         assertThat(controller.getCapacity()).isZero();
         assertThat(controller.getActualStored()).isEqualTo(20);

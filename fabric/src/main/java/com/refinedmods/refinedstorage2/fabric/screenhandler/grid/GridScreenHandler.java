@@ -73,46 +73,48 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
 
         this.playerInventory = playerInventory;
 
-        addProperty(redstoneModeProperty = TwoWaySyncProperty.forClient(
+        this.redstoneModeProperty = TwoWaySyncProperty.forClient(
                 0,
                 RedstoneModeSettings::getRedstoneMode,
                 RedstoneModeSettings::getRedstoneMode,
                 RedstoneMode.IGNORE,
-                (redstoneMode) -> {
+                redstoneMode -> {
                 }
-        ));
-
-        addProperty(sortingDirectionProperty = TwoWaySyncProperty.forClient(
+        );
+        this.sortingDirectionProperty = TwoWaySyncProperty.forClient(
                 1,
                 GridSettings::getSortingDirection,
                 GridSettings::getSortingDirection,
                 GridSortingDirection.ASCENDING,
                 this::onSortingDirectionChanged
-        ));
-
-        addProperty(sortingTypeProperty = TwoWaySyncProperty.forClient(
+        );
+        this.sortingTypeProperty = TwoWaySyncProperty.forClient(
                 2,
                 GridSettings::getSortingType,
                 GridSettings::getSortingType,
                 GridSortingType.QUANTITY,
                 this::onSortingTypeChanged
-        ));
-
-        addProperty(sizeProperty = TwoWaySyncProperty.forClient(
+        );
+        this.sizeProperty = TwoWaySyncProperty.forClient(
                 3,
                 GridSettings::getSize,
                 GridSettings::getSize,
                 GridSize.STRETCH,
                 this::onSizeChanged
-        ));
-
-        addProperty(searchBoxModeProperty = TwoWaySyncProperty.forClient(
+        );
+        this.searchBoxModeProperty = TwoWaySyncProperty.forClient(
                 4,
-                searchBoxMode -> Rs2Mod.API.getGridSearchBoxModeRegistry().getId(searchBoxMode),
-                searchBoxMode -> Rs2Mod.API.getGridSearchBoxModeRegistry().get(searchBoxMode),
+                mode -> Rs2Mod.API.getGridSearchBoxModeRegistry().getId(mode),
+                mode -> Rs2Mod.API.getGridSearchBoxModeRegistry().get(mode),
                 Rs2Mod.API.getGridSearchBoxModeRegistry().getDefault(),
                 this::onSearchBoxModeChanged
-        ));
+        );
+
+        addProperty(redstoneModeProperty);
+        addProperty(sortingDirectionProperty);
+        addProperty(sortingTypeProperty);
+        addProperty(sizeProperty);
+        addProperty(searchBoxModeProperty);
 
         active = buf.readBoolean();
 
@@ -123,8 +125,8 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
 
         addSlots(0);
 
-        int size = buf.readInt();
-        for (int i = 0; i < size; ++i) {
+        int amountOfStacks = buf.readInt();
+        for (int i = 0; i < amountOfStacks; ++i) {
             Rs2ItemStack stack = PacketUtil.readItemStack(buf, true);
             StorageTracker.Entry trackerEntry = PacketUtil.readTrackerEntry(buf);
             itemView.loadStack(stack, stack.getAmount(), trackerEntry);
@@ -135,45 +137,47 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     public GridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity grid) {
         super(Rs2Mod.SCREEN_HANDLERS.getGrid(), syncId);
 
-        addProperty(redstoneModeProperty = TwoWaySyncProperty.forServer(
+        this.redstoneModeProperty = TwoWaySyncProperty.forServer(
                 0,
                 RedstoneModeSettings::getRedstoneMode,
                 RedstoneModeSettings::getRedstoneMode,
                 grid::getRedstoneMode,
                 grid::setRedstoneMode
-        ));
-
-        addProperty(sortingDirectionProperty = TwoWaySyncProperty.forServer(
+        );
+        this.sortingDirectionProperty = TwoWaySyncProperty.forServer(
                 1,
                 GridSettings::getSortingDirection,
                 GridSettings::getSortingDirection,
                 grid::getSortingDirection,
                 grid::setSortingDirection
-        ));
-
-        addProperty(sortingTypeProperty = TwoWaySyncProperty.forServer(
+        );
+        this.sortingTypeProperty = TwoWaySyncProperty.forServer(
                 2,
                 GridSettings::getSortingType,
                 GridSettings::getSortingType,
                 grid::getSortingType,
                 grid::setSortingType
-        ));
-
-        addProperty(sizeProperty = TwoWaySyncProperty.forServer(
+        );
+        this.sizeProperty = TwoWaySyncProperty.forServer(
                 3,
                 GridSettings::getSize,
                 GridSettings::getSize,
                 grid::getSize,
                 grid::setSize
-        ));
-
-        addProperty(searchBoxModeProperty = TwoWaySyncProperty.forServer(
+        );
+        this.searchBoxModeProperty = TwoWaySyncProperty.forServer(
                 4,
-                searchBoxMode -> Rs2Mod.API.getGridSearchBoxModeRegistry().getId(searchBoxMode),
-                searchBoxMode -> Rs2Mod.API.getGridSearchBoxModeRegistry().get(searchBoxMode),
+                mode -> Rs2Mod.API.getGridSearchBoxModeRegistry().getId(mode),
+                mode -> Rs2Mod.API.getGridSearchBoxModeRegistry().get(mode),
                 grid::getSearchBoxMode,
                 grid::setSearchBoxMode
-        ));
+        );
+
+        addProperty(redstoneModeProperty);
+        addProperty(sortingDirectionProperty);
+        addProperty(sortingTypeProperty);
+        addProperty(sizeProperty);
+        addProperty(searchBoxModeProperty);
 
         this.playerInventory = playerInventory;
         this.storageChannel = grid.getNetwork().getItemStorageChannel();

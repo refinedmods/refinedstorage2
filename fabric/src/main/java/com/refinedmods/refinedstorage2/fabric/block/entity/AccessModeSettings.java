@@ -7,6 +7,9 @@ public class AccessModeSettings {
     private static final int INSERT = 1;
     private static final int EXTRACT = 2;
 
+    private AccessModeSettings() {
+    }
+
     public static AccessMode getAccessMode(int accessMode) {
         switch (accessMode) {
             case INSERT_EXTRACT:

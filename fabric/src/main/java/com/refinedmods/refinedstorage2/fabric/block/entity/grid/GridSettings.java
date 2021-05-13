@@ -18,6 +18,9 @@ public class GridSettings {
     private static final int SIZE_MEDIUM = 2;
     private static final int SIZE_LARGE = 3;
 
+    private GridSettings() {
+    }
+
     public static GridSortingDirection getSortingDirection(int sortingDirection) {
         switch (sortingDirection) {
             case SORTING_ASCENDING:

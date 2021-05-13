@@ -16,7 +16,7 @@ public abstract class SideButtonWidget extends ButtonWidget implements ButtonWid
     private static final int WIDTH = 18;
     private static final int HEIGHT = 18;
 
-    public SideButtonWidget(PressAction pressAction) {
+    protected SideButtonWidget(PressAction pressAction) {
         super(-1, -1, WIDTH, HEIGHT, LiteralText.EMPTY, pressAction);
     }
 

@@ -7,6 +7,9 @@ public class RedstoneModeSettings {
     private static final int HIGH = 1;
     private static final int LOW = 2;
 
+    private RedstoneModeSettings() {
+    }
+
     public static RedstoneMode getRedstoneMode(int redstoneMode) {
         switch (redstoneMode) {
             case IGNORE:

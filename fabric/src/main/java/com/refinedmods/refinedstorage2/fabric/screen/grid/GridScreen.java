@@ -55,6 +55,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     private static final int COLUMNS = 9;
 
     private static final int DISABLED_SLOT_COLOR = 0xFF5B5B5B;
+    private static final int SELECTION_SLOT_COLOR = -2130706433;
 
     private ScrollbarWidget scrollbar;
     private GridSearchBoxWidget searchField;
@@ -172,7 +173,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     @Override
     protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        ScreenUtil.drawVersionInformation(matrices, textRenderer, delta);
+        ScreenUtil.drawVersionInformation(matrices, textRenderer);
         client.getTextureManager().bindTexture(TEXTURE);
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
@@ -242,7 +243,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         if (!getScreenHandler().isActive()) {
             renderDisabledSlot(matrices, slotX, slotY);
         } else if (mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16 && isOverStorageArea(mouseX, mouseY)) {
-            renderSelection(matrices, idx, slotX, slotY, stack);
+            renderSelection(matrices, slotX, slotY);
             if (stack != null) {
                 gridSlotNumber = idx;
             }
@@ -257,10 +258,10 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         RenderSystem.enableDepthTest();
     }
 
-    private void renderSelection(MatrixStack matrices, int idx, int slotX, int slotY, FabricItemGridStack stack) {
+    private void renderSelection(MatrixStack matrices, int slotX, int slotY) {
         RenderSystem.disableDepthTest();
         RenderSystem.colorMask(true, true, true, false);
-        fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, -2130706433, -2130706433);
+        fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, SELECTION_SLOT_COLOR, SELECTION_SLOT_COLOR);
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.enableDepthTest();
     }
@@ -307,7 +308,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             matrixStack.scale(0.5F, 0.5F, 1);
         }
 
-        textRenderer.drawWithShadow(matrixStack, amount, (large ? 16 : 30) - textRenderer.getWidth(amount), large ? 8 : 22, color);
+        textRenderer.drawWithShadow(matrixStack, amount, (float) (large ? 16 : 30) - textRenderer.getWidth(amount), large ? 8 : 22, color);
 
         matrixStack.pop();
     }

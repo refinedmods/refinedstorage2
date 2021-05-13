@@ -61,9 +61,7 @@ public class StorageDiskItem extends Item {
         });
 
         if (context.isAdvanced()) {
-            getId(stack).ifPresent(id -> {
-                tooltip.add(new LiteralText(id.toString()).formatted(Formatting.GRAY));
-            });
+            getId(stack).ifPresent(id -> tooltip.add(new LiteralText(id.toString()).formatted(Formatting.GRAY)));
         }
     }
 

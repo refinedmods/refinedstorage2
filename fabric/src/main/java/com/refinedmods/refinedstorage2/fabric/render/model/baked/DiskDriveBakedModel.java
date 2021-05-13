@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.render.model.baked;
 
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
-import com.refinedmods.refinedstorage2.fabric.block.DiskDriveBlock;
+import com.refinedmods.refinedstorage2.fabric.block.BaseBlock;
 
 import java.util.Random;
 import java.util.function.Supplier;
@@ -33,7 +33,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
 
     @Override
     public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
-        QuadRotator rotator = new QuadRotator(state.get(DiskDriveBlock.DIRECTION));
+        QuadRotator rotator = new QuadRotator(state.get(BaseBlock.DIRECTION));
 
         context.pushTransform(rotator);
 

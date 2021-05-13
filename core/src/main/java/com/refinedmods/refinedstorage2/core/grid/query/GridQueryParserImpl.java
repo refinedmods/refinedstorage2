@@ -138,7 +138,7 @@ public class GridQueryParserImpl implements GridQueryParser {
     }
 
     private static Predicate<GridStack<?>> and(List<Predicate<GridStack<?>>> predicates) {
-        return (stack) -> {
+        return stack -> {
             for (Predicate<GridStack<?>> predicate : predicates) {
                 if (!predicate.test(stack)) {
                     return false;
@@ -149,7 +149,7 @@ public class GridQueryParserImpl implements GridQueryParser {
     }
 
     private static Predicate<GridStack<?>> or(List<Predicate<GridStack<?>>> predicates) {
-        return (stack) -> {
+        return stack -> {
             for (Predicate<GridStack<?>> predicate : predicates) {
                 if (predicate.test(stack)) {
                     return true;
@@ -160,7 +160,7 @@ public class GridQueryParserImpl implements GridQueryParser {
     }
 
     private static Predicate<GridStack<?>> not(Predicate<GridStack<?>> predicate) {
-        return (stack) -> !predicate.test(stack);
+        return stack -> !predicate.test(stack);
     }
 
     @Override

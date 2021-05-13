@@ -20,6 +20,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  */
 @Mixin(JsonUnbakedModel.class)
 public class JsonUnbakedModelMixin {
+    private JsonUnbakedModelMixin() {
+    }
+
     @Inject(method = "createQuad", at = @At("RETURN"), cancellable = true, require = 1, allow = 1)
     private static void onBakeFace(ModelElement element, ModelElementFace elementFace, Sprite sprite, Direction side, ModelBakeSettings settings, Identifier id, CallbackInfoReturnable<BakedQuad> cri) {
         if (elementFace instanceof FullbrightHooks.FullbrightModelElementFace) {

@@ -6,6 +6,9 @@ public class FilterModeSettings {
     private static final int BLOCK = 0;
     private static final int ALLOW = 1;
 
+    private FilterModeSettings() {
+    }
+
     public static FilterMode getFilterMode(int filterMode) {
         switch (filterMode) {
             case BLOCK:

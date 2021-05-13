@@ -162,7 +162,7 @@ public class GridEventHandlerImpl implements GridEventHandler {
 
     @Override
     public void onItemUpdate(Rs2ItemStack template, long amount, StorageTracker.Entry trackerEntry) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override

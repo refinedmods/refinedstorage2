@@ -27,6 +27,9 @@ public class FullbrightHooks {
 
     private static final ThreadLocal<Boolean> ENABLE_FULLBRIGHT_EXTENSIONS = new ThreadLocal<>();
 
+    private FullbrightHooks() {
+    }
+
     public static void beginDeserializingModel(Identifier location) {
         if (Rs2Mod.isModIdentifier(location)) {
             ENABLE_FULLBRIGHT_EXTENSIONS.set(true);

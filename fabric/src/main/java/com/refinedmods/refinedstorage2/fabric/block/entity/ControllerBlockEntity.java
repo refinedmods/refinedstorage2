@@ -47,12 +47,12 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     @Override
     public void tick() {
         if (world != null && !world.isClient() && node != null) {
-            ControllerEnergyType type = ControllerEnergyType.ofState(node.getState());
-            if (type != lastType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > 1000)) {
+            ControllerEnergyType currentType = ControllerEnergyType.ofState(node.getState());
+            if (currentType != lastType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > 1000)) {
                 this.lastTypeChanged = System.currentTimeMillis();
-                this.lastType = type;
+                this.lastType = currentType;
 
-                world.setBlockState(pos, world.getBlockState(pos).with(ControllerBlock.ENERGY_TYPE, type));
+                world.setBlockState(pos, world.getBlockState(pos).with(ControllerBlock.ENERGY_TYPE, currentType));
             }
         }
     }

@@ -52,7 +52,7 @@ public class NetworkImpl implements Network {
 
     private void invalidateEnergySources() {
         List<EnergyStorage> sources = mapReferences(
-                node -> node instanceof EnergyStorage,
+                EnergyStorage.class::isInstance,
                 NetworkNodeReferencingEnergyStorage::new
         );
         energyStorage.setSources(sources);
@@ -61,7 +61,7 @@ public class NetworkImpl implements Network {
     @Override
     public void invalidateStorageChannelSources() {
         List<Storage<Rs2ItemStack>> sources = mapReferences(
-                node -> node instanceof Storage,
+                Storage.class::isInstance,
                 ref -> new NetworkNodeReferencingStorage<>(ref, new EmptyItemStorage())
         );
         itemStorageChannel.setSources(sources);

@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class NetworkNodeBlock extends BaseBlock implements BlockEntityProvider {
     public static final BooleanProperty ACTIVE = BooleanProperty.of("active");
 
-    public NetworkNodeBlock(Settings settings) {
+    protected NetworkNodeBlock(Settings settings) {
         super(settings);
 
         if (hasActive()) {

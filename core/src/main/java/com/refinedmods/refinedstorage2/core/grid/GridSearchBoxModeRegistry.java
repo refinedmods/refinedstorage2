@@ -38,7 +38,7 @@ public class GridSearchBoxModeRegistry {
 
     public GridSearchBoxMode getDefault() {
         if (modes.isEmpty()) {
-            throw new RuntimeException("No search box modes are available");
+            throw new IllegalStateException("No search box modes are available");
         }
         return modes.get(0);
     }

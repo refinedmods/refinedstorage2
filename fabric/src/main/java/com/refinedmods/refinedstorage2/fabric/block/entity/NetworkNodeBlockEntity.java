@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.core.util.Position;
-import com.refinedmods.refinedstorage2.fabric.block.GridBlock;
 import com.refinedmods.refinedstorage2.fabric.block.NetworkNodeBlock;
 
 import net.minecraft.block.BlockState;
@@ -22,7 +21,7 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     private boolean lastActive;
     private long lastActiveChanged;
 
-    public NetworkNodeBlockEntity(BlockEntityType<?> type) {
+    protected NetworkNodeBlockEntity(BlockEntityType<?> type) {
         super(type);
     }
 
@@ -95,7 +94,7 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     private void updateState(boolean active) {
         BlockState state = world.getBlockState(pos);
         if (state.contains(NetworkNodeBlock.ACTIVE)) {
-            world.setBlockState(pos, world.getBlockState(pos).with(GridBlock.ACTIVE, active));
+            world.setBlockState(pos, world.getBlockState(pos).with(NetworkNodeBlock.ACTIVE, active));
         }
     }
 

@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.query.lexer;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class SyntaxHighlighterColors {
@@ -13,7 +13,7 @@ public class SyntaxHighlighterColors {
             .setColor(TokenType.INTEGER_NUMBER, "GREEN")
             .setColor(TokenType.FLOATING_NUMBER, "GREEN");
 
-    private final Map<TokenType, String> colors = new HashMap<>();
+    private final Map<TokenType, String> colors = new EnumMap<>(TokenType.class);
     private final String defaultColor;
 
     public SyntaxHighlighterColors(String defaultColor) {

@@ -7,6 +7,9 @@ import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
 public class KeyBindingUtil {
+    private KeyBindingUtil() {
+    }
+
     public static boolean isKeyDown(KeyBinding keybinding) {
         return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), ((KeyBindingAccessor) keybinding).getBoundKey().getCode());
     }

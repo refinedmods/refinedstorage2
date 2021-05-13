@@ -228,6 +228,10 @@ class GridEventHandlerImplTest {
 
         // Act
         eventHandler.onInsertFromCursor(GridInsertMode.ENTIRE_STACK);
+
+        // Assert
+        assertThat(interactor.getCursorStack().isEmpty()).isTrue();
+        assertItemStackListContents(storageChannel.getStacks());
     }
 
     @ParameterizedTest

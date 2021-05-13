@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class BaseBlock extends Block {
     public static final EnumProperty<BiDirection> DIRECTION = EnumProperty.of("direction", BiDirection.class);
 
-    public BaseBlock(Settings settings) {
+    protected BaseBlock(Settings settings) {
         super(settings);
 
         if (hasBiDirection()) {

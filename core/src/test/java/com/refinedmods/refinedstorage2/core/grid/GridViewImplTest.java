@@ -24,7 +24,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @Rs2Test
-public class GridViewImplTest {
+class GridViewImplTest {
     private GridView<Rs2ItemStack> view;
 
     @BeforeEach

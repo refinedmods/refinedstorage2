@@ -18,8 +18,8 @@ public class NetworkNodeReferencingStorage<T> implements Storage<T>, Priority {
 
     private Storage<T> getStorage() {
         return ref.get()
-                .filter(node -> node instanceof Storage)
-                .map(node -> (Storage<T>) node)
+                .filter(Storage.class::isInstance)
+                .map(Storage.class::cast)
                 .orElse(fallback);
     }
 

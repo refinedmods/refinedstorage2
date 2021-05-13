@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.fabric.screenhandler.AccessModeAccessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -20,7 +20,7 @@ import net.minecraft.util.Formatting;
 public class AccessModeSideButtonWidget extends SideButtonWidget {
     private final AccessModeAccessor accessModeAccessor;
     private final TooltipRenderer tooltipRenderer;
-    private final Map<AccessMode, List<Text>> tooltips = new HashMap<>();
+    private final Map<AccessMode, List<Text>> tooltips = new EnumMap<>(AccessMode.class);
 
     public AccessModeSideButtonWidget(AccessModeAccessor accessModeAccessor, TooltipRenderer tooltipRenderer) {
         super(createPressAction(accessModeAccessor));

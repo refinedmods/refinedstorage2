@@ -50,50 +50,52 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     public DiskDriveScreenHandler(int syncId, PlayerInventory playerInventory) {
         super(Rs2Mod.SCREEN_HANDLERS.getDiskDrive(), syncId);
 
-        addProperty(priorityProperty = TwoWaySyncProperty.forClient(
+        this.priorityProperty = TwoWaySyncProperty.forClient(
                 0,
                 priority -> priority,
                 priority -> priority,
                 0,
-                (priority) -> {
+                priority -> {
                 }
-        ));
-
-        addProperty(filterModeProperty = TwoWaySyncProperty.forClient(
+        );
+        this.filterModeProperty = TwoWaySyncProperty.forClient(
                 1,
                 FilterModeSettings::getFilterMode,
                 FilterModeSettings::getFilterMode,
                 FilterMode.BLOCK,
-                (filterMode) -> {
+                filterMode -> {
                 }
-        ));
-
-        addProperty(exactModeProperty = TwoWaySyncProperty.forClient(
+        );
+        this.exactModeProperty = TwoWaySyncProperty.forClient(
                 2,
-                value -> value ? 0 : 1,
+                value -> Boolean.TRUE.equals(value) ? 0 : 1,
                 value -> value == 0,
                 true,
-                (exactMode) -> {
+                exactMode -> {
                 }
-        ));
-
-        addProperty(accessModeProperty = TwoWaySyncProperty.forClient(
+        );
+        this.accessModeProperty = TwoWaySyncProperty.forClient(
                 3,
                 AccessModeSettings::getAccessMode,
                 AccessModeSettings::getAccessMode,
                 AccessMode.INSERT_EXTRACT,
-                (accessMode) -> {
+                accessMode -> {
                 }
-        ));
-
-        addProperty(redstoneModeProperty = TwoWaySyncProperty.forClient(
+        );
+        this.redstoneModeProperty = TwoWaySyncProperty.forClient(
                 4,
                 RedstoneModeSettings::getRedstoneMode,
                 RedstoneModeSettings::getRedstoneMode,
                 RedstoneMode.IGNORE,
-                (redstoneMode) -> {
+                redstoneMode -> {
                 }
-        ));
+        );
+
+        addProperty(priorityProperty);
+        addProperty(filterModeProperty);
+        addProperty(exactModeProperty);
+        addProperty(accessModeProperty);
+        addProperty(redstoneModeProperty);
 
         this.storageDiskInfoAccessor = new StorageDiskInfoAccessorImpl(playerInventory.player.getEntityWorld());
 
@@ -103,45 +105,47 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     public DiskDriveScreenHandler(int syncId, PlayerEntity player, FixedItemInv diskInventory, FixedItemInv filterInventory, DiskDriveBlockEntity diskDrive, StorageDiskInfoAccessor storageDiskInfoAccessor) {
         super(Rs2Mod.SCREEN_HANDLERS.getDiskDrive(), syncId);
 
-        addProperty(priorityProperty = TwoWaySyncProperty.forServer(
+        this.priorityProperty = TwoWaySyncProperty.forServer(
                 0,
                 priority -> priority,
                 priority -> priority,
                 diskDrive::getPriority,
                 diskDrive::setPriority
-        ));
-
-        addProperty(filterModeProperty = TwoWaySyncProperty.forServer(
+        );
+        this.filterModeProperty = TwoWaySyncProperty.forServer(
                 1,
                 FilterModeSettings::getFilterMode,
                 FilterModeSettings::getFilterMode,
                 diskDrive::getFilterMode,
                 diskDrive::setFilterMode
-        ));
-
-        addProperty(exactModeProperty = TwoWaySyncProperty.forServer(
+        );
+        this.exactModeProperty = TwoWaySyncProperty.forServer(
                 2,
-                value -> value ? 0 : 1,
+                value -> Boolean.TRUE.equals(value) ? 0 : 1,
                 value -> value == 0,
                 diskDrive::isExactMode,
                 diskDrive::setExactMode
-        ));
-
-        addProperty(accessModeProperty = TwoWaySyncProperty.forServer(
+        );
+        this.accessModeProperty = TwoWaySyncProperty.forServer(
                 3,
                 AccessModeSettings::getAccessMode,
                 AccessModeSettings::getAccessMode,
                 diskDrive::getAccessMode,
                 diskDrive::setAccessMode
-        ));
-
-        addProperty(redstoneModeProperty = TwoWaySyncProperty.forServer(
+        );
+        this.redstoneModeProperty = TwoWaySyncProperty.forServer(
                 4,
                 RedstoneModeSettings::getRedstoneMode,
                 RedstoneModeSettings::getRedstoneMode,
                 diskDrive::getRedstoneMode,
                 diskDrive::setRedstoneMode
-        ));
+        );
+
+        addProperty(priorityProperty);
+        addProperty(filterModeProperty);
+        addProperty(exactModeProperty);
+        addProperty(accessModeProperty);
+        addProperty(redstoneModeProperty);
 
         this.storageDiskInfoAccessor = storageDiskInfoAccessor;
 
