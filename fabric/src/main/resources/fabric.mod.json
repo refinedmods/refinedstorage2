@@ -26,6 +26,13 @@
             "com.refinedmods.refinedstorage2.fabric.integration.ModMenuIntegration"
         ]
     },
+    "custom": {
+        "modmenu": {
+            "links": {
+                "modmenu.discord": "https://discordapp.com/invite/VYzsydb"
+            }
+        }
+    },
     "mixins": [
         "refinedstorage2.mixins.json"
     ],
