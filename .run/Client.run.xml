@@ -1,10 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Client" type="Application" factoryName="Application">
-    <option name="ALTERNATIVE_JRE_PATH" value="C:\Program Files\AdoptOpenJDK\jdk-11.0.8.10-hotspot"/>
-    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="net.fabricmc.devlaunchinjector.Main" />
     <module name="refinedstorage2.fabric.main" />
-    <option name="VM_PARAMETERS" value="-Dfabric.dli.config=C:\Users\RaoulV\Projects\Prive\refinedstorage2\fabric\.gradle\loom-cache\launch.cfg -Dfabric.dli.env=client -Dfabric.dli.main=net.fabricmc.loader.launch.knot.KnotClient" />
+    <option name="VM_PARAMETERS"
+            value="-Dfabric.dli.config=$PROJECT_DIR$\fabric\.gradle\loom-cache\launch.cfg -Dfabric.dli.env=client -Dfabric.dli.main=net.fabricmc.loader.launch.knot.KnotClient"/>
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run" />
     <method v="2">
       <option name="Make" enabled="true" />
