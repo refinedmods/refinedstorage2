@@ -100,6 +100,18 @@ class GridQueryParserImplTest {
     }
 
     @Test
+    void Test_implicit_and_query_with_unary_operator() throws GridQueryParserException {
+        // Act
+        Predicate<GridStack<?>> predicate = queryParser.parse("@minecraft >5");
+
+        // Assert
+        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.DIRT, 6)))).isTrue();
+        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 5)))).isFalse();
+        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.SPONGE, 5), "rs", "Refined Storage"))).isFalse();
+        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.COBBLESTONE, 6), "rs", "Refined Storage"))).isFalse();
+    }
+
+    @Test
     void Test_and_query() throws GridQueryParserException {
         // Act
         Predicate<GridStack<?>> predicate = queryParser.parse("DirT && di && RT");

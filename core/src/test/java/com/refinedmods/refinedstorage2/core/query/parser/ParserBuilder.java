@@ -21,10 +21,7 @@ class ParserBuilder {
             .addBinaryOperator("-", new Operator(3, Associativity.LEFT))
             .addBinaryOperator("*", new Operator(4, Associativity.LEFT))
             .addBinaryOperator("/", new Operator(4, Associativity.LEFT))
-            .addBinaryOperator("^", new Operator(5, Associativity.RIGHT))
-            .addUnaryOperatorPosition("!", UnaryOperatorPosition.PREFIX)
-            .addUnaryOperatorPosition("++", UnaryOperatorPosition.BOTH)
-            .addUnaryOperatorPosition("--", UnaryOperatorPosition.BOTH);
+            .addBinaryOperator("^", new Operator(5, Associativity.RIGHT));
 
     private final List<Token> tokens = new ArrayList<>();
 

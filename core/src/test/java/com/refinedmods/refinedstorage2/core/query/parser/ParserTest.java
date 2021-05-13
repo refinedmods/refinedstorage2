@@ -158,14 +158,13 @@ class ParserTest {
     }
 
     @Test
-    void Test_prefixed_unary_operator() {
+    void Test_unary_operators() {
         // Act
         List<Node> nodes = builder
                 .token("!", TokenType.UNARY_OP)
                 .token("true", TokenType.IDENTIFIER)
                 .token("++", TokenType.UNARY_OP)
                 .token("x", TokenType.IDENTIFIER)
-                .token("--", TokenType.UNARY_OP)
                 .token("!", TokenType.UNARY_OP)
                 .token("(", TokenType.PAREN_OPEN)
                 .token("x", TokenType.IDENTIFIER)
@@ -176,13 +175,13 @@ class ParserTest {
 
         // Assert
         assertThat(nodes).hasSize(3);
-        assertThat(nodes.get(0)).hasToString("!true++");
-        assertThat(nodes.get(1)).hasToString("x--");
+        assertThat(nodes.get(0)).hasToString("!true");
+        assertThat(nodes.get(1)).hasToString("++x");
         assertThat(nodes.get(2)).hasToString("!((x && y))");
     }
 
     @Test
-    void Test_prefix_unary_operator_with_no_target() {
+    void Test_unary_operator_with_no_target() {
         // Arrange
         builder.token("!", TokenType.UNARY_OP);
 
@@ -192,35 +191,6 @@ class ParserTest {
         // Assert
         assertThat(e.getMessage()).isEqualTo("Unary operator has no target");
         assertThat(e.getToken().getContent()).isEqualTo("!");
-    }
-
-    @Test
-    void Test_invalid_suffixed_unary_operator() {
-        // Act
-        builder
-                .token("true", TokenType.IDENTIFIER)
-                .token("!", TokenType.UNARY_OP);
-
-        // Assert
-        ParserException e = assertThrows(ParserException.class, () -> builder.getNodes());
-        assertThat(e.getMessage()).isEqualTo("Cannot use '!' as suffixed unary operator");
-        assertThat(e.getToken().getContent()).isEqualTo("!");
-    }
-
-    @Test
-    void Test_suffixed_unary_operator() {
-        // Act
-        List<Node> nodes = builder
-                .token("x", TokenType.IDENTIFIER)
-                .token("++", TokenType.UNARY_OP)
-                .token("y", TokenType.IDENTIFIER)
-                .token("--", TokenType.UNARY_OP)
-                .getNodes();
-
-        // Assert
-        assertThat(nodes).hasSize(2);
-        assertThat(nodes.get(0)).hasToString("x++");
-        assertThat(nodes.get(1)).hasToString("y--");
     }
 
     @Test

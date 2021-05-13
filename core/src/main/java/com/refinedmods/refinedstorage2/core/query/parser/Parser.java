@@ -26,7 +26,6 @@ public class Parser {
     public void parse() {
         while (isNotEof()) {
             Node node = parseExpression(0);
-
             nodes.add(node);
         }
     }
@@ -87,17 +86,12 @@ public class Parser {
             return new ParenNode(nodes);
         }
 
-        return parsePrefixedUnaryOp();
+        return parseUnaryOp();
     }
 
-    private Node parsePrefixedUnaryOp() {
+    private Node parseUnaryOp() {
         Token maybeUnaryOp = current();
         if (maybeUnaryOp.getType() == TokenType.UNARY_OP) {
-            UnaryOperatorPosition position = operatorMappings.getUnaryOperatorPosition(maybeUnaryOp);
-            if (!position.canUseAsPrefix()) {
-                throw new ParserException("Cannot use '" + maybeUnaryOp.getContent() + "' as prefixed unary operator", maybeUnaryOp);
-            }
-
             next();
             if (!isNotEof()) {
                 throw new ParserException("Unary operator has no target", maybeUnaryOp);
@@ -106,35 +100,7 @@ public class Parser {
             return new UnaryOpNode(parseAtom(), maybeUnaryOp, UnaryOpNode.Type.PREFIX);
         }
 
-        return parseSuffixedUnaryOp();
-    }
-
-    private Node parseSuffixedUnaryOp() {
-        Node node = parseLiteral();
-
-        Token maybeUnaryOp = currentOrNull();
-        if (maybeUnaryOp != null && maybeUnaryOp.getType() == TokenType.UNARY_OP) {
-            UnaryOperatorPosition position = operatorMappings.getUnaryOperatorPosition(maybeUnaryOp);
-            if (!position.canUseAsSuffix()) {
-                throw new ParserException("Cannot use '" + maybeUnaryOp.getContent() + "' as suffixed unary operator", maybeUnaryOp);
-            }
-
-            next();
-            node = new UnaryOpNode(node, maybeUnaryOp, UnaryOpNode.Type.SUFFIX);
-        }
-
-        return node;
-    }
-
-    private void expect(TokenType type, String content) {
-        Token token = currentOrNull();
-        if (token == null) {
-            throw new ParserException("Expected '" + content + "'", tokens.get(tokens.size() - 1));
-        }
-
-        if (token.getType() != type || !token.getContent().equals(content)) {
-            throw new ParserException("Expected '" + content + "', got '" + token.getContent() + "'", token);
-        }
+        return parseLiteral();
     }
 
     private Node parseLiteral() {
