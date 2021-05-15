@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.fabric.init.Rs2Blocks;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2Items;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2ScreenHandlers;
 import com.refinedmods.refinedstorage2.fabric.integration.ReiIntegration;
+import com.refinedmods.refinedstorage2.fabric.loot.Rs2LootFunctions;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;

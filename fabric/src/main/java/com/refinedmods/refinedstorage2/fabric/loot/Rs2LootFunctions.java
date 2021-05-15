@@ -1,6 +1,6 @@
-package com.refinedmods.refinedstorage2.fabric;
+package com.refinedmods.refinedstorage2.fabric.loot;
 
-import com.refinedmods.refinedstorage2.fabric.loot.ControllerLootFunction;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 
 import net.minecraft.loot.function.LootFunctionType;
 import net.minecraft.util.registry.Registry;
