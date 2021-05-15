@@ -10,6 +10,8 @@ import java.util.UUID;
 public interface Network {
     UUID getId();
 
+    void update();
+
     Set<NetworkNodeReference> getNodeReferences();
 
     void onNodesChanged();

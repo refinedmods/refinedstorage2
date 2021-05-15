@@ -11,4 +11,6 @@ public interface NetworkManager {
     void onNodeRemoved(NetworkNodeRepository nodeRepository, Position pos);
 
     Collection<Network> getNetworks();
+
+    void update();
 }

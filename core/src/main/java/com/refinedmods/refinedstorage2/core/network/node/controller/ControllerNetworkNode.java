@@ -12,9 +12,10 @@ import com.refinedmods.refinedstorage2.core.util.Position;
 public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStorage {
     private final EnergyStorage energyStorage;
 
-    public ControllerNetworkNode(Rs2World world, Position pos, NetworkNodeReference ref, long capacity, ControllerType type) {
+    public ControllerNetworkNode(Rs2World world, Position pos, NetworkNodeReference ref, long stored, long capacity, ControllerType type) {
         super(world, pos, ref);
         this.energyStorage = buildEnergyStorage(capacity, type);
+        this.energyStorage.receive(stored, Action.EXECUTE);
     }
 
     private static EnergyStorage buildEnergyStorage(long capacity, ControllerType type) {
@@ -69,9 +70,6 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
 
     @Override
     public long receive(long amount, Action action) {
-        if (!isActive()) {
-            return amount;
-        }
         return energyStorage.receive(amount, action);
     }
 

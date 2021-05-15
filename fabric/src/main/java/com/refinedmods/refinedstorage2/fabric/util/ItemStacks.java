@@ -10,9 +10,14 @@ import java.util.Map;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.registry.Registry;
 
 public final class ItemStacks {
     private static final Map<Item, Rs2Item> ITEMS = new HashMap<>();
+
+    private static final String TAG_AMOUNT = "amount";
+    private static final String TAG_TAG = "tag";
+    private static final String TAG_ID = "id";
 
     private ItemStacks() {
     }
@@ -22,6 +27,24 @@ public final class ItemStacks {
             return Rs2ItemStack.EMPTY;
         }
         return new Rs2ItemStack(ofItem(stack.getItem()), stack.getCount(), stack.getTag());
+    }
+
+    public static CompoundTag toTag(Rs2ItemStack stack) {
+        CompoundTag tag = new CompoundTag();
+        tag.putLong(TAG_AMOUNT, stack.getAmount());
+        if (stack.getTag() != null) {
+            tag.put(TAG_TAG, (CompoundTag) stack.getTag());
+        }
+        tag.putInt(TAG_ID, stack.getItem().getId());
+        return tag;
+    }
+
+    public static Rs2ItemStack fromTag(CompoundTag tag) {
+        int id = tag.getInt(TAG_ID);
+        Item item = Registry.ITEM.get(id);
+        long amount = tag.getLong(TAG_AMOUNT);
+        Object stackTag = tag.get(TAG_TAG);
+        return new Rs2ItemStack(ofItem(item), amount, stackTag);
     }
 
     public static ItemStack toItemStack(Rs2ItemStack stack) {

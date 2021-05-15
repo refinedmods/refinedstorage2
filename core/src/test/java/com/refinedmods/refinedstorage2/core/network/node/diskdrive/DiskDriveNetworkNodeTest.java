@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -335,43 +334,6 @@ class DiskDriveNetworkNodeTest {
         assertItemStack(remainderBeforeInsertingDisk.get(), new Rs2ItemStack(ItemStubs.DIRT, 5));
 
         assertThat(remainderAfterInsertingDisk).isEmpty();
-    }
-
-    @RepeatedTest(100)
-    void Test_changing_priority_should_invalidate_storage_sources_in_network() {
-        // Arrange
-        NetworkBuilder builder = NetworkBuilder.create();
-        builder.infiniteEnergy();
-
-        DiskDriveNetworkNodeWrapper sut1 = DiskDriveNetworkNodeWrapper.create();
-        DiskDriveNetworkNodeWrapper sut2 = DiskDriveNetworkNodeWrapper.create();
-        DiskDriveNetworkNodeWrapper sut3 = DiskDriveNetworkNodeWrapper.create();
-
-        builder.node(sut1);
-        builder.node(sut2);
-        builder.node(sut3);
-
-        ItemDiskStorage disk1 = new ItemDiskStorage(10);
-        ItemDiskStorage disk2 = new ItemDiskStorage(10);
-        ItemDiskStorage disk3 = new ItemDiskStorage(10);
-
-        sut1.getFakeStorageDiskProviderManager().setDisk(0, disk1);
-        sut2.getFakeStorageDiskProviderManager().setDisk(0, disk2);
-        sut3.getFakeStorageDiskProviderManager().setDisk(0, disk3);
-
-        Network network = builder.build();
-
-        // Act
-        sut1.setPriority(8);
-        sut2.setPriority(15);
-        sut3.setPriority(2);
-
-        network.getItemStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 15, Action.EXECUTE);
-
-        // Assert
-        assertItemStackListContents(disk2.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
-        assertItemStackListContents(disk1.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 5));
-        assertItemStackListContents(disk3.getStacks());
     }
 
     @Test

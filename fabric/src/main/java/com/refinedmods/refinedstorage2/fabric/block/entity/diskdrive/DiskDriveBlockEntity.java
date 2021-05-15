@@ -46,6 +46,14 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetworkNode> implements Storage<Rs2ItemStack>, RenderAttachmentBlockEntity, BlockEntityClientSerializable, NamedScreenHandlerFactory, BlockEntityWithDrops {
+    private static final String TAG_PRIORITY = "pri";
+    private static final String TAG_FILTER_MODE = "fim";
+    private static final String TAG_EXACT_MODE = "em";
+    private static final String TAG_ACCESS_MODE = "am";
+    private static final String TAG_DISK_INVENTORY = "inv";
+    private static final String TAG_FILTER_INVENTORY = "fi";
+    private static final String TAG_STATES = "states";
+
     private final DiskDriveInventory diskInventory = new DiskDriveInventory();
     private final FullFixedItemInv filterInventory = new FullFixedItemInv(9);
     private DiskDriveState driveState;
@@ -58,25 +66,14 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     }
 
     @Override
-    public void setLocation(World world, BlockPos pos) {
-        super.setLocation(world, pos);
-
-        if (!world.isClient()) {
-            for (int i = 0; i < diskInventory.getSlotCount(); ++i) {
-                onDiskChanged(i);
-            }
-        }
-    }
-
-    @Override
     public void onActiveChanged(boolean active) {
         super.onActiveChanged(active);
         sync();
     }
 
     @Override
-    protected DiskDriveNetworkNode createNode(World world, BlockPos pos) {
-        return new DiskDriveNetworkNode(
+    protected DiskDriveNetworkNode createNode(World world, BlockPos pos, CompoundTag tag) {
+        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(
                 FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
                 FabricNetworkNodeReference.of(world, pos),
@@ -85,46 +82,52 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
                 Rs2Config.get().getDiskDrive().getEnergyUsage(),
                 Rs2Config.get().getDiskDrive().getEnergyUsagePerDisk()
         );
+
+        if (tag.contains(TAG_PRIORITY)) {
+            diskDrive.setPriority(tag.getInt(TAG_PRIORITY));
+        }
+
+        if (tag.contains(TAG_FILTER_MODE)) {
+            diskDrive.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
+        }
+
+        if (tag.contains(TAG_EXACT_MODE)) {
+            diskDrive.setExactMode(tag.getBoolean(TAG_EXACT_MODE));
+        }
+
+        if (tag.contains(TAG_ACCESS_MODE)) {
+            diskDrive.setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
+        }
+
+        for (int slot = 0; slot < diskInventory.getSlotCount(); ++slot) {
+            diskDrive.onDiskChanged(slot);
+        }
+
+        return diskDrive;
     }
 
     @Override
     public void fromTag(BlockState state, CompoundTag tag) {
         super.fromTag(state, tag);
 
-        if (tag.contains("inv")) {
-            diskInventory.fromTag(tag.getCompound("inv"));
+        if (tag.contains(TAG_DISK_INVENTORY)) {
+            diskInventory.fromTag(tag.getCompound(TAG_DISK_INVENTORY));
         }
 
-        if (tag.contains("fi")) {
-            filterInventory.fromTag(tag.getCompound("fi"));
-        }
-
-        if (tag.contains("pri")) {
-            node.setPriority(tag.getInt("pri"));
-        }
-
-        if (tag.contains("fim")) {
-            node.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt("fim")));
-        }
-
-        if (tag.contains("em")) {
-            node.setExactMode(tag.getBoolean("em"));
-        }
-
-        if (tag.contains("am")) {
-            node.setAccessMode(AccessModeSettings.getAccessMode(tag.getInt("am")));
+        if (tag.contains(TAG_FILTER_INVENTORY)) {
+            filterInventory.fromTag(tag.getCompound(TAG_FILTER_INVENTORY));
         }
     }
 
     @Override
     public CompoundTag toTag(CompoundTag tag) {
         tag = super.toTag(tag);
-        tag.put("inv", diskInventory.toTag());
-        tag.put("fi", filterInventory.toTag());
-        tag.putInt("fim", FilterModeSettings.getFilterMode(node.getFilterMode()));
-        tag.putInt("pri", node.getPriority());
-        tag.putBoolean("em", node.isExactMode());
-        tag.putInt("am", AccessModeSettings.getAccessMode(node.getAccessMode()));
+        tag.put(TAG_DISK_INVENTORY, diskInventory.toTag());
+        tag.put(TAG_FILTER_INVENTORY, filterInventory.toTag());
+        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(node.getFilterMode()));
+        tag.putInt(TAG_PRIORITY, node.getPriority());
+        tag.putBoolean(TAG_EXACT_MODE, node.isExactMode());
+        tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(node.getAccessMode()));
         return tag;
     }
 
@@ -174,8 +177,8 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
     @Override
     public void fromClientTag(CompoundTag tag) {
-        if (tag.contains("states")) {
-            ListTag statesList = tag.getList("states", NbtType.BYTE);
+        if (tag.contains(TAG_STATES)) {
+            ListTag statesList = tag.getList(TAG_STATES, NbtType.BYTE);
 
             driveState = new DiskDriveState(statesList.size());
 
@@ -198,7 +201,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
         for (DiskState state : node.createState().getStates()) {
             statesList.add(ByteTag.of((byte) state.ordinal()));
         }
-        tag.put("states", statesList);
+        tag.put(TAG_STATES, statesList);
         return tag;
     }
 
@@ -245,6 +248,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
     public void setPriority(int priority) {
         node.setPriority(priority);
+        node.getNetwork().getItemStorageChannel().sortSources();
         markDirty();
     }
 }

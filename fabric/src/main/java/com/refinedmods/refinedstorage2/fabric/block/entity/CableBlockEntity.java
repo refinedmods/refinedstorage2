@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAda
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -17,7 +18,7 @@ public class CableBlockEntity extends NetworkNodeBlockEntity<NetworkNodeImpl> {
     }
 
     @Override
-    protected NetworkNodeImpl createNode(World world, BlockPos pos) {
+    protected NetworkNodeImpl createNode(World world, BlockPos pos, CompoundTag tag) {
         return new CableNetworkNode(
                 FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),

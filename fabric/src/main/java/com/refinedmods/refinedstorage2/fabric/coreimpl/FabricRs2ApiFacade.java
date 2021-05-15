@@ -23,7 +23,7 @@ public class FabricRs2ApiFacade implements Rs2ApiFacade<MinecraftServer, World> 
         return server
                 .getWorld(World.OVERWORLD)
                 .getPersistentStateManager()
-                .getOrCreate(() -> new FabricNetworkManager(FabricNetworkManager.NAME, new NetworkManagerImpl()), FabricNetworkManager.NAME);
+                .getOrCreate(() -> new FabricNetworkManager(FabricNetworkManager.NAME, new NetworkManagerImpl(), server), FabricNetworkManager.NAME);
     }
 
     @Override

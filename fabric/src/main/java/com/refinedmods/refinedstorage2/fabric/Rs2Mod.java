@@ -24,6 +24,7 @@ import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -68,8 +69,13 @@ public class Rs2Mod implements ModInitializer {
         registerContent();
         registerGridSearchBoxModes();
         registerPackets();
+        registerEventListeners();
 
         LOGGER.info("Refined Storage 2 has loaded.");
+    }
+
+    private void registerEventListeners() {
+        ServerTickEvents.START_SERVER_TICK.register(server -> API.getNetworkManager(server).update());
     }
 
     private void registerContent() {

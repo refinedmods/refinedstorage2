@@ -3,12 +3,17 @@ package com.refinedmods.refinedstorage2.core.storage.disk;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import com.google.common.base.Preconditions;
 
 public class StorageDiskManagerImpl implements StorageDiskManager {
     private final Map<UUID, StorageDisk<?>> disks = new HashMap<>();
+
+    public Set<Map.Entry<UUID, StorageDisk<?>>> getDisks() {
+        return disks.entrySet();
+    }
 
     @Override
     public <T> Optional<StorageDisk<T>> getDisk(UUID id) {

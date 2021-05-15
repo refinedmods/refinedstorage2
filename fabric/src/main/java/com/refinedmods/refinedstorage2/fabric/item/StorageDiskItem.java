@@ -1,9 +1,10 @@
 package com.refinedmods.refinedstorage2.fabric.item;
 
-import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.FabricItemDiskStorage;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.FabricStorageDiskManager;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.ItemStorageType;
 
 import java.util.List;
@@ -27,6 +28,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class StorageDiskItem extends Item {
+    private static final String TAG_ID = "id";
+
     private final ItemStorageType type;
 
     public StorageDiskItem(Settings settings, ItemStorageType type) {
@@ -35,8 +38,8 @@ public class StorageDiskItem extends Item {
     }
 
     public static Optional<UUID> getId(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().containsUuid("id")) {
-            return Optional.of(stack.getTag().getUuid("id"));
+        if (stack.hasTag() && stack.getTag().containsUuid(TAG_ID)) {
+            return Optional.of(stack.getTag().getUuid(TAG_ID));
         }
         return Optional.empty();
     }
@@ -101,10 +104,10 @@ public class StorageDiskItem extends Item {
         if (!world.isClient() && !stack.hasTag() && entity instanceof PlayerEntity) {
             UUID id = UUID.randomUUID();
 
-            Rs2Mod.API.getStorageDiskManager(world).setDisk(id, new ItemDiskStorage(type.getCapacity()));
+            Rs2Mod.API.getStorageDiskManager(world).setDisk(id, new FabricItemDiskStorage(type.getCapacity(), () -> ((FabricStorageDiskManager) Rs2Mod.API.getStorageDiskManager(world)).markDirty()));
 
             stack.setTag(new CompoundTag());
-            stack.getTag().putUuid("id", id);
+            stack.getTag().putUuid(TAG_ID, id);
         }
     }
 }

@@ -14,7 +14,6 @@ import com.refinedmods.refinedstorage2.fabric.screenhandler.ControllerScreenHand
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -30,8 +29,10 @@ import team.reborn.energy.EnergySide;
 import team.reborn.energy.EnergyTier;
 
 public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetworkNode> implements EnergyStorage, ExtendedScreenHandlerFactory, team.reborn.energy.EnergyStorage {
-    private final ControllerType type;
+    private static final String TAG_STORED = "stored";
+    private static final int ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
 
+    private final ControllerType type;
     private long lastTypeChanged;
     private ControllerEnergyType lastType = ControllerEnergyType.OFF;
 
@@ -48,7 +49,7 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     public void tick() {
         if (world != null && !world.isClient() && node != null) {
             ControllerEnergyType currentType = ControllerEnergyType.ofState(node.getState());
-            if (currentType != lastType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > 1000)) {
+            if (currentType != lastType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
                 this.lastTypeChanged = System.currentTimeMillis();
                 this.lastType = currentType;
 
@@ -58,11 +59,12 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     }
 
     @Override
-    protected ControllerNetworkNode createNode(World world, BlockPos pos) {
+    protected ControllerNetworkNode createNode(World world, BlockPos pos, CompoundTag tag) {
         return new ControllerNetworkNode(
                 FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
                 FabricNetworkNodeReference.of(world, pos),
+                tag.getLong(TAG_STORED),
                 Rs2Config.get().getController().getCapacity(),
                 type
         );
@@ -103,18 +105,9 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
-
-        if (tag.contains("stored")) {
-            node.receive(tag.getLong("stored"), Action.EXECUTE);
-        }
-    }
-
-    @Override
     public CompoundTag toTag(CompoundTag tag) {
         tag = super.toTag(tag);
-        tag.putLong("stored", node.getActualStored());
+        tag.putLong(TAG_STORED, node.getActualStored());
         return tag;
     }
 

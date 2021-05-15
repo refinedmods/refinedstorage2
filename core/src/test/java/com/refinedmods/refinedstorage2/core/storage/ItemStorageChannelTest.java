@@ -8,9 +8,11 @@ import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -140,5 +142,30 @@ class ItemStorageChannelTest {
 
         // Assert
         assertThat(stack).isEmpty();
+    }
+
+    @RepeatedTest(100)
+    void Test_sorting_sources() {
+        // Arrange
+        PrioritizedStorage<Rs2ItemStack> disk1 = new PrioritizedStorage<>(0, new ItemDiskStorage(10));
+        PrioritizedStorage<Rs2ItemStack> disk2 = new PrioritizedStorage<>(0, new ItemDiskStorage(10));
+        PrioritizedStorage<Rs2ItemStack> disk3 = new PrioritizedStorage<>(0, new ItemDiskStorage(10));
+
+        ItemStorageChannel channel = new ItemStorageChannel();
+        channel.setSources(Arrays.asList(disk1, disk2, disk3));
+
+        disk1.setPriority(8);
+        disk2.setPriority(15);
+        disk3.setPriority(2);
+
+        // Act
+        channel.sortSources();
+
+        channel.insert(new Rs2ItemStack(ItemStubs.DIRT), 15, Action.EXECUTE);
+
+        // Assert
+        assertItemStackListContents(disk2.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
+        assertItemStackListContents(disk1.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 5));
+        assertItemStackListContents(disk3.getStacks());
     }
 }

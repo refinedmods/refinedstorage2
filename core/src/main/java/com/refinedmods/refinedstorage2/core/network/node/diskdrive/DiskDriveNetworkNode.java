@@ -148,7 +148,6 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
 
     public void setPriority(int priority) {
         this.priority = priority;
-        network.getItemStorageChannel().sortSources();
     }
 
     @Override

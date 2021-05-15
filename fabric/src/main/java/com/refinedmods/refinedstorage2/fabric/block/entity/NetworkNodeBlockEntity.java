@@ -17,9 +17,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends BlockEntity implements NetworkNode, Tickable {
+    private static final int ACTIVE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
+    private static final String TAG_REDSTONE_MODE = "rm";
+
     protected T node;
     private boolean lastActive;
     private long lastActiveChanged;
+    private CompoundTag tag;
 
     protected NetworkNodeBlockEntity(BlockEntityType<?> type) {
         super(type);
@@ -29,10 +33,22 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     public void setLocation(World world, BlockPos pos) {
         super.setLocation(world, pos);
 
-        node = createNode(world, pos);
+        if (world.isClient()) {
+            return;
+        }
+
+        if (tag == null) {
+            tag = new CompoundTag();
+        }
+
+        this.node = createNode(world, pos, tag);
+
+        if (tag.contains(TAG_REDSTONE_MODE)) {
+            node.setRedstoneMode(RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE)));
+        }
     }
 
-    protected abstract T createNode(World world, BlockPos pos);
+    protected abstract T createNode(World world, BlockPos pos, CompoundTag tag);
 
     @Override
     public Position getPosition() {
@@ -56,17 +72,14 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
 
     @Override
     public CompoundTag toTag(CompoundTag tag) {
-        tag.putInt("rm", RedstoneModeSettings.getRedstoneMode(getRedstoneMode()));
+        tag.putInt(TAG_REDSTONE_MODE, RedstoneModeSettings.getRedstoneMode(getRedstoneMode()));
 
         return super.toTag(tag);
     }
 
     @Override
     public void fromTag(BlockState blockState, CompoundTag tag) {
-        if (tag.contains("rm")) {
-            node.setRedstoneMode(RedstoneModeSettings.getRedstoneMode(tag.getInt("rm")));
-        }
-
+        this.tag = tag;
         super.fromTag(blockState, tag);
     }
 
@@ -74,7 +87,7 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     public void tick() {
         if (world != null && !world.isClient() && node != null) {
             boolean active = node.isActive();
-            if (active != lastActive && (lastActiveChanged == 0 || System.currentTimeMillis() - lastActiveChanged > 1000)) {
+            if (active != lastActive && (lastActiveChanged == 0 || System.currentTimeMillis() - lastActiveChanged > ACTIVE_CHANGE_MINIMUM_INTERVAL_MS)) {
                 this.lastActiveChanged = System.currentTimeMillis();
                 this.lastActive = active;
 

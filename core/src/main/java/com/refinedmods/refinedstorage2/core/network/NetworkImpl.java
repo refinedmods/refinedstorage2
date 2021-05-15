@@ -35,6 +35,11 @@ public class NetworkImpl implements Network {
     }
 
     @Override
+    public void update() {
+        // doesn't have to do anything for now
+    }
+
+    @Override
     public Set<NetworkNodeReference> getNodeReferences() {
         return nodeReferences;
     }

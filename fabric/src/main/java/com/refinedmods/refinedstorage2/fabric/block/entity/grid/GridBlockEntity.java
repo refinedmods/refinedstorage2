@@ -19,7 +19,6 @@ import com.refinedmods.refinedstorage2.fabric.util.Positions;
 import java.util.Collection;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.CompoundTag;
@@ -32,19 +31,42 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> implements ExtendedScreenHandlerFactory {
+    private static final String TAG_SORTING_DIRECTION = "sd";
+    private static final String TAG_SORTING_TYPE = "st";
+    private static final String TAG_SIZE = "s";
+    private static final String TAG_SEARCH_BOX_MODE = "sbm";
+
     public GridBlockEntity() {
         super(Rs2Mod.BLOCK_ENTITIES.getGrid());
     }
 
     @Override
-    protected GridNetworkNode createNode(World world, BlockPos pos) {
-        return new GridNetworkNode(
+    protected GridNetworkNode createNode(World world, BlockPos pos, CompoundTag tag) {
+        GridNetworkNode grid = new GridNetworkNode(
                 FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
                 FabricNetworkNodeReference.of(world, pos),
                 Rs2Mod.API.getGridSearchBoxModeRegistry(),
                 Rs2Config.get().getGrid().getEnergyUsage()
         );
+
+        if (tag.contains(TAG_SORTING_DIRECTION)) {
+            grid.setSortingDirection(GridSettings.getSortingDirection(tag.getInt(TAG_SORTING_DIRECTION)));
+        }
+
+        if (tag.contains(TAG_SORTING_TYPE)) {
+            grid.setSortingType(GridSettings.getSortingType(tag.getInt(TAG_SORTING_TYPE)));
+        }
+
+        if (tag.contains(TAG_SIZE)) {
+            grid.setSize(GridSettings.getSize(tag.getInt(TAG_SIZE)));
+        }
+
+        if (tag.contains(TAG_SEARCH_BOX_MODE)) {
+            grid.setSearchBoxMode(Rs2Mod.API.getGridSearchBoxModeRegistry().get(tag.getInt(TAG_SEARCH_BOX_MODE)));
+        }
+
+        return grid;
     }
 
     @Override
@@ -58,32 +80,11 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
     }
 
     @Override
-    public void fromTag(BlockState blockState, CompoundTag tag) {
-        if (tag.contains("sd")) {
-            node.setSortingDirection(GridSettings.getSortingDirection(tag.getInt("sd")));
-        }
-
-        if (tag.contains("st")) {
-            node.setSortingType(GridSettings.getSortingType(tag.getInt("st")));
-        }
-
-        if (tag.contains("s")) {
-            node.setSize(GridSettings.getSize(tag.getInt("s")));
-        }
-
-        if (tag.contains("sbm")) {
-            node.setSearchBoxMode(Rs2Mod.API.getGridSearchBoxModeRegistry().get(tag.getInt("sbm")));
-        }
-
-        super.fromTag(blockState, tag);
-    }
-
-    @Override
     public CompoundTag toTag(CompoundTag tag) {
-        tag.putInt("sd", GridSettings.getSortingDirection(node.getSortingDirection()));
-        tag.putInt("st", GridSettings.getSortingType(node.getSortingType()));
-        tag.putInt("s", GridSettings.getSize(node.getSize()));
-        tag.putInt("sbm", Rs2Mod.API.getGridSearchBoxModeRegistry().getId(node.getSearchBoxMode()));
+        tag.putInt(TAG_SORTING_DIRECTION, GridSettings.getSortingDirection(node.getSortingDirection()));
+        tag.putInt(TAG_SORTING_TYPE, GridSettings.getSortingType(node.getSortingType()));
+        tag.putInt(TAG_SIZE, GridSettings.getSize(node.getSize()));
+        tag.putInt(TAG_SEARCH_BOX_MODE, Rs2Mod.API.getGridSearchBoxModeRegistry().getId(node.getSearchBoxMode()));
 
         return super.toTag(tag);
     }

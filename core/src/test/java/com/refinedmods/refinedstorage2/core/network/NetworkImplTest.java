@@ -57,7 +57,7 @@ class NetworkImplTest {
     void Test_node_change_should_rebuild_energy_storage_sources() {
         // Arrange
         NetworkNodeReference badRef = new StubNetworkNodeReference(null);
-        NetworkNodeReference controllerRef = new StubNetworkNodeReference(new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 5, ControllerType.NORMAL));
+        NetworkNodeReference controllerRef = new StubNetworkNodeReference(new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 0, 5, ControllerType.NORMAL));
 
         Network network = new NetworkImpl(UUID.randomUUID());
         network.getNodeReferences().add(badRef);
@@ -81,7 +81,7 @@ class NetworkImplTest {
     @Test
     void Test_receiving_energy() {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 20, ControllerType.NORMAL);
+        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 0, 20, ControllerType.NORMAL);
         NetworkNodeReference controllerRef = new StubNetworkNodeReference(controller);
 
         Network network = new NetworkImpl(UUID.randomUUID());
@@ -100,7 +100,7 @@ class NetworkImplTest {
     @Test
     void Test_receiving_energy_when_node_is_gone() {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 20, ControllerType.NORMAL);
+        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 0, 20, ControllerType.NORMAL);
         StubNetworkNodeReference controllerRef = new StubNetworkNodeReference(controller);
 
         Network network = new NetworkImpl(UUID.randomUUID());
@@ -121,7 +121,7 @@ class NetworkImplTest {
     @Test
     void Test_extracting_energy() {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 20, ControllerType.NORMAL);
+        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 0, 20, ControllerType.NORMAL);
         NetworkNodeReference controllerRef = new StubNetworkNodeReference(controller);
 
         Network network = new NetworkImpl(UUID.randomUUID());
@@ -142,7 +142,7 @@ class NetworkImplTest {
     @Test
     void Test_extracting_energy_when_node_is_gone() {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 20, ControllerType.NORMAL);
+        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, null, 0, 20, ControllerType.NORMAL);
         StubNetworkNodeReference controllerRef = new StubNetworkNodeReference(controller);
 
         Network network = new NetworkImpl(UUID.randomUUID());

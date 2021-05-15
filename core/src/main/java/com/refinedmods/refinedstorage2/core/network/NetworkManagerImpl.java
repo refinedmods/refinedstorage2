@@ -198,7 +198,7 @@ public class NetworkManagerImpl implements NetworkManager {
         networks.remove(network.getId());
     }
 
-    private void addNetwork(Network network) {
+    public void addNetwork(Network network) {
         LOGGER.debug("Network {} has been added", network.getId());
         networks.put(network.getId(), network);
     }
@@ -206,5 +206,10 @@ public class NetworkManagerImpl implements NetworkManager {
     @Override
     public Collection<Network> getNetworks() {
         return networks.values();
+    }
+
+    @Override
+    public void update() {
+        networks.values().forEach(Network::update);
     }
 }

@@ -6,12 +6,16 @@ import java.util.Collection;
 import java.util.Optional;
 
 public class PrioritizedStorage<T> implements Storage<T>, Priority {
-    private final int priority;
+    private int priority;
     private final Storage<T> parent;
 
     public PrioritizedStorage(int priority, Storage<T> parent) {
         this.priority = priority;
         this.parent = parent;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     @Override
