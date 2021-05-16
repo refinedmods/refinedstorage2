@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
+import com.refinedmods.refinedstorage2.core.grid.GridInsertMode;
 import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
@@ -12,16 +13,12 @@ import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.FabricItemGridStack;
 import com.refinedmods.refinedstorage2.fabric.mixin.SlotAccessor;
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.fabric.screen.BaseScreen;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 import com.refinedmods.refinedstorage2.fabric.util.LastModifiedUtil;
-import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
 
 import java.util.ArrayList;
@@ -84,6 +81,10 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             return GridExtractMode.PLAYER_INVENTORY_STACK;
         }
         return GridExtractMode.CURSOR_STACK;
+    }
+
+    private static GridInsertMode getInsertMode(int clickedButton) {
+        return clickedButton == 1 ? GridInsertMode.SINGLE : GridInsertMode.ENTIRE_STACK;
     }
 
     @Override
@@ -394,11 +395,11 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             tooltipY += 10;
         }
 
-        for (int i = 0; i < smallLines.size(); ++i) {
+        for (OrderedText smallLine : smallLines) {
             matrixStack.push();
             matrixStack.scale(smallTextScale, smallTextScale, 1);
 
-            textRenderer.draw(smallLines.get(i), (float) tooltipX / smallTextScale, (float) tooltipY / smallTextScale, -1, true, matrixStack.peek().getModel(), immediate, false, 0, 15728880);
+            textRenderer.draw(smallLine, (float) tooltipX / smallTextScale, (float) tooltipY / smallTextScale, -1, true, matrixStack.peek().getModel(), immediate, false, 0, 15728880);
             matrixStack.pop();
 
             tooltipY += 9;
@@ -427,22 +428,25 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         ItemStack cursorStack = playerInventory.getCursorStack();
 
         if (!getScreenHandler().getItemView().getStacks().isEmpty() && gridSlotNumber >= 0 && cursorStack.isEmpty()) {
-            GridStack<Rs2ItemStack> stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber);
-
-            PacketUtil.sendToServer(GridExtractPacket.ID, buf -> {
-                PacketUtil.writeItemStack(buf, stack.getStack(), false);
-                GridExtractPacket.writeMode(buf, getExtractMode(clickedButton));
-            });
-
+            mouseClickedInGridWithoutItem(clickedButton);
             return true;
         }
 
         if (isOverStorageArea((int) mouseX, (int) mouseY) && !cursorStack.isEmpty() && (clickedButton == 0 || clickedButton == 1)) {
-            PacketUtil.sendToServer(GridInsertFromCursorPacket.ID, buf -> buf.writeBoolean(clickedButton == 1));
+            mouseClickedInGridWithItem(clickedButton);
             return true;
         }
 
         return super.mouseClicked(mouseX, mouseY, clickedButton);
+    }
+
+    private void mouseClickedInGridWithItem(int clickedButton) {
+        getScreenHandler().onInsertFromCursor(getInsertMode(clickedButton));
+    }
+
+    private void mouseClickedInGridWithoutItem(int clickedButton) {
+        GridStack<Rs2ItemStack> stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber);
+        getScreenHandler().onExtract(stack.getStack(), getExtractMode(clickedButton));
     }
 
     @Override
@@ -464,26 +468,33 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
 
         if (shift || ctrl) {
             if (isOverStorageArea((int) x, (int) y) && gridSlotNumber >= 0) {
-                getScreenHandler().getItemView().setPreventSorting(true);
-
-                Rs2ItemStack stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber).getStack();
-                PacketUtil.sendToServer(GridScrollPacket.ID, buf -> {
-                    PacketUtil.writeItemStack(buf, stack, false);
-                    GridScrollPacket.writeMode(buf, getScrollInGridMode(shift, up));
-                    buf.writeInt(playerInventory.getSlotWithStack(ItemStacks.toItemStack(stack)));
-                });
+                mouseScrolledOnStorageArea(up, shift);
             } else if (focusedSlot != null && focusedSlot.hasStack()) {
-                getScreenHandler().getItemView().setPreventSorting(true);
-
-                PacketUtil.sendToServer(GridScrollPacket.ID, buf -> {
-                    PacketUtil.writeItemStack(buf, ItemStacks.ofItemStack(focusedSlot.getStack()), false);
-                    GridScrollPacket.writeMode(buf, getScrollInGridMode(shift, up));
-                    buf.writeInt(((SlotAccessor) focusedSlot).getIndex());
-                });
+                mouseScrolledOnInventoryArea(up, shift);
             }
         }
 
         return this.scrollbar.mouseScrolled(x, y, delta) || super.mouseScrolled(x, y, delta);
+    }
+
+    private void mouseScrolledOnInventoryArea(boolean up, boolean shift) {
+        getScreenHandler().getItemView().setPreventSorting(true);
+
+        Rs2ItemStack stack = ItemStacks.ofItemStack(focusedSlot.getStack());
+        int slot = ((SlotAccessor) focusedSlot).getIndex();
+        GridScrollMode mode = getScrollInGridMode(shift, up);
+
+        getScreenHandler().onScroll(stack, slot, mode);
+    }
+
+    private void mouseScrolledOnStorageArea(boolean up, boolean shift) {
+        getScreenHandler().getItemView().setPreventSorting(true);
+
+        Rs2ItemStack stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber).getStack();
+        int slot = playerInventory.getSlotWithStack(ItemStacks.toItemStack(stack));
+        GridScrollMode mode = getScrollInGridMode(shift, up);
+
+        getScreenHandler().onScroll(stack, slot, mode);
     }
 
     private GridScrollMode getScrollInGridMode(boolean shift, boolean up) {

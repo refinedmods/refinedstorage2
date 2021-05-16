@@ -34,6 +34,12 @@ class GridEventHandlerImplTest {
     }
 
     @Test
+    void Test_activeness() {
+        // Assert
+        assertThat(eventHandler.isActive()).isTrue();
+    }
+
+    @Test
     void Test_inserting_entire_stack_from_cursor() {
         // Arrange
         storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
@@ -148,6 +154,8 @@ class GridEventHandlerImplTest {
 
         Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
         assertThat(entry).isNotPresent();
+
+        assertThat(eventHandler.isActive()).isFalse();
     }
 
     @Test
@@ -217,6 +225,8 @@ class GridEventHandlerImplTest {
 
         Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
         assertThat(entry).isNotPresent();
+
+        assertThat(eventHandler.isActive()).isFalse();
     }
 
     @Test
@@ -473,6 +483,8 @@ class GridEventHandlerImplTest {
 
         Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
         assertThat(entry).isNotPresent();
+
+        assertThat(eventHandler.isActive()).isFalse();
     }
 
     @Test
@@ -645,6 +657,8 @@ class GridEventHandlerImplTest {
 
         Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
         assertThat(entry).isNotPresent();
+
+        assertThat(eventHandler.isActive()).isFalse();
     }
 
     @Test
@@ -819,5 +833,7 @@ class GridEventHandlerImplTest {
 
         Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
         assertThat(entry).isNotPresent();
+
+        assertThat(eventHandler.isActive()).isFalse();
     }
 }

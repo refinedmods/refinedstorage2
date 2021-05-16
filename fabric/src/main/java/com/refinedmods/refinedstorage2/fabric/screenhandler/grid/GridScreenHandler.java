@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.screenhandler.grid;
 
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
-import com.refinedmods.refinedstorage2.core.grid.GridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.grid.GridInsertMode;
 import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
@@ -24,9 +23,9 @@ import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridSettings;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.PlayerGridInteractor;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.ClientGridEventHandler;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.ServerGridEventHandler;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.query.FabricGridStackFactory;
-import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridItemUpdatePacket;
 import com.refinedmods.refinedstorage2.fabric.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.BaseScreenHandler;
@@ -60,8 +59,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     private final TwoWaySyncProperty<GridSearchBoxMode> searchBoxModeProperty;
     private GridBlockEntity grid;
     private StorageChannel<Rs2ItemStack> storageChannel; // TODO - Support changing of the channel.
-    private GridEventHandler eventHandler;
-    private boolean active;
+    private final GridEventHandler eventHandler;
     private Runnable sizeChangedListener;
     private GridSearchBox searchBox;
 
@@ -116,7 +114,9 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         addProperty(sizeProperty);
         addProperty(searchBoxModeProperty);
 
-        active = buf.readBoolean();
+        boolean active = buf.readBoolean();
+
+        this.eventHandler = new ClientGridEventHandler(active, itemView);
 
         itemView.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
         itemView.setSortingType(GridSettings.getSortingType(buf.readInt()));
@@ -182,13 +182,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         this.playerInventory = playerInventory;
         this.storageChannel = grid.getNetwork().getItemStorageChannel();
         this.storageChannel.addListener(this);
-        this.eventHandler = new GridEventHandlerImpl(grid.isActive(), storageChannel, new PlayerGridInteractor(playerInventory.player)) {
-            @Override
-            public void onActiveChanged(boolean active) {
-                super.onActiveChanged(active);
-                PacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, GridActivePacket.ID, buf -> buf.writeBoolean(active));
-            }
-        };
+        this.eventHandler = new ServerGridEventHandler(grid.isActive(), storageChannel, (ServerPlayerEntity) playerInventory.player);
         this.grid = grid;
         this.grid.addWatcher(eventHandler);
 
@@ -273,10 +267,14 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         this.searchBox.setAutoSelected(searchBoxMode.shouldAutoSelect());
         this.searchBox.setListener(text -> {
             if (Rs2Config.get().getGrid().isRememberSearchQuery()) {
-                lastSearchQuery = text;
+                updateLastSearchQuery(text);
             }
             searchBox.setInvalid(!searchBoxMode.onTextChanged(itemView, text));
         });
+    }
+
+    private static void updateLastSearchQuery(String query) {
+        lastSearchQuery = query;
     }
 
     @Override
@@ -294,7 +292,6 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
 
     public void addSlots(int playerInventoryY) {
         slots.clear();
-
         addPlayerInventory(playerInventory, 8, playerInventoryY);
     }
 
@@ -329,18 +326,17 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
 
     @Override
     public void onItemUpdate(Rs2ItemStack template, long amount, StorageTracker.Entry trackerEntry) {
-        LOGGER.info("Item {} got updated with {}", template, amount);
-
-        itemView.onChange(template, amount, trackerEntry);
+        eventHandler.onItemUpdate(template, amount, trackerEntry);
     }
 
     @Override
     public void onActiveChanged(boolean active) {
-        this.active = active;
+        eventHandler.onActiveChanged(active);
     }
 
+    @Override
     public boolean isActive() {
-        return active;
+        return eventHandler.isActive();
     }
 
     @Override
