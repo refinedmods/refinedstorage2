@@ -1,0 +1,23 @@
+{
+    "name": "book.refinedstorage2.entry.networking.controllers.title",
+    "category": "refinedstorage2:networking",
+    "icon": "refinedstorage2:controller",
+    "pages": [
+        {
+            "type": "text",
+            "text": "book.refinedstorage2.entry.networking.controllers.line0"
+        },
+        {
+            "type": "crafting",
+            "recipe": "refinedstorage2:controller"
+        },
+        {
+            "type": "text",
+            "text": "book.refinedstorage2.entry.networking.controllers.line1"
+        },
+        {
+            "type": "text",
+            "text": "book.refinedstorage2.entry.networking.controllers.line2"
+        }
+    ]
+}

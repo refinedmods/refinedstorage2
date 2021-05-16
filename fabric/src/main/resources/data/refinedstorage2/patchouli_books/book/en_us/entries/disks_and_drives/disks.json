@@ -26,6 +26,10 @@
             "type": "crafting",
             "recipe": "refinedstorage2:64k_storage_part",
             "recipe2": "refinedstorage2:64k_storage_disk"
+        },
+        {
+            "type": "text",
+            "text": "book.refinedstorage2.entry.disks_and_drives.disks.line1"
         }
     ]
 }
