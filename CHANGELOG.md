@@ -30,7 +30,6 @@ Currently, this version only works on Fabric.
 - (Raw) Advanced Processor
 - Silicon
 - Processor Binding
-- "Reset" button on the storage priority screen.
 - Integration with Roughly Enough Items in the form of a REI search box mode.
 - Integration with ModMenu.
 - Integration with Patchouli.
@@ -41,6 +40,7 @@ Currently, this version only works on Fabric.
 ### Changed
 
 - Re-arranged the Disk Drive GUI slightly. The priority button has been moved to the side.
+- The "Priority" screen now has a reset button.
 - "Whitelist" has been renamed to "Allowlist".
 - "Blacklist" has been renamed to "Blocklist".
 - Contents of storages in "insert-only" mode are now visible in the Grid.
