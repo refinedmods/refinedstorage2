@@ -1,0 +1,25 @@
+{
+    "name": "book.refinedstorage2.entry.disks_and_drives.storage_housing.title",
+    "category": "refinedstorage2:disks_and_drives",
+    "icon": "refinedstorage2:storage_housing",
+    "pages": [
+        {
+            "type": "text",
+            "text": "book.refinedstorage2.entry.disks_and_drives.storage_housing.line0"
+        },
+        {
+            "type": "crafting",
+            "recipe": "refinedstorage2:storage_housing"
+        },
+        {
+            "type": "crafting",
+            "recipe": "refinedstorage2:1k_storage_disk_from_storage_housing",
+            "recipe2": "refinedstorage2:4k_storage_disk_from_storage_housing"
+        },
+        {
+            "type": "crafting",
+            "recipe": "refinedstorage2:16k_storage_disk_from_storage_housing",
+            "recipe2": "refinedstorage2:64k_storage_disk_from_storage_housing"
+        }
+    ]
+}
