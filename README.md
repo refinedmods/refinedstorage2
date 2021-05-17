@@ -53,9 +53,7 @@ It is possible to edit the config in-game through [ClothConfig](https://github.c
 
 Refined Storage 2 has no required dependencies, besides [Fabric API](https://github.com/FabricMC/fabric).
 
-The JAR is shipped with [LibBlockAttributes](https://github.com/AlexIIL/LibBlockAttributes)
-, [autoconfig1u](https://github.com/shedaniel/AutoConfig) and [Team Reborn Energy](https://github.com/TechReborn/Energy)
-.
+The JAR is shipped with [LibBlockAttributes](https://github.com/AlexIIL/LibBlockAttributes), [autoconfig1u](https://github.com/shedaniel/AutoConfig) and [Team Reborn Energy](https://github.com/TechReborn/Energy).
 
 ### Suggested dependencies
 
@@ -82,8 +80,7 @@ We might close your issue, without explanation, if you do not follow these guide
 
 ## Feature requests
 
-Have a feature request? Please let us know on the [issue tracker](https://github.com/refinedmods/refinedstorage2/issues)
-.
+Have a feature request? Please let us know on the [issue tracker](https://github.com/refinedmods/refinedstorage2/issues).
 
 1) Ensure that you are running on the latest Refined Storage 2 version.
 2) Ensure that your feature request hasn't already been posted. Please look in the closed issues as well (for feature
