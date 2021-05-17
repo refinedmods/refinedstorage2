@@ -68,14 +68,15 @@ public abstract class BaseBlock extends Block {
     @Override
     @SuppressWarnings("deprecation")
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (!world.isClient()) {
-            NamedScreenHandlerFactory screenHandlerFactory = state.createScreenHandlerFactory(world, pos);
-            if (screenHandlerFactory != null) {
+        NamedScreenHandlerFactory screenHandlerFactory = state.createScreenHandlerFactory(world, pos);
+        if (screenHandlerFactory != null) {
+            if (!world.isClient()) {
                 player.openHandledScreen(screenHandlerFactory);
             }
+            return ActionResult.SUCCESS;
         }
 
-        return ActionResult.SUCCESS;
+        return super.onUse(state, world, pos, player, hand, hit);
     }
 
     @Override
