@@ -7,11 +7,16 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Material;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.block.Waterloggable;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.ai.pathing.NavigationType;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
@@ -20,7 +25,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-public class CableBlock extends NetworkNodeBlock {
+public class CableBlock extends NetworkNodeBlock implements Waterloggable {
     private static final BooleanProperty NORTH = BooleanProperty.of("north");
     private static final BooleanProperty EAST = BooleanProperty.of("east");
     private static final BooleanProperty SOUTH = BooleanProperty.of("south");
@@ -45,13 +50,31 @@ public class CableBlock extends NetworkNodeBlock {
                 .with(SOUTH, false)
                 .with(WEST, false)
                 .with(UP, false)
-                .with(DOWN, false));
+                .with(DOWN, false)
+                .with(Properties.WATERLOGGED, false));
+    }
+
+    @Override
+    public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
+        return !state.get(Properties.WATERLOGGED);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public FluidState getFluidState(BlockState state) {
+        return Boolean.TRUE.equals(state.get(Properties.WATERLOGGED)) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
     }
 
     @Override
     @SuppressWarnings("deprecation")
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState newState, WorldAccess world, BlockPos pos, BlockPos posFrom) {
         return getState(state, world, pos);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public boolean canPathfindThrough(BlockState state, BlockView world, BlockPos pos, NavigationType type) {
+        return false;
     }
 
     @Override
@@ -63,7 +86,7 @@ public class CableBlock extends NetworkNodeBlock {
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
 
-        builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN);
+        builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN, Properties.WATERLOGGED);
     }
 
     @Override
