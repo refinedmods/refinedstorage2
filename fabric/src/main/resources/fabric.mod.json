@@ -3,12 +3,12 @@
     "id": "refinedstorage2",
     "version": "${version}",
     "name": "Refined Storage 2",
-    "description": "An elegant solution to your hoarding problem.",
+    "description": "Refined Storage is a mass storage mod for Minecraft that offers the player a network-based storage system, allowing them to store items and fluids on a massively expandable device network.",
     "authors": [
         "Refined Mods"
     ],
     "contact": {
-        "homepage": "https://refinedmods.com/",
+        "homepage": "https://refinedmods.com/refined-storage",
         "sources": "https://github.com/refinedmods/refinedstorage2",
         "issues": "https://github.com/refinedmods/refinedstorage2/issues"
     },
