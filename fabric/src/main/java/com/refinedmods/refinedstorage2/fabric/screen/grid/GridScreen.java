@@ -463,46 +463,69 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     @Override
     public boolean mouseScrolled(double x, double y, double delta) {
         boolean up = delta > 0;
-        boolean shift = hasShiftDown();
-        boolean ctrl = hasControlDown();
 
-        if (shift || ctrl) {
-            if (isOverStorageArea((int) x, (int) y) && gridSlotNumber >= 0) {
-                mouseScrolledOnStorageArea(up, shift);
-            } else if (focusedSlot != null && focusedSlot.hasStack()) {
-                mouseScrolledOnInventoryArea(up, shift);
-            }
+        if (isOverStorageArea((int) x, (int) y) && gridSlotNumber >= 0) {
+            mouseScrolledOnStorageArea(up);
+        } else if (focusedSlot != null && focusedSlot.hasStack()) {
+            mouseScrolledOnInventoryArea(up);
         }
 
         return this.scrollbar.mouseScrolled(x, y, delta) || super.mouseScrolled(x, y, delta);
     }
 
-    private void mouseScrolledOnInventoryArea(boolean up, boolean shift) {
+    private void mouseScrolledOnInventoryArea(boolean up) {
         getScreenHandler().getItemView().setPreventSorting(true);
 
         Rs2ItemStack stack = ItemStacks.ofItemStack(focusedSlot.getStack());
         int slot = ((SlotAccessor) focusedSlot).getIndex();
-        GridScrollMode mode = getScrollInGridMode(shift, up);
+        GridScrollMode mode = getScrollModeWhenScrollingOnInventoryArea(up);
+        if (mode == null) {
+            return;
+        }
 
         getScreenHandler().onScroll(stack, slot, mode);
     }
 
-    private void mouseScrolledOnStorageArea(boolean up, boolean shift) {
+    private static GridScrollMode getScrollModeWhenScrollingOnInventoryArea(boolean up) {
+        if (hasShiftDown()) {
+            return up ? GridScrollMode.INVENTORY_TO_GRID : GridScrollMode.GRID_TO_INVENTORY;
+        }
+        return null;
+    }
+
+    private void mouseScrolledOnStorageArea(boolean up) {
         getScreenHandler().getItemView().setPreventSorting(true);
 
         Rs2ItemStack stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber).getStack();
         int slot = playerInventory.getSlotWithStack(ItemStacks.toItemStack(stack));
-        GridScrollMode mode = getScrollInGridMode(shift, up);
+        GridScrollMode mode = getScrollModeWhenScrollingOnGridArea(up);
+        if (mode == null) {
+            return;
+        }
 
         getScreenHandler().onScroll(stack, slot, mode);
     }
 
-    private GridScrollMode getScrollInGridMode(boolean shift, boolean up) {
-        if (up) {
-            return shift ? GridScrollMode.INVENTORY_TO_GRID_STACK : GridScrollMode.INVENTORY_TO_GRID_SINGLE_STACK;
-        } else {
-            return shift ? GridScrollMode.GRID_TO_INVENTORY_STACK : GridScrollMode.GRID_TO_INVENTORY_SINGLE_STACK;
+    private GridScrollMode getScrollModeWhenScrollingOnGridArea(boolean up) {
+        boolean shift = hasShiftDown();
+        boolean ctrl = hasControlDown();
+        if (shift && ctrl) {
+            return null;
         }
+
+        if (up) {
+            if (shift) {
+                return GridScrollMode.INVENTORY_TO_GRID;
+            }
+        } else {
+            if (shift) {
+                return GridScrollMode.GRID_TO_INVENTORY;
+            } else if (ctrl) {
+                return GridScrollMode.GRID_TO_CURSOR;
+            }
+        }
+
+        return null;
     }
 
     @Override

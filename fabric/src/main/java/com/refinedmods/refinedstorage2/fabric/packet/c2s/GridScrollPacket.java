@@ -20,17 +20,14 @@ public class GridScrollPacket implements ServerPlayNetworking.PlayChannelHandler
 
     public static void writeMode(PacketByteBuf buf, GridScrollMode mode) {
         switch (mode) {
-            case GRID_TO_INVENTORY_STACK:
+            case GRID_TO_INVENTORY:
                 buf.writeByte(0);
                 break;
-            case GRID_TO_INVENTORY_SINGLE_STACK:
+            case GRID_TO_CURSOR:
                 buf.writeByte(1);
                 break;
-            case INVENTORY_TO_GRID_STACK:
+            case INVENTORY_TO_GRID:
                 buf.writeByte(2);
-                break;
-            case INVENTORY_TO_GRID_SINGLE_STACK:
-                buf.writeByte(3);
                 break;
         }
     }
@@ -51,12 +48,10 @@ public class GridScrollPacket implements ServerPlayNetworking.PlayChannelHandler
 
     private GridScrollMode getMode(byte mode) {
         if (mode == 0) {
-            return GridScrollMode.GRID_TO_INVENTORY_STACK;
+            return GridScrollMode.GRID_TO_INVENTORY;
         } else if (mode == 1) {
-            return GridScrollMode.GRID_TO_INVENTORY_SINGLE_STACK;
-        } else if (mode == 2) {
-            return GridScrollMode.INVENTORY_TO_GRID_STACK;
+            return GridScrollMode.GRID_TO_CURSOR;
         }
-        return GridScrollMode.INVENTORY_TO_GRID_SINGLE_STACK;
+        return GridScrollMode.INVENTORY_TO_GRID;
     }
 }

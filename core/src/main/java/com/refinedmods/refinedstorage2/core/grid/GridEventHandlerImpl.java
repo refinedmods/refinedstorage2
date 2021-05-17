@@ -182,25 +182,24 @@ public class GridEventHandlerImpl implements GridEventHandler {
         }
 
         switch (mode) {
-            case GRID_TO_INVENTORY_SINGLE_STACK:
-            case GRID_TO_INVENTORY_STACK:
-                handleExtractFromGrid(template, slot, mode);
+            case GRID_TO_INVENTORY:
+                handleExtractFromGridToInventory(template, slot);
                 break;
-            case INVENTORY_TO_GRID_SINGLE_STACK:
-            case INVENTORY_TO_GRID_STACK:
-                handleExtractFromInventory(template, slot, mode);
+            case GRID_TO_CURSOR:
+                handleExtractFromGridToCursor(template);
+                break;
+            case INVENTORY_TO_GRID:
+                handleExtractFromInventoryToGrid(template, slot);
                 break;
         }
     }
 
-    private void handleExtractFromInventory(Rs2ItemStack template, int slot, GridScrollMode mode) {
-        int size = mode == GridScrollMode.INVENTORY_TO_GRID_SINGLE_STACK ? 1 : template.getMaxCount();
-
-        Rs2ItemStack extractedSimulated = interactor.extractFromInventory(template, slot, size, Action.SIMULATE);
+    private void handleExtractFromInventoryToGrid(Rs2ItemStack template, int slot) {
+        Rs2ItemStack extractedSimulated = interactor.extractFromInventory(template, slot, 1, Action.SIMULATE);
         if (!extractedSimulated.isEmpty()) {
             Optional<Rs2ItemStack> remainderSimulated = storageChannel.insert(extractedSimulated, extractedSimulated.getAmount(), Action.SIMULATE);
             if (!remainderSimulated.isPresent() || remainderSimulated.get().getAmount() != extractedSimulated.getAmount()) {
-                Rs2ItemStack extracted = interactor.extractFromInventory(template, slot, size, Action.EXECUTE);
+                Rs2ItemStack extracted = interactor.extractFromInventory(template, slot, 1, Action.EXECUTE);
                 if (!extracted.isEmpty()) {
                     storageChannel
                             .insert(extracted, extracted.getAmount(), interactor)
@@ -210,14 +209,12 @@ public class GridEventHandlerImpl implements GridEventHandler {
         }
     }
 
-    private void handleExtractFromGrid(Rs2ItemStack template, int preferredSlot, GridScrollMode mode) {
-        int size = mode == GridScrollMode.GRID_TO_INVENTORY_SINGLE_STACK ? 1 : template.getMaxCount();
-
-        storageChannel.extract(template, size, Action.SIMULATE).ifPresent(stack -> {
+    private void handleExtractFromGridToInventory(Rs2ItemStack template, int preferredSlot) {
+        storageChannel.extract(template, 1, Action.SIMULATE).ifPresent(stack -> {
             Rs2ItemStack remainderSimulated = interactor.insertIntoInventory(stack, preferredSlot, Action.SIMULATE);
-            if (remainderSimulated.isEmpty() || remainderSimulated.getAmount() != size) {
+            if (remainderSimulated.isEmpty()) {
                 storageChannel
-                        .extract(template, size, interactor)
+                        .extract(template, 1, interactor)
                         .map(extracted -> interactor.insertIntoInventory(extracted, preferredSlot, Action.EXECUTE))
                         .ifPresent(remainder -> {
                             if (!remainder.isEmpty()) {
@@ -225,6 +222,29 @@ public class GridEventHandlerImpl implements GridEventHandler {
                             }
                         });
             }
+        });
+    }
+
+    private void handleExtractFromGridToCursor(Rs2ItemStack template) {
+        Rs2ItemStack cursorStack = interactor.getCursorStack();
+        if (!cursorStack.isEmpty()) {
+            if (!cursorStack.getItem().equals(template.getItem())) {
+                return;
+            }
+            if (cursorStack.getAmount() + 1 > cursorStack.getMaxCount()) {
+                return;
+            }
+        }
+
+        storageChannel.extract(template, 1, Action.SIMULATE).ifPresent(extractedSimulated -> {
+            storageChannel.extract(template, 1, interactor).ifPresent(extracted -> {
+                if (cursorStack.isEmpty()) {
+                    interactor.setCursorStack(extracted);
+                } else {
+                    cursorStack.increment(1);
+                    interactor.setCursorStack(cursorStack);
+                }
+            });
         });
     }
 }
