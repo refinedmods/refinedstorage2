@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 
 import java.util.Arrays;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -332,5 +333,23 @@ class CompositeEnergyStorageTest {
         }
 
         assertThat(sut.getCapacity()).isEqualTo(15);
+    }
+
+    @Test
+    void Test_energy_stored_and_capacity_on_composite_with_infinite_energy_storages() {
+        // Arrange
+        EnergyStorage a = new CreativeEnergyStorage();
+        EnergyStorage b = new CreativeEnergyStorage();
+
+        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        sut.setSources(Arrays.asList(a, b));
+
+        // Act
+        long stored = sut.getStored();
+        long capacity = sut.getCapacity();
+
+        // Assert
+        assertThat(stored).isEqualTo(Long.MAX_VALUE);
+        assertThat(capacity).isEqualTo(Long.MAX_VALUE);
     }
 }

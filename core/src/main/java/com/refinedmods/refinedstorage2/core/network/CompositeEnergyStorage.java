@@ -14,12 +14,26 @@ public class CompositeEnergyStorage implements EnergyStorage {
 
     @Override
     public long getStored() {
-        return sources.stream().mapToLong(EnergyStorage::getStored).sum();
+        long stored = 0;
+        for (EnergyStorage source : sources) {
+            if (stored + source.getStored() < 0) {
+                return Long.MAX_VALUE;
+            }
+            stored += source.getStored();
+        }
+        return stored;
     }
 
     @Override
     public long getCapacity() {
-        return sources.stream().mapToLong(EnergyStorage::getCapacity).sum();
+        long capacity = 0;
+        for (EnergyStorage source : sources) {
+            if (capacity + source.getCapacity() < 0) {
+                return Long.MAX_VALUE;
+            }
+            capacity += source.getCapacity();
+        }
+        return capacity;
     }
 
     @Override
