@@ -84,12 +84,6 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
         );
     }
 
-    public void receive() {
-        if (node != null && type == ControllerType.NORMAL) {
-            node.receive(50, Action.EXECUTE);
-        }
-    }
-
     @Override
     public long getStored() {
         return node.getStored();
