@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.fabric.screenhandler.ControllerScreenHand
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -24,17 +25,20 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.EnergySide;
 import team.reborn.energy.EnergyTier;
 
 public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetworkNode> implements EnergyStorage, ExtendedScreenHandlerFactory, team.reborn.energy.EnergyStorage {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private static final String TAG_STORED = "stored";
     private static final int ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
 
     private final ControllerType type;
     private long lastTypeChanged;
-    private ControllerEnergyType lastType = ControllerEnergyType.OFF;
 
     public ControllerBlockEntity(ControllerType type) {
         super(getBlockEntityType(type));
@@ -48,14 +52,24 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     @Override
     public void tick() {
         if (world != null && !world.isClient() && node != null) {
-            ControllerEnergyType currentType = ControllerEnergyType.ofState(node.getState());
-            if (currentType != lastType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
-                this.lastTypeChanged = System.currentTimeMillis();
-                this.lastType = currentType;
+            calculateCachedStateIfNecessary();
 
-                world.setBlockState(pos, world.getBlockState(pos).with(ControllerBlock.ENERGY_TYPE, currentType));
+            ControllerEnergyType type = ControllerEnergyType.ofState(node.getState());
+            ControllerEnergyType inWorldType = cachedState.get(ControllerBlock.ENERGY_TYPE);
+
+            if (type != inWorldType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
+                LOGGER.info("Energy type state change for block at {}: {} -> {}", pos, inWorldType, type);
+
+                this.lastTypeChanged = System.currentTimeMillis();
+
+                updateEnergyTypeInWorld(type);
             }
         }
+    }
+
+    private void updateEnergyTypeInWorld(ControllerEnergyType type) {
+        BlockState newState = world.getBlockState(pos).with(ControllerBlock.ENERGY_TYPE, type);
+        updateState(newState);
     }
 
     @Override

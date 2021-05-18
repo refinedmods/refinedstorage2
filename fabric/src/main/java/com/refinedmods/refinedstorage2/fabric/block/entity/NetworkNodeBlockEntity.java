@@ -15,15 +15,19 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends BlockEntity implements NetworkNode, Tickable {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private static final int ACTIVE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
     private static final String TAG_REDSTONE_MODE = "rm";
 
     protected T node;
-    private boolean lastActive;
     private long lastActiveChanged;
     private CompoundTag tag;
+    protected BlockState cachedState;
 
     protected NetworkNodeBlockEntity(BlockEntityType<?> type) {
         super(type);
@@ -86,29 +90,39 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     @Override
     public void tick() {
         if (world != null && !world.isClient() && node != null) {
-            boolean active = node.isActive();
-            if (active != lastActive && (lastActiveChanged == 0 || System.currentTimeMillis() - lastActiveChanged > ACTIVE_CHANGE_MINIMUM_INTERVAL_MS)) {
-                this.lastActiveChanged = System.currentTimeMillis();
-                this.lastActive = active;
-
-                onActiveChanged(active);
-                updateState(active);
-            }
-
+            updateActivenessInWorld();
             update();
         }
+    }
+
+    private void updateActivenessInWorld() {
+        calculateCachedStateIfNecessary();
+
+        if (!cachedState.contains(NetworkNodeBlock.ACTIVE)) {
+            return;
+        }
+
+        boolean active = node.isActive();
+        boolean activeInWorld = cachedState.get(NetworkNodeBlock.ACTIVE);
+
+        if (active != activeInWorld && (lastActiveChanged == 0 || System.currentTimeMillis() - lastActiveChanged > ACTIVE_CHANGE_MINIMUM_INTERVAL_MS)) {
+            LOGGER.info("Activeness state change for block at {}: {} -> {}", pos, activeInWorld, active);
+
+            this.lastActiveChanged = System.currentTimeMillis();
+
+            onActiveChanged(active);
+            updateActivenessInWorld(active);
+        }
+    }
+
+    private void updateActivenessInWorld(boolean active) {
+        BlockState newState = world.getBlockState(pos).with(NetworkNodeBlock.ACTIVE, active);
+        updateState(newState);
     }
 
     @Override
     public void update() {
         node.update();
-    }
-
-    private void updateState(boolean active) {
-        BlockState state = world.getBlockState(pos);
-        if (state.contains(NetworkNodeBlock.ACTIVE)) {
-            world.setBlockState(pos, world.getBlockState(pos).with(NetworkNodeBlock.ACTIVE, active));
-        }
     }
 
     @Override
@@ -128,5 +142,20 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     public void setRedstoneMode(RedstoneMode redstoneMode) {
         node.setRedstoneMode(redstoneMode);
         markDirty();
+    }
+
+    protected void updateState(BlockState newState) {
+        world.setBlockState(pos, newState);
+        calculateCachedState();
+    }
+
+    protected void calculateCachedStateIfNecessary() {
+        if (cachedState == null) {
+            calculateCachedState();
+        }
+    }
+
+    private void calculateCachedState() {
+        this.cachedState = world.getBlockState(pos);
     }
 }

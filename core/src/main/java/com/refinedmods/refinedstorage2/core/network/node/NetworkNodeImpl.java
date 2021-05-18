@@ -5,12 +5,7 @@ import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public abstract class NetworkNodeImpl implements NetworkNode {
-    private static final Logger LOGGER = LogManager.getLogger(NetworkNodeImpl.class);
-
     protected final Rs2World world;
     private final Position pos;
     private final NetworkNodeReference ref;
@@ -63,7 +58,6 @@ public abstract class NetworkNodeImpl implements NetworkNode {
 
     @Override
     public void onActiveChanged(boolean active) {
-        LOGGER.info("Active changed to {} for node at {}", active, pos);
     }
 
     public abstract long getEnergyUsage();
