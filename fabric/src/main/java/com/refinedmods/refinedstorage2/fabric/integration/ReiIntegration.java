@@ -5,22 +5,16 @@ import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.ReiGridSearchBoxMode;
 import com.refinedmods.refinedstorage2.fabric.integration.rei.ReiProxy;
 
+import net.fabricmc.loader.api.FabricLoader;
+
 public class ReiIntegration {
-    private static Boolean loaded;
+    private static final String REI_MOD_ID = "roughlyenoughitems-api";
 
     private ReiIntegration() {
     }
 
     public static boolean isLoaded() {
-        if (loaded == null) {
-            try {
-                Class.forName("me.shedaniel.rei.api.REIHelper");
-                loaded = true;
-            } catch (ClassNotFoundException e) {
-                loaded = false;
-            }
-        }
-        return loaded;
+        return FabricLoader.getInstance().isModLoaded(REI_MOD_ID);
     }
 
     public static void registerGridSearchBoxModes(GridQueryParser queryParser) {

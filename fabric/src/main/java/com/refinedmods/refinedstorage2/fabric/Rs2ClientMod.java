@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric;
 
 import com.refinedmods.refinedstorage2.fabric.mixin.ModelPredicateProviderRegistryAccessor;
+import com.refinedmods.refinedstorage2.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.ControllerEnergyPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridItemUpdatePacket;
@@ -77,10 +78,10 @@ public class Rs2ClientMod implements ClientModInitializer {
     }
 
     private void registerPackets() {
-        ClientPlayNetworking.registerGlobalReceiver(StorageDiskInfoResponsePacket.ID, new StorageDiskInfoResponsePacket());
-        ClientPlayNetworking.registerGlobalReceiver(GridItemUpdatePacket.ID, new GridItemUpdatePacket());
-        ClientPlayNetworking.registerGlobalReceiver(GridActivePacket.ID, new GridActivePacket());
-        ClientPlayNetworking.registerGlobalReceiver(ControllerEnergyPacket.ID, new ControllerEnergyPacket());
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.STORAGE_DISK_INFO_RESPONSE, new StorageDiskInfoResponsePacket());
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ITEM_UPDATE, new GridItemUpdatePacket());
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ACTIVE, new GridActivePacket());
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.CONTROLLER_ENERGY, new ControllerEnergyPacket());
     }
 
     private void registerKeyBindings() {

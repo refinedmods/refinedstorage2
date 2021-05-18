@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.fabric.init.Rs2Items;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2ScreenHandlers;
 import com.refinedmods.refinedstorage2.fabric.integration.ReiIntegration;
 import com.refinedmods.refinedstorage2.fabric.loot.Rs2LootFunctions;
+import com.refinedmods.refinedstorage2.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
@@ -87,11 +88,11 @@ public class Rs2Mod implements ModInitializer {
     }
 
     private void registerPackets() {
-        ServerPlayNetworking.registerGlobalReceiver(StorageDiskInfoRequestPacket.ID, new StorageDiskInfoRequestPacket());
-        ServerPlayNetworking.registerGlobalReceiver(GridInsertFromCursorPacket.ID, new GridInsertFromCursorPacket());
-        ServerPlayNetworking.registerGlobalReceiver(GridExtractPacket.ID, new GridExtractPacket());
-        ServerPlayNetworking.registerGlobalReceiver(GridScrollPacket.ID, new GridScrollPacket());
-        ServerPlayNetworking.registerGlobalReceiver(PropertyChangePacket.ID, new PropertyChangePacket());
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.STORAGE_DISK_INFO_REQUEST, new StorageDiskInfoRequestPacket());
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_INSERT_FROM_CURSOR, new GridInsertFromCursorPacket());
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_EXTRACT, new GridExtractPacket());
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_SCROLL, new GridScrollPacket());
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.PROPERTY_CHANGE, new PropertyChangePacket());
     }
 
     private void registerGridSearchBoxModes() {

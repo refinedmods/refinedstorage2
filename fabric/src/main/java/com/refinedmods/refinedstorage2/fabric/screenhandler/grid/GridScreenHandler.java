@@ -26,13 +26,14 @@ import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridSettings;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.ClientGridEventHandler;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.ServerGridEventHandler;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.query.FabricGridStackFactory;
-import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridItemUpdatePacket;
+import com.refinedmods.refinedstorage2.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.fabric.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.BaseScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
+import com.refinedmods.refinedstorage2.fabric.util.ServerPacketUtil;
 
 import java.util.Optional;
 
@@ -348,7 +349,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     public void onChanged(StackListResult<Rs2ItemStack> change) {
         LOGGER.info("Received a change of {} for {}", change.getChange(), change.getStack());
 
-        PacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, GridItemUpdatePacket.ID, buf -> {
+        ServerPacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, PacketIds.GRID_ITEM_UPDATE, buf -> {
             PacketUtil.writeItemStack(buf, change.getStack(), false);
             buf.writeLong(change.getChange());
 

@@ -3,12 +3,8 @@ package com.refinedmods.refinedstorage2.fabric.util;
 import java.util.Locale;
 
 import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.client.util.math.Vector4f;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3i;
 
 public enum BiDirection implements StringIdentifiable {
     NORTH(new Vector3f(0, 0, 0)),
@@ -24,16 +20,10 @@ public enum BiDirection implements StringIdentifiable {
     DOWN_SOUTH(new Vector3f(-90, 0, 180)),
     DOWN_WEST(new Vector3f(-90, 0, 90));
 
-    private final Quaternion quaternion;
-    private final Matrix4f mat;
+    private final Vector3f vec;
 
     BiDirection(Vector3f vec) {
-        this.quaternion = new Quaternion(vec.getX(), vec.getY(), vec.getZ(), true);
-        this.mat = new Matrix4f();
-        this.mat.loadIdentity();
-        this.mat.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(vec.getX()));
-        this.mat.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(vec.getY()));
-        this.mat.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(vec.getZ()));
+        this.vec = vec;
     }
 
     public static BiDirection forHorizontal(Direction horizontalDirection) {
@@ -81,15 +71,8 @@ public enum BiDirection implements StringIdentifiable {
         }
     }
 
-    public Quaternion getQuaternion() {
-        return quaternion;
-    }
-
-    public Direction rotate(Direction facing) {
-        Vec3i dir = facing.getVector();
-        Vector4f vec = new Vector4f((float) dir.getX(), (float) dir.getY(), (float) dir.getZ(), 1.0F);
-        vec.transform(mat);
-        return Direction.getFacing(vec.getX(), vec.getY(), vec.getZ());
+    public Vector3f getVec() {
+        return vec;
     }
 
     @Override

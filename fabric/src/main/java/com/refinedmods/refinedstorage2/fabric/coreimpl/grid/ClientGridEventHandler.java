@@ -7,9 +7,10 @@ import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
+import com.refinedmods.refinedstorage2.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridExtractPacket;
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridInsertFromCursorPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
+import com.refinedmods.refinedstorage2.fabric.util.ClientPacketUtil;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +29,7 @@ public class ClientGridEventHandler implements GridEventHandler {
 
     @Override
     public void onInsertFromCursor(GridInsertMode mode) {
-        PacketUtil.sendToServer(GridInsertFromCursorPacket.ID, buf -> buf.writeBoolean(mode == GridInsertMode.SINGLE));
+        ClientPacketUtil.sendToServer(PacketIds.GRID_INSERT_FROM_CURSOR, buf -> buf.writeBoolean(mode == GridInsertMode.SINGLE));
     }
 
     @Override
@@ -38,7 +39,7 @@ public class ClientGridEventHandler implements GridEventHandler {
 
     @Override
     public void onExtract(Rs2ItemStack stack, GridExtractMode mode) {
-        PacketUtil.sendToServer(GridExtractPacket.ID, buf -> {
+        ClientPacketUtil.sendToServer(PacketIds.GRID_EXTRACT, buf -> {
             PacketUtil.writeItemStack(buf, stack, false);
             GridExtractPacket.writeMode(buf, mode);
         });
@@ -62,7 +63,7 @@ public class ClientGridEventHandler implements GridEventHandler {
 
     @Override
     public void onScroll(Rs2ItemStack template, int slot, GridScrollMode mode) {
-        PacketUtil.sendToServer(GridScrollPacket.ID, buf -> {
+        ClientPacketUtil.sendToServer(PacketIds.GRID_SCROLL, buf -> {
             PacketUtil.writeItemStack(buf, template, false);
             GridScrollPacket.writeMode(buf, mode);
             buf.writeInt(slot);

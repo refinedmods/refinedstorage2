@@ -3,8 +3,8 @@ package com.refinedmods.refinedstorage2.fabric.coreimpl.grid;
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
-import com.refinedmods.refinedstorage2.fabric.packet.s2c.GridActivePacket;
-import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
+import com.refinedmods.refinedstorage2.fabric.packet.PacketIds;
+import com.refinedmods.refinedstorage2.fabric.util.ServerPacketUtil;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -19,6 +19,6 @@ public class ServerGridEventHandler extends GridEventHandlerImpl {
     @Override
     public void onActiveChanged(boolean active) {
         super.onActiveChanged(active);
-        PacketUtil.sendToPlayer(player, GridActivePacket.ID, buf -> buf.writeBoolean(active));
+        ServerPacketUtil.sendToPlayer(player, PacketIds.GRID_ACTIVE, buf -> buf.writeBoolean(active));
     }
 }

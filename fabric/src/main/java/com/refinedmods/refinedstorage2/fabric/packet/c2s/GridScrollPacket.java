@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.fabric.packet.c2s;
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -13,11 +12,8 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 
 public class GridScrollPacket implements ServerPlayNetworking.PlayChannelHandler {
-    public static final Identifier ID = Rs2Mod.createIdentifier("grid_scroll");
-
     public static void writeMode(PacketByteBuf buf, GridScrollMode mode) {
         switch (mode) {
             case GRID_TO_INVENTORY:

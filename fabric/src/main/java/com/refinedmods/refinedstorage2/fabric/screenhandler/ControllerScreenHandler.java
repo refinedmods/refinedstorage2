@@ -4,9 +4,9 @@ import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.RedstoneModeSettings;
-import com.refinedmods.refinedstorage2.fabric.packet.s2c.ControllerEnergyPacket;
+import com.refinedmods.refinedstorage2.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.property.TwoWaySyncProperty;
-import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
+import com.refinedmods.refinedstorage2.fabric.util.ServerPacketUtil;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -69,7 +69,7 @@ public class ControllerScreenHandler extends BaseScreenHandler implements Redsto
             serverStored = controller.getActualStored();
             serverCapacity = controller.getActualCapacity();
 
-            PacketUtil.sendToPlayer((ServerPlayerEntity) playerEntity, ControllerEnergyPacket.ID, buf -> {
+            ServerPacketUtil.sendToPlayer((ServerPlayerEntity) playerEntity, PacketIds.CONTROLLER_ENERGY, buf -> {
                 buf.writeLong(serverStored);
                 buf.writeLong(serverCapacity);
             });

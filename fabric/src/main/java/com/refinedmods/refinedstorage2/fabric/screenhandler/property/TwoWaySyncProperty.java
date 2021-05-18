@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.screenhandler.property;
 
-import com.refinedmods.refinedstorage2.fabric.packet.c2s.PropertyChangePacket;
-import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
+import com.refinedmods.refinedstorage2.fabric.packet.PacketIds;
+import com.refinedmods.refinedstorage2.fabric.util.ClientPacketUtil;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -35,7 +35,7 @@ public class TwoWaySyncProperty<T> extends Property {
     }
 
     public void syncToServer(T newValue) {
-        PacketUtil.sendToServer(PropertyChangePacket.ID, buf -> {
+        ClientPacketUtil.sendToServer(PacketIds.PROPERTY_CHANGE, buf -> {
             buf.writeInt(index);
             buf.writeInt(serializer.apply(newValue));
         });

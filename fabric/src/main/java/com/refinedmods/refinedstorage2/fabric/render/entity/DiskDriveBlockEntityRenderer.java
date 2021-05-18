@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.fabric.block.BaseBlock;
 import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.render.CubeBuilder;
+import com.refinedmods.refinedstorage2.fabric.util.BiDirection;
 
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -14,6 +15,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Quaternion;
 
 public class DiskDriveBlockEntityRenderer extends BlockEntityRenderer<DiskDriveBlockEntity> {
     public static final RenderLayer RENDER_LAYER = RenderLayer.of("drive_leds", VertexFormats.POSITION_COLOR, 7, 32565, false, true, RenderLayer.MultiPhaseParameters.builder().build(false));
@@ -29,6 +31,10 @@ public class DiskDriveBlockEntityRenderer extends BlockEntityRenderer<DiskDriveB
         super(dispatcher);
     }
 
+    private Quaternion createQuaternion(BiDirection direction) {
+        return new Quaternion(direction.getVec().getX(), direction.getVec().getY(), direction.getVec().getZ(), true);
+    }
+
     @Override
     public void render(DiskDriveBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         if (!(entity.getRenderAttachmentData() instanceof DiskDriveState)) {
@@ -40,7 +46,7 @@ public class DiskDriveBlockEntityRenderer extends BlockEntityRenderer<DiskDriveB
         matrices.push();
 
         matrices.translate(0.5F, 0.5F, 0.5F);
-        matrices.multiply(entity.getWorld().getBlockState(entity.getPos()).get(BaseBlock.DIRECTION).getQuaternion());
+        matrices.multiply(createQuaternion(entity.getWorld().getBlockState(entity.getPos()).get(BaseBlock.DIRECTION)));
         matrices.translate(-0.5F, -0.5F, -0.5F);
 
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RENDER_LAYER);

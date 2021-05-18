@@ -5,31 +5,13 @@ import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 
-import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 
 public class PacketUtil {
     private PacketUtil() {
-    }
-
-    public static void sendToServer(Identifier id, Consumer<PacketByteBuf> bufConsumer) {
-        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        bufConsumer.accept(buf);
-        ClientPlayNetworking.send(id, buf);
-    }
-
-    public static void sendToPlayer(ServerPlayerEntity playerEntity, Identifier id, Consumer<PacketByteBuf> bufConsumer) {
-        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        bufConsumer.accept(buf);
-        ServerPlayNetworking.send(playerEntity, id, buf);
     }
 
     public static void writeItemStack(PacketByteBuf buf, Rs2ItemStack stack, boolean withCount) {
