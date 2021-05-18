@@ -4,7 +4,7 @@
     <module name="refinedstorage2.fabric.main" />
     <option name="VM_PARAMETERS"
             value="-Dfabric.dli.config=$PROJECT_DIR$\fabric\.gradle\loom-cache\launch.cfg -Dfabric.dli.env=client -Dfabric.dli.main=net.fabricmc.loader.launch.knot.KnotClient"/>
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run-client"/>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
