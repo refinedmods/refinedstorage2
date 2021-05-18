@@ -48,7 +48,7 @@ Currently, this version only works on Fabric.
 - The Grid search bar now has much more powerful searching, supporting expressions. Consult the Patchouli documentation.
 - A single item in storage can now be larger than 2,147,483,647.
 - You can now place directional blocks facing up/down.
-- A controller that is in nearly on/nearly off state is no longer fullbright.
+- Fullbright rendering isn't implemented yet.
 - You can now add multiple controllers to a network to meet the energy requirements of your network.
 - The Priority screen now has a "Reset" button.
 - The Grid can now use smooth scrolling.
