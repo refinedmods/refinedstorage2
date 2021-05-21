@@ -46,8 +46,9 @@ public class NetworkImpl implements Network {
 
     @Override
     public void onNodesChanged() {
-        invalidateStorageChannelSources();
+        // Invalidating the energy sources first is important, so disk drives know they have energy and can expose items.
         invalidateEnergySources();
+        invalidateStorageChannelSources();
     }
 
     @Override
