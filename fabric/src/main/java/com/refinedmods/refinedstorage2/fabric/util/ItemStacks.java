@@ -9,6 +9,7 @@ import java.util.Map;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.registry.Registry;
 
@@ -42,6 +43,9 @@ public final class ItemStacks {
     public static Rs2ItemStack fromTag(CompoundTag tag) {
         int id = tag.getInt(TAG_ID);
         Item item = Registry.ITEM.get(id);
+        if (item == Items.AIR) {
+            return Rs2ItemStack.EMPTY;
+        }
         long amount = tag.getLong(TAG_AMOUNT);
         Object stackTag = tag.get(TAG_TAG);
         return new Rs2ItemStack(ofItem(item), amount, stackTag);

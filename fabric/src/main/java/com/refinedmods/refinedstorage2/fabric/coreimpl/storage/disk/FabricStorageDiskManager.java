@@ -73,6 +73,9 @@ public class FabricStorageDiskManager extends PersistentState implements Storage
         ListTag stacks = diskTag.getList(TAG_DISK_STACKS, NbtType.COMPOUND);
         for (Tag stackTag : stacks) {
             Rs2ItemStack stack = ItemStacks.fromTag((CompoundTag) stackTag);
+            if (stack.isEmpty()) {
+                continue;
+            }
             disk.insert(stack, stack.getAmount(), Action.EXECUTE);
         }
         return disk;
