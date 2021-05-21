@@ -7,9 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [2.0.0-milestone.1.0]
+## [2.0.0-milestone.1.1]
+
+## [2.0.0-milestone.1.0] - 2021-05-21
 
 Currently, this version only works on Fabric.
+
+This is milestone release, this release could be very unstable, could break worlds and might not be compatible when
+upgrading to a later version.
 
 ### Added
 
