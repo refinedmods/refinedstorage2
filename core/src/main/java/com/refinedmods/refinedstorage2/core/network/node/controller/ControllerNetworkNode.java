@@ -1,19 +1,18 @@
 package com.refinedmods.refinedstorage2.core.network.node.controller;
 
 import com.refinedmods.refinedstorage2.core.Rs2World;
-import com.refinedmods.refinedstorage2.core.network.CreativeEnergyStorage;
-import com.refinedmods.refinedstorage2.core.network.EnergyStorage;
-import com.refinedmods.refinedstorage2.core.network.EnergyStorageImpl;
+import com.refinedmods.refinedstorage2.core.network.energy.CreativeEnergyStorage;
+import com.refinedmods.refinedstorage2.core.network.energy.EnergyStorage;
+import com.refinedmods.refinedstorage2.core.network.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
-import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStorage {
     private final EnergyStorage energyStorage;
 
-    public ControllerNetworkNode(Rs2World world, Position pos, NetworkNodeReference ref, long stored, long capacity, ControllerType type) {
-        super(world, pos, ref);
+    public ControllerNetworkNode(Rs2World world, Position pos, long stored, long capacity, ControllerType type) {
+        super(world, pos);
         this.energyStorage = buildEnergyStorage(capacity, type);
         this.energyStorage.receive(stored, Action.EXECUTE);
     }
@@ -41,7 +40,7 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
 
     @Override
     public boolean isActive() {
-        return getRedstoneMode().isActive(world.isPowered(getPosition()));
+        return redstoneMode.isActive(world.isPowered(position));
     }
 
     public long getActualStored() {
@@ -82,7 +81,7 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
     }
 
     @Override
-    public long getEnergyUsage() {
+    protected long getEnergyUsage() {
         return 0;
     }
 }

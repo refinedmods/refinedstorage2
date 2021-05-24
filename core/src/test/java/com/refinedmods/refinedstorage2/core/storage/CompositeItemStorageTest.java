@@ -60,7 +60,7 @@ class CompositeItemStorageTest {
         // Arrange
         ItemDiskStorage diskStorage = new ItemDiskStorage(20);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
+        CompositeItemStorage storage = new CompositeItemStorage(Collections.singletonList(diskStorage), ItemStackList.create());
 
         // Act
         Optional<Rs2ItemStack> remainder = storage.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, action);
@@ -87,7 +87,7 @@ class CompositeItemStorageTest {
         // Arrange
         ItemDiskStorage diskStorage = new ItemDiskStorage(20);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
+        CompositeItemStorage storage = new CompositeItemStorage(Collections.singletonList(diskStorage), ItemStackList.create());
 
         // Act
         Optional<Rs2ItemStack> remainder = storage.insert(new Rs2ItemStack(ItemStubs.DIRT), 30, action);
@@ -194,7 +194,7 @@ class CompositeItemStorageTest {
         ItemDiskStorage diskStorage = new ItemDiskStorage(10);
         diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
+        CompositeItemStorage storage = new CompositeItemStorage(Collections.singletonList(diskStorage), ItemStackList.create());
 
         // Act
         Optional<Rs2ItemStack> result = storage.extract(new Rs2ItemStack(ItemStubs.GLASS), 10, Action.EXECUTE);
@@ -210,7 +210,7 @@ class CompositeItemStorageTest {
         ItemDiskStorage diskStorage = new ItemDiskStorage(10);
         diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
+        CompositeItemStorage storage = new CompositeItemStorage(Collections.singletonList(diskStorage), ItemStackList.create());
 
         // Act
         Optional<Rs2ItemStack> result = storage.extract(new Rs2ItemStack(ItemStubs.DIRT), 3, action);
@@ -268,7 +268,7 @@ class CompositeItemStorageTest {
         ItemDiskStorage diskStorage = new ItemDiskStorage(10);
         diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 4, Action.EXECUTE);
 
-        CompositeItemStorage storage = new CompositeItemStorage(Arrays.asList(diskStorage), ItemStackList.create());
+        CompositeItemStorage storage = new CompositeItemStorage(Collections.singletonList(diskStorage), ItemStackList.create());
 
         // Act
         Optional<Rs2ItemStack> result = storage.extract(new Rs2ItemStack(ItemStubs.DIRT), 7, action);

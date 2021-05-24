@@ -181,9 +181,9 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         addProperty(searchBoxModeProperty);
 
         this.playerInventory = playerInventory;
-        this.storageChannel = grid.getNetwork().getItemStorageChannel();
+        this.storageChannel = grid.getNode().getStorageChannel();
         this.storageChannel.addListener(this);
-        this.eventHandler = new ServerGridEventHandler(grid.isActive(), storageChannel, (ServerPlayerEntity) playerInventory.player);
+        this.eventHandler = new ServerGridEventHandler(grid.getNode().isActive(), storageChannel, (ServerPlayerEntity) playerInventory.player);
         this.grid = grid;
         this.grid.addWatcher(eventHandler);
 

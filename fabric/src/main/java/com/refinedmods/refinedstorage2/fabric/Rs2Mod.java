@@ -5,6 +5,9 @@ import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeDisplayPropert
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserImpl;
+import com.refinedmods.refinedstorage2.core.network.component.EnergyNetworkComponent;
+import com.refinedmods.refinedstorage2.core.network.component.GraphNetworkComponent;
+import com.refinedmods.refinedstorage2.core.network.component.ItemStorageNetworkComponent;
 import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.core.query.parser.ParserOperatorMappings;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.FabricRs2ApiFacade;
@@ -25,11 +28,9 @@ import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -37,7 +38,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Rs2Mod implements ModInitializer {
-    public static final Rs2ApiFacade<MinecraftServer, World> API = new FabricRs2ApiFacade();
+    public static final Rs2ApiFacade<World> API = new FabricRs2ApiFacade();
     public static final Rs2Blocks BLOCKS = new Rs2Blocks();
     public static final Rs2Items ITEMS = new Rs2Items();
     public static final Rs2BlockEntities BLOCK_ENTITIES = new Rs2BlockEntities();
@@ -67,16 +68,18 @@ public class Rs2Mod implements ModInitializer {
     public void onInitialize() {
         AutoConfig.register(Rs2Config.class, Toml4jConfigSerializer::new);
 
+        registerNetworkComponents();
         registerContent();
         registerGridSearchBoxModes();
         registerPackets();
-        registerEventListeners();
 
         LOGGER.info("Refined Storage 2 has loaded.");
     }
 
-    private void registerEventListeners() {
-        ServerTickEvents.START_SERVER_TICK.register(server -> API.getNetworkManager(server).update());
+    private void registerNetworkComponents() {
+        Rs2Mod.API.getNetworkComponentRegistry().addComponent(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
+        Rs2Mod.API.getNetworkComponentRegistry().addComponent(GraphNetworkComponent.class, GraphNetworkComponent::new);
+        Rs2Mod.API.getNetworkComponentRegistry().addComponent(ItemStorageNetworkComponent.class, network -> new ItemStorageNetworkComponent());
     }
 
     private void registerContent() {

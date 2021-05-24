@@ -3,8 +3,8 @@ package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
+import com.refinedmods.refinedstorage2.core.network.component.ItemStorageNetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
-import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.CompositeItemStorage;
 import com.refinedmods.refinedstorage2.core.storage.Priority;
@@ -45,8 +45,8 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
     private final long energyUsage;
     private final long energyUsagePerDisk;
 
-    public DiskDriveNetworkNode(Rs2World world, Position pos, NetworkNodeReference ref, StorageDiskManager diskManager, StorageDiskProvider diskProvider, long energyUsage, long energyUsagePerDisk) {
-        super(world, pos, ref);
+    public DiskDriveNetworkNode(Rs2World world, Position pos, StorageDiskManager diskManager, StorageDiskProvider diskProvider, long energyUsage, long energyUsagePerDisk) {
+        super(world, pos);
 
         this.diskManager = diskManager;
         this.diskProvider = diskProvider;
@@ -55,13 +55,13 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
     }
 
     @Override
-    public void onActiveChanged(boolean active) {
+    protected void onActiveChanged(boolean active) {
         super.onActiveChanged(active);
-        network.invalidateStorageChannelSources();
+        network.getComponent(ItemStorageNetworkComponent.class).invalidate();
     }
 
     @Override
-    public long getEnergyUsage() {
+    protected long getEnergyUsage() {
         return energyUsage + (energyUsagePerDisk * diskCount);
     }
 

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.core.util;
 
 import java.util.Objects;
 
-public final class Position {
+public final class Position implements Comparable<Position> {
     public static final Position ORIGIN = new Position(0, 0, 0);
 
     private final int x;
@@ -47,6 +47,10 @@ public final class Position {
         return offset(Direction.EAST);
     }
 
+    public Position south() {
+        return offset(Direction.SOUTH);
+    }
+
     public Position up() {
         return offset(Direction.UP);
     }
@@ -71,5 +75,14 @@ public final class Position {
                 ", y=" + y +
                 ", z=" + z +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Position o) {
+        if (this.getY() == o.getY()) {
+            return this.getZ() == o.getZ() ? this.getX() - o.getX() : this.getZ() - o.getZ();
+        } else {
+            return this.getY() - o.getY();
+        }
     }
 }

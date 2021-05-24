@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class FakeStorageDiskProviderManager implements StorageDiskProvider, StorageDiskManager {
     private final Map<Integer, UUID> slots = new HashMap<>();
-    private final Map<UUID, StorageDisk> disks = new HashMap<>();
+    private final Map<UUID, StorageDisk<?>> disks = new HashMap<>();
     private DiskDriveNetworkNode diskDrive;
 
     public void setDiskDrive(DiskDriveNetworkNode diskDrive) {
@@ -25,7 +25,8 @@ public class FakeStorageDiskProviderManager implements StorageDiskProvider, Stor
 
     @Override
     public <T> Optional<StorageDisk<T>> getDisk(UUID id) {
-        return Optional.ofNullable(disks.get(id));
+        StorageDisk<?> disk = disks.get(id);
+        return Optional.ofNullable(disk == null ? null : (StorageDisk<T>) disk);
     }
 
     public <T> void setDisk(int slot, StorageDisk<T> disk) {

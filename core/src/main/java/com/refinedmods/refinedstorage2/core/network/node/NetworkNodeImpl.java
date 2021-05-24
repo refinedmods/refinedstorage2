@@ -2,30 +2,20 @@ package com.refinedmods.refinedstorage2.core.network.node;
 
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.Network;
+import com.refinedmods.refinedstorage2.core.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 public abstract class NetworkNodeImpl implements NetworkNode {
     protected final Rs2World world;
-    private final Position pos;
-    private final NetworkNodeReference ref;
+    protected final Position position;
     protected Network network;
-    private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
+    protected RedstoneMode redstoneMode = RedstoneMode.IGNORE;
+    private boolean wasActive;
 
-    protected NetworkNodeImpl(Rs2World world, Position pos, NetworkNodeReference ref) {
+    public NetworkNodeImpl(Rs2World world, Position position) {
         this.world = world;
-        this.pos = pos;
-        this.ref = ref;
-    }
-
-    @Override
-    public void update() {
-        network.getEnergyStorage().extract(getEnergyUsage(), Action.EXECUTE);
-    }
-
-    @Override
-    public Position getPosition() {
-        return pos;
+        this.position = position;
     }
 
     @Override
@@ -38,27 +28,31 @@ public abstract class NetworkNodeImpl implements NetworkNode {
         this.network = network;
     }
 
-    @Override
-    public NetworkNodeReference createReference() {
-        return ref;
+    public boolean isActive() {
+        return redstoneMode.isActive(world.isPowered(position)) && network.getComponent(EnergyNetworkComponent.class).getEnergyStorage().getStored() > 0;
     }
 
-    public RedstoneMode getRedstoneMode() {
-        return redstoneMode;
+    protected void onActiveChanged(boolean active) {
     }
+
+    @Override
+    public void update() {
+        network.getComponent(EnergyNetworkComponent.class).getEnergyStorage().extract(getEnergyUsage(), Action.EXECUTE);
+
+        if (wasActive != isActive()) {
+            wasActive = isActive();
+
+            onActiveChanged(wasActive);
+        }
+    }
+
+    protected abstract long getEnergyUsage();
 
     public void setRedstoneMode(RedstoneMode redstoneMode) {
         this.redstoneMode = redstoneMode;
     }
 
-    @Override
-    public boolean isActive() {
-        return redstoneMode.isActive(world.isPowered(pos)) && network.getEnergyStorage().getStored() > 0;
+    public RedstoneMode getRedstoneMode() {
+        return redstoneMode;
     }
-
-    @Override
-    public void onActiveChanged(boolean active) {
-    }
-
-    public abstract long getEnergyUsage();
 }

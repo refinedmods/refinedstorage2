@@ -4,7 +4,9 @@ import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.item.ItemStubs;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.Network;
-import com.refinedmods.refinedstorage2.core.network.NetworkBuilder;
+import com.refinedmods.refinedstorage2.core.network.NetworkUtil;
+import com.refinedmods.refinedstorage2.core.network.component.ItemStorageNetworkComponent;
+import com.refinedmods.refinedstorage2.core.network.host.FakeNetworkNodeHost;
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
@@ -32,15 +34,15 @@ class DiskDriveNetworkNodeTest {
     private static final long BASE_USAGE = 10;
     private static final long USAGE_PER_DISK = 3;
 
-    private DiskDriveNetworkNodeWrapper diskDrive;
     private Network network;
+    private DiskDriveNetworkNodeWrapper diskDrive;
 
     @BeforeEach
     void setUp() {
-        network = NetworkBuilder.create()
-                .node(diskDrive = DiskDriveNetworkNodeWrapper.create(BASE_USAGE, USAGE_PER_DISK))
-                .infiniteEnergy()
-                .build();
+        network = NetworkUtil.createWithCreativeEnergySource();
+        diskDrive = DiskDriveNetworkNodeWrapper.create(BASE_USAGE, USAGE_PER_DISK);
+        diskDrive.setNetwork(network);
+        network.addHost(new FakeNetworkNodeHost<>(diskDrive));
     }
 
     @Test
@@ -472,16 +474,18 @@ class DiskDriveNetworkNodeTest {
     void Test_changing_to_inactive_should_omit_items_from_storage_channel() {
         // Arrange
         StorageDisk<Rs2ItemStack> disk = new ItemDiskStorage(10);
+        disk.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
+
         diskDrive.getFakeStorageDiskProviderManager().setDisk(0, disk);
 
-        network.getItemStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
+        network.getComponent(ItemStorageNetworkComponent.class).invalidate();
 
         diskDrive.setRedstoneMode(RedstoneMode.HIGH);
 
         // Act
-        Collection<Rs2ItemStack> stacksBeforeStateChange = network.getItemStorageChannel().getStacks();
+        Collection<Rs2ItemStack> stacksBeforeStateChange = network.getComponent(ItemStorageNetworkComponent.class).getStorageChannel().getStacks();
         diskDrive.onActiveChanged(false);
-        Collection<Rs2ItemStack> stacksAfterStateChange = network.getItemStorageChannel().getStacks();
+        Collection<Rs2ItemStack> stacksAfterStateChange = network.getComponent(ItemStorageNetworkComponent.class).getStorageChannel().getStacks();
 
         // Assert
         assertThat(stacksBeforeStateChange).isNotEmpty();

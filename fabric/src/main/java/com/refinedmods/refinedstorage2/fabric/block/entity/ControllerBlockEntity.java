@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity;
 
-import com.refinedmods.refinedstorage2.core.network.EnergyStorage;
+import com.refinedmods.refinedstorage2.core.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.core.util.Action;
@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.fabric.block.ControllerEnergyType;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.network.node.FabricNetworkNodeReference;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.ControllerScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
@@ -51,10 +50,10 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
 
     @Override
     public void tick() {
-        if (world != null && !world.isClient() && node != null) {
+        if (world != null && !world.isClient() && host != null) {
             calculateCachedStateIfNecessary();
 
-            ControllerEnergyType type = ControllerEnergyType.ofState(node.getState());
+            ControllerEnergyType type = ControllerEnergyType.ofState(host.getNode().getState());
             ControllerEnergyType inWorldType = cachedState.get(ControllerBlock.ENERGY_TYPE);
 
             if (type != inWorldType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
@@ -77,7 +76,6 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
         return new ControllerNetworkNode(
                 FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
-                FabricNetworkNodeReference.of(world, pos),
                 tag.getLong(TAG_STORED),
                 Rs2Config.get().getController().getCapacity(),
                 type
@@ -86,17 +84,17 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
 
     @Override
     public long getStored() {
-        return node.getStored();
+        return host.getNode().getStored();
     }
 
     @Override
     public long getCapacity() {
-        return node.getCapacity();
+        return host.getNode().getCapacity();
     }
 
     @Override
     public long receive(long amount, Action action) {
-        long remainder = node.receive(amount, action);
+        long remainder = host.getNode().receive(amount, action);
         if (remainder != amount && action == Action.EXECUTE) {
             markDirty();
         }
@@ -105,7 +103,7 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
 
     @Override
     public long extract(long amount, Action action) {
-        long extracted = node.extract(amount, action);
+        long extracted = host.getNode().extract(amount, action);
         if (extracted > 0 && action == Action.EXECUTE) {
             markDirty();
         }
@@ -115,7 +113,7 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     @Override
     public CompoundTag toTag(CompoundTag tag) {
         tag = super.toTag(tag);
-        tag.putLong(TAG_STORED, node.getActualStored());
+        tag.putLong(TAG_STORED, host.getNode().getActualStored());
         return tag;
     }
 
@@ -137,31 +135,31 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     }
 
     public long getActualStored() {
-        return node.getActualStored();
+        return host.getNode().getActualStored();
     }
 
     public long getActualCapacity() {
-        return node.getActualCapacity();
+        return host.getNode().getActualCapacity();
     }
 
     @Override
     public double getStored(EnergySide face) {
-        return node.getStored();
+        return host.getNode().getStored();
     }
 
     @Override
     public void setStored(double amount) {
-        long difference = (long) amount - node.getStored();
+        long difference = (long) amount - host.getNode().getStored();
         if (difference > 0) {
-            node.receive(difference, Action.EXECUTE);
+            host.getNode().receive(difference, Action.EXECUTE);
         } else {
-            node.extract(Math.abs(difference), Action.EXECUTE);
+            host.getNode().extract(Math.abs(difference), Action.EXECUTE);
         }
     }
 
     @Override
     public double getMaxStoredPower() {
-        return node.getCapacity();
+        return host.getNode().getCapacity();
     }
 
     @Override

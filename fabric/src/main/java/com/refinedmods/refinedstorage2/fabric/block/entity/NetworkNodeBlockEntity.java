@@ -1,12 +1,20 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity;
 
-import com.refinedmods.refinedstorage2.core.network.Network;
-import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
+import com.refinedmods.refinedstorage2.core.Rs2World;
+import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistry;
+import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
+import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHostImpl;
+import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHostRepository;
+import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHostVisitor;
+import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHostVisitorOperator;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
-import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.core.util.Position;
+import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.NetworkNodeBlock;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.network.host.FabricNetworkNodeHostRepository;
+import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -18,16 +26,18 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends BlockEntity implements NetworkNode, Tickable {
+public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends BlockEntity implements NetworkNodeHost<T>, Tickable, NetworkNodeHostVisitor {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final int ACTIVE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
     private static final String TAG_REDSTONE_MODE = "rm";
 
-    protected T node;
     private long lastActiveChanged;
     private CompoundTag tag;
     protected BlockState cachedState;
+    private boolean mustInitialize;
+
+    protected NetworkNodeHostImpl<T> host;
 
     protected NetworkNodeBlockEntity(BlockEntityType<?> type) {
         super(type);
@@ -45,34 +55,15 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
             tag = new CompoundTag();
         }
 
-        this.node = createNode(world, pos, tag);
+        this.host = new NetworkNodeHostImpl<>(FabricRs2WorldAdapter.of(world), Positions.ofBlockPos(pos), createNode(world, pos, tag));
+        this.mustInitialize = true;
 
         if (tag.contains(TAG_REDSTONE_MODE)) {
-            node.setRedstoneMode(RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE)));
+            host.getNode().setRedstoneMode(RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE)));
         }
     }
 
     protected abstract T createNode(World world, BlockPos pos, CompoundTag tag);
-
-    @Override
-    public Position getPosition() {
-        return node.getPosition();
-    }
-
-    @Override
-    public Network getNetwork() {
-        return node.getNetwork();
-    }
-
-    @Override
-    public void setNetwork(Network network) {
-        node.setNetwork(network);
-    }
-
-    @Override
-    public NetworkNodeReference createReference() {
-        return node.createReference();
-    }
 
     @Override
     public CompoundTag toTag(CompoundTag tag) {
@@ -89,9 +80,14 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
 
     @Override
     public void tick() {
-        if (world != null && !world.isClient() && node != null) {
-            updateActivenessInWorld();
-            update();
+        if (world != null && !world.isClient() && host != null) {
+            if (mustInitialize) {
+                host.initialize(new FabricNetworkNodeHostRepository(world), Rs2Mod.API.getNetworkComponentRegistry());
+                mustInitialize = false;
+            } else {
+                updateActivenessInWorld();
+                host.getNode().update();
+            }
         }
     }
 
@@ -102,7 +98,7 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
             return;
         }
 
-        boolean active = node.isActive();
+        boolean active = host.getNode().isActive();
         boolean activeInWorld = cachedState.get(NetworkNodeBlock.ACTIVE);
 
         if (active != activeInWorld && (lastActiveChanged == 0 || System.currentTimeMillis() - lastActiveChanged > ACTIVE_CHANGE_MINIMUM_INTERVAL_MS)) {
@@ -110,9 +106,12 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
 
             this.lastActiveChanged = System.currentTimeMillis();
 
-            onActiveChanged(active);
+            activenessChanged(active);
             updateActivenessInWorld(active);
         }
+    }
+
+    protected void activenessChanged(boolean active) {
     }
 
     private void updateActivenessInWorld(boolean active) {
@@ -120,27 +119,12 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
         updateState(newState);
     }
 
-    @Override
-    public void update() {
-        node.update();
-    }
-
-    @Override
-    public void onActiveChanged(boolean active) {
-        node.onActiveChanged(active);
-    }
-
-    @Override
-    public boolean isActive() {
-        return node.isActive();
-    }
-
     public RedstoneMode getRedstoneMode() {
-        return node.getRedstoneMode();
+        return host.getNode().getRedstoneMode();
     }
 
     public void setRedstoneMode(RedstoneMode redstoneMode) {
-        node.setRedstoneMode(redstoneMode);
+        host.getNode().setRedstoneMode(redstoneMode);
         markDirty();
     }
 
@@ -157,5 +141,35 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
 
     private void calculateCachedState() {
         this.cachedState = world.getBlockState(pos);
+    }
+
+    @Override
+    public void initialize(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
+        host.initialize(hostRepository, networkComponentRegistry);
+    }
+
+    @Override
+    public void remove(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
+        host.remove(hostRepository, networkComponentRegistry);
+    }
+
+    @Override
+    public T getNode() {
+        return host.getNode();
+    }
+
+    @Override
+    public Rs2World getHostWorld() {
+        return host.getHostWorld();
+    }
+
+    @Override
+    public Position getPosition() {
+        return host.getPosition();
+    }
+
+    @Override
+    public void visit(NetworkNodeHostVisitorOperator operator) {
+        host.visit(operator);
     }
 }

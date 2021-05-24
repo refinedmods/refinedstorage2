@@ -9,6 +9,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.0.0-milestone.1.1]
 
+### Changed
+
+- Implemented a new networking system
+
 ## [2.0.0-milestone.1.0] - 2021-05-21
 
 Currently, this version only works on Fabric.

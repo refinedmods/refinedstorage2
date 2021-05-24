@@ -1,24 +1,12 @@
 package com.refinedmods.refinedstorage2.core.network;
 
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeReference;
-import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
-
-import java.util.Set;
-import java.util.UUID;
+import com.refinedmods.refinedstorage2.core.network.component.NetworkComponent;
+import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
 
 public interface Network {
-    UUID getId();
+    <T extends NetworkComponent> T getComponent(Class<T> componentClass);
 
-    void update();
+    void addHost(NetworkNodeHost<?> host);
 
-    Set<NetworkNodeReference> getNodeReferences();
-
-    void onNodesChanged();
-
-    EnergyStorage getEnergyStorage();
-
-    void invalidateStorageChannelSources();
-
-    StorageChannel<Rs2ItemStack> getItemStorageChannel();
+    void removeHost(NetworkNodeHost<?> host);
 }

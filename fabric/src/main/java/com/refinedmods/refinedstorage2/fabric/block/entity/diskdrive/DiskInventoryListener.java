@@ -18,8 +18,5 @@ public class DiskInventoryListener implements ItemInvSlotChangeListener {
         }
 
         diskDrive.onDiskChanged(slot);
-        diskDrive.getNetwork().invalidateStorageChannelSources();
-        diskDrive.sync();
-        diskDrive.markDirty();
     }
 }
