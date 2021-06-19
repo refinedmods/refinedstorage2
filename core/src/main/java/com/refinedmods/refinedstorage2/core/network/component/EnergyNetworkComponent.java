@@ -1,11 +1,8 @@
 package com.refinedmods.refinedstorage2.core.network.component;
 
-import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.energy.CompositeEnergyStorage;
 import com.refinedmods.refinedstorage2.core.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
-
-import java.util.Set;
 
 public class EnergyNetworkComponent implements NetworkComponent {
     private final CompositeEnergyStorage energyStorage = new CompositeEnergyStorage();
@@ -22,16 +19,6 @@ public class EnergyNetworkComponent implements NetworkComponent {
         if (host.getNode() instanceof EnergyStorage) {
             energyStorage.removeSource((EnergyStorage) host.getNode());
         }
-    }
-
-    @Override
-    public void onNetworkRemoved() {
-
-    }
-
-    @Override
-    public void onNetworkSplit(Set<Network> networks) {
-
     }
 
     public CompositeEnergyStorage getEnergyStorage() {

@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.fabric.coreimpl.network.host;
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
 import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHostRepository;
+import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.util.Position;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
@@ -19,11 +20,11 @@ public class FabricNetworkNodeHostRepository implements NetworkNodeHostRepositor
     }
 
     @Override
-    public Optional<NetworkNodeHost> getHost(Rs2World world, Position position) {
+    public <T extends NetworkNode> Optional<NetworkNodeHost<T>> getHost(Rs2World world, Position position) {
         // TODO: Use world param.
         BlockEntity blockEntity = this.world.getBlockEntity(Positions.toBlockPos(position));
         if (blockEntity instanceof NetworkNodeHost) {
-            return Optional.of((NetworkNodeHost) blockEntity);
+            return Optional.of((NetworkNodeHost<T>) blockEntity);
         }
 
         return Optional.empty();

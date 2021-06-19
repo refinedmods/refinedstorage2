@@ -23,6 +23,7 @@ public class NetworkUtil {
         private final List<NetworkNodeHost<?>> added = new ArrayList<>();
         private final List<NetworkNodeHost<?>> removed = new ArrayList<>();
         private final List<Set<Network>> splits = new ArrayList<>();
+        private final List<Network> merges = new ArrayList<>();
         private int removeCount = 0;
 
         @Override
@@ -43,6 +44,11 @@ public class NetworkUtil {
         @Override
         public void onNetworkSplit(Set<Network> networks) {
             splits.add(networks);
+        }
+
+        @Override
+        public void onNetworkMerge(Network network) {
+            merges.add(network);
         }
     }
 
@@ -87,6 +93,10 @@ public class NetworkUtil {
 
     public static List<Set<Network>> getNetworkSplits(Network network) {
         return network.getComponent(NodeCallbackListenerComponent.class).splits;
+    }
+
+    public static List<Network> getNetworkMerges(Network network) {
+        return network.getComponent(NodeCallbackListenerComponent.class).merges;
     }
 
     public static int getNetworkRemovedCount(Network network) {

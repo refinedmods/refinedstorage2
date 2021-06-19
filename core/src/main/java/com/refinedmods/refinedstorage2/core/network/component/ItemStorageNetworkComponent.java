@@ -1,14 +1,12 @@
 package com.refinedmods.refinedstorage2.core.network.component;
 
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
 import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,16 +31,6 @@ public class ItemStorageNetworkComponent implements NetworkComponent {
             sources.remove((Storage<Rs2ItemStack>) host.getNode());
             invalidate();
         }
-    }
-
-    @Override
-    public void onNetworkRemoved() {
-
-    }
-
-    @Override
-    public void onNetworkSplit(Set<Network> networks) {
-
     }
 
     public void invalidate() {

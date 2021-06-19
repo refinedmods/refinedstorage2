@@ -10,13 +10,13 @@ import java.util.Set;
 
 public class NetworkNodeHostVisitorOperatorImpl implements NetworkNodeHostVisitorOperator {
     private final NetworkNodeHostRepository hostRepository;
-    private final Set<NetworkNodeHostEntry> currentEntries;
-    private final Set<NetworkNodeHostEntry> foundEntries = new HashSet<>();
-    private final Set<NetworkNodeHostEntry> newEntries = new HashSet<>();
-    private final Set<NetworkNodeHostEntry> removedEntries;
+    private final Set<NetworkNodeHostEntry<?>> currentEntries;
+    private final Set<NetworkNodeHostEntry<?>> foundEntries = new HashSet<>();
+    private final Set<NetworkNodeHostEntry<?>> newEntries = new HashSet<>();
+    private final Set<NetworkNodeHostEntry<?>> removedEntries;
     private final Queue<NetworkNodeHostVisitor> visitors = new ArrayDeque<>();
 
-    public NetworkNodeHostVisitorOperatorImpl(NetworkNodeHostRepository hostRepository, Set<NetworkNodeHostEntry> currentEntries) {
+    public NetworkNodeHostVisitorOperatorImpl(NetworkNodeHostRepository hostRepository, Set<NetworkNodeHostEntry<?>> currentEntries) {
         this.hostRepository = hostRepository;
         this.currentEntries = currentEntries;
         this.removedEntries = new HashSet<>(currentEntries);
@@ -32,14 +32,14 @@ public class NetworkNodeHostVisitorOperatorImpl implements NetworkNodeHostVisito
     @Override
     public void apply(Rs2World world, Position position) {
         hostRepository.getHost(world, position).ifPresent(host -> {
-            NetworkNodeHostEntry entry = NetworkNodeHostEntry.create(host);
+            NetworkNodeHostEntry<?> entry = NetworkNodeHostEntry.create(host);
             if (foundEntries.add(entry)) {
                 addEntry(entry);
             }
         });
     }
 
-    private void addEntry(NetworkNodeHostEntry entry) {
+    private void addEntry(NetworkNodeHostEntry<?> entry) {
         if (!currentEntries.contains(entry)) {
             newEntries.add(entry);
         }
@@ -50,15 +50,15 @@ public class NetworkNodeHostVisitorOperatorImpl implements NetworkNodeHostVisito
         }
     }
 
-    public Set<NetworkNodeHostEntry> getFoundEntries() {
+    public Set<NetworkNodeHostEntry<?>> getFoundEntries() {
         return foundEntries;
     }
 
-    public Set<NetworkNodeHostEntry> getNewEntries() {
+    public Set<NetworkNodeHostEntry<?>> getNewEntries() {
         return newEntries;
     }
 
-    public Set<NetworkNodeHostEntry> getRemovedEntries() {
+    public Set<NetworkNodeHostEntry<?>> getRemovedEntries() {
         return removedEntries;
     }
 }

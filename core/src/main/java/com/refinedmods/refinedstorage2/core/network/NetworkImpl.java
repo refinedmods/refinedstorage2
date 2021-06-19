@@ -38,4 +38,9 @@ public class NetworkImpl implements Network {
     public void split(Set<Network> networks) {
         components.values().forEach(c -> c.onNetworkSplit(networks));
     }
+
+    @Override
+    public void merge(Network network) {
+        components.values().forEach(c -> c.onNetworkMerge(network));
+    }
 }

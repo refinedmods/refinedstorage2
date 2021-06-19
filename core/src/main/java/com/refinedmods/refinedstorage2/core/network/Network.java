@@ -15,4 +15,6 @@ public interface Network {
     void remove();
 
     void split(Set<Network> networks);
+
+    void merge(Network network);
 }

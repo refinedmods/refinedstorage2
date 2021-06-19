@@ -50,6 +50,8 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
 
     @Override
     public void tick() {
+        super.tick();
+
         if (world != null && !world.isClient() && host != null) {
             calculateCachedStateIfNecessary();
 

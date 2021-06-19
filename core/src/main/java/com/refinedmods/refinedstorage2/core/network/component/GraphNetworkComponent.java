@@ -15,13 +15,13 @@ public class GraphNetworkComponent implements NetworkComponent {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Network network;
-    private final Set<NetworkNodeHostEntry> hosts = new HashSet<>();
+    private final Set<NetworkNodeHostEntry<?>> hosts = new HashSet<>();
 
     public GraphNetworkComponent(Network network) {
         this.network = network;
     }
 
-    public Set<NetworkNodeHostEntry> getHosts() {
+    public Set<NetworkNodeHostEntry<?>> getHosts() {
         return hosts;
     }
 
@@ -45,5 +45,10 @@ public class GraphNetworkComponent implements NetworkComponent {
     @Override
     public void onNetworkSplit(Set<Network> networks) {
         LOGGER.info("Network {} has been split into {} other networks ({})", network.hashCode(), networks.size(), networks.stream().map(Network::hashCode).collect(Collectors.toList()));
+    }
+
+    @Override
+    public void onNetworkMerge(Network network) {
+        LOGGER.info("Network {} has merged with network {}", network.hashCode(), this.network.hashCode());
     }
 }

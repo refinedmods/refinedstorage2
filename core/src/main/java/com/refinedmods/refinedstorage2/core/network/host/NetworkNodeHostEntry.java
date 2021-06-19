@@ -1,26 +1,27 @@
 package com.refinedmods.refinedstorage2.core.network.host;
 
 import com.refinedmods.refinedstorage2.core.Rs2World;
+import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.Objects;
 
-public final class NetworkNodeHostEntry {
-    private final NetworkNodeHost host;
+public final class NetworkNodeHostEntry<T extends NetworkNode> {
+    private final NetworkNodeHost<T> host;
     private final Rs2World world;
     private final Position position;
 
-    public static NetworkNodeHostEntry create(NetworkNodeHost host) {
-        return new NetworkNodeHostEntry(host, host.getHostWorld(), host.getPosition());
+    public static <T extends NetworkNode> NetworkNodeHostEntry<T> create(NetworkNodeHost<T> host) {
+        return new NetworkNodeHostEntry<>(host, host.getHostWorld(), host.getPosition());
     }
 
-    private NetworkNodeHostEntry(NetworkNodeHost host, Rs2World world, Position position) {
+    private NetworkNodeHostEntry(NetworkNodeHost<T> host, Rs2World world, Position position) {
         this.host = host;
         this.world = world;
         this.position = position;
     }
 
-    public NetworkNodeHost getHost() {
+    public NetworkNodeHost<T> getHost() {
         return host;
     }
 
