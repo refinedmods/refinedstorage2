@@ -19,5 +19,38 @@
             "type": "text",
             "text": "book.refinedstorage2.entry.networking.controllers.line2"
         }
-    ]
+    ],
+    "extra_recipe_mappings": {
+        "refinedstorage2:black_controller": 0,
+        "refinedstorage2:black_creative_controller": 0,
+        "refinedstorage2:blue_controller": 0,
+        "refinedstorage2:blue_creative_controller": 0,
+        "refinedstorage2:brown_controller": 0,
+        "refinedstorage2:brown_creative_controller": 0,
+        "refinedstorage2:creative_controller": 0,
+        "refinedstorage2:cyan_controller": 0,
+        "refinedstorage2:cyan_creative_controller": 0,
+        "refinedstorage2:gray_controller": 0,
+        "refinedstorage2:gray_creative_controller": 0,
+        "refinedstorage2:green_controller": 0,
+        "refinedstorage2:green_creative_controller": 0,
+        "refinedstorage2:light_gray_controller": 0,
+        "refinedstorage2:light_gray_creative_controller": 0,
+        "refinedstorage2:lime_controller": 0,
+        "refinedstorage2:lime_creative_controller": 0,
+        "refinedstorage2:magenta_controller": 0,
+        "refinedstorage2:magenta_creative_controller": 0,
+        "refinedstorage2:orange_controller": 0,
+        "refinedstorage2:orange_creative_controller": 0,
+        "refinedstorage2:pink_controller": 0,
+        "refinedstorage2:pink_creative_controller": 0,
+        "refinedstorage2:purple_controller": 0,
+        "refinedstorage2:purple_creative_controller": 0,
+        "refinedstorage2:red_controller": 0,
+        "refinedstorage2:red_creative_controller": 0,
+        "refinedstorage2:white_controller": 0,
+        "refinedstorage2:white_creative_controller": 0,
+        "refinedstorage2:yellow_controller": 0,
+        "refinedstorage2:yellow_creative_controller": 0
+    }
 }

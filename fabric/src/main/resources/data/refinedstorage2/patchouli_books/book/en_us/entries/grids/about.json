@@ -11,5 +11,22 @@
             "type": "crafting",
             "recipe": "refinedstorage2:grid"
         }
-    ]
+    ],
+    "extra_recipe_mappings": {
+        "refinedstorage2:black_grid": 0,
+        "refinedstorage2:blue_grid": 0,
+        "refinedstorage2:brown_grid": 0,
+        "refinedstorage2:cyan_grid": 0,
+        "refinedstorage2:gray_grid": 0,
+        "refinedstorage2:green_grid": 0,
+        "refinedstorage2:light_gray_grid": 0,
+        "refinedstorage2:lime_grid": 0,
+        "refinedstorage2:magenta_grid": 0,
+        "refinedstorage2:orange_grid": 0,
+        "refinedstorage2:pink_grid": 0,
+        "refinedstorage2:purple_grid": 0,
+        "refinedstorage2:red_grid": 0,
+        "refinedstorage2:white_grid": 0,
+        "refinedstorage2:yellow_grid": 0
+    }
 }
