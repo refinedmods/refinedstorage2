@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRe
 import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
 
 import java.util.Map;
+import java.util.Set;
 
 public class NetworkImpl implements Network {
     private final Map<Class<? extends NetworkComponent>, NetworkComponent> components;
@@ -26,5 +27,15 @@ public class NetworkImpl implements Network {
     @Override
     public void removeHost(NetworkNodeHost<?> host) {
         components.values().forEach(c -> c.onHostRemoved(host));
+    }
+
+    @Override
+    public void remove() {
+        components.values().forEach(NetworkComponent::onNetworkRemoved);
+    }
+
+    @Override
+    public void split(Set<Network> networks) {
+        components.values().forEach(c -> c.onNetworkSplit(networks));
     }
 }

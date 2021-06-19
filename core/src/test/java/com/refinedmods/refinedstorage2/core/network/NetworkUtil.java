@@ -15,12 +15,15 @@ import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 public class NetworkUtil {
     private static class NodeCallbackListenerComponent implements NetworkComponent {
         private final List<NetworkNodeHost<?>> added = new ArrayList<>();
         private final List<NetworkNodeHost<?>> removed = new ArrayList<>();
+        private final List<Set<Network>> splits = new ArrayList<>();
+        private int removeCount = 0;
 
         @Override
         public void onHostAdded(NetworkNodeHost<?> host) {
@@ -30,6 +33,16 @@ public class NetworkUtil {
         @Override
         public void onHostRemoved(NetworkNodeHost<?> host) {
             removed.add(host);
+        }
+
+        @Override
+        public void onNetworkRemoved() {
+            removeCount++;
+        }
+
+        @Override
+        public void onNetworkSplit(Set<Network> networks) {
+            splits.add(networks);
         }
     }
 
@@ -70,5 +83,13 @@ public class NetworkUtil {
 
     public static List<NetworkNodeHost<?>> getRemovedHosts(Network network) {
         return network.getComponent(NodeCallbackListenerComponent.class).removed;
+    }
+
+    public static List<Set<Network>> getNetworkSplits(Network network) {
+        return network.getComponent(NodeCallbackListenerComponent.class).splits;
+    }
+
+    public static int getNetworkRemovedCount(Network network) {
+        return network.getComponent(NodeCallbackListenerComponent.class).removeCount;
     }
 }

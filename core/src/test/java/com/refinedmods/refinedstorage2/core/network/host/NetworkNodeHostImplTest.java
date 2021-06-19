@@ -7,6 +7,9 @@ import com.refinedmods.refinedstorage2.core.network.NetworkUtil;
 import com.refinedmods.refinedstorage2.core.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
+import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +35,7 @@ class NetworkNodeHostImplTest {
 
         assertThat(NetworkUtil.getAddedHosts(host.getNode().getNetwork())).containsExactly(host);
         assertThat(NetworkUtil.getRemovedHosts(host.getNode().getNetwork())).isEmpty();
+        assertThat(NetworkUtil.getNetworkRemovedCount(host.getNode().getNetwork())).isZero();
 
         assertThat(unrelatedHost.getNode().getNetwork()).isNotNull().isNotEqualTo(host.getNode().getNetwork());
         assertThat(unrelatedHost.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getHosts()).containsExactly(NetworkNodeHostEntry.create(unrelatedHost));
@@ -66,6 +70,7 @@ class NetworkNodeHostImplTest {
 
         assertThat(NetworkUtil.getAddedHosts(expectedNetwork)).containsExactly(existingHost1, existingHost2, newHost);
         assertThat(NetworkUtil.getRemovedHosts(expectedNetwork)).isEmpty();
+        assertThat(NetworkUtil.getNetworkRemovedCount(expectedNetwork)).isZero();
 
         assertThat(unrelatedHost.getNode().getNetwork()).isNotNull().isNotEqualTo(expectedNetwork);
         assertThat(unrelatedHost.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getHosts()).containsExactly(NetworkNodeHostEntry.create(unrelatedHost));
@@ -98,8 +103,9 @@ class NetworkNodeHostImplTest {
                 NetworkNodeHostEntry.create(newHost)
         );
 
-        assertThat(NetworkUtil.getAddedHosts(expectedNetwork)).containsExactly(existingHost1, existingHost2, newHost);
+        assertThat(NetworkUtil.getAddedHosts(expectedNetwork)).containsExactlyInAnyOrder(existingHost2, newHost, existingHost1);
         assertThat(NetworkUtil.getRemovedHosts(expectedNetwork)).isEmpty();
+        assertThat(NetworkUtil.getNetworkRemovedCount(expectedNetwork)).isZero();
 
         assertThat(unrelatedHost.getNode().getNetwork()).isNotNull().isNotEqualTo(expectedNetwork);
         assertThat(unrelatedHost.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getHosts()).containsExactly(NetworkNodeHostEntry.create(unrelatedHost));
@@ -135,6 +141,10 @@ class NetworkNodeHostImplTest {
                 NetworkNodeHostEntry.create(host3)
         );
 
+        assertThat(NetworkUtil.getAddedHosts(expectedNetwork)).containsExactlyInAnyOrder(host1, host2, host3);
+        assertThat(NetworkUtil.getRemovedHosts(expectedNetwork)).isEmpty();
+        assertThat(NetworkUtil.getNetworkRemovedCount(expectedNetwork)).isZero();
+
         assertThat(unrelatedHost.getNode().getNetwork()).isNotNull().isNotEqualTo(expectedNetwork);
         assertThat(unrelatedHost.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getHosts()).containsExactly(NetworkNodeHostEntry.create(unrelatedHost));
     }
@@ -167,6 +177,11 @@ class NetworkNodeHostImplTest {
                 NetworkNodeHostEntry.create(host2),
                 NetworkNodeHostEntry.create(host3)
         );
+
+        assertThat(NetworkUtil.getNetworkSplits(host2.getNode().getNetwork())).isEmpty();
+        assertThat(NetworkUtil.getAddedHosts(host2.getNode().getNetwork())).containsExactly(host1, host2, host3);
+        assertThat(NetworkUtil.getRemovedHosts(host2.getNode().getNetwork())).containsExactly(host1);
+        assertThat(NetworkUtil.getNetworkRemovedCount(host2.getNode().getNetwork())).isZero();
     }
 
     @Test
@@ -176,7 +191,9 @@ class NetworkNodeHostImplTest {
 
         NetworkNodeHost<?> host1 = NetworkUtil.createHostWithNetwork(world, Position.ORIGIN);
         NetworkNodeHost<?> host2 = NetworkUtil.createHostWithNetwork(world, Position.ORIGIN.down(), host -> host1.getNode().getNetwork());
+
         NetworkNodeHost<?> host3 = NetworkUtil.createHostWithNetwork(world, Position.ORIGIN.down().down(), host -> host1.getNode().getNetwork());
+
         NetworkNodeHost<?> host4 = NetworkUtil.createHostWithNetwork(world, Position.ORIGIN.down().down().down(), host -> host1.getNode().getNetwork());
         NetworkNodeHost<?> host5 = NetworkUtil.createHostWithNetwork(world, Position.ORIGIN.down().down().down().down(), host -> host1.getNode().getNetwork());
 
@@ -197,6 +214,15 @@ class NetworkNodeHostImplTest {
                 .isNotSameAs(host4.getNode().getNetwork())
                 .isNotSameAs(host5.getNode().getNetwork());
 
+        assertThat(NetworkUtil.getNetworkSplits(host1.getNode().getNetwork())).isEmpty();
+        assertThat(NetworkUtil.getAddedHosts(host1.getNode().getNetwork())).containsExactlyInAnyOrder(host1, host2);
+        assertThat(NetworkUtil.getRemovedHosts(host1.getNode().getNetwork())).isEmpty();
+        assertThat(NetworkUtil.getNetworkRemovedCount(host1.getNode().getNetwork())).isZero();
+
+        assertThat(host1.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getHosts()).containsExactlyInAnyOrder(
+                NetworkNodeHostEntry.create(host1),
+                NetworkNodeHostEntry.create(host2)
+        );
 
         assertThat(host4.getNode().getNetwork())
                 .isSameAs(host5.getNode().getNetwork())
@@ -204,10 +230,13 @@ class NetworkNodeHostImplTest {
                 .isNotSameAs(host1.getNode().getNetwork())
                 .isNotSameAs(host2.getNode().getNetwork());
 
-        assertThat(host1.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getHosts()).containsExactlyInAnyOrder(
-                NetworkNodeHostEntry.create(host1),
-                NetworkNodeHostEntry.create(host2)
-        );
+        List<Set<Network>> splits = NetworkUtil.getNetworkSplits(host4.getNode().getNetwork());
+        assertThat(splits).hasSize(1);
+        assertThat(splits.get(0)).containsExactlyInAnyOrder(host1.getNode().getNetwork());
+
+        assertThat(NetworkUtil.getAddedHosts(host4.getNode().getNetwork())).containsExactlyInAnyOrder(host1, host2, host3, host4, host5);
+        assertThat(NetworkUtil.getRemovedHosts(host4.getNode().getNetwork())).containsExactlyInAnyOrder(host1, host2, host3);
+        assertThat(NetworkUtil.getNetworkRemovedCount(host4.getNode().getNetwork())).isZero();
 
         assertThat(host4.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getHosts()).containsExactlyInAnyOrder(
                 NetworkNodeHostEntry.create(host4),
@@ -221,8 +250,11 @@ class NetworkNodeHostImplTest {
         FakeRs2World world = new FakeRs2World();
 
         NetworkNodeHost<?> host1 = NetworkUtil.createHostWithNetwork(world, Position.ORIGIN);
+
         NetworkNodeHost<?> host2 = NetworkUtil.createHostWithNetwork(world, Position.ORIGIN.up(), host -> host1.getNode().getNetwork());
+
         NetworkNodeHost<?> host3 = NetworkUtil.createHostWithNetwork(world, Position.ORIGIN.down(), host -> host1.getNode().getNetwork());
+
         NetworkNodeHost<?> host4 = NetworkUtil.createHostWithNetwork(world, Position.ORIGIN.north(), host -> host1.getNode().getNetwork());
         NetworkNodeHost<?> host5 = NetworkUtil.createHostWithNetwork(world, Position.ORIGIN.north().north(), host -> host1.getNode().getNetwork());
 
@@ -243,17 +275,35 @@ class NetworkNodeHostImplTest {
                 .isNotSameAs(host5.getNode().getNetwork())
                 .isNotSameAs(unrelatedHost.getNode().getNetwork());
 
+        assertThat(NetworkUtil.getNetworkSplits(host2.getNode().getNetwork())).isEmpty();
+        assertThat(NetworkUtil.getAddedHosts(host2.getNode().getNetwork())).containsExactlyInAnyOrder(host2);
+        assertThat(NetworkUtil.getRemovedHosts(host2.getNode().getNetwork())).isEmpty();
+        assertThat(NetworkUtil.getNetworkRemovedCount(host2.getNode().getNetwork())).isZero();
+
         assertThat(host3.getNode().getNetwork())
                 .isNotSameAs(host2.getNode().getNetwork())
                 .isNotSameAs(host4.getNode().getNetwork())
                 .isNotSameAs(host5.getNode().getNetwork())
                 .isNotSameAs(unrelatedHost.getNode().getNetwork());
 
+        List<Set<Network>> splits = NetworkUtil.getNetworkSplits(host3.getNode().getNetwork());
+        assertThat(splits).hasSize(1);
+        assertThat(splits.get(0)).containsExactlyInAnyOrder(host2.getNode().getNetwork(), host4.getNode().getNetwork());
+
+        assertThat(NetworkUtil.getAddedHosts(host3.getNode().getNetwork())).containsExactlyInAnyOrder(host1, host2, host3, host4, host5);
+        assertThat(NetworkUtil.getRemovedHosts(host3.getNode().getNetwork())).containsExactlyInAnyOrder(host1, host2, host4, host5);
+        assertThat(NetworkUtil.getNetworkRemovedCount(host3.getNode().getNetwork())).isZero();
+
         assertThat(host4.getNode().getNetwork())
                 .isNotSameAs(host2.getNode().getNetwork())
                 .isNotSameAs(host3.getNode().getNetwork())
                 .isSameAs(host5.getNode().getNetwork())
                 .isNotSameAs(unrelatedHost.getNode().getNetwork());
+
+        assertThat(NetworkUtil.getNetworkSplits(host4.getNode().getNetwork())).isEmpty();
+        assertThat(NetworkUtil.getAddedHosts(host4.getNode().getNetwork())).containsExactlyInAnyOrder(host4, host5);
+        assertThat(NetworkUtil.getRemovedHosts(host4.getNode().getNetwork())).isEmpty();
+        assertThat(NetworkUtil.getNetworkRemovedCount(host4.getNode().getNetwork())).isZero();
 
         assertThat(host2.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getHosts()).containsExactlyInAnyOrder(
                 NetworkNodeHostEntry.create(host2)
@@ -279,6 +329,8 @@ class NetworkNodeHostImplTest {
 
         FakeNetworkNodeHostRepository repository = FakeNetworkNodeHostRepository.of(host, unrelatedHost);
 
+        Network network = host.getNode().getNetwork();
+
         // Act
         repository.removeHost(world, host.getPosition());
         host.remove(repository, NetworkUtil.NETWORK_COMPONENT_REGISTRY);
@@ -289,5 +341,10 @@ class NetworkNodeHostImplTest {
         assertThat(unrelatedHost.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getHosts()).containsExactlyInAnyOrder(
                 NetworkNodeHostEntry.create(unrelatedHost)
         );
+
+        assertThat(NetworkUtil.getNetworkSplits(network)).isEmpty();
+        assertThat(NetworkUtil.getAddedHosts(network)).containsExactly(host);
+        assertThat(NetworkUtil.getRemovedHosts(network)).isEmpty();
+        assertThat(NetworkUtil.getNetworkRemovedCount(network)).isEqualTo(1);
     }
 }

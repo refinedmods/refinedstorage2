@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -30,9 +31,9 @@ public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHo
     }
 
     @Override
-    public void initialize(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
+    public boolean initialize(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
         if (node.getNetwork() != null) {
-            return;
+            return false;
         }
 
         NetworkNodeHostVisitorOperatorImpl operator = new NetworkNodeHostVisitorOperatorImpl(hostRepository, Collections.emptySet());
@@ -42,6 +43,8 @@ public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHo
         Preconditions.checkArgument(operator.getRemovedEntries().isEmpty(), "Cannot have removed entries");
 
         mergeNetworks(hostRepository, operator.getFoundEntries(), networkComponentRegistry);
+
+        return true;
     }
 
     private void mergeNetworks(NetworkNodeHostRepository hostRepository, Set<NetworkNodeHostEntry> foundEntries, NetworkComponentRegistry networkComponentRegistry) {
@@ -98,6 +101,7 @@ public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHo
         NetworkNodeHostEntry pivot = findPivot(removedHost, hosts);
 
         if (pivot == null) {
+            node.getNetwork().remove();
             node.setNetwork(null);
             return;
         }
@@ -112,7 +116,13 @@ public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHo
     }
 
     private NetworkNodeHostEntry findPivot(NetworkNodeHostEntry currentEntry, Set<NetworkNodeHostEntry> hosts) {
-        for (NetworkNodeHostEntry entry : hosts) {
+        // Sorting is necessary to add some predictability to which pivot is selected
+        List<NetworkNodeHostEntry> sortedEntries = hosts
+                .stream()
+                .sorted(Comparator.comparing(a -> a.getHost().getPosition()))
+                .collect(Collectors.toList());
+
+        for (NetworkNodeHostEntry entry : sortedEntries) {
             if (!entry.equals(currentEntry)) {
                 return entry;
             }
@@ -121,15 +131,28 @@ public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHo
     }
 
     private void splitNetworks(NetworkNodeHostRepository hostRepository, Set<NetworkNodeHostEntry> removedEntries, NetworkComponentRegistry networkComponentRegistry) {
+        Network networkOfRemovedNode = node.getNetwork();
+
         removedEntries.forEach(e -> {
             e.getHost().getNode().getNetwork().removeHost(e.getHost());
             e.getHost().getNode().setNetwork(null);
         });
 
+        Set<Network> splittedNetworks = new HashSet<>();
+
         removedEntries
                 .stream()
                 .filter(e -> e.getHost() != this)
-                .forEach(removedEntry -> removedEntry.getHost().initialize(hostRepository, networkComponentRegistry));
+                .forEach(removedEntry -> {
+                    boolean establishedNetwork = removedEntry.getHost().initialize(hostRepository, networkComponentRegistry);
+                    if (establishedNetwork) {
+                        splittedNetworks.add(removedEntry.getHost().getNode().getNetwork());
+                    }
+                });
+
+        if (!splittedNetworks.isEmpty()) {
+            networkOfRemovedNode.split(splittedNetworks);
+        }
     }
 
     @Override

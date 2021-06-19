@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.core.network.NetworkImpl;
 import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +28,16 @@ class NetworkComponentRegistryImplTest {
 
         @Override
         public void onHostRemoved(NetworkNodeHost<?> host) {
+
+        }
+
+        @Override
+        public void onNetworkRemoved() {
+
+        }
+
+        @Override
+        public void onNetworkSplit(Set<Network> networks) {
 
         }
     }

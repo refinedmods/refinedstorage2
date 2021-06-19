@@ -3,11 +3,10 @@ package com.refinedmods.refinedstorage2.core.network.component;
 import com.refinedmods.refinedstorage2.core.network.Network;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 public class NetworkComponentRegistryImpl implements NetworkComponentRegistry {
-    private final Map<Class<? extends NetworkComponent>, Function<Network, NetworkComponent>> registry = new LinkedHashMap<>();
+    private final LinkedHashMap<Class<? extends NetworkComponent>, Function<Network, NetworkComponent>> registry = new LinkedHashMap<>();
 
     @Override
     public void addComponent(Class<? extends NetworkComponent> clazz, Function<Network, NetworkComponent> factory) {

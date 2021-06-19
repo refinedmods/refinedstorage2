@@ -144,8 +144,8 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     }
 
     @Override
-    public void initialize(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
-        host.initialize(hostRepository, networkComponentRegistry);
+    public boolean initialize(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
+        return host.initialize(hostRepository, networkComponentRegistry);
     }
 
     @Override

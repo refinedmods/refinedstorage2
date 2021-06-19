@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 public interface NetworkNodeHost<T extends NetworkNode> {
-    void initialize(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry);
+    boolean initialize(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry);
 
     void remove(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry);
 

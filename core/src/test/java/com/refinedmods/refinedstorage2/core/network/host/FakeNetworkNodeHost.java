@@ -13,8 +13,8 @@ public class FakeNetworkNodeHost<T extends NetworkNode> implements NetworkNodeHo
     }
 
     @Override
-    public void initialize(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
-
+    public boolean initialize(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
+        return false;
     }
 
     @Override
