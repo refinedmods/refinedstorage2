@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerTy
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.fabric.block.entity.RelayBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
 
@@ -16,6 +17,7 @@ public class Rs2BlockEntities {
     private BlockEntityType<GridBlockEntity> grid;
     private BlockEntityType<ControllerBlockEntity> controller;
     private BlockEntityType<ControllerBlockEntity> creativeController;
+    private BlockEntityType<RelayBlockEntity> relay;
 
     public void register(Rs2Blocks blocks) {
         cable = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("cable"), BlockEntityType.Builder.create(CableBlockEntity::new, blocks.getCable()).build(null));
@@ -23,6 +25,7 @@ public class Rs2BlockEntities {
         grid = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("grid"), BlockEntityType.Builder.create(GridBlockEntity::new, blocks.getGrid().toArray()).build(null));
         controller = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("controller"), BlockEntityType.Builder.create(() -> new ControllerBlockEntity(ControllerType.NORMAL), blocks.getController().toArray()).build(null));
         creativeController = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("creative_controller"), BlockEntityType.Builder.create(() -> new ControllerBlockEntity(ControllerType.CREATIVE), blocks.getCreativeController().toArray()).build(null));
+        relay = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("relay"), BlockEntityType.Builder.create(RelayBlockEntity::new, blocks.getRelay()).build(null));
     }
 
     public BlockEntityType<CableBlockEntity> getCable() {
@@ -43,5 +46,9 @@ public class Rs2BlockEntities {
 
     public BlockEntityType<ControllerBlockEntity> getCreativeController() {
         return creativeController;
+    }
+
+    public BlockEntityType<RelayBlockEntity> getRelay() {
+        return relay;
     }
 }

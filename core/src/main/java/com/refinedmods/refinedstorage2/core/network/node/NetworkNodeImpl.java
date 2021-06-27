@@ -29,7 +29,8 @@ public abstract class NetworkNodeImpl implements NetworkNode {
     }
 
     public boolean isActive() {
-        return redstoneMode.isActive(world.isPowered(position)) && network.getComponent(EnergyNetworkComponent.class).getEnergyStorage().getStored() > 0;
+        return redstoneMode.isActive(world.isPowered(position))
+                && network.getComponent(EnergyNetworkComponent.class).getEnergyStorage().getStored() > 0;
     }
 
     protected void onActiveChanged(boolean active) {

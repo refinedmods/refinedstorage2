@@ -5,16 +5,17 @@ import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRe
 import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
 import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHostImpl;
 import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHostRepository;
-import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHostVisitor;
-import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHostVisitorOperator;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.core.util.Direction;
 import com.refinedmods.refinedstorage2.core.util.Position;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.NetworkNodeBlock;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.host.FabricNetworkNodeHostRepository;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
+
+import java.util.List;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -26,7 +27,7 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends BlockEntity implements NetworkNodeHost<T>, Tickable, NetworkNodeHostVisitor {
+public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends BlockEntity implements NetworkNodeHost<T>, Tickable {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final int ACTIVE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
@@ -55,12 +56,17 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
             tag = new CompoundTag();
         }
 
-        this.host = new NetworkNodeHostImpl<>(FabricRs2WorldAdapter.of(world), Positions.ofBlockPos(pos), createNode(world, pos, tag));
+        T node = createNode(world, pos, tag);
+        this.host = createHost(world, pos, node);
         this.mustInitialize = true;
 
         if (tag.contains(TAG_REDSTONE_MODE)) {
             host.getNode().setRedstoneMode(RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE)));
         }
+    }
+
+    protected NetworkNodeHostImpl<T> createHost(World world, BlockPos pos, T node) {
+        return new NetworkNodeHostImpl<>(FabricRs2WorldAdapter.of(world), Positions.ofBlockPos(pos), node);
     }
 
     protected abstract T createNode(World world, BlockPos pos, CompoundTag tag);
@@ -169,7 +175,12 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     }
 
     @Override
-    public void visit(NetworkNodeHostVisitorOperator operator) {
-        host.visit(operator);
+    public List<NetworkNodeHost<?>> getConnections(NetworkNodeHostRepository hostRepository) {
+        return host.getConnections(hostRepository);
+    }
+
+    @Override
+    public boolean canConnectWith(NetworkNodeHost<?> other, Direction incomingDirection) {
+        return host.canConnectWith(other, incomingDirection);
     }
 }
