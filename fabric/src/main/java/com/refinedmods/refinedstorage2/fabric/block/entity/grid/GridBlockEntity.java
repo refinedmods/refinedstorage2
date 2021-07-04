@@ -76,70 +76,70 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
 
     @Override
     public CompoundTag toTag(CompoundTag tag) {
-        tag.putInt(TAG_SORTING_DIRECTION, GridSettings.getSortingDirection(host.getNode().getSortingDirection()));
-        tag.putInt(TAG_SORTING_TYPE, GridSettings.getSortingType(host.getNode().getSortingType()));
-        tag.putInt(TAG_SIZE, GridSettings.getSize(host.getNode().getSize()));
-        tag.putInt(TAG_SEARCH_BOX_MODE, Rs2Mod.API.getGridSearchBoxModeRegistry().getId(host.getNode().getSearchBoxMode()));
+        tag.putInt(TAG_SORTING_DIRECTION, GridSettings.getSortingDirection(container.getNode().getSortingDirection()));
+        tag.putInt(TAG_SORTING_TYPE, GridSettings.getSortingType(container.getNode().getSortingType()));
+        tag.putInt(TAG_SIZE, GridSettings.getSize(container.getNode().getSize()));
+        tag.putInt(TAG_SEARCH_BOX_MODE, Rs2Mod.API.getGridSearchBoxModeRegistry().getId(container.getNode().getSearchBoxMode()));
 
         return super.toTag(tag);
     }
 
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeBoolean(host.getNode().isActive());
+        buf.writeBoolean(container.getNode().isActive());
         buf.writeInt(GridSettings.getSortingDirection(getSortingDirection()));
         buf.writeInt(GridSettings.getSortingType(getSortingType()));
         buf.writeInt(GridSettings.getSize(getSize()));
         buf.writeInt(Rs2Mod.API.getGridSearchBoxModeRegistry().getId(getSearchBoxMode()));
 
-        buf.writeInt(host.getNode().getStackCount());
-        host.getNode().forEachStack((stack, trackerEntry) -> {
+        buf.writeInt(container.getNode().getStackCount());
+        container.getNode().forEachStack((stack, trackerEntry) -> {
             PacketUtil.writeItemStack(buf, stack, true);
             PacketUtil.writeTrackerEntry(buf, trackerEntry);
         });
     }
 
     public GridSortingType getSortingType() {
-        return host.getNode().getSortingType();
+        return container.getNode().getSortingType();
     }
 
     public void setSortingType(GridSortingType sortingType) {
-        host.getNode().setSortingType(sortingType);
+        container.getNode().setSortingType(sortingType);
         markDirty();
     }
 
     public GridSortingDirection getSortingDirection() {
-        return host.getNode().getSortingDirection();
+        return container.getNode().getSortingDirection();
     }
 
     public void setSortingDirection(GridSortingDirection sortingDirection) {
-        host.getNode().setSortingDirection(sortingDirection);
+        container.getNode().setSortingDirection(sortingDirection);
         markDirty();
     }
 
     public GridSearchBoxMode getSearchBoxMode() {
-        return host.getNode().getSearchBoxMode();
+        return container.getNode().getSearchBoxMode();
     }
 
     public void setSearchBoxMode(GridSearchBoxMode searchBoxMode) {
-        host.getNode().setSearchBoxMode(searchBoxMode);
+        container.getNode().setSearchBoxMode(searchBoxMode);
         markDirty();
     }
 
     public GridSize getSize() {
-        return host.getNode().getSize();
+        return container.getNode().getSize();
     }
 
     public void setSize(GridSize size) {
-        host.getNode().setSize(size);
+        container.getNode().setSize(size);
         markDirty();
     }
 
     public void addWatcher(GridEventHandler eventHandler) {
-        host.getNode().addWatcher(eventHandler);
+        container.getNode().addWatcher(eventHandler);
     }
 
     public void removeWatcher(GridEventHandler eventHandler) {
-        host.getNode().removeWatcher(eventHandler);
+        container.getNode().removeWatcher(eventHandler);
     }
 }

@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.NetworkUtil;
 import com.refinedmods.refinedstorage2.core.network.component.ItemStorageNetworkComponent;
-import com.refinedmods.refinedstorage2.core.network.host.FakeNetworkNodeHost;
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.core.network.node.container.FakeNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
@@ -42,7 +42,7 @@ class DiskDriveNetworkNodeTest {
         network = NetworkUtil.createWithCreativeEnergySource();
         diskDrive = DiskDriveNetworkNodeWrapper.create(BASE_USAGE, USAGE_PER_DISK);
         diskDrive.setNetwork(network);
-        network.addHost(new FakeNetworkNodeHost<>(diskDrive));
+        network.addContainer(new FakeNetworkNodeContainer<>(diskDrive));
     }
 
     @Test

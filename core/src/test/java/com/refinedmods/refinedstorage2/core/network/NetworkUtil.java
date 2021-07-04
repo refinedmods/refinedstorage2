@@ -8,9 +8,9 @@ import com.refinedmods.refinedstorage2.core.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistryImpl;
 import com.refinedmods.refinedstorage2.core.network.energy.CreativeEnergyStorage;
-import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
-import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHostImpl;
 import com.refinedmods.refinedstorage2.core.network.node.EmptyNetworkNode;
+import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerImpl;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.ArrayList;
@@ -20,20 +20,20 @@ import java.util.function.Function;
 
 public class NetworkUtil {
     private static class NodeCallbackListenerComponent implements NetworkComponent {
-        private final List<NetworkNodeHost<?>> added = new ArrayList<>();
-        private final List<NetworkNodeHost<?>> removed = new ArrayList<>();
+        private final List<NetworkNodeContainer<?>> added = new ArrayList<>();
+        private final List<NetworkNodeContainer<?>> removed = new ArrayList<>();
         private final List<Set<Network>> splits = new ArrayList<>();
         private final List<Network> merges = new ArrayList<>();
         private int removeCount = 0;
 
         @Override
-        public void onHostAdded(NetworkNodeHost<?> host) {
-            added.add(host);
+        public void onContainerAdded(NetworkNodeContainer<?> container) {
+            added.add(container);
         }
 
         @Override
-        public void onHostRemoved(NetworkNodeHost<?> host) {
-            removed.add(host);
+        public void onContainerRemoved(NetworkNodeContainer<?> container) {
+            removed.add(container);
         }
 
         @Override
@@ -67,27 +67,27 @@ public class NetworkUtil {
         return network;
     }
 
-    public static NetworkNodeHost<?> createHost(Rs2World world, Position position) {
-        return new NetworkNodeHostImpl<>(world, position, new EmptyNetworkNode(world, position));
+    public static NetworkNodeContainer<?> createContainer(Rs2World world, Position position) {
+        return new NetworkNodeContainerImpl<>(world, position, new EmptyNetworkNode(world, position));
     }
 
-    public static NetworkNodeHost<?> createHostWithNetwork(Rs2World world, Position position, Function<NetworkNodeHost<?>, Network> networkFactory) {
-        NetworkNodeHost<?> host = createHost(world, position);
-        Network network = networkFactory.apply(host);
-        host.getNode().setNetwork(network);
-        network.addHost(host);
-        return host;
+    public static NetworkNodeContainer<?> createContainerWithNetwork(Rs2World world, Position position, Function<NetworkNodeContainer<?>, Network> networkFactory) {
+        NetworkNodeContainer<?> container = createContainer(world, position);
+        Network network = networkFactory.apply(container);
+        container.getNode().setNetwork(network);
+        network.addContainer(container);
+        return container;
     }
 
-    public static NetworkNodeHost<?> createHostWithNetwork(Rs2World world, Position position) {
-        return createHostWithNetwork(world, position, host -> new NetworkImpl(NetworkUtil.NETWORK_COMPONENT_REGISTRY));
+    public static NetworkNodeContainer<?> createContainerWithNetwork(Rs2World world, Position position) {
+        return createContainerWithNetwork(world, position, container -> new NetworkImpl(NetworkUtil.NETWORK_COMPONENT_REGISTRY));
     }
 
-    public static List<NetworkNodeHost<?>> getAddedHosts(Network network) {
+    public static List<NetworkNodeContainer<?>> getAddedContainers(Network network) {
         return network.getComponent(NodeCallbackListenerComponent.class).added;
     }
 
-    public static List<NetworkNodeHost<?>> getRemovedHosts(Network network) {
+    public static List<NetworkNodeContainer<?>> getRemovedContainers(Network network) {
         return network.getComponent(NodeCallbackListenerComponent.class).removed;
     }
 

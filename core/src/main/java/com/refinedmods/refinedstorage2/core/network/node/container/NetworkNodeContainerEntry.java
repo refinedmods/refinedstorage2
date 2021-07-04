@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.network.host;
+package com.refinedmods.refinedstorage2.core.network.node.container;
 
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
@@ -6,30 +6,30 @@ import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.Objects;
 
-public final class NetworkNodeHostEntry<T extends NetworkNode> {
-    private final NetworkNodeHost<T> host;
+public final class NetworkNodeContainerEntry<T extends NetworkNode> {
+    private final NetworkNodeContainer<T> container;
     private final Rs2World world;
     private final Position position;
 
-    public static <T extends NetworkNode> NetworkNodeHostEntry<T> create(NetworkNodeHost<T> host) {
-        return new NetworkNodeHostEntry<>(host, host.getHostWorld(), host.getPosition());
+    public static <T extends NetworkNode> NetworkNodeContainerEntry<T> create(NetworkNodeContainer<T> container) {
+        return new NetworkNodeContainerEntry<>(container, container.getContainerWorld(), container.getPosition());
     }
 
-    private NetworkNodeHostEntry(NetworkNodeHost<T> host, Rs2World world, Position position) {
-        this.host = host;
+    private NetworkNodeContainerEntry(NetworkNodeContainer<T> container, Rs2World world, Position position) {
+        this.container = container;
         this.world = world;
         this.position = position;
     }
 
-    public NetworkNodeHost<T> getHost() {
-        return host;
+    public NetworkNodeContainer<T> getContainer() {
+        return container;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        NetworkNodeHostEntry that = (NetworkNodeHostEntry) o;
+        NetworkNodeContainerEntry that = (NetworkNodeContainerEntry) o;
         return Objects.equals(world, that.world) && Objects.equals(position, that.position);
     }
 

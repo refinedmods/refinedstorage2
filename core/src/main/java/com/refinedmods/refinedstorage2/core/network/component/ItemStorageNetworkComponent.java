@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.core.network.component;
 
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
+import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 
@@ -18,17 +18,17 @@ public class ItemStorageNetworkComponent implements NetworkComponent {
     private final List<Storage<Rs2ItemStack>> sources = new ArrayList<>();
 
     @Override
-    public void onHostAdded(NetworkNodeHost<?> host) {
-        if (host.getNode() instanceof Storage) {
-            sources.add((Storage<Rs2ItemStack>) host.getNode());
+    public void onContainerAdded(NetworkNodeContainer<?> container) {
+        if (container.getNode() instanceof Storage) {
+            sources.add((Storage<Rs2ItemStack>) container.getNode());
             invalidate();
         }
     }
 
     @Override
-    public void onHostRemoved(NetworkNodeHost<?> host) {
-        if (host.getNode() instanceof Storage) {
-            sources.remove((Storage<Rs2ItemStack>) host.getNode());
+    public void onContainerRemoved(NetworkNodeContainer<?> container) {
+        if (container.getNode() instanceof Storage) {
+            sources.remove((Storage<Rs2ItemStack>) container.getNode());
             invalidate();
         }
     }

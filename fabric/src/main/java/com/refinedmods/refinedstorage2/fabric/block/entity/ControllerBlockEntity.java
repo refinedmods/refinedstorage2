@@ -52,10 +52,10 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     public void tick() {
         super.tick();
 
-        if (world != null && !world.isClient() && host != null) {
+        if (world != null && !world.isClient() && container != null) {
             calculateCachedStateIfNecessary();
 
-            ControllerEnergyType type = ControllerEnergyType.ofState(host.getNode().getState());
+            ControllerEnergyType type = ControllerEnergyType.ofState(container.getNode().getState());
             ControllerEnergyType inWorldType = cachedState.get(ControllerBlock.ENERGY_TYPE);
 
             if (type != inWorldType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
@@ -86,17 +86,17 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
 
     @Override
     public long getStored() {
-        return host.getNode().getStored();
+        return container.getNode().getStored();
     }
 
     @Override
     public long getCapacity() {
-        return host.getNode().getCapacity();
+        return container.getNode().getCapacity();
     }
 
     @Override
     public long receive(long amount, Action action) {
-        long remainder = host.getNode().receive(amount, action);
+        long remainder = container.getNode().receive(amount, action);
         if (remainder != amount && action == Action.EXECUTE) {
             markDirty();
         }
@@ -105,7 +105,7 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
 
     @Override
     public long extract(long amount, Action action) {
-        long extracted = host.getNode().extract(amount, action);
+        long extracted = container.getNode().extract(amount, action);
         if (extracted > 0 && action == Action.EXECUTE) {
             markDirty();
         }
@@ -115,7 +115,7 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     @Override
     public CompoundTag toTag(CompoundTag tag) {
         tag = super.toTag(tag);
-        tag.putLong(TAG_STORED, host.getNode().getActualStored());
+        tag.putLong(TAG_STORED, container.getNode().getActualStored());
         return tag;
     }
 
@@ -137,31 +137,31 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     }
 
     public long getActualStored() {
-        return host.getNode().getActualStored();
+        return container.getNode().getActualStored();
     }
 
     public long getActualCapacity() {
-        return host.getNode().getActualCapacity();
+        return container.getNode().getActualCapacity();
     }
 
     @Override
     public double getStored(EnergySide face) {
-        return host.getNode().getStored();
+        return container.getNode().getStored();
     }
 
     @Override
     public void setStored(double amount) {
-        long difference = (long) amount - host.getNode().getStored();
+        long difference = (long) amount - container.getNode().getStored();
         if (difference > 0) {
-            host.getNode().receive(difference, Action.EXECUTE);
+            container.getNode().receive(difference, Action.EXECUTE);
         } else {
-            host.getNode().extract(Math.abs(difference), Action.EXECUTE);
+            container.getNode().extract(Math.abs(difference), Action.EXECUTE);
         }
     }
 
     @Override
     public double getMaxStoredPower() {
-        return host.getNode().getCapacity();
+        return container.getNode().getCapacity();
     }
 
     @Override

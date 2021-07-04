@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.core.network.component;
 import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.NetworkImpl;
-import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
+import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
 
 import java.util.Map;
 import java.util.Set;
@@ -22,12 +22,12 @@ class NetworkComponentRegistryImplTest {
         }
 
         @Override
-        public void onHostAdded(NetworkNodeHost<?> host) {
+        public void onContainerAdded(NetworkNodeContainer<?> container) {
 
         }
 
         @Override
-        public void onHostRemoved(NetworkNodeHost<?> host) {
+        public void onContainerRemoved(NetworkNodeContainer<?> container) {
 
         }
 

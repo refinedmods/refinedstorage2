@@ -4,8 +4,8 @@ import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.item.ItemStubs;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.NetworkUtil;
-import com.refinedmods.refinedstorage2.core.network.host.FakeNetworkNodeHost;
-import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
+import com.refinedmods.refinedstorage2.core.network.node.container.FakeNetworkNodeContainer;
+import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNodeWrapper;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ItemStorageNetworkComponentTest {
     private ItemStorageNetworkComponent sut;
     private DiskDriveNetworkNodeWrapper diskDrive;
-    private NetworkNodeHost<DiskDriveNetworkNodeWrapper> diskDriveHost;
+    private NetworkNodeContainer<DiskDriveNetworkNodeWrapper> diskDriveContainer;
 
     @BeforeEach
     void setUp() {
@@ -33,17 +33,17 @@ class ItemStorageNetworkComponentTest {
         diskDrive.getFakeStorageDiskProviderManager().setDisk(0, new ItemDiskStorage(100));
         diskDrive.setNetwork(NetworkUtil.createWithCreativeEnergySource());
 
-        diskDriveHost = new FakeNetworkNodeHost<>(diskDrive);
+        diskDriveContainer = new FakeNetworkNodeContainer<>(diskDrive);
     }
 
     @Test
     void Test_adding_node_should_invalidate_storage() {
         // Arrange
-        sut.onHostAdded(diskDriveHost);
+        sut.onContainerAdded(diskDriveContainer);
 
         // Act
         Optional<Rs2ItemStack> remainderBeforeRemoval = sut.getStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
-        sut.onHostRemoved(diskDriveHost);
+        sut.onContainerRemoved(diskDriveContainer);
         Optional<Rs2ItemStack> remainderAfterRemoval = sut.getStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         // Assert
@@ -55,7 +55,7 @@ class ItemStorageNetworkComponentTest {
     @Test
     void Test_inserting_items() {
         // Arrange
-        sut.onHostAdded(diskDriveHost);
+        sut.onContainerAdded(diskDriveContainer);
 
         // Act
         Optional<Rs2ItemStack> remainder = sut.getStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 4, Action.EXECUTE);
@@ -69,7 +69,7 @@ class ItemStorageNetworkComponentTest {
     @Test
     void Test_extracting_items() {
         // Arrange
-        sut.onHostAdded(diskDriveHost);
+        sut.onContainerAdded(diskDriveContainer);
 
         sut.getStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 

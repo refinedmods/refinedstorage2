@@ -123,10 +123,10 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
         tag = super.toTag(tag);
         tag.put(TAG_DISK_INVENTORY, diskInventory.toTag());
         tag.put(TAG_FILTER_INVENTORY, filterInventory.toTag());
-        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(host.getNode().getFilterMode()));
-        tag.putInt(TAG_PRIORITY, host.getNode().getPriority());
-        tag.putBoolean(TAG_EXACT_MODE, host.getNode().isExactMode());
-        tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(host.getNode().getAccessMode()));
+        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(container.getNode().getFilterMode()));
+        tag.putInt(TAG_PRIORITY, container.getNode().getPriority());
+        tag.putBoolean(TAG_EXACT_MODE, container.getNode().isExactMode());
+        tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(container.getNode().getAccessMode()));
         return tag;
     }
 
@@ -135,34 +135,34 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     }
 
     public FilterMode getFilterMode() {
-        return host.getNode().getFilterMode();
+        return container.getNode().getFilterMode();
     }
 
     public void setFilterMode(FilterMode mode) {
-        host.getNode().setFilterMode(mode);
+        container.getNode().setFilterMode(mode);
         markDirty();
     }
 
     public boolean isExactMode() {
-        return host.getNode().isExactMode();
+        return container.getNode().isExactMode();
     }
 
     public void setExactMode(boolean exactMode) {
-        host.getNode().setExactMode(exactMode);
+        container.getNode().setExactMode(exactMode);
         markDirty();
     }
 
     public AccessMode getAccessMode() {
-        return host.getNode().getAccessMode();
+        return container.getNode().getAccessMode();
     }
 
     public void setAccessMode(AccessMode accessMode) {
-        host.getNode().setAccessMode(accessMode);
+        container.getNode().setAccessMode(accessMode);
         markDirty();
     }
 
     public void setFilterTemplates(List<ItemStack> templates) {
-        host.getNode().setFilterTemplates(templates.stream().map(ItemStacks::ofItemStack).collect(Collectors.toList()));
+        container.getNode().setFilterTemplates(templates.stream().map(ItemStacks::ofItemStack).collect(Collectors.toList()));
     }
 
     @Override
@@ -171,8 +171,8 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     }
 
     void onDiskChanged(int slot) {
-        host.getNode().onDiskChanged(slot);
-        host.getNode().getNetwork().getComponent(ItemStorageNetworkComponent.class).invalidate();
+        container.getNode().onDiskChanged(slot);
+        container.getNode().getNetwork().getComponent(ItemStorageNetworkComponent.class).invalidate();
         sync();
         markDirty();
     }
@@ -200,7 +200,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     @Override
     public CompoundTag toClientTag(CompoundTag tag) {
         ListTag statesList = new ListTag();
-        for (DiskState state : host.getNode().createState().getStates()) {
+        for (DiskState state : container.getNode().createState().getStates()) {
             statesList.add(ByteTag.of((byte) state.ordinal()));
         }
         tag.put(TAG_STATES, statesList);
@@ -226,31 +226,31 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
     @Override
     public Optional<Rs2ItemStack> extract(Rs2ItemStack template, long amount, Action action) {
-        return host.getNode().extract(template, amount, action);
+        return container.getNode().extract(template, amount, action);
     }
 
     @Override
     public Optional<Rs2ItemStack> insert(Rs2ItemStack template, long amount, Action action) {
-        return host.getNode().insert(template, amount, action);
+        return container.getNode().insert(template, amount, action);
     }
 
     @Override
     public Collection<Rs2ItemStack> getStacks() {
-        return host.getNode().getStacks();
+        return container.getNode().getStacks();
     }
 
     @Override
     public long getStored() {
-        return host.getNode().getStored();
+        return container.getNode().getStored();
     }
 
     public int getPriority() {
-        return host.getNode().getPriority();
+        return container.getNode().getPriority();
     }
 
     public void setPriority(int priority) {
-        host.getNode().setPriority(priority);
-        host.getNode().getNetwork().getComponent(ItemStorageNetworkComponent.class).getStorageChannel().sortSources();
+        container.getNode().setPriority(priority);
+        container.getNode().getNetwork().getComponent(ItemStorageNetworkComponent.class).getStorageChannel().sortSources();
         markDirty();
     }
 }

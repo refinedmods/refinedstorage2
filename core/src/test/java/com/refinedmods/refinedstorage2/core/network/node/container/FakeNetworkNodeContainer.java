@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.network.host;
+package com.refinedmods.refinedstorage2.core.network.node.container;
 
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistry;
@@ -8,20 +8,20 @@ import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.List;
 
-public class FakeNetworkNodeHost<T extends NetworkNode> implements NetworkNodeHost<T> {
+public class FakeNetworkNodeContainer<T extends NetworkNode> implements NetworkNodeContainer<T> {
     private final T node;
 
-    public FakeNetworkNodeHost(T node) {
+    public FakeNetworkNodeContainer(T node) {
         this.node = node;
     }
 
     @Override
-    public boolean initialize(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
+    public boolean initialize(NetworkNodeContainerRepository containerRepository, NetworkComponentRegistry networkComponentRegistry) {
         return false;
     }
 
     @Override
-    public void remove(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
+    public void remove(NetworkNodeContainerRepository containerRepository, NetworkComponentRegistry networkComponentRegistry) {
 
     }
 
@@ -36,17 +36,17 @@ public class FakeNetworkNodeHost<T extends NetworkNode> implements NetworkNodeHo
     }
 
     @Override
-    public Rs2World getHostWorld() {
+    public Rs2World getContainerWorld() {
         return null;
     }
 
     @Override
-    public List<NetworkNodeHost<?>> getConnections(NetworkNodeHostRepository hostRepository) {
+    public List<NetworkNodeContainer<?>> getConnections(NetworkNodeContainerRepository containerRepository) {
         return null;
     }
 
     @Override
-    public boolean canConnectWith(NetworkNodeHost<?> other, Direction incomingDirection) {
+    public boolean canConnectWith(NetworkNodeContainer<?> other, Direction incomingDirection) {
         return false;
     }
 }

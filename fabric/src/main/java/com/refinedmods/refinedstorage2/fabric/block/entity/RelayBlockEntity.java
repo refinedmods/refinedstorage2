@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity;
 
-import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHostImpl;
-import com.refinedmods.refinedstorage2.core.network.host.relay.RelayNetworkNodeHost;
+import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerImpl;
+import com.refinedmods.refinedstorage2.core.network.node.container.relay.RelayNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.relay.RelayNetworkNode;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
@@ -17,8 +17,8 @@ public class RelayBlockEntity extends NetworkNodeBlockEntity<RelayNetworkNode> {
     }
 
     @Override
-    protected NetworkNodeHostImpl<RelayNetworkNode> createHost(World world, BlockPos pos, RelayNetworkNode node) {
-        return new RelayNetworkNodeHost(FabricRs2WorldAdapter.of(world), Positions.ofBlockPos(pos), node);
+    protected NetworkNodeContainerImpl<RelayNetworkNode> createContainer(World world, BlockPos pos, RelayNetworkNode node) {
+        return new RelayNetworkNodeContainer(FabricRs2WorldAdapter.of(world), Positions.ofBlockPos(pos), node);
     }
 
     @Override

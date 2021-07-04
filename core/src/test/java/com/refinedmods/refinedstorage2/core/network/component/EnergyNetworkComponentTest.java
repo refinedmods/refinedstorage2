@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.core.network.component;
 
 import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.adapter.FakeRs2World;
-import com.refinedmods.refinedstorage2.core.network.host.FakeNetworkNodeHost;
+import com.refinedmods.refinedstorage2.core.network.node.container.FakeNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.core.util.Position;
@@ -32,7 +32,7 @@ class EnergyNetworkComponentTest {
         long storedBefore = sut.getEnergyStorage().getStored();
 
         // Act
-        sut.onHostAdded(new FakeNetworkNodeHost<>(new ControllerNetworkNode(
+        sut.onContainerAdded(new FakeNetworkNodeContainer<>(new ControllerNetworkNode(
                 new FakeRs2World(),
                 Position.ORIGIN,
                 100,
@@ -56,7 +56,7 @@ class EnergyNetworkComponentTest {
         // Arrange
         EnergyNetworkComponent sut = new EnergyNetworkComponent();
 
-        FakeNetworkNodeHost<ControllerNetworkNode> host = new FakeNetworkNodeHost<>(new ControllerNetworkNode(
+        FakeNetworkNodeContainer<ControllerNetworkNode> container = new FakeNetworkNodeContainer<>(new ControllerNetworkNode(
                 new FakeRs2World(),
                 Position.ORIGIN,
                 100,
@@ -64,13 +64,13 @@ class EnergyNetworkComponentTest {
                 ControllerType.NORMAL
         ));
 
-        sut.onHostAdded(host);
+        sut.onContainerAdded(container);
 
         long capacityBefore = sut.getEnergyStorage().getCapacity();
         long storedBefore = sut.getEnergyStorage().getStored();
 
         // Act
-        sut.onHostRemoved(host);
+        sut.onContainerRemoved(container);
 
         long capacityAfter = sut.getEnergyStorage().getCapacity();
         long storedAfter = sut.getEnergyStorage().getStored();

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.core.network;
 
 import com.refinedmods.refinedstorage2.core.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistry;
-import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
+import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
 
 import java.util.Map;
 import java.util.Set;
@@ -20,13 +20,13 @@ public class NetworkImpl implements Network {
     }
 
     @Override
-    public void addHost(NetworkNodeHost<?> host) {
-        components.values().forEach(c -> c.onHostAdded(host));
+    public void addContainer(NetworkNodeContainer<?> container) {
+        components.values().forEach(c -> c.onContainerAdded(container));
     }
 
     @Override
-    public void removeHost(NetworkNodeHost<?> host) {
-        components.values().forEach(c -> c.onHostRemoved(host));
+    public void removeContainer(NetworkNodeContainer<?> container) {
+        components.values().forEach(c -> c.onContainerRemoved(container));
     }
 
     @Override

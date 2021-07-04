@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.network.host;
+package com.refinedmods.refinedstorage2.core.network.node.container;
 
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.Network;
@@ -21,24 +21,24 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
-public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHost<T> {
+public class NetworkNodeContainerImpl<T extends NetworkNode> implements NetworkNodeContainer<T> {
     protected final Rs2World world;
     protected final Position position;
     private final T node;
 
-    public NetworkNodeHostImpl(Rs2World world, Position position, T node) {
+    public NetworkNodeContainerImpl(Rs2World world, Position position, T node) {
         this.world = world;
         this.position = position;
         this.node = node;
     }
 
     @Override
-    public boolean initialize(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
+    public boolean initialize(NetworkNodeContainerRepository containerRepository, NetworkComponentRegistry networkComponentRegistry) {
         if (node.getNetwork() != null) {
             return false;
         }
 
-        ConnectionScanner scanner = new ConnectionScanner(hostRepository, Collections.emptySet());
+        ConnectionScanner scanner = new ConnectionScanner(containerRepository, Collections.emptySet());
         scanner.scan(world, position);
 
         Preconditions.checkArgument(scanner.getRemovedEntries().isEmpty(), "Cannot have removed entries");
@@ -48,14 +48,14 @@ public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHo
         return true;
     }
 
-    private void mergeNetworksOfNodes(Set<NetworkNodeHostEntry<?>> foundEntries, NetworkComponentRegistry networkComponentRegistry) {
+    private void mergeNetworksOfNodes(Set<NetworkNodeContainerEntry<?>> foundEntries, NetworkComponentRegistry networkComponentRegistry) {
         Network pivotNetwork = findPivotNetworkForMerge(foundEntries).orElseGet(() -> createNetwork(networkComponentRegistry));
 
         Set<Network> mergedNetworks = new HashSet<>();
 
-        for (NetworkNodeHostEntry<?> entry : foundEntries) {
-            NetworkNode entryNode = entry.getHost().getNode();
-            boolean isNotInPivotNetwork = !pivotNetwork.getComponent(GraphNetworkComponent.class).getHosts().contains(entry);
+        for (NetworkNodeContainerEntry<?> entry : foundEntries) {
+            NetworkNode entryNode = entry.getContainer().getNode();
+            boolean isNotInPivotNetwork = !pivotNetwork.getComponent(GraphNetworkComponent.class).getContainers().contains(entry);
             if (isNotInPivotNetwork) {
                 Network mergedNetwork = mergeNetworkOfNode(pivotNetwork, entry, entryNode);
                 if (mergedNetwork != null) {
@@ -67,11 +67,11 @@ public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHo
         mergedNetworks.forEach(mn -> mn.merge(pivotNetwork));
     }
 
-    private Network mergeNetworkOfNode(Network newNetwork, NetworkNodeHostEntry<?> entry, NetworkNode entryNode) {
+    private Network mergeNetworkOfNode(Network newNetwork, NetworkNodeContainerEntry<?> entry, NetworkNode entryNode) {
         Network oldNetwork = entryNode.getNetwork();
 
         entryNode.setNetwork(newNetwork);
-        newNetwork.addHost(entry.getHost());
+        newNetwork.addContainer(entry.getContainer());
 
         return oldNetwork;
     }
@@ -79,16 +79,16 @@ public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHo
     private NetworkImpl createNetwork(NetworkComponentRegistry networkComponentRegistry) {
         NetworkImpl network = new NetworkImpl(networkComponentRegistry);
         node.setNetwork(network);
-        network.addHost(this);
+        network.addContainer(this);
         return network;
     }
 
-    private Optional<Network> findPivotNetworkForMerge(Set<NetworkNodeHostEntry<?>> foundEntries) {
-        for (NetworkNodeHostEntry<?> entry : sortEntries(foundEntries)) {
-            if (entry.getHost() == this) {
+    private Optional<Network> findPivotNetworkForMerge(Set<NetworkNodeContainerEntry<?>> foundEntries) {
+        for (NetworkNodeContainerEntry<?> entry : sortEntries(foundEntries)) {
+            if (entry.getContainer() == this) {
                 continue;
             }
-            Network entryNetwork = entry.getHost().getNode().getNetwork();
+            Network entryNetwork = entry.getContainer().getNode().getNetwork();
             if (entryNetwork != null) {
                 return Optional.of(entryNetwork);
             }
@@ -97,27 +97,27 @@ public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHo
         return Optional.empty();
     }
 
-    private List<NetworkNodeHostEntry<?>> sortEntries(Set<NetworkNodeHostEntry<?>> foundEntries) {
-        return foundEntries
+    private List<NetworkNodeContainerEntry<?>> sortEntries(Set<NetworkNodeContainerEntry<?>> containers) {
+        return containers
                 .stream()
-                .sorted(Comparator.comparing(a -> a.getHost().getPosition()))
+                .sorted(Comparator.comparing(a -> a.getContainer().getPosition()))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void remove(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
+    public void remove(NetworkNodeContainerRepository containerRepository, NetworkComponentRegistry networkComponentRegistry) {
         if (node.getNetwork() == null) {
             throw new IllegalStateException("Cannot remove node that has no network yet");
         }
 
-        if (hostRepository.getHost(world, position).isPresent()) {
-            throw new IllegalStateException("Host must not be present at removal");
+        if (containerRepository.getContainer(world, position).isPresent()) {
+            throw new IllegalStateException("Container must not be present at removal");
         }
 
-        Set<NetworkNodeHostEntry<?>> hosts = node.getNetwork().getComponent(GraphNetworkComponent.class).getHosts();
+        Set<NetworkNodeContainerEntry<?>> containers = node.getNetwork().getComponent(GraphNetworkComponent.class).getContainers();
 
-        NetworkNodeHostEntry<T> removedHost = NetworkNodeHostEntry.create(this);
-        NetworkNodeHostEntry<?> pivot = findPivotNodeForRemove(removedHost, hosts);
+        NetworkNodeContainerEntry<T> removedContainer = NetworkNodeContainerEntry.create(this);
+        NetworkNodeContainerEntry<?> pivot = findPivotNodeForRemove(removedContainer, containers);
 
         if (pivot == null) {
             node.getNetwork().remove();
@@ -125,16 +125,16 @@ public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHo
             return;
         }
 
-        ConnectionScanner scanner = new ConnectionScanner(hostRepository, hosts);
-        scanner.scan(pivot.getHost().getHostWorld(), pivot.getHost().getPosition());
+        ConnectionScanner scanner = new ConnectionScanner(containerRepository, containers);
+        scanner.scan(pivot.getContainer().getContainerWorld(), pivot.getContainer().getPosition());
 
-        Preconditions.checkState(scanner.getRemovedEntries().contains(removedHost), "The removed host isn't present in the removed entries");
+        Preconditions.checkState(scanner.getRemovedEntries().contains(removedContainer), "The removed container isn't present in the removed entries");
 
-        splitNetworks(hostRepository, scanner.getRemovedEntries(), networkComponentRegistry, removedHost);
+        splitNetworks(containerRepository, scanner.getRemovedEntries(), networkComponentRegistry, removedContainer);
     }
 
-    private NetworkNodeHostEntry<?> findPivotNodeForRemove(NetworkNodeHostEntry<T> currentEntry, Set<NetworkNodeHostEntry<?>> hosts) {
-        for (NetworkNodeHostEntry<?> entry : sortEntries(hosts)) {
+    private NetworkNodeContainerEntry<?> findPivotNodeForRemove(NetworkNodeContainerEntry<T> currentEntry, Set<NetworkNodeContainerEntry<?>> containers) {
+        for (NetworkNodeContainerEntry<?> entry : sortEntries(containers)) {
             if (!entry.equals(currentEntry)) {
                 return entry;
             }
@@ -142,24 +142,24 @@ public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHo
         return null;
     }
 
-    private void splitNetworks(NetworkNodeHostRepository hostRepository,
-                               Set<NetworkNodeHostEntry<?>> removedEntries,
+    private void splitNetworks(NetworkNodeContainerRepository containerRepository,
+                               Set<NetworkNodeContainerEntry<?>> removedEntries,
                                NetworkComponentRegistry networkComponentRegistry,
-                               NetworkNodeHostEntry<T> removedEntry) {
+                               NetworkNodeContainerEntry<T> removedEntry) {
         Network networkOfRemovedNode = node.getNetwork();
 
         removedEntries.forEach(e -> {
-            e.getHost().getNode().getNetwork().removeHost(e.getHost());
-            e.getHost().getNode().setNetwork(null);
+            e.getContainer().getNode().getNetwork().removeContainer(e.getContainer());
+            e.getContainer().getNode().setNetwork(null);
         });
 
         Set<Network> networksResultingOfSplit = removedEntries
                 .stream()
                 .filter(e -> !e.equals(removedEntry))
                 .map(e -> {
-                    boolean establishedNetwork = e.getHost().initialize(hostRepository, networkComponentRegistry);
+                    boolean establishedNetwork = e.getContainer().initialize(containerRepository, networkComponentRegistry);
                     if (establishedNetwork) {
-                        return e.getHost().getNode().getNetwork();
+                        return e.getContainer().getNode().getNetwork();
                     }
                     return null;
                 })
@@ -182,17 +182,17 @@ public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHo
     }
 
     @Override
-    public Rs2World getHostWorld() {
+    public Rs2World getContainerWorld() {
         return world;
     }
 
     @Override
-    public List<NetworkNodeHost<?>> getConnections(NetworkNodeHostRepository hostRepository) {
-        List<NetworkNodeHost<?>> connections = new ArrayList<>();
+    public List<NetworkNodeContainer<?>> getConnections(NetworkNodeContainerRepository containerRepository) {
+        List<NetworkNodeContainer<?>> connections = new ArrayList<>();
         for (Direction direction : Direction.values()) {
-            hostRepository.getHost(world, position.offset(direction)).ifPresent(host -> {
-                if (host.canConnectWith(this, direction.getOpposite())) {
-                    connections.add(host);
+            containerRepository.getContainer(world, position.offset(direction)).ifPresent(container -> {
+                if (container.canConnectWith(this, direction.getOpposite())) {
+                    connections.add(container);
                 }
             });
         }
@@ -200,7 +200,7 @@ public class NetworkNodeHostImpl<T extends NetworkNode> implements NetworkNodeHo
     }
 
     @Override
-    public boolean canConnectWith(NetworkNodeHost<?> other, Direction incomingDirection) {
+    public boolean canConnectWith(NetworkNodeContainer<?> other, Direction incomingDirection) {
         return true;
     }
 }

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.block;
 
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.network.host.FabricNetworkNodeHostRepository;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.network.container.FabricNetworkNodeContainerRepository;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
@@ -48,7 +48,7 @@ public abstract class NetworkNodeBlock extends BaseBlock implements BlockEntityP
             super.onStateReplaced(state, world, pos, newState, moved);
 
             if (world instanceof ServerWorld && blockEntity instanceof NetworkNodeBlockEntity) {
-                ((NetworkNodeBlockEntity) blockEntity).remove(new FabricNetworkNodeHostRepository(world), Rs2Mod.API.getNetworkComponentRegistry());
+                ((NetworkNodeBlockEntity) blockEntity).remove(new FabricNetworkNodeContainerRepository(world), Rs2Mod.API.getNetworkComponentRegistry());
             }
         }
     }

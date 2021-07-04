@@ -2,17 +2,17 @@ package com.refinedmods.refinedstorage2.fabric.block.entity;
 
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistry;
-import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHost;
-import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHostImpl;
-import com.refinedmods.refinedstorage2.core.network.host.NetworkNodeHostRepository;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerImpl;
+import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerRepository;
 import com.refinedmods.refinedstorage2.core.util.Direction;
 import com.refinedmods.refinedstorage2.core.util.Position;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.NetworkNodeBlock;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.network.host.FabricNetworkNodeHostRepository;
+import com.refinedmods.refinedstorage2.fabric.coreimpl.network.container.FabricNetworkNodeContainerRepository;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
 import java.util.List;
@@ -27,7 +27,7 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends BlockEntity implements NetworkNodeHost<T>, Tickable {
+public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends BlockEntity implements NetworkNodeContainer<T>, Tickable {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final int ACTIVE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
@@ -38,7 +38,7 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     protected BlockState cachedState;
     private boolean mustInitialize;
 
-    protected NetworkNodeHostImpl<T> host;
+    protected NetworkNodeContainerImpl<T> container;
 
     protected NetworkNodeBlockEntity(BlockEntityType<?> type) {
         super(type);
@@ -57,16 +57,16 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
         }
 
         T node = createNode(world, pos, tag);
-        this.host = createHost(world, pos, node);
+        this.container = createContainer(world, pos, node);
         this.mustInitialize = true;
 
         if (tag.contains(TAG_REDSTONE_MODE)) {
-            host.getNode().setRedstoneMode(RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE)));
+            container.getNode().setRedstoneMode(RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE)));
         }
     }
 
-    protected NetworkNodeHostImpl<T> createHost(World world, BlockPos pos, T node) {
-        return new NetworkNodeHostImpl<>(FabricRs2WorldAdapter.of(world), Positions.ofBlockPos(pos), node);
+    protected NetworkNodeContainerImpl<T> createContainer(World world, BlockPos pos, T node) {
+        return new NetworkNodeContainerImpl<>(FabricRs2WorldAdapter.of(world), Positions.ofBlockPos(pos), node);
     }
 
     protected abstract T createNode(World world, BlockPos pos, CompoundTag tag);
@@ -86,13 +86,13 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
 
     @Override
     public void tick() {
-        if (world != null && !world.isClient() && host != null) {
+        if (world != null && !world.isClient() && container != null) {
             if (mustInitialize) {
-                host.initialize(new FabricNetworkNodeHostRepository(world), Rs2Mod.API.getNetworkComponentRegistry());
+                container.initialize(new FabricNetworkNodeContainerRepository(world), Rs2Mod.API.getNetworkComponentRegistry());
                 mustInitialize = false;
             } else {
                 updateActivenessInWorld();
-                host.getNode().update();
+                container.getNode().update();
             }
         }
     }
@@ -104,7 +104,7 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
             return;
         }
 
-        boolean active = host.getNode().isActive();
+        boolean active = container.getNode().isActive();
         boolean activeInWorld = cachedState.get(NetworkNodeBlock.ACTIVE);
 
         if (active != activeInWorld && (lastActiveChanged == 0 || System.currentTimeMillis() - lastActiveChanged > ACTIVE_CHANGE_MINIMUM_INTERVAL_MS)) {
@@ -126,11 +126,11 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     }
 
     public RedstoneMode getRedstoneMode() {
-        return host.getNode().getRedstoneMode();
+        return container.getNode().getRedstoneMode();
     }
 
     public void setRedstoneMode(RedstoneMode redstoneMode) {
-        host.getNode().setRedstoneMode(redstoneMode);
+        container.getNode().setRedstoneMode(redstoneMode);
         markDirty();
     }
 
@@ -150,37 +150,37 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     }
 
     @Override
-    public boolean initialize(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
-        return host.initialize(hostRepository, networkComponentRegistry);
+    public boolean initialize(NetworkNodeContainerRepository containerRepository, NetworkComponentRegistry networkComponentRegistry) {
+        return container.initialize(containerRepository, networkComponentRegistry);
     }
 
     @Override
-    public void remove(NetworkNodeHostRepository hostRepository, NetworkComponentRegistry networkComponentRegistry) {
-        host.remove(hostRepository, networkComponentRegistry);
+    public void remove(NetworkNodeContainerRepository containerRepository, NetworkComponentRegistry networkComponentRegistry) {
+        container.remove(containerRepository, networkComponentRegistry);
     }
 
     @Override
     public T getNode() {
-        return host.getNode();
+        return container.getNode();
     }
 
     @Override
-    public Rs2World getHostWorld() {
-        return host.getHostWorld();
+    public Rs2World getContainerWorld() {
+        return container.getContainerWorld();
     }
 
     @Override
     public Position getPosition() {
-        return host.getPosition();
+        return container.getPosition();
     }
 
     @Override
-    public List<NetworkNodeHost<?>> getConnections(NetworkNodeHostRepository hostRepository) {
-        return host.getConnections(hostRepository);
+    public List<NetworkNodeContainer<?>> getConnections(NetworkNodeContainerRepository containerRepository) {
+        return container.getConnections(containerRepository);
     }
 
     @Override
-    public boolean canConnectWith(NetworkNodeHost<?> other, Direction incomingDirection) {
-        return host.canConnectWith(other, incomingDirection);
+    public boolean canConnectWith(NetworkNodeContainer<?> other, Direction incomingDirection) {
+        return container.canConnectWith(other, incomingDirection);
     }
 }

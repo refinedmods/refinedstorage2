@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.network.host;
+package com.refinedmods.refinedstorage2.core.network.node.container;
 
 import com.refinedmods.refinedstorage2.core.Rs2Test;
 
@@ -6,10 +6,10 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
 @Rs2Test
-class NetworkNodeHostEntryTest {
+class NetworkNodeContainerEntryTest {
     @Test
     void Test_equals_hashcode() {
         // Assert
-        EqualsVerifier.forClass(NetworkNodeHostEntry.class).withIgnoredFields("host").verify();
+        EqualsVerifier.forClass(NetworkNodeContainerEntry.class).withIgnoredFields("container").verify();
     }
 }
