@@ -15,6 +15,6 @@
     "link_color": "29f7ff",
     "link_hover_color": "16B7BC",
     "macros": {
-        "$(h)": "$(#29f7ff)"
+        "\$(h)": "\$(#29f7ff)"
     }
 }
