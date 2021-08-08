@@ -17,7 +17,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -39,8 +39,8 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     private final ControllerType type;
     private long lastTypeChanged;
 
-    public ControllerBlockEntity(ControllerType type) {
-        super(getBlockEntityType(type));
+    public ControllerBlockEntity(ControllerType type, BlockPos pos, BlockState state) {
+        super(getBlockEntityType(type), pos, state);
         this.type = type;
     }
 
@@ -49,32 +49,29 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void tick(World world, BlockPos pos, BlockState state) {
+        super.tick(world, pos, state);
 
         if (world != null && !world.isClient() && container != null) {
-            calculateCachedStateIfNecessary();
-
             ControllerEnergyType type = ControllerEnergyType.ofState(container.getNode().getState());
-            ControllerEnergyType inWorldType = cachedState.get(ControllerBlock.ENERGY_TYPE);
+            ControllerEnergyType inWorldType = state.get(ControllerBlock.ENERGY_TYPE);
 
             if (type != inWorldType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
                 LOGGER.info("Energy type state change for block at {}: {} -> {}", pos, inWorldType, type);
 
                 this.lastTypeChanged = System.currentTimeMillis();
 
-                updateEnergyTypeInWorld(type);
+                updateEnergyTypeInWorld(state, type);
             }
         }
     }
 
-    private void updateEnergyTypeInWorld(ControllerEnergyType type) {
-        BlockState newState = world.getBlockState(pos).with(ControllerBlock.ENERGY_TYPE, type);
-        updateState(newState);
+    private void updateEnergyTypeInWorld(BlockState state, ControllerEnergyType type) {
+        world.setBlockState(pos, state.with(ControllerBlock.ENERGY_TYPE, type));
     }
 
     @Override
-    protected ControllerNetworkNode createNode(World world, BlockPos pos, CompoundTag tag) {
+    protected ControllerNetworkNode createNode(World world, BlockPos pos, NbtCompound tag) {
         return new ControllerNetworkNode(
                 FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
@@ -113,8 +110,8 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        tag = super.toTag(tag);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        tag = super.writeNbt(tag);
         tag.putLong(TAG_STORED, container.getNode().getActualStored());
         return tag;
     }

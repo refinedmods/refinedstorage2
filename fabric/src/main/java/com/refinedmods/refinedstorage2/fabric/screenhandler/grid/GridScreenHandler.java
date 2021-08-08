@@ -371,4 +371,8 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     public void setRedstoneMode(RedstoneMode redstoneMode) {
         redstoneModeProperty.syncToServer(redstoneMode);
     }
+
+    public int getPlayerInventorySlotThatHasStack(ItemStack stack) {
+        return playerInventory.getSlotWithStack(stack);
+    }
 }

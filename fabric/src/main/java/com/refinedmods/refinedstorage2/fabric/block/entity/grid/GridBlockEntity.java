@@ -15,9 +15,10 @@ import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -32,12 +33,12 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
     private static final String TAG_SIZE = "s";
     private static final String TAG_SEARCH_BOX_MODE = "sbm";
 
-    public GridBlockEntity() {
-        super(Rs2Mod.BLOCK_ENTITIES.getGrid());
+    public GridBlockEntity(BlockPos pos, BlockState state) {
+        super(Rs2Mod.BLOCK_ENTITIES.getGrid(), pos, state);
     }
 
     @Override
-    protected GridNetworkNode createNode(World world, BlockPos pos, CompoundTag tag) {
+    protected GridNetworkNode createNode(World world, BlockPos pos, NbtCompound tag) {
         GridNetworkNode grid = new GridNetworkNode(
                 FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
@@ -75,13 +76,12 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
+    public NbtCompound writeNbt(NbtCompound tag) {
         tag.putInt(TAG_SORTING_DIRECTION, GridSettings.getSortingDirection(container.getNode().getSortingDirection()));
         tag.putInt(TAG_SORTING_TYPE, GridSettings.getSortingType(container.getNode().getSortingType()));
         tag.putInt(TAG_SIZE, GridSettings.getSize(container.getNode().getSize()));
         tag.putInt(TAG_SEARCH_BOX_MODE, Rs2Mod.API.getGridSearchBoxModeRegistry().getId(container.getNode().getSearchBoxMode()));
-
-        return super.toTag(tag);
+        return super.writeNbt(tag);
     }
 
     @Override

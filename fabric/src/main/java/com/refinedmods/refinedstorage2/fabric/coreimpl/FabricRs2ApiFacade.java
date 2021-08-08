@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskManagerImpl;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.FabricRequestInfoCallback;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.FabricStorageDiskManager;
 
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 
 public class FabricRs2ApiFacade implements Rs2ApiFacade<World> {
@@ -32,7 +33,17 @@ public class FabricRs2ApiFacade implements Rs2ApiFacade<World> {
                 .getServer()
                 .getWorld(World.OVERWORLD)
                 .getPersistentStateManager()
-                .getOrCreate(() -> new FabricStorageDiskManager(FabricStorageDiskManager.NAME, new StorageDiskManagerImpl()), FabricStorageDiskManager.NAME);
+                .getOrCreate(this::createStorageDiskManager, this::createStorageDiskManager, FabricStorageDiskManager.NAME);
+    }
+
+    private FabricStorageDiskManager createStorageDiskManager(NbtCompound tag) {
+        var manager = createStorageDiskManager();
+        manager.read(tag);
+        return manager;
+    }
+
+    private FabricStorageDiskManager createStorageDiskManager() {
+        return new FabricStorageDiskManager(new StorageDiskManagerImpl());
     }
 
     @Override

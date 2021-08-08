@@ -59,7 +59,7 @@ public abstract class BaseBlock extends Block {
         BlockState state = getDefaultState();
 
         if (hasBiDirection()) {
-            state = state.with(DIRECTION, getDirection(ctx.getPlayerFacing(), ctx.getPlayer() != null ? ctx.getPlayer().pitch : 0));
+            state = state.with(DIRECTION, getDirection(ctx.getPlayerFacing(), ctx.getPlayer() != null ? ctx.getPlayer().getPitch() : 0));
         }
 
         return state;

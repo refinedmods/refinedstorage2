@@ -8,10 +8,10 @@
         "Refined Mods"
     ],
     "contact": {
-        "homepage": "https://refinedmods.com/refined-storage",
         "sources": "https://github.com/refinedmods/refinedstorage2",
         "issues": "https://github.com/refinedmods/refinedstorage2/issues"
     },
+    "accessWidener": "refinedstorage2.accesswidener",
     "icon": "assets/refinedstorage2/icon.png",
     "license": "MIT",
     "environment": "*",
@@ -37,10 +37,11 @@
         "refinedstorage2.mixins.json"
     ],
     "depends": {
-        "fabricloader": ">=0.7.4",
+        "fabricloader": ">=0.11.3",
         "fabric": "*",
-        "minecraft": "1.16.x",
-        "libblockattributes": ">=0.8.4",
+        "minecraft": "1.17.x",
+        "libblockattributes": ">=0.9.0",
+        "java": ">=16",
         "autoconfig1u": "*",
         "team_reborn_energy": "*"
     },

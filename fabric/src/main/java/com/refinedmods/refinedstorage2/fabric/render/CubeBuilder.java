@@ -26,42 +26,42 @@ public class CubeBuilder {
 
     public void putFace(MatrixStack matrixStack, VertexConsumer builder, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b, int a, Direction face) {
         switch (face) {
-            case DOWN:
+            case DOWN -> {
                 this.putVertex(builder, matrixStack, r, g, b, a, x2, y1, z1);
                 this.putVertex(builder, matrixStack, r, g, b, a, x2, y1, z2);
                 this.putVertex(builder, matrixStack, r, g, b, a, x1, y1, z2);
                 this.putVertex(builder, matrixStack, r, g, b, a, x1, y1, z1);
-                break;
-            case UP:
+            }
+            case UP -> {
                 this.putVertex(builder, matrixStack, r, g, b, a, x1, y2, z1);
                 this.putVertex(builder, matrixStack, r, g, b, a, x1, y2, z2);
                 this.putVertex(builder, matrixStack, r, g, b, a, x2, y2, z2);
                 this.putVertex(builder, matrixStack, r, g, b, a, x2, y2, z1);
-                break;
-            case NORTH:
+            }
+            case NORTH -> {
                 this.putVertex(builder, matrixStack, r, g, b, a, x2, y2, z1);
                 this.putVertex(builder, matrixStack, r, g, b, a, x2, y1, z1);
                 this.putVertex(builder, matrixStack, r, g, b, a, x1, y1, z1);
                 this.putVertex(builder, matrixStack, r, g, b, a, x1, y2, z1);
-                break;
-            case SOUTH:
+            }
+            case SOUTH -> {
                 this.putVertex(builder, matrixStack, r, g, b, a, x1, y2, z2);
                 this.putVertex(builder, matrixStack, r, g, b, a, x1, y1, z2);
                 this.putVertex(builder, matrixStack, r, g, b, a, x2, y1, z2);
                 this.putVertex(builder, matrixStack, r, g, b, a, x2, y2, z2);
-                break;
-            case WEST:
+            }
+            case WEST -> {
                 this.putVertex(builder, matrixStack, r, g, b, a, x1, y1, z1);
                 this.putVertex(builder, matrixStack, r, g, b, a, x1, y1, z2);
                 this.putVertex(builder, matrixStack, r, g, b, a, x1, y2, z2);
                 this.putVertex(builder, matrixStack, r, g, b, a, x1, y2, z1);
-                break;
-            case EAST:
+            }
+            case EAST -> {
                 this.putVertex(builder, matrixStack, r, g, b, a, x2, y2, z1);
                 this.putVertex(builder, matrixStack, r, g, b, a, x2, y2, z2);
                 this.putVertex(builder, matrixStack, r, g, b, a, x2, y1, z2);
                 this.putVertex(builder, matrixStack, r, g, b, a, x2, y1, z1);
-                break;
+            }
         }
     }
 

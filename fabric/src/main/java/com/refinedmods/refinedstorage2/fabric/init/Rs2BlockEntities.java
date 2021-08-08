@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.fabric.block.entity.RelayBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
 
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.registry.Registry;
 
@@ -20,12 +21,12 @@ public class Rs2BlockEntities {
     private BlockEntityType<RelayBlockEntity> relay;
 
     public void register(Rs2Blocks blocks) {
-        cable = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("cable"), BlockEntityType.Builder.create(CableBlockEntity::new, blocks.getCable()).build(null));
-        diskDrive = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("disk_drive"), BlockEntityType.Builder.create(DiskDriveBlockEntity::new, blocks.getDiskDrive()).build(null));
-        grid = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("grid"), BlockEntityType.Builder.create(GridBlockEntity::new, blocks.getGrid().toArray()).build(null));
-        controller = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("controller"), BlockEntityType.Builder.create(() -> new ControllerBlockEntity(ControllerType.NORMAL), blocks.getController().toArray()).build(null));
-        creativeController = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("creative_controller"), BlockEntityType.Builder.create(() -> new ControllerBlockEntity(ControllerType.CREATIVE), blocks.getCreativeController().toArray()).build(null));
-        relay = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("relay"), BlockEntityType.Builder.create(RelayBlockEntity::new, blocks.getRelay()).build(null));
+        cable = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("cable"), FabricBlockEntityTypeBuilder.create(CableBlockEntity::new, blocks.getCable()).build(null));
+        diskDrive = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("disk_drive"), FabricBlockEntityTypeBuilder.create(DiskDriveBlockEntity::new, blocks.getDiskDrive()).build(null));
+        grid = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("grid"), FabricBlockEntityTypeBuilder.create(GridBlockEntity::new, blocks.getGrid().toArray()).build(null));
+        controller = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("controller"), FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.NORMAL, pos, state), blocks.getController().toArray()).build(null));
+        creativeController = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("creative_controller"), FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.CREATIVE, pos, state), blocks.getCreativeController().toArray()).build(null));
+        relay = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("relay"), FabricBlockEntityTypeBuilder.create(RelayBlockEntity::new, blocks.getRelay()).build(null));
     }
 
     public BlockEntityType<CableBlockEntity> getCable() {

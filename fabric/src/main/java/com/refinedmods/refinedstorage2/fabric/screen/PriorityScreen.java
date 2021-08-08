@@ -10,8 +10,10 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -46,8 +48,8 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
 
     private TextFieldWidget amountField;
 
-    public PriorityScreen(PriorityAccessor priorityAccessor, Screen parent) {
-        super(new DummyScreenHandler(), null, PriorityScreen.PRIORITY_TEXT);
+    public PriorityScreen(PriorityAccessor priorityAccessor, Screen parent, PlayerInventory playerInventory) {
+        super(new DummyScreenHandler(), playerInventory, PriorityScreen.PRIORITY_TEXT);
 
         this.parent = parent;
         this.priorityAccessor = priorityAccessor;
@@ -62,9 +64,9 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
     protected void init() {
         super.init();
 
-        addButton(new ButtonWidget(x + ACTION_BUTTON_X, y + ACTION_BUTTON_Y, ACTION_BUTTON_WIDTH, 20, RESET_TEXT, btn -> reset()));
-        addButton(new ButtonWidget(x + ACTION_BUTTON_X, y + ACTION_BUTTON_Y + 24, ACTION_BUTTON_WIDTH, 20, SET_TEXT, btn -> ok()));
-        addButton(new ButtonWidget(x + ACTION_BUTTON_X, y + ACTION_BUTTON_Y + 48, ACTION_BUTTON_WIDTH, 20, CANCEL_TEXT, btn -> close()));
+        addDrawableChild(new ButtonWidget(x + ACTION_BUTTON_X, y + ACTION_BUTTON_Y, ACTION_BUTTON_WIDTH, 20, RESET_TEXT, btn -> reset()));
+        addDrawableChild(new ButtonWidget(x + ACTION_BUTTON_X, y + ACTION_BUTTON_Y + 24, ACTION_BUTTON_WIDTH, 20, SET_TEXT, btn -> ok()));
+        addDrawableChild(new ButtonWidget(x + ACTION_BUTTON_X, y + ACTION_BUTTON_Y + 48, ACTION_BUTTON_WIDTH, 20, CANCEL_TEXT, btn -> close()));
 
         amountField = new TextFieldWidget(textRenderer, x + AMOUNT_X, y + AMOUNT_Y, 69 - 6, textRenderer.fontHeight, new LiteralText(""));
         amountField.setDrawsBackground(false);
@@ -73,7 +75,7 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
         amountField.setFocusUnlocked(false);
         amountField.setTextFieldFocused(true);
 
-        addButton(amountField);
+        addDrawableChild(amountField);
 
         addIncrementButtons(INCREMENTS_TOP, x + INCREMENT_BUTTON_X, y + INCREMENT_BUTTON_TOP_Y);
         addIncrementButtons(INCREMENTS_BOTTOM, x + INCREMENT_BUTTON_X, y + INCREMENT_BUTTON_BOTTOM_Y);
@@ -83,7 +85,7 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
         for (int increment : increments) {
             Text text = new LiteralText((increment > 0 ? "+" : "") + increment);
 
-            addButton(new ButtonWidget(x, y, INCREMENT_BUTTON_WIDTH, 20, text, btn -> changeAmount(increment)));
+            addDrawableChild(new ButtonWidget(x, y, INCREMENT_BUTTON_WIDTH, 20, text, btn -> changeAmount(increment)));
 
             x += INCREMENT_BUTTON_WIDTH + 3;
         }
@@ -115,11 +117,15 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
 
     @Override
     protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         ScreenUtil.drawVersionInformation(matrices, textRenderer);
-        client.getTextureManager().bindTexture(TEXTURE);
+
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, TEXTURE);
+
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
+
         drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
     }
 
@@ -164,7 +170,7 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
     }
 
     private void close() {
-        MinecraftClient.getInstance().openScreen(parent);
+        MinecraftClient.getInstance().setScreen(parent);
     }
 
     private static class DummyScreenHandler extends ScreenHandler {

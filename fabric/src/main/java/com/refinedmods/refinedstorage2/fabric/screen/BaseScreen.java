@@ -17,8 +17,7 @@ public abstract class BaseScreen<T extends ScreenHandler> extends HandledScreen<
 
     @Override
     protected void init() {
-        children.clear();
-        buttons.clear();
+        clearChildren();
         super.init();
         sideButtonY = 6;
     }
@@ -29,7 +28,7 @@ public abstract class BaseScreen<T extends ScreenHandler> extends HandledScreen<
 
         sideButtonY += button.getHeight() + 2;
 
-        addButton(button);
+        addDrawableChild(button);
     }
 
     protected void setScissor(int x, int y, int w, int h) {

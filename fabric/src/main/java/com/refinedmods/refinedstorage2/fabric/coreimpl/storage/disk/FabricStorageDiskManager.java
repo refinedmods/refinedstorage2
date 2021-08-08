@@ -14,9 +14,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.world.PersistentState;
 
 public class FabricStorageDiskManager extends PersistentState implements StorageDiskManager {
@@ -29,8 +29,7 @@ public class FabricStorageDiskManager extends PersistentState implements Storage
 
     private final StorageDiskManagerImpl parent;
 
-    public FabricStorageDiskManager(String name, StorageDiskManagerImpl parent) {
-        super(name);
+    public FabricStorageDiskManager(StorageDiskManagerImpl parent) {
         this.parent = parent;
     }
 
@@ -59,20 +58,19 @@ public class FabricStorageDiskManager extends PersistentState implements Storage
         return parent.getInfo(id);
     }
 
-    @Override
-    public void fromTag(CompoundTag tag) {
-        ListTag disks = tag.getList(TAG_DISKS, NbtType.COMPOUND);
-        for (Tag diskTag : disks) {
-            UUID id = ((CompoundTag) diskTag).getUuid(TAG_DISK_ID);
-            parent.setDisk(id, convertStorageDiskFromTag((CompoundTag) diskTag));
+    public void read(NbtCompound tag) {
+        NbtList disks = tag.getList(TAG_DISKS, NbtType.COMPOUND);
+        for (NbtElement diskTag : disks) {
+            UUID id = ((NbtCompound) diskTag).getUuid(TAG_DISK_ID);
+            parent.setDisk(id, convertStorageDiskFromTag((NbtCompound) diskTag));
         }
     }
 
-    private StorageDisk<?> convertStorageDiskFromTag(CompoundTag diskTag) {
+    private StorageDisk<?> convertStorageDiskFromTag(NbtCompound diskTag) {
         FabricItemDiskStorage disk = new FabricItemDiskStorage(diskTag.getLong(TAG_DISK_CAPACITY), this::markDirty);
-        ListTag stacks = diskTag.getList(TAG_DISK_STACKS, NbtType.COMPOUND);
-        for (Tag stackTag : stacks) {
-            Rs2ItemStack stack = ItemStacks.fromTag((CompoundTag) stackTag);
+        NbtList stacks = diskTag.getList(TAG_DISK_STACKS, NbtType.COMPOUND);
+        for (NbtElement stackTag : stacks) {
+            Rs2ItemStack stack = ItemStacks.fromTag((NbtCompound) stackTag);
             if (stack.isEmpty()) {
                 continue;
             }
@@ -82,8 +80,8 @@ public class FabricStorageDiskManager extends PersistentState implements Storage
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        ListTag disksList = new ListTag();
+    public NbtCompound writeNbt(NbtCompound tag) {
+        NbtList disksList = new NbtList();
         for (Map.Entry<UUID, StorageDisk<?>> entry : parent.getDisks()) {
             disksList.add(convertStorageDiskToTag(entry.getKey(), entry.getValue()));
         }
@@ -91,11 +89,11 @@ public class FabricStorageDiskManager extends PersistentState implements Storage
         return tag;
     }
 
-    private Tag convertStorageDiskToTag(UUID id, StorageDisk<?> disk) {
-        CompoundTag tag = new CompoundTag();
+    private NbtElement convertStorageDiskToTag(UUID id, StorageDisk<?> disk) {
+        NbtCompound tag = new NbtCompound();
         tag.putUuid(TAG_DISK_ID, id);
         tag.putLong(TAG_DISK_CAPACITY, disk.getCapacity());
-        ListTag stacks = new ListTag();
+        NbtList stacks = new NbtList();
         for (Rs2ItemStack stack : (Collection<Rs2ItemStack>) disk.getStacks()) {
             stacks.add(ItemStacks.toTag(stack));
         }

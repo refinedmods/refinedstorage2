@@ -13,7 +13,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
@@ -65,7 +65,7 @@ public class ControllerBlockItem extends ColoredBlockItem {
     }
 
     private static long getStored(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
+        NbtCompound tag = stack.getNbt();
         if (tag == null) {
             return 0;
         }
@@ -73,7 +73,7 @@ public class ControllerBlockItem extends ColoredBlockItem {
     }
 
     private static long getCapacity(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
+        NbtCompound tag = stack.getNbt();
         if (tag == null) {
             return 0;
         }
@@ -81,11 +81,11 @@ public class ControllerBlockItem extends ColoredBlockItem {
     }
 
     public static void setEnergy(ItemStack stack, long stored, long capacity) {
-        if (!stack.hasTag()) {
-            stack.setTag(new CompoundTag());
+        if (!stack.hasNbt()) {
+            stack.setNbt(new NbtCompound());
         }
-        stack.getTag().putLong("stored", stored);
-        stack.getTag().putLong("cap", capacity);
+        stack.getNbt().putLong("stored", stored);
+        stack.getNbt().putLong("cap", capacity);
     }
 
     public static int calculateDamage(long stored, long capacity) {

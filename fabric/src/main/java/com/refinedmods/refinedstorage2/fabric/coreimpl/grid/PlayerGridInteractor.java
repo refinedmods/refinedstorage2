@@ -10,7 +10,6 @@ import alexiil.mc.lib.attributes.item.compat.FixedInventoryVanillaWrapper;
 import alexiil.mc.lib.attributes.item.filter.ExactItemStackFilter;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
 
 public class PlayerGridInteractor implements GridInteractor {
     private final PlayerEntity player;
@@ -18,18 +17,17 @@ public class PlayerGridInteractor implements GridInteractor {
 
     public PlayerGridInteractor(PlayerEntity player) {
         this.player = player;
-        this.inventory = new FixedInventoryVanillaWrapper(player.inventory);
+        this.inventory = new FixedInventoryVanillaWrapper(player.getInventory());
     }
 
     @Override
     public Rs2ItemStack getCursorStack() {
-        return ItemStacks.ofItemStack(player.inventory.getCursorStack());
+        return ItemStacks.ofItemStack(player.currentScreenHandler.getCursorStack());
     }
 
     @Override
     public void setCursorStack(Rs2ItemStack stack) {
-        player.inventory.setCursorStack(ItemStacks.toItemStack(stack));
-        ((ServerPlayerEntity) player).updateCursorStack();
+        player.currentScreenHandler.setCursorStack(ItemStacks.toItemStack(stack));
     }
 
     @Override

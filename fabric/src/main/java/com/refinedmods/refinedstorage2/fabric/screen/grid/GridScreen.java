@@ -28,8 +28,10 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
@@ -107,13 +109,13 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
 
         getScreenHandler().addSlots(backgroundHeight - BOTTOM_HEIGHT + 17);
 
-        this.scrollbar = new ScrollbarWidget(client, x + 174, y + 20, 12, (visibleRows * 18) - 2);
+        this.scrollbar = new ScrollbarWidget(x + 174, y + 20, 12, (visibleRows * 18) - 2);
         this.scrollbar.setScrollAnimation(Rs2Config.get().getGrid().isSmoothScrolling());
         this.getScreenHandler().getItemView().setListener(this::stacksChanged);
         stacksChanged();
 
-        children.add(scrollbar);
-        addButton(searchField);
+        addSelectableChild(scrollbar);
+        addSelectableChild(searchField);
 
         addSideButton(new RedstoneModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
         addSideButton(new SortingDirectionSideButtonWidget(getScreenHandler(), this::renderTooltip));
@@ -123,8 +125,8 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    protected void handledScreenTick() {
+        super.handledScreenTick();
 
         String newValue = getScreenHandler().getSearchBoxMode().getSearchBoxValue();
         if (searchField != null && newValue != null && !searchField.getText().equals(newValue)) {
@@ -173,9 +175,12 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
 
     @Override
     protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         ScreenUtil.drawVersionInformation(matrices, textRenderer);
-        client.getTextureManager().bindTexture(TEXTURE);
+
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, TEXTURE);
+
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
 
@@ -221,7 +226,10 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             return;
         }
 
-        client.getTextureManager().bindTexture(TEXTURE);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, TEXTURE);
+
         drawTexture(matrices, rowX, rowY, 0, 238, 162, 18);
 
         for (int column = 0; column < COLUMNS; ++column) {
@@ -271,7 +279,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         setZOffset(100);
         itemRenderer.zOffset = 100.0F;
 
-        itemRenderer.renderInGuiWithOverrides(client.player, stack.getMcStack(), slotX, slotY);
+        itemRenderer.renderInGuiWithOverrides(stack.getMcStack(), slotX, slotY);
 
         String text = stack.isZeroed() ? "0" : String.valueOf(stack.getAmount());
         Integer color = stack.isZeroed() ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue();
@@ -358,7 +366,8 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         matrixStack.push();
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
-        bufferBuilder.begin(7, VertexFormats.POSITION_COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
         Matrix4f matrix4f = matrixStack.peek().getModel();
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 4, tooltipX + tooltipWidth + 3, tooltipY - 3, 400, -267386864, -267386864);
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY + tooltipHeight + 3, tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 4, 400, -267386864, -267386864);
@@ -373,10 +382,8 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.shadeModel(7425);
         bufferBuilder.end();
         BufferRenderer.draw(bufferBuilder);
-        RenderSystem.shadeModel(7424);
         RenderSystem.disableBlend();
         RenderSystem.enableTexture();
         VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
@@ -425,7 +432,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             return true;
         }
 
-        ItemStack cursorStack = playerInventory.getCursorStack();
+        ItemStack cursorStack = getScreenHandler().getCursorStack();
 
         if (!getScreenHandler().getItemView().getStacks().isEmpty() && gridSlotNumber >= 0 && cursorStack.isEmpty()) {
             mouseClickedInGridWithoutItem(clickedButton);
@@ -497,7 +504,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         getScreenHandler().getItemView().setPreventSorting(true);
 
         Rs2ItemStack stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber).getStack();
-        int slot = playerInventory.getSlotWithStack(ItemStacks.toItemStack(stack));
+        int slot = getScreenHandler().getPlayerInventorySlotThatHasStack(ItemStacks.toItemStack(stack));
         GridScrollMode mode = getScrollModeWhenScrollingOnGridArea(up);
         if (mode == null) {
             return;

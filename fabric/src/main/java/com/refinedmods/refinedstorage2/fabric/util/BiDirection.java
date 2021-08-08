@@ -2,27 +2,27 @@ package com.refinedmods.refinedstorage2.fabric.util;
 
 import java.util.Locale;
 
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3f;
 
 public enum BiDirection implements StringIdentifiable {
-    NORTH(new Vector3f(0, 0, 0)),
-    EAST(new Vector3f(0, -90, 0)),
-    SOUTH(new Vector3f(0, 180, 0)),
-    WEST(new Vector3f(0, 90, 0)),
-    UP_NORTH(new Vector3f(90, 0, 180)),
-    UP_EAST(new Vector3f(90, 0, -90)),
-    UP_SOUTH(new Vector3f(90, 0, 0)),
-    UP_WEST(new Vector3f(90, 0, 90)),
-    DOWN_NORTH(new Vector3f(-90, 0, 0)),
-    DOWN_EAST(new Vector3f(-90, 0, -90)),
-    DOWN_SOUTH(new Vector3f(-90, 0, 180)),
-    DOWN_WEST(new Vector3f(-90, 0, 90));
+    NORTH(new Vec3f(0, 0, 0)),
+    EAST(new Vec3f(0, -90, 0)),
+    SOUTH(new Vec3f(0, 180, 0)),
+    WEST(new Vec3f(0, 90, 0)),
+    UP_NORTH(new Vec3f(90, 0, 180)),
+    UP_EAST(new Vec3f(90, 0, -90)),
+    UP_SOUTH(new Vec3f(90, 0, 0)),
+    UP_WEST(new Vec3f(90, 0, 90)),
+    DOWN_NORTH(new Vec3f(-90, 0, 0)),
+    DOWN_EAST(new Vec3f(-90, 0, -90)),
+    DOWN_SOUTH(new Vec3f(-90, 0, 180)),
+    DOWN_WEST(new Vec3f(-90, 0, 90));
 
-    private final Vector3f vec;
+    private final Vec3f vec;
 
-    BiDirection(Vector3f vec) {
+    BiDirection(Vec3f vec) {
         this.vec = vec;
     }
 
@@ -71,7 +71,7 @@ public enum BiDirection implements StringIdentifiable {
         }
     }
 
-    public Vector3f getVec() {
+    public Vec3f getVec() {
         return vec;
     }
 

@@ -1,18 +1,18 @@
 package com.refinedmods.refinedstorage2.fabric.integration.rei;
 
-import me.shedaniel.rei.api.REIHelper;
-import me.shedaniel.rei.gui.widget.TextFieldWidget;
+import me.shedaniel.rei.api.client.REIRuntime;
+import me.shedaniel.rei.api.client.gui.widgets.TextField;
 
 public class ReiProxy {
     public void setSearchFieldText(String text) {
-        TextFieldWidget field = REIHelper.getInstance().getSearchTextField();
+        TextField field = REIRuntime.getInstance().getSearchTextField();
         if (field != null) {
             field.setText(text);
         }
     }
 
     public String getSearchFieldText() {
-        TextFieldWidget field = REIHelper.getInstance().getSearchTextField();
+        TextField field = REIRuntime.getInstance().getSearchTextField();
         if (field != null) {
             return field.getText();
         }

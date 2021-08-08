@@ -24,7 +24,7 @@ body:
         attributes:
             label: What Minecraft version is this happening on?
             options:
-                - Minecraft 1.16.5
+                - Minecraft 1.17.1
     -   type: input
         id: fabric-version
         attributes:

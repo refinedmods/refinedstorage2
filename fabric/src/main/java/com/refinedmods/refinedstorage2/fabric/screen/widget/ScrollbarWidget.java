@@ -3,21 +3,22 @@ package com.refinedmods.refinedstorage2.fabric.screen.widget;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
-public class ScrollbarWidget extends DrawableHelper implements Element, Drawable {
+public class ScrollbarWidget extends DrawableHelper implements Element, Drawable, Selectable {
     private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/widgets.png");
     private static final int SCROLLER_HEIGHT = 15;
 
     private static final int ANIMATION_SCROLL_DURATION_IN_TICKS = 10;
     private static final double ANIMATION_SCROLL_HEIGHT_IN_PIXELS = 30;
 
-    private final MinecraftClient client;
     private final int x;
     private final int y;
     private final int width;
@@ -34,8 +35,7 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
     private double animationTickCounter;
     private int animationSpeed;
 
-    public ScrollbarWidget(MinecraftClient client, int x, int y, int width, int height) {
-        this.client = client;
+    public ScrollbarWidget(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -60,10 +60,13 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
             updateScrollingAnimation(partialTicks);
         }
 
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        client.getTextureManager().bindTexture(TEXTURE);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, TEXTURE);
+
         int enabledU = clicked ? 220 : 232;
         int u = enabled ? enabledU : 244;
+
         drawTexture(matrixStack, x, y + (int) ((float) offset / (float) maxOffset * (float) (height - SCROLLER_HEIGHT)), u, 0, 12, 15);
     }
 
@@ -161,5 +164,15 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
 
     private void updateOffset(double mouseY) {
         setOffset(Math.floor((mouseY - y) / (height - SCROLLER_HEIGHT) * maxOffset));
+    }
+
+    @Override
+    public SelectionType getType() {
+        return SelectionType.NONE;
+    }
+
+    @Override
+    public void appendNarrations(NarrationMessageBuilder builder) {
+
     }
 }

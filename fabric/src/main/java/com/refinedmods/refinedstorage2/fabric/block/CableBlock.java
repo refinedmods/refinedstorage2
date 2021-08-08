@@ -142,8 +142,9 @@ public class CableBlock extends NetworkNodeBlock implements Waterloggable {
                 .with(DOWN, down);
     }
 
+    @Nullable
     @Override
-    public @Nullable BlockEntity createBlockEntity(BlockView world) {
-        return new CableBlockEntity();
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new CableBlockEntity(pos, state);
     }
 }

@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
@@ -32,7 +33,7 @@ public class ControllerScreen extends BaseScreen<ControllerScreenHandler> {
         this.backgroundHeight = 189;
 
         this.progressWidget = new ProgressWidget(80, 20, 16, 70, this::getPercentageFull, this::renderTooltip, this::createTooltip);
-        addChild(progressWidget);
+        addDrawableChild(progressWidget);
     }
 
     @Override
@@ -56,11 +57,15 @@ public class ControllerScreen extends BaseScreen<ControllerScreenHandler> {
 
     @Override
     protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         ScreenUtil.drawVersionInformation(matrices, textRenderer);
-        client.getTextureManager().bindTexture(TEXTURE);
+
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, TEXTURE);
+
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
+
         drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
     }
 

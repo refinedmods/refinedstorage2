@@ -3,8 +3,8 @@ package com.refinedmods.refinedstorage2.fabric.screen.widget;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
@@ -30,11 +30,9 @@ public abstract class SideButtonWidget extends ButtonWidget implements ButtonWid
 
     @Override
     public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        client.getTextureManager().bindTexture(getTextureIdentifier());
-
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.enableAlphaTest();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, getTextureIdentifier());
 
         this.hovered = mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
 
@@ -44,8 +42,9 @@ public abstract class SideButtonWidget extends ButtonWidget implements ButtonWid
         if (hovered) {
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            RenderSystem.color4f(1.0f, 1.0f, 1.0f, 0.5f);
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.5f);
             drawTexture(matrices, x, y, 238, 54, WIDTH, HEIGHT);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.disableBlend();
 
             onTooltip(this, matrices, mouseX, mouseY);

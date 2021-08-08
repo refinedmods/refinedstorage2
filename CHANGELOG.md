@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Ported to Minecraft 1.17.1
+- Add block variants to Patchouli book entries
 - Implemented a new networking system
 
 ## [2.0.0-milestone.1.0] - 2021-05-21

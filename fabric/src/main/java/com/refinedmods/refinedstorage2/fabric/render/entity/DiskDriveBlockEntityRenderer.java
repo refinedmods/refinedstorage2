@@ -7,29 +7,36 @@ import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBl
 import com.refinedmods.refinedstorage2.fabric.render.CubeBuilder;
 import com.refinedmods.refinedstorage2.fabric.util.BiDirection;
 
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderPhase;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Quaternion;
 
-public class DiskDriveBlockEntityRenderer extends BlockEntityRenderer<DiskDriveBlockEntity> {
-    public static final RenderLayer RENDER_LAYER = RenderLayer.of("drive_leds", VertexFormats.POSITION_COLOR, 7, 32565, false, true, RenderLayer.MultiPhaseParameters.builder().build(false));
+public class DiskDriveBlockEntityRenderer implements BlockEntityRenderer<DiskDriveBlockEntity> {
+    private static final RenderLayer RENDER_LAYER = RenderLayer.of(
+            "drive_leds",
+            VertexFormats.POSITION_COLOR,
+            VertexFormat.DrawMode.QUADS,
+            32565,
+            false,
+            true,
+            RenderLayer.MultiPhaseParameters.builder().shader(new RenderPhase.Shader(GameRenderer::getPositionColorShader)).build(false)
+    );
 
     private static final int LED_X1 = 10;
     private static final int LED_Y1 = 12;
     private static final int LED_Z1 = -1;
+
     private static final int LED_X2 = 11;
     private static final int LED_Y2 = 13;
     private static final int LED_Z2 = 0;
-
-    public DiskDriveBlockEntityRenderer(BlockEntityRenderDispatcher dispatcher) {
-        super(dispatcher);
-    }
 
     private Quaternion createQuaternion(BiDirection direction) {
         return new Quaternion(direction.getVec().getX(), direction.getVec().getY(), direction.getVec().getZ(), true);

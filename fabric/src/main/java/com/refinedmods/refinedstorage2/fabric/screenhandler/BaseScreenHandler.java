@@ -41,20 +41,19 @@ public class BaseScreenHandler extends ScreenHandler {
     }
 
     @Override
-    public ItemStack onSlotClick(int id, int dragType, SlotActionType actionType, PlayerEntity player) {
+    public void onSlotClick(int id, int dragType, SlotActionType actionType, PlayerEntity player) {
         Slot slot = id >= 0 ? getSlot(id) : null;
 
         if (slot instanceof FilterSlot) {
-            ItemStack cursorStack = player.inventory.getCursorStack();
+            ItemStack cursorStack = getCursorStack();
             if (cursorStack.isEmpty()) {
                 slot.setStack(ItemStack.EMPTY);
             } else {
                 slot.setStack(cursorStack.copy());
             }
-            return cursorStack;
+        } else {
+            super.onSlotClick(id, dragType, actionType, player);
         }
-
-        return super.onSlotClick(id, dragType, actionType, player);
     }
 
     @Override

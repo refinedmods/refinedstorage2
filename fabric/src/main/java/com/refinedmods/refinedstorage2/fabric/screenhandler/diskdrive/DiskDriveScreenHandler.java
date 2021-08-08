@@ -159,7 +159,7 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
         for (int i = 0; i < 9; ++i) {
             addSlot(createFilterSlot(player, filterInventory, i));
         }
-        addPlayerInventory(player.inventory, 8, 141);
+        addPlayerInventory(player.getInventory(), 8, 141);
     }
 
     private SlotFixedItemInv createFilterSlot(PlayerEntity player, FixedItemInv filterInventory, int i) {

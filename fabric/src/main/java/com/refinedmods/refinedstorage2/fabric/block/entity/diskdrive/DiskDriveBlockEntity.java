@@ -34,9 +34,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.ByteTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtByte;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
@@ -58,8 +58,8 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     private final FullFixedItemInv filterInventory = new FullFixedItemInv(9);
     private DiskDriveState driveState;
 
-    public DiskDriveBlockEntity() {
-        super(Rs2Mod.BLOCK_ENTITIES.getDiskDrive());
+    public DiskDriveBlockEntity(BlockPos pos, BlockState state) {
+        super(Rs2Mod.BLOCK_ENTITIES.getDiskDrive(), pos, state);
 
         diskInventory.setOwnerListener(new DiskInventoryListener(this));
         filterInventory.setOwnerListener(new FilterInventoryListener(this));
@@ -72,7 +72,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     }
 
     @Override
-    protected DiskDriveNetworkNode createNode(World world, BlockPos pos, CompoundTag tag) {
+    protected DiskDriveNetworkNode createNode(World world, BlockPos pos, NbtCompound tag) {
         DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(
                 FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
@@ -106,8 +106,8 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
 
         if (tag.contains(TAG_DISK_INVENTORY)) {
             diskInventory.fromTag(tag.getCompound(TAG_DISK_INVENTORY));
@@ -119,8 +119,8 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        tag = super.toTag(tag);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        tag = super.writeNbt(tag);
         tag.put(TAG_DISK_INVENTORY, diskInventory.toTag());
         tag.put(TAG_FILTER_INVENTORY, filterInventory.toTag());
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(container.getNode().getFilterMode()));
@@ -178,14 +178,14 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     }
 
     @Override
-    public void fromClientTag(CompoundTag tag) {
+    public void fromClientTag(NbtCompound tag) {
         if (tag.contains(TAG_STATES)) {
-            ListTag statesList = tag.getList(TAG_STATES, NbtType.BYTE);
+            NbtList statesList = tag.getList(TAG_STATES, NbtType.BYTE);
 
             driveState = new DiskDriveState(statesList.size());
 
             for (int i = 0; i < statesList.size(); ++i) {
-                int idx = ((ByteTag) statesList.get(i)).getInt();
+                int idx = ((NbtByte) statesList.get(i)).intValue();
                 if (idx < 0 || idx >= DiskState.values().length) {
                     idx = DiskState.NONE.ordinal();
                 }
@@ -198,10 +198,10 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     }
 
     @Override
-    public CompoundTag toClientTag(CompoundTag tag) {
-        ListTag statesList = new ListTag();
+    public NbtCompound toClientTag(NbtCompound tag) {
+        NbtList statesList = new NbtList();
         for (DiskState state : container.getNode().createState().getStates()) {
-            statesList.add(ByteTag.of((byte) state.ordinal()));
+            statesList.add(NbtByte.of((byte) state.ordinal()));
         }
         tag.put(TAG_STATES, statesList);
         return tag;

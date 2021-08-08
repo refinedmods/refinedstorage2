@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
@@ -27,6 +28,7 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
     private static final TranslatableText DISKS_TEXT = Rs2Mod.createTranslation("gui", "disk_drive.disks");
 
     private final ProgressWidget progressWidget;
+    private final PlayerInventory playerInventory;
 
     public DiskDriveScreen(DiskDriveScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -37,9 +39,10 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
         this.playerInventoryTitleY = 129;
         this.backgroundWidth = 176;
         this.backgroundHeight = 223;
+        this.playerInventory = inventory;
 
         this.progressWidget = new ProgressWidget(99, 54, 16, 70, handler::getProgress, this::renderTooltip, this::createTooltip);
-        addChild(progressWidget);
+        addDrawableChild(progressWidget);
     }
 
     @Override
@@ -49,7 +52,7 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
         addSideButton(new FilterModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
         addSideButton(new ExactModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
         addSideButton(new AccessModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
-        addSideButton(new PrioritySideButtonWidget(getScreenHandler(), this, this::renderTooltip));
+        addSideButton(new PrioritySideButtonWidget(getScreenHandler(), playerInventory, this, this::renderTooltip));
     }
 
     private List<Text> createTooltip() {
@@ -71,11 +74,15 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
 
     @Override
     protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         ScreenUtil.drawVersionInformation(matrices, textRenderer);
-        client.getTextureManager().bindTexture(TEXTURE);
+
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, TEXTURE);
+
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
+
         drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
     }
 

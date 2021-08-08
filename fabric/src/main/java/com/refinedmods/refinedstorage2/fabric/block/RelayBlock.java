@@ -164,7 +164,7 @@ public class RelayBlock extends NetworkNodeBlock {
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new RelayBlockEntity();
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new RelayBlockEntity(pos, state);
     }
 }

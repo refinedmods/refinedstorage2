@@ -17,7 +17,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -38,8 +38,8 @@ public class StorageDiskItem extends Item {
     }
 
     public static Optional<UUID> getId(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().containsUuid(TAG_ID)) {
-            return Optional.of(stack.getTag().getUuid(TAG_ID));
+        if (stack.hasNbt() && stack.getNbt().containsUuid(TAG_ID)) {
+            return Optional.of(stack.getNbt().getUuid(TAG_ID));
         }
         return Optional.empty();
     }
@@ -84,7 +84,7 @@ public class StorageDiskItem extends Item {
                 .map(disk -> {
                     ItemStack storagePart = createStoragePart(stack.getCount());
 
-                    if (!user.inventory.insertStack(storagePart.copy())) {
+                    if (!user.getInventory().insertStack(storagePart.copy())) {
                         world.spawnEntity(new ItemEntity(world, user.getX(), user.getY(), user.getZ(), storagePart));
                     }
 
@@ -101,13 +101,13 @@ public class StorageDiskItem extends Item {
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         super.inventoryTick(stack, world, entity, slot, selected);
 
-        if (!world.isClient() && !stack.hasTag() && entity instanceof PlayerEntity) {
+        if (!world.isClient() && !stack.hasNbt() && entity instanceof PlayerEntity) {
             UUID id = UUID.randomUUID();
 
             Rs2Mod.API.getStorageDiskManager(world).setDisk(id, new FabricItemDiskStorage(type.getCapacity(), () -> ((FabricStorageDiskManager) Rs2Mod.API.getStorageDiskManager(world)).markDirty()));
 
-            stack.setTag(new CompoundTag());
-            stack.getTag().putUuid(TAG_ID, id);
+            stack.setNbt(new NbtCompound());
+            stack.getNbt().putUuid(TAG_ID, id);
         }
     }
 }

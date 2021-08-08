@@ -4,12 +4,12 @@ import com.refinedmods.refinedstorage2.fabric.util.BiDirection;
 
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.client.util.math.Vector4f;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.Vector4f;
 
 public class QuadRotator implements RenderContext.QuadTransform {
     private final BiDirection direction;
@@ -20,7 +20,7 @@ public class QuadRotator implements RenderContext.QuadTransform {
 
     @Override
     public boolean transform(MutableQuadView quad) {
-        Vector3f tmp = new Vector3f();
+        Vec3f tmp = new Vec3f();
 
         for (int i = 0; i < 4; ++i) {
             quad.copyPos(i, tmp);
@@ -40,9 +40,9 @@ public class QuadRotator implements RenderContext.QuadTransform {
 
         Matrix4f mat = new Matrix4f();
         mat.loadIdentity();
-        mat.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(direction.getVec().getX()));
-        mat.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(direction.getVec().getY()));
-        mat.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(direction.getVec().getZ()));
+        mat.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(direction.getVec().getX()));
+        mat.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(direction.getVec().getY()));
+        mat.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(direction.getVec().getZ()));
 
         Direction nominalFace = quad.nominalFace();
         Direction cullFace = quad.cullFace();

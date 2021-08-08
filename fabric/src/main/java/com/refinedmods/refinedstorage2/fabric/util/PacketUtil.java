@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
 import java.util.Optional;
 
 import net.minecraft.item.Item;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 
 public class PacketUtil {
@@ -27,12 +27,12 @@ public class PacketUtil {
                 buf.writeLong(stack.getAmount());
             }
 
-            CompoundTag compoundTag = null;
+            NbtCompound compoundTag = null;
             if (stack.getTag() != null) {
-                compoundTag = (CompoundTag) stack.getTag();
+                compoundTag = (NbtCompound) stack.getTag();
             }
 
-            buf.writeCompoundTag(compoundTag);
+            buf.writeNbt(compoundTag);
         }
     }
 
@@ -47,7 +47,7 @@ public class PacketUtil {
                 amount = buf.readLong();
             }
 
-            return new Rs2ItemStack(ItemStacks.ofItem(Item.byRawId(id)), amount, buf.readCompoundTag());
+            return new Rs2ItemStack(ItemStacks.ofItem(Item.byRawId(id)), amount, buf.readNbt());
         }
     }
 

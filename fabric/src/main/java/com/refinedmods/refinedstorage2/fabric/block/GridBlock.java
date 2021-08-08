@@ -10,7 +10,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,11 +29,6 @@ public class GridBlock extends NetworkNodeBlock {
     }
 
     @Override
-    public @Nullable BlockEntity createBlockEntity(BlockView world) {
-        return new GridBlockEntity();
-    }
-
-    @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         ActionResult result = Rs2Mod.BLOCKS.getGrid().updateColor(state, player.getStackInHand(hand), world, pos, player);
         if (result != ActionResult.PASS) {
@@ -42,5 +36,11 @@ public class GridBlock extends NetworkNodeBlock {
         }
 
         return super.onUse(state, world, pos, player, hand, hit);
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new GridBlockEntity(pos, state);
     }
 }

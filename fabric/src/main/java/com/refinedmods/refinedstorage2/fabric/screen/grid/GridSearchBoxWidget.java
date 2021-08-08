@@ -44,7 +44,7 @@ public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearch
     }
 
     private OrderedText invalidText(String text) {
-        return OrderedText.styledString(text, Style.EMPTY.withFormatting(Formatting.RED));
+        return OrderedText.styledForwardsVisitedString(text, Style.EMPTY.withFormatting(Formatting.RED));
     }
 
     private OrderedText convertCharactersToOrderedText(List<SyntaxHighlightedCharacter> characters) {
@@ -57,7 +57,7 @@ public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearch
 
     private OrderedText convertCharacterToOrderedText(SyntaxHighlightedCharacter character) {
         Formatting color = Formatting.byName(character.getColor());
-        return OrderedText.styledString(character.getCharacter(), Style.EMPTY.withColor(color));
+        return OrderedText.styledForwardsVisitedString(character.getCharacter(), Style.EMPTY.withColor(color));
     }
 
     private Lexer createLexer(String text) {

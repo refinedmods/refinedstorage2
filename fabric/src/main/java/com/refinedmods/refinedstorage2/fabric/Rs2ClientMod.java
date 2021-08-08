@@ -21,7 +21,7 @@ import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerInventory;
@@ -64,7 +64,7 @@ public class Rs2ClientMod implements ClientModInitializer {
     }
 
     private void registerBlockEntityRenderers() {
-        BlockEntityRendererRegistry.INSTANCE.register(Rs2Mod.BLOCK_ENTITIES.getDiskDrive(), DiskDriveBlockEntityRenderer::new);
+        BlockEntityRendererRegistry.INSTANCE.register(Rs2Mod.BLOCK_ENTITIES.getDiskDrive(), ctx -> new DiskDriveBlockEntityRenderer());
     }
 
     private void registerCustomModels() {
