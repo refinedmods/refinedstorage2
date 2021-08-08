@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.fabric.block.entity;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerImpl;
 import com.refinedmods.refinedstorage2.core.network.node.container.relay.RelayNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.relay.RelayNetworkNode;
+import com.refinedmods.refinedstorage2.core.util.Direction;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
@@ -23,6 +24,6 @@ public class RelayBlockEntity extends NetworkNodeBlockEntity<RelayNetworkNode> {
 
     @Override
     protected RelayNetworkNode createNode(World world, BlockPos pos, CompoundTag tag) {
-        return new RelayNetworkNode(FabricRs2WorldAdapter.of(world), Positions.ofBlockPos(pos));
+        return new RelayNetworkNode(FabricRs2WorldAdapter.of(world), Positions.ofBlockPos(pos), Direction.NORTH);
     }
 }

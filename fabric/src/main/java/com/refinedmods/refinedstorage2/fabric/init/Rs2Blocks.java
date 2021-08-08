@@ -36,7 +36,7 @@ public class Rs2Blocks {
         quartzEnrichedIron = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("quartz_enriched_iron_block"), new QuartzEnrichedIronBlock(STONE_SETTINGS));
         diskDrive = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("disk_drive"), new DiskDriveBlock(STONE_SETTINGS));
         machineCasing = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("machine_casing"), new MachineCasingBlock(STONE_SETTINGS));
-        relay = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("relay"), new RelayBlock(STONE_SETTINGS));
+        relay = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("relay"), new RelayBlock());
         grid.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("grid")), new GridBlock(STONE_SETTINGS)));
         controller.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("controller")), new ControllerBlock(STONE_SETTINGS, ControllerType.NORMAL)));
         creativeController.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("creative_controller")), new ControllerBlock(STONE_SETTINGS, ControllerType.CREATIVE)));

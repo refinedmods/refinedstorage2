@@ -57,6 +57,7 @@ public class Rs2ClientMod implements ClientModInitializer {
 
     private void setRenderLayers() {
         BlockRenderLayerMap.INSTANCE.putBlock(Rs2Mod.BLOCKS.getCable(), RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(Rs2Mod.BLOCKS.getRelay(), RenderLayer.getCutout());
         Rs2Mod.BLOCKS.getGrid().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout()));
         Rs2Mod.BLOCKS.getController().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout()));
         Rs2Mod.BLOCKS.getCreativeController().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout()));

@@ -20,7 +20,7 @@ public class RelayNetworkNodeContainer extends NetworkNodeContainerImpl<RelayNet
     public List<NetworkNodeContainer<?>> getConnections(NetworkNodeContainerRepository containerRepository) {
         List<NetworkNodeContainer<?>> connections = new ArrayList<>();
         for (Direction direction : Direction.values()) {
-            if (direction == Direction.NORTH) {
+            if (direction == getNode().getDirection()) {
                 continue;
             }
             containerRepository.getContainer(world, position.offset(direction)).ifPresent(container -> {
