@@ -1,0 +1,45 @@
+name: Bug Report
+description: Found a bug or encountered a crash? Please report it here.
+labels: [ bug ]
+body:
+    -   type: textarea
+        id: what-happened
+        attributes:
+            label: What happened? Please describe the bug.
+            description: If applicable, also tell us what you expected to happen instead.
+        validations:
+            required: true
+    -   type: textarea
+        id: steps-to-reproduce
+        attributes:
+            label: How can we reproduce this bug or crash?
+            placeholder: |
+                1.
+                2.
+                3.
+        validations:
+            required: true
+    -   type: dropdown
+        id: minecraft-version
+        attributes:
+            label: What Minecraft version is this happening on?
+            options:
+                - Minecraft 1.16.5
+    -   type: input
+        id: fabric-version
+        attributes:
+            label: What Fabric version is this happening on?
+        validations:
+            required: true
+    -   type: input
+        id: rs-version
+        attributes:
+            label: What Refined Storage version is this happening on?
+        validations:
+            required: true
+    -   type: textarea
+        id: logs
+        attributes:
+            label: Relevant log output
+            description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+            render: shell
