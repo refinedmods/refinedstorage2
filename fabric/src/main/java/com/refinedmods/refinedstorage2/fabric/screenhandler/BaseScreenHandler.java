@@ -60,4 +60,9 @@ public class BaseScreenHandler extends ScreenHandler {
     public boolean canUse(PlayerEntity player) {
         return true;
     }
+
+    @Override
+    public ItemStack transferSlot(PlayerEntity player, int index) {
+        return ItemStack.EMPTY;
+    }
 }

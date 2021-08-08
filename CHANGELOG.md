@@ -9,6 +9,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.0.0-milestone.1.1]
 
+### Fixed
+
+- Fix crash when transferring items in the Controller screen
+
 ### Changed
 
 - Ported to Minecraft 1.17.1
