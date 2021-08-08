@@ -12,12 +12,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Changes are added in `CHANGELOG.md`. Please refrain from using technical terminology, keep it user-friendly. The
   format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Branching
+## Gitflow
 
-Regarding naming, please use `feature/`, followed by the ID of the issue on the issue tracker, followed by a short
-description. For example: `feature/1783/disk-drive`.
-
-For bugfixes, use `fix/`as a prefix.
+This project uses [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
 
 ## Documentation
 

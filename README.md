@@ -1,4 +1,4 @@
-# Refined Storage 2 [![Build Status](https://github.com/refinedmods/refinedstorage2/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/refinedmods/refinedstorage2/actions/workflows/build.yml) [![Downloads on CurseForge](http://cf.way2muchnoise.eu/full_243076_downloads.svg)](http://minecraft.curseforge.com/projects/refined-storage) [![Discord](https://img.shields.io/discord/342942776494653441)](https://discordapp.com/invite/VYzsydb) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
+# Refined Storage 2 [![Build Status](https://github.com/refinedmods/refinedstorage2/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/refinedmods/refinedstorage2/actions/workflows/build.yml) [![Downloads on CurseForge](http://cf.way2muchnoise.eu/full_243076_downloads.svg)](http://minecraft.curseforge.com/projects/refined-storage) [![Discord](https://img.shields.io/discord/342942776494653441)](https://discordapp.com/invite/VYzsydb) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 
 ## About
 
