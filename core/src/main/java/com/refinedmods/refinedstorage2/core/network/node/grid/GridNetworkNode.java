@@ -1,9 +1,7 @@
 package com.refinedmods.refinedstorage2.core.network.node.grid;
 
-import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
-import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.core.grid.GridSize;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
@@ -33,9 +31,9 @@ public class GridNetworkNode extends NetworkNodeImpl {
     private GridSearchBoxMode searchBoxMode;
     private final long energyUsage;
 
-    public GridNetworkNode(Rs2World world, Position pos, GridSearchBoxModeRegistry searchBoxModeRegistry, long energyUsage) {
-        super(world, pos);
-        this.searchBoxMode = searchBoxModeRegistry.getDefault();
+    public GridNetworkNode(Position pos, GridSearchBoxMode defaultSearchBoxMode, long energyUsage) {
+        super(pos);
+        this.searchBoxMode = defaultSearchBoxMode;
         this.energyUsage = energyUsage;
     }
 

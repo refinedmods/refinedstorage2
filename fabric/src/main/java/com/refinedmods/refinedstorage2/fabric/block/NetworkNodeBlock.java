@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.fabric.block;
 
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
-import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntityTicker;
+import com.refinedmods.refinedstorage2.fabric.block.entity.ticker.NetworkNodeBlockEntityTicker;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.network.container.FabricNetworkNodeContainerRepository;
 
 import net.minecraft.block.Block;

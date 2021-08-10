@@ -22,12 +22,11 @@ import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 
 public class NetworkNodeContainerImpl<T extends NetworkNode> implements NetworkNodeContainer<T> {
-    protected final Rs2World world;
+    protected Rs2World world;
     protected final Position position;
     private final T node;
 
-    public NetworkNodeContainerImpl(Rs2World world, Position position, T node) {
-        this.world = world;
+    public NetworkNodeContainerImpl(Position position, T node) {
         this.position = position;
         this.node = node;
     }
@@ -184,6 +183,12 @@ public class NetworkNodeContainerImpl<T extends NetworkNode> implements NetworkN
     @Override
     public Rs2World getContainerWorld() {
         return world;
+    }
+
+    @Override
+    public void setContainerWorld(Rs2World world) {
+        this.world = world;
+        this.node.setWorld(world);
     }
 
     @Override

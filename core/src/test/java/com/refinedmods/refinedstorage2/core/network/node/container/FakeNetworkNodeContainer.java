@@ -41,6 +41,11 @@ public class FakeNetworkNodeContainer<T extends NetworkNode> implements NetworkN
     }
 
     @Override
+    public void setContainerWorld(Rs2World world) {
+        node.setWorld(world);
+    }
+
+    @Override
     public List<NetworkNodeContainer<?>> getConnections(NetworkNodeContainerRepository containerRepository) {
         return null;
     }

@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.core.network.node.relay;
 
-import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.core.util.Direction;
 import com.refinedmods.refinedstorage2.core.util.Position;
@@ -8,8 +7,8 @@ import com.refinedmods.refinedstorage2.core.util.Position;
 public class RelayNetworkNode extends NetworkNodeImpl {
     private final Direction direction;
 
-    public RelayNetworkNode(Rs2World world, Position position, Direction direction) {
-        super(world, position);
+    public RelayNetworkNode(Position position, Direction direction) {
+        super(position);
         this.direction = direction;
     }
 

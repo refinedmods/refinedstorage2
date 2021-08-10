@@ -68,7 +68,9 @@ public class NetworkUtil {
     }
 
     public static NetworkNodeContainer<?> createContainer(Rs2World world, Position position) {
-        return new NetworkNodeContainerImpl<>(world, position, new EmptyNetworkNode(world, position));
+        NetworkNodeContainer<?> container = new NetworkNodeContainerImpl<>(position, new EmptyNetworkNode(position));
+        container.setContainerWorld(world);
+        return container;
     }
 
     public static NetworkNodeContainer<?> createContainerWithNetwork(Rs2World world, Position position, Function<NetworkNodeContainer<?>, Network> networkFactory) {

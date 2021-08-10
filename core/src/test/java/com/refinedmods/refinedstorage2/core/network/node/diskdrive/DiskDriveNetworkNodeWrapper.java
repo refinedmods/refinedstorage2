@@ -8,9 +8,11 @@ public class DiskDriveNetworkNodeWrapper extends DiskDriveNetworkNode {
     private final FakeStorageDiskProviderManager fakeStorageDiskProviderManager;
 
     private DiskDriveNetworkNodeWrapper(Rs2World world, Position pos, FakeStorageDiskProviderManager fakeStorageDiskProviderManager, long energyUsage, long energyUsagePerDisk) {
-        super(world, pos, fakeStorageDiskProviderManager, fakeStorageDiskProviderManager, energyUsage, energyUsagePerDisk);
+        super(pos, fakeStorageDiskProviderManager, energyUsage, energyUsagePerDisk);
         this.fakeStorageDiskProviderManager = fakeStorageDiskProviderManager;
         this.fakeStorageDiskProviderManager.setDiskDrive(this);
+        this.setWorld(world);
+        this.setDiskManager(fakeStorageDiskProviderManager);
     }
 
     public FakeStorageDiskProviderManager getFakeStorageDiskProviderManager() {

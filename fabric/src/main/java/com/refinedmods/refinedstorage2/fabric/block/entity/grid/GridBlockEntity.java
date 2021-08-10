@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.core.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
@@ -24,7 +23,6 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> implements ExtendedScreenHandlerFactory {
@@ -38,28 +36,29 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
     }
 
     @Override
-    protected GridNetworkNode createNode(World world, BlockPos pos, NbtCompound tag) {
+    protected GridNetworkNode createNode(BlockPos pos, NbtCompound tag) {
         GridNetworkNode grid = new GridNetworkNode(
-                FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
-                Rs2Mod.API.getGridSearchBoxModeRegistry(),
+                Rs2Mod.API.getGridSearchBoxModeRegistry().getDefault(),
                 Rs2Config.get().getGrid().getEnergyUsage()
         );
 
-        if (tag.contains(TAG_SORTING_DIRECTION)) {
-            grid.setSortingDirection(GridSettings.getSortingDirection(tag.getInt(TAG_SORTING_DIRECTION)));
-        }
+        if (tag != null) {
+            if (tag.contains(TAG_SORTING_DIRECTION)) {
+                grid.setSortingDirection(GridSettings.getSortingDirection(tag.getInt(TAG_SORTING_DIRECTION)));
+            }
 
-        if (tag.contains(TAG_SORTING_TYPE)) {
-            grid.setSortingType(GridSettings.getSortingType(tag.getInt(TAG_SORTING_TYPE)));
-        }
+            if (tag.contains(TAG_SORTING_TYPE)) {
+                grid.setSortingType(GridSettings.getSortingType(tag.getInt(TAG_SORTING_TYPE)));
+            }
 
-        if (tag.contains(TAG_SIZE)) {
-            grid.setSize(GridSettings.getSize(tag.getInt(TAG_SIZE)));
-        }
+            if (tag.contains(TAG_SIZE)) {
+                grid.setSize(GridSettings.getSize(tag.getInt(TAG_SIZE)));
+            }
 
-        if (tag.contains(TAG_SEARCH_BOX_MODE)) {
-            grid.setSearchBoxMode(Rs2Mod.API.getGridSearchBoxModeRegistry().get(tag.getInt(TAG_SEARCH_BOX_MODE)));
+            if (tag.contains(TAG_SEARCH_BOX_MODE)) {
+                grid.setSearchBoxMode(Rs2Mod.API.getGridSearchBoxModeRegistry().get(tag.getInt(TAG_SEARCH_BOX_MODE)));
+            }
         }
 
         return grid;

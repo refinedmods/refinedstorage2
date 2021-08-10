@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.core.network.component;
 import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.adapter.FakeRs2World;
 import com.refinedmods.refinedstorage2.core.network.node.container.FakeNetworkNodeContainer;
+import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.core.util.Position;
@@ -23,6 +24,17 @@ class EnergyNetworkComponentTest {
         assertThat(sut.getEnergyStorage().getCapacity()).isZero();
     }
 
+    private NetworkNodeContainer<ControllerNetworkNode> createControllerContainer() {
+        NetworkNodeContainer<ControllerNetworkNode> container = new FakeNetworkNodeContainer<>(new ControllerNetworkNode(
+                Position.ORIGIN,
+                100,
+                1000,
+                ControllerType.NORMAL
+        ));
+        container.setContainerWorld(new FakeRs2World());
+        return container;
+    }
+
     @Test
     void Test_adding_node_should_update_energy_storage() {
         // Arrange
@@ -32,13 +44,7 @@ class EnergyNetworkComponentTest {
         long storedBefore = sut.getEnergyStorage().getStored();
 
         // Act
-        sut.onContainerAdded(new FakeNetworkNodeContainer<>(new ControllerNetworkNode(
-                new FakeRs2World(),
-                Position.ORIGIN,
-                100,
-                1000,
-                ControllerType.NORMAL
-        )));
+        sut.onContainerAdded(createControllerContainer());
 
         long capacityAfter = sut.getEnergyStorage().getCapacity();
         long storedAfter = sut.getEnergyStorage().getStored();
@@ -56,13 +62,7 @@ class EnergyNetworkComponentTest {
         // Arrange
         EnergyNetworkComponent sut = new EnergyNetworkComponent();
 
-        FakeNetworkNodeContainer<ControllerNetworkNode> container = new FakeNetworkNodeContainer<>(new ControllerNetworkNode(
-                new FakeRs2World(),
-                Position.ORIGIN,
-                100,
-                1000,
-                ControllerType.NORMAL
-        ));
+        NetworkNodeContainer<ControllerNetworkNode> container = createControllerContainer();
 
         sut.onContainerAdded(container);
 

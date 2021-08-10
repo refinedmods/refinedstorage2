@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.core.network.node.container.relay;
 
-import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerImpl;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerRepository;
@@ -12,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RelayNetworkNodeContainer extends NetworkNodeContainerImpl<RelayNetworkNode> {
-    public RelayNetworkNodeContainer(Rs2World world, Position position, RelayNetworkNode node) {
-        super(world, position, node);
+    public RelayNetworkNodeContainer(Position position, RelayNetworkNode node) {
+        super(position, node);
     }
 
     @Override

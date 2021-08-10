@@ -7,14 +7,13 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 public abstract class NetworkNodeImpl implements NetworkNode {
-    protected final Rs2World world;
+    protected Rs2World world;
     protected final Position position;
     protected Network network;
     protected RedstoneMode redstoneMode = RedstoneMode.IGNORE;
     private boolean wasActive;
 
-    public NetworkNodeImpl(Rs2World world, Position position) {
-        this.world = world;
+    public NetworkNodeImpl(Position position) {
         this.position = position;
     }
 
@@ -26,6 +25,11 @@ public abstract class NetworkNodeImpl implements NetworkNode {
     @Override
     public void setNetwork(Network network) {
         this.network = network;
+    }
+
+    @Override
+    public void setWorld(Rs2World world) {
+        this.world = world;
     }
 
     public boolean isActive() {

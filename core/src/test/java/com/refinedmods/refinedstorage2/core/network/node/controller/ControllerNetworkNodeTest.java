@@ -35,7 +35,8 @@ class ControllerNetworkNodeTest {
     @MethodSource("getStoredAndExpectedState")
     void Test_calculating_states(long stored, ControllerEnergyState expectedState) {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, 0, 100, ControllerType.NORMAL);
+        ControllerNetworkNode controller = new ControllerNetworkNode(Position.ORIGIN, 0, 100, ControllerType.NORMAL);
+        controller.setWorld(new FakeRs2World());
 
         controller.receive(stored, Action.EXECUTE);
 
@@ -49,8 +50,9 @@ class ControllerNetworkNodeTest {
     @Test
     void Test_calculating_state_when_inactive() {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, 0, 100, ControllerType.NORMAL);
+        ControllerNetworkNode controller = new ControllerNetworkNode(Position.ORIGIN, 0, 100, ControllerType.NORMAL);
         controller.setRedstoneMode(RedstoneMode.HIGH);
+        controller.setWorld(new FakeRs2World());
 
         // Act
         ControllerEnergyState state = controller.getState();
@@ -63,7 +65,8 @@ class ControllerNetworkNodeTest {
     @EnumSource(ControllerType.class)
     void Test_receiving_energy(ControllerType type) {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, 0, 100, type);
+        ControllerNetworkNode controller = new ControllerNetworkNode(Position.ORIGIN, 0, 100, type);
+        controller.setWorld(new FakeRs2World());
 
         // Act
         long remainder = controller.receive(10, Action.EXECUTE);
@@ -83,7 +86,8 @@ class ControllerNetworkNodeTest {
     @Test
     void Test_receiving_energy_when_inactive() {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, 0, 100, ControllerType.NORMAL);
+        ControllerNetworkNode controller = new ControllerNetworkNode(Position.ORIGIN, 0, 100, ControllerType.NORMAL);
+        controller.setWorld(new FakeRs2World());
 
         controller.receive(5, Action.EXECUTE);
         controller.setRedstoneMode(RedstoneMode.HIGH);
@@ -103,7 +107,8 @@ class ControllerNetworkNodeTest {
     @EnumSource(ControllerType.class)
     void Test_extracting_energy(ControllerType type) {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, 0, 100, type);
+        ControllerNetworkNode controller = new ControllerNetworkNode(Position.ORIGIN, 0, 100, type);
+        controller.setWorld(new FakeRs2World());
 
         // Act
         controller.receive(10, Action.EXECUTE);
@@ -124,7 +129,8 @@ class ControllerNetworkNodeTest {
     @Test
     void Test_extracting_energy_when_inactive() {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(new FakeRs2World(), Position.ORIGIN, 0, 100, ControllerType.NORMAL);
+        ControllerNetworkNode controller = new ControllerNetworkNode(Position.ORIGIN, 0, 100, ControllerType.NORMAL);
+        controller.setWorld(new FakeRs2World());
 
         controller.receive(20, Action.EXECUTE);
         controller.setRedstoneMode(RedstoneMode.HIGH);

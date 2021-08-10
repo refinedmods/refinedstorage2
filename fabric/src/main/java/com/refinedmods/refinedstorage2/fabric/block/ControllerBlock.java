@@ -3,10 +3,13 @@ package com.refinedmods.refinedstorage2.fabric.block;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.fabric.block.entity.ticker.ControllerBlockEntityTicker;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
@@ -51,5 +54,10 @@ public class ControllerBlock extends NetworkNodeBlock {
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new ControllerBlockEntity(type, pos, state);
+    }
+
+    @Override
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return (BlockEntityTicker<T>) new ControllerBlockEntityTicker();
     }
 }

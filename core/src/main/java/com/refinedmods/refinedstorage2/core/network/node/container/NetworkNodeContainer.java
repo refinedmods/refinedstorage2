@@ -19,6 +19,8 @@ public interface NetworkNodeContainer<T extends NetworkNode> {
 
     Rs2World getContainerWorld();
 
+    void setContainerWorld(Rs2World world);
+
     List<NetworkNodeContainer<?>> getConnections(NetworkNodeContainerRepository containerRepository);
 
     boolean canConnectWith(NetworkNodeContainer<?> other, Direction incomingDirection);

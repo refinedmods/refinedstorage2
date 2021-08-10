@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
-import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
 import com.refinedmods.refinedstorage2.core.network.component.ItemStorageNetworkComponent;
@@ -34,7 +33,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
     private static final double DISK_NEAR_CAPACITY_THRESHOLD = .75;
 
-    private final StorageDiskManager diskManager;
+    private StorageDiskManager diskManager;
     private final StorageDiskProvider diskProvider;
     private final StorageDisk[] disks = new StorageDisk[DISK_COUNT];
     private int diskCount;
@@ -45,13 +44,15 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
     private final long energyUsage;
     private final long energyUsagePerDisk;
 
-    public DiskDriveNetworkNode(Rs2World world, Position pos, StorageDiskManager diskManager, StorageDiskProvider diskProvider, long energyUsage, long energyUsagePerDisk) {
-        super(world, pos);
-
-        this.diskManager = diskManager;
+    public DiskDriveNetworkNode(Position pos, StorageDiskProvider diskProvider, long energyUsage, long energyUsagePerDisk) {
+        super(pos);
         this.diskProvider = diskProvider;
         this.energyUsage = energyUsage;
         this.energyUsagePerDisk = energyUsagePerDisk;
+    }
+
+    public void setDiskManager(StorageDiskManager diskManager) {
+        this.diskManager = diskManager;
     }
 
     @Override

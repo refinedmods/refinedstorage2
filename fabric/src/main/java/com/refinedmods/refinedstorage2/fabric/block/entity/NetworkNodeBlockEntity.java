@@ -9,10 +9,8 @@ import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeCo
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerRepository;
 import com.refinedmods.refinedstorage2.core.util.Direction;
 import com.refinedmods.refinedstorage2.core.util.Position;
-import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.NetworkNodeBlock;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.network.container.FabricNetworkNodeContainerRepository;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
 import java.util.List;
@@ -33,8 +31,6 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     private static final String TAG_REDSTONE_MODE = "rm";
 
     private long lastActiveChanged;
-    private NbtCompound tag;
-    private boolean mustInitialize;
 
     protected NetworkNodeContainerImpl<T> container;
 
@@ -42,58 +38,46 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
         super(type, pos, state);
     }
 
-    public void tick(World world, BlockPos pos, BlockState state) {
-        if (world != null && !world.isClient() && container != null) {
-            if (mustInitialize) {
-                container.initialize(new FabricNetworkNodeContainerRepository(world), Rs2Mod.API.getNetworkComponentRegistry());
-                mustInitialize = false;
-            } else {
-                updateActivenessInWorld(state);
-                container.getNode().update();
-            }
-        }
-    }
-
     @Override
     public void setWorld(World world) {
         super.setWorld(world);
-
-        if (world.isClient()) {
-            return;
-        }
-
-        if (tag == null) {
-            tag = new NbtCompound();
-        }
-
-        T node = createNode(world, pos, tag);
-        this.container = createContainer(world, pos, node);
-        this.mustInitialize = true;
-
-        if (tag.contains(TAG_REDSTONE_MODE)) {
-            container.getNode().setRedstoneMode(RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE)));
+        if (!world.isClient()) {
+            if (container == null) {
+                container = createContainer(pos, createNode(pos, null));
+            }
+            setContainerWorld(FabricRs2WorldAdapter.of(world));
         }
     }
 
-    protected NetworkNodeContainerImpl<T> createContainer(World world, BlockPos pos, T node) {
-        return new NetworkNodeContainerImpl<>(FabricRs2WorldAdapter.of(world), Positions.ofBlockPos(pos), node);
+    @Override
+    public void setContainerWorld(Rs2World world) {
+        container.setContainerWorld(world);
     }
 
-    protected abstract T createNode(World world, BlockPos pos, NbtCompound tag);
+    protected NetworkNodeContainerImpl<T> createContainer(BlockPos pos, T node) {
+        return new NetworkNodeContainerImpl<>(Positions.ofBlockPos(pos), node);
+    }
+
+    protected abstract T createNode(BlockPos pos, NbtCompound tag);
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
-        tag.putInt(TAG_REDSTONE_MODE, RedstoneModeSettings.getRedstoneMode(getRedstoneMode()));
+        nbt.putInt(TAG_REDSTONE_MODE, RedstoneModeSettings.getRedstoneMode(getRedstoneMode()));
         return super.writeNbt(nbt);
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        this.tag = nbt;
+
+        container = createContainer(pos, createNode(pos, nbt));
+
+        if (nbt.contains(TAG_REDSTONE_MODE)) {
+            container.getNode().setRedstoneMode(RedstoneModeSettings.getRedstoneMode(nbt.getInt(TAG_REDSTONE_MODE)));
+        }
     }
 
-    public void updateActivenessInWorld(BlockState state) {
+    public void updateActiveness(BlockState state) {
         if (!state.contains(NetworkNodeBlock.ACTIVE)) {
             return;
         }
@@ -107,15 +91,15 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
             this.lastActiveChanged = System.currentTimeMillis();
 
             activenessChanged(active);
-            updateActivenessInWorld(state, active);
+            updateActiveness(state, active);
         }
     }
 
-    protected void activenessChanged(boolean active) {
+    private void updateActiveness(BlockState state, boolean active) {
+        world.setBlockState(pos, state.with(NetworkNodeBlock.ACTIVE, active));
     }
 
-    private void updateActivenessInWorld(BlockState state, boolean active) {
-        world.setBlockState(pos, state.with(NetworkNodeBlock.ACTIVE, active));
+    protected void activenessChanged(boolean active) {
     }
 
     public RedstoneMode getRedstoneMode() {

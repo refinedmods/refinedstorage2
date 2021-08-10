@@ -15,7 +15,6 @@ import com.refinedmods.refinedstorage2.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
@@ -66,40 +65,47 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     }
 
     @Override
+    public void setWorld(World world) {
+        super.setWorld(world);
+        if (!world.isClient()) {
+            container.getNode().setDiskManager(Rs2Mod.API.getStorageDiskManager(world));
+            for (int slot = 0; slot < diskInventory.getSlotCount(); ++slot) {
+                container.getNode().onDiskChanged(slot);
+            }
+        }
+    }
+
+    @Override
     public void activenessChanged(boolean active) {
         super.activenessChanged(active);
         sync();
     }
 
     @Override
-    protected DiskDriveNetworkNode createNode(World world, BlockPos pos, NbtCompound tag) {
+    protected DiskDriveNetworkNode createNode(BlockPos pos, NbtCompound tag) {
         DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(
-                FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
-                Rs2Mod.API.getStorageDiskManager(world),
                 diskInventory,
                 Rs2Config.get().getDiskDrive().getEnergyUsage(),
                 Rs2Config.get().getDiskDrive().getEnergyUsagePerDisk()
         );
 
-        if (tag.contains(TAG_PRIORITY)) {
-            diskDrive.setPriority(tag.getInt(TAG_PRIORITY));
-        }
+        if (tag != null) {
+            if (tag.contains(TAG_PRIORITY)) {
+                diskDrive.setPriority(tag.getInt(TAG_PRIORITY));
+            }
 
-        if (tag.contains(TAG_FILTER_MODE)) {
-            diskDrive.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
-        }
+            if (tag.contains(TAG_FILTER_MODE)) {
+                diskDrive.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
+            }
 
-        if (tag.contains(TAG_EXACT_MODE)) {
-            diskDrive.setExactMode(tag.getBoolean(TAG_EXACT_MODE));
-        }
+            if (tag.contains(TAG_EXACT_MODE)) {
+                diskDrive.setExactMode(tag.getBoolean(TAG_EXACT_MODE));
+            }
 
-        if (tag.contains(TAG_ACCESS_MODE)) {
-            diskDrive.setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
-        }
-
-        for (int slot = 0; slot < diskInventory.getSlotCount(); ++slot) {
-            diskDrive.onDiskChanged(slot);
+            if (tag.contains(TAG_ACCESS_MODE)) {
+                diskDrive.setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
+            }
         }
 
         return diskDrive;

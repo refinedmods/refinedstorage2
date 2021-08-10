@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.fabric.block.ControllerEnergyType;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.ControllerScreenHandler;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
@@ -23,7 +22,6 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -48,34 +46,28 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
         return type == ControllerType.CREATIVE ? Rs2Mod.BLOCK_ENTITIES.getCreativeController() : Rs2Mod.BLOCK_ENTITIES.getController();
     }
 
-    @Override
-    public void tick(World world, BlockPos pos, BlockState state) {
-        super.tick(world, pos, state);
+    public void updateEnergyType(BlockState state) {
+        ControllerEnergyType type = ControllerEnergyType.ofState(container.getNode().getState());
+        ControllerEnergyType inWorldType = state.get(ControllerBlock.ENERGY_TYPE);
 
-        if (world != null && !world.isClient() && container != null) {
-            ControllerEnergyType type = ControllerEnergyType.ofState(container.getNode().getState());
-            ControllerEnergyType inWorldType = state.get(ControllerBlock.ENERGY_TYPE);
+        if (type != inWorldType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
+            LOGGER.info("Energy type state change for block at {}: {} -> {}", pos, inWorldType, type);
 
-            if (type != inWorldType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
-                LOGGER.info("Energy type state change for block at {}: {} -> {}", pos, inWorldType, type);
+            this.lastTypeChanged = System.currentTimeMillis();
 
-                this.lastTypeChanged = System.currentTimeMillis();
-
-                updateEnergyTypeInWorld(state, type);
-            }
+            updateEnergyType(state, type);
         }
     }
 
-    private void updateEnergyTypeInWorld(BlockState state, ControllerEnergyType type) {
+    private void updateEnergyType(BlockState state, ControllerEnergyType type) {
         world.setBlockState(pos, state.with(ControllerBlock.ENERGY_TYPE, type));
     }
 
     @Override
-    protected ControllerNetworkNode createNode(World world, BlockPos pos, NbtCompound tag) {
+    protected ControllerNetworkNode createNode(BlockPos pos, NbtCompound tag) {
         return new ControllerNetworkNode(
-                FabricRs2WorldAdapter.of(world),
                 Positions.ofBlockPos(pos),
-                tag.getLong(TAG_STORED),
+                tag != null ? tag.getLong(TAG_STORED) : 0L,
                 Rs2Config.get().getController().getCapacity(),
                 type
         );
