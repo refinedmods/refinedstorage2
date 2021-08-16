@@ -6,9 +6,12 @@ import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.NetworkUtil;
 import com.refinedmods.refinedstorage2.core.network.node.container.FakeNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNodeWrapper;
+import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveListener;
+import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
+import com.refinedmods.refinedstorage2.core.network.node.diskdrive.FakeStorageDiskProviderManager;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
+import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.Optional;
 
@@ -18,29 +21,32 @@ import org.junit.jupiter.api.Test;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 @Rs2Test
 class ItemStorageNetworkComponentTest {
     private ItemStorageNetworkComponent sut;
-    private DiskDriveNetworkNodeWrapper diskDrive;
-    private NetworkNodeContainer<DiskDriveNetworkNodeWrapper> diskDriveContainer;
+    private DiskDriveNetworkNode diskDrive;
+    private NetworkNodeContainer<DiskDriveNetworkNode> diskDriveContainer;
 
     @BeforeEach
     void setUp() {
         sut = new ItemStorageNetworkComponent();
 
-        diskDrive = DiskDriveNetworkNodeWrapper.create();
-        diskDrive.getFakeStorageDiskProviderManager().setDisk(0, new ItemDiskStorage(100));
-        diskDrive.setNetwork(NetworkUtil.createWithCreativeEnergySource());
+        FakeStorageDiskProviderManager fakeStorageDiskProviderManager = new FakeStorageDiskProviderManager();
+        fakeStorageDiskProviderManager.setDiskInSlot(0, new ItemDiskStorage(100));
 
-        diskDriveContainer = new FakeNetworkNodeContainer<>(diskDrive);
+        diskDrive = new DiskDriveNetworkNode(Position.ORIGIN, fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class));
+        diskDrive.setNetwork(NetworkUtil.createWithCreativeEnergySource());
+        diskDrive.initialize(fakeStorageDiskProviderManager);
+
+        diskDriveContainer = FakeNetworkNodeContainer.createForFakeWorld(diskDrive);
+
+        sut.onContainerAdded(diskDriveContainer);
     }
 
     @Test
     void Test_adding_node_should_invalidate_storage() {
-        // Arrange
-        sut.onContainerAdded(diskDriveContainer);
-
         // Act
         Optional<Rs2ItemStack> remainderBeforeRemoval = sut.getStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
         sut.onContainerRemoved(diskDriveContainer);
@@ -54,9 +60,6 @@ class ItemStorageNetworkComponentTest {
 
     @Test
     void Test_inserting_items() {
-        // Arrange
-        sut.onContainerAdded(diskDriveContainer);
-
         // Act
         Optional<Rs2ItemStack> remainder = sut.getStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 4, Action.EXECUTE);
 
@@ -69,8 +72,6 @@ class ItemStorageNetworkComponentTest {
     @Test
     void Test_extracting_items() {
         // Arrange
-        sut.onContainerAdded(diskDriveContainer);
-
         sut.getStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         // Act

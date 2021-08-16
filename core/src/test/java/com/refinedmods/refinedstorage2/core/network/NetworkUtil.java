@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.core.network.energy.CreativeEnergyStorage
 import com.refinedmods.refinedstorage2.core.network.node.EmptyNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerImpl;
+import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.ArrayList;
@@ -103,5 +104,13 @@ public class NetworkUtil {
 
     public static int getNetworkRemovedCount(Network network) {
         return network.getComponent(NodeCallbackListenerComponent.class).removeCount;
+    }
+
+    public static ItemStorageNetworkComponent itemStorageOf(Network network) {
+        return network.getComponent(ItemStorageNetworkComponent.class);
+    }
+
+    public static ItemStorageChannel itemStorageChannelOf(Network network) {
+        return itemStorageOf(network).getStorageChannel();
     }
 }

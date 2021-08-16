@@ -30,6 +30,7 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     private static final int ACTIVE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
     private static final String TAG_REDSTONE_MODE = "rm";
 
+    private Boolean lastActive;
     private long lastActiveChanged;
 
     protected NetworkNodeContainerImpl<T> container;
@@ -78,24 +79,36 @@ public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends 
     }
 
     public void updateActiveness(BlockState state) {
-        if (!state.contains(NetworkNodeBlock.ACTIVE)) {
-            return;
+        boolean supportsActivenessState = state.contains(NetworkNodeBlock.ACTIVE);
+
+        if (lastActive == null) {
+            lastActive = determineInitialActiveness(state, supportsActivenessState);
         }
 
         boolean active = container.getNode().isActive();
-        boolean activeInWorld = state.get(NetworkNodeBlock.ACTIVE);
 
-        if (active != activeInWorld && (lastActiveChanged == 0 || System.currentTimeMillis() - lastActiveChanged > ACTIVE_CHANGE_MINIMUM_INTERVAL_MS)) {
-            LOGGER.info("Activeness state change for block at {}: {} -> {}", pos, activeInWorld, active);
+        if (active != lastActive && (lastActiveChanged == 0 || System.currentTimeMillis() - lastActiveChanged > ACTIVE_CHANGE_MINIMUM_INTERVAL_MS)) {
+            LOGGER.info("Activeness state change for block at {}: {} -> {}", pos, lastActive, active);
 
+            this.lastActive = active;
             this.lastActiveChanged = System.currentTimeMillis();
 
             activenessChanged(active);
-            updateActiveness(state, active);
+
+            if (supportsActivenessState) {
+                updateActivenessState(state, active);
+            }
         }
     }
 
-    private void updateActiveness(BlockState state, boolean active) {
+    private boolean determineInitialActiveness(BlockState state, boolean supportsActivenessState) {
+        if (supportsActivenessState) {
+            return state.get(NetworkNodeBlock.ACTIVE);
+        }
+        return container.getNode().isActive();
+    }
+
+    private void updateActivenessState(BlockState state, boolean active) {
         world.setBlockState(pos, state.with(NetworkNodeBlock.ACTIVE, active));
     }
 

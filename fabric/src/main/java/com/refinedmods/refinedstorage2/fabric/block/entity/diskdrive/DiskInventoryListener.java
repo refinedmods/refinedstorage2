@@ -16,7 +16,6 @@ public class DiskInventoryListener implements ItemInvSlotChangeListener {
         if (diskDrive.getWorld().isClient()) {
             return;
         }
-
         diskDrive.onDiskChanged(slot);
     }
 }

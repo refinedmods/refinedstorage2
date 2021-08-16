@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive;
 
 import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.network.component.ItemStorageNetworkComponent;
+import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
@@ -42,9 +42,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetworkNode> implements Storage<Rs2ItemStack>, RenderAttachmentBlockEntity, BlockEntityClientSerializable, NamedScreenHandlerFactory, BlockEntityWithDrops {
+public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetworkNode> implements Storage<Rs2ItemStack>, RenderAttachmentBlockEntity, BlockEntityClientSerializable, NamedScreenHandlerFactory, BlockEntityWithDrops, DiskDriveListener {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private static final String TAG_PRIORITY = "pri";
     private static final String TAG_FILTER_MODE = "fim";
     private static final String TAG_EXACT_MODE = "em";
@@ -53,9 +57,14 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     private static final String TAG_FILTER_INVENTORY = "fi";
     private static final String TAG_STATES = "states";
 
+    private static final int DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
+
     private final DiskDriveInventory diskInventory = new DiskDriveInventory();
     private final FullFixedItemInv filterInventory = new FullFixedItemInv(9);
     private DiskDriveState driveState;
+
+    private boolean syncRequested;
+    private long lastStateChanged;
 
     public DiskDriveBlockEntity(BlockPos pos, BlockState state) {
         super(Rs2Mod.BLOCK_ENTITIES.getDiskDrive(), pos, state);
@@ -64,14 +73,24 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
         filterInventory.setOwnerListener(new FilterInventoryListener(this));
     }
 
+    public void updateDiskStateIfNecessary() {
+        if (!syncRequested) {
+            return;
+        }
+
+        if (lastStateChanged == 0 || (System.currentTimeMillis() - lastStateChanged) > DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS) {
+            LOGGER.info("Disk state change for block at {}", pos);
+            this.lastStateChanged = System.currentTimeMillis();
+            this.syncRequested = false;
+            sync();
+        }
+    }
+
     @Override
     public void setWorld(World world) {
         super.setWorld(world);
         if (!world.isClient()) {
-            container.getNode().setDiskManager(Rs2Mod.API.getStorageDiskManager(world));
-            for (int slot = 0; slot < diskInventory.getSlotCount(); ++slot) {
-                container.getNode().onDiskChanged(slot);
-            }
+            container.getNode().initialize(Rs2Mod.API.getStorageDiskManager(world));
         }
     }
 
@@ -87,7 +106,8 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
                 Positions.ofBlockPos(pos),
                 diskInventory,
                 Rs2Config.get().getDiskDrive().getEnergyUsage(),
-                Rs2Config.get().getDiskDrive().getEnergyUsagePerDisk()
+                Rs2Config.get().getDiskDrive().getEnergyUsagePerDisk(),
+                this
         );
 
         if (tag != null) {
@@ -178,7 +198,6 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
     void onDiskChanged(int slot) {
         container.getNode().onDiskChanged(slot);
-        container.getNode().getNetwork().getComponent(ItemStorageNetworkComponent.class).invalidate();
         sync();
         markDirty();
     }
@@ -256,7 +275,11 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
 
     public void setPriority(int priority) {
         container.getNode().setPriority(priority);
-        container.getNode().getNetwork().getComponent(ItemStorageNetworkComponent.class).getStorageChannel().sortSources();
         markDirty();
+    }
+
+    @Override
+    public void onDiskChanged() {
+        this.syncRequested = true;
     }
 }

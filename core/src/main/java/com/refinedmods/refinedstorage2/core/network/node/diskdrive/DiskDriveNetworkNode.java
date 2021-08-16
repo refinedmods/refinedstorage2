@@ -30,29 +30,74 @@ import org.apache.logging.log4j.Logger;
 
 public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2ItemStack>, Priority {
     public static final int DISK_COUNT = 8;
+
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
-    private static final double DISK_NEAR_CAPACITY_THRESHOLD = .75;
 
     private StorageDiskManager diskManager;
+
     private final StorageDiskProvider diskProvider;
-    private final StorageDisk[] disks = new StorageDisk[DISK_COUNT];
-    private int diskCount;
-    private final Filter<Rs2ItemStack> itemFilter = new ItemFilter();
-    private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
-    private CompositeItemStorage compositeStorage = CompositeItemStorage.empty();
-    private int priority;
     private final long energyUsage;
     private final long energyUsagePerDisk;
+    private final DiskDriveListener listener;
 
-    public DiskDriveNetworkNode(Position pos, StorageDiskProvider diskProvider, long energyUsage, long energyUsagePerDisk) {
+    private final DiskDriveItemStorageDisk[] disks = new DiskDriveItemStorageDisk[DISK_COUNT];
+    private int diskCount;
+    private CompositeItemStorage compositeStorage = CompositeItemStorage.empty();
+
+    private final Filter<Rs2ItemStack> itemFilter = new ItemFilter();
+    private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
+    private int priority;
+
+    public DiskDriveNetworkNode(Position pos, StorageDiskProvider diskProvider, long energyUsage, long energyUsagePerDisk, DiskDriveListener listener) {
         super(pos);
         this.diskProvider = diskProvider;
         this.energyUsage = energyUsage;
         this.energyUsagePerDisk = energyUsagePerDisk;
+        this.listener = listener;
     }
 
-    public void setDiskManager(StorageDiskManager diskManager) {
+    public void initialize(StorageDiskManager diskManager) {
         this.diskManager = diskManager;
+        for (int i = 0; i < DISK_COUNT; ++i) {
+            initializeDiskInSlot(i);
+        }
+        initializeDiskCountAndStorage();
+    }
+
+    public void onDiskChanged(int slot) {
+        if (slot < 0 || slot >= disks.length) {
+            LOGGER.warn("Tried to change disk in invalid slot {}", slot);
+            return;
+        }
+        initializeDiskInSlot(slot);
+        initializeDiskCountAndStorage();
+        network.getComponent(ItemStorageNetworkComponent.class).invalidate();
+    }
+
+    private void initializeDiskCountAndStorage() {
+        this.diskCount = (int) Arrays
+                .stream(disks)
+                .filter(Objects::nonNull)
+                .count();
+        this.compositeStorage = new CompositeItemStorage(createSources(), ItemStackList.create());
+    }
+
+    private void initializeDiskInSlot(int slot) {
+        disks[slot] = diskProvider
+                .getDiskId(slot)
+                .flatMap(diskManager::getDisk)
+                .map(disk -> new DiskDriveItemStorageDisk((StorageDisk) disk, listener))
+                .orElse(null);
+    }
+
+    private List<Storage<Rs2ItemStack>> createSources() {
+        List<Storage<Rs2ItemStack>> sources = new ArrayList<>();
+        for (StorageDisk<Rs2ItemStack> disk : disks) {
+            if (disk != null) {
+                sources.add(disk);
+            }
+        }
+        return sources;
     }
 
     @Override
@@ -66,52 +111,21 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
         return energyUsage + (energyUsagePerDisk * diskCount);
     }
 
-    public void onDiskChanged(int slot) {
-        if (slot < 0 || slot >= disks.length) {
-            LOGGER.warn("Tried to change disk in invalid slot {}", slot);
-            return;
-        }
-
-        disks[slot] = diskProvider.getDiskId(slot).flatMap(diskManager::getDisk).orElse(null);
-        diskCount = (int) Arrays.stream(disks).filter(Objects::nonNull).count();
-
-        List<Storage<Rs2ItemStack>> sources = new ArrayList<>();
-        for (StorageDisk<Rs2ItemStack> disk : disks) {
-            if (disk != null) {
-                sources.add(disk);
-            }
-        }
-
-        compositeStorage = new CompositeItemStorage(sources, ItemStackList.create());
-    }
-
     public DiskDriveState createState() {
         DiskDriveState states = new DiskDriveState(DISK_COUNT);
         for (int i = 0; i < DISK_COUNT; ++i) {
             states.setState(i, getState(disks[i]));
         }
-
         return states;
     }
 
-    private DiskState getState(StorageDisk<?> disk) {
+    private DiskState getState(DiskDriveItemStorageDisk disk) {
         if (disk == null) {
             return DiskState.NONE;
-        } else {
-            if (!isActive()) {
-                return DiskState.DISCONNECTED;
-            }
-
-            double fullness = (double) disk.getStored() / (double) disk.getCapacity();
-
-            if (fullness >= 1D) {
-                return DiskState.FULL;
-            } else if (fullness >= DISK_NEAR_CAPACITY_THRESHOLD) {
-                return DiskState.NEAR_CAPACITY;
-            } else {
-                return DiskState.NORMAL;
-            }
+        } else if (!isActive()) {
+            return DiskState.DISCONNECTED;
         }
+        return disk.getState();
     }
 
     public boolean isExactMode() {
@@ -149,6 +163,9 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
 
     public void setPriority(int priority) {
         this.priority = priority;
+        if (network != null) {
+            network.getComponent(ItemStorageNetworkComponent.class).getStorageChannel().sortSources();
+        }
     }
 
     @Override
