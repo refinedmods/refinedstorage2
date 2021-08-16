@@ -151,18 +151,13 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     }
 
     private int getMaxRows() {
-        switch (getScreenHandler().getSize()) {
-            case STRETCH:
-                return Rs2Config.get().getGrid().getMaxRowsStretch();
-            case SMALL:
-                return 3;
-            case MEDIUM:
-                return 5;
-            case LARGE:
-                return 8;
-            default:
-                return Rs2Config.get().getGrid().getMaxRowsStretch();
-        }
+        return switch (getScreenHandler().getSize()) {
+            case STRETCH -> Rs2Config.get().getGrid().getMaxRowsStretch();
+            case SMALL -> 3;
+            case MEDIUM -> 5;
+            case LARGE -> 8;
+            case EXTRA_LARGE -> 12;
+        };
     }
 
     private boolean isOverStorageArea(int mouseX, int mouseY) {

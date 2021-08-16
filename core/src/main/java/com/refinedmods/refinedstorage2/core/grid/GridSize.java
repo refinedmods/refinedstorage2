@@ -4,20 +4,16 @@ public enum GridSize {
     STRETCH,
     SMALL,
     MEDIUM,
-    LARGE;
+    LARGE,
+    EXTRA_LARGE;
 
     public GridSize toggle() {
-        switch (this) {
-            case STRETCH:
-                return SMALL;
-            case SMALL:
-                return MEDIUM;
-            case MEDIUM:
-                return LARGE;
-            case LARGE:
-                return STRETCH;
-            default:
-                return STRETCH;
-        }
+        return switch (this) {
+            case STRETCH -> SMALL;
+            case SMALL -> MEDIUM;
+            case MEDIUM -> LARGE;
+            case LARGE -> EXTRA_LARGE;
+            case EXTRA_LARGE -> STRETCH;
+        };
     }
 }

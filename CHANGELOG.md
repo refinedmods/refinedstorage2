@@ -9,6 +9,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.0.0-milestone.1.1]
 
+### Added
+
+- New Grid size: "Extra large" (12 rows)
+
 ### Fixed
 
 - Fix crash when transferring items in the Controller screen

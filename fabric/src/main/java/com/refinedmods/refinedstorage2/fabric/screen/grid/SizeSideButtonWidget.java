@@ -43,18 +43,12 @@ public class SizeSideButtonWidget extends SideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        switch (screenHandler.getSize()) {
-            case STRETCH:
-                return 64 + 48;
-            case SMALL:
-                return 64;
-            case MEDIUM:
-                return 64 + 16;
-            case LARGE:
-                return 64 + 32;
-            default:
-                return 64 + 48;
-        }
+        return switch (screenHandler.getSize()) {
+            case STRETCH -> 64 + 48;
+            case SMALL -> 64;
+            case MEDIUM -> 64 + 16;
+            case LARGE, EXTRA_LARGE -> 64 + 32;
+        };
     }
 
     @Override

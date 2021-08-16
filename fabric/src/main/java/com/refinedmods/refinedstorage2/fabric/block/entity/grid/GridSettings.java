@@ -17,89 +17,63 @@ public class GridSettings {
     private static final int SIZE_SMALL = 1;
     private static final int SIZE_MEDIUM = 2;
     private static final int SIZE_LARGE = 3;
+    private static final int SIZE_EXTRA_LARGE = 4;
 
     private GridSettings() {
     }
 
     public static GridSortingDirection getSortingDirection(int sortingDirection) {
-        switch (sortingDirection) {
-            case SORTING_ASCENDING:
-                return GridSortingDirection.ASCENDING;
-            case SORTING_DESCENDING:
-                return GridSortingDirection.DESCENDING;
-            default:
-                return GridSortingDirection.ASCENDING;
-        }
+        return switch (sortingDirection) {
+            case SORTING_ASCENDING -> GridSortingDirection.ASCENDING;
+            case SORTING_DESCENDING -> GridSortingDirection.DESCENDING;
+            default -> GridSortingDirection.ASCENDING;
+        };
     }
 
     public static int getSortingDirection(GridSortingDirection sortingDirection) {
-        switch (sortingDirection) {
-            case ASCENDING:
-                return SORTING_ASCENDING;
-            case DESCENDING:
-                return SORTING_DESCENDING;
-            default:
-                return SORTING_ASCENDING;
-        }
+        return switch (sortingDirection) {
+            case ASCENDING -> SORTING_ASCENDING;
+            case DESCENDING -> SORTING_DESCENDING;
+        };
     }
 
     public static GridSortingType getSortingType(int sortingType) {
-        switch (sortingType) {
-            case SORTING_TYPE_QUANTITY:
-                return GridSortingType.QUANTITY;
-            case SORTING_TYPE_NAME:
-                return GridSortingType.NAME;
-            case SORTING_TYPE_ID:
-                return GridSortingType.ID;
-            case SORTING_TYPE_LAST_MODIFIED:
-                return GridSortingType.LAST_MODIFIED;
-            default:
-                return GridSortingType.QUANTITY;
-        }
+        return switch (sortingType) {
+            case SORTING_TYPE_QUANTITY -> GridSortingType.QUANTITY;
+            case SORTING_TYPE_NAME -> GridSortingType.NAME;
+            case SORTING_TYPE_ID -> GridSortingType.ID;
+            case SORTING_TYPE_LAST_MODIFIED -> GridSortingType.LAST_MODIFIED;
+            default -> GridSortingType.QUANTITY;
+        };
     }
 
     public static int getSortingType(GridSortingType sortingType) {
-        switch (sortingType) {
-            case QUANTITY:
-                return SORTING_TYPE_QUANTITY;
-            case NAME:
-                return SORTING_TYPE_NAME;
-            case ID:
-                return SORTING_TYPE_ID;
-            case LAST_MODIFIED:
-                return SORTING_TYPE_LAST_MODIFIED;
-            default:
-                return SORTING_TYPE_QUANTITY;
-        }
+        return switch (sortingType) {
+            case QUANTITY -> SORTING_TYPE_QUANTITY;
+            case NAME -> SORTING_TYPE_NAME;
+            case ID -> SORTING_TYPE_ID;
+            case LAST_MODIFIED -> SORTING_TYPE_LAST_MODIFIED;
+        };
     }
 
     public static GridSize getSize(int size) {
-        switch (size) {
-            case SIZE_STRETCH:
-                return GridSize.STRETCH;
-            case SIZE_SMALL:
-                return GridSize.SMALL;
-            case SIZE_MEDIUM:
-                return GridSize.MEDIUM;
-            case SIZE_LARGE:
-                return GridSize.LARGE;
-            default:
-                return GridSize.STRETCH;
-        }
+        return switch (size) {
+            case SIZE_STRETCH -> GridSize.STRETCH;
+            case SIZE_SMALL -> GridSize.SMALL;
+            case SIZE_MEDIUM -> GridSize.MEDIUM;
+            case SIZE_LARGE -> GridSize.LARGE;
+            case SIZE_EXTRA_LARGE -> GridSize.EXTRA_LARGE;
+            default -> GridSize.STRETCH;
+        };
     }
 
     public static int getSize(GridSize size) {
-        switch (size) {
-            case STRETCH:
-                return SIZE_STRETCH;
-            case SMALL:
-                return SIZE_SMALL;
-            case MEDIUM:
-                return SIZE_MEDIUM;
-            case LARGE:
-                return SIZE_LARGE;
-            default:
-                return SIZE_STRETCH;
-        }
+        return switch (size) {
+            case STRETCH -> SIZE_STRETCH;
+            case SMALL -> SIZE_SMALL;
+            case MEDIUM -> SIZE_MEDIUM;
+            case LARGE -> SIZE_LARGE;
+            case EXTRA_LARGE -> SIZE_EXTRA_LARGE;
+        };
     }
 }
