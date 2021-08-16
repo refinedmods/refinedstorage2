@@ -43,18 +43,12 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        switch (screenHandler.getSortingType()) {
-            case QUANTITY:
-                return 0;
-            case NAME:
-                return 16;
-            case ID:
-                return 32;
-            case LAST_MODIFIED:
-                return 48;
-            default:
-                return 0;
-        }
+        return switch (screenHandler.getSortingType()) {
+            case QUANTITY -> 0;
+            case NAME -> 16;
+            case ID -> 32;
+            case LAST_MODIFIED -> 48;
+        };
     }
 
     @Override

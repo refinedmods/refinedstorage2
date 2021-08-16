@@ -33,9 +33,13 @@ public abstract class SideButtonWidget extends ButtonWidget implements ButtonWid
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, getTextureIdentifier());
+        RenderSystem.enableDepthTest();
 
         this.hovered = mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
 
+        // Ensure that the tooltip is drawn over the side buttons (tooltips have a Z offset of 400).
+        int originalZOffset = getZOffset();
+        setZOffset(300);
         drawTexture(matrices, x, y, 238, hovered ? 35 : 16, WIDTH, HEIGHT);
         drawTexture(matrices, x + 1, y + 1, getXTexture(), getYTexture(), WIDTH, HEIGHT);
 
@@ -46,8 +50,14 @@ public abstract class SideButtonWidget extends ButtonWidget implements ButtonWid
             drawTexture(matrices, x, y, 238, 54, WIDTH, HEIGHT);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.disableBlend();
+        }
 
+        setZOffset(originalZOffset);
+
+        if (hovered) {
             onTooltip(this, matrices, mouseX, mouseY);
         }
+
+        RenderSystem.disableDepthTest();
     }
 }
