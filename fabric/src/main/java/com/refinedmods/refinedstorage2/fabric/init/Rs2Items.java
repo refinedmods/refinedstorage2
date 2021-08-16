@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.init;
 
+import com.refinedmods.refinedstorage2.fabric.FeatureFlag;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.ItemStorageType;
 import com.refinedmods.refinedstorage2.fabric.item.CoreItem;
@@ -37,7 +38,11 @@ public class Rs2Items {
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("silicon"), new SiliconItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("processor_binding"), new ProcessorBindingItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("disk_drive"), new BlockItem(blocks.getDiskDrive(), createSettings(itemGroup)));
-        Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("relay"), new BlockItem(blocks.getRelay(), createSettings(itemGroup)));
+
+        if (Rs2Mod.FEATURES.contains(FeatureFlag.RELAY)) {
+            Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("relay"), new BlockItem(blocks.getRelay(), createSettings(itemGroup)));
+        }
+
         storageHousing = Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("storage_housing"), new StorageHousingItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("machine_casing"), new BlockItem(blocks.getMachineCasing(), createSettings(itemGroup)));
         blocks.getGrid().forEach((color, block, nameFactory) -> Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(nameFactory.apply("grid")), new ColoredBlockItem(block, createSettings(itemGroup), color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid"))));

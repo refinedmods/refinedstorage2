@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.init;
 
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
+import com.refinedmods.refinedstorage2.fabric.FeatureFlag;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.ControllerBlockEntity;
@@ -26,7 +27,10 @@ public class Rs2BlockEntities {
         grid = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("grid"), FabricBlockEntityTypeBuilder.create(GridBlockEntity::new, blocks.getGrid().toArray()).build(null));
         controller = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("controller"), FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.NORMAL, pos, state), blocks.getController().toArray()).build(null));
         creativeController = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("creative_controller"), FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.CREATIVE, pos, state), blocks.getCreativeController().toArray()).build(null));
-        relay = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("relay"), FabricBlockEntityTypeBuilder.create(RelayBlockEntity::new, blocks.getRelay()).build(null));
+
+        if (Rs2Mod.FEATURES.contains(FeatureFlag.RELAY)) {
+            relay = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("relay"), FabricBlockEntityTypeBuilder.create(RelayBlockEntity::new, blocks.getRelay()).build(null));
+        }
     }
 
     public BlockEntityType<CableBlockEntity> getCable() {

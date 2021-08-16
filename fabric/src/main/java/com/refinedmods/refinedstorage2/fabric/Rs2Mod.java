@@ -24,6 +24,8 @@ import com.refinedmods.refinedstorage2.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.PropertyChangePacket;
 import com.refinedmods.refinedstorage2.fabric.packet.c2s.StorageDiskInfoRequestPacket;
 
+import java.util.Set;
+
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
@@ -47,13 +49,10 @@ public class Rs2Mod implements ModInitializer {
     static final String ID = "refinedstorage2";
     private static final Logger LOGGER = LogManager.getLogger(Rs2Mod.class);
     private static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(createIdentifier("general"), () -> new ItemStack(BLOCKS.getController().getNormal()));
+    public static final Set<FeatureFlag> FEATURES = Set.of();
 
     public static Identifier createIdentifier(String value) {
         return new Identifier(ID, value);
-    }
-
-    public static boolean isModIdentifier(Identifier identifier) {
-        return ID.equals(identifier.getNamespace());
     }
 
     public static String createTranslationKey(String category, String value) {
