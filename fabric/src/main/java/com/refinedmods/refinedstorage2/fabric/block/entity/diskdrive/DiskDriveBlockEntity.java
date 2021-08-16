@@ -22,7 +22,6 @@ import com.refinedmods.refinedstorage2.fabric.util.Positions;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import alexiil.mc.lib.attributes.item.FixedItemInv;
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
@@ -188,7 +187,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     }
 
     public void setFilterTemplates(List<ItemStack> templates) {
-        container.getNode().setFilterTemplates(templates.stream().map(ItemStacks::ofItemStack).collect(Collectors.toList()));
+        container.getNode().setFilterTemplates(templates.stream().map(ItemStacks::ofItemStack).toList());
     }
 
     @Override

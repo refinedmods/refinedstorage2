@@ -2,18 +2,8 @@ package com.refinedmods.refinedstorage2.core.util;
 
 import java.util.Objects;
 
-public final class Position implements Comparable<Position> {
+public record Position(int x, int y, int z) implements Comparable<Position> {
     public static final Position ORIGIN = new Position(0, 0, 0);
-
-    private final int x;
-    private final int y;
-    private final int z;
-
-    public Position(int x, int y, int z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
 
     public int getX() {
         return x;

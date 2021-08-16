@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeCo
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,7 +43,7 @@ public class GraphNetworkComponent implements NetworkComponent {
 
     @Override
     public void onNetworkSplit(Set<Network> networks) {
-        LOGGER.info("Network {} has been split into {} other networks ({})", network.hashCode(), networks.size(), networks.stream().map(Network::hashCode).collect(Collectors.toList()));
+        LOGGER.info("Network {} has been split into {} other networks ({})", network.hashCode(), networks.size(), networks.stream().map(Network::hashCode).toList());
     }
 
     @Override

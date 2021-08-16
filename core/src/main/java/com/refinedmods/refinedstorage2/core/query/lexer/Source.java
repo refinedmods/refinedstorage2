@@ -1,14 +1,6 @@
 package com.refinedmods.refinedstorage2.core.query.lexer;
 
-public class Source {
-    private final String name;
-    private final String content;
-
-    public Source(String name, String content) {
-        this.name = name;
-        this.content = content;
-    }
-
+public record Source(String name, String content) {
     public String getName() {
         return name;
     }

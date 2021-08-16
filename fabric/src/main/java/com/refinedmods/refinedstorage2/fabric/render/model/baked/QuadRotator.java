@@ -61,7 +61,7 @@ public class QuadRotator implements RenderContext.QuadTransform {
 
     private Direction rotate(Direction facing, Matrix4f mat) {
         Vec3i dir = facing.getVector();
-        Vector4f vec = new Vector4f((float) dir.getX(), (float) dir.getY(), (float) dir.getZ(), 1.0F);
+        Vector4f vec = new Vector4f(dir.getX(), dir.getY(), dir.getZ(), 1.0F);
         vec.transform(mat);
         return Direction.getFacing(vec.getX(), vec.getY(), vec.getZ());
     }

@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import alexiil.mc.lib.attributes.item.FixedItemInvView;
@@ -24,7 +23,7 @@ public class FilterInventoryListener implements ItemInvSlotChangeListener {
         List<ItemStack> filterTemplates = StreamSupport
                 .stream(view.stackIterable().spliterator(), false)
                 .filter(s -> !s.isEmpty())
-                .collect(Collectors.toList());
+                .toList();
 
         diskDrive.setFilterTemplates(filterTemplates);
         diskDrive.markDirty();

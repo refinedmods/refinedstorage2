@@ -25,9 +25,9 @@ public class ControllerLootFunction implements LootFunction {
     public ItemStack apply(ItemStack stack, LootContext lootContext) {
         BlockEntity controller = lootContext.get(LootContextParameters.BLOCK_ENTITY);
 
-        if (controller instanceof ControllerBlockEntity) {
-            long stored = ((ControllerBlockEntity) controller).getActualStored();
-            long capacity = ((ControllerBlockEntity) controller).getActualCapacity();
+        if (controller instanceof ControllerBlockEntity controllerBlockEntity) {
+            long stored = controllerBlockEntity.getActualStored();
+            long capacity = controllerBlockEntity.getActualCapacity();
             int damage = ControllerBlockItem.calculateDamage(stored, capacity);
 
             stack.setDamage(damage);

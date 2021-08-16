@@ -100,7 +100,7 @@ public class NetworkNodeContainerImpl<T extends NetworkNode> implements NetworkN
         return containers
                 .stream()
                 .sorted(Comparator.comparing(a -> a.getContainer().getPosition()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

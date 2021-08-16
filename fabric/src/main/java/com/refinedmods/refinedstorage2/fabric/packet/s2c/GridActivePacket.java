@@ -16,8 +16,8 @@ public class GridActivePacket implements ClientPlayNetworking.PlayChannelHandler
 
         client.execute(() -> {
             ScreenHandler screenHandler = client.player.currentScreenHandler;
-            if (screenHandler instanceof GridEventHandler) {
-                ((GridEventHandler) screenHandler).onActiveChanged(active);
+            if (screenHandler instanceof GridEventHandler gridEventHandler) {
+                gridEventHandler.onActiveChanged(active);
             }
         });
     }

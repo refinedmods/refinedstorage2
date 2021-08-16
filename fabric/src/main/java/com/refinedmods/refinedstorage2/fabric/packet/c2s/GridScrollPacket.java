@@ -36,8 +36,8 @@ public class GridScrollPacket implements ServerPlayNetworking.PlayChannelHandler
 
         server.execute(() -> {
             ScreenHandler screenHandler = player.currentScreenHandler;
-            if (screenHandler instanceof GridEventHandler) {
-                ((GridEventHandler) screenHandler).onScroll(stack, slot, mode);
+            if (screenHandler instanceof GridEventHandler gridEventHandler) {
+                gridEventHandler.onScroll(stack, slot, mode);
             }
         });
     }

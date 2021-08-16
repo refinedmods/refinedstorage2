@@ -5,13 +5,7 @@ import com.refinedmods.refinedstorage2.core.query.lexer.TokenRange;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ParenNode implements Node {
-    private final List<Node> nodes;
-
-    public ParenNode(List<Node> nodes) {
-        this.nodes = nodes;
-    }
-
+public record ParenNode(List<Node> nodes) implements Node {
     public List<Node> getNodes() {
         return nodes;
     }

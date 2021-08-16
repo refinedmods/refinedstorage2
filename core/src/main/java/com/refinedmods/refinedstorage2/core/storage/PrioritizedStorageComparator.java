@@ -6,8 +6,8 @@ public class PrioritizedStorageComparator implements Comparator<Storage<?>> {
     public static final Comparator<Storage<?>> INSTANCE = new PrioritizedStorageComparator();
 
     private static int getPriority(Storage<?> storage) {
-        if (storage instanceof Priority) {
-            return ((Priority) storage).getPriority();
+        if (storage instanceof Priority priority) {
+            return priority.getPriority();
         }
         return 0;
     }

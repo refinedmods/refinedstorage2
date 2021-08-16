@@ -13,7 +13,7 @@ public abstract class NetworkNodeImpl implements NetworkNode {
     protected RedstoneMode redstoneMode = RedstoneMode.IGNORE;
     private boolean wasActive;
 
-    public NetworkNodeImpl(Position position) {
+    protected NetworkNodeImpl(Position position) {
         this.position = position;
     }
 

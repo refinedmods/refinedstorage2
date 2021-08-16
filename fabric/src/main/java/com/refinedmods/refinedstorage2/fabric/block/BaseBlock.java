@@ -83,7 +83,7 @@ public abstract class BaseBlock extends Block {
     @SuppressWarnings("deprecation")
     public @Nullable NamedScreenHandlerFactory createScreenHandlerFactory(BlockState state, World world, BlockPos pos) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        return blockEntity instanceof NamedScreenHandlerFactory ? (NamedScreenHandlerFactory) blockEntity : null;
+        return blockEntity instanceof NamedScreenHandlerFactory factory ? factory : null;
     }
 
     @Override
@@ -91,8 +91,8 @@ public abstract class BaseBlock extends Block {
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock() && !state.getBlock().getClass().equals(newState.getBlock().getClass())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof BlockEntityWithDrops) {
-                ItemScatterer.spawn(world, pos, ((BlockEntityWithDrops) blockEntity).getDrops());
+            if (blockEntity instanceof BlockEntityWithDrops drops) {
+                ItemScatterer.spawn(world, pos, drops.getDrops());
                 world.updateComparators(pos, this);
             }
 

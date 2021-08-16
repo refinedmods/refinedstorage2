@@ -47,15 +47,15 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     }
 
     public void updateEnergyType(BlockState state) {
-        ControllerEnergyType type = ControllerEnergyType.ofState(container.getNode().getState());
-        ControllerEnergyType inWorldType = state.get(ControllerBlock.ENERGY_TYPE);
+        ControllerEnergyType energyType = ControllerEnergyType.ofState(container.getNode().getState());
+        ControllerEnergyType inWorldEnergyType = state.get(ControllerBlock.ENERGY_TYPE);
 
-        if (type != inWorldType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
-            LOGGER.info("Energy type state change for block at {}: {} -> {}", pos, inWorldType, type);
+        if (energyType != inWorldEnergyType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
+            LOGGER.info("Energy type state change for block at {}: {} -> {}", pos, inWorldEnergyType, energyType);
 
             this.lastTypeChanged = System.currentTimeMillis();
 
-            updateEnergyType(state, type);
+            updateEnergyType(state, energyType);
         }
     }
 

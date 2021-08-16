@@ -48,8 +48,8 @@ public class ControllerBlockItem extends ColoredBlockItem {
         boolean result = super.postPlacement(pos, world, player, stack, state);
         if (!world.isClient()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof ControllerBlockEntity) {
-                ((ControllerBlockEntity) blockEntity).receive(getStored(stack), Action.EXECUTE);
+            if (blockEntity instanceof ControllerBlockEntity controllerBlockEntity) {
+                controllerBlockEntity.receive(getStored(stack), Action.EXECUTE);
             }
         }
         return result;

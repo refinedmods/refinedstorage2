@@ -67,7 +67,7 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
         int enabledU = clicked ? 220 : 232;
         int u = enabled ? enabledU : 244;
 
-        drawTexture(matrixStack, x, y + (int) ((float) offset / (float) maxOffset * (float) (height - SCROLLER_HEIGHT)), u, 0, 12, 15);
+        drawTexture(matrixStack, x, y + (int) ((float) offset / (float) maxOffset * (height - SCROLLER_HEIGHT)), u, 0, 12, 15);
     }
 
     private boolean isAnimatingScroll() {
@@ -79,7 +79,7 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
         double relativeAnimationProgress = easeOutQuint(absoluteAnimationProgress);
 
         double scrollHeight = ANIMATION_SCROLL_HEIGHT_IN_PIXELS + ((animationSpeed + 1) * 4D);
-        double newOffset = animationStartOffset + (relativeAnimationProgress * scrollHeight * (double) animationScrollDirection);
+        double newOffset = animationStartOffset + (relativeAnimationProgress * scrollHeight * animationScrollDirection);
         setOffset(newOffset);
 
         animationTickCounter += partialTicks;
@@ -173,6 +173,6 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
 
     @Override
     public void appendNarrations(NarrationMessageBuilder builder) {
-
+        // intentionally empty
     }
 }

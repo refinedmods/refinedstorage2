@@ -39,12 +39,9 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
 
         super.emitBlockQuads(blockView, state, pos, randomSupplier, context);
 
-        if (blockView instanceof RenderAttachedBlockView) {
-            Object renderAttachment = ((RenderAttachedBlockView) blockView).getBlockEntityRenderAttachment(pos);
-
-            if (renderAttachment instanceof DiskDriveState) {
-                DiskDriveState states = (DiskDriveState) renderAttachment;
-
+        if (blockView instanceof RenderAttachedBlockView renderAttachedBlockView) {
+            Object renderAttachment = renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
+            if (renderAttachment instanceof DiskDriveState states) {
                 for (int i = 0; i < translators.length; ++i) {
                     if (states.getState(i) != DiskState.NONE) {
                         context.pushTransform(translators[i]);

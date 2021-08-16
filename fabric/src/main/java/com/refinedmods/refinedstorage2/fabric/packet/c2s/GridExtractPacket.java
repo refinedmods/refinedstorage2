@@ -35,8 +35,8 @@ public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandle
 
         server.execute(() -> {
             ScreenHandler screenHandler = player.currentScreenHandler;
-            if (screenHandler instanceof GridEventHandler) {
-                ((GridEventHandler) screenHandler).onExtract(stack, mode);
+            if (screenHandler instanceof GridEventHandler gridEventHandler) {
+                gridEventHandler.onExtract(stack, mode);
             }
         });
     }

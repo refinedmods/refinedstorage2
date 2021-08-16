@@ -27,48 +27,33 @@ public enum BiDirection implements StringIdentifiable {
     }
 
     public static BiDirection forHorizontal(Direction horizontalDirection) {
-        switch (horizontalDirection) {
-            case NORTH:
-                return NORTH;
-            case SOUTH:
-                return SOUTH;
-            case WEST:
-                return WEST;
-            case EAST:
-                return EAST;
-            default:
-                throw new IllegalArgumentException("Invalid: " + horizontalDirection);
-        }
+        return switch (horizontalDirection) {
+            case NORTH -> NORTH;
+            case SOUTH -> SOUTH;
+            case WEST -> WEST;
+            case EAST -> EAST;
+            default -> throw new IllegalArgumentException(String.valueOf(horizontalDirection));
+        };
     }
 
     public static BiDirection forUp(Direction verticalDirection) {
-        switch (verticalDirection) {
-            case NORTH:
-                return UP_NORTH;
-            case SOUTH:
-                return UP_SOUTH;
-            case WEST:
-                return UP_WEST;
-            case EAST:
-                return UP_EAST;
-            default:
-                throw new IllegalArgumentException("Invalid: " + verticalDirection);
-        }
+        return switch (verticalDirection) {
+            case NORTH -> UP_NORTH;
+            case SOUTH -> UP_SOUTH;
+            case WEST -> UP_WEST;
+            case EAST -> UP_EAST;
+            default -> throw new IllegalArgumentException(String.valueOf(verticalDirection));
+        };
     }
 
     public static BiDirection forDown(Direction verticalDirection) {
-        switch (verticalDirection) {
-            case NORTH:
-                return DOWN_NORTH;
-            case SOUTH:
-                return DOWN_SOUTH;
-            case WEST:
-                return DOWN_WEST;
-            case EAST:
-                return DOWN_EAST;
-            default:
-                throw new IllegalArgumentException("Invalid: " + verticalDirection);
-        }
+        return switch (verticalDirection) {
+            case NORTH -> DOWN_NORTH;
+            case SOUTH -> DOWN_SOUTH;
+            case WEST -> DOWN_WEST;
+            case EAST -> DOWN_EAST;
+            default -> throw new IllegalArgumentException(String.valueOf(verticalDirection));
+        };
     }
 
     public Vec3f getVec() {

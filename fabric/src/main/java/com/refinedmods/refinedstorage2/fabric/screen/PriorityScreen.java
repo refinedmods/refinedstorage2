@@ -131,7 +131,7 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
 
     @Override
     protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
-        textRenderer.draw(matrices, title, (float) titleX, (float) titleY, 4210752);
+        textRenderer.draw(matrices, title, titleX, titleY, 4210752);
     }
 
     @Override

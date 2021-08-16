@@ -1,14 +1,7 @@
 package com.refinedmods.refinedstorage2.core.query.lexer;
 
-public class LexerTokenMapping {
-    private final String value;
-    private final TokenType type;
-
-    public LexerTokenMapping(String value, TokenType type) {
-        this.value = value;
-        this.type = type;
-    }
-
+public record LexerTokenMapping(String value,
+                                TokenType type) {
     public String getValue() {
         return value;
     }

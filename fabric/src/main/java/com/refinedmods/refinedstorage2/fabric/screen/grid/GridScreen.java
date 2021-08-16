@@ -392,7 +392,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         for (int i = 0; i < lines.size(); ++i) {
             OrderedText text = lines.get(i);
             if (text != null) {
-                textRenderer.draw(text, (float) tooltipX, (float) tooltipY, -1, true, matrix4f, immediate, false, 0, 15728880);
+                textRenderer.draw(text, tooltipX, tooltipY, -1, true, matrix4f, immediate, false, 0, 15728880);
             }
 
             if (i == 0) {
@@ -406,7 +406,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             matrixStack.push();
             matrixStack.scale(smallTextScale, smallTextScale, 1);
 
-            textRenderer.draw(smallLine, (float) tooltipX / smallTextScale, (float) tooltipY / smallTextScale, -1, true, matrixStack.peek().getModel(), immediate, false, 0, 15728880);
+            textRenderer.draw(smallLine, tooltipX / smallTextScale, tooltipY / smallTextScale, -1, true, matrixStack.peek().getModel(), immediate, false, 0, 15728880);
             matrixStack.pop();
 
             tooltipY += 9;

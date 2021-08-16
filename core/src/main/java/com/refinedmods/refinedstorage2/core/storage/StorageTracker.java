@@ -24,15 +24,7 @@ public class StorageTracker<T, I> {
         return Optional.ofNullable(entries.get(idFactory.apply(stack)));
     }
 
-    public static class Entry {
-        private final long time;
-        private final String name;
-
-        public Entry(long time, String name) {
-            this.time = time;
-            this.name = name;
-        }
-
+    public record Entry(long time, String name) {
         public long getTime() {
             return time;
         }

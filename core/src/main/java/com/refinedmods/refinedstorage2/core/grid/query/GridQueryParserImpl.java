@@ -41,21 +41,21 @@ public class GridQueryParserImpl implements GridQueryParser {
     }
 
     private static Predicate<GridStack<?>> parseNode(Node node) throws GridQueryParserException {
-        if (node instanceof LiteralNode) {
-            String content = ((LiteralNode) node).getToken().getContent();
+        if (node instanceof LiteralNode literalNode) {
+            String content = literalNode.getToken().getContent();
             return name(content);
-        } else if (node instanceof UnaryOpNode) {
-            return parseUnaryOpNode((UnaryOpNode) node);
-        } else if (node instanceof BinOpNode) {
-            String operator = ((BinOpNode) node).getBinOp().getContent();
+        } else if (node instanceof UnaryOpNode unaryOpNode) {
+            return parseUnaryOpNode(unaryOpNode);
+        } else if (node instanceof BinOpNode binOpNode) {
+            String operator = binOpNode.getBinOp().getContent();
 
             if ("&&".equals(operator)) {
-                return parseAndBinOpNode((BinOpNode) node);
+                return parseAndBinOpNode(binOpNode);
             } else if ("||".equals(operator)) {
-                return parseOrBinOpNode((BinOpNode) node);
+                return parseOrBinOpNode(binOpNode);
             }
-        } else if (node instanceof ParenNode) {
-            return implicitAnd(((ParenNode) node).getNodes());
+        } else if (node instanceof ParenNode parenNode) {
+            return implicitAnd(parenNode.getNodes());
         }
 
         throw new GridQueryParserException(node.getRange(), "Unsupported node", null);
@@ -82,14 +82,14 @@ public class GridQueryParserImpl implements GridQueryParser {
         if ("!".equals(operator)) {
             return not(parseNode(content));
         } else if ("@".equals(operator)) {
-            if (content instanceof LiteralNode) {
-                return mod(((LiteralNode) content).getToken().getContent());
+            if (content instanceof LiteralNode literalNode) {
+                return mod(literalNode.getToken().getContent());
             } else {
                 throw new GridQueryParserException(content.getRange(), "Mod filtering expects a literal", null);
             }
         } else if ("$".equals(operator)) {
-            if (content instanceof LiteralNode) {
-                return tag(((LiteralNode) content).getToken().getContent());
+            if (content instanceof LiteralNode literalNode) {
+                return tag(literalNode.getToken().getContent());
             } else {
                 throw new GridQueryParserException(content.getRange(), "Tag filtering expects a literal", null);
             }

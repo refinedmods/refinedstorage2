@@ -3,15 +3,7 @@ package com.refinedmods.refinedstorage2.core.query.parser.node;
 import com.refinedmods.refinedstorage2.core.query.lexer.Token;
 import com.refinedmods.refinedstorage2.core.query.lexer.TokenRange;
 
-public class UnaryOpNode implements Node {
-    private final Node node;
-    private final Token operator;
-
-    public UnaryOpNode(Node node, Token operator) {
-        this.node = node;
-        this.operator = operator;
-    }
-
+public record UnaryOpNode(Node node, Token operator) implements Node {
     public Node getNode() {
         return node;
     }

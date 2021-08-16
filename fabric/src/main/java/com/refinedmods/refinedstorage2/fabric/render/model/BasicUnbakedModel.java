@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.fabric.render.model;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.render.model.UnbakedModel;
@@ -17,6 +16,6 @@ public interface BasicUnbakedModel extends UnbakedModel {
                 .stream()
                 .map(unbakedModelGetter)
                 .flatMap(unbakedModel -> unbakedModel.getTextureDependencies(unbakedModelGetter, unresolvedTextureReferences).stream())
-                .collect(Collectors.toList());
+                .toList();
     }
 }

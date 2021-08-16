@@ -41,7 +41,7 @@ public class ProgressWidget extends DrawableHelper implements Drawable, Element,
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        int correctedHeight = (int) (progressSupplier.getAsDouble() * (double) height);
+        int correctedHeight = (int) (progressSupplier.getAsDouble() * height);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -62,6 +62,6 @@ public class ProgressWidget extends DrawableHelper implements Drawable, Element,
 
     @Override
     public void appendNarrations(NarrationMessageBuilder builder) {
-
+        // intentionally empty
     }
 }

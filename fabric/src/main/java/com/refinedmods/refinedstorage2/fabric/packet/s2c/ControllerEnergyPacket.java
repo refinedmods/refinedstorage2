@@ -17,8 +17,8 @@ public class ControllerEnergyPacket implements ClientPlayNetworking.PlayChannelH
 
         client.execute(() -> {
             ScreenHandler screenHandler = client.player.currentScreenHandler;
-            if (screenHandler instanceof ControllerScreenHandler) {
-                ((ControllerScreenHandler) screenHandler).setEnergy(stored, capacity);
+            if (screenHandler instanceof ControllerScreenHandler controllerScreenHandler) {
+                controllerScreenHandler.setEnergy(stored, capacity);
             }
         });
     }

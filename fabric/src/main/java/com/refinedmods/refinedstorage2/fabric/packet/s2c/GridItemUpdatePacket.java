@@ -21,8 +21,8 @@ public class GridItemUpdatePacket implements ClientPlayNetworking.PlayChannelHan
 
         client.execute(() -> {
             ScreenHandler screenHandler = client.player.currentScreenHandler;
-            if (screenHandler instanceof GridEventHandler) {
-                ((GridEventHandler) screenHandler).onItemUpdate(template, amount, trackerEntry);
+            if (screenHandler instanceof GridEventHandler gridEventHandler) {
+                gridEventHandler.onItemUpdate(template, amount, trackerEntry);
             }
         });
     }

@@ -1,16 +1,6 @@
 package com.refinedmods.refinedstorage2.core.query.lexer;
 
-public class Token {
-    private final String content;
-    private final TokenType type;
-    private final TokenPosition position;
-
-    public Token(String content, TokenType type, TokenPosition position) {
-        this.content = content;
-        this.type = type;
-        this.position = position;
-    }
-
+public record Token(String content, TokenType type, TokenPosition position) {
     public String getContent() {
         return content;
     }

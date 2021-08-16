@@ -121,15 +121,11 @@ public class GridEventHandlerImpl implements GridEventHandler {
     }
 
     private Rs2ItemStack handleExtracted(GridExtractMode mode, Rs2ItemStack extractedSimulated, Rs2ItemStack stack, long size) {
-        switch (mode) {
-            case CURSOR_STACK:
-            case CURSOR_HALF:
-                return handleExtractToCursor(stack, size);
-            case PLAYER_INVENTORY_STACK:
-                return handleExtractToPlayerInventory(extractedSimulated);
-            default:
-                return Rs2ItemStack.EMPTY;
-        }
+        return switch (mode) {
+            case CURSOR_STACK, CURSOR_HALF -> handleExtractToCursor(stack, size);
+            case PLAYER_INVENTORY_STACK -> handleExtractToPlayerInventory(extractedSimulated);
+            default -> Rs2ItemStack.EMPTY;
+        };
     }
 
     private Rs2ItemStack handleExtractToPlayerInventory(Rs2ItemStack extractedSimulated) {
@@ -149,15 +145,11 @@ public class GridEventHandlerImpl implements GridEventHandler {
     }
 
     private long getSize(long totalSize, GridExtractMode mode) {
-        switch (mode) {
-            case CURSOR_STACK:
-            case PLAYER_INVENTORY_STACK:
-                return totalSize;
-            case CURSOR_HALF:
-                return totalSize == 1 ? 1 : totalSize / 2;
-            default:
-                return 0;
-        }
+        return switch (mode) {
+            case CURSOR_STACK, PLAYER_INVENTORY_STACK -> totalSize;
+            case CURSOR_HALF -> totalSize == 1 ? 1 : totalSize / 2;
+            default -> 0;
+        };
     }
 
     @Override

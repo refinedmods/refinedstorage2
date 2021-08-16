@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 
 public class BlockColorMap<T extends Block> extends ColorMap<T> {
     public ActionResult updateColor(BlockState state, ItemStack heldItem, World world, BlockPos pos, PlayerEntity player) {
-        DyeColor color = heldItem.getItem() instanceof DyeItem ? ((DyeItem) heldItem.getItem()).getColor() : null;
+        DyeColor color = heldItem.getItem() instanceof DyeItem dye ? dye.getColor() : null;
         if (color == null || state.getBlock().equals(map.get(color))) {
             return ActionResult.PASS;
         }
