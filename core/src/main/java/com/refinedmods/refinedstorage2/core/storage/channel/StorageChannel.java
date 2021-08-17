@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.core.list.listenable.StackListListener;
 import com.refinedmods.refinedstorage2.core.storage.Source;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface StorageChannel<T> extends Storage<T> {
@@ -22,5 +21,9 @@ public interface StorageChannel<T> extends Storage<T> {
 
     void sortSources();
 
-    void setSources(List<Storage<T>> sources);
+    void addSource(Storage<?> source);
+
+    void removeSource(Storage<?> source);
+
+    void invalidate();
 }

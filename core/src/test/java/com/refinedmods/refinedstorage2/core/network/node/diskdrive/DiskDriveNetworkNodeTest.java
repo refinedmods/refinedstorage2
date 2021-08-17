@@ -28,7 +28,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.verification.VerificationMode;
 
 import static com.refinedmods.refinedstorage2.core.network.NetworkUtil.itemStorageChannelOf;
-import static com.refinedmods.refinedstorage2.core.network.NetworkUtil.itemStorageComponentOf;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -299,7 +298,7 @@ class DiskDriveNetworkNodeTest {
         storageDiskProviderManager.setDiskInSlot(3, storageDisk3);
 
         diskDrive.initialize(storageDiskProviderManager);
-        itemStorageComponentOf(network).invalidate();
+        itemStorageChannelOf(network).invalidate();
 
         // Act
         Optional<Rs2ItemStack> extracted = itemStorageChannelOf(network).extract(new Rs2ItemStack(ItemStubs.DIRT), 85, Action.EXECUTE);

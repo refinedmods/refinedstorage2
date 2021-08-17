@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +23,7 @@ public class StorageChannelImpl<S extends Rs2Stack, I> implements StorageChannel
     private final Set<StackListListener<S>> listeners = new HashSet<>();
     private ListenableStackList<S> list;
     private CompositeStorage<S> storage;
+    private final List<Storage<S>> sources = new ArrayList<>();
 
     public StorageChannelImpl(Supplier<StackList<S>> listFactory, StorageTracker<S, I> tracker, CompositeStorage<S> defaultStorage) {
         this.listFactory = listFactory;
@@ -30,7 +32,7 @@ public class StorageChannelImpl<S extends Rs2Stack, I> implements StorageChannel
     }
 
     @Override
-    public void setSources(List<Storage<S>> sources) {
+    public void invalidate() {
         this.list = new ListenableStackList<>(listFactory.get(), listeners);
         this.storage = new CompositeStorage<>(sources, list);
         sortSources();
@@ -39,6 +41,18 @@ public class StorageChannelImpl<S extends Rs2Stack, I> implements StorageChannel
     @Override
     public void sortSources() {
         storage.sortSources();
+    }
+
+    @Override
+    public void addSource(Storage<?> source) {
+        sources.add((Storage<S>) source);
+        invalidate();
+    }
+
+    @Override
+    public void removeSource(Storage<?> source) {
+        sources.remove((Storage<S>) source);
+        invalidate();
     }
 
     @Override

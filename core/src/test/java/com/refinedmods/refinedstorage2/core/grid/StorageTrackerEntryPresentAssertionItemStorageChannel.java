@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.core.util.Action;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -84,7 +83,17 @@ public class StorageTrackerEntryPresentAssertionItemStorageChannel<T> implements
     }
 
     @Override
-    public void setSources(List<Storage<T>> sources) {
-        parent.setSources(sources);
+    public void addSource(Storage<?> source) {
+        parent.addSource(source);
+    }
+
+    @Override
+    public void removeSource(Storage<?> source) {
+        parent.removeSource(source);
+    }
+
+    @Override
+    public void invalidate() {
+        parent.invalidate();
     }
 }

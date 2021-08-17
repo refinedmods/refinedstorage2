@@ -1,11 +1,14 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.core.list.item.StackListImpl;
-import com.refinedmods.refinedstorage2.core.network.component.ItemStorageNetworkComponent;
+import com.refinedmods.refinedstorage2.core.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
+import com.refinedmods.refinedstorage2.core.storage.StorageSource;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.core.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage2.core.storage.composite.Priority;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
@@ -28,7 +31,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2ItemStack>, Priority {
+public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2ItemStack>, StorageSource, Priority {
     public static final int DISK_COUNT = 8;
 
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
@@ -71,7 +74,8 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
         }
         initializeDiskInSlot(slot);
         initializeDiskCountAndStorage();
-        network.getComponent(ItemStorageNetworkComponent.class).invalidate();
+        LOGGER.info("Invalidating storage due to disk drive disk change");
+        network.getComponent(StorageNetworkComponent.class).getStorageChannel(StorageChannelTypes.ITEM).invalidate();
     }
 
     private void initializeDiskCountAndStorage() {
@@ -79,7 +83,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
                 .stream(disks)
                 .filter(Objects::nonNull)
                 .count();
-        this.compositeStorage = new CompositeStorage(createSources(), StackListImpl.createItemStackList());
+        this.compositeStorage = new CompositeStorage<>(createSources(), StackListImpl.createItemStackList());
     }
 
     private void initializeDiskInSlot(int slot) {
@@ -103,7 +107,8 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
     @Override
     protected void onActiveChanged(boolean active) {
         super.onActiveChanged(active);
-        network.getComponent(ItemStorageNetworkComponent.class).invalidate();
+        LOGGER.info("Invalidating storage due to disk drive activeness change");
+        network.getComponent(StorageNetworkComponent.class).getStorageChannel(StorageChannelTypes.ITEM).invalidate();
     }
 
     @Override
@@ -164,7 +169,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
     public void setPriority(int priority) {
         this.priority = priority;
         if (network != null) {
-            network.getComponent(ItemStorageNetworkComponent.class).getStorageChannel().sortSources();
+            network.getComponent(StorageNetworkComponent.class).getStorageChannel(StorageChannelTypes.ITEM).sortSources();
         }
     }
 
@@ -197,5 +202,13 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
     @Override
     public long getStored() {
         return compositeStorage.getStored();
+    }
+
+    @Override
+    public <T> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
+        if (channelType == StorageChannelTypes.ITEM) {
+            return Optional.of((Storage<T>) this);
+        }
+        return Optional.empty();
     }
 }

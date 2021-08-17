@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetw
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.FakeStorageDiskProviderManager;
 import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.Position;
@@ -18,20 +19,20 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
+import static com.refinedmods.refinedstorage2.core.network.NetworkUtil.STORAGE_CHANNEL_TYPE_REGISTRY;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 @Rs2Test
-class ItemStorageNetworkComponentTest {
-    private ItemStorageNetworkComponent sut;
+class StorageNetworkComponentTest {
+    private StorageNetworkComponent sut;
     private DiskDriveNetworkNode diskDrive;
     private NetworkNodeContainer<DiskDriveNetworkNode> diskDriveContainer;
 
     @BeforeEach
     void setUp() {
-        sut = new ItemStorageNetworkComponent();
+        sut = new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY);
 
         FakeStorageDiskProviderManager fakeStorageDiskProviderManager = new FakeStorageDiskProviderManager();
         fakeStorageDiskProviderManager.setDiskInSlot(0, new ItemDiskStorage(100));
@@ -45,42 +46,17 @@ class ItemStorageNetworkComponentTest {
         sut.onContainerAdded(diskDriveContainer);
     }
 
+    // TODO: Expand these tests
     @Test
     void Test_adding_node_should_invalidate_storage() {
         // Act
-        Optional<Rs2ItemStack> remainderBeforeRemoval = sut.getStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainderBeforeRemoval = sut.getStorageChannel(StorageChannelTypes.ITEM).insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
         sut.onContainerRemoved(diskDriveContainer);
-        Optional<Rs2ItemStack> remainderAfterRemoval = sut.getStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainderAfterRemoval = sut.getStorageChannel(StorageChannelTypes.ITEM).insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         // Assert
         assertThat(remainderBeforeRemoval).isEmpty();
         assertThat(remainderAfterRemoval).isPresent();
         assertItemStackListContents(diskDrive.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
-    }
-
-    @Test
-    void Test_inserting_items() {
-        // Act
-        Optional<Rs2ItemStack> remainder = sut.getStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 4, Action.EXECUTE);
-
-        // Assert
-        assertThat(remainder).isEmpty();
-        assertItemStackListContents(sut.getStorageChannel().getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 4));
-        assertThat(sut.getStorageChannel().getStored()).isEqualTo(4);
-    }
-
-    @Test
-    void Test_extracting_items() {
-        // Arrange
-        sut.getStorageChannel().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
-
-        // Act
-        Optional<Rs2ItemStack> extracted = sut.getStorageChannel().extract(new Rs2ItemStack(ItemStubs.DIRT), 4, Action.EXECUTE);
-
-        // Assert
-        assertThat(extracted).isPresent();
-        assertItemStack(extracted.get(), new Rs2ItemStack(ItemStubs.DIRT, 4));
-        assertItemStackListContents(sut.getStorageChannel().getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 6));
-        assertThat(sut.getStorageChannel().getStored()).isEqualTo(6);
     }
 }

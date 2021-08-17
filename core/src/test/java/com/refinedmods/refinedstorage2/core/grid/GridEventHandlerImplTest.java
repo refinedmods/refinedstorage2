@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +45,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_inserting_entire_stack_from_cursor() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+            storageChannel.addSource(new ItemDiskStorage(30));
 
             interactor.setCursorStack(new Rs2ItemStack(ItemStubs.DIRT, 25));
 
@@ -65,7 +64,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_inserting_entire_stack_with_remainder_from_cursor() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+            storageChannel.addSource(new ItemDiskStorage(30));
 
             interactor.setCursorStack(new Rs2ItemStack(ItemStubs.DIRT, 31));
 
@@ -84,7 +83,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_inserting_entire_stack_with_no_space_left_in_storage_from_cursor() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+            storageChannel.addSource(new ItemDiskStorage(30));
 
             storageChannel.insert(new Rs2ItemStack(ItemStubs.GLASS), 30, Action.EXECUTE);
 
@@ -107,7 +106,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_inserting_single_item_from_cursor() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+            storageChannel.addSource(new ItemDiskStorage(30));
 
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 29, Action.EXECUTE);
 
@@ -128,7 +127,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_inserting_single_item_with_full_storage_from_cursor() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+            storageChannel.addSource(new ItemDiskStorage(30));
 
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 30, Action.EXECUTE);
 
@@ -172,7 +171,7 @@ class GridEventHandlerImplTest {
         @EnumSource(GridInsertMode.class)
         void Test_inserting_invalid_stack(GridInsertMode insertMode) {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+            storageChannel.addSource(new ItemDiskStorage(30));
 
             interactor.setCursorStack(Rs2ItemStack.EMPTY);
 
@@ -190,7 +189,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_inserting_by_transferring() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+            storageChannel.addSource(new ItemDiskStorage(30));
 
             // Act
             Rs2ItemStack resultingStack = eventHandler.onInsertFromTransfer(new Rs2ItemStack(ItemStubs.GLASS, 30));
@@ -207,7 +206,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_inserting_by_transferring_with_remainder() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+            storageChannel.addSource(new ItemDiskStorage(30));
 
             storageChannel.insert(new Rs2ItemStack(ItemStubs.GLASS), 15, Action.EXECUTE);
 
@@ -226,7 +225,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_inserting_by_transferring_when_storage_is_full() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+            storageChannel.addSource(new ItemDiskStorage(30));
 
             storageChannel.insert(new Rs2ItemStack(ItemStubs.GLASS), 30, Action.EXECUTE);
 
@@ -265,7 +264,7 @@ class GridEventHandlerImplTest {
         @EnumSource(GridExtractMode.class)
         void Test_extracting_item(GridExtractMode mode) {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(35)));
+            storageChannel.addSource(new ItemDiskStorage(35));
 
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 30, Action.EXECUTE);
 
@@ -302,7 +301,7 @@ class GridEventHandlerImplTest {
         @EnumSource(GridExtractMode.class)
         void Test_extracting_item_that_has_large_count(GridExtractMode mode) {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(1000)));
+            storageChannel.addSource(new ItemDiskStorage(1000));
 
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 300, Action.EXECUTE);
 
@@ -339,7 +338,7 @@ class GridEventHandlerImplTest {
         @EnumSource(GridExtractMode.class)
         void Test_extracting_item_that_is_not_found(GridExtractMode mode) {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(30)));
+            storageChannel.addSource(new ItemDiskStorage(30));
 
             storageChannel.insert(new Rs2ItemStack(ItemStubs.GLASS), 30, Action.EXECUTE);
 
@@ -361,7 +360,7 @@ class GridEventHandlerImplTest {
         @EnumSource(GridExtractMode.class)
         void Test_extracting_item_should_respect_max_stack_size(GridExtractMode mode) {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
 
             storageChannel.insert(new Rs2ItemStack(ItemStubs.BUCKET), 64, Action.EXECUTE);
 
@@ -398,7 +397,7 @@ class GridEventHandlerImplTest {
         @EnumSource(GridExtractMode.class)
         void Test_extracting_item_when_inactive(GridExtractMode mode) {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(35)));
+            storageChannel.addSource(new ItemDiskStorage(35));
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 30, Action.EXECUTE);
 
             eventHandler.onActiveChanged(false);
@@ -425,7 +424,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_from_grid_to_inventory_when_inventory_is_full_during_insert_should_return_remainder_to_storage() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
 
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 64, Action.EXECUTE);
 
@@ -447,7 +446,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_from_grid_to_inventory_when_inventory_is_full_before_insert_should_return_remainder_to_storage() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
 
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 64, Action.EXECUTE);
 
@@ -472,7 +471,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_half_single_item_from_grid_to_cursor_should_still_extract_single_item() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
 
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 1, Action.EXECUTE);
 
@@ -495,7 +494,7 @@ class GridEventHandlerImplTest {
         @EnumSource(value = GridExtractMode.class, names = {"CURSOR_STACK", "CURSOR_HALF"})
         void Test_extracting_item_from_grid_to_cursor_should_not_perform_when_cursor_already_has_stack(GridExtractMode mode) {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
 
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 65, Action.EXECUTE);
 
@@ -516,7 +515,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_from_grid_to_inventory() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 32, Action.EXECUTE);
 
             interactor.resetInventoryAndSetCapacity(32);
@@ -537,7 +536,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_stack_that_does_not_exist_from_grid_to_inventory() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 32, Action.EXECUTE);
 
             // Act
@@ -554,7 +553,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_stack_that_has_no_space_in_inventory_from_grid_to_inventory_should_return_remainder_to_storage() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 32, Action.EXECUTE);
 
             interactor.resetInventoryAndSetCapacity(32);
@@ -574,7 +573,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_from_grid_to_cursor() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 32, Action.EXECUTE);
 
             // Act
@@ -593,7 +592,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_stack_that_does_not_exist_from_grid_to_cursor() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 32, Action.EXECUTE);
 
             // Act
@@ -611,7 +610,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_from_grid_to_cursor_when_item_is_already_on_cursor() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 32, Action.EXECUTE);
 
             interactor.setCursorStack(new Rs2ItemStack(ItemStubs.DIRT, ItemStubs.DIRT.getMaxAmount() - 1));
@@ -632,7 +631,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_from_grid_to_cursor_when_item_currently_on_cursor_does_not_stack() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 32, Action.EXECUTE);
 
             interactor.setCursorStack(new Rs2ItemStack(ItemStubs.GLASS));
@@ -652,7 +651,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_from_grid_to_cursor_when_item_currently_on_cursor_would_overflow() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 32, Action.EXECUTE);
 
             interactor.setCursorStack(new Rs2ItemStack(ItemStubs.DIRT, ItemStubs.DIRT.getMaxAmount()));
@@ -676,7 +675,7 @@ class GridEventHandlerImplTest {
         @EnumSource(value = GridScrollMode.class, names = {"GRID_TO_INVENTORY", "GRID_TO_CURSOR"})
         void Test_extracting_from_grid_when_inactive(GridScrollMode scrollMode) {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
             eventHandler.onActiveChanged(false);
@@ -700,7 +699,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_single_stack_from_inventory_to_grid() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
 
             interactor.insertIntoInventory(new Rs2ItemStack(ItemStubs.GLASS, 128), -1, Action.EXECUTE);
 
@@ -719,7 +718,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_single_stack_from_inventory_to_grid_that_does_not_exist() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
 
             interactor.insertIntoInventory(new Rs2ItemStack(ItemStubs.DIRT, 128), -1, Action.EXECUTE);
 
@@ -737,7 +736,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_single_stack_from_inventory_to_grid_that_has_no_space_in_storage_should_return_remainder_to_inventory() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(2)));
+            storageChannel.addSource(new ItemDiskStorage(2));
             storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 2, Action.EXECUTE);
 
             interactor.insertIntoInventory(new Rs2ItemStack(ItemStubs.GLASS, 128), -1, Action.EXECUTE);
@@ -756,7 +755,7 @@ class GridEventHandlerImplTest {
         @Test
         void Test_extracting_from_inventory_to_grid_when_inactive() {
             // Arrange
-            storageChannel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
+            storageChannel.addSource(new ItemDiskStorage(100));
 
             interactor.insertIntoInventory(new Rs2ItemStack(ItemStubs.DIRT, 10), -1, Action.EXECUTE);
 

@@ -3,16 +3,19 @@ package com.refinedmods.refinedstorage2.core.network;
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.component.GraphNetworkComponent;
-import com.refinedmods.refinedstorage2.core.network.component.ItemStorageNetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistryImpl;
+import com.refinedmods.refinedstorage2.core.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.energy.CreativeEnergyStorage;
 import com.refinedmods.refinedstorage2.core.network.node.EmptyNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerImpl;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypeRegistry;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypeRegistryImpl;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.ArrayList;
@@ -55,11 +58,14 @@ public class NetworkUtil {
     }
 
     public static final NetworkComponentRegistry NETWORK_COMPONENT_REGISTRY = new NetworkComponentRegistryImpl();
+    public static final StorageChannelTypeRegistry STORAGE_CHANNEL_TYPE_REGISTRY = new StorageChannelTypeRegistryImpl();
 
     static {
+        STORAGE_CHANNEL_TYPE_REGISTRY.addType(StorageChannelTypes.ITEM);
+
         NETWORK_COMPONENT_REGISTRY.addComponent(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
         NETWORK_COMPONENT_REGISTRY.addComponent(GraphNetworkComponent.class, GraphNetworkComponent::new);
-        NETWORK_COMPONENT_REGISTRY.addComponent(ItemStorageNetworkComponent.class, network -> new ItemStorageNetworkComponent());
+        NETWORK_COMPONENT_REGISTRY.addComponent(StorageNetworkComponent.class, network -> new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY));
         NETWORK_COMPONENT_REGISTRY.addComponent(NodeCallbackListenerComponent.class, network -> new NodeCallbackListenerComponent());
     }
 
@@ -107,11 +113,11 @@ public class NetworkUtil {
         return network.getComponent(NodeCallbackListenerComponent.class).removeCount;
     }
 
-    public static ItemStorageNetworkComponent itemStorageComponentOf(Network network) {
-        return network.getComponent(ItemStorageNetworkComponent.class);
+    public static StorageNetworkComponent itemStorageComponentOf(Network network) {
+        return network.getComponent(StorageNetworkComponent.class);
     }
 
     public static StorageChannel<Rs2ItemStack> itemStorageChannelOf(Network network) {
-        return itemStorageComponentOf(network).getStorageChannel();
+        return itemStorageComponentOf(network).getStorageChannel(StorageChannelTypes.ITEM);
     }
 }

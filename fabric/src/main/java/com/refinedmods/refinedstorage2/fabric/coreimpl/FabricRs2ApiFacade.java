@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.coreimpl;
 
-import com.refinedmods.refinedstorage2.core.Rs2ApiFacade;
+import com.refinedmods.refinedstorage2.core.Rs2CoreApiFacade;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistryImpl;
@@ -15,7 +15,7 @@ import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.FabricStorag
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 
-public class FabricRs2ApiFacade implements Rs2ApiFacade<World> {
+public class FabricRs2ApiFacade implements Rs2CoreApiFacade<World> {
     private final StorageDiskManager clientStorageDiskManager = new ClientStorageDiskManager(new FabricRequestInfoCallback());
     private final GridSearchBoxModeRegistry gridSearchBoxModeRegistry = new GridSearchBoxModeRegistry();
     private final NetworkComponentRegistry networkComponentRegistry = new NetworkComponentRegistryImpl();

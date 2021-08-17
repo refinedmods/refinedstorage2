@@ -46,7 +46,6 @@ public abstract class NetworkNodeImpl implements NetworkNode {
 
         if (wasActive != isActive()) {
             wasActive = isActive();
-
             onActiveChanged(wasActive);
         }
     }
