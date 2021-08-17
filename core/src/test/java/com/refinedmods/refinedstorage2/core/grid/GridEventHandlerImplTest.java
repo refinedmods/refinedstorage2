@@ -1,10 +1,11 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
 import com.refinedmods.refinedstorage2.core.Rs2Test;
-import com.refinedmods.refinedstorage2.core.item.ItemStubs;
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
-import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
+import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
 
@@ -24,14 +25,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Rs2Test
 class GridEventHandlerImplTest {
     private FakeGridInteractor interactor;
-    private ItemStorageChannel storageChannel;
+    private StorageChannel<Rs2ItemStack> storageChannel;
     private GridEventHandlerImpl eventHandler;
 
     @BeforeEach
     void setUp() {
         interactor = new FakeGridInteractor();
-        storageChannel = new ItemStorageChannel();
-        eventHandler = new GridEventHandlerImpl(true, new StorageTrackerEntryPresentAssertionItemStorageChannel(storageChannel), interactor);
+        storageChannel = StorageChannelTypes.ITEM.create();
+        eventHandler = new GridEventHandlerImpl(true, new StorageTrackerEntryPresentAssertionItemStorageChannel<>(storageChannel), interactor);
     }
 
     @Test

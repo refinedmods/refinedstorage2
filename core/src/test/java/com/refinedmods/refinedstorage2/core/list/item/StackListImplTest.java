@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.core.list.item;
 
 import com.refinedmods.refinedstorage2.core.Rs2Test;
-import com.refinedmods.refinedstorage2.core.item.ItemStubs;
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStackIdentifier;
+import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
+import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
-class ItemStackListTest {
-    private final ItemStackList<Rs2ItemStackIdentifier> list = ItemStackList.create();
+class StackListImplTest {
+    private final StackList<Rs2ItemStack> list = StackListImpl.createItemStackList();
 
     @Test
     void Test_adding_a_stack() {

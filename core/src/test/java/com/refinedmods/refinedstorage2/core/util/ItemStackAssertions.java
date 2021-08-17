@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.core.util;
 
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.list.StackList;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

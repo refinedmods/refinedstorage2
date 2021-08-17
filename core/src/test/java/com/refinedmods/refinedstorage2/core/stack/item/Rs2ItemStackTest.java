@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.item;
+package com.refinedmods.refinedstorage2.core.stack.item;
 
 import com.refinedmods.refinedstorage2.core.Rs2Test;
 

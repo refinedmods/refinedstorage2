@@ -1,6 +1,8 @@
-package com.refinedmods.refinedstorage2.core.item;
+package com.refinedmods.refinedstorage2.core.stack.item;
 
-public final class Rs2ItemStack {
+import com.refinedmods.refinedstorage2.core.stack.Rs2Stack;
+
+public final class Rs2ItemStack implements Rs2Stack {
     public static final Rs2ItemStack EMPTY = new Rs2ItemStack(null, 0, null);
 
     private final Rs2Item item;
@@ -27,23 +29,28 @@ public final class Rs2ItemStack {
         return item;
     }
 
+    @Override
     public long getAmount() {
         return amount;
     }
 
+    @Override
     public void setAmount(long amount) {
         this.amount = amount;
         this.updateEmptyState();
     }
 
+    @Override
     public void increment(long amount) {
         setAmount(this.amount + amount);
     }
 
+    @Override
     public void decrement(long amount) {
         setAmount(this.amount - amount);
     }
 
+    @Override
     public Rs2ItemStack copy() {
         if (isEmpty()) {
             return EMPTY;
@@ -63,6 +70,7 @@ public final class Rs2ItemStack {
         this.empty = this.amount <= 0;
     }
 
+    @Override
     public boolean isEmpty() {
         return empty;
     }

@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
 import com.refinedmods.refinedstorage2.core.Rs2Test;
-import com.refinedmods.refinedstorage2.core.item.ItemStubs;
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStackIdentifier;
-import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
-import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
+import com.refinedmods.refinedstorage2.core.list.item.StackListImpl;
+import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStackIdentifier;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
 
 import java.util.Optional;
 
@@ -29,7 +29,7 @@ class GridViewImplTest {
 
     @BeforeEach
     void setUp() {
-        view = new GridViewImpl<>(new FakeGridStackFactory(), Rs2ItemStackIdentifier::new, ItemStackList.create());
+        view = new GridViewImpl<>(new FakeGridStackFactory(), Rs2ItemStackIdentifier::new, StackListImpl.createItemStackList());
         view.setSortingType(GridSortingType.QUANTITY);
     }
 

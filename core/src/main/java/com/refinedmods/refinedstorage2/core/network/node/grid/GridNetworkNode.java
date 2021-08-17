@@ -5,12 +5,11 @@ import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.core.grid.GridSize;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.component.ItemStorageNetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
-import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
-import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
-import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.HashSet;
@@ -83,7 +82,7 @@ public class GridNetworkNode extends NetworkNodeImpl {
     }
 
     public void forEachStack(BiConsumer<Rs2ItemStack, Optional<StorageTracker.Entry>> consumer) {
-        ItemStorageChannel storageChannel = network.getComponent(ItemStorageNetworkComponent.class).getStorageChannel();
+        StorageChannel<Rs2ItemStack> storageChannel = network.getComponent(ItemStorageNetworkComponent.class).getStorageChannel();
         storageChannel.getStacks().forEach(stack -> consumer.accept(stack, storageChannel.getTracker().getEntry(stack)));
     }
 

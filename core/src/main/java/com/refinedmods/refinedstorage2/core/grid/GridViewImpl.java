@@ -2,21 +2,14 @@ package com.refinedmods.refinedstorage2.core.grid;
 
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
-import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class GridViewImpl<T, I> implements GridView<T> {
     private static final Logger LOGGER = LogManager.getLogger(GridViewImpl.class);

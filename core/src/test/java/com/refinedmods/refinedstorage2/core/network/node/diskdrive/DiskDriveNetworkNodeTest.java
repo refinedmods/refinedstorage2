@@ -1,12 +1,12 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.core.Rs2Test;
-import com.refinedmods.refinedstorage2.core.item.ItemStubs;
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.NetworkUtil;
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.core.network.node.container.FakeNetworkNodeContainer;
+import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
@@ -28,7 +28,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.verification.VerificationMode;
 
 import static com.refinedmods.refinedstorage2.core.network.NetworkUtil.itemStorageChannelOf;
-import static com.refinedmods.refinedstorage2.core.network.NetworkUtil.itemStorageOf;
+import static com.refinedmods.refinedstorage2.core.network.NetworkUtil.itemStorageComponentOf;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -299,7 +299,7 @@ class DiskDriveNetworkNodeTest {
         storageDiskProviderManager.setDiskInSlot(3, storageDisk3);
 
         diskDrive.initialize(storageDiskProviderManager);
-        itemStorageOf(network).invalidate();
+        itemStorageComponentOf(network).invalidate();
 
         // Act
         Optional<Rs2ItemStack> extracted = itemStorageChannelOf(network).extract(new Rs2ItemStack(ItemStubs.DIRT), 85, Action.EXECUTE);

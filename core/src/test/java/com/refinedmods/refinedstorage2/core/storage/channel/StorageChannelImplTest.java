@@ -1,10 +1,11 @@
-package com.refinedmods.refinedstorage2.core.storage;
+package com.refinedmods.refinedstorage2.core.storage.channel;
 
 import com.refinedmods.refinedstorage2.core.Rs2Test;
-import com.refinedmods.refinedstorage2.core.item.ItemStubs;
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.list.StackListListener;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
+import com.refinedmods.refinedstorage2.core.list.listenable.StackListListener;
+import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.storage.composite.PrioritizedStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
 
@@ -12,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,12 +30,18 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @Rs2Test
-class ItemStorageChannelTest {
+class StorageChannelImplTest {
+    private StorageChannel<Rs2ItemStack> channel;
+
+    @BeforeEach
+    void setUp() {
+        channel = StorageChannelTypes.ITEM.create();
+    }
+
     @ParameterizedTest
     @EnumSource(Action.class)
     void Test_listener_on_insertion(Action action) {
         // Arrange
-        ItemStorageChannel channel = new ItemStorageChannel();
         channel.setSources(Collections.singletonList(new ItemDiskStorage(10)));
 
         StackListListener<Rs2ItemStack> listener = mock(StackListListener.class);
@@ -62,7 +70,6 @@ class ItemStorageChannelTest {
         ItemDiskStorage diskStorage = new ItemDiskStorage(10);
         diskStorage.insert(new Rs2ItemStack(ItemStubs.GLASS), 10, Action.EXECUTE);
 
-        ItemStorageChannel channel = new ItemStorageChannel();
         channel.setSources(Collections.singletonList(diskStorage));
 
         StackListListener<Rs2ItemStack> listener = mock(StackListListener.class);
@@ -87,7 +94,6 @@ class ItemStorageChannelTest {
     @Test
     void Test_inserting() {
         // Arrange
-        ItemStorageChannel channel = new ItemStorageChannel();
         channel.setSources(Collections.singletonList(new ItemDiskStorage(10)));
 
         // Act
@@ -104,7 +110,6 @@ class ItemStorageChannelTest {
         ItemDiskStorage diskStorage = new ItemDiskStorage(100);
         diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
 
-        ItemStorageChannel channel = new ItemStorageChannel();
         channel.setSources(Collections.singletonList(diskStorage));
 
         // Act
@@ -120,7 +125,6 @@ class ItemStorageChannelTest {
         ItemDiskStorage diskStorage = new ItemDiskStorage(100);
         diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
 
-        ItemStorageChannel channel = new ItemStorageChannel();
         channel.setSources(Collections.singletonList(diskStorage));
 
         // Act
@@ -134,7 +138,6 @@ class ItemStorageChannelTest {
     @Test
     void Test_getting_non_existent_stack() {
         // Arrange
-        ItemStorageChannel channel = new ItemStorageChannel();
         channel.setSources(Collections.singletonList(new ItemDiskStorage(100)));
 
         // Act
@@ -151,7 +154,6 @@ class ItemStorageChannelTest {
         PrioritizedStorage<Rs2ItemStack> disk2 = new PrioritizedStorage<>(0, new ItemDiskStorage(10));
         PrioritizedStorage<Rs2ItemStack> disk3 = new PrioritizedStorage<>(0, new ItemDiskStorage(10));
 
-        ItemStorageChannel channel = new ItemStorageChannel();
         channel.setSources(Arrays.asList(disk1, disk2, disk3));
 
         disk1.setPriority(8);

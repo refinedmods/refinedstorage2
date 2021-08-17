@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import com.refinedmods.refinedstorage2.core.storage.StorageTracker;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
 
 import java.util.Comparator;
 import java.util.function.Function;
@@ -26,17 +26,12 @@ public enum GridSortingType {
     }
 
     public GridSortingType toggle() {
-        switch (this) {
-            case QUANTITY:
-                return NAME;
-            case NAME:
-                return ID;
-            case ID:
-                return LAST_MODIFIED;
-            case LAST_MODIFIED:
-                return QUANTITY;
-            default:
-                return QUANTITY;
-        }
+        return switch (this) {
+            case QUANTITY -> NAME;
+            case NAME -> ID;
+            case ID -> LAST_MODIFIED;
+            case LAST_MODIFIED -> QUANTITY;
+            default -> QUANTITY;
+        };
     }
 }

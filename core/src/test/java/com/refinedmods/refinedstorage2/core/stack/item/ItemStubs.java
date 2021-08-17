@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.item;
+package com.refinedmods.refinedstorage2.core.stack.item;
 
 public final class ItemStubs {
     public static final Rs2Item DIRT = new ItemStub(1, "Dirt", 64);

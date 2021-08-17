@@ -1,13 +1,13 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
+import com.refinedmods.refinedstorage2.core.list.item.StackListImpl;
 import com.refinedmods.refinedstorage2.core.network.component.ItemStorageNetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
-import com.refinedmods.refinedstorage2.core.storage.CompositeItemStorage;
-import com.refinedmods.refinedstorage2.core.storage.Priority;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
+import com.refinedmods.refinedstorage2.core.storage.composite.CompositeStorage;
+import com.refinedmods.refinedstorage2.core.storage.composite.Priority;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskManager;
@@ -42,7 +42,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
 
     private final DiskDriveItemStorageDisk[] disks = new DiskDriveItemStorageDisk[DISK_COUNT];
     private int diskCount;
-    private CompositeItemStorage compositeStorage = CompositeItemStorage.empty();
+    private CompositeStorage<Rs2ItemStack> compositeStorage = CompositeStorage.emptyItemStackStorage();
 
     private final Filter<Rs2ItemStack> itemFilter = new ItemFilter();
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
@@ -79,7 +79,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
                 .stream(disks)
                 .filter(Objects::nonNull)
                 .count();
-        this.compositeStorage = new CompositeItemStorage(createSources(), ItemStackList.create());
+        this.compositeStorage = new CompositeStorage(createSources(), StackListImpl.createItemStackList());
     }
 
     private void initializeDiskInSlot(int slot) {

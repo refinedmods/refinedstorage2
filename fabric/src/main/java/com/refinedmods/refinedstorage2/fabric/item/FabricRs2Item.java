@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.item;
 
-import com.refinedmods.refinedstorage2.core.item.Rs2Item;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2Item;
 
 import net.minecraft.item.Item;
 

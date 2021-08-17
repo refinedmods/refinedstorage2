@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.storage;
+package com.refinedmods.refinedstorage2.core.storage.channel;
 
 import java.util.HashMap;
 import java.util.Map;

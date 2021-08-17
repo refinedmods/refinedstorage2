@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.item;
+package com.refinedmods.refinedstorage2.core.stack.item;
 
 public class ItemStub implements Rs2Item {
     private final int id;

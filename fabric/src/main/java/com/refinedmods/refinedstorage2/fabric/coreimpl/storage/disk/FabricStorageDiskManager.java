@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk;
 
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskManager;

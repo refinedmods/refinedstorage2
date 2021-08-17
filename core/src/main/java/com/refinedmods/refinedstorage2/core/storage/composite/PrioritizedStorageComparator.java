@@ -1,4 +1,6 @@
-package com.refinedmods.refinedstorage2.core.storage;
+package com.refinedmods.refinedstorage2.core.storage.composite;
+
+import com.refinedmods.refinedstorage2.core.storage.Storage;
 
 import java.util.Comparator;
 

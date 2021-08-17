@@ -1,9 +1,10 @@
 package com.refinedmods.refinedstorage2.core.network.component;
 
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 public class ItemStorageNetworkComponent implements NetworkComponent {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final ItemStorageChannel storageChannel = new ItemStorageChannel();
+    private final StorageChannel<Rs2ItemStack> storageChannel = StorageChannelTypes.ITEM.create();
     private final List<Storage<Rs2ItemStack>> sources = new ArrayList<>();
 
     @Override
@@ -38,7 +39,7 @@ public class ItemStorageNetworkComponent implements NetworkComponent {
         storageChannel.setSources(sources);
     }
 
-    public ItemStorageChannel getStorageChannel() {
+    public StorageChannel<Rs2ItemStack> getStorageChannel() {
         return storageChannel;
     }
 }

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.coreimpl.grid;
 
 import com.refinedmods.refinedstorage2.core.grid.GridInteractor;
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 

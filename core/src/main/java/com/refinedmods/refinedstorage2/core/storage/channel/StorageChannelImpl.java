@@ -1,0 +1,95 @@
+package com.refinedmods.refinedstorage2.core.storage.channel;
+
+import com.refinedmods.refinedstorage2.core.list.StackList;
+import com.refinedmods.refinedstorage2.core.list.listenable.ListenableStackList;
+import com.refinedmods.refinedstorage2.core.list.listenable.StackListListener;
+import com.refinedmods.refinedstorage2.core.stack.Rs2Stack;
+import com.refinedmods.refinedstorage2.core.storage.Source;
+import com.refinedmods.refinedstorage2.core.storage.Storage;
+import com.refinedmods.refinedstorage2.core.storage.composite.CompositeStorage;
+import com.refinedmods.refinedstorage2.core.util.Action;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Supplier;
+
+public class StorageChannelImpl<S extends Rs2Stack, I> implements StorageChannel<S> {
+    private final Supplier<StackList<S>> listFactory;
+    private final StorageTracker<S, I> tracker;
+    private final Set<StackListListener<S>> listeners = new HashSet<>();
+    private ListenableStackList<S> list;
+    private CompositeStorage<S> storage;
+
+    public StorageChannelImpl(Supplier<StackList<S>> listFactory, StorageTracker<S, I> tracker, CompositeStorage<S> defaultStorage) {
+        this.listFactory = listFactory;
+        this.tracker = tracker;
+        this.storage = defaultStorage;
+    }
+
+    @Override
+    public void setSources(List<Storage<S>> sources) {
+        this.list = new ListenableStackList<>(listFactory.get(), listeners);
+        this.storage = new CompositeStorage<>(sources, list);
+        sortSources();
+    }
+
+    @Override
+    public void sortSources() {
+        storage.sortSources();
+    }
+
+    @Override
+    public void addListener(StackListListener<S> listener) {
+        listeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(StackListListener<S> listener) {
+        listeners.remove(listener);
+    }
+
+    @Override
+    public Optional<S> extract(S template, long amount, Source source) {
+        tracker.onChanged(template, source.getName());
+        return extract(template, amount, Action.EXECUTE);
+    }
+
+    @Override
+    public Optional<S> insert(S template, long amount, Source source) {
+        tracker.onChanged(template, source.getName());
+        return insert(template, amount, Action.EXECUTE);
+    }
+
+    @Override
+    public StorageTracker<S, ?> getTracker() {
+        return tracker;
+    }
+
+    @Override
+    public Optional<S> get(S template) {
+        return list.get(template);
+    }
+
+    @Override
+    public Optional<S> extract(S template, long amount, Action action) {
+        return storage.extract(template, amount, action);
+    }
+
+    @Override
+    public Optional<S> insert(S template, long amount, Action action) {
+        return storage.insert(template, amount, action);
+    }
+
+    @Override
+    public Collection<S> getStacks() {
+        return storage.getStacks();
+    }
+
+    @Override
+    public long getStored() {
+        return storage.getStored();
+    }
+}

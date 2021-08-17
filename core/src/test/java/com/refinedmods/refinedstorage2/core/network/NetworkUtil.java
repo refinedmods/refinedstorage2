@@ -11,7 +11,8 @@ import com.refinedmods.refinedstorage2.core.network.energy.CreativeEnergyStorage
 import com.refinedmods.refinedstorage2.core.network.node.EmptyNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerImpl;
-import com.refinedmods.refinedstorage2.core.storage.ItemStorageChannel;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.ArrayList;
@@ -106,11 +107,11 @@ public class NetworkUtil {
         return network.getComponent(NodeCallbackListenerComponent.class).removeCount;
     }
 
-    public static ItemStorageNetworkComponent itemStorageOf(Network network) {
+    public static ItemStorageNetworkComponent itemStorageComponentOf(Network network) {
         return network.getComponent(ItemStorageNetworkComponent.class);
     }
 
-    public static ItemStorageChannel itemStorageChannelOf(Network network) {
-        return itemStorageOf(network).getStorageChannel();
+    public static StorageChannel<Rs2ItemStack> itemStorageChannelOf(Network network) {
+        return itemStorageComponentOf(network).getStorageChannel();
     }
 }

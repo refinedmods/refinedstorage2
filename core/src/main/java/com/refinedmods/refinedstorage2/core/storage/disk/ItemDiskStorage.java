@@ -1,15 +1,15 @@
 package com.refinedmods.refinedstorage2.core.storage.disk;
 
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.list.StackList;
-import com.refinedmods.refinedstorage2.core.list.item.ItemStackList;
+import com.refinedmods.refinedstorage2.core.list.item.StackListImpl;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.util.Action;
 
 import java.util.Collection;
 import java.util.Optional;
 
 public class ItemDiskStorage implements StorageDisk<Rs2ItemStack> {
-    private final StackList<Rs2ItemStack> list = ItemStackList.create();
+    private final StackList<Rs2ItemStack> list = StackListImpl.createItemStackList();
     private final long capacity;
     private long stored;
 

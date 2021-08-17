@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.coreimpl.grid;
 
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandlerImpl;
-import com.refinedmods.refinedstorage2.core.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.storage.StorageChannel;
+import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.fabric.util.ServerPacketUtil;
 
