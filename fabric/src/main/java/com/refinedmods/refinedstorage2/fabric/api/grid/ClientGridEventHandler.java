@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.fabric.coreimpl.grid;
+package com.refinedmods.refinedstorage2.fabric.api.grid;
 
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;

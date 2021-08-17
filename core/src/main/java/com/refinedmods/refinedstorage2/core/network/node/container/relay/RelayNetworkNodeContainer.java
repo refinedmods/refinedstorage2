@@ -22,7 +22,7 @@ public class RelayNetworkNodeContainer extends NetworkNodeContainerImpl<RelayNet
             if (direction == getNode().getDirection()) {
                 continue;
             }
-            containerRepository.getContainer(world, position.offset(direction)).ifPresent(container -> {
+            containerRepository.getContainer(position.offset(direction)).ifPresent(container -> {
                 if (container.canConnectWith(this, direction.getOpposite())) {
                     connections.add(container);
                 }

@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
+import com.refinedmods.refinedstorage2.core.Rs2CoreApiFacade;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
@@ -31,7 +32,7 @@ public class SearchBoxModeSideButtonWidget extends SideButtonWidget {
     }
 
     private static PressAction createPressAction(GridScreenHandler screenHandler) {
-        return btn -> screenHandler.setSearchBoxMode(Rs2Mod.API.getGridSearchBoxModeRegistry().next(screenHandler.getSearchBoxMode()));
+        return btn -> screenHandler.setSearchBoxMode(Rs2CoreApiFacade.INSTANCE.getGridSearchBoxModeRegistry().next(screenHandler.getSearchBoxMode()));
     }
 
     private List<Text> calculateTooltip(GridSearchBoxMode searchBoxMode) {

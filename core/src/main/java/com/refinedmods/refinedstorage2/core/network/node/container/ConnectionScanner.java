@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.core.network.node.container;
 
-import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.ArrayDeque;
@@ -10,21 +9,19 @@ import java.util.Queue;
 import java.util.Set;
 
 public class ConnectionScanner {
-    private final NetworkNodeContainerRepository containerRepository;
     private final Set<NetworkNodeContainerEntry<?>> currentEntries;
     private final Set<NetworkNodeContainerEntry<?>> foundEntries = new HashSet<>();
     private final Set<NetworkNodeContainerEntry<?>> newEntries = new HashSet<>();
     private final Set<NetworkNodeContainerEntry<?>> removedEntries;
     private final Queue<Runnable> visitors = new ArrayDeque<>();
 
-    public ConnectionScanner(NetworkNodeContainerRepository containerRepository, Set<NetworkNodeContainerEntry<?>> currentEntries) {
-        this.containerRepository = containerRepository;
+    public ConnectionScanner(Set<NetworkNodeContainerEntry<?>> currentEntries) {
         this.currentEntries = currentEntries;
         this.removedEntries = new HashSet<>(currentEntries);
     }
 
-    public void scan(Rs2World world, Position position) {
-        addVisitorIfPossibleAt(world, position);
+    public void scan(NetworkNodeContainerRepository containerRepository, Position position) {
+        addVisitorIfPossibleAt(containerRepository, position);
 
         Runnable currentVisitor;
         while ((currentVisitor = visitors.poll()) != null) {
@@ -32,11 +29,11 @@ public class ConnectionScanner {
         }
     }
 
-    private void addVisitorIfPossibleAt(Rs2World world, Position position) {
-        containerRepository.getContainer(world, position).ifPresent(container -> addEntry(NetworkNodeContainerEntry.create(container)));
+    private void addVisitorIfPossibleAt(NetworkNodeContainerRepository containerRepository, Position position) {
+        containerRepository.getContainer(position).ifPresent(container -> addEntry(containerRepository, NetworkNodeContainerEntry.create(container)));
     }
 
-    private void addEntry(NetworkNodeContainerEntry<?> entry) {
+    private void addEntry(NetworkNodeContainerRepository containerRepository, NetworkNodeContainerEntry<?> entry) {
         if (foundEntries.contains(entry)) {
             return;
         }
@@ -51,7 +48,7 @@ public class ConnectionScanner {
 
         List<NetworkNodeContainer<?>> connections = entry.getContainer().getConnections(containerRepository);
         for (NetworkNodeContainer<?> connection : connections) {
-            addVisitorIfPossibleAt(connection.getContainerWorld(), connection.getPosition());
+            addVisitorIfPossibleAt(containerRepository, connection.getPosition());
         }
     }
 

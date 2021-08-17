@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage2.core.network.component.StorageNetworkComp
 import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.core.query.parser.ParserOperatorMappings;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.FabricRs2ApiFacade;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2BlockEntities;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2Blocks;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2Items;
@@ -36,12 +35,10 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Rs2Mod implements ModInitializer {
-    public static final Rs2CoreApiFacade<World> API = new FabricRs2ApiFacade();
     public static final Rs2Blocks BLOCKS = new Rs2Blocks();
     public static final Rs2Items ITEMS = new Rs2Items();
     public static final Rs2BlockEntities BLOCK_ENTITIES = new Rs2BlockEntities();
@@ -78,13 +75,14 @@ public class Rs2Mod implements ModInitializer {
     }
 
     private void registerStorageChannelTypes() {
-        Rs2Mod.API.getStorageChannelTypeRegistry().addType(StorageChannelTypes.ITEM);
+        Rs2CoreApiFacade.INSTANCE.getStorageChannelTypeRegistry().addType(StorageChannelTypes.ITEM);
     }
 
     private void registerNetworkComponents() {
-        Rs2Mod.API.getNetworkComponentRegistry().addComponent(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
-        Rs2Mod.API.getNetworkComponentRegistry().addComponent(GraphNetworkComponent.class, GraphNetworkComponent::new);
-        Rs2Mod.API.getNetworkComponentRegistry().addComponent(StorageNetworkComponent.class, network -> new StorageNetworkComponent(Rs2Mod.API.getStorageChannelTypeRegistry()));
+        Rs2CoreApiFacade.INSTANCE.getNetworkComponentRegistry().addComponent(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
+        Rs2CoreApiFacade.INSTANCE.getNetworkComponentRegistry().addComponent(GraphNetworkComponent.class, GraphNetworkComponent::new);
+        Rs2CoreApiFacade.INSTANCE.getNetworkComponentRegistry().addComponent(StorageNetworkComponent.class, network ->
+                new StorageNetworkComponent(Rs2CoreApiFacade.INSTANCE.getStorageChannelTypeRegistry()));
     }
 
     private void registerContent() {
@@ -107,7 +105,7 @@ public class Rs2Mod implements ModInitializer {
         GridQueryParser queryParser = new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS);
 
         for (boolean autoSelected : new boolean[]{false, true}) {
-            API.getGridSearchBoxModeRegistry().add(new GridSearchBoxModeImpl(queryParser, autoSelected, createSearchBoxModeDisplayProperties(autoSelected)));
+            Rs2CoreApiFacade.INSTANCE.getGridSearchBoxModeRegistry().add(new GridSearchBoxModeImpl(queryParser, autoSelected, createSearchBoxModeDisplayProperties(autoSelected)));
         }
 
         if (ReiIntegration.isLoaded()) {

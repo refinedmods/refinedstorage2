@@ -37,8 +37,8 @@ public class NetworkNodeContainerImpl<T extends NetworkNode> implements NetworkN
             return false;
         }
 
-        ConnectionScanner scanner = new ConnectionScanner(containerRepository, Collections.emptySet());
-        scanner.scan(world, position);
+        ConnectionScanner scanner = new ConnectionScanner(Collections.emptySet());
+        scanner.scan(containerRepository, position);
 
         Preconditions.checkArgument(scanner.getRemovedEntries().isEmpty(), "Cannot have removed entries");
 
@@ -109,7 +109,7 @@ public class NetworkNodeContainerImpl<T extends NetworkNode> implements NetworkN
             throw new IllegalStateException("Cannot remove node that has no network yet");
         }
 
-        if (containerRepository.getContainer(world, position).isPresent()) {
+        if (containerRepository.getContainer(position).isPresent()) {
             throw new IllegalStateException("Container must not be present at removal");
         }
 
@@ -124,8 +124,8 @@ public class NetworkNodeContainerImpl<T extends NetworkNode> implements NetworkN
             return;
         }
 
-        ConnectionScanner scanner = new ConnectionScanner(containerRepository, containers);
-        scanner.scan(pivot.getContainer().getContainerWorld(), pivot.getContainer().getPosition());
+        ConnectionScanner scanner = new ConnectionScanner(containers);
+        scanner.scan(containerRepository, pivot.getContainer().getPosition());
 
         Preconditions.checkState(scanner.getRemovedEntries().contains(removedContainer), "The removed container isn't present in the removed entries");
 
@@ -195,7 +195,7 @@ public class NetworkNodeContainerImpl<T extends NetworkNode> implements NetworkN
     public List<NetworkNodeContainer<?>> getConnections(NetworkNodeContainerRepository containerRepository) {
         List<NetworkNodeContainer<?>> connections = new ArrayList<>();
         for (Direction direction : Direction.values()) {
-            containerRepository.getContainer(world, position.offset(direction)).ifPresent(container -> {
+            containerRepository.getContainer(position.offset(direction)).ifPresent(container -> {
                 if (container.canConnectWith(this, direction.getOpposite())) {
                     connections.add(container);
                 }

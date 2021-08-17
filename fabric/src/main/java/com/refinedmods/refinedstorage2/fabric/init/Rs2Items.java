@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.fabric.init;
 
 import com.refinedmods.refinedstorage2.fabric.FeatureFlag;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.ItemStorageType;
 import com.refinedmods.refinedstorage2.fabric.item.CoreItem;
 import com.refinedmods.refinedstorage2.fabric.item.ProcessorBindingItem;
 import com.refinedmods.refinedstorage2.fabric.item.ProcessorItem;
@@ -27,7 +26,7 @@ import net.minecraft.util.registry.Registry;
 public class Rs2Items {
     private static final String BLOCK_TRANSLATION_CATEGORY = "block";
 
-    private final Map<ItemStorageType, StoragePartItem> storageParts = new EnumMap<>(ItemStorageType.class);
+    private final Map<StorageDiskItem.ItemStorageType, StoragePartItem> storageParts = new EnumMap<>(StorageDiskItem.ItemStorageType.class);
     private final List<ControllerBlockItem> controllers = new ArrayList<>();
     private StorageHousingItem storageHousing;
 
@@ -61,13 +60,13 @@ public class Rs2Items {
             Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_processor"), new ProcessorItem(createSettings(itemGroup)));
         }
 
-        for (ItemStorageType type : ItemStorageType.values()) {
-            if (type != ItemStorageType.CREATIVE) {
+        for (StorageDiskItem.ItemStorageType type : StorageDiskItem.ItemStorageType.values()) {
+            if (type != StorageDiskItem.ItemStorageType.CREATIVE) {
                 storageParts.put(type, Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_storage_part"), new StoragePartItem(createSettings(itemGroup))));
             }
         }
 
-        for (ItemStorageType type : ItemStorageType.values()) {
+        for (StorageDiskItem.ItemStorageType type : StorageDiskItem.ItemStorageType.values()) {
             Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_storage_disk"), new StorageDiskItem(createSettings(itemGroup).maxCount(1).fireproof(), type));
         }
 
@@ -87,7 +86,7 @@ public class Rs2Items {
         return storageHousing;
     }
 
-    public StoragePartItem getStoragePart(ItemStorageType type) {
+    public StoragePartItem getStoragePart(StorageDiskItem.ItemStorageType type) {
         return storageParts.get(type);
     }
 }

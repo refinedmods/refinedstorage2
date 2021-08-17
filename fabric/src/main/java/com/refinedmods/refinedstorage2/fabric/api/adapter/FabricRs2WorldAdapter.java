@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.fabric.coreimpl.adapter;
+package com.refinedmods.refinedstorage2.fabric.api.adapter;
 
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.util.Position;

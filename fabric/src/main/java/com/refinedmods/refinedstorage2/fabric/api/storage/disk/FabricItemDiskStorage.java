@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk;
+package com.refinedmods.refinedstorage2.fabric.api.storage.disk;
 
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;

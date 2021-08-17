@@ -9,8 +9,8 @@ import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeCo
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerRepository;
 import com.refinedmods.refinedstorage2.core.util.Direction;
 import com.refinedmods.refinedstorage2.core.util.Position;
+import com.refinedmods.refinedstorage2.fabric.api.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.block.NetworkNodeBlock;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
 import java.util.List;

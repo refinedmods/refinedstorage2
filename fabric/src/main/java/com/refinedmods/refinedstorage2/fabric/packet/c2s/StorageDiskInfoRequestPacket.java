@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
-import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.fabric.util.ServerPacketUtil;
 
@@ -20,7 +20,7 @@ public class StorageDiskInfoRequestPacket implements ServerPlayNetworking.PlayCh
         UUID id = buf.readUuid();
 
         server.execute(() -> {
-            StorageDiskInfo info = Rs2Mod.API
+            StorageDiskInfo info = Rs2PlatformApiFacade.INSTANCE
                     .getStorageDiskManager(player.getEntityWorld())
                     .getInfo(id);
 

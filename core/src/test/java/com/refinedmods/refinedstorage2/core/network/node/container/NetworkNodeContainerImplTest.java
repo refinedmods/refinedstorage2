@@ -173,7 +173,7 @@ class NetworkNodeContainerImplTest {
         FakeNetworkNodeContainerRepository repository = FakeNetworkNodeContainerRepository.of(container1, container2, container3, unrelatedContainer);
 
         // Act
-        repository.removeContainer(world, container1.getPosition());
+        repository.removeContainer(container1.getPosition());
         container1.remove(repository, NetworkUtil.NETWORK_COMPONENT_REGISTRY);
 
         // Assert
@@ -212,7 +212,7 @@ class NetworkNodeContainerImplTest {
         FakeNetworkNodeContainerRepository repository = FakeNetworkNodeContainerRepository.of(container1, container2, container3, container4, container5, unrelatedContainer);
 
         // Act
-        repository.removeContainer(world, container3.getPosition());
+        repository.removeContainer(container3.getPosition());
         container3.remove(repository, NetworkUtil.NETWORK_COMPONENT_REGISTRY);
 
         // Assert
@@ -273,7 +273,7 @@ class NetworkNodeContainerImplTest {
         FakeNetworkNodeContainerRepository repository = FakeNetworkNodeContainerRepository.of(container1, container2, container3, container4, container5, unrelatedContainer);
 
         // Act
-        repository.removeContainer(world, container1.getPosition());
+        repository.removeContainer(container1.getPosition());
         container1.remove(repository, NetworkUtil.NETWORK_COMPONENT_REGISTRY);
 
         // Assert
@@ -342,7 +342,7 @@ class NetworkNodeContainerImplTest {
         Network network = container.getNode().getNetwork();
 
         // Act
-        repository.removeContainer(world, container.getPosition());
+        repository.removeContainer(container.getPosition());
         container.remove(repository, NetworkUtil.NETWORK_COMPONENT_REGISTRY);
 
         // Assert

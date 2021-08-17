@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.screenhandler.grid;
 
+import com.refinedmods.refinedstorage2.core.Rs2CoreApiFacade;
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.grid.GridInsertMode;
@@ -20,12 +21,12 @@ import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.fabric.api.grid.ClientGridEventHandler;
+import com.refinedmods.refinedstorage2.fabric.api.grid.ServerGridEventHandler;
+import com.refinedmods.refinedstorage2.fabric.api.grid.query.FabricGridStackFactory;
 import com.refinedmods.refinedstorage2.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.grid.GridSettings;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.ClientGridEventHandler;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.ServerGridEventHandler;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.query.FabricGridStackFactory;
 import com.refinedmods.refinedstorage2.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.fabric.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.BaseScreenHandler;
@@ -103,9 +104,9 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         );
         this.searchBoxModeProperty = TwoWaySyncProperty.forClient(
                 4,
-                mode -> Rs2Mod.API.getGridSearchBoxModeRegistry().getId(mode),
-                mode -> Rs2Mod.API.getGridSearchBoxModeRegistry().get(mode),
-                Rs2Mod.API.getGridSearchBoxModeRegistry().getDefault(),
+                mode -> Rs2CoreApiFacade.INSTANCE.getGridSearchBoxModeRegistry().getId(mode),
+                mode -> Rs2CoreApiFacade.INSTANCE.getGridSearchBoxModeRegistry().get(mode),
+                Rs2CoreApiFacade.INSTANCE.getGridSearchBoxModeRegistry().getDefault(),
                 this::onSearchBoxModeChanged
         );
 
@@ -122,7 +123,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         itemView.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
         itemView.setSortingType(GridSettings.getSortingType(buf.readInt()));
         size = GridSettings.getSize(buf.readInt());
-        searchBoxMode = Rs2Mod.API.getGridSearchBoxModeRegistry().get(buf.readInt());
+        searchBoxMode = Rs2CoreApiFacade.INSTANCE.getGridSearchBoxModeRegistry().get(buf.readInt());
 
         addSlots(0);
 
@@ -168,8 +169,8 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         );
         this.searchBoxModeProperty = TwoWaySyncProperty.forServer(
                 4,
-                mode -> Rs2Mod.API.getGridSearchBoxModeRegistry().getId(mode),
-                mode -> Rs2Mod.API.getGridSearchBoxModeRegistry().get(mode),
+                mode -> Rs2CoreApiFacade.INSTANCE.getGridSearchBoxModeRegistry().getId(mode),
+                mode -> Rs2CoreApiFacade.INSTANCE.getGridSearchBoxModeRegistry().get(mode),
                 grid::getSearchBoxMode,
                 grid::setSearchBoxMode
         );

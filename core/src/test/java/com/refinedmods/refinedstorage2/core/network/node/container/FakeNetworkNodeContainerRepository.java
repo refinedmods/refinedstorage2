@@ -1,37 +1,35 @@
 package com.refinedmods.refinedstorage2.core.network.node.container;
 
-import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.core.util.Position;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
-
 public class FakeNetworkNodeContainerRepository implements NetworkNodeContainerRepository {
-    private final Table<Rs2World, Position, NetworkNodeContainer<?>> containers = HashBasedTable.create();
+    private final Map<Position, NetworkNodeContainer<?>> containers = new HashMap<>();
 
     public static FakeNetworkNodeContainerRepository of(NetworkNodeContainer<?>... containers) {
         FakeNetworkNodeContainerRepository repo = new FakeNetworkNodeContainerRepository();
         for (NetworkNodeContainer<?> container : containers) {
-            repo.setContainer(container.getContainerWorld(), container.getPosition(), container);
+            repo.setContainer(container.getPosition(), container);
         }
         return repo;
     }
 
-    public void removeContainer(Rs2World world, Position position) {
-        containers.remove(world, position);
+    public void removeContainer(Position position) {
+        containers.remove(position);
     }
 
-    public FakeNetworkNodeContainerRepository setContainer(Rs2World world, Position position, NetworkNodeContainer<?> container) {
-        containers.put(world, position, container);
+    public FakeNetworkNodeContainerRepository setContainer(Position position, NetworkNodeContainer<?> container) {
+        containers.put(position, container);
         return this;
     }
 
     @Override
-    public <T extends NetworkNode> Optional<NetworkNodeContainer<T>> getContainer(Rs2World world, Position position) {
-        NetworkNodeContainer<?> container = containers.get(world, position);
+    public <T extends NetworkNode> Optional<NetworkNodeContainer<T>> getContainer(Position position) {
+        NetworkNodeContainer<?> container = containers.get(position);
         return Optional.ofNullable(container == null ? null : (NetworkNodeContainer<T>) container);
     }
 }

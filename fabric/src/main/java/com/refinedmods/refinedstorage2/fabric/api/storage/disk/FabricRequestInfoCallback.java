@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk;
+package com.refinedmods.refinedstorage2.fabric.api.storage.disk;
 
 import com.refinedmods.refinedstorage2.core.util.ThrottleHelper;
 import com.refinedmods.refinedstorage2.fabric.packet.PacketIds;

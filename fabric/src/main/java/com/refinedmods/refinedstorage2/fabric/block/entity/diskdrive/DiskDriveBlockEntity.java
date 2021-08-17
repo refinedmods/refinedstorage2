@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.FilterMode;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.fabric.block.entity.FilterModeSettings;
@@ -89,7 +90,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     public void setWorld(World world) {
         super.setWorld(world);
         if (!world.isClient()) {
-            container.getNode().initialize(Rs2Mod.API.getStorageDiskManager(world));
+            container.getNode().initialize(Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world));
         }
     }
 

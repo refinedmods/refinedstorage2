@@ -3,9 +3,9 @@ package com.refinedmods.refinedstorage2.fabric.item;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.FabricItemDiskStorage;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.FabricStorageDiskManager;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.storage.disk.ItemStorageType;
+import com.refinedmods.refinedstorage2.fabric.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.fabric.api.storage.disk.FabricItemDiskStorage;
+import com.refinedmods.refinedstorage2.fabric.api.storage.disk.FabricStorageDiskManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +48,7 @@ public class StorageDiskItem extends Item {
         if (world == null) {
             return Optional.empty();
         }
-        return getId(stack).map(Rs2Mod.API.getStorageDiskManager(world)::getInfo);
+        return getId(stack).map(Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world)::getInfo);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class StorageDiskItem extends Item {
         }
 
         return getId(stack)
-                .flatMap(id -> Rs2Mod.API.getStorageDiskManager(world).disassembleDisk(id))
+                .flatMap(id -> Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world).disassembleDisk(id))
                 .map(disk -> {
                     ItemStack storagePart = createStoragePart(stack.getCount());
 
@@ -104,10 +104,35 @@ public class StorageDiskItem extends Item {
         if (!world.isClient() && !stack.hasNbt() && entity instanceof PlayerEntity) {
             UUID id = UUID.randomUUID();
 
-            Rs2Mod.API.getStorageDiskManager(world).setDisk(id, new FabricItemDiskStorage(type.getCapacity(), () -> ((FabricStorageDiskManager) Rs2Mod.API.getStorageDiskManager(world)).markDirty()));
+            Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world).setDisk(id, new FabricItemDiskStorage(type.getCapacity(),
+                    () -> ((FabricStorageDiskManager) Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world)).markDirty()));
 
             stack.setNbt(new NbtCompound());
             stack.getNbt().putUuid(TAG_ID, id);
+        }
+    }
+
+    public enum ItemStorageType {
+        ONE_K("1k", 1000),
+        FOUR_K("4k", 4000),
+        SIXTEEN_K("16k", 16_000),
+        SIXTY_FOUR_K("64k", 64_000),
+        CREATIVE("creative", -1);
+
+        private final String name;
+        private final int capacity;
+
+        ItemStorageType(String name, int capacity) {
+            this.name = name;
+            this.capacity = capacity;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getCapacity() {
+            return capacity;
         }
     }
 }

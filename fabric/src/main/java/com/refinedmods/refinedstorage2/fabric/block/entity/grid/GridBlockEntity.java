@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.grid;
 
+import com.refinedmods.refinedstorage2.core.Rs2CoreApiFacade;
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.core.grid.GridSize;
@@ -39,7 +40,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
     protected GridNetworkNode createNode(BlockPos pos, NbtCompound tag) {
         GridNetworkNode grid = new GridNetworkNode(
                 Positions.ofBlockPos(pos),
-                Rs2Mod.API.getGridSearchBoxModeRegistry().getDefault(),
+                Rs2CoreApiFacade.INSTANCE.getGridSearchBoxModeRegistry().getDefault(),
                 Rs2Config.get().getGrid().getEnergyUsage()
         );
 
@@ -57,7 +58,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
             }
 
             if (tag.contains(TAG_SEARCH_BOX_MODE)) {
-                grid.setSearchBoxMode(Rs2Mod.API.getGridSearchBoxModeRegistry().get(tag.getInt(TAG_SEARCH_BOX_MODE)));
+                grid.setSearchBoxMode(Rs2CoreApiFacade.INSTANCE.getGridSearchBoxModeRegistry().get(tag.getInt(TAG_SEARCH_BOX_MODE)));
             }
         }
 
@@ -79,7 +80,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         tag.putInt(TAG_SORTING_DIRECTION, GridSettings.getSortingDirection(container.getNode().getSortingDirection()));
         tag.putInt(TAG_SORTING_TYPE, GridSettings.getSortingType(container.getNode().getSortingType()));
         tag.putInt(TAG_SIZE, GridSettings.getSize(container.getNode().getSize()));
-        tag.putInt(TAG_SEARCH_BOX_MODE, Rs2Mod.API.getGridSearchBoxModeRegistry().getId(container.getNode().getSearchBoxMode()));
+        tag.putInt(TAG_SEARCH_BOX_MODE, Rs2CoreApiFacade.INSTANCE.getGridSearchBoxModeRegistry().getId(container.getNode().getSearchBoxMode()));
         return super.writeNbt(tag);
     }
 
@@ -89,7 +90,7 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
         buf.writeInt(GridSettings.getSortingDirection(getSortingDirection()));
         buf.writeInt(GridSettings.getSortingType(getSortingType()));
         buf.writeInt(GridSettings.getSize(getSize()));
-        buf.writeInt(Rs2Mod.API.getGridSearchBoxModeRegistry().getId(getSearchBoxMode()));
+        buf.writeInt(Rs2CoreApiFacade.INSTANCE.getGridSearchBoxModeRegistry().getId(getSearchBoxMode()));
 
         buf.writeInt(container.getNode().getStackCount());
         container.getNode().forEachStack((stack, trackerEntry) -> {

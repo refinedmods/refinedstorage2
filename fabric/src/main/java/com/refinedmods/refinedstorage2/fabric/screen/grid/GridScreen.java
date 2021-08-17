@@ -11,7 +11,7 @@ import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
-import com.refinedmods.refinedstorage2.fabric.coreimpl.grid.FabricItemGridStack;
+import com.refinedmods.refinedstorage2.fabric.api.grid.FabricItemGridStack;
 import com.refinedmods.refinedstorage2.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.fabric.screen.BaseScreen;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.RedstoneModeSideButtonWidget;
