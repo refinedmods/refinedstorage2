@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.core.storage.composite;
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.item.StackListImpl;
 import com.refinedmods.refinedstorage2.core.stack.Rs2Stack;
+import com.refinedmods.refinedstorage2.core.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.util.Action;
@@ -26,6 +27,10 @@ public class CompositeStorage<S extends Rs2Stack> implements Storage<S> {
 
     public static CompositeStorage<Rs2ItemStack> emptyItemStackStorage() {
         return new CompositeStorage<>(Collections.emptyList(), StackListImpl.createItemStackList());
+    }
+
+    public static CompositeStorage<Rs2FluidStack> emptyFluidStackStorage() {
+        return new CompositeStorage<>(Collections.emptyList(), StackListImpl.createFluidStackList());
     }
 
     public void sortSources() {

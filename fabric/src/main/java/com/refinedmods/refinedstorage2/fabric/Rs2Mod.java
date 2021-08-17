@@ -76,6 +76,7 @@ public class Rs2Mod implements ModInitializer {
 
     private void registerStorageChannelTypes() {
         Rs2CoreApiFacade.INSTANCE.getStorageChannelTypeRegistry().addType(StorageChannelTypes.ITEM);
+        Rs2CoreApiFacade.INSTANCE.getStorageChannelTypeRegistry().addType(StorageChannelTypes.FLUID);
     }
 
     private void registerNetworkComponents() {

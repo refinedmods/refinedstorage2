@@ -3,6 +3,8 @@ package com.refinedmods.refinedstorage2.core.list.item;
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.stack.Rs2Stack;
+import com.refinedmods.refinedstorage2.core.stack.fluid.Rs2FluidStack;
+import com.refinedmods.refinedstorage2.core.stack.fluid.Rs2FluidStackIdentifier;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStackIdentifier;
 
@@ -27,6 +29,10 @@ public class StackListImpl<I, S extends Rs2Stack> implements StackList<S> {
 
     public static StackListImpl<Rs2ItemStackIdentifier, Rs2ItemStack> createItemStackList() {
         return new StackListImpl<>(Rs2ItemStackIdentifier::new);
+    }
+
+    public static StackListImpl<Rs2FluidStackIdentifier, Rs2FluidStack> createFluidStackList() {
+        return new StackListImpl<>(Rs2FluidStackIdentifier::new);
     }
 
     @Override
