@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.core.network.component;
 
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.core.stack.Rs2Stack;
 import com.refinedmods.refinedstorage2.core.storage.StorageSource;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelType;
@@ -55,7 +56,7 @@ public class StorageNetworkComponent implements NetworkComponent {
         });
     }
 
-    public <T> StorageChannel<T> getStorageChannel(StorageChannelType<T> type) {
+    public <T extends Rs2Stack> StorageChannel<T> getStorageChannel(StorageChannelType<T> type) {
         return (StorageChannel<T>) channels.get(type);
     }
 }

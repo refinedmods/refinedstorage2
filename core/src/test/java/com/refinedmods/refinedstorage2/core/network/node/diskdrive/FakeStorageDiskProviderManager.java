@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskManager;
@@ -16,6 +18,14 @@ public class FakeStorageDiskProviderManager implements StorageDiskProvider, Stor
     @Override
     public Optional<UUID> getDiskId(int slot) {
         return Optional.ofNullable(slots.get(slot));
+    }
+
+    @Override
+    public Optional<StorageChannelType<?>> getStorageChannelType(int slot) {
+        if (slots.containsKey(slot)) {
+            return Optional.of(StorageChannelTypes.ITEM);
+        }
+        return Optional.empty();
     }
 
     @Override

@@ -1,20 +1,17 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
-import com.refinedmods.refinedstorage2.core.list.item.StackListImpl;
 import com.refinedmods.refinedstorage2.core.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
+import com.refinedmods.refinedstorage2.core.stack.Rs2Stack;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.storage.StorageSource;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.core.storage.composite.CompositeStorage;
-import com.refinedmods.refinedstorage2.core.storage.composite.Priority;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskManager;
-import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.Filter;
 import com.refinedmods.refinedstorage2.core.util.FilterMode;
 import com.refinedmods.refinedstorage2.core.util.ItemFilter;
@@ -22,16 +19,18 @@ import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2ItemStack>, StorageSource, Priority {
+public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSource {
     public static final int DISK_COUNT = 8;
 
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
@@ -43,28 +42,46 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
     private final long energyUsagePerDisk;
     private final DiskDriveListener listener;
 
-    private final DiskDriveItemStorageDisk[] disks = new DiskDriveItemStorageDisk[DISK_COUNT];
+    private final DiskDriveStorageDisk[] disks = new DiskDriveStorageDisk[DISK_COUNT];
+    private final Map<StorageChannelType<?>, DiskDriveStorage<?>> compositeStorages;
     private int diskCount;
-    private CompositeStorage<Rs2ItemStack> compositeStorage = CompositeStorage.emptyItemStackStorage();
 
     private final Filter<Rs2ItemStack> itemFilter = new ItemFilter();
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
     private int priority;
 
-    public DiskDriveNetworkNode(Position pos, StorageDiskProvider diskProvider, long energyUsage, long energyUsagePerDisk, DiskDriveListener listener) {
+    public DiskDriveNetworkNode(Position pos, StorageDiskProvider diskProvider, long energyUsage, long energyUsagePerDisk, DiskDriveListener listener, StorageChannelTypeRegistry storageChannelTypeRegistry) {
         super(pos);
         this.diskProvider = diskProvider;
         this.energyUsage = energyUsage;
         this.energyUsagePerDisk = energyUsagePerDisk;
         this.listener = listener;
+        this.compositeStorages = createCompositeStorages(storageChannelTypeRegistry);
+    }
+
+    private Map<StorageChannelType<?>, DiskDriveStorage<?>> createCompositeStorages(StorageChannelTypeRegistry storageChannelTypeRegistry) {
+        return storageChannelTypeRegistry
+                .getTypes()
+                .stream()
+                .collect(ImmutableMap.toImmutableMap(type -> type, this::createCompositeStorage));
+    }
+
+    private DiskDriveStorage<?> createCompositeStorage(StorageChannelType<?> type) {
+        if (type == StorageChannelTypes.ITEM) {
+            return new DiskDriveItemStorage(this, itemFilter);
+        }
+        return new DiskDriveStorage<>(this, type);
     }
 
     public void initialize(StorageDiskManager diskManager) {
         this.diskManager = diskManager;
+
+        Set<StorageChannelType<?>> affectedStorageChannelTypes = new HashSet<>();
         for (int i = 0; i < DISK_COUNT; ++i) {
-            initializeDiskInSlot(i);
+            affectedStorageChannelTypes.addAll(initializeDiskInSlot(i));
         }
-        initializeDiskCountAndStorage();
+        affectedStorageChannelTypes.forEach(this::invalidateChannel);
+        setDiskCount();
     }
 
     public void onDiskChanged(int slot) {
@@ -72,43 +89,60 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
             LOGGER.warn("Tried to change disk in invalid slot {}", slot);
             return;
         }
-        initializeDiskInSlot(slot);
-        initializeDiskCountAndStorage();
-        LOGGER.info("Invalidating storage due to disk drive disk change");
-        network.getComponent(StorageNetworkComponent.class).getStorageChannel(StorageChannelTypes.ITEM).invalidate();
+        Set<StorageChannelType<?>> affectedStorageChannelTypes = initializeDiskInSlot(slot);
+        affectedStorageChannelTypes.forEach(type -> {
+            invalidateChannel(type);
+            network.getComponent(StorageNetworkComponent.class).getStorageChannel(type).invalidate();
+        });
+        setDiskCount();
     }
 
-    private void initializeDiskCountAndStorage() {
+    private void setDiskCount() {
         this.diskCount = (int) Arrays
                 .stream(disks)
                 .filter(Objects::nonNull)
                 .count();
-        this.compositeStorage = new CompositeStorage<>(createSources(), StackListImpl.createItemStackList());
     }
 
-    private void initializeDiskInSlot(int slot) {
-        disks[slot] = diskProvider
-                .getDiskId(slot)
-                .flatMap(diskManager::getDisk)
-                .map(disk -> new DiskDriveItemStorageDisk((StorageDisk) disk, listener))
-                .orElse(null);
+    private <T extends Rs2Stack> void invalidateChannel(StorageChannelType<T> channelType) {
+        List<Storage<T>> sources = getSourcesForChannel(channelType);
+        ((DiskDriveStorage<T>) compositeStorages.get(channelType)).setSources(sources);
     }
 
-    private List<Storage<Rs2ItemStack>> createSources() {
-        List<Storage<Rs2ItemStack>> sources = new ArrayList<>();
-        for (StorageDisk<Rs2ItemStack> disk : disks) {
-            if (disk != null) {
-                sources.add(disk);
+    private <T extends Rs2Stack> List<Storage<T>> getSourcesForChannel(StorageChannelType<T> channelType) {
+        List<Storage<T>> sources = new ArrayList<>();
+        for (DiskDriveStorageDisk<?> disk : disks) {
+            if (disk != null && disk.getStorageChannelType() == channelType) {
+                sources.add((Storage<T>) disk);
             }
         }
         return sources;
+    }
+
+    private Set<StorageChannelType<?>> initializeDiskInSlot(int slot) {
+        Set<StorageChannelType<?>> affectedStorageChannelTypes = new HashSet<>();
+        if (disks[slot] != null) {
+            affectedStorageChannelTypes.add(disks[slot].getStorageChannelType());
+        }
+
+        diskProvider.getStorageChannelType(slot).ifPresentOrElse(type -> {
+            disks[slot] = diskProvider
+                    .getDiskId(slot)
+                    .flatMap(diskManager::getDisk)
+                    .map(disk -> new DiskDriveStorageDisk(disk, type, listener))
+                    .orElse(null);
+
+            affectedStorageChannelTypes.add(type);
+        }, () -> disks[slot] = null);
+
+        return affectedStorageChannelTypes;
     }
 
     @Override
     protected void onActiveChanged(boolean active) {
         super.onActiveChanged(active);
         LOGGER.info("Invalidating storage due to disk drive activeness change");
-        network.getComponent(StorageNetworkComponent.class).getStorageChannel(StorageChannelTypes.ITEM).invalidate();
+        compositeStorages.keySet().forEach(type -> network.getComponent(StorageNetworkComponent.class).getStorageChannel(type).invalidate());
     }
 
     @Override
@@ -124,7 +158,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
         return states;
     }
 
-    private DiskState getState(DiskDriveItemStorageDisk disk) {
+    private DiskState getState(DiskDriveStorageDisk<?> disk) {
         if (disk == null) {
             return DiskState.NONE;
         } else if (!isActive()) {
@@ -161,53 +195,22 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements Storage<Rs2
         this.accessMode = accessMode;
     }
 
-    @Override
+    public void setPriority(int priority) {
+        this.priority = priority;
+        if (network != null) {
+            compositeStorages.keySet().forEach(type -> network.getComponent(StorageNetworkComponent.class).getStorageChannel(type).sortSources());
+        }
+    }
+
     public int getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
-        this.priority = priority;
-        if (network != null) {
-            network.getComponent(StorageNetworkComponent.class).getStorageChannel(StorageChannelTypes.ITEM).sortSources();
-        }
-    }
-
     @Override
-    public Optional<Rs2ItemStack> extract(Rs2ItemStack template, long amount, Action action) {
-        if (accessMode == AccessMode.INSERT || !isActive()) {
-            return Optional.empty();
-        }
-        return compositeStorage.extract(template, amount, action);
-    }
-
-    @Override
-    public Optional<Rs2ItemStack> insert(Rs2ItemStack template, long amount, Action action) {
-        if (!itemFilter.isAllowed(template) || accessMode == AccessMode.EXTRACT || !isActive()) {
-            Rs2ItemStack remainder = template.copy();
-            remainder.setAmount(amount);
-            return Optional.of(remainder);
-        }
-        return compositeStorage.insert(template, amount, action);
-    }
-
-    @Override
-    public Collection<Rs2ItemStack> getStacks() {
-        if (!isActive()) {
-            return Collections.emptyList();
-        }
-        return compositeStorage.getStacks();
-    }
-
-    @Override
-    public long getStored() {
-        return compositeStorage.getStored();
-    }
-
-    @Override
-    public <T> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
-        if (channelType == StorageChannelTypes.ITEM) {
-            return Optional.of((Storage<T>) this);
+    public <T extends Rs2Stack> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
+        DiskDriveStorage<?> storage = compositeStorages.get(channelType);
+        if (storage != null) {
+            return Optional.of((Storage<T>) storage);
         }
         return Optional.empty();
     }

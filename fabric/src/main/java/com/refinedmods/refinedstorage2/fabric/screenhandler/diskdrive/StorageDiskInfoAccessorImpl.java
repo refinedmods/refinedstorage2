@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive;
 
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
-import com.refinedmods.refinedstorage2.fabric.item.StorageDiskItem;
+import com.refinedmods.refinedstorage2.fabric.api.storage.disk.StorageDiskItem;
 
 import java.util.Optional;
 
@@ -17,6 +17,9 @@ public class StorageDiskInfoAccessorImpl implements StorageDiskInfoAccessor {
 
     @Override
     public Optional<StorageDiskInfo> getDiskInfo(ItemStack stack) {
-        return StorageDiskItem.getInfo(world, stack);
+        if (stack.getItem() instanceof StorageDiskItem storageDiskItem) {
+            return storageDiskItem.getInfo(world, stack);
+        }
+        return Optional.empty();
     }
 }

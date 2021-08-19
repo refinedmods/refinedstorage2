@@ -16,6 +16,7 @@ import com.refinedmods.refinedstorage2.core.util.Position;
 import org.junit.jupiter.api.Test;
 
 import static com.refinedmods.refinedstorage2.core.network.NetworkUtil.NETWORK_COMPONENT_REGISTRY;
+import static com.refinedmods.refinedstorage2.core.network.NetworkUtil.STORAGE_CHANNEL_TYPE_REGISTRY;
 import static com.refinedmods.refinedstorage2.core.network.NetworkUtil.itemStorageChannelOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -31,7 +32,7 @@ class NetworkImplTest {
         ItemDiskStorage disk = new ItemDiskStorage(10);
         disk.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
         fakeStorageDiskProviderManager.setDiskInSlot(1, disk);
-        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(Position.ORIGIN, fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class));
+        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(Position.ORIGIN, fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(network);
         diskDrive.initialize(fakeStorageDiskProviderManager);
         FakeNetworkNodeContainer<DiskDriveNetworkNode> diskDriveContainer = FakeNetworkNodeContainer.createForFakeWorld(diskDrive);

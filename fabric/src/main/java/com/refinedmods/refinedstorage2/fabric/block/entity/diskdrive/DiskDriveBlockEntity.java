@@ -1,13 +1,15 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive;
 
+import com.refinedmods.refinedstorage2.core.Rs2CoreApiFacade;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveState;
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.stack.Rs2Stack;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
+import com.refinedmods.refinedstorage2.core.storage.StorageSource;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
-import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.core.util.FilterMode;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
@@ -20,7 +22,6 @@ import com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive.DiskDriveS
 import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetworkNode> implements Storage<Rs2ItemStack>, RenderAttachmentBlockEntity, BlockEntityClientSerializable, NamedScreenHandlerFactory, BlockEntityWithDrops, DiskDriveListener {
+public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetworkNode> implements StorageSource, RenderAttachmentBlockEntity, BlockEntityClientSerializable, NamedScreenHandlerFactory, BlockEntityWithDrops, DiskDriveListener {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_PRIORITY = "pri";
@@ -107,7 +108,8 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
                 diskInventory,
                 Rs2Config.get().getDiskDrive().getEnergyUsage(),
                 Rs2Config.get().getDiskDrive().getEnergyUsagePerDisk(),
-                this
+                this,
+                Rs2CoreApiFacade.INSTANCE.getStorageChannelTypeRegistry()
         );
 
         if (tag != null) {
@@ -249,26 +251,6 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
         return drops;
     }
 
-    @Override
-    public Optional<Rs2ItemStack> extract(Rs2ItemStack template, long amount, Action action) {
-        return container.getNode().extract(template, amount, action);
-    }
-
-    @Override
-    public Optional<Rs2ItemStack> insert(Rs2ItemStack template, long amount, Action action) {
-        return container.getNode().insert(template, amount, action);
-    }
-
-    @Override
-    public Collection<Rs2ItemStack> getStacks() {
-        return container.getNode().getStacks();
-    }
-
-    @Override
-    public long getStored() {
-        return container.getNode().getStored();
-    }
-
     public int getPriority() {
         return container.getNode().getPriority();
     }
@@ -281,5 +263,10 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
     @Override
     public void onDiskChanged() {
         this.syncRequested = true;
+    }
+
+    @Override
+    public <T extends Rs2Stack> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
+        return container.getNode().getStorageForChannel(channelType);
     }
 }

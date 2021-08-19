@@ -37,7 +37,7 @@ class StorageNetworkComponentTest {
         FakeStorageDiskProviderManager fakeStorageDiskProviderManager = new FakeStorageDiskProviderManager();
         fakeStorageDiskProviderManager.setDiskInSlot(0, new ItemDiskStorage(100));
 
-        diskDrive = new DiskDriveNetworkNode(Position.ORIGIN, fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class));
+        diskDrive = new DiskDriveNetworkNode(Position.ORIGIN, fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(NetworkUtil.createWithCreativeEnergySource());
         diskDrive.initialize(fakeStorageDiskProviderManager);
 
@@ -57,6 +57,6 @@ class StorageNetworkComponentTest {
         // Assert
         assertThat(remainderBeforeRemoval).isEmpty();
         assertThat(remainderAfterRemoval).isPresent();
-        assertItemStackListContents(diskDrive.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
+        assertItemStackListContents(diskDrive.getStorageForChannel(StorageChannelTypes.ITEM).get().getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
     }
 }

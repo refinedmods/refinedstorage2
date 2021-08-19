@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.core.stack.Rs2Stack;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.util.Action;
@@ -8,17 +9,23 @@ import com.refinedmods.refinedstorage2.core.util.Action;
 import java.util.Collection;
 import java.util.Optional;
 
-public class DiskDriveItemStorageDisk implements StorageDisk<Rs2ItemStack> {
+public class DiskDriveStorageDisk<T extends Rs2Stack> implements StorageDisk<T> {
     private static final double DISK_NEAR_CAPACITY_THRESHOLD = .75;
 
-    private final StorageDisk<Rs2ItemStack> parent;
+    private final StorageDisk<T> parent;
+    private final StorageChannelType<T> storageChannelType;
     private final DiskDriveListener listener;
     private DiskState state;
 
-    public DiskDriveItemStorageDisk(StorageDisk<Rs2ItemStack> parent, DiskDriveListener listener) {
+    public DiskDriveStorageDisk(StorageDisk<T> parent, StorageChannelType<T> storageChannelType, DiskDriveListener listener) {
         this.parent = parent;
+        this.storageChannelType = storageChannelType;
         this.listener = listener;
         this.state = getState();
+    }
+
+    public StorageChannelType<T> getStorageChannelType() {
+        return storageChannelType;
     }
 
     public DiskState getState() {
@@ -42,8 +49,8 @@ public class DiskDriveItemStorageDisk implements StorageDisk<Rs2ItemStack> {
     }
 
     @Override
-    public Optional<Rs2ItemStack> extract(Rs2ItemStack template, long amount, Action action) {
-        Optional<Rs2ItemStack> extracted = parent.extract(template, amount, action);
+    public Optional<T> extract(T template, long amount, Action action) {
+        Optional<T> extracted = parent.extract(template, amount, action);
         if (action == Action.EXECUTE && extracted.isPresent()) {
             checkStateChanged();
         }
@@ -51,8 +58,8 @@ public class DiskDriveItemStorageDisk implements StorageDisk<Rs2ItemStack> {
     }
 
     @Override
-    public Optional<Rs2ItemStack> insert(Rs2ItemStack template, long amount, Action action) {
-        Optional<Rs2ItemStack> remainder = parent.insert(template, amount, action);
+    public Optional<T> insert(T template, long amount, Action action) {
+        Optional<T> remainder = parent.insert(template, amount, action);
         if (action == Action.EXECUTE && (remainder.isEmpty() || remainder.get().getAmount() != amount)) {
             checkStateChanged();
         }
@@ -60,7 +67,7 @@ public class DiskDriveItemStorageDisk implements StorageDisk<Rs2ItemStack> {
     }
 
     @Override
-    public Collection<Rs2ItemStack> getStacks() {
+    public Collection<T> getStacks() {
         return parent.getStacks();
     }
 

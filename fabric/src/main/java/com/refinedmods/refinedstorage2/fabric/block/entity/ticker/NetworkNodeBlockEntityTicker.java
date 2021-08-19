@@ -19,6 +19,7 @@ public class NetworkNodeBlockEntityTicker<T extends NetworkNodeBlockEntity<?>> i
     }
 
     protected void tick(World world, BlockState state, T blockEntity) {
+        // TODO: Remove this allocation
         blockEntity.initialize(new FabricNetworkNodeContainerRepository(world), Rs2CoreApiFacade.INSTANCE.getNetworkComponentRegistry());
         blockEntity.updateActiveness(state);
         blockEntity.getNode().update();

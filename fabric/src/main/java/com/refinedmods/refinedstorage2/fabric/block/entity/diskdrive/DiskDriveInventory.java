@@ -2,7 +2,8 @@ package com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive;
 
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.StorageDiskProvider;
-import com.refinedmods.refinedstorage2.fabric.item.StorageDiskItem;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.fabric.api.storage.disk.StorageDiskItem;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -31,11 +32,19 @@ public class DiskDriveInventory extends FullFixedItemInv implements StorageDiskP
 
     @Override
     public Optional<UUID> getDiskId(int slot) {
+        return validateAndGetStack(slot).flatMap(stack -> ((StorageDiskItem) stack.getItem()).getDiskId(stack));
+    }
+
+    @Override
+    public Optional<StorageChannelType<?>> getStorageChannelType(int slot) {
+        return validateAndGetStack(slot).flatMap(stack -> ((StorageDiskItem) stack.getItem()).getType(stack));
+    }
+
+    private Optional<ItemStack> validateAndGetStack(int slot) {
         ItemStack stack = getInvStack(slot);
         if (stack.isEmpty() || !(stack.getItem() instanceof StorageDiskItem)) {
             return Optional.empty();
         }
-
-        return StorageDiskItem.getId(stack);
+        return Optional.of(stack);
     }
 }

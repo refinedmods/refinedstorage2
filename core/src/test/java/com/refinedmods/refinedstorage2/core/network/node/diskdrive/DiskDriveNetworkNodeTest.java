@@ -5,9 +5,13 @@ import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.NetworkUtil;
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.core.network.node.container.FakeNetworkNodeContainer;
+import com.refinedmods.refinedstorage2.core.stack.Rs2Stack;
 import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
+import com.refinedmods.refinedstorage2.core.storage.Storage;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
@@ -27,6 +31,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.verification.VerificationMode;
 
+import static com.refinedmods.refinedstorage2.core.network.NetworkUtil.STORAGE_CHANNEL_TYPE_REGISTRY;
 import static com.refinedmods.refinedstorage2.core.network.NetworkUtil.itemStorageChannelOf;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
@@ -46,6 +51,8 @@ class DiskDriveNetworkNodeTest {
     private FakeStorageDiskProviderManager storageDiskProviderManager;
     private DiskDriveListener diskDriveListener;
 
+    // TODO: Test with additional storage channel types
+
     @BeforeEach
     void setUp() {
         diskDriveListener = mock(DiskDriveListener.class);
@@ -57,7 +64,7 @@ class DiskDriveNetworkNodeTest {
     }
 
     private FakeNetworkNodeContainer<DiskDriveNetworkNode> createDiskDriveContainer(Network network, FakeStorageDiskProviderManager storageDiskProviderManager, DiskDriveListener diskDriveListener) {
-        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(Position.ORIGIN, storageDiskProviderManager, BASE_USAGE, USAGE_PER_DISK, diskDriveListener);
+        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(Position.ORIGIN, storageDiskProviderManager, BASE_USAGE, USAGE_PER_DISK, diskDriveListener, STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(network);
 
         FakeNetworkNodeContainer<DiskDriveNetworkNode> container = FakeNetworkNodeContainer.createForFakeWorld(diskDrive);
@@ -65,6 +72,14 @@ class DiskDriveNetworkNodeTest {
         network.addContainer(container);
 
         return container;
+    }
+
+    private <T extends Rs2Stack> Storage<T> storageOf(DiskDriveNetworkNode diskDrive, StorageChannelType<T> type) {
+        return diskDrive.getStorageForChannel(type).get();
+    }
+
+    private Storage<Rs2ItemStack> storageOf(DiskDriveNetworkNode diskDrive) {
+        return storageOf(diskDrive, StorageChannelTypes.ITEM);
     }
 
     @Test
@@ -79,8 +94,8 @@ class DiskDriveNetworkNodeTest {
 
         // Assert
         assertThat(diskDrive.getEnergyUsage()).isEqualTo(BASE_USAGE);
-        assertThat(diskDrive.getStacks()).isEmpty();
-        assertThat(diskDrive.getStored()).isZero();
+        assertThat(storageOf(diskDrive).getStacks()).isEmpty();
+        assertThat(storageOf(diskDrive).getStored()).isZero();
         assertThat(states.getStates())
                 .hasSize(DiskDriveNetworkNode.DISK_COUNT)
                 .allMatch(state -> state == DiskState.NONE);
@@ -99,9 +114,9 @@ class DiskDriveNetworkNodeTest {
 
         // Assert
         assertThat(diskDrive.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_DISK);
-        assertItemStackListContents(diskDrive.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 5));
+        assertItemStackListContents(storageOf(diskDrive).getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 5));
         assertItemStackListContents(itemStorageChannelOf(network).getStacks());
-        assertThat(diskDrive.getStored()).isEqualTo(5L);
+        assertThat(storageOf(diskDrive).getStored()).isEqualTo(5L);
     }
 
     @ParameterizedTest
@@ -157,9 +172,30 @@ class DiskDriveNetworkNodeTest {
 
         // Assert
         assertThat(diskDrive.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_DISK);
-        assertItemStackListContents(diskDrive.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 5));
+        assertItemStackListContents(storageOf(diskDrive).getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 5));
         assertItemStackListContents(itemStorageChannelOf(network).getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 5));
-        assertThat(diskDrive.getStored()).isEqualTo(5L);
+        assertThat(storageOf(diskDrive).getStored()).isEqualTo(5L);
+    }
+
+    @Test
+    void Test_changing_disk_in_slot() {
+        // Arrange
+        ItemDiskStorage disk = new ItemDiskStorage(10);
+        disk.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
+        storageDiskProviderManager.setDiskInSlot(7, disk);
+        diskDrive.initialize(storageDiskProviderManager);
+
+        // Act
+        ItemDiskStorage disk2 = new ItemDiskStorage(10);
+        disk2.insert(new Rs2ItemStack(ItemStubs.GLASS), 2, Action.EXECUTE);
+        storageDiskProviderManager.setDiskInSlot(7, disk2);
+        diskDrive.onDiskChanged(7);
+
+        // Assert
+        assertThat(diskDrive.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_DISK);
+        assertItemStackListContents(storageOf(diskDrive).getStacks(), new Rs2ItemStack(ItemStubs.GLASS, 2));
+        assertItemStackListContents(itemStorageChannelOf(network).getStacks(), new Rs2ItemStack(ItemStubs.GLASS, 2));
+        assertThat(storageOf(diskDrive).getStored()).isEqualTo(2L);
     }
 
     @Test
@@ -179,9 +215,9 @@ class DiskDriveNetworkNodeTest {
 
         // Assert
         assertThat(diskDrive.getEnergyUsage()).isEqualTo(BASE_USAGE);
-        assertItemStackListContents(diskDrive.getStacks());
+        assertItemStackListContents(storageOf(diskDrive).getStacks());
         assertItemStackListContents(itemStorageChannelOf(network).getStacks());
-        assertThat(diskDrive.getStored()).isZero();
+        assertThat(storageOf(diskDrive).getStored()).isZero();
     }
 
     @Test
@@ -211,14 +247,14 @@ class DiskDriveNetworkNodeTest {
         diskDrive.onDiskChanged(1);
 
         // Act
-        Collection<Rs2ItemStack> stacks = diskDrive.getStacks();
+        Collection<Rs2ItemStack> stacks = storageOf(diskDrive).getStacks();
         Collection<Rs2ItemStack> stacksInNetwork = itemStorageChannelOf(network).getStacks();
         long storedInNetwork = itemStorageChannelOf(network).getStored();
 
         // Assert
         assertItemStackListContents(stacks, new Rs2ItemStack(ItemStubs.DIRT, 50), new Rs2ItemStack(ItemStubs.GLASS, 50));
         assertItemStackListContents(stacksInNetwork, new Rs2ItemStack(ItemStubs.DIRT, 50), new Rs2ItemStack(ItemStubs.GLASS, 50));
-        assertThat(diskDrive.getStored()).isEqualTo(100);
+        assertThat(storageOf(diskDrive).getStored()).isEqualTo(100);
         assertThat(storedInNetwork).isEqualTo(100);
     }
 
@@ -236,14 +272,14 @@ class DiskDriveNetworkNodeTest {
         diskDrive.onDiskChanged(1);
 
         // Act
-        Collection<Rs2ItemStack> stacks = diskDrive.getStacks();
+        Collection<Rs2ItemStack> stacks = storageOf(diskDrive).getStacks();
         Collection<Rs2ItemStack> stacksInNetwork = itemStorageChannelOf(network).getStacks();
         long storedInNetwork = itemStorageChannelOf(network).getStored();
 
         // Assert
         assertItemStackListContents(stacks);
         assertItemStackListContents(stacksInNetwork);
-        assertThat(diskDrive.getStored()).isEqualTo(100L);
+        assertThat(storageOf(diskDrive).getStored()).isEqualTo(100L);
         assertThat(storedInNetwork).isEqualTo(100L);
     }
 
@@ -277,7 +313,7 @@ class DiskDriveNetworkNodeTest {
         assertItemStackListContents(storageDisk3.getStacks(), new Rs2ItemStack(ItemStubs.GLASS, 100));
         assertItemStackListContents(itemStorageChannelOf(network).getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 160), new Rs2ItemStack(ItemStubs.GLASS, 140));
 
-        assertThat(diskDrive.getStored()).isEqualTo(150 + 10 + 140);
+        assertThat(storageOf(diskDrive).getStored()).isEqualTo(150 + 10 + 140);
     }
 
     @Test
@@ -317,7 +353,7 @@ class DiskDriveNetworkNodeTest {
                 new Rs2ItemStack(ItemStubs.SPONGE, 10)
         );
 
-        assertThat(diskDrive.getStored()).isEqualTo(125);
+        assertThat(storageOf(diskDrive).getStored()).isEqualTo(125);
     }
 
     @Test
@@ -335,9 +371,9 @@ class DiskDriveNetworkNodeTest {
         // Act
         Rs2ItemStack glassWithTag = new Rs2ItemStack(ItemStubs.GLASS, 12, "myTag");
 
-        Optional<Rs2ItemStack> remainder1 = diskDrive.insert(new Rs2ItemStack(ItemStubs.GLASS), 12, Action.EXECUTE);
-        Optional<Rs2ItemStack> remainder2 = diskDrive.insert(glassWithTag, 12, Action.EXECUTE);
-        Optional<Rs2ItemStack> remainder3 = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder1 = storageOf(diskDrive).insert(new Rs2ItemStack(ItemStubs.GLASS), 12, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder2 = storageOf(diskDrive).insert(glassWithTag, 12, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder3 = storageOf(diskDrive).insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         // Assert
         assertThat(remainder1).isPresent();
@@ -361,7 +397,7 @@ class DiskDriveNetworkNodeTest {
         diskDrive.initialize(storageDiskProviderManager);
 
         // Act
-        Optional<Rs2ItemStack> remainder = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder = storageOf(diskDrive).insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
 
         // Assert
         switch (accessMode) {
@@ -387,7 +423,7 @@ class DiskDriveNetworkNodeTest {
         storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 20, Action.EXECUTE);
 
         // Act
-        Optional<Rs2ItemStack> extracted = diskDrive.extract(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
+        Optional<Rs2ItemStack> extracted = storageOf(diskDrive).extract(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
 
         // Assert
         switch (accessMode) {
@@ -409,7 +445,7 @@ class DiskDriveNetworkNodeTest {
         storageDiskProviderManager.setDiskInSlot(1, storageDisk);
 
         // Act
-        Optional<Rs2ItemStack> remainder = diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
+        Optional<Rs2ItemStack> remainder = storageOf(diskDrive).insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
 
         // Assert
         assertThat(remainder).isPresent();
@@ -429,7 +465,7 @@ class DiskDriveNetworkNodeTest {
         storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 20, Action.EXECUTE);
 
         // Act
-        Optional<Rs2ItemStack> extracted = diskDrive.extract(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
+        Optional<Rs2ItemStack> extracted = storageOf(diskDrive).extract(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
 
         // Assert
         assertThat(extracted).isEmpty();
@@ -490,7 +526,7 @@ class DiskDriveNetworkNodeTest {
         StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk);
         diskDrive.initialize(storageDiskProviderManager);
-        diskDrive.insert(new Rs2ItemStack(ItemStubs.DIRT), 74, Action.EXECUTE);
+        storageOf(diskDrive).insert(new Rs2ItemStack(ItemStubs.DIRT), 74, Action.EXECUTE);
 
         // Act
         itemStorageChannelOf(network).insert(new Rs2ItemStack(ItemStubs.DIRT), 1, action);
@@ -529,11 +565,11 @@ class DiskDriveNetworkNodeTest {
 
         // Assert
         if (oneHasPriority) {
-            assertThat(diskDrive.getStacks()).isNotEmpty();
-            assertThat(diskDrive2.getNode().getStacks()).isEmpty();
+            assertThat(storageOf(diskDrive).getStacks()).isNotEmpty();
+            assertThat(storageOf(diskDrive2.getNode()).getStacks()).isEmpty();
         } else {
-            assertThat(diskDrive.getStacks()).isEmpty();
-            assertThat(diskDrive2.getNode().getStacks()).isNotEmpty();
+            assertThat(storageOf(diskDrive).getStacks()).isEmpty();
+            assertThat(storageOf(diskDrive2.getNode()).getStacks()).isNotEmpty();
         }
     }
 }

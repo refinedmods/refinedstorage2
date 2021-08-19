@@ -3,11 +3,11 @@ package com.refinedmods.refinedstorage2.fabric.init;
 import com.refinedmods.refinedstorage2.fabric.FeatureFlag;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.item.CoreItem;
+import com.refinedmods.refinedstorage2.fabric.item.ItemStorageDiskItem;
 import com.refinedmods.refinedstorage2.fabric.item.ProcessorBindingItem;
 import com.refinedmods.refinedstorage2.fabric.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.fabric.item.QuartzEnrichedIronItem;
 import com.refinedmods.refinedstorage2.fabric.item.SiliconItem;
-import com.refinedmods.refinedstorage2.fabric.item.StorageDiskItem;
 import com.refinedmods.refinedstorage2.fabric.item.StorageHousingItem;
 import com.refinedmods.refinedstorage2.fabric.item.StoragePartItem;
 import com.refinedmods.refinedstorage2.fabric.item.block.ColoredBlockItem;
@@ -26,7 +26,7 @@ import net.minecraft.util.registry.Registry;
 public class Rs2Items {
     private static final String BLOCK_TRANSLATION_CATEGORY = "block";
 
-    private final Map<StorageDiskItem.ItemStorageType, StoragePartItem> storageParts = new EnumMap<>(StorageDiskItem.ItemStorageType.class);
+    private final Map<ItemStorageDiskItem.ItemStorageType, StoragePartItem> storageParts = new EnumMap<>(ItemStorageDiskItem.ItemStorageType.class);
     private final List<ControllerBlockItem> controllers = new ArrayList<>();
     private StorageHousingItem storageHousing;
 
@@ -60,14 +60,14 @@ public class Rs2Items {
             Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_processor"), new ProcessorItem(createSettings(itemGroup)));
         }
 
-        for (StorageDiskItem.ItemStorageType type : StorageDiskItem.ItemStorageType.values()) {
-            if (type != StorageDiskItem.ItemStorageType.CREATIVE) {
+        for (ItemStorageDiskItem.ItemStorageType type : ItemStorageDiskItem.ItemStorageType.values()) {
+            if (type != ItemStorageDiskItem.ItemStorageType.CREATIVE) {
                 storageParts.put(type, Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_storage_part"), new StoragePartItem(createSettings(itemGroup))));
             }
         }
 
-        for (StorageDiskItem.ItemStorageType type : StorageDiskItem.ItemStorageType.values()) {
-            Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_storage_disk"), new StorageDiskItem(createSettings(itemGroup).maxCount(1).fireproof(), type));
+        for (ItemStorageDiskItem.ItemStorageType type : ItemStorageDiskItem.ItemStorageType.values()) {
+            Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_storage_disk"), new ItemStorageDiskItem(createSettings(itemGroup).maxCount(1).fireproof(), type));
         }
 
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("construction_core"), new CoreItem(createSettings(itemGroup)));
@@ -86,7 +86,7 @@ public class Rs2Items {
         return storageHousing;
     }
 
-    public StoragePartItem getStoragePart(StorageDiskItem.ItemStorageType type) {
+    public StoragePartItem getStoragePart(ItemStorageDiskItem.ItemStorageType type) {
         return storageParts.get(type);
     }
 }
