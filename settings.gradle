@@ -8,6 +8,12 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+
 rootProject.name = 'refinedstorage2'
 include 'core'
 include 'fabric'

@@ -5,16 +5,9 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_16
 targetCompatibility = JavaVersion.VERSION_16
 
-group = 'com.refinedmods.refinedstorage2'
 archivesBaseName = 'refinedstorage2-fabric'
-version = '2.0.0-milestone.1.2'
-
-if (System.getenv('GITHUB_SHA') != null) {
-    version += '+' + System.getenv('GITHUB_SHA').substring(0, 7)
-}
 
 repositories {
-    mavenCentral()
     // Required for libblockattributes
     maven {
         name = 'BuildCraft'
@@ -35,35 +28,35 @@ repositories {
 }
 
 dependencies {
-    minecraft 'com.mojang:minecraft:1.17.1'
-    mappings 'net.fabricmc:yarn:1.17.1+build.14:v2'
-    modImplementation 'net.fabricmc:fabric-loader:0.11.6'
-    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.37.0+1.17'
+    minecraft "com.mojang:minecraft:${project.minecraftVersion}"
+    mappings "net.fabricmc:yarn:${project.yarnVersion}"
+    modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricApiVersion}"
 
     implementation project(':core')
     include project(':core')
 
-    modImplementation 'alexiil.mc.lib:libblockattributes-all:0.9.0'
-    include 'alexiil.mc.lib:libblockattributes-all:0.9.0'
+    modImplementation "alexiil.mc.lib:libblockattributes-all:${project.libBlockAttributesVersion}"
+    include "alexiil.mc.lib:libblockattributes-all:${project.libBlockAttributesVersion}"
 
-    modApi('me.sargunvohra.mcmods:autoconfig1u:3.3.1') {
+    modApi("me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig1uVersion}") {
         exclude(group: 'net.fabricmc.fabric-api')
     }
-    include 'me.sargunvohra.mcmods:autoconfig1u:3.3.1'
+    include "me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig1uVersion}"
 
-    modApi('me.shedaniel.cloth:cloth-config-fabric:5.0.38') {
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.clothConfigVersion}") {
         exclude(group: 'net.fabricmc.fabric-api')
     }
 
-    modApi('teamreborn:energy:0.1.1') {
+    modApi("teamreborn:energy:${project.energyVersion}") {
         exclude(group: 'net.fabricmc.fabric-api')
     }
-    include 'teamreborn:energy:0.1.1'
+    include "teamreborn:energy:${project.energyVersion}"
 
-    modCompileOnly 'me.shedaniel:RoughlyEnoughItems-api:6.0.267-alpha'
-    modRuntime 'me.shedaniel:RoughlyEnoughItems-fabric:6.0.267-alpha'
-    modImplementation 'com.terraformersmc:modmenu:2.0.4'
-    modImplementation 'vazkii.patchouli:Patchouli:1.17.1-55-FABRIC-SNAPSHOT'
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api:${project.reiVersion}"
+    modRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}"
+    modImplementation "com.terraformersmc:modmenu:${project.modMenuVersion}"
+    modImplementation "vazkii.patchouli:Patchouli:${project.patchouliVersion}"
 }
 
 loom {
