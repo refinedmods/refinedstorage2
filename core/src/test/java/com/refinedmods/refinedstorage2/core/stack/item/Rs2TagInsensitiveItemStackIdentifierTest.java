@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.stack.item;
 
-import com.refinedmods.refinedstorage2.core.Rs2Test;
+import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;

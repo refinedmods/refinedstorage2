@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import com.refinedmods.refinedstorage2.core.Rs2Test;
+import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;

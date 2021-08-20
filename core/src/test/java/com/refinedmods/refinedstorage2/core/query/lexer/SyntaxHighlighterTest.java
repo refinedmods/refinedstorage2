@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.query.lexer;
 
-import com.refinedmods.refinedstorage2.core.Rs2Test;
+import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Arrays;
 import java.util.Collections;

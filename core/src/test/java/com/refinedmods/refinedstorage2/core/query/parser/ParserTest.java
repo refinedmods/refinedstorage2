@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.core.query.parser;
 
-import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.query.lexer.TokenType;
 import com.refinedmods.refinedstorage2.core.query.parser.node.Node;
+import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.List;
 

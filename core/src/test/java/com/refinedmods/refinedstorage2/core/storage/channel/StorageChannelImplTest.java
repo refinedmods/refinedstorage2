@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.core.storage.channel;
 
-import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.list.listenable.StackListListener;
 import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
@@ -8,6 +7,7 @@ import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.composite.PrioritizedStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.util.Action;
+import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;
 

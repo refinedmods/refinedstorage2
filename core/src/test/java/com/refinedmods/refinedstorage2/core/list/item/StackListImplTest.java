@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.core.list.item;
 
-import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.StackListResult;
 import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.ArrayList;
 import java.util.Collection;

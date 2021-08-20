@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.core.network.node.container;
 
-import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.adapter.FakeRs2World;
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.NetworkUtil;
 import com.refinedmods.refinedstorage2.core.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.core.util.Position;
+import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.List;
 import java.util.Set;

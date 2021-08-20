@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import com.refinedmods.refinedstorage2.core.Rs2Test;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.core.list.item.StackListImpl;
 import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
@@ -8,6 +7,7 @@ import com.refinedmods.refinedstorage2.core.query.parser.ParserOperatorMappings;
 import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStackIdentifier;
+import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
 
