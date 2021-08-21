@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.util;
+package com.refinedmods.refinedstorage2.api.core;
 
 import java.util.List;
 

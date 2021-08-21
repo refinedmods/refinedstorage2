@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.screen.widget;
 
-import com.refinedmods.refinedstorage2.core.util.History;
+import com.refinedmods.refinedstorage2.api.core.History;
 import com.refinedmods.refinedstorage2.fabric.Rs2ClientMod;
 import com.refinedmods.refinedstorage2.fabric.mixin.TextFieldWidgetAccessor;
 import com.refinedmods.refinedstorage2.fabric.util.KeyBindingUtil;
