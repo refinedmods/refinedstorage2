@@ -1,11 +1,7 @@
 plugins {
-    id 'java'
     id 'jacoco'
     id 'info.solidsoft.pitest' version '1.5.1'
 }
-
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = 'refinedstorage2-core'
 
@@ -28,11 +24,6 @@ dependencies {
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
-}
-
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = 'UTF-8'
-    it.options.release = 16
 }
 
 jacocoTestReport {

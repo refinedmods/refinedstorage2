@@ -2,9 +2,6 @@ plugins {
     id 'fabric-loom' version '0.8-SNAPSHOT'
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
-
 archivesBaseName = 'refinedstorage2-fabric'
 
 repositories {
@@ -86,11 +83,6 @@ processResources {
     filesMatching('data/refinedstorage2/patchouli_books/book/book.json') {
         expand 'version': project.version
     }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = 'UTF-8'
-    it.options.release = 16
 }
 
 java {
