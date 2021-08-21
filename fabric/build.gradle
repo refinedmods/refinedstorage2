@@ -36,6 +36,9 @@ dependencies {
     implementation project(':core')
     include project(':core')
 
+    implementation project(':refinedstorage2-core-api')
+    include project(':refinedstorage2-core-api')
+
     modImplementation "alexiil.mc.lib:libblockattributes-all:${project.libBlockAttributesVersion}"
     include "alexiil.mc.lib:libblockattributes-all:${project.libBlockAttributesVersion}"
 

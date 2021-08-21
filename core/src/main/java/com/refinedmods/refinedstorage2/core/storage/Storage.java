@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.storage;
 
-import com.refinedmods.refinedstorage2.core.util.Action;
+import com.refinedmods.refinedstorage2.api.core.Action;
 
 import java.util.Collection;
 import java.util.Optional;

@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.core.network.node;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.component.EnergyNetworkComponent;
-import com.refinedmods.refinedstorage2.core.util.Action;
-import com.refinedmods.refinedstorage2.core.util.Position;
 
 public abstract class NetworkNodeImpl implements NetworkNode {
     protected Rs2World world;

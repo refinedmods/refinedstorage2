@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.core.network.node.relay;
 
+import com.refinedmods.refinedstorage2.api.core.Direction;
+import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
-import com.refinedmods.refinedstorage2.core.util.Direction;
-import com.refinedmods.refinedstorage2.core.util.Position;
 
 public class RelayNetworkNode extends NetworkNodeImpl {
     private final Direction direction;

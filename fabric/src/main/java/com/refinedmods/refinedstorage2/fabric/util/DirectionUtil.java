@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.util;
 
-import com.refinedmods.refinedstorage2.core.util.Direction;
+import com.refinedmods.refinedstorage2.api.core.Direction;
 
 public class DirectionUtil {
     private DirectionUtil() {

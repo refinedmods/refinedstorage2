@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.core.storage.disk;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.util.Action;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;

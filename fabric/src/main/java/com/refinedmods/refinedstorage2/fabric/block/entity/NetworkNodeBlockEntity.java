@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity;
 
+import com.refinedmods.refinedstorage2.api.core.Direction;
+import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
@@ -7,8 +9,6 @@ import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerImpl;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerRepository;
-import com.refinedmods.refinedstorage2.core.util.Direction;
-import com.refinedmods.refinedstorage2.core.util.Position;
 import com.refinedmods.refinedstorage2.fabric.api.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.fabric.block.NetworkNodeBlock;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;

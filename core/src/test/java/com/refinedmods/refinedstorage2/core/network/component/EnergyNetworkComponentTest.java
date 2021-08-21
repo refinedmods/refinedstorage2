@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.core.network.component;
 
+import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.core.network.node.container.FakeNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
-import com.refinedmods.refinedstorage2.core.util.Position;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;

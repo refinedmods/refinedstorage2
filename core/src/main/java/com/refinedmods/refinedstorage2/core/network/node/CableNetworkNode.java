@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.network.node;
 
-import com.refinedmods.refinedstorage2.core.util.Position;
+import com.refinedmods.refinedstorage2.api.core.Position;
 
 public class CableNetworkNode extends NetworkNodeImpl {
     private final long energyUsage;

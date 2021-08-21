@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
+import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.core.grid.GridInsertMode;
 import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
@@ -8,7 +9,6 @@ import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.core.query.lexer.SyntaxHighlighter;
 import com.refinedmods.refinedstorage2.core.query.lexer.SyntaxHighlighterColors;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.api.grid.FabricItemGridStack;
@@ -294,7 +294,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         } else {
             List<OrderedText> lines = Lists.transform(getTooltipFromItem(stack.getMcStack()), Text::asOrderedText);
             List<OrderedText> smallLines = new ArrayList<>();
-            smallLines.add(Rs2Mod.createTranslation("misc", "total", stack.isZeroed() ? "0" : Quantities.format(stack.getAmount())).formatted(Formatting.GRAY).asOrderedText());
+            smallLines.add(Rs2Mod.createTranslation("misc", "total", stack.isZeroed() ? "0" : QuantityFormatter.format(stack.getAmount())).formatted(Formatting.GRAY).asOrderedText());
 
             view.getTrackerEntry(stack.getStack()).ifPresent(entry -> smallLines.add(LastModifiedUtil.getText(entry.getTime(), entry.getName()).formatted(Formatting.GRAY).asOrderedText()));
 

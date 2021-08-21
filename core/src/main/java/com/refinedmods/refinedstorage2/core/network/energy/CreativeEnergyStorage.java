@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.network.energy;
 
-import com.refinedmods.refinedstorage2.core.util.Action;
+import com.refinedmods.refinedstorage2.api.core.Action;
 
 public class CreativeEnergyStorage implements EnergyStorage {
     @Override

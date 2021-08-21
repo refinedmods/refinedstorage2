@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.core.adapter;
 
+import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.core.Rs2World;
-import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,13 +1,13 @@
 package com.refinedmods.refinedstorage2.core.network.node.container;
 
+import com.refinedmods.refinedstorage2.api.core.Direction;
+import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.Network;
 import com.refinedmods.refinedstorage2.core.network.NetworkImpl;
 import com.refinedmods.refinedstorage2.core.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
-import com.refinedmods.refinedstorage2.core.util.Direction;
-import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.ArrayList;
 import java.util.Collections;

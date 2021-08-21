@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.screen;
 
-import com.refinedmods.refinedstorage2.core.util.Quantities;
+import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.AccessModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ExactModeSideButtonWidget;
@@ -60,12 +60,12 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
         long stored = getScreenHandler().getStored();
 
         if (handler.hasInfiniteDisk()) {
-            tooltip.add(Rs2Mod.createTranslation("misc", "stored", Quantities.format(stored)));
+            tooltip.add(Rs2Mod.createTranslation("misc", "stored", QuantityFormatter.format(stored)));
         } else {
             long capacity = getScreenHandler().getCapacity();
             double progress = getScreenHandler().getProgress();
 
-            tooltip.add(Rs2Mod.createTranslation("misc", "stored_with_capacity", Quantities.format(stored), Quantities.format(capacity)));
+            tooltip.add(Rs2Mod.createTranslation("misc", "stored_with_capacity", QuantityFormatter.format(stored), QuantityFormatter.format(capacity)));
             tooltip.add(Rs2Mod.createTranslation("misc", "full", (int) (progress * 100D)).formatted(Formatting.GRAY));
         }
 

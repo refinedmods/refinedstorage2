@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.item.block;
 
-import com.refinedmods.refinedstorage2.core.util.Action;
-import com.refinedmods.refinedstorage2.core.util.Quantities;
+import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.ControllerBlockEntity;
 
@@ -37,8 +37,8 @@ public class ControllerBlockItem extends ColoredBlockItem {
             tooltip.add(Rs2Mod.createTranslation(
                     "misc",
                     "stored_with_capacity",
-                    Quantities.format(getStored(stack)),
-                    Quantities.format(cap)
+                    QuantityFormatter.format(getStored(stack)),
+                    QuantityFormatter.format(cap)
             ).formatted(Formatting.GRAY));
         }
     }

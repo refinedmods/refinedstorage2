@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.util;
 
-import com.refinedmods.refinedstorage2.core.util.Position;
+import com.refinedmods.refinedstorage2.api.core.Position;
 
 import net.minecraft.util.math.BlockPos;
 

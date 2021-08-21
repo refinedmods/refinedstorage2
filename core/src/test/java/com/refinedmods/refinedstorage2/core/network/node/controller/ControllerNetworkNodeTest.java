@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.core.network.node.controller;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.core.adapter.FakeRs2World;
 import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
-import com.refinedmods.refinedstorage2.core.util.Action;
-import com.refinedmods.refinedstorage2.core.util.Position;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.stream.Stream;

@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.core.network.node.controller;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.core.network.energy.CreativeEnergyStorage;
 import com.refinedmods.refinedstorage2.core.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.core.network.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
-import com.refinedmods.refinedstorage2.core.util.Action;
-import com.refinedmods.refinedstorage2.core.util.Position;
 
 public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStorage {
     private final EnergyStorage energyStorage;

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.core.network.node.container;
 
+import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNode;
-import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.HashMap;
 import java.util.Map;

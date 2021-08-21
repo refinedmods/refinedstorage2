@@ -1,14 +1,14 @@
-package com.refinedmods.refinedstorage2.core.util;
+package com.refinedmods.refinedstorage2.api.core;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-public class Quantities {
+public class QuantityFormatter {
     private static final DecimalFormat FORMATTER_WITH_UNITS = new DecimalFormat("####0.#", DecimalFormatSymbols.getInstance(Locale.US));
     private static final DecimalFormat FORMATTER = new DecimalFormat("#,###", DecimalFormatSymbols.getInstance(Locale.US));
 
-    private Quantities() {
+    private QuantityFormatter() {
     }
 
     public static String formatWithUnits(long qty) {

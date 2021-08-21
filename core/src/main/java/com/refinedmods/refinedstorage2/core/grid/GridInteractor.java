@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.Source;
-import com.refinedmods.refinedstorage2.core.util.Action;
 
 public interface GridInteractor extends Source {
     Rs2ItemStack getCursorStack();

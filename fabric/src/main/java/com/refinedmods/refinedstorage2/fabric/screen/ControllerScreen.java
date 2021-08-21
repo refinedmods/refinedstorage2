@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.screen;
 
-import com.refinedmods.refinedstorage2.core.util.Quantities;
+import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.ProgressWidget;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.RedstoneModeSideButtonWidget;
@@ -50,8 +50,8 @@ public class ControllerScreen extends BaseScreen<ControllerScreenHandler> {
         return Collections.singletonList(Rs2Mod.createTranslation(
                 "misc",
                 "stored_with_capacity",
-                Quantities.format(getScreenHandler().getStored()),
-                Quantities.format(getScreenHandler().getCapacity())
+                QuantityFormatter.format(getScreenHandler().getStored()),
+                QuantityFormatter.format(getScreenHandler().getCapacity())
         ));
     }
 

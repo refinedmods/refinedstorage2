@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.item;
 
+import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
-import com.refinedmods.refinedstorage2.core.util.Quantities;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.fabric.api.storage.disk.StorageDiskItem;
@@ -57,9 +57,9 @@ public abstract class AbstractStorageDiskItem extends Item implements StorageDis
 
         getInfo(world, stack).ifPresent(info -> {
             if (info.getCapacity() == -1) {
-                tooltip.add(Rs2Mod.createTranslation("misc", "stored", Quantities.formatWithUnits(info.getStored())).formatted(Formatting.GRAY));
+                tooltip.add(Rs2Mod.createTranslation("misc", "stored", QuantityFormatter.formatWithUnits(info.getStored())).formatted(Formatting.GRAY));
             } else {
-                tooltip.add(Rs2Mod.createTranslation("misc", "stored_with_capacity", Quantities.formatWithUnits(info.getStored()), Quantities.formatWithUnits(info.getCapacity())).formatted(Formatting.GRAY));
+                tooltip.add(Rs2Mod.createTranslation("misc", "stored_with_capacity", QuantityFormatter.formatWithUnits(info.getStored()), QuantityFormatter.formatWithUnits(info.getCapacity())).formatted(Formatting.GRAY));
             }
         });
 

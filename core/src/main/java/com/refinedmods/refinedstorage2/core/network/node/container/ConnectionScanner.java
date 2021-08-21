@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.network.node.container;
 
-import com.refinedmods.refinedstorage2.core.util.Position;
+import com.refinedmods.refinedstorage2.api.core.Position;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;

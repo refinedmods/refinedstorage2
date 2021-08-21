@@ -1,12 +1,12 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.core.stack.Rs2Stack;
 import com.refinedmods.refinedstorage2.core.storage.AccessMode;
 import com.refinedmods.refinedstorage2.core.storage.ProxyStorage;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.core.storage.composite.Priority;
-import com.refinedmods.refinedstorage2.core.util.Action;
 
 import java.util.Collection;
 import java.util.Collections;

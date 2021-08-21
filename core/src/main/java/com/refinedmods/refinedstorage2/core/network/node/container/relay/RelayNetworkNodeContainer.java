@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.core.network.node.container.relay;
 
+import com.refinedmods.refinedstorage2.api.core.Direction;
+import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerImpl;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerRepository;
 import com.refinedmods.refinedstorage2.core.network.node.relay.RelayNetworkNode;
-import com.refinedmods.refinedstorage2.core.util.Direction;
-import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.ArrayList;
 import java.util.List;

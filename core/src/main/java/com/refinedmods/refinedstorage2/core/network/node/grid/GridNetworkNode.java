@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.core.network.node.grid;
 
+import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.core.grid.GridSize;
@@ -11,7 +12,6 @@ import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
-import com.refinedmods.refinedstorage2.core.util.Position;
 
 import java.util.HashSet;
 import java.util.Optional;

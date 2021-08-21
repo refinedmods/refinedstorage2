@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.network.energy;
 
-import com.refinedmods.refinedstorage2.core.util.Action;
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;

@@ -1,12 +1,12 @@
 package com.refinedmods.refinedstorage2.core.storage.composite;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.core.list.StackList;
 import com.refinedmods.refinedstorage2.core.list.item.StackListImpl;
 import com.refinedmods.refinedstorage2.core.stack.Rs2Stack;
 import com.refinedmods.refinedstorage2.core.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
-import com.refinedmods.refinedstorage2.core.util.Action;
 
 import java.util.Collection;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.util;
+package com.refinedmods.refinedstorage2.api.core;
 
 public enum Direction {
     DOWN(new Position(0, -1, 0), 1),

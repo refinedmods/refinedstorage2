@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.core.graph;
 
+import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.core.Rs2World;
-import com.refinedmods.refinedstorage2.core.util.Position;
 
 public class FakeRequest {
     private final Rs2World world;
