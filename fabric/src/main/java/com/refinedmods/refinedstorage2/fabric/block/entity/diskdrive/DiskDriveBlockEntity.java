@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
+import com.refinedmods.refinedstorage2.api.stack.filter.FilterMode;
 import com.refinedmods.refinedstorage2.core.Rs2CoreApiFacade;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
@@ -10,7 +11,6 @@ import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.storage.StorageSource;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
-import com.refinedmods.refinedstorage2.core.util.FilterMode;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.api.Rs2PlatformApiFacade;

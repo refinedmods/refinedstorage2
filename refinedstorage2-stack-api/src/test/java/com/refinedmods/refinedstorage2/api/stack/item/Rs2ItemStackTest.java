@@ -1,7 +1,5 @@
-package com.refinedmods.refinedstorage2.api.stack;
+package com.refinedmods.refinedstorage2.api.stack.item;
 
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2Item;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.stack.test.ItemStub;
 import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
 import com.refinedmods.refinedstorage2.test.Rs2Test;

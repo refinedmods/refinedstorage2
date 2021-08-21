@@ -1,6 +1,5 @@
-package com.refinedmods.refinedstorage2.api.stack;
+package com.refinedmods.refinedstorage2.api.stack.item;
 
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;

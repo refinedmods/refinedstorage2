@@ -2,6 +2,9 @@ package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
+import com.refinedmods.refinedstorage2.api.stack.filter.Filter;
+import com.refinedmods.refinedstorage2.api.stack.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.stack.filter.ItemFilter;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
@@ -13,9 +16,6 @@ import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypeRe
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskManager;
-import com.refinedmods.refinedstorage2.core.util.Filter;
-import com.refinedmods.refinedstorage2.core.util.FilterMode;
-import com.refinedmods.refinedstorage2.core.util.ItemFilter;
 
 import java.util.ArrayList;
 import java.util.Arrays;

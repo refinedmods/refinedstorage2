@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
+import com.refinedmods.refinedstorage2.api.stack.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
 import com.refinedmods.refinedstorage2.core.network.Network;
@@ -16,7 +17,6 @@ import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
-import com.refinedmods.refinedstorage2.core.util.FilterMode;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Arrays;

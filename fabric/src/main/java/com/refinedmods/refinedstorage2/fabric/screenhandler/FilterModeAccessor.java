@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.screenhandler;
 
-import com.refinedmods.refinedstorage2.core.util.FilterMode;
+import com.refinedmods.refinedstorage2.api.stack.filter.FilterMode;
 
 public interface FilterModeAccessor {
     FilterMode getFilterMode();

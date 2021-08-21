@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.stack.filter.Filter;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.core.util.Filter;
 
 import java.util.Optional;
 

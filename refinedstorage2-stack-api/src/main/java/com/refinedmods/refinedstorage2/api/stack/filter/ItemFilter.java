@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.util;
+package com.refinedmods.refinedstorage2.api.stack.filter;
 
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2TagInsensitiveItemStackIdentifier;

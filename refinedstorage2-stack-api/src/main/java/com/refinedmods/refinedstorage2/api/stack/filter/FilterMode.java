@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.core.util;
+package com.refinedmods.refinedstorage2.api.stack.filter;
 
 public enum FilterMode {
     ALLOW,
