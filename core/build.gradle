@@ -1,5 +1,4 @@
 plugins {
-    id 'jacoco'
     id 'info.solidsoft.pitest' version '1.5.1'
 }
 
@@ -23,11 +22,6 @@ dependencies {
 
 test {
     useJUnitPlatform()
-    finalizedBy jacocoTestReport
-}
-
-jacocoTestReport {
-    dependsOn test
 }
 
 pitest {
