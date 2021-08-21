@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.core.storage.channel;
 
-import com.refinedmods.refinedstorage2.core.list.item.StackListImpl;
-import com.refinedmods.refinedstorage2.core.stack.fluid.Rs2FluidStack;
-import com.refinedmods.refinedstorage2.core.stack.fluid.Rs2FluidStackIdentifier;
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStackIdentifier;
+import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
+import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStackIdentifier;
+import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStackIdentifier;
+import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.storage.composite.CompositeStorage;
 

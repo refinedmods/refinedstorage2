@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.util;
 
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2Item;
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.item.Rs2Item;
+import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
 
 import java.util.Optional;

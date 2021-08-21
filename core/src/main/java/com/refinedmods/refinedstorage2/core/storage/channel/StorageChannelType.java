@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.storage.channel;
 
-import com.refinedmods.refinedstorage2.core.stack.Rs2Stack;
+import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
 import com.refinedmods.refinedstorage2.core.storage.Storage;
 import com.refinedmods.refinedstorage2.core.storage.composite.CompositeStorage;
 

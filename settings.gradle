@@ -19,4 +19,6 @@ include 'core'
 include 'fabric'
 include 'refinedstorage2-test'
 include 'refinedstorage2-core-api'
+include 'refinedstorage2-stack-api'
+include 'refinedstorage2-stack-api-test'
 

@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.core.storage.disk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.core.list.StackList;
-import com.refinedmods.refinedstorage2.core.list.item.StackListImpl;
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.list.StackList;
+import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
 
 import java.util.Collection;
 import java.util.Optional;

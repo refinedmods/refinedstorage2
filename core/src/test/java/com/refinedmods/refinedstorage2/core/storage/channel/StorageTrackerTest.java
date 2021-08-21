@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.core.storage.channel;
 
-import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStackIdentifier;
+import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStackIdentifier;
+import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;

@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import com.refinedmods.refinedstorage2.core.list.item.StackListImpl;
-import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStackIdentifier;
+import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStackIdentifier;
+import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
+import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
 import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertOrderedItemGridStackListContents;
+import static com.refinedmods.refinedstorage2.core.grid.GridTestUtil.assertOrderedItemGridStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;

@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.core.storage.composite;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.core.list.item.StackListImpl;
-import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
+import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
 import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStack;
-import static com.refinedmods.refinedstorage2.core.util.ItemStackAssertions.assertItemStackListContents;
+import static com.refinedmods.refinedstorage2.api.stack.test.ItemStackAssertions.assertItemStack;
+import static com.refinedmods.refinedstorage2.api.stack.test.ItemStackAssertions.assertItemStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test

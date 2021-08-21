@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.core.util;
 
-import com.refinedmods.refinedstorage2.core.stack.item.ItemStubs;
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.ArrayList;

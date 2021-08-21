@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.util;
 
-import com.refinedmods.refinedstorage2.core.list.StackList;
+import com.refinedmods.refinedstorage2.api.stack.list.StackList;
 
 import java.util.List;
 
@@ -32,14 +32,10 @@ public abstract class Filter<T> {
     }
 
     public boolean isAllowed(T template) {
-        switch (mode) {
-            case ALLOW:
-                return list.get(template).isPresent();
-            case BLOCK:
-                return !list.get(template).isPresent();
-            default:
-                return false;
-        }
+        return switch (mode) {
+            case ALLOW -> list.get(template).isPresent();
+            case BLOCK -> list.get(template).isEmpty();
+        };
     }
 
     public void setTemplates(List<T> templates) {

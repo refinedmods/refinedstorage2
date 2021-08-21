@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+archivesBaseName = 'refinedstorage2-stack-api-test'
+
+dependencies {
+    testImplementation project(':refinedstorage2-test')
+    implementation "org.junit.jupiter:junit-jupiter-api:${project.junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
+    implementation "org.assertj:assertj-core:${project.assertJVersion}"
+    implementation project(':refinedstorage2-stack-api')
+}
+
+test {
+    useJUnitPlatform()
+}

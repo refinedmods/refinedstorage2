@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.core.util;
 
-import com.refinedmods.refinedstorage2.core.list.StackList;
-import com.refinedmods.refinedstorage2.core.list.item.StackListImpl;
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.stack.item.Rs2TagInsensitiveItemStackIdentifier;
+import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.item.Rs2TagInsensitiveItemStackIdentifier;
+import com.refinedmods.refinedstorage2.api.stack.list.StackList;
+import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
 
 public class ItemFilter extends Filter<Rs2ItemStack> {
     @Override
