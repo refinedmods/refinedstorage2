@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = 'refinedstorage2'
-include 'fabric'
+include 'refinedstorage2-platform-fabric'
 include 'refinedstorage2-test'
 include 'refinedstorage2-core-api'
 include 'refinedstorage2-stack-api'

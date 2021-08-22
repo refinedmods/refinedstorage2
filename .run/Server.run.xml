@@ -3,7 +3,7 @@
         <option name="ALTERNATIVE_JRE_PATH" value="16"/>
         <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true"/>
         <option name="MAIN_CLASS_NAME" value="net.fabricmc.devlaunchinjector.Main"/>
-        <module name="refinedstorage2.fabric.main"/>
+        <module name="refinedstorage2.refinedstorage2-platform-fabric.main"/>
         <option name="VM_PARAMETERS"
                 value="-Dfabric.dli.config=$PROJECT_DIR$/../refinedstorage2\fabric\.gradle\loom-cache\launch.cfg -Dfabric.dli.env=server -Dfabric.dli.main=net.fabricmc.loader.launch.knot.KnotServer"/>
         <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run-server"/>
