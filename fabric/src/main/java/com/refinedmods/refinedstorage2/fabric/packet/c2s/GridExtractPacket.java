@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.packet.c2s;
 
+import com.refinedmods.refinedstorage2.api.grid.GridEventHandler;
+import com.refinedmods.refinedstorage2.api.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
-import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
 import com.refinedmods.refinedstorage2.fabric.util.PacketUtil;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

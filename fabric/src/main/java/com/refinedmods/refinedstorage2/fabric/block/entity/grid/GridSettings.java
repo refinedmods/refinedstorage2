@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.grid;
 
-import com.refinedmods.refinedstorage2.core.grid.GridSize;
-import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
-import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
+import com.refinedmods.refinedstorage2.api.grid.GridSize;
+import com.refinedmods.refinedstorage2.api.grid.GridSortingDirection;
+import com.refinedmods.refinedstorage2.api.grid.GridSortingType;
 
 public class GridSettings {
     private static final int SORTING_ASCENDING = 0;

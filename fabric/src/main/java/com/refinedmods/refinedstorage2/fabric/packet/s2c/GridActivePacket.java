@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
+import com.refinedmods.refinedstorage2.api.grid.GridEventHandler;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

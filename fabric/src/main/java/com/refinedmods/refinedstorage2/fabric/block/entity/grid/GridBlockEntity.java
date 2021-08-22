@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity.grid;
 
-import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
-import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
-import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeRegistry;
-import com.refinedmods.refinedstorage2.core.grid.GridSize;
-import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
-import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
+import com.refinedmods.refinedstorage2.api.grid.GridEventHandler;
+import com.refinedmods.refinedstorage2.api.grid.GridSearchBoxMode;
+import com.refinedmods.refinedstorage2.api.grid.GridSearchBoxModeRegistry;
+import com.refinedmods.refinedstorage2.api.grid.GridSize;
+import com.refinedmods.refinedstorage2.api.grid.GridSortingDirection;
+import com.refinedmods.refinedstorage2.api.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.core.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
-import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
-import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeRegistry;
+import com.refinedmods.refinedstorage2.api.grid.GridSearchBoxMode;
+import com.refinedmods.refinedstorage2.api.grid.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SideButtonWidget;

@@ -1,12 +1,12 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
+import com.refinedmods.refinedstorage2.api.grid.GridExtractMode;
+import com.refinedmods.refinedstorage2.api.grid.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.api.grid.GridStack;
+import com.refinedmods.refinedstorage2.api.grid.GridView;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.grid.GridExtractMode;
-import com.refinedmods.refinedstorage2.core.grid.GridInsertMode;
-import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.core.grid.GridStack;
-import com.refinedmods.refinedstorage2.core.grid.GridView;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.api.grid.FabricItemGridStack;

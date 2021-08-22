@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.api.grid.query;
 
+import com.refinedmods.refinedstorage2.api.grid.GridStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.fabric.api.grid.FabricItemGridStack;
 import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 

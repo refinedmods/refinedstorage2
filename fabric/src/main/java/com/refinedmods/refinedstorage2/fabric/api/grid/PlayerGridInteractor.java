@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.api.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.grid.GridInteractor;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.grid.GridInteractor;
 import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 
 import alexiil.mc.lib.attributes.Simulation;

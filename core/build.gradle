@@ -20,6 +20,7 @@ dependencies {
     implementation project(':refinedstorage2-stack-api')
     implementation project(':refinedstorage2-storage-api')
     implementation project(':refinedstorage2-query-parser')
+    implementation project(':refinedstorage2-grid-api')
 }
 
 test {

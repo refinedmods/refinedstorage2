@@ -1,25 +1,21 @@
 package com.refinedmods.refinedstorage2.core.network.node.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Position;
+import com.refinedmods.refinedstorage2.api.grid.*;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
-import com.refinedmods.refinedstorage2.core.grid.GridEventHandler;
-import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxMode;
-import com.refinedmods.refinedstorage2.core.grid.GridSize;
-import com.refinedmods.refinedstorage2.core.grid.GridSortingDirection;
-import com.refinedmods.refinedstorage2.core.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.core.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class GridNetworkNode extends NetworkNodeImpl {
     private static final Logger LOGGER = LogManager.getLogger(GridNetworkNode.class);
