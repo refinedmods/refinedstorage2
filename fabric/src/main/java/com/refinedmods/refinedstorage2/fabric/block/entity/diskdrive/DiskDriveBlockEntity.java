@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageSource;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
-import com.refinedmods.refinedstorage2.core.Rs2CoreApiFacade;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveState;
@@ -109,7 +109,7 @@ public class DiskDriveBlockEntity extends NetworkNodeBlockEntity<DiskDriveNetwor
                 Rs2Config.get().getDiskDrive().getEnergyUsage(),
                 Rs2Config.get().getDiskDrive().getEnergyUsagePerDisk(),
                 this,
-                Rs2CoreApiFacade.INSTANCE.getStorageChannelTypeRegistry()
+                StorageChannelTypeRegistry.INSTANCE
         );
 
         if (tag != null) {
