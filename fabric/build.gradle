@@ -30,9 +30,6 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricApiVersion}"
 
-    implementation project(':core')
-    include project(':core')
-
     implementation project(':refinedstorage2-core-api')
     include project(':refinedstorage2-core-api')
 
