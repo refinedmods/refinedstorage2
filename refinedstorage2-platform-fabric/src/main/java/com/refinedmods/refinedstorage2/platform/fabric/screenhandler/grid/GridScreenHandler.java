@@ -21,9 +21,9 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
-import com.refinedmods.refinedstorage2.platform.fabric.api.grid.ClientGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.api.grid.ServerGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.api.grid.query.FabricGridStackFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ClientGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ServerGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.query.FabricGridStackFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridSettings;
@@ -32,7 +32,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.screen.grid.GridSearchBox
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.BaseScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.property.TwoWaySyncProperty;
-import com.refinedmods.refinedstorage2.platform.fabric.util.ItemStacks;
+import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
 

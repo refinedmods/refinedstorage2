@@ -6,6 +6,10 @@ pluginManagement {
         }
         gradlePluginPortal()
     }
+
+    plugins {
+        id 'fabric-loom' version '0.8-SNAPSHOT'
+    }
 }
 
 dependencyResolutionManagement {
@@ -24,4 +28,5 @@ include 'refinedstorage2-storage-api'
 include 'refinedstorage2-query-parser'
 include 'refinedstorage2-grid-api'
 include 'refinedstorage2-network-api'
+include 'refinedstorage2-platform-fabric-api'
 

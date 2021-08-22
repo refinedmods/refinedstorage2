@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.node.CableNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
-import com.refinedmods.refinedstorage2.platform.fabric.util.Positions;
+import com.refinedmods.refinedstorage2.platform.fabric.api.util.Positions;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;

@@ -6,6 +6,8 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 
 import java.util.Optional;
 
+import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -47,7 +49,7 @@ public class PacketUtil {
                 amount = buf.readLong();
             }
 
-            return new Rs2ItemStack(ItemStacks.ofItem(Item.byRawId(id)), amount, buf.readNbt());
+            return new Rs2ItemStack(Rs2PlatformApiFacade.INSTANCE.toRs2Item(Item.byRawId(id)), amount, buf.readNbt());
         }
     }
 

@@ -1,0 +1,12 @@
+{
+    "schemaVersion": 1,
+    "id": "refinedstorage2-api",
+    "version": "${version}",
+    "name": "Refined Storage 2 API",
+    "description": "The API for Refined Storage 2.",
+    "authors": [
+        "Refined Mods"
+    ],
+    "license": "MIT",
+    "environment": "*"
+}

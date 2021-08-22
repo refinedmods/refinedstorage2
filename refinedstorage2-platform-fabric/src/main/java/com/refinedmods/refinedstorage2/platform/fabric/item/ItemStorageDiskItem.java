@@ -5,15 +5,15 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.FabricItemDiskStorage;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.FabricStorageDiskManager;
+import com.refinedmods.refinedstorage2.platform.fabric.api.item.StorageDiskItemImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.ListenableItemDiskStorage;
 
 import java.util.Optional;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class ItemStorageDiskItem extends AbstractStorageDiskItem {
+public class ItemStorageDiskItem extends StorageDiskItemImpl {
     private final ItemStorageType type;
 
     public ItemStorageDiskItem(Settings settings, ItemStorageType type) {
@@ -36,8 +36,12 @@ public class ItemStorageDiskItem extends AbstractStorageDiskItem {
 
     @Override
     protected StorageDisk<?> createStorageDisk(World world) {
-        return new FabricItemDiskStorage(type.getCapacity(),
-                () -> ((FabricStorageDiskManager) Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world)).markDirty());
+        return new ListenableItemDiskStorage(type.getCapacity(), Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world)::markAsChanged);
+    }
+
+    @Override
+    protected ItemStack createDisassemblyByproduct() {
+        return new ItemStack(Rs2Mod.ITEMS.getStorageHousing());
     }
 
     public enum ItemStorageType {

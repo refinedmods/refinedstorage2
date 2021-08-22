@@ -9,9 +9,9 @@ import com.refinedmods.refinedstorage2.api.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainerImpl;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainerRepository;
-import com.refinedmods.refinedstorage2.platform.fabric.api.adapter.FabricRs2WorldAdapter;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.adapter.FabricRs2WorldAdapter;
 import com.refinedmods.refinedstorage2.platform.fabric.block.NetworkNodeBlock;
-import com.refinedmods.refinedstorage2.platform.fabric.util.Positions;
+import com.refinedmods.refinedstorage2.platform.fabric.api.util.Positions;
 
 import java.util.List;
 

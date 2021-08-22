@@ -19,15 +19,14 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.BlockEntityW
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.NetworkNodeBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.util.ItemStacks;
-import com.refinedmods.refinedstorage2.platform.fabric.util.Positions;
+import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
+import com.refinedmods.refinedstorage2.platform.fabric.api.util.Positions;
 
 import java.util.List;
 import java.util.Optional;
 
 import alexiil.mc.lib.attributes.item.FixedItemInv;
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
-
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.fabricmc.fabric.api.util.NbtType;

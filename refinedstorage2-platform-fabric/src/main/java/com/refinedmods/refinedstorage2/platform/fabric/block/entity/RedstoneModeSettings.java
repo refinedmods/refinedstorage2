@@ -11,28 +11,19 @@ public class RedstoneModeSettings {
     }
 
     public static RedstoneMode getRedstoneMode(int redstoneMode) {
-        switch (redstoneMode) {
-            case IGNORE:
-                return RedstoneMode.IGNORE;
-            case HIGH:
-                return RedstoneMode.HIGH;
-            case LOW:
-                return RedstoneMode.LOW;
-            default:
-                return RedstoneMode.IGNORE;
-        }
+        return switch (redstoneMode) {
+            case IGNORE -> RedstoneMode.IGNORE;
+            case HIGH -> RedstoneMode.HIGH;
+            case LOW -> RedstoneMode.LOW;
+            default -> RedstoneMode.IGNORE;
+        };
     }
 
     public static int getRedstoneMode(RedstoneMode redstoneMode) {
-        switch (redstoneMode) {
-            case IGNORE:
-                return IGNORE;
-            case HIGH:
-                return HIGH;
-            case LOW:
-                return LOW;
-            default:
-                return IGNORE;
-        }
+        return switch (redstoneMode) {
+            case IGNORE -> IGNORE;
+            case HIGH -> HIGH;
+            case LOW -> LOW;
+        };
     }
 }

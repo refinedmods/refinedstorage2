@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.integration;
 
 import com.refinedmods.refinedstorage2.api.grid.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParser;
-import com.refinedmods.refinedstorage2.platform.fabric.api.grid.ReiGridSearchBoxMode;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ReiGridSearchBoxMode;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiProxy;
 
 import net.fabricmc.loader.api.FabricLoader;

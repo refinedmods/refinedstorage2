@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.fabric.block.ControllerEnergyType;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.ControllerScreenHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.util.Positions;
+import com.refinedmods.refinedstorage2.platform.fabric.api.util.Positions;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;

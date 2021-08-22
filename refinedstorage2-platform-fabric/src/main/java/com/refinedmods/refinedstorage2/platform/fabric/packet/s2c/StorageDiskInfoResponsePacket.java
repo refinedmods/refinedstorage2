@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.api.storage.disk.ClientStorageDiskManager;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.FabricClientStorageDiskManager;
 
 import java.util.UUID;
 
@@ -18,6 +18,6 @@ public class StorageDiskInfoResponsePacket implements ClientPlayNetworking.PlayC
         long stored = buf.readLong();
         long capacity = buf.readLong();
 
-        client.execute(() -> ((ClientStorageDiskManager) Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(client.world)).setInfo(id, stored, capacity));
+        client.execute(() -> ((FabricClientStorageDiskManager) Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(client.world)).setInfo(id, stored, capacity));
     }
 }

@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.8-SNAPSHOT'
+    id 'fabric-loom'
 }
 
 archivesBaseName = 'refinedstorage2-platform-fabric'
@@ -47,6 +47,9 @@ dependencies {
 
     implementation project(':refinedstorage2-grid-api')
     include project(':refinedstorage2-grid-api')
+
+    implementation project(':refinedstorage2-platform-fabric-api')
+    include project(':refinedstorage2-platform-fabric-api')
 
     modImplementation "alexiil.mc.lib:libblockattributes-all:${project.libBlockAttributesVersion}"
     include "alexiil.mc.lib:libblockattributes-all:${project.libBlockAttributesVersion}"
