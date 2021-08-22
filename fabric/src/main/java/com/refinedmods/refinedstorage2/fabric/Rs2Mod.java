@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.core.Rs2CoreApiFacade;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeDisplayProperties;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeImpl;
+import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.core.network.component.EnergyNetworkComponent;
@@ -107,7 +108,7 @@ public class Rs2Mod implements ModInitializer {
         GridQueryParser queryParser = new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS);
 
         for (boolean autoSelected : new boolean[]{false, true}) {
-            Rs2CoreApiFacade.INSTANCE.getGridSearchBoxModeRegistry().add(new GridSearchBoxModeImpl(queryParser, autoSelected, createSearchBoxModeDisplayProperties(autoSelected)));
+            GridSearchBoxModeRegistry.INSTANCE.add(new GridSearchBoxModeImpl(queryParser, autoSelected, createSearchBoxModeDisplayProperties(autoSelected)));
         }
 
         if (ReiIntegration.isLoaded()) {

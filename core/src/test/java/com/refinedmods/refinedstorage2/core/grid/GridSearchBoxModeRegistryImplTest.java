@@ -10,8 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 @Rs2Test
-class GridSearchBoxModeRegistryTest {
-    private final GridSearchBoxModeRegistry gridSearchBoxModeRegistry = new GridSearchBoxModeRegistry();
+class GridSearchBoxModeRegistryImplTest {
+    private final GridSearchBoxModeRegistry gridSearchBoxModeRegistry = new GridSearchBoxModeRegistryImpl();
 
     @Test
     void Test_getting_default_when_no_search_box_modes_are_present() {
