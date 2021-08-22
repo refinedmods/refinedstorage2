@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+// TODO Move to api platform module
 public abstract class NetworkNodeBlock extends BaseBlock implements BlockEntityProvider {
     public static final BooleanProperty ACTIVE = BooleanProperty.of("active");
 

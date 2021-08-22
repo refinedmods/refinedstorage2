@@ -15,4 +15,12 @@ subprojects {
         it.options.encoding = 'UTF-8'
         it.options.release = 16
     }
+
+    processResources {
+        inputs.property 'version', project.version
+
+        filesMatching('fabric.mod.json') {
+            expand 'version': project.version
+        }
+    }
 }

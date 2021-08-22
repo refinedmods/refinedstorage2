@@ -1,8 +1,8 @@
 {
     "schemaVersion": 1,
-    "id": "refinedstorage2-platform-api",
+    "id": "refinedstorage2-grid-api",
     "version": "${version}",
-    "name": "Refined Storage 2 Platform API",
+    "name": "Refined Storage 2 Grid API",
     "authors": [
         "Refined Mods"
     ],

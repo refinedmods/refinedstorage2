@@ -24,6 +24,7 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+// TODO Move to api platform module
 public abstract class NetworkNodeBlockEntity<T extends NetworkNodeImpl> extends BlockEntity implements NetworkNodeContainer<T> {
     private static final Logger LOGGER = LogManager.getLogger();
 
