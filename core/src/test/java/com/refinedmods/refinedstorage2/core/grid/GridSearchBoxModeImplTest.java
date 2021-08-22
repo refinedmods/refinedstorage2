@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
 import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserImpl;
-import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
-import com.refinedmods.refinedstorage2.core.query.parser.ParserOperatorMappings;
+import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
+import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;

@@ -1,13 +1,13 @@
 package com.refinedmods.refinedstorage2.fabric.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.core.History;
-import com.refinedmods.refinedstorage2.core.query.lexer.Lexer;
-import com.refinedmods.refinedstorage2.core.query.lexer.LexerException;
-import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
-import com.refinedmods.refinedstorage2.core.query.lexer.Source;
-import com.refinedmods.refinedstorage2.core.query.lexer.SyntaxHighlightedCharacter;
-import com.refinedmods.refinedstorage2.core.query.lexer.SyntaxHighlighter;
 import com.refinedmods.refinedstorage2.fabric.screen.widget.SearchFieldWidget;
+import com.refinedmods.refinedstorage2.query.lexer.Lexer;
+import com.refinedmods.refinedstorage2.query.lexer.LexerException;
+import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
+import com.refinedmods.refinedstorage2.query.lexer.Source;
+import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlightedCharacter;
+import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
 
 import java.util.ArrayList;
 import java.util.List;

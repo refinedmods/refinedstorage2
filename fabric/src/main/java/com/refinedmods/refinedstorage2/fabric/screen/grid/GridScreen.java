@@ -7,8 +7,6 @@ import com.refinedmods.refinedstorage2.core.grid.GridInsertMode;
 import com.refinedmods.refinedstorage2.core.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
 import com.refinedmods.refinedstorage2.core.grid.GridView;
-import com.refinedmods.refinedstorage2.core.query.lexer.SyntaxHighlighter;
-import com.refinedmods.refinedstorage2.core.query.lexer.SyntaxHighlighterColors;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.api.grid.FabricItemGridStack;
@@ -20,6 +18,8 @@ import com.refinedmods.refinedstorage2.fabric.screenhandler.grid.GridScreenHandl
 import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 import com.refinedmods.refinedstorage2.fabric.util.LastModifiedUtil;
 import com.refinedmods.refinedstorage2.fabric.util.ScreenUtil;
+import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
+import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighterColors;
 
 import java.util.ArrayList;
 import java.util.List;

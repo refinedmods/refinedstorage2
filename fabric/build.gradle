@@ -42,6 +42,9 @@ dependencies {
     implementation project(':refinedstorage2-storage-api')
     include project(':refinedstorage2-storage-api')
 
+    implementation project(':refinedstorage2-query-parser')
+    include project(':refinedstorage2-query-parser')
+
     modImplementation "alexiil.mc.lib:libblockattributes-all:${project.libBlockAttributesVersion}"
     include "alexiil.mc.lib:libblockattributes-all:${project.libBlockAttributesVersion}"
 

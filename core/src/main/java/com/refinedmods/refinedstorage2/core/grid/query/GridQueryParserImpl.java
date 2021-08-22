@@ -1,20 +1,20 @@
 package com.refinedmods.refinedstorage2.core.grid.query;
 
 import com.refinedmods.refinedstorage2.core.grid.GridStack;
-import com.refinedmods.refinedstorage2.core.query.lexer.Lexer;
-import com.refinedmods.refinedstorage2.core.query.lexer.LexerException;
-import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
-import com.refinedmods.refinedstorage2.core.query.lexer.Source;
-import com.refinedmods.refinedstorage2.core.query.lexer.Token;
-import com.refinedmods.refinedstorage2.core.query.lexer.TokenType;
-import com.refinedmods.refinedstorage2.core.query.parser.Parser;
-import com.refinedmods.refinedstorage2.core.query.parser.ParserException;
-import com.refinedmods.refinedstorage2.core.query.parser.ParserOperatorMappings;
-import com.refinedmods.refinedstorage2.core.query.parser.node.BinOpNode;
-import com.refinedmods.refinedstorage2.core.query.parser.node.LiteralNode;
-import com.refinedmods.refinedstorage2.core.query.parser.node.Node;
-import com.refinedmods.refinedstorage2.core.query.parser.node.ParenNode;
-import com.refinedmods.refinedstorage2.core.query.parser.node.UnaryOpNode;
+import com.refinedmods.refinedstorage2.query.lexer.Lexer;
+import com.refinedmods.refinedstorage2.query.lexer.LexerException;
+import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
+import com.refinedmods.refinedstorage2.query.lexer.Source;
+import com.refinedmods.refinedstorage2.query.lexer.Token;
+import com.refinedmods.refinedstorage2.query.lexer.TokenType;
+import com.refinedmods.refinedstorage2.query.parser.Parser;
+import com.refinedmods.refinedstorage2.query.parser.ParserException;
+import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
+import com.refinedmods.refinedstorage2.query.parser.node.BinOpNode;
+import com.refinedmods.refinedstorage2.query.parser.node.LiteralNode;
+import com.refinedmods.refinedstorage2.query.parser.node.Node;
+import com.refinedmods.refinedstorage2.query.parser.node.ParenNode;
+import com.refinedmods.refinedstorage2.query.parser.node.UnaryOpNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
