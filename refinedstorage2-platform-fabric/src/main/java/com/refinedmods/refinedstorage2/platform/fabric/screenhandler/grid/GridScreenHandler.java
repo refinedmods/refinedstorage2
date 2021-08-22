@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage2.api.grid.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.api.grid.GridView;
 import com.refinedmods.refinedstorage2.api.grid.GridViewImpl;
-import com.refinedmods.refinedstorage2.api.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
@@ -21,18 +20,19 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ClientGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ServerGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.query.FabricGridStackFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridSettings;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ClientGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ServerGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.query.FabricGridStackFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.BaseScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.property.TwoWaySyncProperty;
-import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
 
@@ -182,9 +182,9 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         addProperty(searchBoxModeProperty);
 
         this.playerInventory = playerInventory;
-        this.storageChannel = grid.getNode().getStorageChannel();
+        this.storageChannel = grid.getContainer().getNode().getStorageChannel();
         this.storageChannel.addListener(this);
-        this.eventHandler = new ServerGridEventHandler(grid.getNode().isActive(), storageChannel, (ServerPlayerEntity) playerInventory.player);
+        this.eventHandler = new ServerGridEventHandler(grid.getContainer().getNode().isActive(), storageChannel, (ServerPlayerEntity) playerInventory.player);
         this.grid = grid;
         this.grid.addWatcher(eventHandler);
 

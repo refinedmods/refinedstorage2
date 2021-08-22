@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.api.network.component;
 
-import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.api.network.node.container.FakeNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
@@ -24,8 +23,7 @@ class EnergyNetworkComponentTest {
     }
 
     private NetworkNodeContainer<ControllerNetworkNode> createControllerContainer() {
-        return FakeNetworkNodeContainer.createForFakeWorld(new ControllerNetworkNode(
-                Position.ORIGIN,
+        return new FakeNetworkNodeContainer<>(new ControllerNetworkNode(
                 100,
                 1000,
                 ControllerType.NORMAL

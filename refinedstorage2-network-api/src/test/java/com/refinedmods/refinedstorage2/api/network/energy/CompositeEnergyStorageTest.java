@@ -346,8 +346,8 @@ class CompositeEnergyStorageTest {
     @Test
     void Test_energy_stored_and_capacity_on_composite_with_infinite_energy_storages() {
         // Arrange
-        EnergyStorage a = new CreativeEnergyStorage();
-        EnergyStorage b = new CreativeEnergyStorage();
+        EnergyStorage a = new InfiniteEnergyStorage();
+        EnergyStorage b = new InfiniteEnergyStorage();
 
         CompositeEnergyStorage sut = new CompositeEnergyStorage();
         sut.addSource(a);

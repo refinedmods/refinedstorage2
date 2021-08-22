@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block;
 
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.container.FabricNetworkNodeContainerRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.NetworkNodeBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.ticker.NetworkNodeBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.FabricConnectionProvider;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
@@ -52,8 +52,8 @@ public abstract class NetworkNodeBlock extends BaseBlock implements BlockEntityP
 
             super.onStateReplaced(state, world, pos, newState, moved);
 
-            if (world instanceof ServerWorld && blockEntity instanceof NetworkNodeBlockEntity) {
-                ((NetworkNodeBlockEntity) blockEntity).remove(new FabricNetworkNodeContainerRepository(world), NetworkComponentRegistry.INSTANCE);
+            if (world instanceof ServerWorld && blockEntity instanceof NetworkNodeBlockEntity networkNodeBlockEntity) {
+                networkNodeBlockEntity.getContainer().remove(new FabricConnectionProvider(world), NetworkComponentRegistry.INSTANCE);
             }
         }
     }

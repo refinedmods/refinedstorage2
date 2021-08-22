@@ -9,15 +9,15 @@ public class EnergyNetworkComponent implements NetworkComponent {
 
     @Override
     public void onContainerAdded(NetworkNodeContainer<?> container) {
-        if (container.getNode() instanceof EnergyStorage nodeEnergyStorage) {
-            energyStorage.addSource(nodeEnergyStorage);
+        if (container.getNode() instanceof EnergyStorage source) {
+            energyStorage.addSource(source);
         }
     }
 
     @Override
     public void onContainerRemoved(NetworkNodeContainer<?> container) {
-        if (container.getNode() instanceof EnergyStorage nodeEnergyStorage) {
-            energyStorage.removeSource(nodeEnergyStorage);
+        if (container.getNode() instanceof EnergyStorage source) {
+            energyStorage.removeSource(source);
         }
     }
 

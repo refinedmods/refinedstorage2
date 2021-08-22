@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.api.network.node.grid;
 
-import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.api.grid.GridEventHandler;
 import com.refinedmods.refinedstorage2.api.grid.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.api.grid.GridSize;
@@ -31,8 +30,7 @@ public class GridNetworkNode extends NetworkNodeImpl {
     private GridSearchBoxMode searchBoxMode;
     private final long energyUsage;
 
-    public GridNetworkNode(Position pos, GridSearchBoxMode defaultSearchBoxMode, long energyUsage) {
-        super(pos);
+    public GridNetworkNode(GridSearchBoxMode defaultSearchBoxMode, long energyUsage) {
         this.searchBoxMode = defaultSearchBoxMode;
         this.energyUsage = energyUsage;
     }
@@ -98,8 +96,8 @@ public class GridNetworkNode extends NetworkNodeImpl {
     }
 
     @Override
-    protected void onActiveChanged(boolean active) {
-        super.onActiveChanged(active);
+    public void setActive(boolean active) {
+        super.setActive(active);
         watchers.forEach(watcher -> watcher.onActiveChanged(active));
     }
 }

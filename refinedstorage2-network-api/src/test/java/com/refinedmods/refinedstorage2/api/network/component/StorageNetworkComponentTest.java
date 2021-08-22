@@ -1,8 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network.component;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.core.Position;
-import com.refinedmods.refinedstorage2.api.network.NetworkUtil;
 import com.refinedmods.refinedstorage2.api.network.node.container.FakeNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
@@ -20,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.STORAGE_CHANNEL_TYPE_REGISTRY;
+import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createWithInfiniteEnergyStorage;
 import static com.refinedmods.refinedstorage2.api.stack.test.ItemStackAssertions.assertItemStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -37,11 +36,11 @@ class StorageNetworkComponentTest {
         FakeStorageDiskProviderManager fakeStorageDiskProviderManager = new FakeStorageDiskProviderManager();
         fakeStorageDiskProviderManager.setDiskInSlot(0, new ItemDiskStorage(100));
 
-        diskDrive = new DiskDriveNetworkNode(Position.ORIGIN, fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
-        diskDrive.setNetwork(NetworkUtil.createWithCreativeEnergySource());
+        diskDrive = new DiskDriveNetworkNode(fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
+        diskDrive.setNetwork(createWithInfiniteEnergyStorage());
         diskDrive.initialize(fakeStorageDiskProviderManager);
 
-        diskDriveContainer = FakeNetworkNodeContainer.createForFakeWorld(diskDrive);
+        diskDriveContainer = new FakeNetworkNodeContainer<>(diskDrive);
 
         sut.onContainerAdded(diskDriveContainer);
     }

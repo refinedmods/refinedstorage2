@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.api.network.energy;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 
-public class CreativeEnergyStorage implements EnergyStorage {
+public class InfiniteEnergyStorage implements EnergyStorage {
     @Override
     public long getStored() {
         return Long.MAX_VALUE;

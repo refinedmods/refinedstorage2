@@ -9,6 +9,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.registry.Registry;
 
+// TODO move behind api facade
 public final class ItemStacks {
     private static final String TAG_AMOUNT = "amount";
     private static final String TAG_TAG = "tag";

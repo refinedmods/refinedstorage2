@@ -1,14 +1,15 @@
 package com.refinedmods.refinedstorage2.api.network.node;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.Rs2World;
 
 public interface NetworkNode {
     Network getNetwork();
 
     void setNetwork(Network network);
 
-    void update();
+    boolean isActive();
 
-    void setWorld(Rs2World world);
+    void setActive(boolean active);
+
+    void update();
 }

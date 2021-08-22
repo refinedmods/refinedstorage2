@@ -49,7 +49,7 @@ public class ControllerBlockItem extends ColoredBlockItem {
         if (!world.isClient()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof ControllerBlockEntity controllerBlockEntity) {
-                controllerBlockEntity.receive(getStored(stack), Action.EXECUTE);
+                controllerBlockEntity.getContainer().getNode().receive(getStored(stack), Action.EXECUTE);
             }
         }
         return result;

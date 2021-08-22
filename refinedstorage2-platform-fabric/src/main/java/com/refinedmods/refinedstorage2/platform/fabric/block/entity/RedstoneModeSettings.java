@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block.entity;
 
-import com.refinedmods.refinedstorage2.api.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.RedstoneMode;
 
 public class RedstoneModeSettings {
     private static final int IGNORE = 0;

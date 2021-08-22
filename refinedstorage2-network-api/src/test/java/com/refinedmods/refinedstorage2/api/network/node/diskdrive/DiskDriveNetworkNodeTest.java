@@ -1,10 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.NetworkUtil;
-import com.refinedmods.refinedstorage2.api.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.api.network.node.container.FakeNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
 import com.refinedmods.refinedstorage2.api.stack.filter.FilterMode;
@@ -32,6 +29,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.verification.VerificationMode;
 
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.STORAGE_CHANNEL_TYPE_REGISTRY;
+import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createWithInfiniteEnergyStorage;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.itemStorageChannelOf;
 import static com.refinedmods.refinedstorage2.api.stack.test.ItemStackAssertions.assertItemStack;
 import static com.refinedmods.refinedstorage2.api.stack.test.ItemStackAssertions.assertItemStackListContents;
@@ -58,16 +56,16 @@ class DiskDriveNetworkNodeTest {
         diskDriveListener = mock(DiskDriveListener.class);
         storageDiskProviderManager = new FakeStorageDiskProviderManager();
 
-        network = NetworkUtil.createWithCreativeEnergySource();
+        network = createWithInfiniteEnergyStorage();
 
         diskDrive = createDiskDriveContainer(network, storageDiskProviderManager, diskDriveListener).getNode();
     }
 
     private FakeNetworkNodeContainer<DiskDriveNetworkNode> createDiskDriveContainer(Network network, FakeStorageDiskProviderManager storageDiskProviderManager, DiskDriveListener diskDriveListener) {
-        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(Position.ORIGIN, storageDiskProviderManager, BASE_USAGE, USAGE_PER_DISK, diskDriveListener, STORAGE_CHANNEL_TYPE_REGISTRY);
+        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(storageDiskProviderManager, BASE_USAGE, USAGE_PER_DISK, diskDriveListener, STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(network);
 
-        FakeNetworkNodeContainer<DiskDriveNetworkNode> container = FakeNetworkNodeContainer.createForFakeWorld(diskDrive);
+        FakeNetworkNodeContainer<DiskDriveNetworkNode> container = new FakeNetworkNodeContainer<>(diskDrive);
 
         network.addContainer(container);
 
@@ -90,6 +88,7 @@ class DiskDriveNetworkNodeTest {
         storageDiskProviderManager.setDiskInSlot(1, disk);
 
         // Act
+        diskDrive.setActive(true);
         DiskDriveState states = diskDrive.createState();
 
         // Assert
@@ -138,7 +137,7 @@ class DiskDriveNetworkNodeTest {
         storageDiskProviderManager.setDiskInSlot(7, fullDisk);
 
         if (inactive) {
-            diskDrive.setRedstoneMode(RedstoneMode.HIGH);
+            diskDrive.setActive(false);
         }
 
         // Act
@@ -268,7 +267,7 @@ class DiskDriveNetworkNodeTest {
         storageDisk1.insert(new Rs2ItemStack(ItemStubs.GLASS), 50, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk1);
 
-        diskDrive.setRedstoneMode(RedstoneMode.HIGH);
+        diskDrive.setActive(false);
         diskDrive.onDiskChanged(1);
 
         // Act
@@ -438,7 +437,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_inserting_when_inactive() {
         // Arrange
-        diskDrive.setRedstoneMode(RedstoneMode.HIGH);
+        diskDrive.setActive(false);
         diskDrive.initialize(storageDiskProviderManager);
 
         StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
@@ -455,7 +454,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_extracting_when_inactive() {
         // Arrange
-        diskDrive.setRedstoneMode(RedstoneMode.HIGH);
+        diskDrive.setActive(false);
 
         StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk);

@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
@@ -50,8 +49,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
     private int priority;
 
-    public DiskDriveNetworkNode(Position pos, StorageDiskProvider diskProvider, long energyUsage, long energyUsagePerDisk, DiskDriveListener listener, StorageChannelTypeRegistry storageChannelTypeRegistry) {
-        super(pos);
+    public DiskDriveNetworkNode(StorageDiskProvider diskProvider, long energyUsage, long energyUsagePerDisk, DiskDriveListener listener, StorageChannelTypeRegistry storageChannelTypeRegistry) {
         this.diskProvider = diskProvider;
         this.energyUsage = energyUsage;
         this.energyUsagePerDisk = energyUsagePerDisk;
@@ -139,14 +137,14 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     }
 
     @Override
-    protected void onActiveChanged(boolean active) {
-        super.onActiveChanged(active);
+    public void setActive(boolean active) {
+        super.setActive(active);
         LOGGER.info("Invalidating storage due to disk drive activeness change");
         compositeStorages.keySet().forEach(type -> network.getComponent(StorageNetworkComponent.class).getStorageChannel(type).invalidate());
     }
 
     @Override
-    protected long getEnergyUsage() {
+    public long getEnergyUsage() {
         return energyUsage + (energyUsagePerDisk * diskCount);
     }
 

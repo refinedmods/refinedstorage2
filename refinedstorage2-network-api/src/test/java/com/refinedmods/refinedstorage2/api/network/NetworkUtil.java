@@ -1,13 +1,12 @@
 package com.refinedmods.refinedstorage2.api.network;
 
-import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistryImpl;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.energy.CreativeEnergyStorage;
+import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.EmptyNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainerImpl;
@@ -68,28 +67,26 @@ public class NetworkUtil {
         NETWORK_COMPONENT_REGISTRY.addComponent(NodeCallbackListenerComponent.class, network -> new NodeCallbackListenerComponent());
     }
 
-    public static Network createWithCreativeEnergySource() {
+    public static Network createWithInfiniteEnergyStorage() {
         Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
-        network.getComponent(EnergyNetworkComponent.class).getEnergyStorage().addSource(new CreativeEnergyStorage());
+        network.getComponent(EnergyNetworkComponent.class).getEnergyStorage().addSource(new InfiniteEnergyStorage());
         return network;
     }
 
-    public static NetworkNodeContainer<?> createContainer(Rs2World world, Position position) {
-        NetworkNodeContainer<?> container = new NetworkNodeContainerImpl<>(position, new EmptyNetworkNode(position));
-        container.setContainerWorld(world);
-        return container;
+    public static NetworkNodeContainer<?> createContainer() {
+        return new NetworkNodeContainerImpl<>(new EmptyNetworkNode());
     }
 
-    public static NetworkNodeContainer<?> createContainerWithNetwork(Rs2World world, Position position, Function<NetworkNodeContainer<?>, Network> networkFactory) {
-        NetworkNodeContainer<?> container = createContainer(world, position);
+    public static NetworkNodeContainer<?> createContainerWithNetwork(Function<NetworkNodeContainer<?>, Network> networkFactory) {
+        NetworkNodeContainer<?> container = createContainer();
         Network network = networkFactory.apply(container);
         container.getNode().setNetwork(network);
         network.addContainer(container);
         return container;
     }
 
-    public static NetworkNodeContainer<?> createContainerWithNetwork(Rs2World world, Position position) {
-        return createContainerWithNetwork(world, position, container -> new NetworkImpl(NetworkUtil.NETWORK_COMPONENT_REGISTRY));
+    public static NetworkNodeContainer<?> createContainerWithNetwork() {
+        return createContainerWithNetwork(container -> new NetworkImpl(NETWORK_COMPONENT_REGISTRY));
     }
 
     public static List<NetworkNodeContainer<?>> getAddedContainers(Network network) {

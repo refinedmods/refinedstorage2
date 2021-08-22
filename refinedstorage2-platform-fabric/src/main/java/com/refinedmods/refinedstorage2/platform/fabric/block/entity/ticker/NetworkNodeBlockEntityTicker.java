@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block.entity.ticker;
 
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.container.FabricNetworkNodeContainerRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.NetworkNodeBlockEntity;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.FabricConnectionProvider;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -20,8 +20,8 @@ public class NetworkNodeBlockEntityTicker<T extends NetworkNodeBlockEntity<?>> i
 
     protected void tick(World world, BlockState state, T blockEntity) {
         // TODO: Remove this allocation
-        blockEntity.initialize(new FabricNetworkNodeContainerRepository(world), NetworkComponentRegistry.INSTANCE);
+        blockEntity.getContainer().initialize(new FabricConnectionProvider(world), NetworkComponentRegistry.INSTANCE);
         blockEntity.updateActiveness(state);
-        blockEntity.getNode().update();
+        blockEntity.getContainer().update();
     }
 }

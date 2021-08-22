@@ -1,23 +1,21 @@
 package com.refinedmods.refinedstorage2.api.network.node.controller;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.core.Position;
-import com.refinedmods.refinedstorage2.api.network.energy.CreativeEnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
+import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 
 public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStorage {
     private final EnergyStorage energyStorage;
 
-    public ControllerNetworkNode(Position pos, long stored, long capacity, ControllerType type) {
-        super(pos);
+    public ControllerNetworkNode(long stored, long capacity, ControllerType type) {
         this.energyStorage = buildEnergyStorage(capacity, type);
         this.energyStorage.receive(stored, Action.EXECUTE);
     }
 
     private static EnergyStorage buildEnergyStorage(long capacity, ControllerType type) {
-        return type == ControllerType.CREATIVE ? new CreativeEnergyStorage() : new EnergyStorageImpl(capacity);
+        return type == ControllerType.CREATIVE ? new InfiniteEnergyStorage() : new EnergyStorageImpl(capacity);
     }
 
     public ControllerEnergyState getState() {
@@ -35,11 +33,6 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
             return ControllerEnergyState.NEARLY_OFF;
         }
         return ControllerEnergyState.OFF;
-    }
-
-    @Override
-    public boolean isActive() {
-        return redstoneMode.isActive(world.isPowered(position));
     }
 
     public long getActualStored() {
@@ -80,7 +73,7 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
     }
 
     @Override
-    protected long getEnergyUsage() {
-        return 0;
+    public long getEnergyUsage() {
+        return 0L;
     }
 }

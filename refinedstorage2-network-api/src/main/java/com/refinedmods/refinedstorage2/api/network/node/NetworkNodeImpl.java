@@ -1,21 +1,12 @@
 package com.refinedmods.refinedstorage2.api.network.node;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.Rs2World;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 
 public abstract class NetworkNodeImpl implements NetworkNode {
-    protected Rs2World world;
-    protected final Position position;
     protected Network network;
-    protected RedstoneMode redstoneMode = RedstoneMode.IGNORE;
-    private boolean wasActive;
-
-    protected NetworkNodeImpl(Position position) {
-        this.position = position;
-    }
+    private boolean active = true;
 
     @Override
     public Network getNetwork() {
@@ -28,35 +19,19 @@ public abstract class NetworkNodeImpl implements NetworkNode {
     }
 
     @Override
-    public void setWorld(Rs2World world) {
-        this.world = world;
+    public final boolean isActive() {
+        return active;
     }
 
-    public boolean isActive() {
-        return redstoneMode.isActive(world.isPowered(position))
-                && network.getComponent(EnergyNetworkComponent.class).getEnergyStorage().getStored() > 0;
-    }
-
-    protected void onActiveChanged(boolean active) {
+    @Override
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override
     public void update() {
         network.getComponent(EnergyNetworkComponent.class).getEnergyStorage().extract(getEnergyUsage(), Action.EXECUTE);
-
-        if (wasActive != isActive()) {
-            wasActive = isActive();
-            onActiveChanged(wasActive);
-        }
     }
 
-    protected abstract long getEnergyUsage();
-
-    public void setRedstoneMode(RedstoneMode redstoneMode) {
-        this.redstoneMode = redstoneMode;
-    }
-
-    public RedstoneMode getRedstoneMode() {
-        return redstoneMode;
-    }
+    public abstract long getEnergyUsage();
 }

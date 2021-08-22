@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.api.network.component;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainerEntry;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,26 +13,26 @@ public class GraphNetworkComponent implements NetworkComponent {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Network network;
-    private final Set<NetworkNodeContainerEntry<?>> containers = new HashSet<>();
+    private final Set<NetworkNodeContainer<?>> containers = new HashSet<>();
 
     public GraphNetworkComponent(Network network) {
         this.network = network;
     }
 
-    public Set<NetworkNodeContainerEntry<?>> getContainers() {
+    public Set<NetworkNodeContainer<?>> getContainers() {
         return containers;
     }
 
     @Override
     public void onContainerAdded(NetworkNodeContainer<?> container) {
-        LOGGER.info("Container added to network {} at position {}", network.hashCode(), container.getPosition());
-        containers.add(NetworkNodeContainerEntry.create(container));
+        LOGGER.info("Container added to network {}", network.hashCode());
+        containers.add(container);
     }
 
     @Override
     public void onContainerRemoved(NetworkNodeContainer<?> container) {
-        LOGGER.info("Container removed from network {} at position {}", network.hashCode(), container.getPosition());
-        containers.remove(NetworkNodeContainerEntry.create(container));
+        LOGGER.info("Container removed from network {}", network.hashCode());
+        containers.remove(container);
     }
 
     @Override

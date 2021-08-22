@@ -18,6 +18,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+// TODO: tooltips are under this guy
 public class ProgressWidget extends DrawableHelper implements Drawable, Element, Selectable {
     private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/widgets.png");
 
@@ -47,7 +48,12 @@ public class ProgressWidget extends DrawableHelper implements Drawable, Element,
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
+        RenderSystem.enableDepthTest();
+        int zOffset = getZOffset();
+        setZOffset(200);
         drawTexture(matrices, x, y + height - correctedHeight, 179, height - correctedHeight, width, correctedHeight);
+        setZOffset(zOffset);
+        RenderSystem.disableDepthTest();
 
         boolean hovered = mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
         if (hovered) {

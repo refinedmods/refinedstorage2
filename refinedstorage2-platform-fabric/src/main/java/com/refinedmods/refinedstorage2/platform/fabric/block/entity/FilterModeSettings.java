@@ -10,24 +10,17 @@ public class FilterModeSettings {
     }
 
     public static FilterMode getFilterMode(int filterMode) {
-        switch (filterMode) {
-            case BLOCK:
-                return FilterMode.BLOCK;
-            case ALLOW:
-                return FilterMode.ALLOW;
-            default:
-                return FilterMode.BLOCK;
-        }
+        return switch (filterMode) {
+            case BLOCK -> FilterMode.BLOCK;
+            case ALLOW -> FilterMode.ALLOW;
+            default -> FilterMode.BLOCK;
+        };
     }
 
     public static int getFilterMode(FilterMode filterMode) {
-        switch (filterMode) {
-            case BLOCK:
-                return BLOCK;
-            case ALLOW:
-                return ALLOW;
-            default:
-                return BLOCK;
-        }
+        return switch (filterMode) {
+            case BLOCK -> BLOCK;
+            case ALLOW -> ALLOW;
+        };
     }
 }

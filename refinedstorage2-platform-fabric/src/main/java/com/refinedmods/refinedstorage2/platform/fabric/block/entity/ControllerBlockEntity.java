@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block.entity;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
@@ -9,7 +8,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.fabric.block.ControllerEnergyType;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.ControllerScreenHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.api.util.Positions;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
@@ -28,7 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.EnergySide;
 import team.reborn.energy.EnergyTier;
 
-public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetworkNode> implements EnergyStorage, ExtendedScreenHandlerFactory, team.reborn.energy.EnergyStorage {
+// TODO: Marking dirty!
+public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetworkNode> implements ExtendedScreenHandlerFactory, team.reborn.energy.EnergyStorage {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORED = "stored";
@@ -66,39 +65,10 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     @Override
     protected ControllerNetworkNode createNode(BlockPos pos, NbtCompound tag) {
         return new ControllerNetworkNode(
-                Positions.ofBlockPos(pos),
                 tag != null ? tag.getLong(TAG_STORED) : 0L,
                 Rs2Config.get().getController().getCapacity(),
                 type
         );
-    }
-
-    @Override
-    public long getStored() {
-        return container.getNode().getStored();
-    }
-
-    @Override
-    public long getCapacity() {
-        return container.getNode().getCapacity();
-    }
-
-    @Override
-    public long receive(long amount, Action action) {
-        long remainder = container.getNode().receive(amount, action);
-        if (remainder != amount && action == Action.EXECUTE) {
-            markDirty();
-        }
-        return remainder;
-    }
-
-    @Override
-    public long extract(long amount, Action action) {
-        long extracted = container.getNode().extract(amount, action);
-        if (extracted > 0 && action == Action.EXECUTE) {
-            markDirty();
-        }
-        return extracted;
     }
 
     @Override

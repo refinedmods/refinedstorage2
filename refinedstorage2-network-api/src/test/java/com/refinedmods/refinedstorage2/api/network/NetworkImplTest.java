@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.api.network.node.container.FakeNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
@@ -32,14 +31,14 @@ class NetworkImplTest {
         ItemDiskStorage disk = new ItemDiskStorage(10);
         disk.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
         fakeStorageDiskProviderManager.setDiskInSlot(1, disk);
-        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(Position.ORIGIN, fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
+        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(network);
         diskDrive.initialize(fakeStorageDiskProviderManager);
-        FakeNetworkNodeContainer<DiskDriveNetworkNode> diskDriveContainer = FakeNetworkNodeContainer.createForFakeWorld(diskDrive);
+        FakeNetworkNodeContainer<DiskDriveNetworkNode> diskDriveContainer = new FakeNetworkNodeContainer<>(diskDrive);
 
-        ControllerNetworkNode controllerNetworkNode = new ControllerNetworkNode(Position.ORIGIN, 100, 100, ControllerType.NORMAL);
+        ControllerNetworkNode controllerNetworkNode = new ControllerNetworkNode(100, 100, ControllerType.NORMAL);
         controllerNetworkNode.setNetwork(network);
-        FakeNetworkNodeContainer<ControllerNetworkNode> controllerContainer = FakeNetworkNodeContainer.createForFakeWorld(controllerNetworkNode);
+        FakeNetworkNodeContainer<ControllerNetworkNode> controllerContainer = new FakeNetworkNodeContainer<>(controllerNetworkNode);
 
         // Act
         network.addContainer(controllerContainer);
