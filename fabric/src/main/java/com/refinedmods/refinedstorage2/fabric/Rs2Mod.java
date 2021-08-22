@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.fabric;
 
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.core.Rs2CoreApiFacade;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeDisplayProperties;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeRegistry;
@@ -10,6 +9,7 @@ import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.core.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.core.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.component.GraphNetworkComponent;
+import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.core.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2BlockEntities;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2Blocks;
@@ -82,9 +82,9 @@ public class Rs2Mod implements ModInitializer {
     }
 
     private void registerNetworkComponents() {
-        Rs2CoreApiFacade.INSTANCE.getNetworkComponentRegistry().addComponent(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
-        Rs2CoreApiFacade.INSTANCE.getNetworkComponentRegistry().addComponent(GraphNetworkComponent.class, GraphNetworkComponent::new);
-        Rs2CoreApiFacade.INSTANCE.getNetworkComponentRegistry().addComponent(StorageNetworkComponent.class, network ->
+        NetworkComponentRegistry.INSTANCE.addComponent(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
+        NetworkComponentRegistry.INSTANCE.addComponent(GraphNetworkComponent.class, GraphNetworkComponent::new);
+        NetworkComponentRegistry.INSTANCE.addComponent(StorageNetworkComponent.class, network ->
                 new StorageNetworkComponent(StorageChannelTypeRegistry.INSTANCE));
     }
 
