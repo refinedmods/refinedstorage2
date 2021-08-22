@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.fabric.item;
 
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.fabric.api.storage.disk.StorageDiskItem;

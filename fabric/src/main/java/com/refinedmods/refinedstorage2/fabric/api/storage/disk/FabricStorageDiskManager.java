@@ -2,10 +2,10 @@ package com.refinedmods.refinedstorage2.fabric.api.storage.disk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskManager;
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskManagerImpl;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskManager;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskManagerImpl;
 import com.refinedmods.refinedstorage2.fabric.util.ItemStacks;
 
 import java.util.Collection;

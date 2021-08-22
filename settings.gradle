@@ -21,4 +21,5 @@ include 'refinedstorage2-test'
 include 'refinedstorage2-core-api'
 include 'refinedstorage2-stack-api'
 include 'refinedstorage2-stack-api-test'
+include 'refinedstorage2-storage-api'
 

@@ -2,6 +2,10 @@ package com.refinedmods.refinedstorage2.core.network;
 
 import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistryImpl;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.core.Rs2World;
 import com.refinedmods.refinedstorage2.core.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.core.network.component.GraphNetworkComponent;
@@ -13,10 +17,6 @@ import com.refinedmods.refinedstorage2.core.network.energy.CreativeEnergyStorage
 import com.refinedmods.refinedstorage2.core.network.node.EmptyNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerImpl;
-import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypeRegistry;
-import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypeRegistryImpl;
-import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
 
 import java.util.ArrayList;
 import java.util.List;

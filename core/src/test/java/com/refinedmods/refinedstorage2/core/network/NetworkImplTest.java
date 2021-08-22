@@ -4,13 +4,13 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.Position;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
+import com.refinedmods.refinedstorage2.api.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.core.network.node.container.FakeNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.core.network.node.diskdrive.FakeStorageDiskProviderManager;
-import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;

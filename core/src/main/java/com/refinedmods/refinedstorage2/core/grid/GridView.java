@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
-import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 
 import java.util.List;
 import java.util.Optional;

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.core.grid;
 
 import com.refinedmods.refinedstorage2.api.stack.list.StackList;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
-import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 
 import java.util.ArrayList;
 import java.util.Collections;

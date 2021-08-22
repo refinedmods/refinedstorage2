@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.core.grid;
 
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 
 public interface GridEventHandler {
     void onInsertFromCursor(GridInsertMode mode);

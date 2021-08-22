@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
-import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskManager;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskManager;
 
 import java.util.HashMap;
 import java.util.Map;

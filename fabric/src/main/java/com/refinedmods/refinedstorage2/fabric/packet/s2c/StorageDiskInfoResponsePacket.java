@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.core.storage.disk.ClientStorageDiskManager;
+import com.refinedmods.refinedstorage2.api.storage.disk.ClientStorageDiskManager;
 import com.refinedmods.refinedstorage2.fabric.api.Rs2PlatformApiFacade;
 
 import java.util.UUID;

@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
-import com.refinedmods.refinedstorage2.core.storage.disk.DiskState;
+import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
 
 import java.util.Arrays;
 

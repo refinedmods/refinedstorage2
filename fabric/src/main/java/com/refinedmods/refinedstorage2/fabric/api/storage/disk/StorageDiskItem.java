@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.api.storage.disk;
 
-import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
 
 import java.util.Optional;
 import java.util.UUID;

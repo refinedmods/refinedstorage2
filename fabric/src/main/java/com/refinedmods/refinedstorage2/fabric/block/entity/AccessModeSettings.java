@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity;
 
-import com.refinedmods.refinedstorage2.core.storage.AccessMode;
+import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 
 public class AccessModeSettings {
     private static final int INSERT_EXTRACT = 0;

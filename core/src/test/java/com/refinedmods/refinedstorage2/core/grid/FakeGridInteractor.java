@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.core.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.core.storage.disk.ItemDiskStorage;
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDisk;
+import com.refinedmods.refinedstorage2.api.storage.disk.ItemDiskStorage;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
 
 import java.util.Collection;
 

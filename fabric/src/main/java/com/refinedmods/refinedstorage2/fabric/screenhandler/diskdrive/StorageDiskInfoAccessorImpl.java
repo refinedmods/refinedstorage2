@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive;
 
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.fabric.api.storage.disk.StorageDiskItem;
 
 import java.util.Optional;

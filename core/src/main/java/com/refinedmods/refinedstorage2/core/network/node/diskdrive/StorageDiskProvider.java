@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.core.network.node.diskdrive;
 
-import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.Optional;
 import java.util.UUID;

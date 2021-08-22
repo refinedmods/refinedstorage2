@@ -39,6 +39,9 @@ dependencies {
     implementation project(':refinedstorage2-stack-api')
     include project(':refinedstorage2-stack-api')
 
+    implementation project(':refinedstorage2-storage-api')
+    include project(':refinedstorage2-storage-api')
+
     modImplementation "alexiil.mc.lib:libblockattributes-all:${project.libBlockAttributesVersion}"
     include "alexiil.mc.lib:libblockattributes-all:${project.libBlockAttributesVersion}"
 

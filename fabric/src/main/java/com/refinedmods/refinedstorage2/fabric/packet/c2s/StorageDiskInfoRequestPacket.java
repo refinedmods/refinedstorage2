@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.packet.c2s;
 
-import com.refinedmods.refinedstorage2.core.storage.disk.StorageDiskInfo;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.fabric.util.ServerPacketUtil;

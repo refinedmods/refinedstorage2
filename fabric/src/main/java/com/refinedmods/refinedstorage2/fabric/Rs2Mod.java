@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric;
 
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.core.Rs2CoreApiFacade;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeDisplayProperties;
 import com.refinedmods.refinedstorage2.core.grid.GridSearchBoxModeImpl;
@@ -10,7 +11,6 @@ import com.refinedmods.refinedstorage2.core.network.component.GraphNetworkCompon
 import com.refinedmods.refinedstorage2.core.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.core.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.core.query.parser.ParserOperatorMappings;
-import com.refinedmods.refinedstorage2.core.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2BlockEntities;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2Blocks;
 import com.refinedmods.refinedstorage2.fabric.init.Rs2Items;
