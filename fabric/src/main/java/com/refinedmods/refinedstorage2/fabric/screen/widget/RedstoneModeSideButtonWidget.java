@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.screen.widget;
 
-import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.api.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.fabric.screenhandler.RedstoneModeAccessor;

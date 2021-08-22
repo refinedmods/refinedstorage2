@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity;
 
 import com.refinedmods.refinedstorage2.api.core.Direction;
-import com.refinedmods.refinedstorage2.core.network.node.container.NetworkNodeContainerImpl;
-import com.refinedmods.refinedstorage2.core.network.node.container.relay.RelayNetworkNodeContainer;
-import com.refinedmods.refinedstorage2.core.network.node.relay.RelayNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainerImpl;
+import com.refinedmods.refinedstorage2.api.network.node.container.relay.RelayNetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.network.node.relay.RelayNetworkNode;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 

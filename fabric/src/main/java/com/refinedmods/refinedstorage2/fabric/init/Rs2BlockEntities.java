@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.init;
 
-import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
+import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.fabric.FeatureFlag;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.CableBlockEntity;

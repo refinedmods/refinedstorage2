@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.fabric.screenhandler.diskdrive;
 
+import com.refinedmods.refinedstorage2.api.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.stack.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
-import com.refinedmods.refinedstorage2.core.network.node.RedstoneMode;
-import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.fabric.block.entity.FilterModeSettings;

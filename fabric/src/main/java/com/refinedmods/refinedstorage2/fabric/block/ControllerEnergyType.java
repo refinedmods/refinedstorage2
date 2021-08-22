@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.block;
 
-import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerEnergyState;
+import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerEnergyState;
 
 import net.minecraft.util.StringIdentifiable;
 

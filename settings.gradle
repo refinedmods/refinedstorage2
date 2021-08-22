@@ -24,4 +24,5 @@ include 'refinedstorage2-stack-api-test'
 include 'refinedstorage2-storage-api'
 include 'refinedstorage2-query-parser'
 include 'refinedstorage2-grid-api'
+include 'refinedstorage2-network-api'
 

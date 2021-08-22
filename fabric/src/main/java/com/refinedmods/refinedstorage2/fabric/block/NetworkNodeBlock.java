@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.fabric.block;
 
-import com.refinedmods.refinedstorage2.core.network.component.NetworkComponentRegistry;
+import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.fabric.api.container.FabricNetworkNodeContainerRepository;
 import com.refinedmods.refinedstorage2.fabric.block.entity.NetworkNodeBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.block.entity.ticker.NetworkNodeBlockEntityTicker;

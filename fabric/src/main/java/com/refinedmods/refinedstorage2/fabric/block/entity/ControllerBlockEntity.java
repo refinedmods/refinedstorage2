@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.core.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerNetworkNode;
-import com.refinedmods.refinedstorage2.core.network.node.controller.ControllerType;
+import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
+import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.block.ControllerBlock;

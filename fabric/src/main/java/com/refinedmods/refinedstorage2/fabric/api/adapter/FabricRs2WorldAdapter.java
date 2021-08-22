@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.api.adapter;
 
 import com.refinedmods.refinedstorage2.api.core.Position;
-import com.refinedmods.refinedstorage2.core.Rs2World;
+import com.refinedmods.refinedstorage2.api.network.Rs2World;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
 
 import java.util.Objects;

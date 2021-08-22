@@ -42,6 +42,9 @@ dependencies {
     implementation project(':refinedstorage2-storage-api')
     include project(':refinedstorage2-storage-api')
 
+    implementation project(':refinedstorage2-network-api')
+    include project(':refinedstorage2-network-api')
+
     implementation project(':refinedstorage2-query-parser')
     include project(':refinedstorage2-query-parser')
 

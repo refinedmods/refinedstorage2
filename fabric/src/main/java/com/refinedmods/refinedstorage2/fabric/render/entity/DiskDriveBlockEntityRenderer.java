@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.render.entity;
 
+import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
-import com.refinedmods.refinedstorage2.core.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.fabric.block.BaseBlock;
 import com.refinedmods.refinedstorage2.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.fabric.render.CubeBuilder;

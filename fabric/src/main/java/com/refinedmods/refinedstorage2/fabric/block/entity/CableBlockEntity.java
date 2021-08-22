@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.fabric.block.entity;
 
-import com.refinedmods.refinedstorage2.core.network.node.CableNetworkNode;
-import com.refinedmods.refinedstorage2.core.network.node.NetworkNodeImpl;
+import com.refinedmods.refinedstorage2.api.network.node.CableNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.fabric.util.Positions;
