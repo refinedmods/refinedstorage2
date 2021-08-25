@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
-import com.refinedmods.refinedstorage2.api.grid.GridEventHandler;
-import com.refinedmods.refinedstorage2.api.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridEventHandler;
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridScrollMode;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 

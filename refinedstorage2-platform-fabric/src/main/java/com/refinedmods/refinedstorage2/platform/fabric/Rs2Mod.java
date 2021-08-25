@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
-import com.refinedmods.refinedstorage2.api.grid.GridSearchBoxModeDisplayProperties;
-import com.refinedmods.refinedstorage2.api.grid.GridSearchBoxModeImpl;
-import com.refinedmods.refinedstorage2.api.grid.GridSearchBoxModeRegistry;
-import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParser;
-import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
+import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeDisplayProperties;
+import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeImpl;
+import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
+import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
+import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;

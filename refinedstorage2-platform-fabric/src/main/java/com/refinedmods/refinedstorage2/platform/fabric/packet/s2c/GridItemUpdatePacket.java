@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.api.grid.GridEventHandler;
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridEventHandler;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;

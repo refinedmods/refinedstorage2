@@ -1,7 +1,10 @@
 package com.refinedmods.refinedstorage2.api.grid.query;
 
-import com.refinedmods.refinedstorage2.api.grid.GridStack;
-import com.refinedmods.refinedstorage2.api.grid.ItemGridStack;
+import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
+import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserException;
+import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
+import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
+import com.refinedmods.refinedstorage2.api.grid.view.stack.ItemGridStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;

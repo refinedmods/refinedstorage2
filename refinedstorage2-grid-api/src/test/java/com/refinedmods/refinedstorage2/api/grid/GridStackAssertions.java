@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.grid;
 
+import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 
 import java.util.Collection;

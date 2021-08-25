@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.GridSortingDirection;
+import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.SideButtonWidget;
