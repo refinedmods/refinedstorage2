@@ -9,6 +9,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.0.0-milestone.1.2]
 
+### Fixed
+
+- Fix Disk Drive item filters not being applied when reloading a world
+
 ### Changed
 
 - Modularized the codebase

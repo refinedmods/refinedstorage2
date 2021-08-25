@@ -26,6 +26,5 @@ public class FilterInventoryListener implements ItemInvSlotChangeListener {
                 .toList();
 
         diskDrive.setFilterTemplates(filterTemplates);
-        diskDrive.markDirty();
     }
 }

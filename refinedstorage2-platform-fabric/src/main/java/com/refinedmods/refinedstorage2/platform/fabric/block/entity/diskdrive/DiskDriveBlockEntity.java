@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.diskdrive.D
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 import alexiil.mc.lib.attributes.item.FixedItemInv;
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
@@ -124,13 +125,17 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
             }
         }
 
+        diskDrive.setFilterTemplates(StreamSupport
+                .stream(filterInventory.getFixedView().stackIterable().spliterator(), false)
+                .filter(s -> !s.isEmpty())
+                .map(ItemStacks::ofItemStack)
+                .toList());
+
         return diskDrive;
     }
 
     @Override
     public void readNbt(NbtCompound tag) {
-        super.readNbt(tag);
-
         if (tag.contains(TAG_DISK_INVENTORY)) {
             diskInventory.fromTag(tag.getCompound(TAG_DISK_INVENTORY));
         }
@@ -138,6 +143,8 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
         if (tag.contains(TAG_FILTER_INVENTORY)) {
             filterInventory.fromTag(tag.getCompound(TAG_FILTER_INVENTORY));
         }
+
+        super.readNbt(tag);
     }
 
     @Override
@@ -185,6 +192,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
 
     public void setFilterTemplates(List<ItemStack> templates) {
         getContainer().getNode().setFilterTemplates(templates.stream().map(ItemStacks::ofItemStack).toList());
+        markDirty();
     }
 
     @Override
