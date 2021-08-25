@@ -6,7 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
-public class KeyBindingUtil {
+public final class KeyBindingUtil {
     private KeyBindingUtil() {
     }
 

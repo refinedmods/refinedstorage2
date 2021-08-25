@@ -8,7 +8,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-public class ServerPacketUtil {
+public final class ServerPacketUtil {
     private ServerPacketUtil() {
     }
 

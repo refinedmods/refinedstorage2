@@ -10,7 +10,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Formatting;
 
-public class ScreenUtil {
+public final class ScreenUtil {
     private static final List<String> VERSION_INFO_LINES = new ArrayList<>();
 
     private ScreenUtil() {

@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
+import com.refinedmods.refinedstorage2.api.core.LastModified;
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridInsertMode;
@@ -7,6 +8,7 @@ import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridScrollMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
@@ -16,7 +18,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.screen.BaseScreen;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.GridScreenHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.util.LastModifiedUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ScreenUtil;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighterColors;
@@ -36,6 +37,7 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -296,10 +298,26 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             List<OrderedText> smallLines = new ArrayList<>();
             smallLines.add(Rs2Mod.createTranslation("misc", "total", stack.isZeroed() ? "0" : QuantityFormatter.format(stack.getAmount())).formatted(Formatting.GRAY).asOrderedText());
 
-            view.getTrackerEntry(stack.getStack()).ifPresent(entry -> smallLines.add(LastModifiedUtil.getText(entry.getTime(), entry.getName()).formatted(Formatting.GRAY).asOrderedText()));
+            view.getTrackerEntry(stack.getStack()).ifPresent(entry -> smallLines.add(getLastModifiedText(entry).formatted(Formatting.GRAY).asOrderedText()));
 
             renderTooltipWithSmallText(matrices, lines, smallLines, mouseX, mouseY);
         }
+    }
+
+    private MutableText getLastModifiedText(StorageTracker.Entry entry) {
+        LastModified lastModified = LastModified.calculate(entry.getTime(), System.currentTimeMillis());
+
+        if (lastModified.getType() == LastModified.Type.JUST_NOW) {
+            return Rs2Mod.createTranslation("misc", "last_modified.just_now", entry.getName());
+        }
+
+        String translationKey = lastModified.getType().toString().toLowerCase();
+        boolean plural = lastModified.getAmount() != 1;
+        if (plural) {
+            translationKey += "s";
+        }
+
+        return Rs2Mod.createTranslation("misc", "last_modified." + translationKey, lastModified.getAmount(), entry.getName());
     }
 
     private void renderAmount(MatrixStack matrixStack, int x, int y, String amount, int color) {
