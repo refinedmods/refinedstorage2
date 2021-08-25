@@ -22,7 +22,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-public class RelayBlock extends NetworkNodeBlock {
+public class RelayBlock extends NetworkNodeContainerBlock {
     private static final BooleanProperty NORTH = BooleanProperty.of("north");
     private static final BooleanProperty EAST = BooleanProperty.of("east");
     private static final BooleanProperty SOUTH = BooleanProperty.of("south");
@@ -141,7 +141,7 @@ public class RelayBlock extends NetworkNodeBlock {
         if (direction == connectionDirection) {
             return false;
         }
-        return world.getBlockState(pos.offset(connectionDirection)).getBlock() instanceof NetworkNodeBlock;
+        return world.getBlockState(pos.offset(connectionDirection)).getBlock() instanceof NetworkNodeContainerBlock;
     }
 
     private BlockState getState(BlockState currentState, WorldAccess world, BlockPos pos, Direction direction) {

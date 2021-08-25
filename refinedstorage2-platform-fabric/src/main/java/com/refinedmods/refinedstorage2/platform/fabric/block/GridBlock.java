@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class GridBlock extends NetworkNodeBlock {
+public class GridBlock extends NetworkNodeContainerBlock {
     public GridBlock(Settings settings) {
         super(settings);
     }

@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.api.grid.GridSortingType;
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
-import com.refinedmods.refinedstorage2.platform.fabric.block.entity.NetworkNodeBlockEntity;
+import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
@@ -25,7 +25,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> implements ExtendedScreenHandlerFactory {
+public class GridBlockEntity extends FabricNetworkNodeContainerBlockEntity<GridNetworkNode> implements ExtendedScreenHandlerFactory {
     private static final String TAG_SORTING_DIRECTION = "sd";
     private static final String TAG_SORTING_TYPE = "st";
     private static final String TAG_SIZE = "s";
@@ -75,69 +75,69 @@ public class GridBlockEntity extends NetworkNodeBlockEntity<GridNetworkNode> imp
 
     @Override
     public NbtCompound writeNbt(NbtCompound tag) {
-        tag.putInt(TAG_SORTING_DIRECTION, GridSettings.getSortingDirection(container.getNode().getSortingDirection()));
-        tag.putInt(TAG_SORTING_TYPE, GridSettings.getSortingType(container.getNode().getSortingType()));
-        tag.putInt(TAG_SIZE, GridSettings.getSize(container.getNode().getSize()));
-        tag.putInt(TAG_SEARCH_BOX_MODE, GridSearchBoxModeRegistry.INSTANCE.getId(container.getNode().getSearchBoxMode()));
+        tag.putInt(TAG_SORTING_DIRECTION, GridSettings.getSortingDirection(getContainer().getNode().getSortingDirection()));
+        tag.putInt(TAG_SORTING_TYPE, GridSettings.getSortingType(getContainer().getNode().getSortingType()));
+        tag.putInt(TAG_SIZE, GridSettings.getSize(getContainer().getNode().getSize()));
+        tag.putInt(TAG_SEARCH_BOX_MODE, GridSearchBoxModeRegistry.INSTANCE.getId(getContainer().getNode().getSearchBoxMode()));
         return super.writeNbt(tag);
     }
 
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeBoolean(container.getNode().isActive());
+        buf.writeBoolean(getContainer().getNode().isActive());
         buf.writeInt(GridSettings.getSortingDirection(getSortingDirection()));
         buf.writeInt(GridSettings.getSortingType(getSortingType()));
         buf.writeInt(GridSettings.getSize(getSize()));
         buf.writeInt(GridSearchBoxModeRegistry.INSTANCE.getId(getSearchBoxMode()));
 
-        buf.writeInt(container.getNode().getStackCount());
-        container.getNode().forEachStack((stack, trackerEntry) -> {
+        buf.writeInt(getContainer().getNode().getStackCount());
+        getContainer().getNode().forEachStack((stack, trackerEntry) -> {
             PacketUtil.writeItemStack(buf, stack, true);
             PacketUtil.writeTrackerEntry(buf, trackerEntry);
         });
     }
 
     public GridSortingType getSortingType() {
-        return container.getNode().getSortingType();
+        return getContainer().getNode().getSortingType();
     }
 
     public void setSortingType(GridSortingType sortingType) {
-        container.getNode().setSortingType(sortingType);
+        getContainer().getNode().setSortingType(sortingType);
         markDirty();
     }
 
     public GridSortingDirection getSortingDirection() {
-        return container.getNode().getSortingDirection();
+        return getContainer().getNode().getSortingDirection();
     }
 
     public void setSortingDirection(GridSortingDirection sortingDirection) {
-        container.getNode().setSortingDirection(sortingDirection);
+        getContainer().getNode().setSortingDirection(sortingDirection);
         markDirty();
     }
 
     public GridSearchBoxMode getSearchBoxMode() {
-        return container.getNode().getSearchBoxMode();
+        return getContainer().getNode().getSearchBoxMode();
     }
 
     public void setSearchBoxMode(GridSearchBoxMode searchBoxMode) {
-        container.getNode().setSearchBoxMode(searchBoxMode);
+        getContainer().getNode().setSearchBoxMode(searchBoxMode);
         markDirty();
     }
 
     public GridSize getSize() {
-        return container.getNode().getSize();
+        return getContainer().getNode().getSize();
     }
 
     public void setSize(GridSize size) {
-        container.getNode().setSize(size);
+        getContainer().getNode().setSize(size);
         markDirty();
     }
 
     public void addWatcher(GridEventHandler eventHandler) {
-        container.getNode().addWatcher(eventHandler);
+        getContainer().getNode().addWatcher(eventHandler);
     }
 
     public void removeWatcher(GridEventHandler eventHandler) {
-        container.getNode().removeWatcher(eventHandler);
+        getContainer().getNode().removeWatcher(eventHandler);
     }
 }

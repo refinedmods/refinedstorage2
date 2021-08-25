@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveBlock extends NetworkNodeBlock implements AttributeProvider {
+public class DiskDriveBlock extends NetworkNodeContainerBlock implements AttributeProvider {
     public DiskDriveBlock(Settings settings) {
         super(settings);
     }

@@ -1,11 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal;
 
+import com.refinedmods.refinedstorage2.api.network.node.container.ConnectionProvider;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2Item;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskManagerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskManager;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.item.FabricRs2Item;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.FabricConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.FabricClientStorageDiskManager;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.FabricStorageDiskManager;
 
@@ -32,6 +34,11 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
                 .getWorld(World.OVERWORLD)
                 .getPersistentStateManager()
                 .getOrCreate(this::createStorageDiskManager, this::createStorageDiskManager, FabricStorageDiskManager.NAME);
+    }
+
+    @Override
+    public ConnectionProvider createConnectionProvider(World world) {
+        return new FabricConnectionProvider(world);
     }
 
     @Override

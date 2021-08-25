@@ -27,7 +27,7 @@ import team.reborn.energy.EnergySide;
 import team.reborn.energy.EnergyTier;
 
 // TODO: Marking dirty!
-public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetworkNode> implements ExtendedScreenHandlerFactory, team.reborn.energy.EnergyStorage {
+public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity<ControllerNetworkNode> implements ExtendedScreenHandlerFactory, team.reborn.energy.EnergyStorage {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORED = "stored";
@@ -46,7 +46,7 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     }
 
     public void updateEnergyType(BlockState state) {
-        ControllerEnergyType energyType = ControllerEnergyType.ofState(container.getNode().getState());
+        ControllerEnergyType energyType = ControllerEnergyType.ofState(getContainer().getNode().getState());
         ControllerEnergyType inWorldEnergyType = state.get(ControllerBlock.ENERGY_TYPE);
 
         if (energyType != inWorldEnergyType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
@@ -74,7 +74,7 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     @Override
     public NbtCompound writeNbt(NbtCompound tag) {
         tag = super.writeNbt(tag);
-        tag.putLong(TAG_STORED, container.getNode().getActualStored());
+        tag.putLong(TAG_STORED, getContainer().getNode().getActualStored());
         return tag;
     }
 
@@ -96,31 +96,31 @@ public class ControllerBlockEntity extends NetworkNodeBlockEntity<ControllerNetw
     }
 
     public long getActualStored() {
-        return container.getNode().getActualStored();
+        return getContainer().getNode().getActualStored();
     }
 
     public long getActualCapacity() {
-        return container.getNode().getActualCapacity();
+        return getContainer().getNode().getActualCapacity();
     }
 
     @Override
     public double getStored(EnergySide face) {
-        return container.getNode().getStored();
+        return getContainer().getNode().getStored();
     }
 
     @Override
     public void setStored(double amount) {
-        long difference = (long) amount - container.getNode().getStored();
+        long difference = (long) amount - getContainer().getNode().getStored();
         if (difference > 0) {
-            container.getNode().receive(difference, Action.EXECUTE);
+            getContainer().getNode().receive(difference, Action.EXECUTE);
         } else {
-            container.getNode().extract(Math.abs(difference), Action.EXECUTE);
+            getContainer().getNode().extract(Math.abs(difference), Action.EXECUTE);
         }
     }
 
     @Override
     public double getMaxStoredPower() {
-        return container.getNode().getCapacity();
+        return getContainer().getNode().getCapacity();
     }
 
     @Override

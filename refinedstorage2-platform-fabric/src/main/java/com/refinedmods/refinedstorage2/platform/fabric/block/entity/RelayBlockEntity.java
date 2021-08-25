@@ -7,7 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 
-public class RelayBlockEntity extends NetworkNodeBlockEntity<RelayNetworkNode> {
+public class RelayBlockEntity extends FabricNetworkNodeContainerBlockEntity<RelayNetworkNode> {
     public RelayBlockEntity(BlockPos pos, BlockState state) {
         super(Rs2Mod.BLOCK_ENTITIES.getRelay(), pos, state);
     }

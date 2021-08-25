@@ -3,12 +3,11 @@ package com.refinedmods.refinedstorage2.platform.fabric.block.entity.ticker;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.ControllerBlockEntity;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.world.World;
 
-public class ControllerBlockEntityTicker extends NetworkNodeBlockEntityTicker<ControllerBlockEntity> {
+public class ControllerBlockEntityTicker extends FabricNetworkNodeContainerBlockEntityTicker<ControllerBlockEntity> {
     @Override
-    protected void tick(World world, BlockState state, ControllerBlockEntity blockEntity) {
-        super.tick(world, state, blockEntity);
+    protected void performContainerUpdate(ControllerBlockEntity blockEntity, BlockState state) {
+        super.performContainerUpdate(blockEntity, state);
         blockEntity.updateEnergyType(state);
     }
 }

@@ -12,4 +12,6 @@ public interface PlatformNetworkNodeContainer<T extends NetworkNode> extends Net
     BlockPos getContainerPosition();
 
     void setContainerWorld(World world);
+
+    void initialize();
 }

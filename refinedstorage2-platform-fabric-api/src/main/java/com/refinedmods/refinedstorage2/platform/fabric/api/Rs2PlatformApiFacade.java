@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.api;
 
+import com.refinedmods.refinedstorage2.api.network.node.container.ConnectionProvider;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2Item;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskManager;
 
@@ -11,6 +12,8 @@ public interface Rs2PlatformApiFacade {
     Rs2PlatformApiFacade INSTANCE = new Rs2PlatformApiFacadeProxy();
 
     PlatformStorageDiskManager getStorageDiskManager(World world);
+
+    ConnectionProvider createConnectionProvider(World world);
 
     Rs2Item toRs2Item(Item item);
 

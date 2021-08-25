@@ -25,7 +25,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-public class CableBlock extends NetworkNodeBlock implements Waterloggable {
+public class CableBlock extends NetworkNodeContainerBlock implements Waterloggable {
     private static final BooleanProperty NORTH = BooleanProperty.of("north");
     private static final BooleanProperty EAST = BooleanProperty.of("east");
     private static final BooleanProperty SOUTH = BooleanProperty.of("south");
@@ -122,7 +122,7 @@ public class CableBlock extends NetworkNodeBlock implements Waterloggable {
     }
 
     private boolean hasConnection(WorldAccess world, BlockPos pos) {
-        return world.getBlockState(pos).getBlock() instanceof NetworkNodeBlock;
+        return world.getBlockState(pos).getBlock() instanceof NetworkNodeContainerBlock;
     }
 
     private BlockState getState(BlockState currentState, WorldAccess world, BlockPos pos) {

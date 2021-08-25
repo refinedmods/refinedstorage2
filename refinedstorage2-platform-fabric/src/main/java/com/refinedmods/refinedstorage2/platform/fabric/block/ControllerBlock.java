@@ -20,7 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class ControllerBlock extends NetworkNodeBlock {
+public class ControllerBlock extends NetworkNodeContainerBlock {
     public static final EnumProperty<ControllerEnergyType> ENERGY_TYPE = EnumProperty.of("energy_type", ControllerEnergyType.class);
 
     private final ControllerType type;

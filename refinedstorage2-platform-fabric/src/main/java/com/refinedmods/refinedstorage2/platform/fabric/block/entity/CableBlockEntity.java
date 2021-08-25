@@ -9,7 +9,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 
-public class CableBlockEntity extends NetworkNodeBlockEntity<NetworkNodeImpl> {
+public class CableBlockEntity extends FabricNetworkNodeContainerBlockEntity<NetworkNodeImpl> {
     public CableBlockEntity(BlockPos pos, BlockState state) {
         super(Rs2Mod.BLOCK_ENTITIES.getCable(), pos, state);
     }
