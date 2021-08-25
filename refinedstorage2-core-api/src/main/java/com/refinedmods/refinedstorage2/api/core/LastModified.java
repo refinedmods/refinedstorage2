@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.core;
 
+// TODO: Add test
 public record LastModified(Type type, long amount) {
     private static final long SECOND = 1000;
     private static final long MINUTE = SECOND * 60;

@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.item.StorageDiskItemImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.ListenableItemDiskStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformItemStorageDisk;
 
 import java.util.Optional;
 
@@ -36,7 +36,7 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected StorageDisk<?> createStorageDisk(World world) {
-        return new ListenableItemDiskStorage(type.getCapacity(), Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world)::markAsChanged);
+        return new PlatformItemStorageDisk(type.getCapacity(), Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world)::markAsChanged);
     }
 
     @Override

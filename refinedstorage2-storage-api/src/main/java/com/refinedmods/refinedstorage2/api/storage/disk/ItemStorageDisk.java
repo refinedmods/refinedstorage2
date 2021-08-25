@@ -8,12 +8,12 @@ import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
 import java.util.Collection;
 import java.util.Optional;
 
-public class ItemDiskStorage implements StorageDisk<Rs2ItemStack> {
+public class ItemStorageDisk implements StorageDisk<Rs2ItemStack> {
     private final StackList<Rs2ItemStack> list = StackListImpl.createItemStackList();
     private final long capacity;
     private long stored;
 
-    public ItemDiskStorage(long capacity) {
+    public ItemStorageDisk(long capacity) {
         this.capacity = capacity;
     }
 

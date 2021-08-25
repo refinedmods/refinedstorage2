@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetwo
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageDiskProviderManager;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
-import com.refinedmods.refinedstorage2.api.storage.disk.ItemDiskStorage;
+import com.refinedmods.refinedstorage2.api.storage.disk.ItemStorageDisk;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class NetworkImplTest {
         Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
 
         FakeStorageDiskProviderManager fakeStorageDiskProviderManager = new FakeStorageDiskProviderManager();
-        ItemDiskStorage disk = new ItemDiskStorage(10);
+        ItemStorageDisk disk = new ItemStorageDisk(10);
         disk.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
         fakeStorageDiskProviderManager.setDiskInSlot(1, disk);
         DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);

@@ -28,7 +28,7 @@ class StorageDiskManagerImplTest {
     void Test_whether_getting_disk_is_present() {
         // Arrange
         UUID id = UUID.randomUUID();
-        StorageDisk<Rs2ItemStack> storage = new ItemDiskStorage(1);
+        StorageDisk<Rs2ItemStack> storage = new ItemStorageDisk(1);
 
         // Act
         storageDiskManager.setDisk(id, storage);
@@ -47,7 +47,7 @@ class StorageDiskManagerImplTest {
     void Test_getting_info_of_disk() {
         // Arrange
         UUID id = UUID.randomUUID();
-        StorageDisk<Rs2ItemStack> storage = new ItemDiskStorage(10);
+        StorageDisk<Rs2ItemStack> storage = new ItemStorageDisk(10);
         storage.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
 
         // Act
@@ -83,7 +83,7 @@ class StorageDiskManagerImplTest {
     void Test_disassembling_a_non_empty_disk() {
         // Arrange
         UUID id = UUID.randomUUID();
-        StorageDisk<Rs2ItemStack> storage = new ItemDiskStorage(10);
+        StorageDisk<Rs2ItemStack> storage = new ItemStorageDisk(10);
         storage.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
         storageDiskManager.setDisk(id, storage);
 
@@ -100,7 +100,7 @@ class StorageDiskManagerImplTest {
     void Test_disassembling_an_empty_disk() {
         // Arrange
         UUID id = UUID.randomUUID();
-        StorageDisk<Rs2ItemStack> storage = new ItemDiskStorage(10);
+        StorageDisk<Rs2ItemStack> storage = new ItemStorageDisk(10);
         storageDiskManager.setDisk(id, storage);
 
         // Act
@@ -117,10 +117,10 @@ class StorageDiskManagerImplTest {
     void Test_inserting_duplicate_storage_disk_ids_should_fail() {
         // Arrange
         UUID id = UUID.randomUUID();
-        storageDiskManager.setDisk(id, new ItemDiskStorage(10));
+        storageDiskManager.setDisk(id, new ItemStorageDisk(10));
 
         // Act
-        Executable action = () -> storageDiskManager.setDisk(id, new ItemDiskStorage(10));
+        Executable action = () -> storageDiskManager.setDisk(id, new ItemStorageDisk(10));
 
         // Assert
         assertThrows(IllegalArgumentException.class, action);

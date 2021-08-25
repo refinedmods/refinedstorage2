@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
-import com.refinedmods.refinedstorage2.api.storage.disk.ItemDiskStorage;
+import com.refinedmods.refinedstorage2.api.storage.disk.ItemStorageDisk;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
@@ -83,7 +83,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_initial_state() {
         // Arrange
-        ItemDiskStorage disk = new ItemDiskStorage(10);
+        ItemStorageDisk disk = new ItemStorageDisk(10);
         disk.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(1, disk);
 
@@ -104,7 +104,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_initialization() {
         // Arrange
-        ItemDiskStorage disk = new ItemDiskStorage(10);
+        ItemStorageDisk disk = new ItemStorageDisk(10);
         disk.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(1, disk);
 
@@ -122,13 +122,13 @@ class DiskDriveNetworkNodeTest {
     @ValueSource(booleans = {true, false})
     void Test_disk_state(boolean inactive) {
         // Arrange
-        StorageDisk<Rs2ItemStack> normalDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> normalDisk = new ItemStorageDisk(100);
         normalDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 74, Action.EXECUTE);
 
-        StorageDisk<Rs2ItemStack> nearCapacityDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> nearCapacityDisk = new ItemStorageDisk(100);
         nearCapacityDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 75, Action.EXECUTE);
 
-        StorageDisk<Rs2ItemStack> fullDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> fullDisk = new ItemStorageDisk(100);
         fullDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 100, Action.EXECUTE);
 
         storageDiskProviderManager.setDiskInSlot(1, UUID.randomUUID());
@@ -162,7 +162,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.initialize(storageDiskProviderManager);
 
-        ItemDiskStorage disk = new ItemDiskStorage(10);
+        ItemStorageDisk disk = new ItemStorageDisk(10);
         disk.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(7, disk);
 
@@ -179,13 +179,13 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_changing_disk_in_slot() {
         // Arrange
-        ItemDiskStorage disk = new ItemDiskStorage(10);
+        ItemStorageDisk disk = new ItemStorageDisk(10);
         disk.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(7, disk);
         diskDrive.initialize(storageDiskProviderManager);
 
         // Act
-        ItemDiskStorage disk2 = new ItemDiskStorage(10);
+        ItemStorageDisk disk2 = new ItemStorageDisk(10);
         disk2.insert(new Rs2ItemStack(ItemStubs.GLASS), 2, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(7, disk2);
         diskDrive.onDiskChanged(7);
@@ -202,7 +202,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.initialize(storageDiskProviderManager);
 
-        ItemDiskStorage disk = new ItemDiskStorage(10);
+        ItemStorageDisk disk = new ItemStorageDisk(10);
         disk.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(7, disk);
 
@@ -238,7 +238,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.initialize(storageDiskProviderManager);
 
-        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemStorageDisk(100);
         storageDisk1.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
         storageDisk1.insert(new Rs2ItemStack(ItemStubs.GLASS), 50, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk1);
@@ -262,7 +262,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.initialize(storageDiskProviderManager);
 
-        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemStorageDisk(100);
         storageDisk1.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
         storageDisk1.insert(new Rs2ItemStack(ItemStubs.GLASS), 50, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk1);
@@ -285,13 +285,13 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_inserting() {
         // Arrange
-        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemStorageDisk(100);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk1);
 
-        StorageDisk<Rs2ItemStack> storageDisk2 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk2 = new ItemStorageDisk(100);
         storageDiskProviderManager.setDiskInSlot(2, storageDisk2);
 
-        StorageDisk<Rs2ItemStack> storageDisk3 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk3 = new ItemStorageDisk(100);
         storageDiskProviderManager.setDiskInSlot(3, storageDisk3);
 
         diskDrive.initialize(storageDiskProviderManager);
@@ -318,17 +318,17 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_extracting() {
         // Arrange
-        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemStorageDisk(100);
         storageDisk1.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
         storageDisk1.insert(new Rs2ItemStack(ItemStubs.GLASS), 50, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk1);
 
-        StorageDisk<Rs2ItemStack> storageDisk2 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk2 = new ItemStorageDisk(100);
         storageDisk2.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
         storageDisk2.insert(new Rs2ItemStack(ItemStubs.GLASS), 50, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(2, storageDisk2);
 
-        StorageDisk<Rs2ItemStack> storageDisk3 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk3 = new ItemStorageDisk(100);
         storageDisk3.insert(new Rs2ItemStack(ItemStubs.SPONGE), 10, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(3, storageDisk3);
 
@@ -362,7 +362,7 @@ class DiskDriveNetworkNodeTest {
         diskDrive.setExactMode(false);
         diskDrive.setFilterTemplates(Arrays.asList(new Rs2ItemStack(ItemStubs.GLASS), new Rs2ItemStack(ItemStubs.STONE)));
 
-        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemStorageDisk(100);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk);
 
         diskDrive.initialize(storageDiskProviderManager);
@@ -390,7 +390,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setAccessMode(accessMode);
 
-        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemStorageDisk(100);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk);
 
         diskDrive.initialize(storageDiskProviderManager);
@@ -414,7 +414,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setAccessMode(accessMode);
 
-        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemStorageDisk(100);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk);
 
         diskDrive.initialize(storageDiskProviderManager);
@@ -440,7 +440,7 @@ class DiskDriveNetworkNodeTest {
         diskDrive.setActive(false);
         diskDrive.initialize(storageDiskProviderManager);
 
-        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemStorageDisk(100);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk);
 
         // Act
@@ -456,7 +456,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setActive(false);
 
-        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemStorageDisk(100);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk);
 
         diskDrive.initialize(storageDiskProviderManager);
@@ -473,7 +473,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_disk_state_change_listener_should_not_be_called_when_not_necessary_on_extracting() {
         // Arrange
-        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemStorageDisk(100);
         storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 76, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk);
         diskDrive.initialize(storageDiskProviderManager);
@@ -488,7 +488,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_disk_state_change_listener_should_not_be_called_when_not_necessary_on_inserting() {
         // Arrange
-        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemStorageDisk(100);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk);
         diskDrive.initialize(storageDiskProviderManager);
 
@@ -503,7 +503,7 @@ class DiskDriveNetworkNodeTest {
     @EnumSource(Action.class)
     void Test_disk_state_change_listener_should_be_called_when_necessary_on_extracting(Action action) {
         // Arrange
-        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemStorageDisk(100);
         storageDisk.insert(new Rs2ItemStack(ItemStubs.DIRT), 75, Action.EXECUTE);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk);
         diskDrive.initialize(storageDiskProviderManager);
@@ -522,7 +522,7 @@ class DiskDriveNetworkNodeTest {
     @EnumSource(Action.class)
     void Test_disk_state_change_listener_should_be_called_when_necessary_on_inserting(Action action) {
         // Arrange
-        StorageDisk<Rs2ItemStack> storageDisk = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk = new ItemStorageDisk(100);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk);
         diskDrive.initialize(storageDiskProviderManager);
         storageOf(diskDrive).insert(new Rs2ItemStack(ItemStubs.DIRT), 74, Action.EXECUTE);
@@ -541,11 +541,11 @@ class DiskDriveNetworkNodeTest {
     @ValueSource(booleans = {true, false})
     void Test_setting_priority(boolean oneHasPriority) {
         // Arrange
-        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk1 = new ItemStorageDisk(100);
         storageDiskProviderManager.setDiskInSlot(1, storageDisk1);
         diskDrive.initialize(storageDiskProviderManager);
 
-        StorageDisk<Rs2ItemStack> storageDisk2 = new ItemDiskStorage(100);
+        StorageDisk<Rs2ItemStack> storageDisk2 = new ItemStorageDisk(100);
         FakeStorageDiskProviderManager storageDiskProviderManager2 = new FakeStorageDiskProviderManager();
         storageDiskProviderManager2.setDiskInSlot(1, storageDisk2);
         FakeNetworkNodeContainer<DiskDriveNetworkNode> diskDrive2 = createDiskDriveContainer(network, storageDiskProviderManager2, mock(DiskDriveListener.class));

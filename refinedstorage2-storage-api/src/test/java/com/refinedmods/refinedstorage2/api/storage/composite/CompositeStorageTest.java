@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
 import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
-import com.refinedmods.refinedstorage2.api.storage.disk.ItemDiskStorage;
+import com.refinedmods.refinedstorage2.api.storage.disk.ItemStorageDisk;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Arrays;
@@ -24,13 +24,13 @@ class CompositeStorageTest {
     @Test
     void Test_setting_sources_should_fill_list() {
         // Arrange
-        ItemDiskStorage diskStorage1 = new ItemDiskStorage(10);
+        ItemStorageDisk diskStorage1 = new ItemStorageDisk(10);
         diskStorage1.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
-        ItemDiskStorage diskStorage2 = new ItemDiskStorage(10);
+        ItemStorageDisk diskStorage2 = new ItemStorageDisk(10);
         diskStorage2.insert(new Rs2ItemStack(ItemStubs.GLASS), 5, Action.EXECUTE);
 
-        ItemDiskStorage diskStorage3 = new ItemDiskStorage(10);
+        ItemStorageDisk diskStorage3 = new ItemStorageDisk(10);
         diskStorage3.insert(new Rs2ItemStack(ItemStubs.DIAMOND), 7, Action.EXECUTE);
         diskStorage3.insert(new Rs2ItemStack(ItemStubs.DIRT), 3, Action.EXECUTE);
 
@@ -58,7 +58,7 @@ class CompositeStorageTest {
     @EnumSource(Action.class)
     void Test_single_source_insert_without_remainder(Action action) {
         // Arrange
-        ItemDiskStorage diskStorage = new ItemDiskStorage(20);
+        ItemStorageDisk diskStorage = new ItemStorageDisk(20);
 
         CompositeStorage<Rs2ItemStack> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), StackListImpl.createItemStackList());
 
@@ -85,7 +85,7 @@ class CompositeStorageTest {
     @EnumSource(Action.class)
     void Test_single_source_insert_with_remainder(Action action) {
         // Arrange
-        ItemDiskStorage diskStorage = new ItemDiskStorage(20);
+        ItemStorageDisk diskStorage = new ItemStorageDisk(20);
 
         CompositeStorage<Rs2ItemStack> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), StackListImpl.createItemStackList());
 
@@ -113,9 +113,9 @@ class CompositeStorageTest {
     @EnumSource(Action.class)
     void Test_multiple_source_insert_without_remainder(Action action) {
         // Arrange
-        ItemDiskStorage diskStorage1 = new ItemDiskStorage(5);
-        ItemDiskStorage diskStorage2 = new ItemDiskStorage(10);
-        ItemDiskStorage diskStorage3 = new ItemDiskStorage(20);
+        ItemStorageDisk diskStorage1 = new ItemStorageDisk(5);
+        ItemStorageDisk diskStorage2 = new ItemStorageDisk(10);
+        ItemStorageDisk diskStorage3 = new ItemStorageDisk(20);
 
         CompositeStorage<Rs2ItemStack> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), StackListImpl.createItemStackList());
 
@@ -146,9 +146,9 @@ class CompositeStorageTest {
     @EnumSource(Action.class)
     void Test_multiple_source_insert_with_remainder(Action action) {
         // Arrange
-        ItemDiskStorage diskStorage1 = new ItemDiskStorage(5);
-        ItemDiskStorage diskStorage2 = new ItemDiskStorage(10);
-        ItemDiskStorage diskStorage3 = new ItemDiskStorage(20);
+        ItemStorageDisk diskStorage1 = new ItemStorageDisk(5);
+        ItemStorageDisk diskStorage2 = new ItemStorageDisk(10);
+        ItemStorageDisk diskStorage3 = new ItemStorageDisk(20);
 
         CompositeStorage<Rs2ItemStack> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), StackListImpl.createItemStackList());
 
@@ -191,7 +191,7 @@ class CompositeStorageTest {
     @Test
     void Test_extracting_without_item_present() {
         // Arrange
-        ItemDiskStorage diskStorage = new ItemDiskStorage(10);
+        ItemStorageDisk diskStorage = new ItemStorageDisk(10);
         diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         CompositeStorage<Rs2ItemStack> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), StackListImpl.createItemStackList());
@@ -207,7 +207,7 @@ class CompositeStorageTest {
     @EnumSource(Action.class)
     void Test_single_source_partial_extract(Action action) {
         // Arrange
-        ItemDiskStorage diskStorage = new ItemDiskStorage(10);
+        ItemStorageDisk diskStorage = new ItemStorageDisk(10);
         diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         CompositeStorage<Rs2ItemStack> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), StackListImpl.createItemStackList());
@@ -236,7 +236,7 @@ class CompositeStorageTest {
     @EnumSource(Action.class)
     void Test_single_source_full_extract(Action action) {
         // Arrange
-        ItemDiskStorage diskStorage = new ItemDiskStorage(10);
+        ItemStorageDisk diskStorage = new ItemStorageDisk(10);
         diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
         CompositeStorage<Rs2ItemStack> storage = new CompositeStorage<>(Arrays.asList(diskStorage), StackListImpl.createItemStackList());
@@ -265,7 +265,7 @@ class CompositeStorageTest {
     @EnumSource(Action.class)
     void Test_single_source_more_than_is_available_extract(Action action) {
         // Arrange
-        ItemDiskStorage diskStorage = new ItemDiskStorage(10);
+        ItemStorageDisk diskStorage = new ItemStorageDisk(10);
         diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 4, Action.EXECUTE);
 
         CompositeStorage<Rs2ItemStack> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), StackListImpl.createItemStackList());
@@ -294,10 +294,10 @@ class CompositeStorageTest {
     @EnumSource(Action.class)
     void Test_multiple_source_partial_extract(Action action) {
         // Arrange
-        ItemDiskStorage diskStorage1 = new ItemDiskStorage(10);
+        ItemStorageDisk diskStorage1 = new ItemStorageDisk(10);
         diskStorage1.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
-        ItemDiskStorage diskStorage2 = new ItemDiskStorage(5);
+        ItemStorageDisk diskStorage2 = new ItemStorageDisk(5);
         diskStorage2.insert(new Rs2ItemStack(ItemStubs.DIRT), 3, Action.EXECUTE);
 
         CompositeStorage<Rs2ItemStack> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2), StackListImpl.createItemStackList());
@@ -328,10 +328,10 @@ class CompositeStorageTest {
     @EnumSource(Action.class)
     void Test_multiple_source_full_extract(Action action) {
         // Arrange
-        ItemDiskStorage diskStorage1 = new ItemDiskStorage(10);
+        ItemStorageDisk diskStorage1 = new ItemStorageDisk(10);
         diskStorage1.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
-        ItemDiskStorage diskStorage2 = new ItemDiskStorage(5);
+        ItemStorageDisk diskStorage2 = new ItemStorageDisk(5);
         diskStorage2.insert(new Rs2ItemStack(ItemStubs.DIRT), 3, Action.EXECUTE);
 
         CompositeStorage<Rs2ItemStack> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2), StackListImpl.createItemStackList());
@@ -362,10 +362,10 @@ class CompositeStorageTest {
     @EnumSource(Action.class)
     void Test_multiple_source_more_than_is_available_extract(Action action) {
         // Arrange
-        ItemDiskStorage diskStorage1 = new ItemDiskStorage(10);
+        ItemStorageDisk diskStorage1 = new ItemStorageDisk(10);
         diskStorage1.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
 
-        ItemDiskStorage diskStorage2 = new ItemDiskStorage(5);
+        ItemStorageDisk diskStorage2 = new ItemStorageDisk(5);
         diskStorage2.insert(new Rs2ItemStack(ItemStubs.DIRT), 3, Action.EXECUTE);
 
         CompositeStorage<Rs2ItemStack> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2), StackListImpl.createItemStackList());
@@ -395,8 +395,8 @@ class CompositeStorageTest {
     @Test
     void Test_prioritizing_when_inserting() {
         // Arrange
-        PrioritizedStorage<Rs2ItemStack> highestPriority = new PrioritizedStorage<>(10, new ItemDiskStorage(10));
-        PrioritizedStorage<Rs2ItemStack> lowestPriority = new PrioritizedStorage<>(5, new ItemDiskStorage(10));
+        PrioritizedStorage<Rs2ItemStack> highestPriority = new PrioritizedStorage<>(10, new ItemStorageDisk(10));
+        PrioritizedStorage<Rs2ItemStack> lowestPriority = new PrioritizedStorage<>(5, new ItemStorageDisk(10));
 
         // Act
         CompositeStorage<Rs2ItemStack> channel = new CompositeStorage<>(Arrays.asList(lowestPriority, highestPriority), StackListImpl.createItemStackList());
@@ -411,8 +411,8 @@ class CompositeStorageTest {
     @Test
     void Test_prioritizing_when_extracting() {
         // Arrange
-        PrioritizedStorage<Rs2ItemStack> highestPriority = new PrioritizedStorage<>(10, new ItemDiskStorage(10));
-        PrioritizedStorage<Rs2ItemStack> lowestPriority = new PrioritizedStorage<>(5, new ItemDiskStorage(10));
+        PrioritizedStorage<Rs2ItemStack> highestPriority = new PrioritizedStorage<>(10, new ItemStorageDisk(10));
+        PrioritizedStorage<Rs2ItemStack> lowestPriority = new PrioritizedStorage<>(5, new ItemStorageDisk(10));
 
         highestPriority.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
         lowestPriority.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);

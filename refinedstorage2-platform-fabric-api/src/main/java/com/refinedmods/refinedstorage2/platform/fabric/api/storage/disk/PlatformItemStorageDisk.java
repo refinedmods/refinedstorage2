@@ -2,14 +2,16 @@ package com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.storage.disk.ItemDiskStorage;
+import com.refinedmods.refinedstorage2.api.storage.disk.ItemStorageDisk;
+import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 
 import java.util.Optional;
 
-public class ListenableItemDiskStorage extends ItemDiskStorage {
+// TODO: Add test
+public class PlatformItemStorageDisk extends ItemStorageDisk implements PlatformStorageDisk<Rs2ItemStack> {
     private final Runnable listener;
 
-    public ListenableItemDiskStorage(long capacity, Runnable listener) {
+    public PlatformItemStorageDisk(long capacity, Runnable listener) {
         super(capacity);
         this.listener = listener;
     }
@@ -31,5 +33,10 @@ public class ListenableItemDiskStorage extends ItemDiskStorage {
             listener.run();
         }
         return remainder;
+    }
+
+    @Override
+    public StorageDiskType<Rs2ItemStack> getType() {
+        return Rs2PlatformApiFacade.INSTANCE.getItemStorageDiskType();
     }
 }
