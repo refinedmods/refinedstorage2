@@ -1,24 +1,28 @@
 package com.refinedmods.refinedstorage2.api.network.node.container;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
+import com.refinedmods.refinedstorage2.api.network.NetworkImpl;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.node.FakeConnectionProvider;
+import com.refinedmods.refinedstorage2.api.network.node.FakeNetworkNode;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.NETWORK_COMPONENT_REGISTRY;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createContainer;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createContainerWithNetwork;
+import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createWithInfiniteEnergyStorage;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getAddedContainers;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getNetworkMerges;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getNetworkRemovedCount;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getNetworkSplits;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getRemovedContainers;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
 class NetworkNodeContainerImplTest {
@@ -175,6 +179,54 @@ class NetworkNodeContainerImplTest {
 
         assertThat(unrelatedContainer.getNode().getNetwork()).isNotNull().isNotEqualTo(expectedNetwork);
         assertThat(unrelatedContainer.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers()).containsExactly(unrelatedContainer);
+    }
+
+    @Test
+    void Test_cannot_remove_without_network_assigned() {
+        // Arrange
+        NetworkNodeContainer<?> container = createContainer();
+
+        // Act
+        Executable action = () -> container.remove(new FakeConnectionProvider(), NETWORK_COMPONENT_REGISTRY);
+
+        // Assert
+        assertThrows(IllegalStateException.class, action);
+    }
+
+    @Test
+    void Test_updating_when_inactive() {
+        // Arrange
+        Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
+
+        FakeNetworkNode networkNode = new FakeNetworkNode(1);
+        networkNode.setNetwork(network);
+
+        NetworkNodeContainer<FakeNetworkNode> container = new NetworkNodeContainerImpl<>(networkNode);
+
+        // Act
+        container.update();
+
+        // Assert
+        assertThat(networkNode.getUpdateCount()).isZero();
+        assertThat(networkNode.isActive()).isFalse();
+    }
+
+    @Test
+    void Test_updating_when_active() {
+        // Arrange
+        Network network = createWithInfiniteEnergyStorage();
+
+        FakeNetworkNode networkNode = new FakeNetworkNode(1);
+        networkNode.setNetwork(network);
+
+        NetworkNodeContainer<FakeNetworkNode> container = new NetworkNodeContainerImpl<>(networkNode);
+
+        // Act
+        container.update();
+
+        // Assert
+        assertThat(networkNode.getUpdateCount()).isEqualTo(1L);
+        assertThat(networkNode.isActive()).isTrue();
     }
 
     @Test

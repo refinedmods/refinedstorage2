@@ -2,6 +2,9 @@ plugins {
     id 'fabric-loom'
 }
 
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
+
 archivesBaseName = 'refinedstorage2-platform-fabric'
 
 repositories {
@@ -16,9 +19,11 @@ repositories {
     maven {
         url 'https://maven.blamejared.com'
     }
+    // REI
     maven {
         url 'https://maven.terraformersmc.com/'
     }
+    // Cloth Config
     maven {
         url 'https://maven.shedaniel.me/'
     }

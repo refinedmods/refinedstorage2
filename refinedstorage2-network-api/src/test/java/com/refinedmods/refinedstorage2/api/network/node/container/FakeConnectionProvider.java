@@ -1,8 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.node;
-
-import com.refinedmods.refinedstorage2.api.network.node.container.ConnectionProvider;
-import com.refinedmods.refinedstorage2.api.network.node.container.Connections;
-import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+package com.refinedmods.refinedstorage2.api.network.node.container;
 
 import java.util.ArrayList;
 import java.util.Collections;

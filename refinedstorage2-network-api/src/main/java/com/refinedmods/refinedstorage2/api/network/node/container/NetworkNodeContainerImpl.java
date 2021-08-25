@@ -155,7 +155,6 @@ public class NetworkNodeContainerImpl<T extends NetworkNodeImpl> implements Netw
         return node;
     }
 
-    // TODO: add unit test for this one.
     protected boolean isActive() {
         // TODO controllers will stay on now when they run out of energy I guess?
         long energyUsage = getNode().getEnergyUsage();
