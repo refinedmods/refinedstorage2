@@ -13,16 +13,4 @@ public record Connections(
         this.newEntries = Collections.unmodifiableSet(newEntries);
         this.removedEntries = Collections.unmodifiableSet(removedEntries);
     }
-
-    public Set<NetworkNodeContainer<?>> getFoundEntries() {
-        return foundEntries;
-    }
-
-    public Set<NetworkNodeContainer<?>> getNewEntries() {
-        return newEntries;
-    }
-
-    public Set<NetworkNodeContainer<?>> getRemovedEntries() {
-        return removedEntries;
-    }
 }

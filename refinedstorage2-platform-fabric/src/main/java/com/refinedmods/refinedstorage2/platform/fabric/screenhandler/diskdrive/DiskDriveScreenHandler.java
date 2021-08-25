@@ -174,7 +174,7 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     }
 
     public boolean hasInfiniteDisk() {
-        return getStorageDiskInfo().anyMatch(info -> info.getCapacity() == -1);
+        return getStorageDiskInfo().anyMatch(info -> info.capacity() == -1);
     }
 
     public double getProgress() {
@@ -185,11 +185,11 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     }
 
     public long getCapacity() {
-        return getStorageDiskInfo().mapToLong(StorageDiskInfo::getCapacity).sum();
+        return getStorageDiskInfo().mapToLong(StorageDiskInfo::capacity).sum();
     }
 
     public long getStored() {
-        return getStorageDiskInfo().mapToLong(StorageDiskInfo::getStored).sum();
+        return getStorageDiskInfo().mapToLong(StorageDiskInfo::stored).sum();
     }
 
     private Stream<StorageDiskInfo> getStorageDiskInfo() {

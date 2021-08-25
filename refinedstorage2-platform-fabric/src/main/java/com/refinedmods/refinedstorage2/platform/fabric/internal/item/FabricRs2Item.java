@@ -5,10 +5,6 @@ import com.refinedmods.refinedstorage2.api.stack.item.Rs2Item;
 import net.minecraft.item.Item;
 
 public record FabricRs2Item(Item item) implements Rs2Item {
-    public Item getItem() {
-        return item;
-    }
-
     @Override
     public int getMaxAmount() {
         return item.getMaxCount();

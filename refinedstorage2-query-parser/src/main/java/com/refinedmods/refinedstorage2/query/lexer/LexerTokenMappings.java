@@ -19,9 +19,9 @@ public class LexerTokenMappings {
             .addMapping(new LexerTokenMapping(")", TokenType.PAREN_CLOSE));
 
     private final Set<LexerTokenMapping> mappings = new TreeSet<>((a, b) -> {
-        int cmp = Integer.compare(b.getValue().length(), a.getValue().length());
+        int cmp = Integer.compare(b.value().length(), a.value().length());
         if (cmp == 0) {
-            return b.getValue().compareTo(a.getValue());
+            return b.value().compareTo(a.value());
         }
         return cmp;
     });
@@ -33,14 +33,14 @@ public class LexerTokenMappings {
 
     public TokenType findMapping(LexerPosition position, Source source) {
         for (LexerTokenMapping mapping : mappings) {
-            String content = mapping.getValue();
-            int contentLength = mapping.getValue().length();
+            String content = mapping.value();
+            int contentLength = mapping.value().length();
 
-            if ((position.getEndIndex() + contentLength <= source.getContent().length()) &&
-                    (content.equals(source.getContent().substring(position.getEndIndex(), position.getEndIndex() + contentLength)))) {
+            if ((position.getEndIndex() + contentLength <= source.content().length()) &&
+                    (content.equals(source.content().substring(position.getEndIndex(), position.getEndIndex() + contentLength)))) {
                 position.advance(contentLength);
 
-                return mapping.getType();
+                return mapping.type();
             }
         }
 

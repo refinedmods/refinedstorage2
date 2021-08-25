@@ -8,14 +8,6 @@ public record LastModified(Type type, long amount) {
     private static final long WEEK = DAY * 7;
     private static final long YEAR = DAY * 365;
 
-    public long getAmount() {
-        return amount;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
     public enum Type {
         JUST_NOW,
         SECOND,

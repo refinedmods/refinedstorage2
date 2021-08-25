@@ -54,8 +54,8 @@ class StorageChannelImplTest {
         if (action == Action.EXECUTE) {
             verify(listener, atMost(1)).onChanged(givenStack.capture());
 
-            assertThat(givenStack.getValue().getChange()).isEqualTo(10);
-            assertItemStack(givenStack.getValue().getStack(), new Rs2ItemStack(ItemStubs.DIRT, 10));
+            assertThat(givenStack.getValue().change()).isEqualTo(10);
+            assertItemStack(givenStack.getValue().stack(), new Rs2ItemStack(ItemStubs.DIRT, 10));
         } else {
             verify(listener, never()).onChanged(any());
         }
@@ -82,8 +82,8 @@ class StorageChannelImplTest {
         if (action == Action.EXECUTE) {
             verify(listener, atMost(1)).onChanged(givenStack.capture());
 
-            assertThat(givenStack.getValue().getChange()).isEqualTo(-5);
-            assertItemStack(givenStack.getValue().getStack(), new Rs2ItemStack(ItemStubs.GLASS, 5));
+            assertThat(givenStack.getValue().change()).isEqualTo(-5);
+            assertItemStack(givenStack.getValue().stack(), new Rs2ItemStack(ItemStubs.GLASS, 5));
         } else {
             verify(listener, never()).onChanged(any());
         }

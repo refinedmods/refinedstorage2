@@ -97,11 +97,11 @@ public class Lexer {
     }
 
     private boolean isNotEof() {
-        return position.getEndIndex() < source.getContent().length();
+        return position.getEndIndex() < source.content().length();
     }
 
     private char current() {
-        return source.getContent().charAt(position.getEndIndex());
+        return source.content().charAt(position.getEndIndex());
     }
 
     private void addToken(TokenType type) {
@@ -109,7 +109,7 @@ public class Lexer {
     }
 
     private void addToken(TokenType type, UnaryOperator<String> contentModifier) {
-        String tokenContent = source.getContent().substring(position.getStartIndex(), position.getEndIndex());
+        String tokenContent = source.content().substring(position.getStartIndex(), position.getEndIndex());
         tokenContent = contentModifier.apply(tokenContent);
 
         TokenPosition tokenPosition = new TokenPosition(source, position.createRange());

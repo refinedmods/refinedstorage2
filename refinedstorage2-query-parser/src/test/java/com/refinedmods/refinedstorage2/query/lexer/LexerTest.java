@@ -47,7 +47,7 @@ class LexerTest {
 
         Token token = tokens.get(0);
         assertToken(token, "hel1lo", TokenType.IDENTIFIER);
-        assertPosition(token.getPosition(), SOURCE_NAME, 1, 1, 1, 6);
+        assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 6);
     }
 
     @Test
@@ -60,15 +60,15 @@ class LexerTest {
 
         Token hello = tokens.get(0);
         assertToken(hello, "hello", TokenType.IDENTIFIER);
-        assertPosition(hello.getPosition(), SOURCE_NAME, 1, 1, 1, 5);
+        assertPosition(hello.position(), SOURCE_NAME, 1, 1, 1, 5);
 
         Token world = tokens.get(1);
         assertToken(world, "wo1rld", TokenType.IDENTIFIER);
-        assertPosition(world.getPosition(), SOURCE_NAME, 1, 7, 1, 12);
+        assertPosition(world.position(), SOURCE_NAME, 1, 7, 1, 12);
 
         Token baz = tokens.get(2);
         assertToken(baz, "baz", TokenType.IDENTIFIER);
-        assertPosition(baz.getPosition(), SOURCE_NAME, 1, 14, 1, 16);
+        assertPosition(baz.position(), SOURCE_NAME, 1, 14, 1, 16);
     }
 
     @Test
@@ -81,7 +81,7 @@ class LexerTest {
 
         Token token = tokens.get(0);
         assertToken(token, "h_el1lo", TokenType.IDENTIFIER);
-        assertPosition(token.getPosition(), SOURCE_NAME, 1, 1, 1, 9);
+        assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 9);
     }
 
     @Test
@@ -94,15 +94,15 @@ class LexerTest {
 
         Token hello = tokens.get(0);
         assertToken(hello, "hello", TokenType.IDENTIFIER);
-        assertPosition(hello.getPosition(), SOURCE_NAME, 1, 1, 1, 7);
+        assertPosition(hello.position(), SOURCE_NAME, 1, 1, 1, 7);
 
         Token world = tokens.get(1);
         assertToken(world, "_World", TokenType.IDENTIFIER);
-        assertPosition(world.getPosition(), SOURCE_NAME, 1, 9, 1, 16);
+        assertPosition(world.position(), SOURCE_NAME, 1, 9, 1, 16);
 
         Token baz = tokens.get(2);
         assertToken(baz, "baz", TokenType.IDENTIFIER);
-        assertPosition(baz.getPosition(), SOURCE_NAME, 1, 18, 1, 22);
+        assertPosition(baz.position(), SOURCE_NAME, 1, 18, 1, 22);
     }
 
     @Test
@@ -115,7 +115,7 @@ class LexerTest {
 
         Token text = tokens.get(0);
         assertToken(text, "", TokenType.IDENTIFIER);
-        assertPosition(text.getPosition(), SOURCE_NAME, 1, 1, 1, 2);
+        assertPosition(text.position(), SOURCE_NAME, 1, 1, 1, 2);
     }
 
     @Test
@@ -138,19 +138,19 @@ class LexerTest {
 
         Token hello = tokens.get(0);
         assertToken(hello, "hello", TokenType.IDENTIFIER);
-        assertPosition(hello.getPosition(), SOURCE_NAME, 1, 1, 1, 5);
+        assertPosition(hello.position(), SOURCE_NAME, 1, 1, 1, 5);
 
         Token world = tokens.get(1);
         assertToken(world, "world", TokenType.IDENTIFIER);
-        assertPosition(world.getPosition(), SOURCE_NAME, 1, 7, 1, 11);
+        assertPosition(world.position(), SOURCE_NAME, 1, 7, 1, 11);
 
         Token baz = tokens.get(2);
         assertToken(baz, "baz", TokenType.IDENTIFIER);
-        assertPosition(baz.getPosition(), SOURCE_NAME, 2, 1, 2, 3);
+        assertPosition(baz.position(), SOURCE_NAME, 2, 1, 2, 3);
 
         Token number = tokens.get(3);
         assertToken(number, "123", TokenType.INTEGER_NUMBER);
-        assertPosition(number.getPosition(), SOURCE_NAME, 4, 1, 4, 3);
+        assertPosition(number.position(), SOURCE_NAME, 4, 1, 4, 3);
     }
 
     @Test
@@ -163,7 +163,7 @@ class LexerTest {
 
         Token token = tokens.get(0);
         assertToken(token, "123", TokenType.INTEGER_NUMBER);
-        assertPosition(token.getPosition(), SOURCE_NAME, 1, 1, 1, 3);
+        assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 3);
     }
 
     @Test
@@ -176,7 +176,7 @@ class LexerTest {
 
         Token token = tokens.get(0);
         assertToken(token, "123.45", TokenType.FLOATING_NUMBER);
-        assertPosition(token.getPosition(), SOURCE_NAME, 1, 1, 1, 6);
+        assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 6);
     }
 
     @Test
@@ -222,15 +222,15 @@ class LexerTest {
         assertToken(tokens.get(7), "&&", TokenType.BIN_OP);
         assertToken(tokens.get(8), "||", TokenType.BIN_OP);
 
-        assertPosition(tokens.get(0).getPosition(), SOURCE_NAME, 1, 1, 1, 1);
-        assertPosition(tokens.get(1).getPosition(), SOURCE_NAME, 1, 2, 1, 2);
-        assertPosition(tokens.get(2).getPosition(), SOURCE_NAME, 1, 3, 1, 3);
-        assertPosition(tokens.get(3).getPosition(), SOURCE_NAME, 1, 4, 1, 4);
-        assertPosition(tokens.get(4).getPosition(), SOURCE_NAME, 1, 5, 1, 5);
-        assertPosition(tokens.get(5).getPosition(), SOURCE_NAME, 1, 6, 1, 6);
-        assertPosition(tokens.get(6).getPosition(), SOURCE_NAME, 1, 7, 1, 7);
-        assertPosition(tokens.get(7).getPosition(), SOURCE_NAME, 1, 8, 1, 9);
-        assertPosition(tokens.get(8).getPosition(), SOURCE_NAME, 1, 10, 1, 11);
+        assertPosition(tokens.get(0).position(), SOURCE_NAME, 1, 1, 1, 1);
+        assertPosition(tokens.get(1).position(), SOURCE_NAME, 1, 2, 1, 2);
+        assertPosition(tokens.get(2).position(), SOURCE_NAME, 1, 3, 1, 3);
+        assertPosition(tokens.get(3).position(), SOURCE_NAME, 1, 4, 1, 4);
+        assertPosition(tokens.get(4).position(), SOURCE_NAME, 1, 5, 1, 5);
+        assertPosition(tokens.get(5).position(), SOURCE_NAME, 1, 6, 1, 6);
+        assertPosition(tokens.get(6).position(), SOURCE_NAME, 1, 7, 1, 7);
+        assertPosition(tokens.get(7).position(), SOURCE_NAME, 1, 8, 1, 9);
+        assertPosition(tokens.get(8).position(), SOURCE_NAME, 1, 10, 1, 11);
     }
 
     private Lexer createLexer(String content) {

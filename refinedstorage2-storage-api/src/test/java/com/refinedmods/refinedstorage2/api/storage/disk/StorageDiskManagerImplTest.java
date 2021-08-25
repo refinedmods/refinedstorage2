@@ -56,8 +56,8 @@ class StorageDiskManagerImplTest {
         StorageDiskInfo info = storageDiskManager.getInfo(id);
 
         // Assert
-        assertThat(info.getCapacity()).isEqualTo(10);
-        assertThat(info.getStored()).isEqualTo(5);
+        assertThat(info.capacity()).isEqualTo(10);
+        assertThat(info.stored()).isEqualTo(5);
     }
 
     @Test
@@ -66,8 +66,8 @@ class StorageDiskManagerImplTest {
         StorageDiskInfo info = storageDiskManager.getInfo(UUID.randomUUID());
 
         // Assert
-        assertThat(info.getCapacity()).isZero();
-        assertThat(info.getStored()).isZero();
+        assertThat(info.capacity()).isZero();
+        assertThat(info.stored()).isZero();
     }
 
     @Test

@@ -33,9 +33,9 @@ public class NetworkNodeContainerImpl<T extends NetworkNodeImpl> implements Netw
 
         Connections connections = connectionProvider.findConnections(this, Collections.emptySet());
 
-        Preconditions.checkArgument(connections.getRemovedEntries().isEmpty(), "Cannot have removed entries");
+        Preconditions.checkArgument(connections.removedEntries().isEmpty(), "Cannot have removed entries");
 
-        mergeNetworksOfNodes(connectionProvider, connections.getFoundEntries(), networkComponentRegistry);
+        mergeNetworksOfNodes(connectionProvider, connections.foundEntries(), networkComponentRegistry);
 
         return true;
     }
@@ -107,9 +107,9 @@ public class NetworkNodeContainerImpl<T extends NetworkNodeImpl> implements Netw
 
         Connections connections = connectionProvider.findConnections(pivot, containers);
 
-        Preconditions.checkState(connections.getRemovedEntries().contains(this), "The removed container isn't present in the removed entries");
+        Preconditions.checkState(connections.removedEntries().contains(this), "The removed container isn't present in the removed entries");
 
-        splitNetworks(connectionProvider, connections.getRemovedEntries(), networkComponentRegistry, this);
+        splitNetworks(connectionProvider, connections.removedEntries(), networkComponentRegistry, this);
     }
 
     private NetworkNodeContainer<?> findPivotNodeForRemove(ConnectionProvider connectionProvider, Set<NetworkNodeContainer<?>> containers) {

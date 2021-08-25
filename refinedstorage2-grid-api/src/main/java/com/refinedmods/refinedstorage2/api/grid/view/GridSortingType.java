@@ -11,8 +11,8 @@ public enum GridSortingType {
     NAME(view -> (a, b) -> a.getName().compareTo(b.getName())),
     ID(view -> (a, b) -> Integer.compare(a.getId(), b.getId())),
     LAST_MODIFIED(view -> (a, b) -> {
-        long lastModifiedA = view.getTrackerEntry(a.getStack()).map(StorageTracker.Entry::getTime).orElse(0L);
-        long lastModifiedB = view.getTrackerEntry(b.getStack()).map(StorageTracker.Entry::getTime).orElse(0L);
+        long lastModifiedA = view.getTrackerEntry(a.getStack()).map(StorageTracker.Entry::time).orElse(0L);
+        long lastModifiedB = view.getTrackerEntry(b.getStack()).map(StorageTracker.Entry::time).orElse(0L);
         return Long.compare(lastModifiedA, lastModifiedB);
     });
 

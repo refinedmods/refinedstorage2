@@ -18,6 +18,6 @@ public class ParserOperatorMappings {
     }
 
     public Operator getOperator(Token token) {
-        return binaryOperatorPrecedenceMap.get(token.getContent());
+        return binaryOperatorPrecedenceMap.get(token.content());
     }
 }

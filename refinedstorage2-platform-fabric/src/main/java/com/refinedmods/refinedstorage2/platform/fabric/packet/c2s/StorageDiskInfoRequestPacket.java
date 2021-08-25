@@ -26,8 +26,8 @@ public class StorageDiskInfoRequestPacket implements ServerPlayNetworking.PlayCh
 
             ServerPacketUtil.sendToPlayer(player, PacketIds.STORAGE_DISK_INFO_RESPONSE, bufToSend -> {
                 bufToSend.writeUuid(id);
-                bufToSend.writeLong(info.getStored());
-                bufToSend.writeLong(info.getCapacity());
+                bufToSend.writeLong(info.stored());
+                bufToSend.writeLong(info.capacity());
             });
         });
     }

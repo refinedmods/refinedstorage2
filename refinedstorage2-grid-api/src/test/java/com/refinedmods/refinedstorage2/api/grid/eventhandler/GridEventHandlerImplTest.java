@@ -58,7 +58,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @Test
@@ -77,7 +77,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @Test
@@ -121,7 +121,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @Test
@@ -200,7 +200,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.GLASS));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @Test
@@ -219,7 +219,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @Test
@@ -294,7 +294,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @ParameterizedTest
@@ -331,7 +331,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @ParameterizedTest
@@ -390,7 +390,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.BUCKET));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @ParameterizedTest
@@ -440,7 +440,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @Test
@@ -487,7 +487,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @ParameterizedTest
@@ -530,7 +530,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @Test
@@ -586,7 +586,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @Test
@@ -625,7 +625,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @Test
@@ -712,7 +712,7 @@ class GridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.GLASS));
             assertThat(entry).isPresent();
-            assertThat(entry.get().getName()).isEqualTo(FakeGridInteractor.NAME);
+            assertThat(entry.get().name()).isEqualTo(FakeGridInteractor.NAME);
         }
 
         @Test

@@ -57,8 +57,8 @@ public final class PacketUtil {
             buf.writeBoolean(false);
         } else {
             buf.writeBoolean(true);
-            buf.writeLong(entry.get().getTime());
-            buf.writeString(entry.get().getName());
+            buf.writeLong(entry.get().time());
+            buf.writeString(entry.get().name());
         }
     }
 

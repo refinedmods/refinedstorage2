@@ -27,8 +27,8 @@ class StorageTrackerTest {
 
         // Assert
         assertThat(entry).isPresent();
-        assertThat(entry.get().getName()).isEqualTo("Raoul");
-        assertThat(entry.get().getTime()).isEqualTo(1000);
+        assertThat(entry.get().name()).isEqualTo("Raoul");
+        assertThat(entry.get().time()).isEqualTo(1000);
     }
 
     @Test
@@ -49,16 +49,16 @@ class StorageTrackerTest {
 
         // Assert
         assertThat(entry1).isPresent();
-        assertThat(entry1.get().getName()).isEqualTo("Raoul");
-        assertThat(entry1.get().getTime()).isEqualTo(1000);
+        assertThat(entry1.get().name()).isEqualTo("Raoul");
+        assertThat(entry1.get().time()).isEqualTo(1000);
 
         assertThat(entry2).isPresent();
-        assertThat(entry2.get().getName()).isEqualTo("VdB");
-        assertThat(entry2.get().getTime()).isEqualTo(2000);
+        assertThat(entry2.get().name()).isEqualTo("VdB");
+        assertThat(entry2.get().time()).isEqualTo(2000);
 
         assertThat(entry3).isPresent();
-        assertThat(entry3.get().getName()).isEqualTo("VdB");
-        assertThat(entry3.get().getTime()).isEqualTo(2000);
+        assertThat(entry3.get().name()).isEqualTo("VdB");
+        assertThat(entry3.get().time()).isEqualTo(2000);
     }
 
     @Test

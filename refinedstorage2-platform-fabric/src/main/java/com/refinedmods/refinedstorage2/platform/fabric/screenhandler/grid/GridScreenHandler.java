@@ -348,13 +348,13 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
 
     @Override
     public void onChanged(StackListResult<Rs2ItemStack> change) {
-        LOGGER.info("Received a change of {} for {}", change.getChange(), change.getStack());
+        LOGGER.info("Received a change of {} for {}", change.change(), change.stack());
 
         ServerPacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, PacketIds.GRID_ITEM_UPDATE, buf -> {
-            PacketUtil.writeItemStack(buf, change.getStack(), false);
-            buf.writeLong(change.getChange());
+            PacketUtil.writeItemStack(buf, change.stack(), false);
+            buf.writeLong(change.change());
 
-            Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(change.getStack());
+            Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(change.stack());
             PacketUtil.writeTrackerEntry(buf, entry);
         });
     }

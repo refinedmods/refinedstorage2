@@ -25,12 +25,5 @@ public class StorageTracker<T, I> {
     }
 
     public record Entry(long time, String name) {
-        public long getTime() {
-            return time;
-        }
-
-        public String getName() {
-            return name;
-        }
     }
 }

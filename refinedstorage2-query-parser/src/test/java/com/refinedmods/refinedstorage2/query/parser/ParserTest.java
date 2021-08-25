@@ -190,7 +190,7 @@ class ParserTest {
 
         // Assert
         assertThat(e.getMessage()).isEqualTo("Unary operator has no target");
-        assertThat(e.getToken().getContent()).isEqualTo("!");
+        assertThat(e.getToken().content()).isEqualTo("!");
     }
 
     @Test
@@ -251,7 +251,7 @@ class ParserTest {
         // Assert
         ParserException e = assertThrows(ParserException.class, () -> builder.getNodes());
         assertThat(e.getMessage()).isEqualTo("Expected ')'");
-        assertThat(e.getToken().getContent()).isEqualTo(")");
+        assertThat(e.getToken().content()).isEqualTo(")");
     }
 
     @Test
@@ -262,7 +262,7 @@ class ParserTest {
         // Assert
         ParserException e = assertThrows(ParserException.class, () -> builder.getNodes());
         assertThat(e.getMessage()).isEqualTo("Unclosed parenthesis");
-        assertThat(e.getToken().getContent()).isEqualTo("(");
+        assertThat(e.getToken().content()).isEqualTo("(");
     }
 
     @Test
@@ -289,6 +289,6 @@ class ParserTest {
         // Assert
         ParserException e = assertThrows(ParserException.class, () -> builder.getNodes());
         assertThat(e.getMessage()).isEqualTo("Unfinished binary operator expression");
-        assertThat(e.getToken().getContent()).isEqualTo("+");
+        assertThat(e.getToken().content()).isEqualTo("+");
     }
 }

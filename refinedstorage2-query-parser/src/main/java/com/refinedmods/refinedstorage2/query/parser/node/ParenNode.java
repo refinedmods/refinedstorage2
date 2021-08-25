@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public record ParenNode(List<Node> nodes) implements Node {
-    public List<Node> getNodes() {
-        return nodes;
-    }
-
+    @Override
     public String toString() {
         return "(" + nodes.stream().map(Node::toString).collect(Collectors.joining(" ")) + ")";
     }

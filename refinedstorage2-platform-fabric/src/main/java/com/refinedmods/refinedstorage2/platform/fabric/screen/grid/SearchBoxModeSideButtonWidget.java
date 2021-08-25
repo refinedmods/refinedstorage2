@@ -38,23 +38,23 @@ public class SearchBoxModeSideButtonWidget extends SideButtonWidget {
     private List<Text> calculateTooltip(GridSearchBoxMode searchBoxMode) {
         List<Text> lines = new ArrayList<>();
         lines.add(Rs2Mod.createTranslation("gui", "grid.search_box_mode"));
-        lines.add(new TranslatableText(searchBoxMode.getDisplayProperties().getNameTranslationKey()).formatted(Formatting.GRAY));
+        lines.add(new TranslatableText(searchBoxMode.getDisplayProperties().nameTranslationKey()).formatted(Formatting.GRAY));
         return lines;
     }
 
     @Override
     protected Identifier getTextureIdentifier() {
-        return identifiers.computeIfAbsent(screenHandler.getSearchBoxMode().getDisplayProperties().getTextureIdentifier(), Identifier::new);
+        return identifiers.computeIfAbsent(screenHandler.getSearchBoxMode().getDisplayProperties().textureIdentifier(), Identifier::new);
     }
 
     @Override
     protected int getXTexture() {
-        return screenHandler.getSearchBoxMode().getDisplayProperties().getTextureX();
+        return screenHandler.getSearchBoxMode().getDisplayProperties().textureX();
     }
 
     @Override
     protected int getYTexture() {
-        return screenHandler.getSearchBoxMode().getDisplayProperties().getTextureY();
+        return screenHandler.getSearchBoxMode().getDisplayProperties().textureY();
     }
 
     @Override

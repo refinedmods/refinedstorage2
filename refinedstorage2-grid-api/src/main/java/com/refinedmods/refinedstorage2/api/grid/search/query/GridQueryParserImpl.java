@@ -42,12 +42,12 @@ public class GridQueryParserImpl implements GridQueryParser {
 
     private static Predicate<GridStack<?>> parseNode(Node node) throws GridQueryParserException {
         if (node instanceof LiteralNode literalNode) {
-            String content = literalNode.getToken().getContent();
+            String content = literalNode.token().content();
             return name(content);
         } else if (node instanceof UnaryOpNode unaryOpNode) {
             return parseUnaryOpNode(unaryOpNode);
         } else if (node instanceof BinOpNode binOpNode) {
-            String operator = binOpNode.getBinOp().getContent();
+            String operator = binOpNode.binOp().content();
 
             if ("&&".equals(operator)) {
                 return parseAndBinOpNode(binOpNode);
@@ -55,7 +55,7 @@ public class GridQueryParserImpl implements GridQueryParser {
                 return parseOrBinOpNode(binOpNode);
             }
         } else if (node instanceof ParenNode parenNode) {
-            return implicitAnd(parenNode.getNodes());
+            return implicitAnd(parenNode.nodes());
         }
 
         throw new GridQueryParserException(node.getRange(), "Unsupported node", null);
@@ -63,33 +63,33 @@ public class GridQueryParserImpl implements GridQueryParser {
 
     private static Predicate<GridStack<?>> parseOrBinOpNode(BinOpNode node) throws GridQueryParserException {
         return or(Arrays.asList(
-                parseNode(node.getLeft()),
-                parseNode(node.getRight())
+                parseNode(node.left()),
+                parseNode(node.right())
         ));
     }
 
     private static Predicate<GridStack<?>> parseAndBinOpNode(BinOpNode node) throws GridQueryParserException {
         return and(Arrays.asList(
-                parseNode(node.getLeft()),
-                parseNode(node.getRight())
+                parseNode(node.left()),
+                parseNode(node.right())
         ));
     }
 
     private static Predicate<GridStack<?>> parseUnaryOpNode(UnaryOpNode node) throws GridQueryParserException {
-        String operator = node.getOperator().getContent();
-        Node content = node.getNode();
+        String operator = node.operator().content();
+        Node content = node.node();
 
         if ("!".equals(operator)) {
             return not(parseNode(content));
         } else if ("@".equals(operator)) {
             if (content instanceof LiteralNode literalNode) {
-                return mod(literalNode.getToken().getContent());
+                return mod(literalNode.token().content());
             } else {
                 throw new GridQueryParserException(content.getRange(), "Mod filtering expects a literal", null);
             }
         } else if ("$".equals(operator)) {
             if (content instanceof LiteralNode literalNode) {
-                return tag(literalNode.getToken().getContent());
+                return tag(literalNode.token().content());
             } else {
                 throw new GridQueryParserException(content.getRange(), "Tag filtering expects a literal", null);
             }
@@ -113,11 +113,11 @@ public class GridQueryParserImpl implements GridQueryParser {
             throw new GridQueryParserException(node.getRange(), "Count filtering expects a literal", null);
         }
 
-        if (((LiteralNode) node).getToken().getType() != TokenType.INTEGER_NUMBER) {
+        if (((LiteralNode) node).token().type() != TokenType.INTEGER_NUMBER) {
             throw new GridQueryParserException(node.getRange(), "Count filtering expects an integer number", null);
         }
 
-        long wantedCount = Long.parseLong(((LiteralNode) node).getToken().getContent());
+        long wantedCount = Long.parseLong(((LiteralNode) node).token().content());
 
         return stack -> predicate.test(stack.getAmount(), wantedCount);
     }
@@ -191,7 +191,7 @@ public class GridQueryParserImpl implements GridQueryParser {
             parser.parse();
             return parser.getNodes();
         } catch (ParserException e) {
-            throw new GridQueryParserException(e.getToken().getPosition().getRange(), e.getMessage(), e);
+            throw new GridQueryParserException(e.getToken().position().range(), e.getMessage(), e);
         }
     }
 }

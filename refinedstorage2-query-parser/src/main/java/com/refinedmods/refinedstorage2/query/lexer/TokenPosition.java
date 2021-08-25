@@ -1,14 +1,6 @@
 package com.refinedmods.refinedstorage2.query.lexer;
 
 public record TokenPosition(Source source, TokenRange range) {
-    public TokenRange getRange() {
-        return range;
-    }
-
-    public Source getSource() {
-        return source;
-    }
-
     @Override
     public String toString() {
         return "TokenPosition{" +

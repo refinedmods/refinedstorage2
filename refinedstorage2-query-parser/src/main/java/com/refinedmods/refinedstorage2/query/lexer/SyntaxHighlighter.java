@@ -14,11 +14,11 @@ public class SyntaxHighlighter {
         List<SyntaxHighlightedCharacter> characters = createInitialCharacters(text);
 
         for (Token token : tokens) {
-            int begin = token.getPosition().getRange().getStartColumn() - 1;
-            int end = token.getPosition().getRange().getEndColumn();
+            int begin = token.position().range().startColumn() - 1;
+            int end = token.position().range().endColumn();
 
             for (int i = begin; i < end; ++i) {
-                characters.get(i).setColor(colors.getColor(token.getType()));
+                characters.get(i).setColor(colors.getColor(token.type()));
             }
         }
 

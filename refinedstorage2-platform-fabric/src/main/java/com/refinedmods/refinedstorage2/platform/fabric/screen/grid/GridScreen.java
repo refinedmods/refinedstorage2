@@ -305,19 +305,19 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     }
 
     private MutableText getLastModifiedText(StorageTracker.Entry entry) {
-        LastModified lastModified = LastModified.calculate(entry.getTime(), System.currentTimeMillis());
+        LastModified lastModified = LastModified.calculate(entry.time(), System.currentTimeMillis());
 
-        if (lastModified.getType() == LastModified.Type.JUST_NOW) {
-            return Rs2Mod.createTranslation("misc", "last_modified.just_now", entry.getName());
+        if (lastModified.type() == LastModified.Type.JUST_NOW) {
+            return Rs2Mod.createTranslation("misc", "last_modified.just_now", entry.name());
         }
 
-        String translationKey = lastModified.getType().toString().toLowerCase();
-        boolean plural = lastModified.getAmount() != 1;
+        String translationKey = lastModified.type().toString().toLowerCase();
+        boolean plural = lastModified.amount() != 1;
         if (plural) {
             translationKey += "s";
         }
 
-        return Rs2Mod.createTranslation("misc", "last_modified." + translationKey, lastModified.getAmount(), entry.getName());
+        return Rs2Mod.createTranslation("misc", "last_modified." + translationKey, lastModified.amount(), entry.name());
     }
 
     private void renderAmount(MatrixStack matrixStack, int x, int y, String amount, int color) {

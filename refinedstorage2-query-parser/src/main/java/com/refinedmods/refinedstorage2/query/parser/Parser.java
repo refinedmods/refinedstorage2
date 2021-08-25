@@ -34,9 +34,9 @@ public class Parser {
         Node lhs = parseAtom();
 
         Token cur = currentOrNull();
-        while (cur != null && cur.getType() == TokenType.BIN_OP && operatorMappings.getOperator(cur).getLevel() >= minPrecedence) {
+        while (cur != null && cur.type() == TokenType.BIN_OP && operatorMappings.getOperator(cur).level() >= minPrecedence) {
             Operator currentOp = operatorMappings.getOperator(cur);
-            int nextMinPrecedence = currentOp.getAssociativity() == Associativity.LEFT ? (currentOp.getLevel() + 1) : currentOp.getLevel();
+            int nextMinPrecedence = currentOp.associativity() == Associativity.LEFT ? (currentOp.level() + 1) : currentOp.level();
 
             next();
             if (!isNotEof()) {
@@ -60,7 +60,7 @@ public class Parser {
     private Node parseParen() {
         Token current = current();
 
-        if (current.getType() == TokenType.PAREN_OPEN) {
+        if (current.type() == TokenType.PAREN_OPEN) {
             next();
             if (!isNotEof()) {
                 throw new ParserException("Unclosed parenthesis", current);
@@ -77,7 +77,7 @@ public class Parser {
                     throw new ParserException("Expected ')'", tokens.get(tokens.size() - 1));
                 }
 
-                if (currentAfterExpression.getType() == TokenType.PAREN_CLOSE && ")".equals(currentAfterExpression.getContent())) {
+                if (currentAfterExpression.type() == TokenType.PAREN_CLOSE && ")".equals(currentAfterExpression.content())) {
                     next();
                     break;
                 }
@@ -91,7 +91,7 @@ public class Parser {
 
     private Node parseUnaryOp() {
         Token maybeUnaryOp = current();
-        if (maybeUnaryOp.getType() == TokenType.UNARY_OP) {
+        if (maybeUnaryOp.type() == TokenType.UNARY_OP) {
             next();
             if (!isNotEof()) {
                 throw new ParserException("Unary operator has no target", maybeUnaryOp);
@@ -106,13 +106,13 @@ public class Parser {
     private Node parseLiteral() {
         Token current = current();
 
-        if (current.getType() == TokenType.IDENTIFIER ||
-                current.getType() == TokenType.FLOATING_NUMBER ||
-                current.getType() == TokenType.INTEGER_NUMBER) {
+        if (current.type() == TokenType.IDENTIFIER ||
+                current.type() == TokenType.FLOATING_NUMBER ||
+                current.type() == TokenType.INTEGER_NUMBER) {
             next();
             return new LiteralNode(current);
         } else {
-            throw new ParserException("Unexpected token " + current.getContent(), current);
+            throw new ParserException("Unexpected token " + current.content(), current);
         }
     }
 

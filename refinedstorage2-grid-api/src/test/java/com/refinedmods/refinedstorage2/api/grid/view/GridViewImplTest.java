@@ -237,8 +237,8 @@ class GridViewImplTest {
         Optional<StorageTracker.Entry> sponge = view.getTrackerEntry(new Rs2ItemStack(ItemStubs.SPONGE));
 
         assertThat(dirt).isPresent();
-        assertThat(dirt.get().getName()).isEqualTo("RaoulA");
-        assertThat(dirt.get().getTime()).isEqualTo(2);
+        assertThat(dirt.get().name()).isEqualTo("RaoulA");
+        assertThat(dirt.get().time()).isEqualTo(2);
 
         assertThat(glass).isEmpty();
         assertThat(sponge).isEmpty();
@@ -403,8 +403,8 @@ class GridViewImplTest {
         Optional<StorageTracker.Entry> sponge = view.getTrackerEntry(new Rs2ItemStack(ItemStubs.SPONGE));
 
         assertThat(dirt).isPresent();
-        assertThat(dirt.get().getName()).isEqualTo("RaoulA");
-        assertThat(dirt.get().getTime()).isEqualTo(2);
+        assertThat(dirt.get().name()).isEqualTo("RaoulA");
+        assertThat(dirt.get().time()).isEqualTo(2);
 
         assertThat(glass).isEmpty();
         assertThat(sponge).isEmpty();

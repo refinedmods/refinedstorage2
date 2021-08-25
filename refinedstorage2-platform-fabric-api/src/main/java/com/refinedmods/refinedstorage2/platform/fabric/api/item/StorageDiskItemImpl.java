@@ -56,18 +56,18 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
         super.appendTooltip(stack, world, tooltip, context);
 
         getInfo(world, stack).ifPresent(info -> {
-            if (info.getCapacity() == -1) {
+            if (info.capacity() == -1) {
                 tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
                         "misc",
                         "stored",
-                        QuantityFormatter.formatWithUnits(info.getStored())
+                        QuantityFormatter.formatWithUnits(info.stored())
                 ).formatted(Formatting.GRAY));
             } else {
                 tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
                         "misc",
                         "stored_with_capacity",
-                        QuantityFormatter.formatWithUnits(info.getStored()),
-                        QuantityFormatter.formatWithUnits(info.getCapacity())
+                        QuantityFormatter.formatWithUnits(info.stored()),
+                        QuantityFormatter.formatWithUnits(info.capacity())
                 ).formatted(Formatting.GRAY));
             }
         });

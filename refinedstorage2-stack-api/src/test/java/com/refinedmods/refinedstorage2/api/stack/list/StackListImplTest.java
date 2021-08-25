@@ -30,10 +30,10 @@ class StackListImplTest {
         StackListResult<Rs2ItemStack> result = list.add(stack, 10);
 
         // Assert
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getChange()).isEqualTo(10);
-        assertThat(result.getStack()).isNotSameAs(stack);
-        assertThat(result.isAvailable()).isTrue();
+        assertThat(result.id()).isNotNull();
+        assertThat(result.change()).isEqualTo(10);
+        assertThat(result.stack()).isNotSameAs(stack);
+        assertThat(result.available()).isTrue();
 
         assertItemStackListContents(list, new Rs2ItemStack(ItemStubs.DIRT, 10));
     }
@@ -49,15 +49,15 @@ class StackListImplTest {
         StackListResult<Rs2ItemStack> result2 = list.add(stack2, 5);
 
         // Assert
-        assertThat(result1.getId()).isNotNull();
-        assertThat(result1.getChange()).isEqualTo(10);
-        assertThat(result1.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
-        assertThat(result1.isAvailable()).isTrue();
+        assertThat(result1.id()).isNotNull();
+        assertThat(result1.change()).isEqualTo(10);
+        assertThat(result1.stack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result1.available()).isTrue();
 
-        assertThat(result2.getId()).isEqualTo(result1.getId());
-        assertThat(result2.getChange()).isEqualTo(5);
-        assertThat(result2.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
-        assertThat(result2.isAvailable()).isTrue();
+        assertThat(result2.id()).isEqualTo(result1.id());
+        assertThat(result2.change()).isEqualTo(5);
+        assertThat(result2.stack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result2.available()).isTrue();
 
         assertItemStackListContents(list, new Rs2ItemStack(ItemStubs.DIRT, 15));
     }
@@ -75,20 +75,20 @@ class StackListImplTest {
         StackListResult<Rs2ItemStack> result3 = list.add(stack3, 3);
 
         // Assert
-        assertThat(result1.getId()).isNotNull();
-        assertThat(result1.getChange()).isEqualTo(10);
-        assertThat(result1.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
-        assertThat(result1.isAvailable()).isTrue();
+        assertThat(result1.id()).isNotNull();
+        assertThat(result1.change()).isEqualTo(10);
+        assertThat(result1.stack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result1.available()).isTrue();
 
-        assertThat(result2.getId()).isEqualTo(result1.getId());
-        assertThat(result2.getChange()).isEqualTo(5);
-        assertThat(result2.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
-        assertThat(result2.isAvailable()).isTrue();
+        assertThat(result2.id()).isEqualTo(result1.id());
+        assertThat(result2.change()).isEqualTo(5);
+        assertThat(result2.stack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result2.available()).isTrue();
 
-        assertThat(result3.getId()).isEqualTo(result3.getId());
-        assertThat(result3.getChange()).isEqualTo(3);
-        assertThat(result3.getStack()).isNotSameAs(stack3);
-        assertThat(result3.isAvailable()).isTrue();
+        assertThat(result3.id()).isEqualTo(result3.id());
+        assertThat(result3.change()).isEqualTo(3);
+        assertThat(result3.stack()).isNotSameAs(stack3);
+        assertThat(result3.available()).isTrue();
 
         assertItemStackListContents(list, new Rs2ItemStack(ItemStubs.DIRT, 15), new Rs2ItemStack(ItemStubs.DIAMOND, 3));
     }
@@ -106,20 +106,20 @@ class StackListImplTest {
         StackListResult<Rs2ItemStack> result3 = list.add(stack3, 3);
 
         // Assert
-        assertThat(result1.getId()).isNotNull();
-        assertThat(result1.getChange()).isEqualTo(10);
-        assertThat(result1.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
-        assertThat(result1.isAvailable()).isTrue();
+        assertThat(result1.id()).isNotNull();
+        assertThat(result1.change()).isEqualTo(10);
+        assertThat(result1.stack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result1.available()).isTrue();
 
-        assertThat(result2.getId()).isNotNull();
-        assertThat(result2.getChange()).isEqualTo(5);
-        assertThat(result2.getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
-        assertThat(result2.isAvailable()).isTrue();
+        assertThat(result2.id()).isNotNull();
+        assertThat(result2.change()).isEqualTo(5);
+        assertThat(result2.stack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result2.available()).isTrue();
 
-        assertThat(result3.getId()).isNotNull();
-        assertThat(result3.getChange()).isEqualTo(3);
-        assertThat(result3.getStack()).isNotSameAs(stack3);
-        assertThat(result3.isAvailable()).isTrue();
+        assertThat(result3.id()).isNotNull();
+        assertThat(result3.change()).isEqualTo(3);
+        assertThat(result3.stack()).isNotSameAs(stack3);
+        assertThat(result3.available()).isTrue();
 
         Rs2ItemStack expectedStack1 = new Rs2ItemStack(ItemStubs.DIRT, 10, "hello 1");
         Rs2ItemStack expectedStack2 = new Rs2ItemStack(ItemStubs.DIRT, 5, "hello 2");
@@ -184,10 +184,10 @@ class StackListImplTest {
 
         // Assert
         assertThat(result2).isPresent();
-        assertThat(result2.get().getId()).isEqualTo(result1.getId());
-        assertThat(result2.get().getChange()).isEqualTo(-5);
-        assertThat(result2.get().getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
-        assertThat(result2.get().isAvailable()).isTrue();
+        assertThat(result2.get().id()).isEqualTo(result1.id());
+        assertThat(result2.get().change()).isEqualTo(-5);
+        assertThat(result2.get().stack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result2.get().available()).isTrue();
 
         assertItemStackListContents(list, new Rs2ItemStack(ItemStubs.DIRT, 15), new Rs2ItemStack(ItemStubs.DIAMOND, 6));
     }
@@ -206,10 +206,10 @@ class StackListImplTest {
 
         // Assert
         assertThat(result2).isPresent();
-        assertThat(result2.get().getId()).isEqualTo(result1.getId());
-        assertThat(result2.get().getChange()).isEqualTo(-20);
-        assertThat(result2.get().getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
-        assertThat(result2.get().isAvailable()).isFalse();
+        assertThat(result2.get().id()).isEqualTo(result1.id());
+        assertThat(result2.get().change()).isEqualTo(-20);
+        assertThat(result2.get().stack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result2.get().available()).isFalse();
 
         assertItemStackListContents(list, new Rs2ItemStack(ItemStubs.DIAMOND, 6));
     }
@@ -228,10 +228,10 @@ class StackListImplTest {
 
         // Assert
         assertThat(result2).isPresent();
-        assertThat(result2.get().getId()).isEqualTo(result1.getId());
-        assertThat(result2.get().getChange()).isEqualTo(-20);
-        assertThat(result2.get().getStack()).isNotSameAs(stack1).isNotSameAs(stack2);
-        assertThat(result2.get().isAvailable()).isFalse();
+        assertThat(result2.get().id()).isEqualTo(result1.id());
+        assertThat(result2.get().change()).isEqualTo(-20);
+        assertThat(result2.get().stack()).isNotSameAs(stack1).isNotSameAs(stack2);
+        assertThat(result2.get().available()).isFalse();
 
         assertItemStackListContents(list, new Rs2ItemStack(ItemStubs.DIAMOND, 6));
     }
@@ -283,7 +283,7 @@ class StackListImplTest {
 
         // Act
         StackListResult<Rs2ItemStack> result = list.add(stack, 3);
-        Optional<Rs2ItemStack> stackInList = list.get(result.getId());
+        Optional<Rs2ItemStack> stackInList = list.get(result.id());
 
         // Assert
         assertThat(stackInList).isPresent();
@@ -300,7 +300,7 @@ class StackListImplTest {
         StackListResult<Rs2ItemStack> result1 = list.add(stack1, 10);
         list.remove(stack2, 3);
 
-        Optional<Rs2ItemStack> stack1InList = list.get(result1.getId());
+        Optional<Rs2ItemStack> stack1InList = list.get(result1.id());
 
         // Assert
         assertThat(stack1InList).isPresent();
@@ -350,7 +350,7 @@ class StackListImplTest {
         StackListResult<Rs2ItemStack> result1 = list.add(stack1, 10);
         list.remove(stack2, 10);
 
-        Optional<Rs2ItemStack> stack1InList = list.get(result1.getId());
+        Optional<Rs2ItemStack> stack1InList = list.get(result1.id());
 
         // Assert
         assertThat(stack1InList).isNotPresent();
@@ -362,8 +362,8 @@ class StackListImplTest {
         Rs2ItemStack stack1 = new Rs2ItemStack(ItemStubs.DIRT, 10);
         Rs2ItemStack stack2 = new Rs2ItemStack(ItemStubs.GLASS, 5);
 
-        UUID id1 = list.add(stack1, 10).getId();
-        UUID id2 = list.add(stack2, 5).getId();
+        UUID id1 = list.add(stack1, 10).id();
+        UUID id2 = list.add(stack2, 5).id();
 
         Collection<Rs2ItemStack> listContentsBeforeClear = new ArrayList<>(list.getAll());
         Optional<Rs2ItemStack> stack1ByIdBeforeClear = list.get(id1);
