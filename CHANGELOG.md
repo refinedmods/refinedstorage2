@@ -9,6 +9,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.0.0-milestone.1.2]
 
+### Changed
+
+- Modularized the codebase
+
 ## [2.0.0-milestone.1.1] - 2021-08-16
 
 ### Added

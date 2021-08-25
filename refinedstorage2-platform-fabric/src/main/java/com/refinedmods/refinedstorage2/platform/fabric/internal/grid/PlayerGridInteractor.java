@@ -40,6 +40,8 @@ public class PlayerGridInteractor implements GridInteractor {
         }
 
         // TODO: Prevent this going into the armor slots.
+        // TODO: move away from LBA
+        // TODO: visit all classes to check quality
         ItemStack remainder = inventory.insertStack(preferredSlot, mcStack, simulation);
         if (!remainder.isEmpty()) {
             return ItemStacks.ofItemStack(inventory.getInsertable().attemptInsertion(remainder, simulation));

@@ -26,6 +26,6 @@ Please use the `.editorconfig` file as provided.
 
 ## Testing
 
-Changes to the `core` module need unit tests.
+Changes to the API modules need unit tests.
 
-Changes to platform modules like `fabric` don't necessarily need these, but they are welcome.
+Changes to platform modules don't necessarily need these, but they are welcome.
