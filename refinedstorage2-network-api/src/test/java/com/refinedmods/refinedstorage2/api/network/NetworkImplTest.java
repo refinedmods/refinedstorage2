@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.network;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.node.container.FakeNetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerListener;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
@@ -36,7 +37,7 @@ class NetworkImplTest {
         diskDrive.initialize(fakeStorageDiskProviderManager);
         FakeNetworkNodeContainer<DiskDriveNetworkNode> diskDriveContainer = new FakeNetworkNodeContainer<>(diskDrive);
 
-        ControllerNetworkNode controllerNetworkNode = new ControllerNetworkNode(100, 100, ControllerType.NORMAL);
+        ControllerNetworkNode controllerNetworkNode = new ControllerNetworkNode(100, 100, ControllerType.NORMAL, mock(ControllerListener.class));
         controllerNetworkNode.setNetwork(network);
         FakeNetworkNodeContainer<ControllerNetworkNode> controllerContainer = new FakeNetworkNodeContainer<>(controllerNetworkNode);
 

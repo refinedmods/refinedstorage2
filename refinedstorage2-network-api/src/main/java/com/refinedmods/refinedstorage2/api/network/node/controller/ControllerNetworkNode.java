@@ -8,10 +8,12 @@ import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 
 public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStorage {
     private final EnergyStorage energyStorage;
+    private final ControllerListener listener;
 
-    public ControllerNetworkNode(long stored, long capacity, ControllerType type) {
+    public ControllerNetworkNode(long stored, long capacity, ControllerType type, ControllerListener listener) {
         this.energyStorage = buildEnergyStorage(capacity, type);
         this.energyStorage.receive(stored, Action.EXECUTE);
+        this.listener = listener;
     }
 
     private static EnergyStorage buildEnergyStorage(long capacity, ControllerType type) {
@@ -61,7 +63,11 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
 
     @Override
     public long receive(long amount, Action action) {
-        return energyStorage.receive(amount, action);
+        long remainder = energyStorage.receive(amount, action);
+        if (remainder != amount && action == Action.EXECUTE) {
+            listener.onEnergyChanged();
+        }
+        return remainder;
     }
 
     @Override
@@ -69,7 +75,11 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
         if (!isActive()) {
             return 0;
         }
-        return energyStorage.extract(amount, action);
+        long extracted = energyStorage.extract(amount, action);
+        if (extracted > 0L && action == Action.EXECUTE) {
+            listener.onEnergyChanged();
+        }
+        return extracted;
     }
 
     @Override

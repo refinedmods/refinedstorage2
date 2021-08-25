@@ -10,8 +10,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.verification.VerificationMode;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @Rs2Test
 class ControllerNetworkNodeTest {
@@ -32,7 +37,7 @@ class ControllerNetworkNodeTest {
     @MethodSource("getStoredAndExpectedState")
     void Test_calculating_states(long stored, ControllerEnergyState expectedState) {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(0, 100, ControllerType.NORMAL);
+        ControllerNetworkNode controller = new ControllerNetworkNode(0, 100, ControllerType.NORMAL, mock(ControllerListener.class));
 
         controller.receive(stored, Action.EXECUTE);
 
@@ -46,7 +51,7 @@ class ControllerNetworkNodeTest {
     @Test
     void Test_calculating_state_when_inactive() {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(0, 100, ControllerType.NORMAL);
+        ControllerNetworkNode controller = new ControllerNetworkNode(0, 100, ControllerType.NORMAL, mock(ControllerListener.class));
         controller.setActive(false);
 
         // Act
@@ -60,7 +65,7 @@ class ControllerNetworkNodeTest {
     @EnumSource(ControllerType.class)
     void Test_receiving_energy(ControllerType type) {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(0, 100, type);
+        ControllerNetworkNode controller = new ControllerNetworkNode(0, 100, type, mock(ControllerListener.class));
 
         // Act
         long remainder = controller.receive(10, Action.EXECUTE);
@@ -80,7 +85,7 @@ class ControllerNetworkNodeTest {
     @Test
     void Test_receiving_energy_when_inactive() {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(0, 100, ControllerType.NORMAL);
+        ControllerNetworkNode controller = new ControllerNetworkNode(0, 100, ControllerType.NORMAL, mock(ControllerListener.class));
 
         controller.receive(5, Action.EXECUTE);
         controller.setActive(false);
@@ -100,7 +105,7 @@ class ControllerNetworkNodeTest {
     @EnumSource(ControllerType.class)
     void Test_extracting_energy(ControllerType type) {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(0, 100, type);
+        ControllerNetworkNode controller = new ControllerNetworkNode(0, 100, type, mock(ControllerListener.class));
 
         // Act
         controller.receive(10, Action.EXECUTE);
@@ -121,7 +126,7 @@ class ControllerNetworkNodeTest {
     @Test
     void Test_extracting_energy_when_inactive() {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(0, 100, ControllerType.NORMAL);
+        ControllerNetworkNode controller = new ControllerNetworkNode(0, 100, ControllerType.NORMAL, mock(ControllerListener.class));
 
         controller.receive(20, Action.EXECUTE);
         controller.setActive(false);
@@ -135,5 +140,69 @@ class ControllerNetworkNodeTest {
         assertThat(controller.getCapacity()).isZero();
         assertThat(controller.getActualStored()).isEqualTo(20);
         assertThat(controller.getActualCapacity()).isEqualTo(100);
+    }
+
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void Test_should_call_listener_when_receiving_when_necessary(Action action) {
+        // Arrange
+        ControllerListener listener = mock(ControllerListener.class);
+
+        ControllerNetworkNode controller = new ControllerNetworkNode(50, 100, ControllerType.NORMAL, listener);
+
+        // Act
+        controller.receive(75, action);
+
+        // Assert
+        VerificationMode times = action == Action.EXECUTE ? times(1) : never();
+
+        verify(listener, times).onEnergyChanged();
+    }
+
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void Test_should_not_call_listener_when_receiving_when_not_necessary(Action action) {
+        // Arrange
+        ControllerListener listener = mock(ControllerListener.class);
+
+        ControllerNetworkNode controller = new ControllerNetworkNode(100, 100, ControllerType.NORMAL, listener);
+
+        // Act
+        controller.receive(10, action);
+
+        // Assert
+        verify(listener, never()).onEnergyChanged();
+    }
+
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void Test_should_call_listener_when_extracting_when_necessary(Action action) {
+        // Arrange
+        ControllerListener listener = mock(ControllerListener.class);
+
+        ControllerNetworkNode controller = new ControllerNetworkNode(50, 100, ControllerType.NORMAL, listener);
+
+        // Act
+        controller.extract(75, action);
+
+        // Assert
+        VerificationMode times = action == Action.EXECUTE ? times(1) : never();
+
+        verify(listener, times).onEnergyChanged();
+    }
+
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void Test_should_not_call_listener_when_extracting_when_not_necessary(Action action) {
+        // Arrange
+        ControllerListener listener = mock(ControllerListener.class);
+
+        ControllerNetworkNode controller = new ControllerNetworkNode(0, 100, ControllerType.NORMAL, listener);
+
+        // Act
+        controller.extract(10, action);
+
+        // Assert
+        verify(listener, never()).onEnergyChanged();
     }
 }

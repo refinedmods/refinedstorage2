@@ -22,17 +22,11 @@ public enum ControllerEnergyType implements StringIdentifiable {
     }
 
     public static ControllerEnergyType ofState(ControllerEnergyState state) {
-        switch (state) {
-            case OFF:
-                return OFF;
-            case NEARLY_ON:
-                return NEARLY_ON;
-            case ON:
-                return ON;
-            case NEARLY_OFF:
-                return NEARLY_OFF;
-            default:
-                return OFF;
-        }
+        return switch (state) {
+            case OFF -> OFF;
+            case NEARLY_ON -> NEARLY_ON;
+            case ON -> ON;
+            case NEARLY_OFF -> NEARLY_OFF;
+        };
     }
 }

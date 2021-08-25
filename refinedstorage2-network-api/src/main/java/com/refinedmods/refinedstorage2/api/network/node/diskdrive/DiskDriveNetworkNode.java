@@ -140,7 +140,9 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     public void setActive(boolean active) {
         super.setActive(active);
         LOGGER.info("Invalidating storage due to disk drive activeness change");
-        compositeStorages.keySet().forEach(type -> network.getComponent(StorageNetworkComponent.class).getStorageChannel(type).invalidate());
+        if (network != null) {
+            compositeStorages.keySet().forEach(type -> network.getComponent(StorageNetworkComponent.class).getStorageChannel(type).invalidate());
+        }
     }
 
     @Override

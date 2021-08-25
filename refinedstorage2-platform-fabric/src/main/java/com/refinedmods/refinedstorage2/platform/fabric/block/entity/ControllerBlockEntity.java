@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block.entity;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerListener;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
@@ -26,8 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.EnergySide;
 import team.reborn.energy.EnergyTier;
 
-// TODO: Marking dirty!
-public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity<ControllerNetworkNode> implements ExtendedScreenHandlerFactory, team.reborn.energy.EnergyStorage {
+public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity<ControllerNetworkNode> implements ExtendedScreenHandlerFactory, team.reborn.energy.EnergyStorage, ControllerListener {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORED = "stored";
@@ -67,7 +67,8 @@ public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity
         return new ControllerNetworkNode(
                 tag != null ? tag.getLong(TAG_STORED) : 0L,
                 Rs2Config.get().getController().getCapacity(),
-                type
+                type,
+                this
         );
     }
 
@@ -126,5 +127,10 @@ public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity
     @Override
     public EnergyTier getTier() {
         return EnergyTier.INFINITE;
+    }
+
+    @Override
+    public void onEnergyChanged() {
+        markDirty();
     }
 }
