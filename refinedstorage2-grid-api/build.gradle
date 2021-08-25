@@ -6,10 +6,9 @@ dependencies {
     testImplementation project(':refinedstorage2-stack-api-test')
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
     testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
-    testImplementation "nl.jqno.equalsverifier:equalsverifier:${project.equalsverifierVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${project.junitVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${project.junitVersion}"
     testImplementation "org.mockito:mockito-core:${project.mockitoVersion}"
-    implementation "com.google.guava:guava:${project.guavaVersion}"
     implementation project(':refinedstorage2-stack-api')
     implementation project(':refinedstorage2-core-api')
     implementation project(':refinedstorage2-storage-api')
