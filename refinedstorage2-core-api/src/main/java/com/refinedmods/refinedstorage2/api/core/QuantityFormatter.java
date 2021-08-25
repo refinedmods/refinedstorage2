@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-public class QuantityFormatter {
+public final class QuantityFormatter {
     private static final DecimalFormat FORMATTER_WITH_UNITS = new DecimalFormat("####0.#", DecimalFormatSymbols.getInstance(Locale.US));
     private static final DecimalFormat FORMATTER = new DecimalFormat("#,###", DecimalFormatSymbols.getInstance(Locale.US));
 
