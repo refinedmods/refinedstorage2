@@ -56,7 +56,7 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
 
     @Override
     public Item toMcItem(Rs2Item item) {
-        return ((FabricRs2Item) item).item();
+        return ((FabricRs2Item) item).getItem();
     }
 
     @Override

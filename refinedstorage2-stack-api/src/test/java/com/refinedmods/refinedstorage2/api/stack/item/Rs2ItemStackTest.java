@@ -13,7 +13,7 @@ class Rs2ItemStackTest {
     @Test
     void Test_properties() {
         // Arrange
-        Rs2Item item = new ItemStub(10, "Test", 64);
+        Rs2Item item = new ItemStub(10, "Test", 64, "test");
 
         // Act
         Rs2ItemStack stack = new Rs2ItemStack(item, 10, "tag");
@@ -30,7 +30,7 @@ class Rs2ItemStackTest {
     @Test
     void Test_properties_when_empty() {
         // Arrange
-        Rs2Item item = new ItemStub(10, "Test", 64);
+        Rs2Item item = new ItemStub(10, "Test", 64, "test");
 
         // Act
         Rs2ItemStack stack = new Rs2ItemStack(item, 0, "tag");
@@ -47,7 +47,7 @@ class Rs2ItemStackTest {
     @Test
     void Test_properties_without_tag() {
         // Arrange
-        Rs2Item item = new ItemStub(10, "Test", 64);
+        Rs2Item item = new ItemStub(10, "Test", 64, "test");
 
         // Act
         Rs2ItemStack stack = new Rs2ItemStack(item, 10);
@@ -64,7 +64,7 @@ class Rs2ItemStackTest {
     @Test
     void Test_properties_without_tag_and_count() {
         // Arrange
-        Rs2Item item = new ItemStub(10, "Test", 64);
+        Rs2Item item = new ItemStub(10, "Test", 64, "test");
 
         // Act
         Rs2ItemStack stack = new Rs2ItemStack(item);
@@ -81,7 +81,7 @@ class Rs2ItemStackTest {
     @Test
     void Test_copy() {
         // Arrange
-        Rs2Item item = new ItemStub(10, "Test", 64);
+        Rs2Item item = new ItemStub(10, "Test", 64, "test");
 
         // Act
         Rs2ItemStack stack = new Rs2ItemStack(item, 10, "tag");

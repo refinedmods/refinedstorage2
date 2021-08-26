@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 // TODO move behind api facade
@@ -32,12 +33,12 @@ public final class ItemStacks {
         if (stack.getTag() != null) {
             tag.put(TAG_TAG, (NbtCompound) stack.getTag());
         }
-        tag.putInt(TAG_ID, stack.getItem().getId());
+        tag.putString(TAG_ID, stack.getItem().getIdentifier());
         return tag;
     }
 
     public static Rs2ItemStack fromTag(NbtCompound tag) {
-        int id = tag.getInt(TAG_ID);
+        Identifier id = new Identifier(tag.getString(TAG_ID));
         Item item = Registry.ITEM.get(id);
         if (item == Items.AIR) {
             return Rs2ItemStack.EMPTY;

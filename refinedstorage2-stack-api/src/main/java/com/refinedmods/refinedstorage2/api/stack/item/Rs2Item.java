@@ -6,4 +6,6 @@ public interface Rs2Item {
     int getId();
 
     String getName();
+
+    String getIdentifier();
 }

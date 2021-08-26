@@ -21,7 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class FabricStorageDiskManager extends PersistentState implements PlatformStorageDiskManager {
-    public static final String NAME = "refinedstorage2_disks";
+    public static final String NAME = "refinedstorage2_disks2";
 
     private static final Logger LOGGER = LogManager.getLogger();
 

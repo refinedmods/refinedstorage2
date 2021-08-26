@@ -11,11 +11,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Fix Disk Drive item filters not being applied when reloading a world
+- Fix Disk Drive item filters not being applied when reloading a world.
+- Fix Storage Disk contents being scrambled when other mods are being added or removed.
 
 ### Changed
 
-- Modularized the codebase
+- Modularized the codebase.
 
 ## [2.0.0-milestone.1.1] - 2021-08-16
 
@@ -25,14 +26,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Fix crash when transferring items in the Controller screen
-- Fix Disk Drive leds not being stable
-- Fix block variants not being present on Patchouli book entries
+- Fix crash when transferring items in the Controller screen.
+- Fix Disk Drive leds not being stable.
+- Fix block variants not being present on Patchouli book entries.
 
 ### Changed
 
-- Ported to Minecraft 1.17.1
-- Implemented a new networking system
+- Ported to Minecraft 1.17.1.
+- Implemented a new networking system.
 
 ## [2.0.0-milestone.1.0] - 2021-05-21
 
