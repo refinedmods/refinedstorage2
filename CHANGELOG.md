@@ -9,10 +9,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.0.0-milestone.1.2]
 
+Storage Disks from the previous version are no longer valid. Please move all your items into another storage medium
+before updating.
+
 ### Fixed
 
 - Fix Disk Drive item filters not being applied when reloading a world.
 - Fix Storage Disk contents being scrambled when other mods are being added or removed.
+- Fix rendering crash with the Disk Drive.
 
 ### Changed
 

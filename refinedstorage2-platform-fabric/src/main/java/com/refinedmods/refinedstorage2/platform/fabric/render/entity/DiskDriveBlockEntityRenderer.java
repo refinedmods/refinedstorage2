@@ -7,13 +7,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.diskdrive.Di
 import com.refinedmods.refinedstorage2.platform.fabric.render.CubeBuilder;
 import com.refinedmods.refinedstorage2.platform.fabric.util.BiDirection;
 
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.RenderPhase;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.render.*;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Direction;
@@ -48,12 +43,18 @@ public class DiskDriveBlockEntityRenderer implements BlockEntityRenderer<DiskDri
             return;
         }
 
-        DiskDriveState states = (DiskDriveState) entity.getRenderAttachmentData();
+        // Always sanity check the block state first, these may not always be correct and can cause crashes (see #20).
+        BlockState blockState = entity.getWorld().getBlockState(entity.getPos());
+        if (!blockState.contains(BaseBlock.DIRECTION)) {
+            return;
+        }
+
+        DiskDriveState diskStates = (DiskDriveState) entity.getRenderAttachmentData();
 
         matrices.push();
 
         matrices.translate(0.5F, 0.5F, 0.5F);
-        matrices.multiply(createQuaternion(entity.getWorld().getBlockState(entity.getPos()).get(BaseBlock.DIRECTION)));
+        matrices.multiply(createQuaternion(blockState.get(BaseBlock.DIRECTION)));
         matrices.translate(-0.5F, -0.5F, -0.5F);
 
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RENDER_LAYER);
@@ -61,7 +62,7 @@ public class DiskDriveBlockEntityRenderer implements BlockEntityRenderer<DiskDri
         int i = 0;
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 2; ++x) {
-                DiskState state = states.getState(i++);
+                DiskState state = diskStates.getState(i++);
 
                 if (state != DiskState.NONE) {
                     float x1 = LED_X1 - (x * 7F);
