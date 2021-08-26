@@ -3,6 +3,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.init;
 import com.refinedmods.refinedstorage2.platform.fabric.FeatureFlag;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.item.CoreItem;
+import com.refinedmods.refinedstorage2.platform.fabric.item.FluidStorageDiskItem;
+import com.refinedmods.refinedstorage2.platform.fabric.item.FluidStoragePartItem;
 import com.refinedmods.refinedstorage2.platform.fabric.item.ItemStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.fabric.item.ProcessorBindingItem;
 import com.refinedmods.refinedstorage2.platform.fabric.item.ProcessorItem;
@@ -27,6 +29,7 @@ public class Rs2Items {
     private static final String BLOCK_TRANSLATION_CATEGORY = "block";
 
     private final Map<ItemStorageDiskItem.ItemStorageType, StoragePartItem> storageParts = new EnumMap<>(ItemStorageDiskItem.ItemStorageType.class);
+    private final Map<FluidStorageDiskItem.FluidStorageType, FluidStoragePartItem> fluidStorageParts = new EnumMap<>(FluidStorageDiskItem.FluidStorageType.class);
     private final List<ControllerBlockItem> controllers = new ArrayList<>();
     private StorageHousingItem storageHousing;
 
@@ -66,8 +69,18 @@ public class Rs2Items {
             }
         }
 
+        for (FluidStorageDiskItem.FluidStorageType type : FluidStorageDiskItem.FluidStorageType.values()) {
+            if (type != FluidStorageDiskItem.FluidStorageType.CREATIVE) {
+                fluidStorageParts.put(type, Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_fluid_storage_part"), new FluidStoragePartItem(createSettings(itemGroup))));
+            }
+        }
+
         for (ItemStorageDiskItem.ItemStorageType type : ItemStorageDiskItem.ItemStorageType.values()) {
             Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_storage_disk"), new ItemStorageDiskItem(createSettings(itemGroup).maxCount(1).fireproof(), type));
+        }
+
+        for (FluidStorageDiskItem.FluidStorageType type : FluidStorageDiskItem.FluidStorageType.values()) {
+            Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_fluid_storage_disk"), new FluidStorageDiskItem(createSettings(itemGroup).maxCount(1).fireproof(), type));
         }
 
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("construction_core"), new CoreItem(createSettings(itemGroup)));
@@ -88,5 +101,9 @@ public class Rs2Items {
 
     public StoragePartItem getStoragePart(ItemStorageDiskItem.ItemStorageType type) {
         return storageParts.get(type);
+    }
+
+    public FluidStoragePartItem getFluidStoragePart(FluidStorageDiskItem.FluidStorageType type) {
+        return fluidStorageParts.get(type);
     }
 }

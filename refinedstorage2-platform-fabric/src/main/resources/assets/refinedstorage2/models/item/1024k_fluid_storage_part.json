@@ -1,0 +1,6 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "refinedstorage2:item/1024k_fluid_storage_part"
+    }
+}
