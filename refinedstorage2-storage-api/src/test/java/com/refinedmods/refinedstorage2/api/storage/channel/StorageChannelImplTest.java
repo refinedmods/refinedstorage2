@@ -6,7 +6,8 @@ import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
 import com.refinedmods.refinedstorage2.api.stack.list.listenable.StackListListener;
 import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
 import com.refinedmods.refinedstorage2.api.storage.composite.PrioritizedStorage;
-import com.refinedmods.refinedstorage2.api.storage.disk.ItemStorageDisk;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;
@@ -40,7 +41,7 @@ class StorageChannelImplTest {
     @EnumSource(Action.class)
     void Test_listener_on_insertion(Action action) {
         // Arrange
-        channel.addSource(new ItemStorageDisk(10));
+        channel.addSource(StorageDiskImpl.createItemStorageDisk(10));
 
         StackListListener<Rs2ItemStack> listener = mock(StackListListener.class);
         channel.addListener(listener);
@@ -65,7 +66,7 @@ class StorageChannelImplTest {
     @EnumSource(Action.class)
     void Test_listener_on_extraction(Action action) {
         // Arrange
-        ItemStorageDisk diskStorage = new ItemStorageDisk(10);
+        StorageDisk<Rs2ItemStack> diskStorage = StorageDiskImpl.createItemStorageDisk(10);
         diskStorage.insert(new Rs2ItemStack(ItemStubs.GLASS), 10, Action.EXECUTE);
 
         channel.addSource(diskStorage);
@@ -92,7 +93,7 @@ class StorageChannelImplTest {
     @Test
     void Test_inserting() {
         // Arrange
-        channel.addSource(new ItemStorageDisk(10));
+        channel.addSource(StorageDiskImpl.createItemStorageDisk(10));
 
         // Act
         channel.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
@@ -105,7 +106,7 @@ class StorageChannelImplTest {
     @Test
     void Test_extracting() {
         // Arrange
-        ItemStorageDisk diskStorage = new ItemStorageDisk(100);
+        StorageDisk<Rs2ItemStack> diskStorage = StorageDiskImpl.createItemStorageDisk(100);
         diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
 
         channel.addSource(diskStorage);
@@ -120,7 +121,7 @@ class StorageChannelImplTest {
     @Test
     void Test_getting_stack() {
         // Arrange
-        ItemStorageDisk diskStorage = new ItemStorageDisk(100);
+        StorageDisk<Rs2ItemStack> diskStorage = StorageDiskImpl.createItemStorageDisk(100);
         diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
 
         channel.addSource(diskStorage);
@@ -136,7 +137,7 @@ class StorageChannelImplTest {
     @Test
     void Test_getting_non_existent_stack() {
         // Arrange
-        channel.addSource(new ItemStorageDisk(100));
+        channel.addSource(StorageDiskImpl.createItemStorageDisk(100));
 
         // Act
         Optional<Rs2ItemStack> stack = channel.get(new Rs2ItemStack(ItemStubs.DIRT));
@@ -148,9 +149,9 @@ class StorageChannelImplTest {
     @RepeatedTest(100)
     void Test_sorting_sources() {
         // Arrange
-        PrioritizedStorage<Rs2ItemStack> disk1 = new PrioritizedStorage<>(0, new ItemStorageDisk(10));
-        PrioritizedStorage<Rs2ItemStack> disk2 = new PrioritizedStorage<>(0, new ItemStorageDisk(10));
-        PrioritizedStorage<Rs2ItemStack> disk3 = new PrioritizedStorage<>(0, new ItemStorageDisk(10));
+        PrioritizedStorage<Rs2ItemStack> disk1 = new PrioritizedStorage<>(0, StorageDiskImpl.createItemStorageDisk(10));
+        PrioritizedStorage<Rs2ItemStack> disk2 = new PrioritizedStorage<>(0, StorageDiskImpl.createItemStorageDisk(10));
+        PrioritizedStorage<Rs2ItemStack> disk3 = new PrioritizedStorage<>(0, StorageDiskImpl.createItemStorageDisk(10));
 
         channel.addSource(disk1);
         channel.addSource(disk2);

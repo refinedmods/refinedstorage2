@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.api.grid.eventhandler;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.storage.disk.ItemStorageDisk;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
 
 import java.util.Collection;
 
@@ -11,10 +11,10 @@ public class FakeGridInteractor implements GridInteractor {
     public static final String NAME = "Fake interactor";
 
     private Rs2ItemStack cursorStack = Rs2ItemStack.EMPTY;
-    private StorageDisk<Rs2ItemStack> inventory = new ItemStorageDisk(1000);
+    private StorageDisk<Rs2ItemStack> inventory = StorageDiskImpl.createItemStorageDisk(1000);
 
     public void resetInventoryAndSetCapacity(int capacity) {
-        inventory = new ItemStorageDisk(capacity);
+        inventory = StorageDiskImpl.createItemStorageDisk(capacity);
     }
 
     @Override

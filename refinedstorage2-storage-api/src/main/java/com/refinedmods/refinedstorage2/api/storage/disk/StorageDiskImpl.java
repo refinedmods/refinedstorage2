@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.storage.disk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.stack.list.StackList;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
@@ -8,17 +9,22 @@ import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
 import java.util.Collection;
 import java.util.Optional;
 
-public class ItemStorageDisk implements StorageDisk<Rs2ItemStack> {
-    private final StackList<Rs2ItemStack> list = StackListImpl.createItemStackList();
+public class StorageDiskImpl<T extends Rs2Stack> implements StorageDisk<T> {
+    private final StackList<T> list;
     private final long capacity;
     private long stored;
 
-    public ItemStorageDisk(long capacity) {
+    public StorageDiskImpl(long capacity, StackList<T> list) {
         this.capacity = capacity;
+        this.list = list;
+    }
+
+    public static StorageDisk<Rs2ItemStack> createItemStorageDisk(long capacity) {
+        return new StorageDiskImpl<>(capacity, StackListImpl.createItemStackList());
     }
 
     @Override
-    public Optional<Rs2ItemStack> extract(Rs2ItemStack template, long amount, Action action) {
+    public Optional<T> extract(T template, long amount, Action action) {
         if (template.isEmpty() || amount <= 0) {
             throw new IllegalArgumentException("Invalid stack");
         }
@@ -32,18 +38,18 @@ public class ItemStorageDisk implements StorageDisk<Rs2ItemStack> {
         });
     }
 
-    private Rs2ItemStack extractPartly(Rs2ItemStack stack, long amount, Action action) {
+    private T extractPartly(T stack, long amount, Action action) {
         if (action == Action.EXECUTE) {
             list.remove(stack, amount);
             stored -= amount;
         }
 
-        Rs2ItemStack extracted = stack.copy();
+        T extracted = (T) stack.copy();
         extracted.setAmount(amount);
         return extracted;
     }
 
-    private Rs2ItemStack extractCompletely(Rs2ItemStack stack, Action action) {
+    private T extractCompletely(T stack, Action action) {
         if (action == Action.EXECUTE) {
             list.remove(stack, stack.getAmount());
             stored -= stack.getAmount();
@@ -53,7 +59,7 @@ public class ItemStorageDisk implements StorageDisk<Rs2ItemStack> {
     }
 
     @Override
-    public Optional<Rs2ItemStack> insert(Rs2ItemStack template, long amount, Action action) {
+    public Optional<T> insert(T template, long amount, Action action) {
         if (template.isEmpty() || amount <= 0) {
             throw new IllegalArgumentException("Invalid stack");
         }
@@ -66,22 +72,22 @@ public class ItemStorageDisk implements StorageDisk<Rs2ItemStack> {
     }
 
     @Override
-    public Collection<Rs2ItemStack> getStacks() {
+    public Collection<T> getStacks() {
         return list.getAll();
     }
 
-    private Optional<Rs2ItemStack> insertPartly(Rs2ItemStack template, long amount, long remainder, Action action) {
+    private Optional<T> insertPartly(T template, long amount, long remainder, Action action) {
         if (action == Action.EXECUTE && amount > 0) {
             stored += amount;
             list.add(template, amount);
         }
 
-        Rs2ItemStack remainderStack = template.copy();
+        T remainderStack = (T) template.copy();
         remainderStack.setAmount(remainder);
         return Optional.of(remainderStack);
     }
 
-    private Optional<Rs2ItemStack> insertCompletely(Rs2ItemStack template, long amount, Action action) {
+    private Optional<T> insertCompletely(T template, long amount, Action action) {
         if (action == Action.EXECUTE) {
             stored += amount;
             list.add(template, amount);

@@ -18,8 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
-class ItemStorageDiskTest {
-    private final ItemStorageDisk disk = new ItemStorageDisk(100);
+class StorageDiskImplTest {
+    private final StorageDisk<Rs2ItemStack> disk = StorageDiskImpl.createItemStorageDisk(100);
 
     @ParameterizedTest
     @EnumSource(Action.class)
@@ -92,7 +92,7 @@ class ItemStorageDiskTest {
     @Test
     void Test_adding_with_negative_capacity() {
         // Arrange
-        ItemStorageDisk diskStorage = new ItemStorageDisk(-1);
+        StorageDisk<Rs2ItemStack> diskStorage = StorageDiskImpl.createItemStorageDisk(-1);
 
         // Act
         Optional<Rs2ItemStack> remainder = diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), Integer.MAX_VALUE, Action.EXECUTE);
@@ -105,7 +105,7 @@ class ItemStorageDiskTest {
     @Test
     void Test_adding_with_zero_capacity() {
         // Arrange
-        ItemStorageDisk diskStorage = new ItemStorageDisk(0);
+        StorageDisk<Rs2ItemStack> diskStorage = StorageDiskImpl.createItemStorageDisk(0);
 
         // Act
         Optional<Rs2ItemStack> remainder = diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 1, Action.EXECUTE);

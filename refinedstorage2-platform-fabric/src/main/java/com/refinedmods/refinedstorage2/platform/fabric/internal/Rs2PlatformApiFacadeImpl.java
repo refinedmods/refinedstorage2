@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal;
 
 import com.refinedmods.refinedstorage2.api.network.node.container.ConnectionProvider;
+import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2Fluid;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2Item;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskManagerImpl;
@@ -8,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskManager;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskType;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.fluid.FabricRs2Fluid;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.item.FabricRs2Item;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.FabricConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.FabricClientStorageDiskManager;
@@ -17,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.Ite
 import java.util.HashMap;
 import java.util.Map;
 
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.TranslatableText;
@@ -25,6 +28,7 @@ import net.minecraft.world.World;
 public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     private final PlatformStorageDiskManager clientStorageDiskManager = new FabricClientStorageDiskManager();
     private final Map<Item, Rs2Item> itemMap = new HashMap<>();
+    private final Map<FluidVariant, Rs2Fluid> fluidMap = new HashMap<>();
 
     @Override
     public PlatformStorageDiskManager getStorageDiskManager(World world) {
@@ -55,8 +59,18 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     }
 
     @Override
+    public Rs2Fluid toRs2Fluid(FluidVariant fluidVariant) {
+        return fluidMap.computeIfAbsent(fluidVariant, FabricRs2Fluid::new);
+    }
+
+    @Override
     public Item toMcItem(Rs2Item item) {
         return ((FabricRs2Item) item).getItem();
+    }
+
+    @Override
+    public FluidVariant toMcFluid(Rs2Fluid fluid) {
+        return ((FabricRs2Fluid) fluid).getFluidVariant();
     }
 
     @Override

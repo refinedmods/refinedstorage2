@@ -1,12 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.fabric.item;
 
+import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.item.StorageDiskItemImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformItemStorageDisk;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.ItemStorageDiskType;
 
 import java.util.Optional;
 
@@ -36,7 +38,12 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected StorageDisk<?> createStorageDisk(World world) {
-        return new PlatformItemStorageDisk(type.getCapacity(), Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world)::markAsChanged);
+        return new PlatformStorageDiskImpl<>(
+                type.getCapacity(),
+                StackListImpl.createItemStackList(),
+                ItemStorageDiskType.INSTANCE,
+                Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world)::markAsChanged
+        );
     }
 
     @Override
