@@ -22,7 +22,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 // TODO: Recipes
-// TODO: Balancing: capacities should match droplets
 public class FluidStorageDiskItem extends StorageDiskItemImpl {
     private final FluidStorageType type;
 
@@ -71,16 +70,16 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     }
 
     public enum FluidStorageType {
-        SIXTY_FOUR_K("64k", 64_000),
-        TWO_HUNDRED_FIFTY_SIX_K("256k", 256_000),
-        THOUSAND_TWENTY_FOUR_K("1024k", 1024_000),
-        FOUR_THOUSAND_NINETY_SIX_K("4096k", 4096_000),
+        SIXTY_FOUR_B("64b", 64 * FluidConstants.BUCKET),
+        TWO_HUNDRED_FIFTY_SIX_B("256b", 256 * FluidConstants.BUCKET),
+        THOUSAND_TWENTY_FOUR_B("1024b", 1024 * FluidConstants.BUCKET),
+        FOUR_THOUSAND_NINETY_SIX_B("4096b", 4096 * FluidConstants.BUCKET),
         CREATIVE("creative", -1);
 
         private final String name;
-        private final int capacity;
+        private final long capacity;
 
-        FluidStorageType(String name, int capacity) {
+        FluidStorageType(String name, long capacity) {
             this.name = name;
             this.capacity = capacity;
         }
@@ -89,7 +88,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
             return name;
         }
 
-        public int getCapacity() {
+        public long getCapacity() {
             return capacity;
         }
     }
