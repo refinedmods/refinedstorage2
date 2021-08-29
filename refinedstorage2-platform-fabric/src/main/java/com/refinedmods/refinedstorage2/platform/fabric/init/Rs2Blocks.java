@@ -6,7 +6,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.fabric.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.fabric.block.DiskDriveBlock;
-import com.refinedmods.refinedstorage2.platform.fabric.block.GridBlock;
+import com.refinedmods.refinedstorage2.platform.fabric.block.FluidGridBlock;
+import com.refinedmods.refinedstorage2.platform.fabric.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.fabric.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.platform.fabric.block.QuartzEnrichedIronBlock;
 import com.refinedmods.refinedstorage2.platform.fabric.block.RelayBlock;
@@ -23,7 +24,8 @@ public class Rs2Blocks {
             .resistance(1.9F)
             .sounds(BlockSoundGroup.STONE);
 
-    private final BlockColorMap<GridBlock> grid = new BlockColorMap<>();
+    private final BlockColorMap<ItemGridBlock> grid = new BlockColorMap<>();
+    private final BlockColorMap<FluidGridBlock> fluidGrid = new BlockColorMap<>();
     private CableBlock cable;
     private QuartzEnrichedIronBlock quartzEnrichedIron;
     private DiskDriveBlock diskDrive;
@@ -42,7 +44,8 @@ public class Rs2Blocks {
             relay = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("relay"), new RelayBlock());
         }
 
-        grid.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("grid")), new GridBlock(STONE_SETTINGS)));
+        grid.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("grid")), new ItemGridBlock(STONE_SETTINGS)));
+        fluidGrid.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("fluid_grid")), new FluidGridBlock(STONE_SETTINGS)));
         controller.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("controller")), new ControllerBlock(STONE_SETTINGS, ControllerType.NORMAL)));
         creativeController.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("creative_controller")), new ControllerBlock(STONE_SETTINGS, ControllerType.CREATIVE)));
     }
@@ -63,8 +66,12 @@ public class Rs2Blocks {
         return machineCasing;
     }
 
-    public BlockColorMap<GridBlock> getGrid() {
+    public BlockColorMap<ItemGridBlock> getGrid() {
         return grid;
+    }
+
+    public BlockColorMap<FluidGridBlock> getFluidGrid() {
+        return fluidGrid;
     }
 
     public BlockColorMap<ControllerBlock> getController() {

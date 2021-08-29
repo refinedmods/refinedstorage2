@@ -48,6 +48,7 @@ public class Rs2Items {
         storageHousing = Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("storage_housing"), new StorageHousingItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("machine_casing"), new BlockItem(blocks.getMachineCasing(), createSettings(itemGroup)));
         blocks.getGrid().forEach((color, block, nameFactory) -> Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(nameFactory.apply("grid")), new ColoredBlockItem(block, createSettings(itemGroup), color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid"))));
+        blocks.getFluidGrid().forEach((color, block, nameFactory) -> Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(nameFactory.apply("fluid_grid")), new ColoredBlockItem(block, createSettings(itemGroup), color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid"))));
         blocks.getController().forEach((color, block, nameFactory) -> controllers.add(Registry.register(
                 Registry.ITEM,
                 Rs2Mod.createIdentifier(nameFactory.apply("controller")),

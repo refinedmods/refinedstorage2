@@ -16,7 +16,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.ClientItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.ServerItemGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricGridStackFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricItemGridStackFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
@@ -33,13 +33,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ItemGridScreenHandler extends GridScreenHandler<Rs2ItemStack> implements ItemGridEventHandler, GridWatcher {
-    private static final Logger LOGGER = LogManager.getLogger(GridScreenHandler.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final ItemGridEventHandler eventHandler;
 
     public ItemGridScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
         super(Rs2Mod.SCREEN_HANDLERS.getGrid(), syncId, playerInventory, buf, createView());
-        this.eventHandler = new ClientItemGridEventHandler(view, isActive());
+        this.eventHandler = new ClientItemGridEventHandler(isActive());
     }
 
     public ItemGridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity<Rs2ItemStack> grid) {
@@ -49,7 +49,7 @@ public class ItemGridScreenHandler extends GridScreenHandler<Rs2ItemStack> imple
     }
 
     private static GridViewImpl<Rs2ItemStack, Rs2ItemStackIdentifier> createView() {
-        return new GridViewImpl<>(new FabricGridStackFactory(), Rs2ItemStackIdentifier::new, StackListImpl.createItemStackList());
+        return new GridViewImpl<>(new FabricItemGridStackFactory(), Rs2ItemStackIdentifier::new, StackListImpl.createItemStackList());
     }
 
     @Override
@@ -105,11 +105,6 @@ public class ItemGridScreenHandler extends GridScreenHandler<Rs2ItemStack> imple
             }
         }
         return ItemStack.EMPTY;
-    }
-
-    @Override
-    public void onItemUpdate(Rs2ItemStack template, long amount, StorageTracker.Entry trackerEntry) {
-        eventHandler.onItemUpdate(template, amount, trackerEntry);
     }
 
     @Override

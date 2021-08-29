@@ -3,12 +3,11 @@ package com.refinedmods.refinedstorage2.api.grid.eventhandler;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
-
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Optional;
 
 public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     private static final Logger LOGGER = LogManager.getLogger(ItemGridEventHandlerImpl.class);
@@ -151,11 +150,6 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
             case CURSOR_STACK, PLAYER_INVENTORY_STACK -> totalSize;
             case CURSOR_HALF -> totalSize == 1 ? 1 : totalSize / 2;
         };
-    }
-
-    @Override
-    public void onItemUpdate(Rs2ItemStack template, long amount, StorageTracker.Entry trackerEntry) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

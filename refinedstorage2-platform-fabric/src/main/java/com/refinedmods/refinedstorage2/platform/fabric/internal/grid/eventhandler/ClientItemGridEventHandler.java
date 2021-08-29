@@ -4,26 +4,17 @@ import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridScrollMode;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.ItemGridEventHandler;
-import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ClientPacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class ClientItemGridEventHandler implements ItemGridEventHandler {
-    private static final Logger LOGGER = LogManager.getLogger(ClientItemGridEventHandler.class);
-
-    private final GridView<Rs2ItemStack> itemView;
     private boolean active;
 
-    public ClientItemGridEventHandler(GridView<Rs2ItemStack> itemView, boolean active) {
-        this.itemView = itemView;
+    public ClientItemGridEventHandler(boolean active) {
         this.active = active;
     }
 
@@ -43,12 +34,6 @@ public class ClientItemGridEventHandler implements ItemGridEventHandler {
             PacketUtil.writeItemStack(buf, stack, false);
             GridExtractPacket.writeMode(buf, mode);
         });
-    }
-
-    @Override
-    public void onItemUpdate(Rs2ItemStack template, long amount, StorageTracker.Entry trackerEntry) {
-        LOGGER.info("Item {} got updated with {}", template, amount);
-        itemView.onChange(template, amount, trackerEntry);
     }
 
     @Override

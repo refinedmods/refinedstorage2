@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.core.LastModified;
-import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
 import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
@@ -226,7 +225,7 @@ public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler
         GridStack<S> stack = null;
         if (idx < view.getStacks().size()) {
             stack = view.getStacks().get(idx);
-            renderStack(matrices, slotX, slotY, stack);
+            renderStackWithAmount(matrices, slotX, slotY, stack);
         }
 
         if (!getScreenHandler().isActive()) {
@@ -238,6 +237,19 @@ public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler
             }
         }
     }
+
+    private void renderStackWithAmount(MatrixStack matrices, int slotX, int slotY, GridStack<S> stack) {
+        renderStack(matrices, slotX, slotY, stack);
+
+        String text = getAmount(stack);
+        Integer color = stack.isZeroed() ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue();
+
+        renderAmount(matrices, slotX, slotY, text, color);
+    }
+
+    protected abstract void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<S> stack);
+
+    protected abstract String getAmount(GridStack<S> stack);
 
     private void renderDisabledSlot(MatrixStack matrices, int slotX, int slotY) {
         RenderSystem.disableDepthTest();
@@ -255,8 +267,6 @@ public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler
         RenderSystem.enableDepthTest();
     }
 
-    protected abstract void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<S> stack);
-
     private void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
         GridView<S> view = getScreenHandler().getView();
         GridStack<S> stack = view.getStacks().get(gridSlotNumber);
@@ -267,7 +277,7 @@ public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler
             renderOrderedTooltip(matrices, lines, mouseX, mouseY);
         } else {
             List<OrderedText> smallLines = new ArrayList<>();
-            smallLines.add(Rs2Mod.createTranslation("misc", "total", stack.isZeroed() ? "0" : QuantityFormatter.format(stack.getAmount())).formatted(Formatting.GRAY).asOrderedText());
+            smallLines.add(Rs2Mod.createTranslation("misc", "total", getAmount(stack)).formatted(Formatting.GRAY).asOrderedText());
 
             view.getTrackerEntry(stack.getStack()).ifPresent(entry -> smallLines.add(getLastModifiedText(entry).formatted(Formatting.GRAY).asOrderedText()));
 

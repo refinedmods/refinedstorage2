@@ -25,8 +25,12 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandlerType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public abstract class GridScreenHandler<T extends Rs2Stack> extends BaseScreenHandler implements StackListListener<T>, RedstoneModeAccessor {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private static String lastSearchQuery = "";
 
     protected final PlayerInventory playerInventory;
@@ -169,6 +173,11 @@ public abstract class GridScreenHandler<T extends Rs2Stack> extends BaseScreenHa
         this.grid = grid;
 
         addSlots(0);
+    }
+
+    public void onStackUpdate(T template, long amount, StorageTracker.Entry trackerEntry) {
+        LOGGER.info("{} got updated with {}", template, amount);
+        view.onChange(template, amount, trackerEntry);
     }
 
     public void setSizeChangedListener(Runnable sizeChangedListener) {

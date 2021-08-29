@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.CableBlockEn
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RelayBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.ItemGridBlockEntity;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -17,6 +18,7 @@ public class Rs2BlockEntities {
     private BlockEntityType<CableBlockEntity> cable;
     private BlockEntityType<DiskDriveBlockEntity> diskDrive;
     private BlockEntityType<ItemGridBlockEntity> grid;
+    private BlockEntityType<FluidGridBlockEntity> fluidGrid;
     private BlockEntityType<ControllerBlockEntity> controller;
     private BlockEntityType<ControllerBlockEntity> creativeController;
     private BlockEntityType<RelayBlockEntity> relay;
@@ -25,6 +27,7 @@ public class Rs2BlockEntities {
         cable = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("cable"), FabricBlockEntityTypeBuilder.create(CableBlockEntity::new, blocks.getCable()).build(null));
         diskDrive = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("disk_drive"), FabricBlockEntityTypeBuilder.create(DiskDriveBlockEntity::new, blocks.getDiskDrive()).build(null));
         grid = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("grid"), FabricBlockEntityTypeBuilder.create(ItemGridBlockEntity::new, blocks.getGrid().toArray()).build(null));
+        fluidGrid = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("fluid_grid"), FabricBlockEntityTypeBuilder.create(FluidGridBlockEntity::new, blocks.getFluidGrid().toArray()).build(null));
         controller = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("controller"), FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.NORMAL, pos, state), blocks.getController().toArray()).build(null));
         creativeController = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("creative_controller"), FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.CREATIVE, pos, state), blocks.getCreativeController().toArray()).build(null));
 
@@ -43,6 +46,10 @@ public class Rs2BlockEntities {
 
     public BlockEntityType<ItemGridBlockEntity> getGrid() {
         return grid;
+    }
+
+    public BlockEntityType<FluidGridBlockEntity> getFluidGrid() {
+        return fluidGrid;
     }
 
     public BlockEntityType<ControllerBlockEntity> getController() {

@@ -60,14 +60,14 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
                 tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
                         "misc",
                         "stored",
-                        QuantityFormatter.formatWithUnits(info.stored())
+                        formatQuantity(info.stored())
                 ).formatted(Formatting.GRAY));
             } else {
                 tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
                         "misc",
                         "stored_with_capacity",
-                        QuantityFormatter.formatWithUnits(info.stored()),
-                        QuantityFormatter.formatWithUnits(info.capacity())
+                        formatQuantity(info.stored()),
+                        formatQuantity(info.capacity())
                 ).formatted(Formatting.GRAY));
             }
         });
@@ -75,6 +75,10 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
         if (context.isAdvanced()) {
             getDiskId(stack).ifPresent(id -> tooltip.add(new LiteralText(id.toString()).formatted(Formatting.GRAY)));
         }
+    }
+
+    protected String formatQuantity(long qty) {
+        return QuantityFormatter.formatWithUnits(qty);
     }
 
     @Override

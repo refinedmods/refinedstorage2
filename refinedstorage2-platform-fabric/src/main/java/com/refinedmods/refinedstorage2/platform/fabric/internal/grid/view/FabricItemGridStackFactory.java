@@ -17,11 +17,12 @@ import net.minecraft.tag.ItemTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-public class FabricGridStackFactory implements Function<Rs2ItemStack, GridStack<Rs2ItemStack>> {
+public class FabricItemGridStackFactory implements Function<Rs2ItemStack, GridStack<Rs2ItemStack>> {
     @Override
     public GridStack<Rs2ItemStack> apply(Rs2ItemStack stack) {
         Item item = Rs2PlatformApiFacade.INSTANCE.toMcItem(stack.getItem());
 
+        /// TODO: This isn't correct. :(
         String name = stack.getName();
         String modId = Registry.ITEM.getId(item).getNamespace();
         String modName = FabricLoader.getInstance().getModContainer(modId).map(ModContainer::getMetadata).map(ModMetadata::getName).orElse("");

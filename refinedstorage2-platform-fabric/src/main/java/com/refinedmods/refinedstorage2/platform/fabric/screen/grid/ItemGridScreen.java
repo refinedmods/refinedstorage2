@@ -15,7 +15,6 @@ import java.util.List;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 public class ItemGridScreen extends GridScreen<Rs2ItemStack, ItemGridScreenHandler> {
     private final ItemGridEventHandler eventHandler;
@@ -27,18 +26,12 @@ public class ItemGridScreen extends GridScreen<Rs2ItemStack, ItemGridScreenHandl
 
     @Override
     protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<Rs2ItemStack> stack) {
-        setZOffset(100);
-        itemRenderer.zOffset = 100.0F;
-
         itemRenderer.renderInGuiWithOverrides(((FabricItemGridStack) stack).getMcStack(), slotX, slotY);
+    }
 
-        String text = stack.isZeroed() ? "0" : String.valueOf(stack.getAmount());
-        Integer color = stack.isZeroed() ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue();
-
-        renderAmount(matrices, slotX, slotY, text, color);
-
-        setZOffset(0);
-        itemRenderer.zOffset = 0.0F;
+    @Override
+    protected String getAmount(GridStack<Rs2ItemStack> stack) {
+        return stack.isZeroed() ? "0" : String.valueOf(stack.getAmount());
     }
 
     @Override
