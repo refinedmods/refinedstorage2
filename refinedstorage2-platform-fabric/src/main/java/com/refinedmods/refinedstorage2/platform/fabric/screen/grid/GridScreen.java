@@ -391,11 +391,7 @@ public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler
                 textRenderer.draw(text, tooltipX, tooltipY, -1, true, matrix4f, immediate, false, 0, 15728880);
             }
 
-            if (i == 0) {
-                tooltipY += 2;
-            }
-
-            tooltipY += 10;
+            tooltipY += 12;
         }
 
         for (OrderedText smallLine : smallLines) {
