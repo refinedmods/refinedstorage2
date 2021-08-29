@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridEventHandler;
+import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -16,8 +16,8 @@ public class GridActivePacket implements ClientPlayNetworking.PlayChannelHandler
 
         client.execute(() -> {
             ScreenHandler screenHandler = client.player.currentScreenHandler;
-            if (screenHandler instanceof GridEventHandler gridEventHandler) {
-                gridEventHandler.onActiveChanged(active);
+            if (screenHandler instanceof GridWatcher gridWatcher) {
+                gridWatcher.onActiveChanged(active);
             }
         });
     }

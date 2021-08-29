@@ -1,15 +1,15 @@
 package com.refinedmods.refinedstorage2.api.network.node.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridEventHandler;
+import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSize;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 
 import java.util.HashSet;
@@ -20,19 +20,21 @@ import java.util.function.BiConsumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GridNetworkNode extends NetworkNodeImpl {
+public class GridNetworkNode<T extends Rs2Stack> extends NetworkNodeImpl {
     private static final Logger LOGGER = LogManager.getLogger(GridNetworkNode.class);
 
-    private final Set<GridEventHandler> watchers = new HashSet<>();
+    private final Set<GridWatcher> watchers = new HashSet<>();
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
     private GridSortingType sortingType = GridSortingType.QUANTITY;
     private GridSize size = GridSize.STRETCH;
     private GridSearchBoxMode searchBoxMode;
     private final long energyUsage;
+    private final StorageChannelType<T> type;
 
-    public GridNetworkNode(GridSearchBoxMode defaultSearchBoxMode, long energyUsage) {
+    public GridNetworkNode(GridSearchBoxMode defaultSearchBoxMode, long energyUsage, StorageChannelType<T> type) {
         this.searchBoxMode = defaultSearchBoxMode;
         this.energyUsage = energyUsage;
+        this.type = type;
     }
 
     public GridSortingDirection getSortingDirection() {
@@ -67,21 +69,16 @@ public class GridNetworkNode extends NetworkNodeImpl {
         this.searchBoxMode = searchBoxMode;
     }
 
-    public void addWatcher(GridEventHandler watcher) {
-        watchers.add(watcher);
-        LOGGER.info("Watcher was added, new count is {}", watchers.size());
-    }
-
-    public StorageChannel<Rs2ItemStack> getStorageChannel() {
-        return network.getComponent(StorageNetworkComponent.class).getStorageChannel(StorageChannelTypes.ITEM);
+    public StorageChannel<T> getStorageChannel() {
+        return network.getComponent(StorageNetworkComponent.class).getStorageChannel(type);
     }
 
     public int getStackCount() {
         return getStorageChannel().getStacks().size();
     }
 
-    public void forEachStack(BiConsumer<Rs2ItemStack, Optional<StorageTracker.Entry>> consumer) {
-        StorageChannel<Rs2ItemStack> storageChannel = getStorageChannel();
+    public void forEachStack(BiConsumer<T, Optional<StorageTracker.Entry>> consumer) {
+        StorageChannel<T> storageChannel = getStorageChannel();
         storageChannel.getStacks().forEach(stack -> consumer.accept(stack, storageChannel.getTracker().getEntry(stack)));
     }
 
@@ -90,7 +87,12 @@ public class GridNetworkNode extends NetworkNodeImpl {
         return energyUsage;
     }
 
-    public void removeWatcher(GridEventHandler watcher) {
+    public void addWatcher(GridWatcher watcher) {
+        watchers.add(watcher);
+        LOGGER.info("Watcher was added, new count is {}", watchers.size());
+    }
+
+    public void removeWatcher(GridWatcher watcher) {
         watchers.remove(watcher);
         LOGGER.info("Watcher was removed, new count is {}", watchers.size());
     }

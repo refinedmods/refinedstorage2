@@ -1,45 +1,47 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridEventHandler;
+import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSize;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
+import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricNetworkNodeContainerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.Nullable;
 
-public class GridBlockEntity extends FabricNetworkNodeContainerBlockEntity<GridNetworkNode> implements ExtendedScreenHandlerFactory {
+public abstract class GridBlockEntity<T extends Rs2Stack> extends FabricNetworkNodeContainerBlockEntity<GridNetworkNode<T>> implements ExtendedScreenHandlerFactory {
     private static final String TAG_SORTING_DIRECTION = "sd";
     private static final String TAG_SORTING_TYPE = "st";
     private static final String TAG_SIZE = "s";
     private static final String TAG_SEARCH_BOX_MODE = "sbm";
 
-    public GridBlockEntity(BlockPos pos, BlockState state) {
-        super(Rs2Mod.BLOCK_ENTITIES.getGrid(), pos, state);
+    private final StorageChannelType<T> type;
+
+    public GridBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state, StorageChannelType<T> type) {
+        super(blockEntityType, pos, state);
+        this.type = type;
     }
 
     @Override
-    protected GridNetworkNode createNode(BlockPos pos, NbtCompound tag) {
-        GridNetworkNode grid = new GridNetworkNode(
+    protected GridNetworkNode<T> createNode(BlockPos pos, NbtCompound tag) {
+        GridNetworkNode<T> grid = new GridNetworkNode<>(
                 GridSearchBoxModeRegistry.INSTANCE.getDefault(),
-                Rs2Config.get().getGrid().getEnergyUsage()
+                Rs2Config.get().getGrid().getEnergyUsage(),
+                type
         );
 
         if (tag != null) {
@@ -69,11 +71,6 @@ public class GridBlockEntity extends FabricNetworkNodeContainerBlockEntity<GridN
     }
 
     @Override
-    public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new GridScreenHandler(syncId, playerInventory, this);
-    }
-
-    @Override
     public NbtCompound writeNbt(NbtCompound tag) {
         tag.putInt(TAG_SORTING_DIRECTION, GridSettings.getSortingDirection(getContainer().getNode().getSortingDirection()));
         tag.putInt(TAG_SORTING_TYPE, GridSettings.getSortingType(getContainer().getNode().getSortingType()));
@@ -92,10 +89,12 @@ public class GridBlockEntity extends FabricNetworkNodeContainerBlockEntity<GridN
 
         buf.writeInt(getContainer().getNode().getStackCount());
         getContainer().getNode().forEachStack((stack, trackerEntry) -> {
-            PacketUtil.writeItemStack(buf, stack, true);
+            writeStack(buf, stack);
             PacketUtil.writeTrackerEntry(buf, trackerEntry);
         });
     }
+
+    protected abstract void writeStack(PacketByteBuf buf, T stack);
 
     public GridSortingType getSortingType() {
         return getContainer().getNode().getSortingType();
@@ -133,11 +132,11 @@ public class GridBlockEntity extends FabricNetworkNodeContainerBlockEntity<GridN
         markDirty();
     }
 
-    public void addWatcher(GridEventHandler eventHandler) {
-        getContainer().getNode().addWatcher(eventHandler);
+    public void addWatcher(GridWatcher watcher) {
+        getContainer().getNode().addWatcher(watcher);
     }
 
-    public void removeWatcher(GridEventHandler eventHandler) {
-        getContainer().getNode().removeWatcher(eventHandler);
+    public void removeWatcher(GridWatcher watcher) {
+        getContainer().getNode().removeWatcher(watcher);
     }
 }

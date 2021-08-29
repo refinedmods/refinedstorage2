@@ -2,17 +2,14 @@ package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.core.LastModified;
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridExtractMode;
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridScrollMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
+import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.stack.FabricItemGridStack;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.BaseScreen;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.RedstoneModeSideButtonWidget;
@@ -46,7 +43,7 @@ import net.minecraft.util.math.Matrix4f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GridScreen extends BaseScreen<GridScreenHandler> {
+public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler<S>> extends BaseScreen<T> {
     private static final Logger LOGGER = LogManager.getLogger(GridScreen.class);
 
     private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/grid.png");
@@ -64,7 +61,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     private int visibleRows;
     private int gridSlotNumber;
 
-    public GridScreen(GridScreenHandler handler, PlayerInventory inventory, Text title) {
+    public GridScreen(T handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
 
         handler.setSizeChangedListener(this::init);
@@ -75,20 +72,6 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         this.playerInventoryTitleY = 75;
         this.backgroundWidth = 227;
         this.backgroundHeight = 176;
-    }
-
-    private static GridExtractMode getExtractMode(int clickedButton) {
-        if (clickedButton == 1) {
-            return GridExtractMode.CURSOR_HALF;
-        }
-        if (hasShiftDown()) {
-            return GridExtractMode.PLAYER_INVENTORY_STACK;
-        }
-        return GridExtractMode.CURSOR_STACK;
-    }
-
-    private static GridInsertMode getInsertMode(int clickedButton) {
-        return clickedButton == 1 ? GridInsertMode.SINGLE : GridInsertMode.ENTIRE_STACK;
     }
 
     @Override
@@ -113,7 +96,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
 
         this.scrollbar = new ScrollbarWidget(x + 174, y + 20, 12, (visibleRows * 18) - 2);
         this.scrollbar.setScrollAnimation(Rs2Config.get().getGrid().isSmoothScrolling());
-        this.getScreenHandler().getItemView().setListener(this::stacksChanged);
+        this.getScreenHandler().getView().setListener(this::stacksChanged);
         stacksChanged();
 
         addSelectableChild(scrollbar);
@@ -137,7 +120,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     }
 
     private void stacksChanged() {
-        totalRows = (int) Math.ceil((float) getScreenHandler().getItemView().getStacks().size() / (float) COLUMNS);
+        totalRows = (int) Math.ceil((float) getScreenHandler().getView().getStacks().size() / (float) COLUMNS);
 
         scrollbar.setEnabled(totalRows > visibleRows);
 
@@ -235,14 +218,14 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
     }
 
     private void renderColumnInRow(MatrixStack matrices, int mouseX, int mouseY, int rowX, int rowY, int idx, int column) {
-        GridView<Rs2ItemStack> view = getScreenHandler().getItemView();
+        GridView<S> view = getScreenHandler().getView();
 
         int slotX = rowX + 1 + (column * 18);
         int slotY = rowY + 1;
 
-        FabricItemGridStack stack = null;
+        GridStack<S> stack = null;
         if (idx < view.getStacks().size()) {
-            stack = (FabricItemGridStack) view.getStacks().get(idx);
+            stack = view.getStacks().get(idx);
             renderStack(matrices, slotX, slotY, stack);
         }
 
@@ -272,29 +255,17 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         RenderSystem.enableDepthTest();
     }
 
-    private void renderStack(MatrixStack matrices, int slotX, int slotY, FabricItemGridStack stack) {
-        setZOffset(100);
-        itemRenderer.zOffset = 100.0F;
-
-        itemRenderer.renderInGuiWithOverrides(stack.getMcStack(), slotX, slotY);
-
-        String text = stack.isZeroed() ? "0" : String.valueOf(stack.getAmount());
-        Integer color = stack.isZeroed() ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue();
-
-        renderAmount(matrices, slotX, slotY, text, color);
-
-        setZOffset(0);
-        itemRenderer.zOffset = 0.0F;
-    }
+    protected abstract void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<S> stack);
 
     private void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
-        GridView<Rs2ItemStack> view = getScreenHandler().getItemView();
-        FabricItemGridStack stack = (FabricItemGridStack) view.getStacks().get(gridSlotNumber);
+        GridView<S> view = getScreenHandler().getView();
+        GridStack<S> stack = view.getStacks().get(gridSlotNumber);
+
+        List<OrderedText> lines = Lists.transform(getTooltip(stack), Text::asOrderedText);
 
         if (!Rs2Config.get().getGrid().isDetailedTooltip()) {
-            renderTooltip(matrices, stack.getMcStack(), mouseX, mouseY);
+            renderOrderedTooltip(matrices, lines, mouseX, mouseY);
         } else {
-            List<OrderedText> lines = Lists.transform(getTooltipFromItem(stack.getMcStack()), Text::asOrderedText);
             List<OrderedText> smallLines = new ArrayList<>();
             smallLines.add(Rs2Mod.createTranslation("misc", "total", stack.isZeroed() ? "0" : QuantityFormatter.format(stack.getAmount())).formatted(Formatting.GRAY).asOrderedText());
 
@@ -303,6 +274,8 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
             renderTooltipWithSmallText(matrices, lines, smallLines, mouseX, mouseY);
         }
     }
+
+    protected abstract List<Text> getTooltip(GridStack<S> stack);
 
     private MutableText getLastModifiedText(StorageTracker.Entry entry) {
         LastModified lastModified = LastModified.calculate(entry.time(), System.currentTimeMillis());
@@ -320,7 +293,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         return Rs2Mod.createTranslation("misc", "last_modified." + translationKey, lastModified.amount(), entry.name());
     }
 
-    private void renderAmount(MatrixStack matrixStack, int x, int y, String amount, int color) {
+    protected void renderAmount(MatrixStack matrixStack, int x, int y, String amount, int color) {
         boolean large = this.client.forcesUnicodeFont() || Rs2Config.get().getGrid().isLargeFont();
 
         matrixStack.push();
@@ -447,27 +420,22 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
 
         ItemStack cursorStack = getScreenHandler().getCursorStack();
 
-        if (!getScreenHandler().getItemView().getStacks().isEmpty() && gridSlotNumber >= 0 && cursorStack.isEmpty()) {
-            mouseClickedInGridWithoutItem(clickedButton);
+        if (!getScreenHandler().getView().getStacks().isEmpty() && gridSlotNumber >= 0 && cursorStack.isEmpty()) {
+            mouseClickedInGrid(clickedButton, getScreenHandler().getView().getStacks().get(gridSlotNumber));
             return true;
         }
 
         if (isOverStorageArea((int) mouseX, (int) mouseY) && !cursorStack.isEmpty() && (clickedButton == 0 || clickedButton == 1)) {
-            mouseClickedInGridWithItem(clickedButton);
+            mouseClickedInGrid(clickedButton);
             return true;
         }
 
         return super.mouseClicked(mouseX, mouseY, clickedButton);
     }
 
-    private void mouseClickedInGridWithItem(int clickedButton) {
-        getScreenHandler().onInsertFromCursor(getInsertMode(clickedButton));
-    }
+    protected abstract void mouseClickedInGrid(int clickedButton);
 
-    private void mouseClickedInGridWithoutItem(int clickedButton) {
-        GridStack<Rs2ItemStack> stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber);
-        getScreenHandler().onExtract(stack.getStack(), getExtractMode(clickedButton));
-    }
+    protected abstract void mouseClickedInGrid(int clickedButton, GridStack<S> stack);
 
     @Override
     public void mouseMoved(double mx, double my) {
@@ -485,68 +453,30 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         boolean up = delta > 0;
 
         if (isOverStorageArea((int) x, (int) y) && gridSlotNumber >= 0) {
-            mouseScrolledOnStorageArea(up);
+            mouseScrolledInGrid(up);
         } else if (focusedSlot != null && focusedSlot.hasStack()) {
-            mouseScrolledOnInventoryArea(up);
+            mouseScrolledInInventory(up);
         }
 
         return this.scrollbar.mouseScrolled(x, y, delta) || super.mouseScrolled(x, y, delta);
     }
 
-    private void mouseScrolledOnInventoryArea(boolean up) {
-        getScreenHandler().getItemView().setPreventSorting(true);
-
+    private void mouseScrolledInInventory(boolean up) {
+        getScreenHandler().getView().setPreventSorting(true);
         Rs2ItemStack stack = ItemStacks.ofItemStack(focusedSlot.getStack());
-        int slot = ((SlotAccessor) focusedSlot).getIndex();
-        GridScrollMode mode = getScrollModeWhenScrollingOnInventoryArea(up);
-        if (mode == null) {
-            return;
-        }
-
-        getScreenHandler().onScroll(stack, slot, mode);
+        int slotIndex = ((SlotAccessor) focusedSlot).getIndex();
+        mouseScrolledInInventory(up, stack, slotIndex);
     }
 
-    private static GridScrollMode getScrollModeWhenScrollingOnInventoryArea(boolean up) {
-        if (hasShiftDown()) {
-            return up ? GridScrollMode.INVENTORY_TO_GRID : GridScrollMode.GRID_TO_INVENTORY;
-        }
-        return null;
+    protected abstract void mouseScrolledInInventory(boolean up, Rs2ItemStack stack, int slotIndex);
+
+    private void mouseScrolledInGrid(boolean up) {
+        getScreenHandler().getView().setPreventSorting(true);
+        GridStack<S> stack = getScreenHandler().getView().getStacks().get(gridSlotNumber);
+        mouseScrolledInGrid(up, stack);
     }
 
-    private void mouseScrolledOnStorageArea(boolean up) {
-        getScreenHandler().getItemView().setPreventSorting(true);
-
-        Rs2ItemStack stack = getScreenHandler().getItemView().getStacks().get(gridSlotNumber).getStack();
-        int slot = getScreenHandler().getPlayerInventorySlotThatHasStack(ItemStacks.toItemStack(stack));
-        GridScrollMode mode = getScrollModeWhenScrollingOnGridArea(up);
-        if (mode == null) {
-            return;
-        }
-
-        getScreenHandler().onScroll(stack, slot, mode);
-    }
-
-    private GridScrollMode getScrollModeWhenScrollingOnGridArea(boolean up) {
-        boolean shift = hasShiftDown();
-        boolean ctrl = hasControlDown();
-        if (shift && ctrl) {
-            return null;
-        }
-
-        if (up) {
-            if (shift) {
-                return GridScrollMode.INVENTORY_TO_GRID;
-            }
-        } else {
-            if (shift) {
-                return GridScrollMode.GRID_TO_INVENTORY;
-            } else if (ctrl) {
-                return GridScrollMode.GRID_TO_CURSOR;
-            }
-        }
-
-        return null;
-    }
+    protected abstract void mouseScrolledInGrid(boolean up, GridStack<S> stack);
 
     @Override
     public boolean charTyped(char unknown1, int unknown2) {
@@ -560,7 +490,7 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
         }
 
         if (hasShiftDown() && Rs2Config.get().getGrid().isPreventSortingWhileShiftIsDown()) {
-            getScreenHandler().getItemView().setPreventSorting(true);
+            getScreenHandler().getView().setPreventSorting(true);
         }
 
         return super.keyPressed(key, scanCode, modifiers);
@@ -568,9 +498,9 @@ public class GridScreen extends BaseScreen<GridScreenHandler> {
 
     @Override
     public boolean keyReleased(int key, int scanCode, int modifiers) {
-        if (getScreenHandler().getItemView().isPreventSorting()) {
-            getScreenHandler().getItemView().setPreventSorting(false);
-            getScreenHandler().getItemView().sort();
+        if (getScreenHandler().getView().isPreventSorting()) {
+            getScreenHandler().getView().setPreventSorting(false);
+            getScreenHandler().getView().sort();
         }
 
         return super.keyReleased(key, scanCode, modifiers);

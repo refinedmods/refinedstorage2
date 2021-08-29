@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridEventHandler;
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
@@ -21,7 +21,7 @@ public class GridItemUpdatePacket implements ClientPlayNetworking.PlayChannelHan
 
         client.execute(() -> {
             ScreenHandler screenHandler = client.player.currentScreenHandler;
-            if (screenHandler instanceof GridEventHandler gridEventHandler) {
+            if (screenHandler instanceof ItemGridEventHandler gridEventHandler) {
                 gridEventHandler.onItemUpdate(template, amount, trackerEntry);
             }
         });

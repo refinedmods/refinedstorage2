@@ -11,8 +11,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.render.model.ControllerMo
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.DiskDriveUnbakedModel;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.DiskDriveScreen;
-import com.refinedmods.refinedstorage2.platform.fabric.screen.grid.GridScreen;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.GridScreenHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.screen.grid.ItemGridScreen;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -24,8 +23,6 @@ import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
@@ -100,12 +97,7 @@ public class Rs2ClientMod implements ClientModInitializer {
 
     private void registerScreens() {
         ScreenRegistry.register(Rs2Mod.SCREEN_HANDLERS.getDiskDrive(), DiskDriveScreen::new);
-        ScreenRegistry.register(Rs2Mod.SCREEN_HANDLERS.getGrid(), new ScreenRegistry.Factory<GridScreenHandler, GridScreen>() {
-            @Override
-            public GridScreen create(GridScreenHandler screenHandler, PlayerInventory playerInventory, Text text) {
-                return new GridScreen(screenHandler, playerInventory, text);
-            }
-        });
+        ScreenRegistry.register(Rs2Mod.SCREEN_HANDLERS.getGrid(), ItemGridScreen::new);
         ScreenRegistry.register(Rs2Mod.SCREEN_HANDLERS.getController(), ControllerScreen::new);
     }
 }

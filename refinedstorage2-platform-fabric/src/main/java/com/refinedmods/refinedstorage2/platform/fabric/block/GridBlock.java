@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block;
 
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
-import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.ItemGridBlockEntity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -41,6 +41,6 @@ public class GridBlock extends NetworkNodeContainerBlock {
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new GridBlockEntity(pos, state);
+        return new ItemGridBlockEntity(pos, state);
     }
 }

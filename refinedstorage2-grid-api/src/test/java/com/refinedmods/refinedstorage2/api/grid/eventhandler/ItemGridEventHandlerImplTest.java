@@ -22,16 +22,16 @@ import static com.refinedmods.refinedstorage2.api.stack.test.ItemStackAssertions
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
-class GridEventHandlerImplTest {
+class ItemGridEventHandlerImplTest {
     private FakeGridInteractor interactor;
     private StorageChannel<Rs2ItemStack> storageChannel;
-    private GridEventHandlerImpl eventHandler;
+    private ItemGridEventHandlerImpl eventHandler;
 
     @BeforeEach
     void setUp() {
         interactor = new FakeGridInteractor();
         storageChannel = StorageChannelTypes.ITEM.create();
-        eventHandler = new GridEventHandlerImpl(true, new StorageTrackerEntryPresentAssertionItemStorageChannel<>(storageChannel), interactor);
+        eventHandler = new ItemGridEventHandlerImpl(true, new StorageTrackerEntryPresentAssertionItemStorageChannel<>(storageChannel), interactor);
     }
 
     @Test

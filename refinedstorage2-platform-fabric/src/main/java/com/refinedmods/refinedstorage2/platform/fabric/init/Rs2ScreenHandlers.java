@@ -3,19 +3,19 @@ package com.refinedmods.refinedstorage2.platform.fabric.init;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.ControllerScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.GridScreenHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.ItemGridScreenHandler;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.screen.ScreenHandlerType;
 
 public class Rs2ScreenHandlers {
     private ScreenHandlerType<DiskDriveScreenHandler> diskDrive;
-    private ScreenHandlerType<GridScreenHandler> grid;
+    private ScreenHandlerType<ItemGridScreenHandler> grid;
     private ScreenHandlerType<ControllerScreenHandler> controller;
 
     public void register() {
         diskDrive = ScreenHandlerRegistry.registerSimple(Rs2Mod.createIdentifier("disk_drive"), DiskDriveScreenHandler::new);
-        grid = ScreenHandlerRegistry.registerExtended(Rs2Mod.createIdentifier("grid"), GridScreenHandler::new);
+        grid = ScreenHandlerRegistry.registerExtended(Rs2Mod.createIdentifier("grid"), ItemGridScreenHandler::new);
         controller = ScreenHandlerRegistry.registerExtended(Rs2Mod.createIdentifier("controller"), ControllerScreenHandler::new);
     }
 
@@ -23,7 +23,7 @@ public class Rs2ScreenHandlers {
         return diskDrive;
     }
 
-    public ScreenHandlerType<GridScreenHandler> getGrid() {
+    public ScreenHandlerType<ItemGridScreenHandler> getGrid() {
         return grid;
     }
 

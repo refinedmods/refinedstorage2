@@ -10,13 +10,13 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GridEventHandlerImpl implements GridEventHandler {
-    private static final Logger LOGGER = LogManager.getLogger(GridEventHandlerImpl.class);
+public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
+    private static final Logger LOGGER = LogManager.getLogger(ItemGridEventHandlerImpl.class);
     private final StorageChannel<Rs2ItemStack> storageChannel;
     private final GridInteractor interactor;
     private boolean active;
 
-    public GridEventHandlerImpl(boolean active, StorageChannel<Rs2ItemStack> storageChannel, GridInteractor interactor) {
+    public ItemGridEventHandlerImpl(boolean active, StorageChannel<Rs2ItemStack> storageChannel, GridInteractor interactor) {
         this.active = active;
         this.storageChannel = storageChannel;
         this.interactor = interactor;

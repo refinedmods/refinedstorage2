@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler;
 
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridEventHandler;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridScrollMode;
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
@@ -16,13 +16,13 @@ import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ClientGridEventHandler implements GridEventHandler {
-    private static final Logger LOGGER = LogManager.getLogger(ClientGridEventHandler.class);
+public class ClientItemGridEventHandler implements ItemGridEventHandler {
+    private static final Logger LOGGER = LogManager.getLogger(ClientItemGridEventHandler.class);
 
-    private boolean active;
     private final GridView<Rs2ItemStack> itemView;
+    private boolean active;
 
-    public ClientGridEventHandler(boolean active, GridView<Rs2ItemStack> itemView) {
+    public ClientItemGridEventHandler(GridView<Rs2ItemStack> itemView, boolean active) {
         this.itemView = itemView;
         this.active = active;
     }

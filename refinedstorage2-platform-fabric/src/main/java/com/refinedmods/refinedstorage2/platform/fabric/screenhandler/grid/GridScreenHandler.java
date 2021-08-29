@@ -1,113 +1,93 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridEventHandler;
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridExtractMode;
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridScrollMode;
 import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSize;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
-import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStackIdentifier;
-import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
-import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
+import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
 import com.refinedmods.refinedstorage2.api.stack.list.listenable.StackListListener;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
-import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.RedstoneMode;
-import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridSettings;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.ClientGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.ServerGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricGridStackFactory;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.BaseScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
-import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
-
-import java.util.Optional;
-
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.server.network.ServerPlayerEntity;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.minecraft.screen.ScreenHandlerType;
 
-public class GridScreenHandler extends BaseScreenHandler implements GridEventHandler, StackListListener<Rs2ItemStack>, RedstoneModeAccessor {
-    private static final Logger LOGGER = LogManager.getLogger(GridScreenHandler.class);
-
+public abstract class GridScreenHandler<T extends Rs2Stack> extends BaseScreenHandler implements StackListListener<T>, RedstoneModeAccessor {
     private static String lastSearchQuery = "";
 
-    private final PlayerInventory playerInventory;
-    private final GridView<Rs2ItemStack> itemView = new GridViewImpl<>(new FabricGridStackFactory(), Rs2ItemStackIdentifier::new, StackListImpl.createItemStackList());
+    protected final PlayerInventory playerInventory;
+    protected final GridView<T> view;
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
     private final TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty;
     private final TwoWaySyncProperty<GridSortingType> sortingTypeProperty;
     private final TwoWaySyncProperty<GridSize> sizeProperty;
     private final TwoWaySyncProperty<GridSearchBoxMode> searchBoxModeProperty;
-    private GridBlockEntity grid;
-    private StorageChannel<Rs2ItemStack> storageChannel; // TODO - Support changing of the channel.
-    private final GridEventHandler eventHandler;
+    protected GridBlockEntity<T> grid;
+    protected StorageChannel<T> storageChannel; // TODO - Support changing of the channel.
     private Runnable sizeChangedListener;
     private GridSearchBox searchBox;
 
     private GridSize size;
     private GridSearchBoxMode searchBoxMode;
 
-    public GridScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
-        super(Rs2Mod.SCREEN_HANDLERS.getGrid(), syncId);
+    private boolean active;
+
+    public GridScreenHandler(ScreenHandlerType<?> screenHandlerType, int syncId, PlayerInventory playerInventory, PacketByteBuf buf, GridView<T> view) {
+        super(screenHandlerType, syncId);
+
+        this.view = view;
 
         this.playerInventory = playerInventory;
 
         this.redstoneModeProperty = TwoWaySyncProperty.forClient(
-                0,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneMode.IGNORE,
-                redstoneMode -> {
-                }
+            0,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneMode.IGNORE,
+            redstoneMode -> {
+            }
         );
         this.sortingDirectionProperty = TwoWaySyncProperty.forClient(
-                1,
-                GridSettings::getSortingDirection,
-                GridSettings::getSortingDirection,
-                GridSortingDirection.ASCENDING,
-                this::onSortingDirectionChanged
+            1,
+            GridSettings::getSortingDirection,
+            GridSettings::getSortingDirection,
+            GridSortingDirection.ASCENDING,
+            this::onSortingDirectionChanged
         );
         this.sortingTypeProperty = TwoWaySyncProperty.forClient(
-                2,
-                GridSettings::getSortingType,
-                GridSettings::getSortingType,
-                GridSortingType.QUANTITY,
-                this::onSortingTypeChanged
+            2,
+            GridSettings::getSortingType,
+            GridSettings::getSortingType,
+            GridSortingType.QUANTITY,
+            this::onSortingTypeChanged
         );
         this.sizeProperty = TwoWaySyncProperty.forClient(
-                3,
-                GridSettings::getSize,
-                GridSettings::getSize,
-                GridSize.STRETCH,
-                this::onSizeChanged
+            3,
+            GridSettings::getSize,
+            GridSettings::getSize,
+            GridSize.STRETCH,
+            this::onSizeChanged
         );
         this.searchBoxModeProperty = TwoWaySyncProperty.forClient(
-                4,
-                GridSearchBoxModeRegistry.INSTANCE::getId,
-                GridSearchBoxModeRegistry.INSTANCE::get,
-                GridSearchBoxModeRegistry.INSTANCE.getDefault(),
-                this::onSearchBoxModeChanged
+            4,
+            GridSearchBoxModeRegistry.INSTANCE::getId,
+            GridSearchBoxModeRegistry.INSTANCE::get,
+            GridSearchBoxModeRegistry.INSTANCE.getDefault(),
+            this::onSearchBoxModeChanged
         );
 
         addProperty(redstoneModeProperty);
@@ -116,63 +96,65 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         addProperty(sizeProperty);
         addProperty(searchBoxModeProperty);
 
-        boolean active = buf.readBoolean();
+        active = buf.readBoolean();
 
-        this.eventHandler = new ClientGridEventHandler(active, itemView);
-
-        itemView.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
-        itemView.setSortingType(GridSettings.getSortingType(buf.readInt()));
+        this.view.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
+        this.view.setSortingType(GridSettings.getSortingType(buf.readInt()));
         size = GridSettings.getSize(buf.readInt());
         searchBoxMode = GridSearchBoxModeRegistry.INSTANCE.get(buf.readInt());
 
-        addSlots(0);
-
         int amountOfStacks = buf.readInt();
         for (int i = 0; i < amountOfStacks; ++i) {
-            Rs2ItemStack stack = PacketUtil.readItemStack(buf, true);
+            T stack = readStack(buf);
             StorageTracker.Entry trackerEntry = PacketUtil.readTrackerEntry(buf);
-            itemView.loadStack(stack, stack.getAmount(), trackerEntry);
+            view.loadStack(stack, stack.getAmount(), trackerEntry);
         }
-        itemView.sort();
+        view.sort();
+
+        addSlots(0);
     }
 
-    public GridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity grid) {
-        super(Rs2Mod.SCREEN_HANDLERS.getGrid(), syncId);
+    protected abstract T readStack(PacketByteBuf buf);
+
+    public GridScreenHandler(ScreenHandlerType<?> screenHandlerType, int syncId, PlayerInventory playerInventory, GridBlockEntity<T> grid, GridView<T> view) {
+        super(screenHandlerType, syncId);
+
+        this.view = view;
 
         this.redstoneModeProperty = TwoWaySyncProperty.forServer(
-                0,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneModeSettings::getRedstoneMode,
-                grid::getRedstoneMode,
-                grid::setRedstoneMode
+            0,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneModeSettings::getRedstoneMode,
+            grid::getRedstoneMode,
+            grid::setRedstoneMode
         );
         this.sortingDirectionProperty = TwoWaySyncProperty.forServer(
-                1,
-                GridSettings::getSortingDirection,
-                GridSettings::getSortingDirection,
-                grid::getSortingDirection,
-                grid::setSortingDirection
+            1,
+            GridSettings::getSortingDirection,
+            GridSettings::getSortingDirection,
+            grid::getSortingDirection,
+            grid::setSortingDirection
         );
         this.sortingTypeProperty = TwoWaySyncProperty.forServer(
-                2,
-                GridSettings::getSortingType,
-                GridSettings::getSortingType,
-                grid::getSortingType,
-                grid::setSortingType
+            2,
+            GridSettings::getSortingType,
+            GridSettings::getSortingType,
+            grid::getSortingType,
+            grid::setSortingType
         );
         this.sizeProperty = TwoWaySyncProperty.forServer(
-                3,
-                GridSettings::getSize,
-                GridSettings::getSize,
-                grid::getSize,
-                grid::setSize
+            3,
+            GridSettings::getSize,
+            GridSettings::getSize,
+            grid::getSize,
+            grid::setSize
         );
         this.searchBoxModeProperty = TwoWaySyncProperty.forServer(
-                4,
-                GridSearchBoxModeRegistry.INSTANCE::getId,
-                GridSearchBoxModeRegistry.INSTANCE::get,
-                grid::getSearchBoxMode,
-                grid::setSearchBoxMode
+            4,
+            GridSearchBoxModeRegistry.INSTANCE::getId,
+            GridSearchBoxModeRegistry.INSTANCE::get,
+            grid::getSearchBoxMode,
+            grid::setSearchBoxMode
         );
 
         addProperty(redstoneModeProperty);
@@ -184,9 +166,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         this.playerInventory = playerInventory;
         this.storageChannel = grid.getContainer().getNode().getStorageChannel();
         this.storageChannel.addListener(this);
-        this.eventHandler = new ServerGridEventHandler(grid.getContainer().getNode().isActive(), storageChannel, (ServerPlayerEntity) playerInventory.player);
         this.grid = grid;
-        this.grid.addWatcher(eventHandler);
 
         addSlots(0);
     }
@@ -228,16 +208,16 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
     }
 
     private void onSortingTypeChanged(GridSortingType sortingType) {
-        if (itemView.getSortingType() != sortingType) {
-            itemView.setSortingType(sortingType);
-            itemView.sort();
+        if (view.getSortingType() != sortingType) {
+            view.setSortingType(sortingType);
+            view.sort();
         }
     }
 
     private void onSortingDirectionChanged(GridSortingDirection sortingDirection) {
-        if (itemView.getSortingDirection() != sortingDirection) {
-            itemView.setSortingDirection(sortingDirection);
-            itemView.sort();
+        if (view.getSortingDirection() != sortingDirection) {
+            view.setSortingDirection(sortingDirection);
+            view.sort();
         }
     }
 
@@ -271,7 +251,7 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
             if (Rs2Config.get().getGrid().isRememberSearchQuery()) {
                 updateLastSearchQuery(text);
             }
-            searchBox.setInvalid(!searchBoxMode.onTextChanged(itemView, text));
+            searchBox.setInvalid(!searchBoxMode.onTextChanged(view, text));
         });
     }
 
@@ -286,10 +266,6 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         if (storageChannel != null) {
             storageChannel.removeListener(this);
         }
-
-        if (grid != null) {
-            grid.removeWatcher(eventHandler);
-        }
     }
 
     public void addSlots(int playerInventoryY) {
@@ -297,70 +273,8 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
         addPlayerInventory(playerInventory, 8, playerInventoryY);
     }
 
-    @Override
-    public void onInsertFromCursor(GridInsertMode mode) {
-        eventHandler.onInsertFromCursor(mode);
-    }
-
-    @Override
-    public Rs2ItemStack onInsertFromTransfer(Rs2ItemStack slotStack) {
-        return eventHandler.onInsertFromTransfer(slotStack);
-    }
-
-    @Override
-    public void onExtract(Rs2ItemStack stack, GridExtractMode mode) {
-        eventHandler.onExtract(stack, mode);
-    }
-
-    @Override
-    public ItemStack transferSlot(PlayerEntity playerEntity, int slotIndex) {
-        if (!playerEntity.world.isClient()) {
-            Slot slot = getSlot(slotIndex);
-            if (slot.hasStack()) {
-                Rs2ItemStack slotStack = ItemStacks.ofItemStack(slot.getStack());
-                ItemStack resultingStack = ItemStacks.toItemStack(eventHandler.onInsertFromTransfer(slotStack));
-                slot.setStack(resultingStack);
-                sendContentUpdates();
-            }
-        }
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public void onItemUpdate(Rs2ItemStack template, long amount, StorageTracker.Entry trackerEntry) {
-        eventHandler.onItemUpdate(template, amount, trackerEntry);
-    }
-
-    @Override
-    public void onActiveChanged(boolean active) {
-        eventHandler.onActiveChanged(active);
-    }
-
-    @Override
-    public boolean isActive() {
-        return eventHandler.isActive();
-    }
-
-    @Override
-    public void onScroll(Rs2ItemStack stack, int slot, GridScrollMode mode) {
-        eventHandler.onScroll(stack, slot, mode);
-    }
-
-    @Override
-    public void onChanged(StackListResult<Rs2ItemStack> change) {
-        LOGGER.info("Received a change of {} for {}", change.change(), change.stack());
-
-        ServerPacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, PacketIds.GRID_ITEM_UPDATE, buf -> {
-            PacketUtil.writeItemStack(buf, change.stack(), false);
-            buf.writeLong(change.change());
-
-            Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(change.stack());
-            PacketUtil.writeTrackerEntry(buf, entry);
-        });
-    }
-
-    public GridView<Rs2ItemStack> getItemView() {
-        return itemView;
+    public GridView<T> getView() {
+        return view;
     }
 
     @Override
@@ -375,5 +289,13 @@ public class GridScreenHandler extends BaseScreenHandler implements GridEventHan
 
     public int getPlayerInventorySlotThatHasStack(ItemStack stack) {
         return playerInventory.getSlotWithStack(stack);
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 }

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridEventHandler;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridScrollMode;
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
@@ -36,7 +36,7 @@ public class GridScrollPacket implements ServerPlayNetworking.PlayChannelHandler
 
         server.execute(() -> {
             ScreenHandler screenHandler = player.currentScreenHandler;
-            if (screenHandler instanceof GridEventHandler gridEventHandler) {
+            if (screenHandler instanceof ItemGridEventHandler gridEventHandler) {
                 gridEventHandler.onScroll(stack, slot, mode);
             }
         });
