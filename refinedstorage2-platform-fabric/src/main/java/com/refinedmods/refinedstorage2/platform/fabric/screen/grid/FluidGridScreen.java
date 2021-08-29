@@ -7,11 +7,9 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.util.FabricQuantityFo
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.stack.FabricFluidGridStack;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.FluidGridScreenHandler;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRenderHandler;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.client.item.TooltipContext;
@@ -34,11 +32,9 @@ public class FluidGridScreen extends GridScreen<Rs2FluidStack, FluidGridScreenHa
     @Override
     protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<Rs2FluidStack> stack) {
         FluidVariant variant = ((FabricFluidGridStack) stack).getMcStack();
-        FluidVariantRenderHandler renderHandler = FluidVariantRendering.getHandlerOrDefault(variant.getFluid());
-
-        Sprite sprite = renderHandler.getSprite(variant);
+        Sprite sprite = FluidVariantRendering.getSprite(variant);
         if (sprite != null) {
-            renderFluidSprite(matrices, slotX, slotY, variant, renderHandler, sprite);
+            renderFluidSprite(matrices, slotX, slotY, variant, sprite);
         }
     }
 
@@ -47,10 +43,10 @@ public class FluidGridScreen extends GridScreen<Rs2FluidStack, FluidGridScreenHa
         return FabricQuantityFormatter.formatDropletsAsBucket(stack.isZeroed() ? 0 : stack.getAmount());
     }
 
-    private void renderFluidSprite(MatrixStack matrices, int slotX, int slotY, FluidVariant variant, FluidVariantRenderHandler renderHandler, Sprite sprite) {
+    private void renderFluidSprite(MatrixStack matrices, int slotX, int slotY, FluidVariant variant, Sprite sprite) {
         RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
 
-        int packedRgb = renderHandler.getColor(variant);
+        int packedRgb = FluidVariantRendering.getColor(variant);
         int r = (packedRgb >> 16 & 255);
         int g = (packedRgb >> 8 & 255);
         int b = (packedRgb & 255);
@@ -89,14 +85,7 @@ public class FluidGridScreen extends GridScreen<Rs2FluidStack, FluidGridScreenHa
     @Override
     protected List<Text> getTooltip(GridStack<Rs2FluidStack> stack) {
         FluidVariant variant = ((FabricFluidGridStack) stack).getMcStack();
-        FluidVariantRenderHandler renderHandler = FluidVariantRendering.getHandlerOrDefault(variant.getFluid());
-
-        List<Text> lines = new ArrayList<>();
-
-        lines.add(renderHandler.getName(variant));
-        renderHandler.appendTooltip(variant, lines, client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.NORMAL);
-
-        return lines;
+        return FluidVariantRendering.getTooltip(variant, client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.NORMAL);
     }
 
     @Override

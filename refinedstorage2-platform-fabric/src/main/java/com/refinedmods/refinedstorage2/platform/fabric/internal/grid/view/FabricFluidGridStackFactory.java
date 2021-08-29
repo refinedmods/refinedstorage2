@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -22,7 +23,7 @@ public class FabricFluidGridStackFactory implements Function<Rs2FluidStack, Grid
     public GridStack<Rs2FluidStack> apply(Rs2FluidStack stack) {
         FluidVariant fluidVariant = Rs2PlatformApiFacade.INSTANCE.toMcFluid(stack.getFluid());
 
-        String name = stack.getName();
+        String name = FluidVariantRendering.getName(fluidVariant).getString();
         String modId = Registry.FLUID.getId(fluidVariant.getFluid()).getNamespace();
         String modName = FabricLoader.getInstance().getModContainer(modId).map(ModContainer::getMetadata).map(ModMetadata::getName).orElse("");
         Set<String> tags = FluidTags.getTagGroup().getTagsFor(fluidVariant.getFluid()).stream().map(Identifier::getPath).collect(Collectors.toSet());

@@ -13,7 +13,7 @@ class Rs2ItemStackTest {
     @Test
     void Test_properties() {
         // Arrange
-        Rs2Item item = new ItemStub(10, "Test", 64, "test");
+        Rs2Item item = new ItemStub(10, 64, "test");
 
         // Act
         Rs2ItemStack stack = new Rs2ItemStack(item, 10, "tag");
@@ -23,14 +23,13 @@ class Rs2ItemStackTest {
         assertThat(stack.getAmount()).isEqualTo(10);
         assertThat(stack.getTag()).isEqualTo("tag");
         assertThat(stack.getMaxCount()).isEqualTo(64);
-        assertThat(stack.getName()).isEqualTo("Test");
         assertThat(stack.isEmpty()).isFalse();
     }
 
     @Test
     void Test_properties_when_empty() {
         // Arrange
-        Rs2Item item = new ItemStub(10, "Test", 64, "test");
+        Rs2Item item = new ItemStub(10, 64, "test");
 
         // Act
         Rs2ItemStack stack = new Rs2ItemStack(item, 0, "tag");
@@ -40,14 +39,13 @@ class Rs2ItemStackTest {
         assertThat(stack.getAmount()).isZero();
         assertThat(stack.getTag()).isEqualTo("tag");
         assertThat(stack.getMaxCount()).isEqualTo(64);
-        assertThat(stack.getName()).isEqualTo("Test");
         assertThat(stack.isEmpty()).isTrue();
     }
 
     @Test
     void Test_properties_without_tag() {
         // Arrange
-        Rs2Item item = new ItemStub(10, "Test", 64, "test");
+        Rs2Item item = new ItemStub(10, 64, "test");
 
         // Act
         Rs2ItemStack stack = new Rs2ItemStack(item, 10);
@@ -57,14 +55,13 @@ class Rs2ItemStackTest {
         assertThat(stack.getAmount()).isEqualTo(10);
         assertThat(stack.getTag()).isNull();
         assertThat(stack.getMaxCount()).isEqualTo(64);
-        assertThat(stack.getName()).isEqualTo("Test");
         assertThat(stack.isEmpty()).isFalse();
     }
 
     @Test
     void Test_properties_without_tag_and_count() {
         // Arrange
-        Rs2Item item = new ItemStub(10, "Test", 64, "test");
+        Rs2Item item = new ItemStub(10, 64, "test");
 
         // Act
         Rs2ItemStack stack = new Rs2ItemStack(item);
@@ -74,14 +71,13 @@ class Rs2ItemStackTest {
         assertThat(stack.getAmount()).isEqualTo(1);
         assertThat(stack.getTag()).isNull();
         assertThat(stack.getMaxCount()).isEqualTo(64);
-        assertThat(stack.getName()).isEqualTo("Test");
         assertThat(stack.isEmpty()).isFalse();
     }
 
     @Test
     void Test_copy() {
         // Arrange
-        Rs2Item item = new ItemStub(10, "Test", 64, "test");
+        Rs2Item item = new ItemStub(10, 64, "test");
 
         // Act
         Rs2ItemStack stack = new Rs2ItemStack(item, 10, "tag");
@@ -92,7 +88,6 @@ class Rs2ItemStackTest {
         assertThat(copiedStack.getAmount()).isEqualTo(10);
         assertThat(copiedStack.getTag()).isEqualTo("tag");
         assertThat(copiedStack.getMaxCount()).isEqualTo(64);
-        assertThat(copiedStack.getName()).isEqualTo("Test");
         assertThat(copiedStack.isEmpty()).isFalse();
         assertThat(copiedStack).isNotSameAs(stack);
     }

@@ -1,7 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.fabric.item;
 
-import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
@@ -16,8 +14,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.Flu
 import java.util.Optional;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -44,18 +40,12 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected StorageDisk<?> createStorageDisk(World world) {
-        var disk = new PlatformStorageDiskImpl<>(
+        return new PlatformStorageDiskImpl<>(
                 type.getCapacity(),
                 StackListImpl.createFluidStackList(),
                 FluidStorageDiskType.INSTANCE,
                 Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world)::markAsChanged
         );
-
-        // TODO: remove
-        disk.insert(new Rs2FluidStack(Rs2PlatformApiFacade.INSTANCE.toRs2Fluid(FluidVariant.of(Fluids.WATER))), FluidConstants.BUCKET + (FluidConstants.BUCKET / 2), Action.EXECUTE);
-        disk.insert(new Rs2FluidStack(Rs2PlatformApiFacade.INSTANCE.toRs2Fluid(FluidVariant.of(Fluids.LAVA))), FluidConstants.BUCKET + (FluidConstants.BUCKET / 2), Action.EXECUTE);
-
-        return disk;
     }
 
     @Override

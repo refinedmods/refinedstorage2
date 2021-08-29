@@ -30,9 +30,4 @@ public class FabricRs2Fluid implements Rs2Fluid {
     public int getId() {
         return rawId;
     }
-
-    @Override
-    public String getName() {
-        return fluidVariant.getFluid().toString();
-    }
 }

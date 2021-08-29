@@ -32,11 +32,6 @@ public class FabricRs2Item implements Rs2Item {
     }
 
     @Override
-    public String getName() {
-        return item.getName().getString();
-    }
-
-    @Override
     public String getIdentifier() {
         return identifier.toString();
     }

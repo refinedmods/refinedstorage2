@@ -79,10 +79,6 @@ public final class Rs2ItemStack implements Rs2Stack {
         return item.getMaxAmount();
     }
 
-    public String getName() {
-        return item.getName();
-    }
-
     @Override
     public String toString() {
         return "Rs2ItemStack{" +

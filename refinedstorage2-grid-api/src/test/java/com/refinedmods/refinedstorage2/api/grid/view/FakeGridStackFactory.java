@@ -12,7 +12,7 @@ public class FakeGridStackFactory implements Function<Rs2ItemStack, GridStack<Rs
     public GridStack<Rs2ItemStack> apply(Rs2ItemStack stack) {
         return new ItemGridStack(
                 stack,
-                stack.getName(),
+                stack.getItem().getIdentifier(),
                 "mc",
                 "Minecraft",
                 Collections.emptySet()

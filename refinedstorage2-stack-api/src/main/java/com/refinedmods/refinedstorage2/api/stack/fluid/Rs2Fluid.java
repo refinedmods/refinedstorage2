@@ -4,6 +4,4 @@ public interface Rs2Fluid {
     String getIdentifier();
 
     int getId();
-
-    String getName();
 }

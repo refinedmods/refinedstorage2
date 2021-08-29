@@ -75,10 +75,6 @@ public final class Rs2FluidStack implements Rs2Stack {
         return empty;
     }
 
-    public String getName() {
-        return fluid.getName();
-    }
-
     @Override
     public String toString() {
         return "Rs2FluidStack{" +

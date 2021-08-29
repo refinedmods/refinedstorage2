@@ -259,7 +259,7 @@ class GridQueryParserImplTest {
     private GridStack<Rs2ItemStack> stack(Rs2ItemStack stack, String modId, String modName, String... tags) {
         return new ItemGridStack(
                 stack,
-                stack.getName(),
+                stack.getItem().getIdentifier(),
                 modId,
                 modName,
                 new HashSet<>(Arrays.asList(tags))

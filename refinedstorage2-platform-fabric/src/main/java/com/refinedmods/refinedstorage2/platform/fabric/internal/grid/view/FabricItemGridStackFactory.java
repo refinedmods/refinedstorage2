@@ -22,8 +22,7 @@ public class FabricItemGridStackFactory implements Function<Rs2ItemStack, GridSt
     public GridStack<Rs2ItemStack> apply(Rs2ItemStack stack) {
         Item item = Rs2PlatformApiFacade.INSTANCE.toMcItem(stack.getItem());
 
-        /// TODO: This isn't correct. :(
-        String name = stack.getName();
+        String name = item.getName().getString();
         String modId = Registry.ITEM.getId(item).getNamespace();
         String modName = FabricLoader.getInstance().getModContainer(modId).map(ModContainer::getMetadata).map(ModMetadata::getName).orElse("");
         Set<String> tags = ItemTags.getTagGroup().getTagsFor(item).stream().map(Identifier::getPath).collect(Collectors.toSet());
