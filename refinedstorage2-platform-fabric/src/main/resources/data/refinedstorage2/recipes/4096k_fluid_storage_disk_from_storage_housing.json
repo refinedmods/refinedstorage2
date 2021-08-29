@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "refinedstorage2:storage_housing"
+        },
+        {
+            "item": "refinedstorage2:4096b_fluid_storage_part"
+        }
+    ],
+    "result": {
+        "item": "refinedstorage2:4096b_fluid_storage_disk"
+    }
+}

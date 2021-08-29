@@ -21,7 +21,6 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-// TODO: Recipes
 public class FluidStorageDiskItem extends StorageDiskItemImpl {
     private final FluidStorageType type;
 
