@@ -39,11 +39,6 @@ public class FluidGridScreenHandler extends GridScreenHandler<Rs2FluidStack> imp
     }
 
     @Override
-    public void onActiveChanged(boolean active) {
-        setActive(active);
-    }
-
-    @Override
     protected Rs2FluidStack readStack(PacketByteBuf buf) {
         return PacketUtil.readFluidStack(buf, true);
     }

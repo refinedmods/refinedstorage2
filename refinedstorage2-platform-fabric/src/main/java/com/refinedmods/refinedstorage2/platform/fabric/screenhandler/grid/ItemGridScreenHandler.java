@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridScrollMode;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.ItemGridEventHandler;
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.ItemGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStackIdentifier;
@@ -15,7 +15,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.ClientItemGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.ServerItemGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.PlayerGridInteractor;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricItemGridStackFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
@@ -32,7 +32,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ItemGridScreenHandler extends GridScreenHandler<Rs2ItemStack> implements ItemGridEventHandler, GridWatcher {
+public class ItemGridScreenHandler extends GridScreenHandler<Rs2ItemStack> implements ItemGridEventHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final ItemGridEventHandler eventHandler;
@@ -44,7 +44,7 @@ public class ItemGridScreenHandler extends GridScreenHandler<Rs2ItemStack> imple
 
     public ItemGridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity<Rs2ItemStack> grid) {
         super(Rs2Mod.SCREEN_HANDLERS.getGrid(), syncId, playerInventory, grid, createView());
-        this.eventHandler = new ServerItemGridEventHandler(grid.getContainer().getNode().isActive(), storageChannel, (ServerPlayerEntity) playerInventory.player);
+        this.eventHandler = new ItemGridEventHandlerImpl(grid.getContainer().getNode().isActive(), storageChannel, new PlayerGridInteractor(playerInventory.player));
         this.grid.addWatcher(this);
     }
 
@@ -109,7 +109,7 @@ public class ItemGridScreenHandler extends GridScreenHandler<Rs2ItemStack> imple
 
     @Override
     public void onActiveChanged(boolean active) {
-        setActive(active);
+        super.onActiveChanged(active);
         eventHandler.onActiveChanged(active);
     }
 

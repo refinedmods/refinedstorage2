@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid;
 
+import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSize;
@@ -15,20 +16,23 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.Redstone
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridSettings;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.BaseScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
+import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class GridScreenHandler<T extends Rs2Stack> extends BaseScreenHandler implements StackListListener<T>, RedstoneModeAccessor {
+public abstract class GridScreenHandler<T extends Rs2Stack> extends BaseScreenHandler implements StackListListener<T>, RedstoneModeAccessor, GridWatcher {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static String lastSearchQuery = "";
@@ -300,8 +304,12 @@ public abstract class GridScreenHandler<T extends Rs2Stack> extends BaseScreenHa
         return playerInventory.getSlotWithStack(stack);
     }
 
-    public void setActive(boolean active) {
+    @Override
+    public void onActiveChanged(boolean active) {
         this.active = active;
+        if (this.playerInventory.player instanceof ServerPlayerEntity serverPlayerEntity) {
+            ServerPacketUtil.sendToPlayer(serverPlayerEntity, PacketIds.GRID_ACTIVE, buf -> buf.writeBoolean(active));
+        }
     }
 
     public boolean isActive() {

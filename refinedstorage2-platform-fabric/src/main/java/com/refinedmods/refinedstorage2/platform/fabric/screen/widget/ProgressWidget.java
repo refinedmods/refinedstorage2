@@ -18,7 +18,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-// TODO: side-button tooltips are under this guy
 public class ProgressWidget extends DrawableHelper implements Drawable, Element, Selectable {
     private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/widgets.png");
 
