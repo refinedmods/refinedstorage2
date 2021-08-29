@@ -1,0 +1,13 @@
+{
+    "parent": "refinedstorage2:block/fullbright_north_cutout",
+    "textures": {
+        "particle": "refinedstorage2:block/fluid_grid/right",
+        "north": "refinedstorage2:block/fluid_grid/front",
+        "east": "refinedstorage2:block/fluid_grid/right",
+        "south": "refinedstorage2:block/fluid_grid/back",
+        "west": "refinedstorage2:block/fluid_grid/left",
+        "up": "refinedstorage2:block/fluid_grid/top",
+        "down": "refinedstorage2:block/bottom",
+        "cutout": "refinedstorage2:block/fluid_grid/cutouts/cyan"
+    }
+}

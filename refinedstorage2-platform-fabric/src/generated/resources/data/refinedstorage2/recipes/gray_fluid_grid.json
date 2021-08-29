@@ -1,0 +1,17 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "refinedstorage2:gray_grid"
+        },
+        {
+            "item": "refinedstorage2:advanced_processor"
+        },
+        {
+            "item": "minecraft:bucket"
+        }
+    ],
+    "result": {
+        "item": "refinedstorage2:gray_fluid_grid"
+    }
+}

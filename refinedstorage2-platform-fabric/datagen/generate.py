@@ -235,9 +235,33 @@ with open('colors.txt') as colors_file:
         generate_blockstate_for_each_bi_direction_and_active(get_color_key(
             color, 'grid'), lambda direction, active: 'refinedstorage2:block/grid/' + color if active else 'refinedstorage2:block/grid/disconnected')
 
+        generate_north_cutout_block_model('fluid_grid/' + color, particle='refinedstorage2:block/fluid_grid/right', east='refinedstorage2:block/fluid_grid/right', south='refinedstorage2:block/fluid_grid/back', west='refinedstorage2:block/fluid_grid/left',
+                                                  up='refinedstorage2:block/fluid_grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/fluid_grid/front', cutout='refinedstorage2:block/fluid_grid/cutouts/' + color, fullbright_cutout=True)
+        generate_referencing_item_model(get_color_key(color, 'fluid_grid'), 'refinedstorage2:block/fluid_grid/' + color)
+        generate_blockstate_for_each_bi_direction_and_active(get_color_key(color, 'fluid_grid'), lambda direction, active: 'refinedstorage2:block/fluid_grid/' + color if active else 'refinedstorage2:block/fluid_grid/disconnected')
+
         generate_simple_loot_table(get_color_key(color, 'grid'), 'refinedstorage2:' + get_color_key(color, 'grid'))
+        generate_simple_loot_table(get_color_key(color, 'fluid_grid'), 'refinedstorage2:' + get_color_key(color, 'fluid_grid'))
         generate_simple_loot_table(get_color_key(color, 'controller'), 'refinedstorage2:' + get_color_key(color, 'controller'), [{'function': 'refinedstorage2:controller'}])
         generate_simple_loot_table(get_color_key(color, 'creative_controller'), 'refinedstorage2:' + get_color_key(color, 'creative_controller'))
+
+        generate_recipe(get_color_key(color, 'fluid_grid'), {
+            'type': 'minecraft:crafting_shapeless',
+            'ingredients': [
+                {
+                    'item': 'refinedstorage2:' + get_color_key(color, 'grid')
+                },
+                {
+                    'item': 'refinedstorage2:advanced_processor'
+                },
+                {
+                    'item': 'minecraft:bucket'
+                }
+            ],
+            'result': {
+                'item': 'refinedstorage2:' + get_color_key(color, 'fluid_grid')
+            }
+        })
 
         if color != 'light_blue':
             generate_recipe('coloring/' + color + '_grid', {
@@ -282,3 +306,6 @@ with open('colors.txt') as colors_file:
 
     generate_north_cutout_block_model('grid/disconnected', particle='refinedstorage2:block/grid/right', east='refinedstorage2:block/grid/right', south='refinedstorage2:block/grid/back', west='refinedstorage2:block/grid/left',
                                       up='refinedstorage2:block/grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/grid/front', cutout='refinedstorage2:block/grid/cutouts/disconnected', fullbright_cutout=False)
+
+    generate_north_cutout_block_model('fluid_grid/disconnected', particle='refinedstorage2:block/fluid_grid/right', east='refinedstorage2:block/fluid_grid/right', south='refinedstorage2:block/fluid_grid/back', west='refinedstorage2:block/fluid_grid/left',
+                                      up='refinedstorage2:block/fluid_grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/fluid_grid/front', cutout='refinedstorage2:block/fluid_grid/cutouts/disconnected', fullbright_cutout=False)

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block;
 
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
-import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.ItemGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.init.BlockColorMap;
 
 import net.minecraft.block.BlockState;
@@ -22,6 +22,6 @@ public class FluidGridBlock extends GridBlock {
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new ItemGridBlockEntity(pos, state);
+        return new FluidGridBlockEntity(pos, state);
     }
 }
