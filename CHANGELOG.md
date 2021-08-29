@@ -12,6 +12,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Storage Disks from the previous version are no longer valid. Please move all your items into another storage medium
 before updating.
 
+### Added
+
+- Fluid Storage Part
+- Fluid Storage Disk
+- Fluid Grid
+
 ### Fixed
 
 - Fix Disk Drive item filters not being applied when reloading a world.
@@ -21,6 +27,8 @@ before updating.
 ### Changed
 
 - Modularized the codebase.
+- The capacity of the various fluid storage part and fluid storage disk tiers are now described in bucket form, no
+  longer in mB form.
 
 ## [2.0.0-milestone.1.1] - 2021-08-16
 
