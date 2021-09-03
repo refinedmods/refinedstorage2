@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
 import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStackIdentifier;
@@ -22,7 +21,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FluidGridScreenHandler extends GridScreenHandler<Rs2FluidStack> implements GridWatcher {
+public class FluidGridScreenHandler extends GridScreenHandler<Rs2FluidStack> {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public FluidGridScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {

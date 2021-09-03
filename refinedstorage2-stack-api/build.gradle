@@ -4,7 +4,6 @@ dependencies {
     testImplementation project(':refinedstorage2-test')
     testImplementation project(':refinedstorage2-stack-api-test')
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${project.junitVersion}"
     testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
     testImplementation "nl.jqno.equalsverifier:equalsverifier:${project.equalsverifierVersion}"
     implementation "com.google.guava:guava:${project.guavaVersion}"

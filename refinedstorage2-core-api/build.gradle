@@ -4,7 +4,6 @@ dependencies {
     testImplementation project(':refinedstorage2-test')
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
     testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${project.junitVersion}"
 }
 
 test {
