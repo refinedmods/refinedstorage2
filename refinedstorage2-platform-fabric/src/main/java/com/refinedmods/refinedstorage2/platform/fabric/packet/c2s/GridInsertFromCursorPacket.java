@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.ItemGridEventHandler;
 
@@ -20,6 +21,8 @@ public class GridInsertFromCursorPacket implements ServerPlayNetworking.PlayChan
             ScreenHandler screenHandler = player.currentScreenHandler;
             if (screenHandler instanceof ItemGridEventHandler gridEventHandler) {
                 gridEventHandler.onInsertFromCursor(single ? GridInsertMode.SINGLE : GridInsertMode.ENTIRE_STACK);
+            } else if (screenHandler instanceof FluidGridEventHandler gridEventHandler) {
+                gridEventHandler.onInsertFromCursor();
             }
         });
     }

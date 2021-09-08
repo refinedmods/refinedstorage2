@@ -12,12 +12,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.util.ClientPacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
 public class ClientItemGridEventHandler implements ItemGridEventHandler {
-    private boolean active;
-
-    public ClientItemGridEventHandler(boolean active) {
-        this.active = active;
-    }
-
     @Override
     public void onInsertFromCursor(GridInsertMode mode) {
         ClientPacketUtil.sendToServer(PacketIds.GRID_INSERT_FROM_CURSOR, buf -> buf.writeBoolean(mode == GridInsertMode.SINGLE));
@@ -38,12 +32,6 @@ public class ClientItemGridEventHandler implements ItemGridEventHandler {
 
     @Override
     public void onActiveChanged(boolean active) {
-        this.active = active;
-    }
-
-    @Override
-    public boolean isActive() {
-        return active;
     }
 
     @Override

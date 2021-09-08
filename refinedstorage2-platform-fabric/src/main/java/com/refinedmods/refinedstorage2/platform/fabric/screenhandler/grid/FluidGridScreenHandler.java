@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid;
 
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.FluidGridEventHandler;
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.FluidGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
 import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStackIdentifier;
@@ -8,6 +10,8 @@ import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.ClientFluidGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.PlayerFluidGridInteractor;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricFluidGridStackFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
@@ -21,20 +25,35 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FluidGridScreenHandler extends GridScreenHandler<Rs2FluidStack> {
+public class FluidGridScreenHandler extends GridScreenHandler<Rs2FluidStack> implements FluidGridEventHandler {
     private static final Logger LOGGER = LogManager.getLogger();
+
+    private final FluidGridEventHandler eventHandler;
 
     public FluidGridScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
         super(Rs2Mod.SCREEN_HANDLERS.getFluidGrid(), syncId, playerInventory, buf, createView());
+        this.eventHandler = new ClientFluidGridEventHandler();
     }
 
     public FluidGridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity<Rs2FluidStack> grid) {
         super(Rs2Mod.SCREEN_HANDLERS.getFluidGrid(), syncId, playerInventory, grid, createView());
         this.grid.addWatcher(this);
+        this.eventHandler = new FluidGridEventHandlerImpl(new PlayerFluidGridInteractor(playerInventory.player), storageChannel, grid.getContainer().getNode().isActive());
     }
 
     private static GridViewImpl<Rs2FluidStack, Rs2FluidStackIdentifier> createView() {
         return new GridViewImpl<>(new FabricFluidGridStackFactory(), Rs2FluidStackIdentifier::new, StackListImpl.createFluidStackList());
+    }
+
+    @Override
+    public void onInsertFromCursor() {
+        eventHandler.onInsertFromCursor();
+    }
+
+    @Override
+    public void onActiveChanged(boolean active) {
+        super.onActiveChanged(active);
+        eventHandler.onActiveChanged(active);
     }
 
     @Override

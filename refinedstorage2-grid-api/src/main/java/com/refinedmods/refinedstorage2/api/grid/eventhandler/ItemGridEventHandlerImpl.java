@@ -158,11 +158,6 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     }
 
     @Override
-    public boolean isActive() {
-        return active;
-    }
-
-    @Override
     public void onScroll(Rs2ItemStack template, int slot, GridScrollMode mode) {
         if (!active) {
             return;

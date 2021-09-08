@@ -39,7 +39,7 @@ public class ItemGridScreenHandler extends GridScreenHandler<Rs2ItemStack> imple
 
     public ItemGridScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
         super(Rs2Mod.SCREEN_HANDLERS.getGrid(), syncId, playerInventory, buf, createView());
-        this.eventHandler = new ClientItemGridEventHandler(isActive());
+        this.eventHandler = new ClientItemGridEventHandler();
     }
 
     public ItemGridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity<Rs2ItemStack> grid) {

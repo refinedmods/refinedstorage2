@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
 import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
@@ -25,8 +26,11 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 
 public class FluidGridScreen extends GridScreen<Rs2FluidStack, FluidGridScreenHandler> {
+    private final FluidGridEventHandler eventHandler;
+
     public FluidGridScreen(FluidGridScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
+        this.eventHandler = handler;
     }
 
     @Override
@@ -90,7 +94,7 @@ public class FluidGridScreen extends GridScreen<Rs2FluidStack, FluidGridScreenHa
 
     @Override
     protected void mouseClickedInGrid(int clickedButton) {
-        // no op
+        eventHandler.onInsertFromCursor();
     }
 
     @Override

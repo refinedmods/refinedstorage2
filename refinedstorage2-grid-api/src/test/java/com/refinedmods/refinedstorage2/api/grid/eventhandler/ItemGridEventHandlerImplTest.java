@@ -34,12 +34,6 @@ class ItemGridEventHandlerImplTest {
         eventHandler = new ItemGridEventHandlerImpl(true, new StorageTrackerEntryPresentAssertionItemStorageChannel<>(storageChannel), interactor);
     }
 
-    @Test
-    void Test_activeness() {
-        // Assert
-        assertThat(eventHandler.isActive()).isTrue();
-    }
-
     @Nested
     class InsertingEntireStack {
         @Test
@@ -163,8 +157,6 @@ class ItemGridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isNotPresent();
-
-            assertThat(eventHandler.isActive()).isFalse();
         }
 
         @ParameterizedTest
@@ -253,8 +245,6 @@ class ItemGridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isNotPresent();
-
-            assertThat(eventHandler.isActive()).isFalse();
         }
     }
 
@@ -414,8 +404,6 @@ class ItemGridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isNotPresent();
-
-            assertThat(eventHandler.isActive()).isFalse();
         }
     }
 
@@ -689,8 +677,6 @@ class ItemGridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isNotPresent();
-
-            assertThat(eventHandler.isActive()).isFalse();
         }
     }
 
@@ -770,8 +756,6 @@ class ItemGridEventHandlerImplTest {
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isNotPresent();
-
-            assertThat(eventHandler.isActive()).isFalse();
         }
     }
 }

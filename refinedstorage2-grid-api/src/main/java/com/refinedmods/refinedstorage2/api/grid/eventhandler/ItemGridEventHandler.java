@@ -11,7 +11,5 @@ public interface ItemGridEventHandler {
 
     void onActiveChanged(boolean active);
 
-    boolean isActive();
-
     void onScroll(Rs2ItemStack template, int slot, GridScrollMode mode);
 }
