@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridInteractor;
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.ItemGridInteractor;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
 
@@ -11,11 +11,11 @@ import alexiil.mc.lib.attributes.item.filter.ExactItemStackFilter;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
-public class PlayerGridInteractor implements GridInteractor {
+public class PlayerItemGridInteractor implements ItemGridInteractor {
     private final PlayerEntity player;
     private final FixedInventoryVanillaWrapper inventory;
 
-    public PlayerGridInteractor(PlayerEntity player) {
+    public PlayerItemGridInteractor(PlayerEntity player) {
         this.player = player;
         this.inventory = new FixedInventoryVanillaWrapper(player.getInventory());
     }

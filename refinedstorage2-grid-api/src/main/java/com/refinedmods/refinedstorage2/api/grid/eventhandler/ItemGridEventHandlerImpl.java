@@ -4,18 +4,18 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Optional;
 
 public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     private static final Logger LOGGER = LogManager.getLogger(ItemGridEventHandlerImpl.class);
     private final StorageChannel<Rs2ItemStack> storageChannel;
-    private final GridInteractor interactor;
+    private final ItemGridInteractor interactor;
     private boolean active;
 
-    public ItemGridEventHandlerImpl(boolean active, StorageChannel<Rs2ItemStack> storageChannel, GridInteractor interactor) {
+    public ItemGridEventHandlerImpl(boolean active, StorageChannel<Rs2ItemStack> storageChannel, ItemGridInteractor interactor) {
         this.active = active;
         this.storageChannel = storageChannel;
         this.interactor = interactor;

@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.storage.disk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
+import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.stack.list.StackList;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
@@ -21,6 +22,10 @@ public class StorageDiskImpl<T extends Rs2Stack> implements StorageDisk<T> {
 
     public static StorageDisk<Rs2ItemStack> createItemStorageDisk(long capacity) {
         return new StorageDiskImpl<>(capacity, StackListImpl.createItemStackList());
+    }
+
+    public static StorageDisk<Rs2FluidStack> createFluidStorageDisk(long capacity) {
+        return new StorageDiskImpl<>(capacity, StackListImpl.createFluidStackList());
     }
 
     @Override

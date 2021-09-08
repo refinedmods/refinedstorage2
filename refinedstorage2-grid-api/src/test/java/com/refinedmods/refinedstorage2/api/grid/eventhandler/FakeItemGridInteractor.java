@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
 
 import java.util.Collection;
 
-public class FakeGridInteractor implements GridInteractor {
+public class FakeItemGridInteractor implements ItemGridInteractor {
     public static final String NAME = "Fake interactor";
 
     private Rs2ItemStack cursorStack = Rs2ItemStack.EMPTY;

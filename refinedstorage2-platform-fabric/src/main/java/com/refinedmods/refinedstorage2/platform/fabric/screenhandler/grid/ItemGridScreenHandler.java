@@ -15,7 +15,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.ClientItemGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.PlayerGridInteractor;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.PlayerItemGridInteractor;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricItemGridStackFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
@@ -44,7 +44,7 @@ public class ItemGridScreenHandler extends GridScreenHandler<Rs2ItemStack> imple
 
     public ItemGridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity<Rs2ItemStack> grid) {
         super(Rs2Mod.SCREEN_HANDLERS.getGrid(), syncId, playerInventory, grid, createView());
-        this.eventHandler = new ItemGridEventHandlerImpl(grid.getContainer().getNode().isActive(), storageChannel, new PlayerGridInteractor(playerInventory.player));
+        this.eventHandler = new ItemGridEventHandlerImpl(grid.getContainer().getNode().isActive(), storageChannel, new PlayerItemGridInteractor(playerInventory.player));
         this.grid.addWatcher(this);
     }
 

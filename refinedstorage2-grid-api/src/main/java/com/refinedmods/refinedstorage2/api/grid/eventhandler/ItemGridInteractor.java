@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 
-public interface GridInteractor extends Source {
+public interface ItemGridInteractor extends Source {
     Rs2ItemStack getCursorStack();
 
     void setCursorStack(Rs2ItemStack stack);
