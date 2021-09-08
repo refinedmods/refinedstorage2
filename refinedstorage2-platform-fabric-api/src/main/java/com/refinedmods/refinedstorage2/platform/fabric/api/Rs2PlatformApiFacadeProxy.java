@@ -2,13 +2,18 @@ package com.refinedmods.refinedstorage2.platform.fabric.api;
 
 import com.refinedmods.refinedstorage2.api.network.node.container.ConnectionProvider;
 import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2Fluid;
+import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2Item;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.platform.fabric.api.converter.PlatformConverter;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskManager;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskType;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
 
@@ -38,23 +43,23 @@ public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public Rs2Item toRs2Item(Item item) {
-        return ensureLoaded().toRs2Item(item);
+    public PlatformConverter<Item, Rs2Item> itemConversion() {
+        return ensureLoaded().itemConversion();
     }
 
     @Override
-    public Rs2Fluid toRs2Fluid(FluidVariant fluidVariant) {
-        return ensureLoaded().toRs2Fluid(fluidVariant);
+    public PlatformConverter<ItemStack, Rs2ItemStack> itemStackConversion() {
+        return ensureLoaded().itemStackConversion();
     }
 
     @Override
-    public Item toMcItem(Rs2Item item) {
-        return ensureLoaded().toMcItem(item);
+    public PlatformConverter<Fluid, Rs2Fluid> fluidConversion() {
+        return ensureLoaded().fluidConversion();
     }
 
     @Override
-    public FluidVariant toMcFluid(Rs2Fluid fluid) {
-        return ensureLoaded().toMcFluid(fluid);
+    public PlatformConverter<ResourceAmount<FluidVariant>, Rs2FluidStack> fluidResourceAmountConversion() {
+        return ensureLoaded().fluidResourceAmountConversion();
     }
 
     @Override

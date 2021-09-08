@@ -27,11 +27,9 @@ public class PlayerFluidGridInteractor implements FluidGridInteractor {
 
     @Override
     public Rs2FluidStack getCursorStack() {
-        ResourceAmount<FluidVariant> resourceAmount = StorageUtil.findExtractableContent(getCursorStorage(), null);
-        if (resourceAmount == null) {
-            return Rs2FluidStack.EMPTY;
-        }
-        return new Rs2FluidStack(Rs2PlatformApiFacade.INSTANCE.toRs2Fluid(resourceAmount.resource()), resourceAmount.amount(), resourceAmount.resource().getNbt());
+        return Rs2PlatformApiFacade.INSTANCE.fluidResourceAmountConversion().toDomain(
+                StorageUtil.findExtractableContent(getCursorStorage(), null)
+        );
     }
 
     @Override
@@ -41,8 +39,9 @@ public class PlayerFluidGridInteractor implements FluidGridInteractor {
 
     @Override
     public Rs2FluidStack extractFromCursor(Action action, long amount) {
+        Storage<FluidVariant> cursorStorage = getCursorStorage();
+
         try (Transaction trans = Transaction.openOuter()) {
-            Storage<FluidVariant> cursorStorage = getCursorStorage();
             FluidVariant resource = StorageUtil.findExtractableResource(cursorStorage, trans);
             if (resource == null) {
                 return Rs2FluidStack.EMPTY;
@@ -57,11 +56,10 @@ public class PlayerFluidGridInteractor implements FluidGridInteractor {
                 trans.commit();
             }
 
-            return new Rs2FluidStack(
-                    Rs2PlatformApiFacade.INSTANCE.toRs2Fluid(resource),
-                    amountExtracted,
-                    resource.getNbt()
-            );
+            return Rs2PlatformApiFacade.INSTANCE.fluidResourceAmountConversion().toDomain(new ResourceAmount<>(
+                    resource,
+                    amountExtracted
+            ));
         }
     }
 

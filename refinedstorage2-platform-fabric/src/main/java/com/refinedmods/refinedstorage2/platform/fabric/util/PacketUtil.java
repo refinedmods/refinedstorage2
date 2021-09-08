@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 
 import java.util.Optional;
 
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.fabricmc.fabric.impl.transfer.fluid.FluidVariantImpl;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
@@ -53,7 +53,7 @@ public final class PacketUtil {
                 amount = buf.readLong();
             }
 
-            return new Rs2ItemStack(Rs2PlatformApiFacade.INSTANCE.toRs2Item(Item.byRawId(id)), amount, buf.readNbt());
+            return new Rs2ItemStack(Rs2PlatformApiFacade.INSTANCE.itemConversion().toDomain(Item.byRawId(id)), amount, buf.readNbt());
         }
     }
 
@@ -90,9 +90,10 @@ public final class PacketUtil {
                 amount = buf.readLong();
             }
 
-            FluidVariant fluidVariant = FluidVariantImpl.of(Registry.FLUID.get(id), buf.readNbt());
-
-            return new Rs2FluidStack(Rs2PlatformApiFacade.INSTANCE.toRs2Fluid(fluidVariant), amount, fluidVariant.getNbt());
+            return Rs2PlatformApiFacade.INSTANCE.fluidResourceAmountConversion().toDomain(new ResourceAmount<>(
+                    FluidVariantImpl.of(Registry.FLUID.get(id), buf.readNbt()),
+                    amount
+            ));
         }
     }
 

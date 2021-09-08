@@ -20,7 +20,7 @@ import net.minecraft.util.registry.Registry;
 public class FabricItemGridStackFactory implements Function<Rs2ItemStack, GridStack<Rs2ItemStack>> {
     @Override
     public GridStack<Rs2ItemStack> apply(Rs2ItemStack stack) {
-        Item item = Rs2PlatformApiFacade.INSTANCE.toMcItem(stack.getItem());
+        Item item = Rs2PlatformApiFacade.INSTANCE.itemConversion().toPlatform(stack.getItem());
 
         String name = item.getName().getString();
         String modId = Registry.ITEM.getId(item).getNamespace();

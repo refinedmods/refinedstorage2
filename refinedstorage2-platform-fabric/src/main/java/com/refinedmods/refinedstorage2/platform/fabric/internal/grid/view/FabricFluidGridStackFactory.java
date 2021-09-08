@@ -21,7 +21,7 @@ import net.minecraft.util.registry.Registry;
 public class FabricFluidGridStackFactory implements Function<Rs2FluidStack, GridStack<Rs2FluidStack>> {
     @Override
     public GridStack<Rs2FluidStack> apply(Rs2FluidStack stack) {
-        FluidVariant fluidVariant = Rs2PlatformApiFacade.INSTANCE.toMcFluid(stack.getFluid());
+        FluidVariant fluidVariant = Rs2PlatformApiFacade.INSTANCE.fluidResourceAmountConversion().toPlatform(stack).resource();
 
         String name = FluidVariantRendering.getName(fluidVariant).getString();
         String modId = Registry.FLUID.getId(fluidVariant.getFluid()).getNamespace();

@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandl
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.ItemGridInteractor;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
+import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 
 import alexiil.mc.lib.attributes.Simulation;
 import alexiil.mc.lib.attributes.item.compat.FixedInventoryVanillaWrapper;
@@ -22,28 +22,28 @@ public class PlayerItemGridInteractor implements ItemGridInteractor {
 
     @Override
     public Rs2ItemStack getCursorStack() {
-        return ItemStacks.ofItemStack(player.currentScreenHandler.getCursorStack());
+        return Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toDomain(player.currentScreenHandler.getCursorStack());
     }
 
     @Override
     public void setCursorStack(Rs2ItemStack stack) {
-        player.currentScreenHandler.setCursorStack(ItemStacks.toItemStack(stack));
+        player.currentScreenHandler.setCursorStack(Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toPlatform(stack));
     }
 
     @Override
     public Rs2ItemStack insertIntoInventory(Rs2ItemStack stack, int preferredSlot, Action action) {
         Simulation simulation = getSimulation(action);
-        ItemStack mcStack = ItemStacks.toItemStack(stack);
+        ItemStack mcStack = Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toPlatform(stack);
 
         if (preferredSlot == -1) {
-            return ItemStacks.ofItemStack(inventory.getInsertable().attemptInsertion(mcStack, simulation));
+            return Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toDomain(inventory.getInsertable().attemptInsertion(mcStack, simulation));
         }
 
         // TODO: Prevent this going into the armor slots.
         // TODO: move away from LBA
         ItemStack remainder = inventory.insertStack(preferredSlot, mcStack, simulation);
         if (!remainder.isEmpty()) {
-            return ItemStacks.ofItemStack(inventory.getInsertable().attemptInsertion(remainder, simulation));
+            return Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toDomain(inventory.getInsertable().attemptInsertion(remainder, simulation));
         }
         return Rs2ItemStack.EMPTY;
     }
@@ -51,11 +51,11 @@ public class PlayerItemGridInteractor implements ItemGridInteractor {
     @Override
     public Rs2ItemStack extractFromInventory(Rs2ItemStack template, int slot, long count, Action action) {
         Simulation simulation = getSimulation(action);
-        ItemStack mcTemplate = ItemStacks.toItemStack(template);
+        ItemStack mcTemplate = Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toPlatform(template);
 
         return slot == -1 ?
-                ItemStacks.ofItemStack(inventory.getExtractable().attemptExtraction(new ExactItemStackFilter(mcTemplate), (int) count, simulation)) :
-                ItemStacks.ofItemStack(inventory.extractStack(slot, null, ItemStack.EMPTY, (int) count, simulation));
+                Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toDomain(inventory.getExtractable().attemptExtraction(new ExactItemStackFilter(mcTemplate), (int) count, simulation)) :
+                Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toDomain(inventory.extractStack(slot, null, ItemStack.EMPTY, (int) count, simulation));
     }
 
     private Simulation getSimulation(Action action) {

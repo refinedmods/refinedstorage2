@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
-import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricNetworkNodeContainerBlockEntity;
@@ -128,7 +127,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
         diskDrive.setFilterTemplates(StreamSupport
                 .stream(filterInventory.getFixedView().stackIterable().spliterator(), false)
                 .filter(s -> !s.isEmpty())
-                .map(ItemStacks::ofItemStack)
+                .map(Rs2PlatformApiFacade.INSTANCE.itemStackConversion()::toDomain)
                 .toList());
 
         return diskDrive;
@@ -191,7 +190,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     public void setFilterTemplates(List<ItemStack> templates) {
-        getContainer().getNode().setFilterTemplates(templates.stream().map(ItemStacks::ofItemStack).toList());
+        getContainer().getNode().setFilterTemplates(templates.stream().map(Rs2PlatformApiFacade.INSTANCE.itemStackConversion()::toDomain).toList());
         markDirty();
     }
 

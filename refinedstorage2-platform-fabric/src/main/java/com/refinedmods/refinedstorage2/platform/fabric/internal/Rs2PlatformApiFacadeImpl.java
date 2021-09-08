@@ -2,33 +2,39 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal;
 
 import com.refinedmods.refinedstorage2.api.network.node.container.ConnectionProvider;
 import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2Fluid;
+import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2Item;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskManagerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.fabric.api.converter.PlatformConverter;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskManager;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskType;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.fluid.FabricRs2Fluid;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.item.FabricRs2Item;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.converter.FluidPlatformConverter;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.converter.FluidResourceAmountPlatformConverter;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.converter.ItemPlatformConverter;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.converter.ItemStackPlatformConverter;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.FabricConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.FabricClientStorageDiskManager;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.FabricStorageDiskManager;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.ItemStorageDiskType;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
 
 public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     private final PlatformStorageDiskManager clientStorageDiskManager = new FabricClientStorageDiskManager();
-    private final Map<Item, Rs2Item> itemMap = new HashMap<>();
-    private final Map<FluidVariant, Rs2Fluid> fluidMap = new HashMap<>();
+    private final ItemPlatformConverter itemPlatformConverter = new ItemPlatformConverter();
+    private final ItemStackPlatformConverter itemStackPlatformConverter = new ItemStackPlatformConverter(itemPlatformConverter);
+    private final FluidPlatformConverter fluidPlatformConverter = new FluidPlatformConverter();
+    private final FluidResourceAmountPlatformConverter fluidResourceAmountPlatformConverter = new FluidResourceAmountPlatformConverter(fluidPlatformConverter);
 
     @Override
     public PlatformStorageDiskManager getStorageDiskManager(World world) {
@@ -54,23 +60,23 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public Rs2Item toRs2Item(Item item) {
-        return itemMap.computeIfAbsent(item, FabricRs2Item::new);
+    public PlatformConverter<Item, Rs2Item> itemConversion() {
+        return itemPlatformConverter;
     }
 
     @Override
-    public Rs2Fluid toRs2Fluid(FluidVariant fluidVariant) {
-        return fluidMap.computeIfAbsent(fluidVariant, FabricRs2Fluid::new);
+    public PlatformConverter<ItemStack, Rs2ItemStack> itemStackConversion() {
+        return itemStackPlatformConverter;
     }
 
     @Override
-    public Item toMcItem(Rs2Item item) {
-        return ((FabricRs2Item) item).getItem();
+    public PlatformConverter<Fluid, Rs2Fluid> fluidConversion() {
+        return fluidPlatformConverter;
     }
 
     @Override
-    public FluidVariant toMcFluid(Rs2Fluid fluid) {
-        return ((FabricRs2Fluid) fluid).getFluidVariant();
+    public PlatformConverter<ResourceAmount<FluidVariant>, Rs2FluidStack> fluidResourceAmountConversion() {
+        return fluidResourceAmountPlatformConverter;
     }
 
     @Override

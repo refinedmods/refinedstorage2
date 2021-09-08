@@ -1,15 +1,16 @@
 package com.refinedmods.refinedstorage2.platform.fabric.api.util;
 
+import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2Fluid;
 import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 
-import net.fabricmc.fabric.impl.transfer.fluid.FluidVariantImpl;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+// TODO: add test
 public final class FluidStacks {
     private static final String TAG_AMOUNT = "amount";
     private static final String TAG_TAG = "tag";
@@ -30,12 +31,13 @@ public final class FluidStacks {
 
     public static Rs2FluidStack fromTag(NbtCompound tag) {
         Identifier id = new Identifier(tag.getString(TAG_ID));
-        Fluid fluid = Registry.FLUID.get(id);
-        if (fluid == Fluids.EMPTY) {
+        Fluid platformFluid = Registry.FLUID.get(id);
+        if (platformFluid == Fluids.EMPTY) {
             return Rs2FluidStack.EMPTY;
         }
         long amount = tag.getLong(TAG_AMOUNT);
-        NbtCompound stackTag = tag.getCompound(TAG_TAG);
-        return new Rs2FluidStack(Rs2PlatformApiFacade.INSTANCE.toRs2Fluid(FluidVariantImpl.of(fluid, stackTag)), amount, stackTag);
+        NbtCompound stackTag = tag.contains(TAG_TAG) ? tag.getCompound(TAG_TAG) : null;
+        Rs2Fluid domainFluid = Rs2PlatformApiFacade.INSTANCE.fluidConversion().toDomain(platformFluid);
+        return new Rs2FluidStack(domainFluid, amount, stackTag);
     }
 }

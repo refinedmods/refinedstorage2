@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
-import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
+import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.ClientItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.eventhandler.PlayerItemGridInteractor;
@@ -98,8 +98,8 @@ public class ItemGridScreenHandler extends GridScreenHandler<Rs2ItemStack> imple
         if (!playerEntity.world.isClient()) {
             Slot slot = getSlot(slotIndex);
             if (slot.hasStack()) {
-                Rs2ItemStack slotStack = ItemStacks.ofItemStack(slot.getStack());
-                ItemStack resultingStack = ItemStacks.toItemStack(eventHandler.onInsertFromTransfer(slotStack));
+                Rs2ItemStack slotStack = Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toDomain(slot.getStack());
+                ItemStack resultingStack = Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toPlatform(eventHandler.onInsertFromTransfer(slotStack));
                 slot.setStack(resultingStack);
                 sendContentUpdates();
             }

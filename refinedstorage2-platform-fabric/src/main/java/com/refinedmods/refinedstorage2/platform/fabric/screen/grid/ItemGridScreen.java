@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridScrollMode;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
+import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.stack.FabricItemGridStack;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.ItemGridScreenHandler;
 
@@ -26,7 +26,7 @@ public class ItemGridScreen extends GridScreen<Rs2ItemStack, ItemGridScreenHandl
 
     @Override
     protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<Rs2ItemStack> stack) {
-        itemRenderer.renderInGuiWithOverrides(((FabricItemGridStack) stack).getMcStack(), slotX, slotY);
+        itemRenderer.renderInGuiWithOverrides(((FabricItemGridStack) stack).getPlatformStack(), slotX, slotY);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ItemGridScreen extends GridScreen<Rs2ItemStack, ItemGridScreenHandl
 
     @Override
     protected List<Text> getTooltip(GridStack<Rs2ItemStack> stack) {
-        return getTooltipFromItem(((FabricItemGridStack) stack).getMcStack());
+        return getTooltipFromItem(((FabricItemGridStack) stack).getPlatformStack());
     }
 
     @Override
@@ -60,7 +60,7 @@ public class ItemGridScreen extends GridScreen<Rs2ItemStack, ItemGridScreenHandl
 
     @Override
     protected void mouseScrolledInGrid(boolean up, GridStack<Rs2ItemStack> stack) {
-        int slotIndex = getScreenHandler().getPlayerInventorySlotThatHasStack(ItemStacks.toItemStack(stack.getStack()));
+        int slotIndex = getScreenHandler().getPlayerInventorySlotThatHasStack(Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toPlatform(stack.getStack()));
         GridScrollMode mode = getScrollModeWhenScrollingOnGridArea(up);
         if (mode == null) {
             return;

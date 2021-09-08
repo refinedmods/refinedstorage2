@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
-import com.refinedmods.refinedstorage2.platform.fabric.api.util.ItemStacks;
+import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.BaseScreen;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.RedstoneModeSideButtonWidget;
@@ -469,7 +469,7 @@ public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler
 
     private void mouseScrolledInInventory(boolean up) {
         getScreenHandler().getView().setPreventSorting(true);
-        Rs2ItemStack stack = ItemStacks.ofItemStack(focusedSlot.getStack());
+        Rs2ItemStack stack = Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toDomain(focusedSlot.getStack());
         int slotIndex = ((SlotAccessor) focusedSlot).getIndex();
         mouseScrolledInInventory(up, stack, slotIndex);
     }

@@ -4,13 +4,11 @@ import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-// TODO move behind api facade
 // TODO add test
 public final class ItemStacks {
     private static final String TAG_AMOUNT = "amount";
@@ -18,13 +16,6 @@ public final class ItemStacks {
     private static final String TAG_ID = "id";
 
     private ItemStacks() {
-    }
-
-    public static Rs2ItemStack ofItemStack(ItemStack stack) {
-        if (stack.isEmpty()) {
-            return Rs2ItemStack.EMPTY;
-        }
-        return new Rs2ItemStack(Rs2PlatformApiFacade.INSTANCE.toRs2Item(stack.getItem()), stack.getCount(), stack.getNbt());
     }
 
     public static NbtCompound toTag(Rs2ItemStack stack) {
@@ -45,16 +36,6 @@ public final class ItemStacks {
         }
         long amount = tag.getLong(TAG_AMOUNT);
         Object stackTag = tag.get(TAG_TAG);
-        return new Rs2ItemStack(Rs2PlatformApiFacade.INSTANCE.toRs2Item(item), amount, stackTag);
-    }
-
-    public static ItemStack toItemStack(Rs2ItemStack stack) {
-        if (stack.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
-        ItemStack s = new ItemStack(Rs2PlatformApiFacade.INSTANCE.toMcItem(stack.getItem()));
-        s.setNbt((NbtCompound) stack.getTag());
-        s.setCount((int) stack.getAmount());
-        return s;
+        return new Rs2ItemStack(Rs2PlatformApiFacade.INSTANCE.itemConversion().toDomain(item), amount, stackTag);
     }
 }

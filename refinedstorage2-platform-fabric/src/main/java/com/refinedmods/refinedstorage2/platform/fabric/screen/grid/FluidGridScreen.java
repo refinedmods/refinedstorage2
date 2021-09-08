@@ -35,7 +35,7 @@ public class FluidGridScreen extends GridScreen<Rs2FluidStack, FluidGridScreenHa
 
     @Override
     protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<Rs2FluidStack> stack) {
-        FluidVariant variant = ((FabricFluidGridStack) stack).getMcStack();
+        FluidVariant variant = ((FabricFluidGridStack) stack).getPlatformStack();
         Sprite sprite = FluidVariantRendering.getSprite(variant);
         if (sprite != null) {
             renderFluidSprite(matrices, slotX, slotY, variant, sprite);
@@ -88,7 +88,7 @@ public class FluidGridScreen extends GridScreen<Rs2FluidStack, FluidGridScreenHa
 
     @Override
     protected List<Text> getTooltip(GridStack<Rs2FluidStack> stack) {
-        FluidVariant variant = ((FabricFluidGridStack) stack).getMcStack();
+        FluidVariant variant = ((FabricFluidGridStack) stack).getPlatformStack();
         return FluidVariantRendering.getTooltip(variant, client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.NORMAL);
     }
 
