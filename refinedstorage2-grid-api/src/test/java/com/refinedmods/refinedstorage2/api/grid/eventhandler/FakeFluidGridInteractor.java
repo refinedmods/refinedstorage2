@@ -7,6 +7,11 @@ public class FakeFluidGridInteractor implements FluidGridInteractor {
     private static final String NAME = "Fake interactor";
 
     private Rs2FluidStack cursorStack = Rs2FluidStack.EMPTY;
+    private final long bucketAmount;
+
+    public FakeFluidGridInteractor(long bucketAmount) {
+        this.bucketAmount = bucketAmount;
+    }
 
     public void setCursorStack(Rs2FluidStack cursorStack) {
         this.cursorStack = cursorStack;
@@ -18,8 +23,8 @@ public class FakeFluidGridInteractor implements FluidGridInteractor {
     }
 
     @Override
-    public Rs2FluidStack extractAllFromCursor(Action action) {
-        return extractFromCursor(action, cursorStack.getAmount());
+    public Rs2FluidStack extractBucketFromCursor(Action action) {
+        return extractFromCursor(action, bucketAmount);
     }
 
     @Override

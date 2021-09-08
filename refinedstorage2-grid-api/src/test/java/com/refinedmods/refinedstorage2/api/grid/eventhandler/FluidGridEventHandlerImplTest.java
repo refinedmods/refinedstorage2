@@ -17,13 +17,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
 class FluidGridEventHandlerImplTest {
+    private static final long BUCKET_AMOUNT = 1000;
+
     private FakeFluidGridInteractor fluidGridInteractor;
     private StorageChannel<Rs2FluidStack> storageChannel;
     private FluidGridEventHandlerImpl sut;
 
     @BeforeEach
     void setUp() {
-        fluidGridInteractor = new FakeFluidGridInteractor();
+        fluidGridInteractor = new FakeFluidGridInteractor(BUCKET_AMOUNT);
         storageChannel = StorageChannelTypes.FLUID.create();
         sut = new FluidGridEventHandlerImpl(fluidGridInteractor, storageChannel, true);
         storageChannel.addSource(StorageDiskImpl.createFluidStorageDisk(10_000));
@@ -38,21 +40,22 @@ class FluidGridEventHandlerImplTest {
         sut.onInsertFromCursor();
 
         // Assert
-        assertThat(fluidGridInteractor.getCursorStack().isEmpty()).isTrue();
-        assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, 2000));
+        assertFluidStack(fluidGridInteractor.getCursorStack(), new Rs2FluidStack(FluidStubs.WATER, 2000 - BUCKET_AMOUNT));
+        assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, BUCKET_AMOUNT));
         assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isPresent();
     }
 
     @Test
     void Test_inserting_partially_when_storage_is_full() {
         // Arrange
-        fluidGridInteractor.setCursorStack(new Rs2FluidStack(FluidStubs.WATER, 11_000));
+        fluidGridInteractor.setCursorStack(new Rs2FluidStack(FluidStubs.WATER, 2000));
+        storageChannel.insert(new Rs2FluidStack(FluidStubs.WATER), 9500, Action.EXECUTE);
 
         // Act
         sut.onInsertFromCursor();
 
         // Assert
-        assertFluidStack(fluidGridInteractor.getCursorStack(), new Rs2FluidStack(FluidStubs.WATER, 1000));
+        assertFluidStack(fluidGridInteractor.getCursorStack(), new Rs2FluidStack(FluidStubs.WATER, 1500));
         assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, 10_000));
         assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isPresent();
     }

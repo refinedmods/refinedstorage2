@@ -22,7 +22,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         if (!active) {
             return;
         }
-        Rs2FluidStack stack = fluidGridInteractor.extractAllFromCursor(Action.SIMULATE);
+        Rs2FluidStack stack = fluidGridInteractor.extractBucketFromCursor(Action.SIMULATE);
         if (!stack.isEmpty()) {
             Optional<Rs2FluidStack> remainder = storageChannel.insert(stack, stack.getAmount(), Action.SIMULATE);
             if (remainder.isEmpty() || remainder.get().getAmount() != stack.getAmount()) {

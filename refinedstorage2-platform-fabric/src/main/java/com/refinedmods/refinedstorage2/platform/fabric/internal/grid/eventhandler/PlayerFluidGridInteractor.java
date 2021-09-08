@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -33,8 +34,8 @@ public class PlayerFluidGridInteractor implements FluidGridInteractor {
     }
 
     @Override
-    public Rs2FluidStack extractAllFromCursor(Action action) {
-        return extractFromCursor(action, getCursorStack().getAmount());
+    public Rs2FluidStack extractBucketFromCursor(Action action) {
+        return extractFromCursor(action, FluidConstants.BUCKET);
     }
 
     @Override

@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.storage.Source;
 public interface FluidGridInteractor extends Source {
     Rs2FluidStack getCursorStack();
 
-    Rs2FluidStack extractAllFromCursor(Action action);
+    Rs2FluidStack extractBucketFromCursor(Action action);
 
     Rs2FluidStack extractFromCursor(Action action, long amount);
 }
