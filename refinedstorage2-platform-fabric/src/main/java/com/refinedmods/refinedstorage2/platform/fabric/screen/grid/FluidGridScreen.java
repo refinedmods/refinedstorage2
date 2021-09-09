@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.FluidGridEventHandler;
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
 import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
@@ -94,7 +95,11 @@ public class FluidGridScreen extends GridScreen<Rs2FluidStack, FluidGridScreenHa
 
     @Override
     protected void mouseClickedInGrid(int clickedButton) {
-        eventHandler.onInsertFromCursor();
+        eventHandler.onInsertFromCursor(getInsertMode(clickedButton));
+    }
+
+    private static GridInsertMode getInsertMode(int clickedButton) {
+        return clickedButton == 1 ? GridInsertMode.SINGLE : GridInsertMode.ENTIRE_STACK;
     }
 
     @Override

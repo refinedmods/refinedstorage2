@@ -19,10 +19,12 @@ public class GridInsertFromCursorPacket implements ServerPlayNetworking.PlayChan
 
         server.execute(() -> {
             ScreenHandler screenHandler = player.currentScreenHandler;
-            if (screenHandler instanceof ItemGridEventHandler gridEventHandler) {
-                gridEventHandler.onInsertFromCursor(single ? GridInsertMode.SINGLE : GridInsertMode.ENTIRE_STACK);
-            } else if (screenHandler instanceof FluidGridEventHandler gridEventHandler) {
-                gridEventHandler.onInsertFromCursor();
+
+            GridInsertMode mode = single ? GridInsertMode.SINGLE : GridInsertMode.ENTIRE_STACK;
+            if (screenHandler instanceof ItemGridEventHandler eventHandler) {
+                eventHandler.onInsertFromCursor(mode);
+            } else if (screenHandler instanceof FluidGridEventHandler eventHandler) {
+                eventHandler.onInsertFromCursor(mode);
             }
         });
     }

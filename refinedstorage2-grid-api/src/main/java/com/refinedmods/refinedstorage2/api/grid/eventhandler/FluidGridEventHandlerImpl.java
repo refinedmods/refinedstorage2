@@ -18,12 +18,16 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     }
 
     @Override
-    public void onInsertFromCursor() {
+    public void onInsertFromCursor(GridInsertMode mode) {
         if (!active) {
             return;
         }
-        // TODO: Support SINGLE and ENTIRE_STACK
-        Rs2FluidStack stack = interactor.extractBucketFromCursor(Action.SIMULATE);
+
+        Rs2FluidStack stack = switch (mode) {
+            case SINGLE -> interactor.extractBucketFromCursor(Action.SIMULATE);
+            case ENTIRE_STACK -> interactor.extractFromCursor(Action.SIMULATE, interactor.getCursorStack().getAmount());
+        };
+
         if (!stack.isEmpty()) {
             Optional<Rs2FluidStack> remainder = storageChannel.insert(stack, stack.getAmount(), Action.SIMULATE);
             if (remainder.isEmpty() || remainder.get().getAmount() != stack.getAmount()) {

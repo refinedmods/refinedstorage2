@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.api.grid.eventhandler;
 import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
 
 public interface FluidGridEventHandler {
-    void onInsertFromCursor();
+    void onInsertFromCursor(GridInsertMode mode);
 
     long onInsertFromTransfer(Rs2FluidStack stack);
 

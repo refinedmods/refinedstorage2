@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.api.grid.eventhandler.FluidGridEventHandlerImpl;
+import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
 import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStackIdentifier;
@@ -60,8 +61,8 @@ public class FluidGridScreenHandler extends GridScreenHandler<Rs2FluidStack> imp
     }
 
     @Override
-    public void onInsertFromCursor() {
-        eventHandler.onInsertFromCursor();
+    public void onInsertFromCursor(GridInsertMode mode) {
+        eventHandler.onInsertFromCursor(mode);
     }
 
     @Override
