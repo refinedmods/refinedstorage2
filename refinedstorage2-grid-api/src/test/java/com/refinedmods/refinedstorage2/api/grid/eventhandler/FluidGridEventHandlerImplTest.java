@@ -102,4 +102,61 @@ class FluidGridEventHandlerImplTest {
         assertFluidStackListContents(storageChannel.getStacks());
         assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isEmpty();
     }
+
+    @Test
+    void Test_inserting_by_transferring() {
+        // Act
+        long remainder = sut.onInsertFromTransfer(new Rs2FluidStack(FluidStubs.WATER, 2000));
+
+        // Assert
+        assertThat(remainder).isZero();
+        assertThat(fluidGridInteractor.getCursorStack().isEmpty()).isTrue();
+        assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, 2000));
+        assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isPresent();
+    }
+
+    @Test
+    void Test_inserting_partial_stack_by_transferring() {
+        // Arrange
+        storageChannel.insert(new Rs2FluidStack(FluidStubs.WATER), 9000, Action.EXECUTE);
+
+        // Act
+        long remainder = sut.onInsertFromTransfer(new Rs2FluidStack(FluidStubs.WATER, 2000));
+
+        // Assert
+        assertThat(remainder).isEqualTo(1000);
+        assertThat(fluidGridInteractor.getCursorStack().isEmpty()).isTrue();
+        assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, 10_000));
+        assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isPresent();
+    }
+
+    @Test
+    void Test_inserting_nothing_due_to_full_storage_by_transferring() {
+        // Arrange
+        storageChannel.insert(new Rs2FluidStack(FluidStubs.WATER), 10_000, Action.EXECUTE);
+
+        // Act
+        long remainder = sut.onInsertFromTransfer(new Rs2FluidStack(FluidStubs.WATER, 2000));
+
+        // Assert
+        assertThat(remainder).isEqualTo(2000);
+        assertThat(fluidGridInteractor.getCursorStack().isEmpty()).isTrue();
+        assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, 10_000));
+        assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isEmpty();
+    }
+
+    @Test
+    void Test_inserting_by_transferring_when_inactive() {
+        // Arrange
+        sut.onActiveChanged(false);
+
+        // Act
+        long remainder = sut.onInsertFromTransfer(new Rs2FluidStack(FluidStubs.WATER, 2000));
+
+        // Assert
+        assertThat(remainder).isEqualTo(2000);
+        assertThat(fluidGridInteractor.getCursorStack().isEmpty()).isTrue();
+        assertFluidStackListContents(storageChannel.getStacks());
+        assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isEmpty();
+    }
 }
