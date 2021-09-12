@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.item.QuartzEnrichedIronIt
 import com.refinedmods.refinedstorage2.platform.fabric.item.SiliconItem;
 import com.refinedmods.refinedstorage2.platform.fabric.item.StorageHousingItem;
 import com.refinedmods.refinedstorage2.platform.fabric.item.StoragePartItem;
+import com.refinedmods.refinedstorage2.platform.fabric.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.fabric.item.block.ColoredBlockItem;
 import com.refinedmods.refinedstorage2.platform.fabric.item.block.ControllerBlockItem;
 
@@ -40,6 +41,7 @@ public class Rs2Items {
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("silicon"), new SiliconItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("processor_binding"), new ProcessorBindingItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("disk_drive"), new BlockItem(blocks.getDiskDrive(), createSettings(itemGroup)));
+        Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("wrench"), new WrenchItem(createSettings(itemGroup).maxCount(1)));
 
         if (Rs2Mod.FEATURES.contains(FeatureFlag.RELAY)) {
             Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("relay"), new BlockItem(blocks.getRelay(), createSettings(itemGroup)));

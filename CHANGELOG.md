@@ -17,6 +17,7 @@ before updating.
 - Fluid Storage Part
 - Fluid Storage Disk
 - Fluid Grid
+- Wrench
 
 ### Fixed
 
@@ -29,6 +30,9 @@ before updating.
 - Modularized the codebase.
 - The capacity of the various fluid storage part and fluid storage disk tiers are now described in bucket form, no
   longer in mB form.
+- The Wrench now plays a sound effect when used.
+- The Wrench works on any block that has the `fabric:wrenchables` tag. Other mods can identify the Refined Storage
+  wrench by checking the `fabric:wrenches` tag.
 
 ## [2.0.0-milestone.1.1] - 2021-08-16
 

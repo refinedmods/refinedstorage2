@@ -2,6 +2,9 @@ package com.refinedmods.refinedstorage2.platform.fabric.block;
 
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.fabric.util.BiDirection;
+import com.refinedmods.refinedstorage2.platform.fabric.util.WrenchUtil;
+
+import java.util.Optional;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -12,6 +15,7 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
@@ -66,17 +70,42 @@ public abstract class BaseBlock extends Block {
     }
 
     @Override
+    public BlockState rotate(BlockState state, BlockRotation rotation) {
+        if (!hasBiDirection()) {
+            return state;
+        }
+        BiDirection currentDirection = state.get(DIRECTION);
+        return state.with(DIRECTION, currentDirection.rotate());
+    }
+
+    @Override
     @SuppressWarnings("deprecation")
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        return tryRotate(state, world, pos, player, hand)
+                .or(() -> tryOpenScreen(state, world, pos, player))
+                .orElseGet(() -> super.onUse(state, world, pos, player, hand, hit));
+    }
+
+    private Optional<ActionResult> tryRotate(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand) {
+        if (WrenchUtil.isWrench(player.getStackInHand(hand).getItem()) && WrenchUtil.isWrenchable(state)) {
+            if (!world.isClient()) {
+                world.setBlockState(pos, state.rotate(BlockRotation.CLOCKWISE_90));
+                WrenchUtil.playWrenchSound(world, pos);
+            }
+            return Optional.of(ActionResult.CONSUME);
+        }
+        return Optional.empty();
+    }
+
+    private Optional<ActionResult> tryOpenScreen(BlockState state, World world, BlockPos pos, PlayerEntity player) {
         NamedScreenHandlerFactory screenHandlerFactory = state.createScreenHandlerFactory(world, pos);
         if (screenHandlerFactory != null) {
             if (!world.isClient()) {
                 player.openHandledScreen(screenHandlerFactory);
             }
-            return ActionResult.SUCCESS;
+            return Optional.of(ActionResult.SUCCESS);
         }
-
-        return super.onUse(state, world, pos, player, hand, hit);
+        return Optional.empty();
     }
 
     @Override

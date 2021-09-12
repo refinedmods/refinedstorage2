@@ -26,6 +26,23 @@ public enum BiDirection implements StringIdentifiable {
         this.vec = vec;
     }
 
+    public BiDirection rotate() {
+        return switch (this) {
+            case NORTH -> EAST;
+            case EAST -> SOUTH;
+            case SOUTH -> WEST;
+            case WEST -> UP_NORTH;
+            case UP_NORTH -> UP_EAST;
+            case UP_EAST -> UP_SOUTH;
+            case UP_SOUTH -> UP_WEST;
+            case UP_WEST -> DOWN_NORTH;
+            case DOWN_NORTH -> DOWN_EAST;
+            case DOWN_EAST -> DOWN_SOUTH;
+            case DOWN_SOUTH -> DOWN_WEST;
+            case DOWN_WEST -> NORTH;
+        };
+    }
+
     public static BiDirection forHorizontal(Direction horizontalDirection) {
         return switch (horizontalDirection) {
             case NORTH -> NORTH;

@@ -41,8 +41,10 @@ import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,6 +58,8 @@ public class Rs2Mod implements ModInitializer {
     private static final Logger LOGGER = LogManager.getLogger(Rs2Mod.class);
     private static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(createIdentifier("general"), () -> new ItemStack(BLOCKS.getController().getNormal()));
     public static final Set<FeatureFlag> FEATURES = Set.of();
+
+    private static SoundEvent wrenchSoundEvent;
 
     public static Identifier createIdentifier(String value) {
         return new Identifier(ID, value);
@@ -80,8 +84,18 @@ public class Rs2Mod implements ModInitializer {
         registerContent();
         registerGridSearchBoxModes();
         registerPackets();
+        registerSounds();
 
         LOGGER.info("Refined Storage 2 has loaded.");
+    }
+
+    private void registerSounds() {
+        Identifier wrenchSoundEventId = Rs2Mod.createIdentifier("wrench");
+        wrenchSoundEvent = Registry.register(Registry.SOUND_EVENT, wrenchSoundEventId, new SoundEvent(wrenchSoundEventId));
+    }
+
+    public static SoundEvent getWrenchSoundEvent() {
+        return wrenchSoundEvent;
     }
 
     private void registerDiskTypes() {
