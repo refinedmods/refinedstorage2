@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.stack.item;
 
 import java.util.Objects;
 
+// TODO: Remove eventually?
 public final class Rs2TagInsensitiveItemStackIdentifier {
     private final Rs2Item item;
 

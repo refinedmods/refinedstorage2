@@ -1,86 +1,63 @@
 package com.refinedmods.refinedstorage2.api.stack.list;
 
-import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
-import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
-import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStackIdentifier;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStackIdentifier;
+import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-public class StackListImpl<I, S extends Rs2Stack> implements StackList<S> {
-    private final Map<I, S> entries = new HashMap<>();
-    private final BiMap<UUID, S> index = HashBiMap.create();
-    private final Function<S, I> idFactory;
-
-    public StackListImpl(Function<S, I> idFactory) {
-        this.idFactory = idFactory;
-    }
-
-    public static StackListImpl<Rs2ItemStackIdentifier, Rs2ItemStack> createItemStackList() {
-        return new StackListImpl<>(Rs2ItemStackIdentifier::new);
-    }
-
-    public static StackListImpl<Rs2FluidStackIdentifier, Rs2FluidStack> createFluidStackList() {
-        return new StackListImpl<>(Rs2FluidStackIdentifier::new);
-    }
+public class StackListImpl<R> implements StackList<R> {
+    private final Map<R, ResourceAmount<R>> entries = new HashMap<>();
+    private final BiMap<UUID, ResourceAmount<R>> index = HashBiMap.create();
 
     @Override
-    public StackListResult<S> add(S template, long amount) {
-        if (template.isEmpty() || amount <= 0) {
-            throw new IllegalArgumentException("Invalid stack");
+    public StackListResult<R> add(R resource, long amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Invalid amount");
         }
 
-        I entry = idFactory.apply(template);
-
-        S existing = entries.get(entry);
+        ResourceAmount<R> existing = entries.get(resource);
         if (existing != null) {
             return addToExisting(existing, amount);
         } else {
-            return addNew(entry, template, amount);
+            return addNew(resource, amount);
         }
     }
 
-    private StackListResult<S> addToExisting(S stack, long amount) {
-        stack.increment(amount);
+    private StackListResult<R> addToExisting(ResourceAmount<R> resourceAmount, long amount) {
+        resourceAmount.increment(amount);
 
-        return new StackListResult<>(stack, amount, index.inverse().get(stack), true);
+        return new StackListResult<>(resourceAmount, amount, index.inverse().get(resourceAmount), true);
     }
 
-    private StackListResult<S> addNew(I entry, S template, long amount) {
-        S stack = (S) template.copy();
-        stack.setAmount(amount);
+    private StackListResult<R> addNew(R resource, long amount) {
+        ResourceAmount<R> resourceAmount = new ResourceAmount<>(resource, amount);
 
         UUID id = UUID.randomUUID();
 
-        index.put(id, stack);
-        entries.put(entry, stack);
+        index.put(id, resourceAmount);
+        entries.put(resource, resourceAmount);
 
-        return new StackListResult<>(stack, amount, id, true);
+        return new StackListResult<>(resourceAmount, amount, id, true);
     }
 
     @Override
-    public Optional<StackListResult<S>> remove(S template, long amount) {
-        if (template.isEmpty() || amount <= 0) {
-            throw new IllegalArgumentException("Invalid stack");
+    public Optional<StackListResult<R>> remove(R resource, long amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Invalid amount");
         }
 
-        I entry = idFactory.apply(template);
-
-        S existing = entries.get(entry);
+        ResourceAmount<R> existing = entries.get(resource);
         if (existing != null) {
             UUID id = index.inverse().get(existing);
 
             if (existing.getAmount() - amount <= 0) {
-                return removeCompletely(entry, existing, id);
+                return removeCompletely(existing, id);
             } else {
                 return removePartly(amount, existing, id);
             }
@@ -89,31 +66,31 @@ public class StackListImpl<I, S extends Rs2Stack> implements StackList<S> {
         return Optional.empty();
     }
 
-    private Optional<StackListResult<S>> removePartly(long amount, S stack, UUID id) {
-        stack.decrement(amount);
+    private Optional<StackListResult<R>> removePartly(long amount, ResourceAmount<R> resourceAmount, UUID id) {
+        resourceAmount.decrement(amount);
 
-        return Optional.of(new StackListResult<>(stack, -amount, id, true));
+        return Optional.of(new StackListResult<>(resourceAmount, -amount, id, true));
     }
 
-    private Optional<StackListResult<S>> removeCompletely(I entry, S stack, UUID id) {
+    private Optional<StackListResult<R>> removeCompletely(ResourceAmount<R> resourceAmount, UUID id) {
         index.remove(id);
-        entries.remove(entry);
+        entries.remove(resourceAmount.getResource());
 
-        return Optional.of(new StackListResult<>(stack, -stack.getAmount(), id, false));
+        return Optional.of(new StackListResult<>(resourceAmount, -resourceAmount.getAmount(), id, false));
     }
 
     @Override
-    public Optional<S> get(S template) {
-        return Optional.ofNullable(entries.get(idFactory.apply(template)));
+    public Optional<ResourceAmount<R>> get(R resource) {
+        return Optional.ofNullable(entries.get(resource));
     }
 
     @Override
-    public Optional<S> get(UUID id) {
+    public Optional<ResourceAmount<R>> get(UUID id) {
         return Optional.ofNullable(index.get(id));
     }
 
     @Override
-    public Collection<S> getAll() {
+    public Collection<ResourceAmount<R>> getAll() {
         return entries.values();
     }
 

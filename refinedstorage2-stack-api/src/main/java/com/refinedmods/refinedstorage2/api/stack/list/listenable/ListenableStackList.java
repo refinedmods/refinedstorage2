@@ -1,55 +1,33 @@
 package com.refinedmods.refinedstorage2.api.stack.list.listenable;
 
+import com.refinedmods.refinedstorage2.api.stack.list.ProxyStackList;
 import com.refinedmods.refinedstorage2.api.stack.list.StackList;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
-public class ListenableStackList<T> implements StackList<T> {
-    private final StackList<T> parent;
-    private final Set<StackListListener<T>> listeners;
+public class ListenableStackList<R> extends ProxyStackList<R> {
+    private final Set<StackListListener<R>> listeners;
 
-    public ListenableStackList(StackList<T> parent, Set<StackListListener<T>> listeners) {
-        this.parent = parent;
+    public ListenableStackList(StackList<R> parent, Set<StackListListener<R>> listeners) {
+        super(parent);
         this.listeners = listeners;
     }
 
     @Override
-    public StackListResult<T> add(T template, long amount) {
-        StackListResult<T> result = parent.add(template, amount);
+    public StackListResult<R> add(R resource, long amount) {
+        StackListResult<R> result = super.add(resource, amount);
         listeners.forEach(listener -> listener.onChanged(result));
         return result;
     }
 
     @Override
-    public Optional<StackListResult<T>> remove(T template, long amount) {
-        return parent.remove(template, amount)
+    public Optional<StackListResult<R>> remove(R resource, long amount) {
+        return super.remove(resource, amount)
                 .map(result -> {
                     listeners.forEach(listener -> listener.onChanged(result));
                     return result;
                 });
-    }
-
-    @Override
-    public Optional<T> get(T template) {
-        return parent.get(template);
-    }
-
-    @Override
-    public Optional<T> get(UUID id) {
-        return parent.get(id);
-    }
-
-    @Override
-    public Collection<T> getAll() {
-        return parent.getAll();
-    }
-
-    @Override
-    public void clear() {
-        parent.clear();
     }
 }

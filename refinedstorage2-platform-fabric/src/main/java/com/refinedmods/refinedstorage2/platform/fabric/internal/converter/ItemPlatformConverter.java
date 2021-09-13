@@ -9,6 +9,7 @@ import java.util.Map;
 
 import net.minecraft.item.Item;
 
+// TODO: This can be removed when Rs2Item is no longer an API concept.
 public class ItemPlatformConverter implements PlatformConverter<Item, Rs2Item> {
     private final Map<Item, Rs2Item> itemCache = new HashMap<>();
 

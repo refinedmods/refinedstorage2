@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.stack.fluid;
 
 import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
 
+// TODO: Remove eventually?
 public final class Rs2FluidStack implements Rs2Stack {
     public static final Rs2FluidStack EMPTY = new Rs2FluidStack(null, 0, null);
 
