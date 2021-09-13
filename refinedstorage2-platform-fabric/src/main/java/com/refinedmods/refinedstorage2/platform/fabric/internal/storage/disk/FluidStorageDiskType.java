@@ -48,7 +48,7 @@ public class FluidStorageDiskType implements StorageDiskType<Rs2FluidStack> {
         NbtCompound tag = new NbtCompound();
         tag.putLong(TAG_DISK_CAPACITY, disk.getCapacity());
         NbtList stacks = new NbtList();
-        for (Rs2FluidStack stack : disk.getStacks()) {
+        for (Rs2FluidStack stack : disk.getAll()) {
             stacks.add(FluidStacks.toTag(stack));
         }
         tag.put(TAG_DISK_STACKS, stacks);

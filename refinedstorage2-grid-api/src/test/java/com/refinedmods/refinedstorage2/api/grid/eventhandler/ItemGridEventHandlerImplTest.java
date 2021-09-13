@@ -48,7 +48,7 @@ class ItemGridEventHandlerImplTest {
 
             // Assert
             assertThat(interactor.getCursorStack().isEmpty()).isTrue();
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 25));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 25));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
@@ -67,7 +67,7 @@ class ItemGridEventHandlerImplTest {
 
             // Assert
             assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.DIRT, 1));
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 30));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 30));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
@@ -88,7 +88,7 @@ class ItemGridEventHandlerImplTest {
 
             // Assert
             assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.DIRT, 1));
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.GLASS, 30));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.GLASS, 30));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isEmpty();
@@ -111,7 +111,7 @@ class ItemGridEventHandlerImplTest {
 
             // Assert
             assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.DIRT, 29));
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 30));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 30));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
@@ -132,7 +132,7 @@ class ItemGridEventHandlerImplTest {
 
             // Assert
             assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.DIRT, 64));
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 30));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 30));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isEmpty();
@@ -172,7 +172,7 @@ class ItemGridEventHandlerImplTest {
 
             // Assert
             assertThat(interactor.getCursorStack().isEmpty()).isTrue();
-            assertItemStackListContents(storageChannel.getStacks());
+            assertItemStackListContents(storageChannel.getAll());
         }
     }
 
@@ -188,7 +188,7 @@ class ItemGridEventHandlerImplTest {
 
             // Assert
             assertThat(resultingStack.isEmpty()).isTrue();
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.GLASS, 30));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.GLASS, 30));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.GLASS));
             assertThat(entry).isPresent();
@@ -207,7 +207,7 @@ class ItemGridEventHandlerImplTest {
 
             // Assert
             assertItemStack(resultingStack, new Rs2ItemStack(ItemStubs.DIRT, 64 - 15));
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.GLASS, 15), new Rs2ItemStack(ItemStubs.DIRT, 15));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.GLASS, 15), new Rs2ItemStack(ItemStubs.DIRT, 15));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
@@ -226,7 +226,7 @@ class ItemGridEventHandlerImplTest {
 
             // Assert
             assertItemStack(resultingStack, new Rs2ItemStack(ItemStubs.DIRT, 64));
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.GLASS, 30));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.GLASS, 30));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isEmpty();
@@ -268,17 +268,17 @@ class ItemGridEventHandlerImplTest {
                 case CURSOR_STACK -> {
                     assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.DIRT, 30));
                     assertItemStackListContents(interactor.getInventory());
-                    assertItemStackListContents(storageChannel.getStacks());
+                    assertItemStackListContents(storageChannel.getAll());
                 }
                 case CURSOR_HALF -> {
                     assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.DIRT, 15));
                     assertItemStackListContents(interactor.getInventory());
-                    assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 15));
+                    assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 15));
                 }
                 case PLAYER_INVENTORY_STACK -> {
                     assertThat(interactor.getCursorStack().isEmpty()).isTrue();
                     assertItemStackListContents(interactor.getInventory(), new Rs2ItemStack(ItemStubs.DIRT, 30));
-                    assertItemStackListContents(storageChannel.getStacks());
+                    assertItemStackListContents(storageChannel.getAll());
                 }
             }
 
@@ -305,17 +305,17 @@ class ItemGridEventHandlerImplTest {
                 case CURSOR_STACK -> {
                     assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.DIRT, 64));
                     assertItemStackListContents(interactor.getInventory());
-                    assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 300 - 64));
+                    assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 300 - 64));
                 }
                 case CURSOR_HALF -> {
                     assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.DIRT, 32));
                     assertItemStackListContents(interactor.getInventory());
-                    assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 300 - 32));
+                    assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 300 - 32));
                 }
                 case PLAYER_INVENTORY_STACK -> {
                     assertThat(interactor.getCursorStack().isEmpty()).isTrue();
                     assertItemStackListContents(interactor.getInventory(), new Rs2ItemStack(ItemStubs.DIRT, 64));
-                    assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 300 - 64));
+                    assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 300 - 64));
                 }
             }
 
@@ -340,7 +340,7 @@ class ItemGridEventHandlerImplTest {
             // Assert
             assertThat(interactor.getCursorStack().isEmpty()).isTrue();
             assertItemStackListContents(interactor.getInventory());
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.GLASS, 30));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.GLASS, 30));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isEmpty();
@@ -364,17 +364,17 @@ class ItemGridEventHandlerImplTest {
                 case CURSOR_STACK -> {
                     assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.BUCKET, 16));
                     assertItemStackListContents(interactor.getInventory());
-                    assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.BUCKET, 64 - 16));
+                    assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.BUCKET, 64 - 16));
                 }
                 case CURSOR_HALF -> {
                     assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.BUCKET, 8));
                     assertItemStackListContents(interactor.getInventory());
-                    assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.BUCKET, 64 - 8));
+                    assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.BUCKET, 64 - 8));
                 }
                 case PLAYER_INVENTORY_STACK -> {
                     assertThat(interactor.getCursorStack().isEmpty()).isTrue();
                     assertItemStackListContents(interactor.getInventory(), new Rs2ItemStack(ItemStubs.BUCKET, 16));
-                    assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.BUCKET, 64 - 16));
+                    assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.BUCKET, 64 - 16));
                 }
             }
 
@@ -400,7 +400,7 @@ class ItemGridEventHandlerImplTest {
             // Assert
             assertThat(interactor.getCursorStack().isEmpty()).isTrue();
             assertItemStackListContents(interactor.getInventory());
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 30));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 30));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isNotPresent();
@@ -423,7 +423,7 @@ class ItemGridEventHandlerImplTest {
 
             // Assert
             assertThat(interactor.getCursorStack().isEmpty()).isTrue();
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 64 - 20));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 64 - 20));
             assertItemStackListContents(interactor.getInventory(), new Rs2ItemStack(ItemStubs.DIRT, 20));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
@@ -446,7 +446,7 @@ class ItemGridEventHandlerImplTest {
 
             // Assert
             assertThat(interactor.getCursorStack().isEmpty()).isTrue();
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 64));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 64));
             assertItemStackListContents(interactor.getInventory(), new Rs2ItemStack(ItemStubs.GLASS, 20));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
@@ -471,7 +471,7 @@ class ItemGridEventHandlerImplTest {
             // Assert
             assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.DIRT, 1));
             assertItemStackListContents(interactor.getInventory());
-            assertItemStackListContents(storageChannel.getStacks());
+            assertItemStackListContents(storageChannel.getAll());
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
             assertThat(entry).isPresent();
@@ -494,7 +494,7 @@ class ItemGridEventHandlerImplTest {
             // Assert
             assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.DIRT, 3));
             assertItemStackListContents(interactor.getInventory());
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 65));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 65));
         }
     }
 
@@ -513,7 +513,7 @@ class ItemGridEventHandlerImplTest {
             eventHandler.onScroll(new Rs2ItemStack(ItemStubs.DIRT), -1, GridScrollMode.GRID_TO_INVENTORY);
 
             // Assert
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 31));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 31));
             assertItemStackListContents(interactor.getInventory(), new Rs2ItemStack(ItemStubs.GLASS, 20), new Rs2ItemStack(ItemStubs.DIRT, 1));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
@@ -531,7 +531,7 @@ class ItemGridEventHandlerImplTest {
             eventHandler.onScroll(new Rs2ItemStack(ItemStubs.GLASS), -1, GridScrollMode.GRID_TO_INVENTORY);
 
             // Assert
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 32));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 32));
             assertItemStackListContents(interactor.getInventory());
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.GLASS));
@@ -551,7 +551,7 @@ class ItemGridEventHandlerImplTest {
             eventHandler.onScroll(new Rs2ItemStack(ItemStubs.DIRT), -1, GridScrollMode.GRID_TO_INVENTORY);
 
             // Assert
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 32));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 32));
             assertItemStackListContents(interactor.getInventory(), new Rs2ItemStack(ItemStubs.GLASS, 32));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
@@ -568,7 +568,7 @@ class ItemGridEventHandlerImplTest {
             eventHandler.onScroll(new Rs2ItemStack(ItemStubs.DIRT), -1, GridScrollMode.GRID_TO_CURSOR);
 
             // Assert
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 31));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 31));
             assertItemStackListContents(interactor.getInventory());
             assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.DIRT, 1));
 
@@ -587,7 +587,7 @@ class ItemGridEventHandlerImplTest {
             eventHandler.onScroll(new Rs2ItemStack(ItemStubs.GLASS), -1, GridScrollMode.GRID_TO_CURSOR);
 
             // Assert
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 32));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 32));
             assertItemStackListContents(interactor.getInventory());
             assertThat(interactor.getCursorStack().isEmpty()).isTrue();
 
@@ -607,7 +607,7 @@ class ItemGridEventHandlerImplTest {
             eventHandler.onScroll(new Rs2ItemStack(ItemStubs.DIRT), -1, GridScrollMode.GRID_TO_CURSOR);
 
             // Assert
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 31));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 31));
             assertItemStackListContents(interactor.getInventory());
             assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.DIRT, ItemStubs.DIRT.getMaxAmount()));
 
@@ -628,7 +628,7 @@ class ItemGridEventHandlerImplTest {
             eventHandler.onScroll(new Rs2ItemStack(ItemStubs.DIRT), -1, GridScrollMode.GRID_TO_CURSOR);
 
             // Assert
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 32));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 32));
             assertItemStackListContents(interactor.getInventory());
             assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.GLASS));
 
@@ -648,7 +648,7 @@ class ItemGridEventHandlerImplTest {
             eventHandler.onScroll(new Rs2ItemStack(ItemStubs.DIRT), -1, GridScrollMode.GRID_TO_CURSOR);
 
             // Assert
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 32));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 32));
             assertItemStackListContents(interactor.getInventory());
             assertItemStack(interactor.getCursorStack(), new Rs2ItemStack(ItemStubs.DIRT, ItemStubs.DIRT.getMaxAmount()));
 
@@ -672,7 +672,7 @@ class ItemGridEventHandlerImplTest {
             eventHandler.onScroll(new Rs2ItemStack(ItemStubs.DIRT), 1, scrollMode);
 
             // Assert
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 10));
             assertItemStackListContents(interactor.getInventory());
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));
@@ -693,7 +693,7 @@ class ItemGridEventHandlerImplTest {
             eventHandler.onScroll(new Rs2ItemStack(ItemStubs.GLASS), -1, GridScrollMode.INVENTORY_TO_GRID);
 
             // Assert
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.GLASS, 1));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.GLASS, 1));
             assertItemStackListContents(interactor.getInventory(), new Rs2ItemStack(ItemStubs.GLASS, 127));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.GLASS));
@@ -712,7 +712,7 @@ class ItemGridEventHandlerImplTest {
             eventHandler.onScroll(new Rs2ItemStack(ItemStubs.GLASS), -1, GridScrollMode.INVENTORY_TO_GRID);
 
             // Assert
-            assertItemStackListContents(storageChannel.getStacks());
+            assertItemStackListContents(storageChannel.getAll());
             assertItemStackListContents(interactor.getInventory(), new Rs2ItemStack(ItemStubs.DIRT, 128));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.GLASS));
@@ -731,7 +731,7 @@ class ItemGridEventHandlerImplTest {
             eventHandler.onScroll(new Rs2ItemStack(ItemStubs.GLASS), -1, GridScrollMode.INVENTORY_TO_GRID);
 
             // Assert
-            assertItemStackListContents(storageChannel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 2));
+            assertItemStackListContents(storageChannel.getAll(), new Rs2ItemStack(ItemStubs.DIRT, 2));
             assertItemStackListContents(interactor.getInventory(), new Rs2ItemStack(ItemStubs.GLASS, 128));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.GLASS));
@@ -751,7 +751,7 @@ class ItemGridEventHandlerImplTest {
             eventHandler.onScroll(new Rs2ItemStack(ItemStubs.DIRT), -1, GridScrollMode.INVENTORY_TO_GRID);
 
             // Assert
-            assertItemStackListContents(storageChannel.getStacks());
+            assertItemStackListContents(storageChannel.getAll());
             assertItemStackListContents(interactor.getInventory(), new Rs2ItemStack(ItemStubs.DIRT, 10));
 
             Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(new Rs2ItemStack(ItemStubs.DIRT));

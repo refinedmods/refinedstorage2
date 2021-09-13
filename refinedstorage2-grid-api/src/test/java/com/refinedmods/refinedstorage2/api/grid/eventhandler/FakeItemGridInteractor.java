@@ -43,6 +43,6 @@ public class FakeItemGridInteractor implements ItemGridInteractor {
     }
 
     public Collection<Rs2ItemStack> getInventory() {
-        return inventory.getStacks();
+        return inventory.getAll();
     }
 }

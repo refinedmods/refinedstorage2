@@ -24,19 +24,19 @@ public class DiskDriveStorage<T extends Rs2Stack> extends ProxyStorage<T> implem
     }
 
     @Override
-    public Optional<T> extract(T template, long amount, Action action) {
+    public Optional<T> extract(T resource, long amount, Action action) {
         if (diskDrive.getAccessMode() == AccessMode.INSERT || !diskDrive.isActive()) {
             return Optional.empty();
         }
-        return super.extract(template, amount, action);
+        return super.extract(resource, amount, action);
     }
 
     @Override
-    public Optional<T> insert(T template, long amount, Action action) {
+    public Optional<T> insert(T resource, long amount, Action action) {
         if (diskDrive.getAccessMode() == AccessMode.EXTRACT || !diskDrive.isActive()) {
-            return notAllowed(template, amount);
+            return notAllowed(resource, amount);
         }
-        return super.insert(template, amount, action);
+        return super.insert(resource, amount, action);
     }
 
     protected Optional<T> notAllowed(T template, long remainderAmount) {
@@ -46,11 +46,11 @@ public class DiskDriveStorage<T extends Rs2Stack> extends ProxyStorage<T> implem
     }
 
     @Override
-    public Collection<T> getStacks() {
+    public Collection<T> getAll() {
         if (!diskDrive.isActive()) {
             return Collections.emptyList();
         }
-        return super.getStacks();
+        return super.getAll();
     }
 
     @Override

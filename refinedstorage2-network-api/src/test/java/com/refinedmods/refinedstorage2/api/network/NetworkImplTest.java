@@ -47,6 +47,6 @@ class NetworkImplTest {
         network.addContainer(diskDriveContainer);
 
         // Assert
-        assertThat(itemStorageChannelOf(network).getStacks()).isNotEmpty();
+        assertThat(itemStorageChannelOf(network).getAll()).isNotEmpty();
     }
 }

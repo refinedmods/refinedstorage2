@@ -49,8 +49,8 @@ public class DiskDriveStorageDisk<T extends Rs2Stack> implements StorageDisk<T> 
     }
 
     @Override
-    public Optional<T> extract(T template, long amount, Action action) {
-        Optional<T> extracted = parent.extract(template, amount, action);
+    public Optional<T> extract(T resource, long amount, Action action) {
+        Optional<T> extracted = parent.extract(resource, amount, action);
         if (action == Action.EXECUTE && extracted.isPresent()) {
             checkStateChanged();
         }
@@ -58,8 +58,8 @@ public class DiskDriveStorageDisk<T extends Rs2Stack> implements StorageDisk<T> 
     }
 
     @Override
-    public Optional<T> insert(T template, long amount, Action action) {
-        Optional<T> remainder = parent.insert(template, amount, action);
+    public Optional<T> insert(T resource, long amount, Action action) {
+        Optional<T> remainder = parent.insert(resource, amount, action);
         if (action == Action.EXECUTE && (remainder.isEmpty() || remainder.get().getAmount() != amount)) {
             checkStateChanged();
         }
@@ -67,8 +67,8 @@ public class DiskDriveStorageDisk<T extends Rs2Stack> implements StorageDisk<T> 
     }
 
     @Override
-    public Collection<T> getStacks() {
-        return parent.getStacks();
+    public Collection<T> getAll() {
+        return parent.getAll();
     }
 
     @Override
