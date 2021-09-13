@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.stack.item;
 
 import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
 
+// TODO: Remove eventually?
 public final class Rs2ItemStack implements Rs2Stack {
     public static final Rs2ItemStack EMPTY = new Rs2ItemStack(null, 0, null);
 

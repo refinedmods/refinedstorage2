@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.stack.fluid;
 
 import java.util.Objects;
 
+// TODO: Remove eventually?
 public final class Rs2FluidStackIdentifier {
     private final Rs2Fluid fluid;
     private final Object tag;
