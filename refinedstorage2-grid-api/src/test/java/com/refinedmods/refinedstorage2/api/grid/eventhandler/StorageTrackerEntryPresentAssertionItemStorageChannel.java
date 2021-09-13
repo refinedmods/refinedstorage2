@@ -20,26 +20,26 @@ public class StorageTrackerEntryPresentAssertionItemStorageChannel<T> implements
     }
 
     @Override
-    public Optional<T> extract(T template, long amount, Action action) {
+    public Optional<T> extract(T resource, long amount, Action action) {
         if (action == Action.EXECUTE) {
-            Optional<StorageTracker.Entry> entry = getTracker().getEntry(template);
+            Optional<StorageTracker.Entry> entry = getTracker().getEntry(resource);
             assertThat(entry).isPresent();
         }
-        return parent.extract(template, amount, action);
+        return parent.extract(resource, amount, action);
     }
 
     @Override
-    public Optional<T> insert(T template, long amount, Action action) {
+    public Optional<T> insert(T resource, long amount, Action action) {
         if (action == Action.EXECUTE) {
-            Optional<StorageTracker.Entry> entry = getTracker().getEntry(template);
+            Optional<StorageTracker.Entry> entry = getTracker().getEntry(resource);
             assertThat(entry).isPresent();
         }
-        return parent.insert(template, amount, action);
+        return parent.insert(resource, amount, action);
     }
 
     @Override
-    public Collection<T> getStacks() {
-        return parent.getStacks();
+    public Collection<T> getAll() {
+        return parent.getAll();
     }
 
     @Override
@@ -58,13 +58,13 @@ public class StorageTrackerEntryPresentAssertionItemStorageChannel<T> implements
     }
 
     @Override
-    public Optional<T> extract(T template, long amount, Source source) {
-        return parent.extract(template, amount, source);
+    public Optional<T> extract(T resource, long amount, Source source) {
+        return parent.extract(resource, amount, source);
     }
 
     @Override
-    public Optional<T> insert(T template, long amount, Source source) {
-        return parent.insert(template, amount, source);
+    public Optional<T> insert(T resource, long amount, Source source) {
+        return parent.insert(resource, amount, source);
     }
 
     @Override
@@ -73,8 +73,8 @@ public class StorageTrackerEntryPresentAssertionItemStorageChannel<T> implements
     }
 
     @Override
-    public Optional<T> get(T template) {
-        return parent.get(template);
+    public Optional<T> get(T resource) {
+        return parent.get(resource);
     }
 
     @Override

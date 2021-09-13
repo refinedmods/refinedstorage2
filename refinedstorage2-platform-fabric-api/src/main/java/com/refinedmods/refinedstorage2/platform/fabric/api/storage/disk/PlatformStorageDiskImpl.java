@@ -19,8 +19,8 @@ public class PlatformStorageDiskImpl<T extends Rs2Stack> extends StorageDiskImpl
     }
 
     @Override
-    public Optional<T> extract(T template, long amount, Action action) {
-        Optional<T> extracted = super.extract(template, amount, action);
+    public Optional<T> extract(T resource, long amount, Action action) {
+        Optional<T> extracted = super.extract(resource, amount, action);
         if (extracted.isPresent() && action == Action.EXECUTE) {
             listener.run();
         }
@@ -28,8 +28,8 @@ public class PlatformStorageDiskImpl<T extends Rs2Stack> extends StorageDiskImpl
     }
 
     @Override
-    public Optional<T> insert(T template, long amount, Action action) {
-        Optional<T> remainder = super.insert(template, amount, action);
+    public Optional<T> insert(T resource, long amount, Action action) {
+        Optional<T> remainder = super.insert(resource, amount, action);
         boolean insertedSomething = !remainder.isPresent() || remainder.get().getAmount() != amount;
         if (insertedSomething && action == Action.EXECUTE) {
             listener.run();

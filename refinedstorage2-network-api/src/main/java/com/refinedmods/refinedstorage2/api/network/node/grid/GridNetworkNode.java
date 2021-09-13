@@ -74,12 +74,12 @@ public class GridNetworkNode<T extends Rs2Stack> extends NetworkNodeImpl {
     }
 
     public int getStackCount() {
-        return getStorageChannel().getStacks().size();
+        return getStorageChannel().getAll().size();
     }
 
     public void forEachStack(BiConsumer<T, Optional<StorageTracker.Entry>> consumer) {
         StorageChannel<T> storageChannel = getStorageChannel();
-        storageChannel.getStacks().forEach(stack -> consumer.accept(stack, storageChannel.getTracker().getEntry(stack)));
+        storageChannel.getAll().forEach(stack -> consumer.accept(stack, storageChannel.getTracker().getEntry(stack)));
     }
 
     @Override

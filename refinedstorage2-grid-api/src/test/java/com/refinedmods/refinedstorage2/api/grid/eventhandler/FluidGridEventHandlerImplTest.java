@@ -15,7 +15,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static com.refinedmods.refinedstorage2.api.stack.test.FluidStackAssertions.assertFluidStack;
-import static com.refinedmods.refinedstorage2.api.stack.test.FluidStackAssertions.assertFluidStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
@@ -46,7 +45,7 @@ class FluidGridEventHandlerImplTest {
 
             // Assert
             assertThat(interactor.getCursorStack().isEmpty()).isTrue();
-            assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, 2000));
+            assertFluidStackListContents(storageChannel.getAll(), new Rs2FluidStack(FluidStubs.WATER, 2000));
             assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isPresent();
         }
 
@@ -61,7 +60,7 @@ class FluidGridEventHandlerImplTest {
 
             // Assert
             assertFluidStack(interactor.getCursorStack(), new Rs2FluidStack(FluidStubs.WATER, 500));
-            assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, 10_000));
+            assertFluidStackListContents(storageChannel.getAll(), new Rs2FluidStack(FluidStubs.WATER, 10_000));
             assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isPresent();
         }
     }
@@ -78,7 +77,7 @@ class FluidGridEventHandlerImplTest {
 
             // Assert
             assertFluidStack(interactor.getCursorStack(), new Rs2FluidStack(FluidStubs.WATER, 2000 - BUCKET_AMOUNT));
-            assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, BUCKET_AMOUNT));
+            assertFluidStackListContents(storageChannel.getAll(), new Rs2FluidStack(FluidStubs.WATER, BUCKET_AMOUNT));
             assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isPresent();
         }
 
@@ -93,7 +92,7 @@ class FluidGridEventHandlerImplTest {
 
             // Assert
             assertFluidStack(interactor.getCursorStack(), new Rs2FluidStack(FluidStubs.WATER, 1500));
-            assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, 10_000));
+            assertFluidStackListContents(storageChannel.getAll(), new Rs2FluidStack(FluidStubs.WATER, 10_000));
             assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isPresent();
         }
     }
@@ -113,7 +112,7 @@ class FluidGridEventHandlerImplTest {
 
             // Assert
             assertFluidStack(interactor.getCursorStack(), new Rs2FluidStack(FluidStubs.WATER, 1));
-            assertFluidStackListContents(storageChannel.getStacks());
+            assertFluidStackListContents(storageChannel.getAll());
             assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isEmpty();
         }
 
@@ -128,7 +127,7 @@ class FluidGridEventHandlerImplTest {
 
             // Assert
             assertThat(interactor.getCursorStack().isEmpty()).isTrue();
-            assertFluidStackListContents(storageChannel.getStacks());
+            assertFluidStackListContents(storageChannel.getAll());
             assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isEmpty();
         }
 
@@ -145,7 +144,7 @@ class FluidGridEventHandlerImplTest {
 
             // Assert
             assertFluidStack(interactor.getCursorStack(), new Rs2FluidStack(FluidStubs.WATER, 1));
-            assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, 10_000));
+            assertFluidStackListContents(storageChannel.getAll(), new Rs2FluidStack(FluidStubs.WATER, 10_000));
             assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isEmpty();
         }
     }
@@ -160,7 +159,7 @@ class FluidGridEventHandlerImplTest {
             // Assert
             assertThat(remainder).isZero();
             assertThat(interactor.getCursorStack().isEmpty()).isTrue();
-            assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, 2000));
+            assertFluidStackListContents(storageChannel.getAll(), new Rs2FluidStack(FluidStubs.WATER, 2000));
             assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isPresent();
         }
 
@@ -175,7 +174,7 @@ class FluidGridEventHandlerImplTest {
             // Assert
             assertThat(remainder).isEqualTo(1000);
             assertThat(interactor.getCursorStack().isEmpty()).isTrue();
-            assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, 10_000));
+            assertFluidStackListContents(storageChannel.getAll(), new Rs2FluidStack(FluidStubs.WATER, 10_000));
             assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isPresent();
         }
 
@@ -190,7 +189,7 @@ class FluidGridEventHandlerImplTest {
             // Assert
             assertThat(remainder).isEqualTo(2000);
             assertThat(interactor.getCursorStack().isEmpty()).isTrue();
-            assertFluidStackListContents(storageChannel.getStacks(), new Rs2FluidStack(FluidStubs.WATER, 10_000));
+            assertFluidStackListContents(storageChannel.getAll(), new Rs2FluidStack(FluidStubs.WATER, 10_000));
             assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isEmpty();
         }
 
@@ -205,7 +204,7 @@ class FluidGridEventHandlerImplTest {
             // Assert
             assertThat(remainder).isEqualTo(2000);
             assertThat(interactor.getCursorStack().isEmpty()).isTrue();
-            assertFluidStackListContents(storageChannel.getStacks());
+            assertFluidStackListContents(storageChannel.getAll());
             assertThat(storageChannel.getTracker().getEntry(new Rs2FluidStack(FluidStubs.WATER))).isEmpty();
         }
     }

@@ -7,23 +7,23 @@ import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
 import java.util.Optional;
 import java.util.Set;
 
-public class ListenableStackList<R> extends ProxyStackList<R> {
-    private final Set<StackListListener<R>> listeners;
+public class ListenableStackList<T> extends ProxyStackList<T> {
+    private final Set<StackListListener<T>> listeners;
 
-    public ListenableStackList(StackList<R> parent, Set<StackListListener<R>> listeners) {
+    public ListenableStackList(StackList<T> parent, Set<StackListListener<T>> listeners) {
         super(parent);
         this.listeners = listeners;
     }
 
     @Override
-    public StackListResult<R> add(R resource, long amount) {
-        StackListResult<R> result = super.add(resource, amount);
+    public StackListResult<T> add(T resource, long amount) {
+        StackListResult<T> result = super.add(resource, amount);
         listeners.forEach(listener -> listener.onChanged(result));
         return result;
     }
 
     @Override
-    public Optional<StackListResult<R>> remove(R resource, long amount) {
+    public Optional<StackListResult<T>> remove(T resource, long amount) {
         return super.remove(resource, amount)
                 .map(result -> {
                     listeners.forEach(listener -> listener.onChanged(result));

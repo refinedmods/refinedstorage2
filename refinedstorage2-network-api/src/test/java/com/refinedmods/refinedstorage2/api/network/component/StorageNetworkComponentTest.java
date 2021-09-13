@@ -47,7 +47,7 @@ class StorageNetworkComponentTest {
     @Test
     void Test_initial_state() {
         // Act
-        Collection<Rs2ItemStack> stacks = sut.getStorageChannel(StorageChannelTypes.ITEM).getStacks();
+        Collection<Rs2ItemStack> stacks = sut.getStorageChannel(StorageChannelTypes.ITEM).getAll();
 
         // Assert
         assertThat(stacks).isEmpty();
@@ -65,7 +65,7 @@ class StorageNetworkComponentTest {
 
         // Assert
         assertThat(remainder).isEmpty();
-        assertThat(storageChannel.getStacks()).isNotEmpty();
+        assertThat(storageChannel.getAll()).isNotEmpty();
     }
 
     @Test
@@ -77,13 +77,13 @@ class StorageNetworkComponentTest {
 
         sut.onContainerAdded(diskDriveContainer);
 
-        Collection<Rs2ItemStack> stacksBeforeRemoval = storageChannel.getStacks();
+        Collection<Rs2ItemStack> stacksBeforeRemoval = storageChannel.getAll();
 
         // Act
         sut.onContainerRemoved(diskDriveContainer);
 
         // Assert
         assertThat(stacksBeforeRemoval).isNotEmpty();
-        assertThat(storageChannel.getStacks()).isEmpty();
+        assertThat(storageChannel.getAll()).isEmpty();
     }
 }

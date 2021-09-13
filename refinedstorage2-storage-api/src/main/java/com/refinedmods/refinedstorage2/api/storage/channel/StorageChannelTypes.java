@@ -1,13 +1,12 @@
 package com.refinedmods.refinedstorage2.api.storage.channel;
 
 import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
-import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStackIdentifier;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
 
+import java.util.Collections;
 import java.util.List;
 
 public final class StorageChannelTypes {
@@ -18,20 +17,20 @@ public final class StorageChannelTypes {
         @Override
         public StorageChannel<Rs2ItemStack> create() {
             return new StorageChannelImpl<>(
-                    StackListImpl::createItemStackList,
-                    new StorageTracker<>(Rs2ItemStackIdentifier::new, System::currentTimeMillis),
-                    CompositeStorage.emptyItemStackStorage()
+                    StackListImpl::new,
+                    new StorageTracker<>(System::currentTimeMillis),
+                    new CompositeStorage<>(Collections.emptyList(), new StackListImpl<>())
             );
         }
 
         @Override
         public CompositeStorage<Rs2ItemStack> createEmptyCompositeStorage() {
-            return CompositeStorage.emptyItemStackStorage();
+            return new CompositeStorage<>(Collections.emptyList(), new StackListImpl<>());
         }
 
         @Override
         public CompositeStorage<Rs2ItemStack> createCompositeStorage(List<Storage<Rs2ItemStack>> sources) {
-            return new CompositeStorage<>(sources, StackListImpl.createItemStackList());
+            return new CompositeStorage<>(sources, new StackListImpl<>());
         }
 
         @Override
@@ -44,20 +43,20 @@ public final class StorageChannelTypes {
         @Override
         public StorageChannel<Rs2FluidStack> create() {
             return new StorageChannelImpl<>(
-                    StackListImpl::createFluidStackList,
-                    new StorageTracker<>(Rs2FluidStackIdentifier::new, System::currentTimeMillis),
-                    CompositeStorage.emptyFluidStackStorage()
+                    StackListImpl::new,
+                    new StorageTracker<>(System::currentTimeMillis),
+                    new CompositeStorage<>(Collections.emptyList(), new StackListImpl<>())
             );
         }
 
         @Override
         public CompositeStorage<Rs2FluidStack> createEmptyCompositeStorage() {
-            return CompositeStorage.emptyFluidStackStorage();
+            return new CompositeStorage<>(Collections.emptyList(), new StackListImpl<>());
         }
 
         @Override
         public CompositeStorage<Rs2FluidStack> createCompositeStorage(List<Storage<Rs2FluidStack>> sources) {
-            return new CompositeStorage<>(sources, StackListImpl.createFluidStackList());
+            return new CompositeStorage<>(sources, new StackListImpl<>());
         }
 
         @Override

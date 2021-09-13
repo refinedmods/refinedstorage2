@@ -48,7 +48,7 @@ public class ItemStorageDiskType implements StorageDiskType<Rs2ItemStack> {
         NbtCompound tag = new NbtCompound();
         tag.putLong(TAG_DISK_CAPACITY, disk.getCapacity());
         NbtList stacks = new NbtList();
-        for (Rs2ItemStack stack : disk.getStacks()) {
+        for (Rs2ItemStack stack : disk.getAll()) {
             stacks.add(ItemStacks.toTag(stack));
         }
         tag.put(TAG_DISK_STACKS, stacks);

@@ -1,8 +1,6 @@
 package com.refinedmods.refinedstorage2.api.storage.disk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;
@@ -28,13 +26,13 @@ class StorageDiskManagerImplTest {
     void Test_whether_getting_disk_is_present() {
         // Arrange
         UUID id = UUID.randomUUID();
-        StorageDisk<Rs2ItemStack> storage = StorageDiskImpl.createItemStorageDisk(1);
+        StorageDisk<String> storage = new StorageDiskImpl<>(1);
 
         // Act
         storageDiskManager.setDisk(id, storage);
-        Optional<StorageDisk<Rs2ItemStack>> foundStorage = storageDiskManager.getDisk(id);
+        Optional<StorageDisk<String>> foundStorage = storageDiskManager.getDisk(id);
 
-        Optional<StorageDisk<Rs2ItemStack>> nonExistent = storageDiskManager.getDisk(UUID.randomUUID());
+        Optional<StorageDisk<String>> nonExistent = storageDiskManager.getDisk(UUID.randomUUID());
 
         // Assert
         assertThat(foundStorage).isNotEmpty();
@@ -47,8 +45,8 @@ class StorageDiskManagerImplTest {
     void Test_getting_info_of_disk() {
         // Arrange
         UUID id = UUID.randomUUID();
-        StorageDisk<Rs2ItemStack> storage = StorageDiskImpl.createItemStorageDisk(10);
-        storage.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
+        StorageDisk<String> storage = new StorageDiskImpl<>(10);
+        storage.insert("A", 5, Action.EXECUTE);
 
         // Act
         storageDiskManager.setDisk(id, storage);
@@ -73,7 +71,7 @@ class StorageDiskManagerImplTest {
     @Test
     void Test_disassembling_a_non_existing_disk() {
         // Act
-        Optional<StorageDisk<Rs2ItemStack>> disassembledDisk = storageDiskManager.disassembleDisk(UUID.randomUUID());
+        Optional<StorageDisk<String>> disassembledDisk = storageDiskManager.disassembleDisk(UUID.randomUUID());
 
         // Assert
         assertThat(disassembledDisk).isEmpty();
@@ -83,13 +81,13 @@ class StorageDiskManagerImplTest {
     void Test_disassembling_a_non_empty_disk() {
         // Arrange
         UUID id = UUID.randomUUID();
-        StorageDisk<Rs2ItemStack> storage = StorageDiskImpl.createItemStorageDisk(10);
-        storage.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
+        StorageDisk<String> storage = new StorageDiskImpl<>(10);
+        storage.insert("A", 5, Action.EXECUTE);
         storageDiskManager.setDisk(id, storage);
 
         // Act
-        Optional<StorageDisk<Rs2ItemStack>> disassembledDisk = storageDiskManager.disassembleDisk(id);
-        Optional<StorageDisk<Rs2ItemStack>> disk = storageDiskManager.getDisk(id);
+        Optional<StorageDisk<String>> disassembledDisk = storageDiskManager.disassembleDisk(id);
+        Optional<StorageDisk<String>> disk = storageDiskManager.getDisk(id);
 
         // Assert
         assertThat(disassembledDisk).isEmpty();
@@ -100,12 +98,12 @@ class StorageDiskManagerImplTest {
     void Test_disassembling_an_empty_disk() {
         // Arrange
         UUID id = UUID.randomUUID();
-        StorageDisk<Rs2ItemStack> storage = StorageDiskImpl.createItemStorageDisk(10);
+        StorageDisk<String> storage = new StorageDiskImpl<>(1);
         storageDiskManager.setDisk(id, storage);
 
         // Act
-        Optional<StorageDisk<Rs2ItemStack>> disassembledDisk = storageDiskManager.disassembleDisk(id);
-        Optional<StorageDisk<Rs2ItemStack>> disk = storageDiskManager.getDisk(id);
+        Optional<StorageDisk<String>> disassembledDisk = storageDiskManager.disassembleDisk(id);
+        Optional<StorageDisk<String>> disk = storageDiskManager.getDisk(id);
 
         // Assert
         assertThat(disassembledDisk).isNotEmpty();
@@ -117,10 +115,10 @@ class StorageDiskManagerImplTest {
     void Test_inserting_duplicate_storage_disk_ids_should_fail() {
         // Arrange
         UUID id = UUID.randomUUID();
-        storageDiskManager.setDisk(id, StorageDiskImpl.createItemStorageDisk(10));
+        storageDiskManager.setDisk(id, new StorageDiskImpl<>(1));
 
         // Act
-        Executable action = () -> storageDiskManager.setDisk(id, StorageDiskImpl.createItemStorageDisk(10));
+        Executable action = () -> storageDiskManager.setDisk(id, new StorageDiskImpl<>(1));
 
         // Assert
         assertThrows(IllegalArgumentException.class, action);

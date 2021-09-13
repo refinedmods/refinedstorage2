@@ -6,35 +6,35 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
-public abstract class ProxyStackList<R> implements StackList<R> {
-    private final StackList<R> parent;
+public abstract class ProxyStackList<T> implements StackList<T> {
+    private final StackList<T> parent;
 
-    public ProxyStackList(StackList<R> parent) {
+    public ProxyStackList(StackList<T> parent) {
         this.parent = parent;
     }
 
     @Override
-    public StackListResult<R> add(R resource, long amount) {
+    public StackListResult<T> add(T resource, long amount) {
         return parent.add(resource, amount);
     }
 
     @Override
-    public Optional<StackListResult<R>> remove(R resource, long amount) {
+    public Optional<StackListResult<T>> remove(T resource, long amount) {
         return parent.remove(resource, amount);
     }
 
     @Override
-    public Optional<ResourceAmount<R>> get(R resource) {
+    public Optional<ResourceAmount<T>> get(T resource) {
         return parent.get(resource);
     }
 
     @Override
-    public Optional<ResourceAmount<R>> get(UUID id) {
+    public Optional<ResourceAmount<T>> get(UUID id) {
         return parent.get(id);
     }
 
     @Override
-    public Collection<ResourceAmount<R>> getAll() {
+    public Collection<ResourceAmount<T>> getAll() {
         return parent.getAll();
     }
 

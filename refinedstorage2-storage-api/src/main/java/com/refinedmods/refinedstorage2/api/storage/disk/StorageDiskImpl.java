@@ -1,104 +1,87 @@
 package com.refinedmods.refinedstorage2.api.storage.disk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
-import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.stack.list.StackList;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
 
 import java.util.Collection;
-import java.util.Optional;
 
-public class StorageDiskImpl<T extends Rs2Stack> implements StorageDisk<T> {
-    private final StackList<T> list;
+public class StorageDiskImpl<T> implements StorageDisk<T> {
+    private final StackList<T> list = new StackListImpl<>();
     private final long capacity;
     private long stored;
 
-    public StorageDiskImpl(long capacity, StackList<T> list) {
+    public StorageDiskImpl(long capacity) {
         this.capacity = capacity;
-        this.list = list;
-    }
-
-    public static StorageDisk<Rs2ItemStack> createItemStorageDisk(long capacity) {
-        return new StorageDiskImpl<>(capacity, StackListImpl.createItemStackList());
-    }
-
-    public static StorageDisk<Rs2FluidStack> createFluidStorageDisk(long capacity) {
-        return new StorageDiskImpl<>(capacity, StackListImpl.createFluidStackList());
     }
 
     @Override
-    public Optional<T> extract(T template, long amount, Action action) {
-        if (template.isEmpty() || amount <= 0) {
-            throw new IllegalArgumentException("Invalid stack");
+    public long extract(T resource, long amount, Action action) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Invalid amount");
         }
 
-        return list.get(template).map(stack -> {
-            if (amount > stack.getAmount()) {
-                return extractCompletely(stack, action);
+        return list.get(resource).map(resourceAmount -> {
+            if (amount > resourceAmount.getAmount()) {
+                return extractCompletely(resourceAmount, action);
             } else {
-                return extractPartly(stack, amount, action);
+                return extractPartly(resource, amount, action);
             }
-        });
+        }).orElse(0L);
     }
 
-    private T extractPartly(T stack, long amount, Action action) {
+    private long extractPartly(T resource, long amount, Action action) {
         if (action == Action.EXECUTE) {
-            list.remove(stack, amount);
+            list.remove(resource, amount);
             stored -= amount;
         }
 
-        T extracted = (T) stack.copy();
-        extracted.setAmount(amount);
-        return extracted;
+        return amount;
     }
 
-    private T extractCompletely(T stack, Action action) {
+    private long extractCompletely(ResourceAmount<T> resourceAmount, Action action) {
         if (action == Action.EXECUTE) {
-            list.remove(stack, stack.getAmount());
-            stored -= stack.getAmount();
+            list.remove(resourceAmount.getResource(), resourceAmount.getAmount());
+            stored -= resourceAmount.getAmount();
         }
 
-        return stack;
+        return resourceAmount.getAmount();
     }
 
     @Override
-    public Optional<T> insert(T template, long amount, Action action) {
-        if (template.isEmpty() || amount <= 0) {
-            throw new IllegalArgumentException("Invalid stack");
+    public long insert(T resource, long amount, Action action) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Invalid amount");
         }
 
         if (capacity >= 0 && stored + amount > capacity) {
-            return insertPartly(template, capacity - stored, amount - (capacity - stored), action);
+            return insertPartly(resource, capacity - stored, amount - (capacity - stored), action);
         } else {
-            return insertCompletely(template, amount, action);
+            insertCompletely(resource, amount, action);
+            return 0;
         }
     }
 
     @Override
-    public Collection<T> getStacks() {
+    public Collection<ResourceAmount<T>> getAll() {
         return list.getAll();
     }
 
-    private Optional<T> insertPartly(T template, long amount, long remainder, Action action) {
+    private long insertPartly(T resource, long amount, long remainder, Action action) {
         if (action == Action.EXECUTE && amount > 0) {
             stored += amount;
-            list.add(template, amount);
+            list.add(resource, amount);
         }
 
-        T remainderStack = (T) template.copy();
-        remainderStack.setAmount(remainder);
-        return Optional.of(remainderStack);
+        return remainder;
     }
 
-    private Optional<T> insertCompletely(T template, long amount, Action action) {
+    private void insertCompletely(T template, long amount, Action action) {
         if (action == Action.EXECUTE) {
             stored += amount;
             list.add(template, amount);
         }
-
-        return Optional.empty();
     }
 
     @Override

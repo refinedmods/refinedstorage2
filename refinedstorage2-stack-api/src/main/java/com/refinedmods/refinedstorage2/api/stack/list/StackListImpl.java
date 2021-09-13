@@ -11,17 +11,17 @@ import java.util.UUID;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-public class StackListImpl<R> implements StackList<R> {
-    private final Map<R, ResourceAmount<R>> entries = new HashMap<>();
-    private final BiMap<UUID, ResourceAmount<R>> index = HashBiMap.create();
+public class StackListImpl<T> implements StackList<T> {
+    private final Map<T, ResourceAmount<T>> entries = new HashMap<>();
+    private final BiMap<UUID, ResourceAmount<T>> index = HashBiMap.create();
 
     @Override
-    public StackListResult<R> add(R resource, long amount) {
+    public StackListResult<T> add(T resource, long amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Invalid amount");
         }
 
-        ResourceAmount<R> existing = entries.get(resource);
+        ResourceAmount<T> existing = entries.get(resource);
         if (existing != null) {
             return addToExisting(existing, amount);
         } else {
@@ -29,14 +29,14 @@ public class StackListImpl<R> implements StackList<R> {
         }
     }
 
-    private StackListResult<R> addToExisting(ResourceAmount<R> resourceAmount, long amount) {
+    private StackListResult<T> addToExisting(ResourceAmount<T> resourceAmount, long amount) {
         resourceAmount.increment(amount);
 
         return new StackListResult<>(resourceAmount, amount, index.inverse().get(resourceAmount), true);
     }
 
-    private StackListResult<R> addNew(R resource, long amount) {
-        ResourceAmount<R> resourceAmount = new ResourceAmount<>(resource, amount);
+    private StackListResult<T> addNew(T resource, long amount) {
+        ResourceAmount<T> resourceAmount = new ResourceAmount<>(resource, amount);
 
         UUID id = UUID.randomUUID();
 
@@ -47,12 +47,12 @@ public class StackListImpl<R> implements StackList<R> {
     }
 
     @Override
-    public Optional<StackListResult<R>> remove(R resource, long amount) {
+    public Optional<StackListResult<T>> remove(T resource, long amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Invalid amount");
         }
 
-        ResourceAmount<R> existing = entries.get(resource);
+        ResourceAmount<T> existing = entries.get(resource);
         if (existing != null) {
             UUID id = index.inverse().get(existing);
 
@@ -66,13 +66,13 @@ public class StackListImpl<R> implements StackList<R> {
         return Optional.empty();
     }
 
-    private Optional<StackListResult<R>> removePartly(long amount, ResourceAmount<R> resourceAmount, UUID id) {
+    private Optional<StackListResult<T>> removePartly(long amount, ResourceAmount<T> resourceAmount, UUID id) {
         resourceAmount.decrement(amount);
 
         return Optional.of(new StackListResult<>(resourceAmount, -amount, id, true));
     }
 
-    private Optional<StackListResult<R>> removeCompletely(ResourceAmount<R> resourceAmount, UUID id) {
+    private Optional<StackListResult<T>> removeCompletely(ResourceAmount<T> resourceAmount, UUID id) {
         index.remove(id);
         entries.remove(resourceAmount.getResource());
 
@@ -80,17 +80,17 @@ public class StackListImpl<R> implements StackList<R> {
     }
 
     @Override
-    public Optional<ResourceAmount<R>> get(R resource) {
+    public Optional<ResourceAmount<T>> get(T resource) {
         return Optional.ofNullable(entries.get(resource));
     }
 
     @Override
-    public Optional<ResourceAmount<R>> get(UUID id) {
+    public Optional<ResourceAmount<T>> get(UUID id) {
         return Optional.ofNullable(index.get(id));
     }
 
     @Override
-    public Collection<ResourceAmount<R>> getAll() {
+    public Collection<ResourceAmount<T>> getAll() {
         return entries.values();
     }
 

@@ -16,10 +16,10 @@ public class DiskDriveItemStorage extends DiskDriveStorage<Rs2ItemStack> {
     }
 
     @Override
-    public Optional<Rs2ItemStack> insert(Rs2ItemStack template, long amount, Action action) {
-        if (!itemFilter.isAllowed(template)) {
-            return notAllowed(template, amount);
+    public Optional<Rs2ItemStack> insert(Rs2ItemStack resource, long amount, Action action) {
+        if (!itemFilter.isAllowed(resource)) {
+            return notAllowed(resource, amount);
         }
-        return super.insert(template, amount, action);
+        return super.insert(resource, amount, action);
     }
 }

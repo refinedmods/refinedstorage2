@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.storage.channel;
 
+import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.stack.list.listenable.StackListListener;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
@@ -11,13 +12,13 @@ public interface StorageChannel<T> extends Storage<T> {
 
     void removeListener(StackListListener<T> listener);
 
-    Optional<T> extract(T template, long amount, Source source);
+    long extract(T resource, long amount, Source source);
 
-    Optional<T> insert(T template, long amount, Source source);
+    long insert(T resource, long amount, Source source);
 
-    StorageTracker<T, ?> getTracker();
+    StorageTracker<T> getTracker();
 
-    Optional<T> get(T template);
+    Optional<ResourceAmount<T>> get(T resource);
 
     void sortSources();
 

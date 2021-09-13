@@ -1,15 +1,17 @@
 package com.refinedmods.refinedstorage2.api.storage.channel;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
 import com.refinedmods.refinedstorage2.api.stack.list.listenable.StackListListener;
-import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
+import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage2.api.storage.composite.PrioritizedStorage;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,10 +21,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 
-import static com.refinedmods.refinedstorage2.api.stack.test.ItemStackAssertions.assertItemStack;
-import static com.refinedmods.refinedstorage2.api.stack.test.ItemStackAssertions.assertItemStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -30,33 +30,37 @@ import static org.mockito.Mockito.verify;
 
 @Rs2Test
 class StorageChannelImplTest {
-    private StorageChannel<Rs2ItemStack> channel;
+    private StorageChannel<String> channel;
 
     @BeforeEach
     void setUp() {
-        channel = StorageChannelTypes.ITEM.create();
+        channel = new StorageChannelImpl<>(
+                StackListImpl::new,
+                new StorageTracker<>(System::currentTimeMillis),
+                new CompositeStorage<>(Collections.emptyList(), new StackListImpl<>())
+        );
     }
 
     @ParameterizedTest
     @EnumSource(Action.class)
     void Test_listener_on_insertion(Action action) {
         // Arrange
-        channel.addSource(StorageDiskImpl.createItemStorageDisk(10));
+        channel.addSource(new StorageDiskImpl<>(10));
 
-        StackListListener<Rs2ItemStack> listener = mock(StackListListener.class);
+        StackListListener<String> listener = mock(StackListListener.class);
         channel.addListener(listener);
 
-        ArgumentCaptor<StackListResult<Rs2ItemStack>> givenStack = ArgumentCaptor.forClass(StackListResult.class);
+        ArgumentCaptor<StackListResult<String>> givenStack = ArgumentCaptor.forClass(StackListResult.class);
 
         // Act
-        channel.insert(new Rs2ItemStack(ItemStubs.DIRT), 15, action);
+        channel.insert("A", 15, action);
 
         // Assert
         if (action == Action.EXECUTE) {
             verify(listener, atMost(1)).onChanged(givenStack.capture());
 
             assertThat(givenStack.getValue().change()).isEqualTo(10);
-            assertItemStack(givenStack.getValue().stack(), new Rs2ItemStack(ItemStubs.DIRT, 10));
+            assertThat(givenStack.getValue().resourceAmount()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 10));
         } else {
             verify(listener, never()).onChanged(any());
         }
@@ -66,25 +70,25 @@ class StorageChannelImplTest {
     @EnumSource(Action.class)
     void Test_listener_on_extraction(Action action) {
         // Arrange
-        StorageDisk<Rs2ItemStack> diskStorage = StorageDiskImpl.createItemStorageDisk(10);
-        diskStorage.insert(new Rs2ItemStack(ItemStubs.GLASS), 10, Action.EXECUTE);
+        StorageDisk<String> diskStorage = new StorageDiskImpl<>(10);
+        diskStorage.insert("A", 10, Action.EXECUTE);
 
         channel.addSource(diskStorage);
 
-        StackListListener<Rs2ItemStack> listener = mock(StackListListener.class);
+        StackListListener<String> listener = mock(StackListListener.class);
         channel.addListener(listener);
 
-        ArgumentCaptor<StackListResult<Rs2ItemStack>> givenStack = ArgumentCaptor.forClass(StackListResult.class);
+        ArgumentCaptor<StackListResult<String>> givenStack = ArgumentCaptor.forClass(StackListResult.class);
 
         // Act
-        channel.extract(new Rs2ItemStack(ItemStubs.GLASS), 5, action);
+        channel.extract("A", 5, action);
 
         // Assert
         if (action == Action.EXECUTE) {
             verify(listener, atMost(1)).onChanged(givenStack.capture());
 
             assertThat(givenStack.getValue().change()).isEqualTo(-5);
-            assertItemStack(givenStack.getValue().stack(), new Rs2ItemStack(ItemStubs.GLASS, 5));
+            assertThat(givenStack.getValue().resourceAmount()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 5));
         } else {
             verify(listener, never()).onChanged(any());
         }
@@ -93,54 +97,59 @@ class StorageChannelImplTest {
     @Test
     void Test_inserting() {
         // Arrange
-        channel.addSource(StorageDiskImpl.createItemStorageDisk(10));
+        channel.addSource(new StorageDiskImpl<>(10));
 
         // Act
-        channel.insert(new Rs2ItemStack(ItemStubs.DIRT), 5, Action.EXECUTE);
-        channel.insert(new Rs2ItemStack(ItemStubs.GLASS), 5, Action.EXECUTE);
+        channel.insert("A", 5, Action.EXECUTE);
+        channel.insert("B", 4, Action.EXECUTE);
 
         // Assert
-        assertItemStackListContents(channel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 5), new Rs2ItemStack(ItemStubs.GLASS, 5));
+        assertThat(channel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new ResourceAmount<>("A", 5),
+                new ResourceAmount<>("B", 4)
+        );
     }
 
     @Test
     void Test_extracting() {
         // Arrange
-        StorageDisk<Rs2ItemStack> diskStorage = StorageDiskImpl.createItemStorageDisk(100);
-        diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
+        StorageDisk<String> diskStorage = new StorageDiskImpl<>(100);
+        diskStorage.insert("A", 50, Action.EXECUTE);
 
         channel.addSource(diskStorage);
 
         // Act
-        channel.extract(new Rs2ItemStack(ItemStubs.DIRT), 49, Action.EXECUTE);
+        channel.extract("A", 49, Action.EXECUTE);
 
         // Assert
-        assertItemStackListContents(channel.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 1));
+        assertThat(channel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new ResourceAmount<>("A", 1)
+        );
     }
 
     @Test
     void Test_getting_stack() {
         // Arrange
-        StorageDisk<Rs2ItemStack> diskStorage = StorageDiskImpl.createItemStorageDisk(100);
-        diskStorage.insert(new Rs2ItemStack(ItemStubs.DIRT), 50, Action.EXECUTE);
+        StorageDisk<String> diskStorage = new StorageDiskImpl<>(100);
+        diskStorage.insert("A", 50, Action.EXECUTE);
 
         channel.addSource(diskStorage);
 
         // Act
-        Optional<Rs2ItemStack> stack = channel.get(new Rs2ItemStack(ItemStubs.DIRT));
+        Optional<ResourceAmount<String>> stack = channel.get("A");
 
         // Assert
         assertThat(stack).isPresent();
-        assertItemStack(stack.get(), new Rs2ItemStack(ItemStubs.DIRT, 50));
+        assertThat(stack.get()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 50));
     }
 
     @Test
     void Test_getting_non_existent_stack() {
         // Arrange
-        channel.addSource(StorageDiskImpl.createItemStorageDisk(100));
+        channel.addSource(new StorageDiskImpl<>(100));
 
         // Act
-        Optional<Rs2ItemStack> stack = channel.get(new Rs2ItemStack(ItemStubs.DIRT));
+        Optional<ResourceAmount<String>> stack = channel.get("A");
 
         // Assert
         assertThat(stack).isEmpty();
@@ -149,9 +158,9 @@ class StorageChannelImplTest {
     @RepeatedTest(100)
     void Test_sorting_sources() {
         // Arrange
-        PrioritizedStorage<Rs2ItemStack> disk1 = new PrioritizedStorage<>(0, StorageDiskImpl.createItemStorageDisk(10));
-        PrioritizedStorage<Rs2ItemStack> disk2 = new PrioritizedStorage<>(0, StorageDiskImpl.createItemStorageDisk(10));
-        PrioritizedStorage<Rs2ItemStack> disk3 = new PrioritizedStorage<>(0, StorageDiskImpl.createItemStorageDisk(10));
+        PrioritizedStorage<String> disk1 = new PrioritizedStorage<>(0, new StorageDiskImpl<>(10));
+        PrioritizedStorage<String> disk2 = new PrioritizedStorage<>(0, new StorageDiskImpl<>(10));
+        PrioritizedStorage<String> disk3 = new PrioritizedStorage<>(0, new StorageDiskImpl<>(10));
 
         channel.addSource(disk1);
         channel.addSource(disk2);
@@ -164,11 +173,15 @@ class StorageChannelImplTest {
         // Act
         channel.sortSources();
 
-        channel.insert(new Rs2ItemStack(ItemStubs.DIRT), 15, Action.EXECUTE);
+        channel.insert("A", 15, Action.EXECUTE);
 
         // Assert
-        assertItemStackListContents(disk2.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 10));
-        assertItemStackListContents(disk1.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 5));
-        assertItemStackListContents(disk3.getStacks());
+        assertThat(disk2.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new ResourceAmount<>("A", 10)
+        );
+        assertThat(disk1.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new ResourceAmount<>("A", 5)
+        );
+        assertThat(disk3.getAll()).isEmpty();
     }
 }
