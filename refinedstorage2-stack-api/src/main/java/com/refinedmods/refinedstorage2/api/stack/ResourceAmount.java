@@ -26,4 +26,12 @@ public class ResourceAmount<T> {
     public void decrement(long amount) {
         this.amount -= amount;
     }
+
+    @Override
+    public String toString() {
+        return "ResourceAmount{" +
+                "resource=" + resource +
+                ", amount=" + amount +
+                '}';
+    }
 }

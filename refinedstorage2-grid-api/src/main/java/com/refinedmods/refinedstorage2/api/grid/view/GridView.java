@@ -14,7 +14,7 @@ public interface GridView<T> {
 
     void setSortingType(GridSortingType sortingType);
 
-    void setFilter(Predicate<GridStack<?>> filter);
+    void setFilter(Predicate<GridStack<T>> filter);
 
     boolean isPreventSorting();
 
@@ -24,13 +24,13 @@ public interface GridView<T> {
 
     void setSortingDirection(GridSortingDirection sortingDirection);
 
-    void loadStack(T template, long amount, StorageTracker.Entry trackerEntry);
+    void loadResource(T resource, long amount, StorageTracker.Entry trackerEntry);
 
     Optional<StorageTracker.Entry> getTrackerEntry(Object template);
 
     void sort();
 
-    void onChange(T template, long amount, StorageTracker.Entry trackerEntry);
+    void onChange(T resource, long amount, StorageTracker.Entry trackerEntry);
 
     List<GridStack<T>> getStacks();
 }
