@@ -1,20 +1,16 @@
 package com.refinedmods.refinedstorage2.api.grid.search;
 
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
-import com.refinedmods.refinedstorage2.api.grid.view.FakeGridStackFactory;
+import com.refinedmods.refinedstorage2.api.grid.view.FakeGridStack;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStackIdentifier;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
-import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
 
-import static com.refinedmods.refinedstorage2.api.grid.GridStackAssertions.assertItemGridStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
@@ -24,32 +20,34 @@ class GridSearchBoxModeImplTest {
     @Test
     void Test_changing_text() {
         // Arrange
-        GridView<Rs2ItemStack> view = new GridViewImpl<>(new FakeGridStackFactory(), Rs2ItemStackIdentifier::new, StackListImpl.createItemStackList());
+        GridView<String> view = new GridViewImpl<>(FakeGridStack::new, new StackListImpl<>());
 
-        view.onChange(new Rs2ItemStack(ItemStubs.DIRT), 64, null);
-        view.onChange(new Rs2ItemStack(ItemStubs.GLASS), 64, null);
+        view.onChange("A", 64, null);
+        view.onChange("B", 64, null);
 
         // Act
-        boolean success = searchBoxMode.onTextChanged(view, "dir");
+        boolean success = searchBoxMode.onTextChanged(view, "A");
 
         // Assert
-        assertItemGridStackListContents(view.getStacks(), new Rs2ItemStack(ItemStubs.DIRT, 64));
+        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridStack("A", 64)
+        );
         assertThat(success).isTrue();
     }
 
     @Test
     void Test_changing_text_for_invalid_query() {
         // Arrange
-        GridView<Rs2ItemStack> view = new GridViewImpl<>(new FakeGridStackFactory(), Rs2ItemStackIdentifier::new, StackListImpl.createItemStackList());
+        GridView<String> view = new GridViewImpl<>(FakeGridStack::new, new StackListImpl<>());
 
-        view.onChange(new Rs2ItemStack(ItemStubs.DIRT), 64, null);
-        view.onChange(new Rs2ItemStack(ItemStubs.GLASS), 64, null);
+        view.onChange("A", 64, null);
+        view.onChange("B", 64, null);
 
         // Act
         boolean success = searchBoxMode.onTextChanged(view, "|");
 
         // Assert
-        assertItemGridStackListContents(view.getStacks());
+        assertThat(view.getStacks()).isEmpty();
         assertThat(success).isFalse();
     }
 }

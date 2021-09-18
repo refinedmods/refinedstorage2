@@ -46,7 +46,7 @@ public class ItemGridScreen extends GridScreen<Rs2ItemStack, ItemGridScreenHandl
 
     @Override
     protected void mouseClickedInGrid(int clickedButton, GridStack<Rs2ItemStack> stack) {
-        eventHandler.onExtract(stack.getStack(), getExtractMode(clickedButton));
+        eventHandler.onExtract(stack.getResourceAmount(), getExtractMode(clickedButton));
     }
 
     @Override
@@ -60,12 +60,12 @@ public class ItemGridScreen extends GridScreen<Rs2ItemStack, ItemGridScreenHandl
 
     @Override
     protected void mouseScrolledInGrid(boolean up, GridStack<Rs2ItemStack> stack) {
-        int slotIndex = getScreenHandler().getPlayerInventorySlotThatHasStack(Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toPlatform(stack.getStack()));
+        int slotIndex = getScreenHandler().getPlayerInventorySlotThatHasStack(Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toPlatform(stack.getResourceAmount()));
         GridScrollMode mode = getScrollModeWhenScrollingOnGridArea(up);
         if (mode == null) {
             return;
         }
-        eventHandler.onScroll(stack.getStack(), slotIndex, mode);
+        eventHandler.onScroll(stack.getResourceAmount(), slotIndex, mode);
     }
 
     private static GridExtractMode getExtractMode(int clickedButton) {

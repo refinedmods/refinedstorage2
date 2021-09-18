@@ -4,6 +4,8 @@ import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserException;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 
+import java.util.function.Predicate;
+
 public class GridSearchBoxModeImpl implements GridSearchBoxMode {
     private final GridQueryParser queryParser;
     private final boolean autoSelect;
@@ -19,7 +21,7 @@ public class GridSearchBoxModeImpl implements GridSearchBoxMode {
     public boolean onTextChanged(GridView<?> view, String text) {
         boolean success = true;
         try {
-            view.setFilter(queryParser.parse(text));
+            view.setFilter((Predicate) queryParser.parse(text));
         } catch (GridQueryParserException e) {
             view.setFilter(stack -> false);
             success = false;

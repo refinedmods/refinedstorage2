@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserExce
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
 import com.refinedmods.refinedstorage2.api.grid.view.stack.ItemGridStack;
+import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
@@ -258,7 +259,7 @@ class GridQueryParserImplTest {
 
     private GridStack<Rs2ItemStack> stack(Rs2ItemStack stack, String modId, String modName, String... tags) {
         return new ItemGridStack(
-                stack,
+                new ResourceAmount<>(stack, stack.getAmount()),
                 stack.getItem().getIdentifier(),
                 modId,
                 modName,

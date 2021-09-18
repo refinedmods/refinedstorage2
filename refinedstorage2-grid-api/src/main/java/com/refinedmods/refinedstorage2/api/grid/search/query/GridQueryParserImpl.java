@@ -119,7 +119,7 @@ public class GridQueryParserImpl implements GridQueryParser {
 
         long wantedCount = Long.parseLong(((LiteralNode) node).token().content());
 
-        return stack -> predicate.test(stack.getAmount(), wantedCount);
+        return stack -> predicate.test(stack.getResourceAmount().getAmount(), wantedCount);
     }
 
     private static Predicate<GridStack<?>> mod(String name) {

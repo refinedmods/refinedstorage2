@@ -23,6 +23,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.RedstoneMod
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -115,7 +116,7 @@ public abstract class GridScreenHandler<T extends Rs2Stack> extends BaseScreenHa
         for (int i = 0; i < amountOfStacks; ++i) {
             T stack = readStack(buf);
             StorageTracker.Entry trackerEntry = PacketUtil.readTrackerEntry(buf);
-            view.loadStack(stack, stack.getAmount(), trackerEntry);
+            view.loadResource(stack, stack.getAmount(), trackerEntry);
         }
         view.sort();
 

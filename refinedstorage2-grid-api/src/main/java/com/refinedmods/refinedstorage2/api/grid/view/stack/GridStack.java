@@ -1,30 +1,30 @@
 package com.refinedmods.refinedstorage2.api.grid.view.stack;
 
+import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
+
 import java.util.Set;
 
 public abstract class GridStack<T> {
-    private final T stack;
+    private final ResourceAmount<T> resource;
     private final String name;
     private final String modId;
     private final String modName;
     private final Set<String> tags;
     private boolean zeroed;
 
-    protected GridStack(T stack, String name, String modId, String modName, Set<String> tags) {
-        this.stack = stack;
+    protected GridStack(ResourceAmount<T> resource, String name, String modId, String modName, Set<String> tags) {
+        this.resource = resource;
         this.name = name;
         this.modId = modId;
         this.modName = modName;
         this.tags = tags;
     }
 
-    public T getStack() {
-        return stack;
+    public ResourceAmount<T> getResourceAmount() {
+        return resource;
     }
 
     public abstract int getId();
-
-    public abstract long getAmount();
 
     public String getName() {
         return name;

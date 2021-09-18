@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
 import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
+import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.stack.list.StackList;
 import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
@@ -19,26 +20,24 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GridViewImpl<T, I> implements GridView<T> {
+public class GridViewImpl<T> implements GridView<T> {
     private static final Logger LOGGER = LogManager.getLogger(GridViewImpl.class);
 
     private final StackList<T> list;
     private final Comparator<GridStack<?>> identitySort;
-    private final Function<T, GridStack<T>> stackFactory;
-    private final Function<T, I> idFactory;
-    private final Map<I, StorageTracker.Entry> trackerEntries = new HashMap<>();
-    private final Map<I, GridStack<T>> stackIndex = new HashMap<>();
+    private final Function<ResourceAmount<T>, GridStack<T>> stackFactory;
+    private final Map<T, StorageTracker.Entry> trackerEntries = new HashMap<>();
+    private final Map<T, GridStack<T>> stackIndex = new HashMap<>();
 
     private List<GridStack<T>> stacks = new ArrayList<>();
     private GridSortingType sortingType;
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
-    private Predicate<GridStack<?>> filter = stack -> true;
+    private Predicate<GridStack<T>> filter = stack -> true;
     private Runnable listener;
     private boolean preventSorting;
 
-    public GridViewImpl(Function<T, GridStack<T>> stackFactory, Function<T, I> idFactory, StackList<T> list) {
+    public GridViewImpl(Function<ResourceAmount<T>, GridStack<T>> stackFactory, StackList<T> list) {
         this.stackFactory = stackFactory;
-        this.idFactory = idFactory;
         this.identitySort = GridSortingType.NAME.getComparator().apply(this);
         this.list = list;
     }
@@ -59,7 +58,7 @@ public class GridViewImpl<T, I> implements GridView<T> {
     }
 
     @Override
-    public void setFilter(Predicate<GridStack<?>> filter) {
+    public void setFilter(Predicate<GridStack<T>> filter) {
         this.filter = filter;
     }
 
@@ -98,14 +97,14 @@ public class GridViewImpl<T, I> implements GridView<T> {
     }
 
     @Override
-    public void loadStack(T template, long amount, StorageTracker.Entry trackerEntry) {
-        list.add(template, amount);
-        trackerEntries.put(idFactory.apply(template), trackerEntry);
+    public void loadResource(T resource, long amount, StorageTracker.Entry trackerEntry) {
+        list.add(resource, amount);
+        trackerEntries.put(resource, trackerEntry);
     }
 
     @Override
     public Optional<StorageTracker.Entry> getTrackerEntry(Object template) {
-        return Optional.ofNullable(trackerEntries.get(idFactory.apply((T) template)));
+        return Optional.ofNullable(trackerEntries.get((T) template));
     }
 
     @Override
@@ -121,54 +120,52 @@ public class GridViewImpl<T, I> implements GridView<T> {
                 .filter(filter)
                 .collect(Collectors.toList());
 
-        stacks.forEach(stack -> stackIndex.put(idFactory.apply(stack.getStack()), stack));
+        stacks.forEach(stack -> stackIndex.put(stack.getResourceAmount().getResource(), stack));
 
         notifyListener();
     }
 
     @Override
-    public void onChange(T template, long amount, StorageTracker.Entry trackerEntry) {
+    public void onChange(T resource, long amount, StorageTracker.Entry trackerEntry) {
         StackListResult<T> stack;
         if (amount < 0) {
-            stack = list.remove(template, Math.abs(amount)).orElseThrow(RuntimeException::new);
+            stack = list.remove(resource, Math.abs(amount)).orElseThrow(RuntimeException::new);
         } else {
-            stack = list.add(template, amount);
+            stack = list.add(resource, amount);
         }
-
-        I id = idFactory.apply(stack.stack());
 
         if (trackerEntry == null) {
-            trackerEntries.remove(id);
+            trackerEntries.remove(resource);
         } else {
-            trackerEntries.put(id, trackerEntry);
+            trackerEntries.put(resource, trackerEntry);
         }
 
-        GridStack<T> gridStack = stackIndex.get(id);
+        GridStack<T> gridStack = stackIndex.get(resource);
         if (gridStack != null) {
             if (gridStack.isZeroed()) {
-                handleChangeForZeroedStack(id, stack, gridStack);
+                handleChangeForZeroedStack(resource, stack, gridStack);
             } else {
-                handleChangeForExistingStack(id, stack, gridStack);
+                handleChangeForExistingStack(resource, stack, gridStack);
             }
         } else {
-            handleChangeForNewStack(id, stack);
+            handleChangeForNewStack(resource, stack);
         }
     }
 
-    private void handleChangeForNewStack(I id, StackListResult<T> stack) {
-        GridStack<T> gridStack = stackFactory.apply(stack.stack());
+    private void handleChangeForNewStack(T resource, StackListResult<T> stack) {
+        GridStack<T> gridStack = stackFactory.apply(stack.resourceAmount());
         if (filter.test(gridStack)) {
-            stackIndex.put(id, gridStack);
+            stackIndex.put(resource, gridStack);
             addIntoView(gridStack);
             notifyListener();
         }
     }
 
-    private void handleChangeForExistingStack(I id, StackListResult<T> stack, GridStack<T> gridStack) {
+    private void handleChangeForExistingStack(T resource, StackListResult<T> stack, GridStack<T> gridStack) {
         if (!preventSorting) {
             if (!filter.test(gridStack) || !stack.available()) {
                 stacks.remove(gridStack);
-                stackIndex.remove(id);
+                stackIndex.remove(resource);
                 notifyListener();
             } else if (stack.available()) {
                 stacks.remove(gridStack);
@@ -180,10 +177,10 @@ public class GridViewImpl<T, I> implements GridView<T> {
         }
     }
 
-    private void handleChangeForZeroedStack(I id, StackListResult<T> stack, GridStack<T> oldGridStack) {
-        GridStack<T> newStack = stackFactory.apply(stack.stack());
+    private void handleChangeForZeroedStack(T resource, StackListResult<T> stack, GridStack<T> oldGridStack) {
+        GridStack<T> newStack = stackFactory.apply(stack.resourceAmount());
 
-        stackIndex.put(id, newStack);
+        stackIndex.put(resource, newStack);
 
         int index = stacks.indexOf(oldGridStack);
         stacks.set(index, newStack);
