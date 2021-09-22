@@ -7,6 +7,7 @@ public class ResourceAmount<T> {
     private long amount;
 
     public ResourceAmount(T resource, long amount) {
+        Preconditions.checkArgument(amount > 0, "Amount be larger than 0");
         this.resource = Preconditions.checkNotNull(resource);
         this.amount = amount;
     }
