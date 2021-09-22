@@ -17,6 +17,7 @@ public class StackListImpl<T> implements StackList<T> {
 
     @Override
     public StackListResult<T> add(T resource, long amount) {
+        // TODO: add nullcheck
         if (amount <= 0) {
             throw new IllegalArgumentException("Invalid amount");
         }
@@ -48,6 +49,7 @@ public class StackListImpl<T> implements StackList<T> {
 
     @Override
     public Optional<StackListResult<T>> remove(T resource, long amount) {
+        // TODO: add nullcheck
         if (amount <= 0) {
             throw new IllegalArgumentException("Invalid amount");
         }

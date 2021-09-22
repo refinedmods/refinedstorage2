@@ -18,6 +18,7 @@ public class StorageDiskImpl<T> implements StorageDisk<T> {
 
     @Override
     public long extract(T resource, long amount, Action action) {
+        // TODO: add nullcheck
         if (amount <= 0) {
             throw new IllegalArgumentException("Invalid amount");
         }
@@ -51,6 +52,7 @@ public class StorageDiskImpl<T> implements StorageDisk<T> {
 
     @Override
     public long insert(T resource, long amount, Action action) {
+        // TODO: add nullcheck
         if (amount <= 0) {
             throw new IllegalArgumentException("Invalid amount");
         }
