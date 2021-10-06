@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid;
 
+import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.service.GridServiceImpl;
@@ -47,7 +48,7 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
         super(Rs2Mod.SCREEN_HANDLERS.getGrid(), syncId, playerInventory, grid, createView());
         this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), itemResource -> (long) itemResource.getItem().getMaxCount());
         this.grid.addWatcher(this);
-        this.itemGridEventHandler = new ItemGridEventHandlerImpl(this, gridService);
+        this.itemGridEventHandler = new ItemGridEventHandlerImpl(this, gridService, playerInventory);
     }
 
     private static GridViewImpl<ItemResource> createView() {
@@ -100,5 +101,10 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
     @Override
     public ItemStack transfer(ItemStack stack) {
         return itemGridEventHandler.transfer(stack);
+    }
+
+    @Override
+    public void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
+        itemGridEventHandler.onExtract(itemResource, mode, cursor);
     }
 }

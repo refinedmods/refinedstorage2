@@ -24,6 +24,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.Ite
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.loot.Rs2LootFunctions;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.PropertyChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.StorageDiskInfoRequestPacket;
@@ -128,6 +129,7 @@ public class Rs2Mod implements ModInitializer {
     private void registerPackets() {
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.STORAGE_DISK_INFO_REQUEST, new StorageDiskInfoRequestPacket());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_INSERT, new GridInsertPacket());
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_EXTRACT, new GridExtractPacket());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.PROPERTY_CHANGE, new PropertyChangePacket());
     }
 
