@@ -54,6 +54,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     private static final int DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
 
     private final DiskDriveInventory diskInventory = new DiskDriveInventory();
+    // TODO: move away from LBA
     private final FullFixedItemInv filterInventory = new FullFixedItemInv(9);
     private DiskDriveState driveState;
 

@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
+import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
@@ -39,29 +40,29 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandl
 
     @Override
     protected void mouseClickedInGrid(int clickedButton, GridStack<ItemResource> stack) {
-
+        getScreenHandler().onExtract(stack.getResourceAmount().getResource(), getExtractMode(clickedButton), shouldExtractToCursor());
     }
 
     @Override
     protected void mouseScrolledInInventory(boolean up, Rs2ItemStack stack, int slotIndex) {
-
+        // todo
     }
 
     @Override
     protected void mouseScrolledInGrid(boolean up, GridStack<ItemResource> stack) {
-
+        // todo
     }
 
-    /*
     private static GridExtractMode getExtractMode(int clickedButton) {
         if (clickedButton == 1) {
-            return GridExtractMode.CURSOR_HALF;
+            return GridExtractMode.HALF_RESOURCE;
         }
-        if (hasShiftDown()) {
-            return GridExtractMode.PLAYER_INVENTORY_STACK;
-        }
-        return GridExtractMode.CURSOR_STACK;
-    }*/
+        return GridExtractMode.ENTIRE_RESOURCE;
+    }
+
+    private static boolean shouldExtractToCursor() {
+        return !hasShiftDown();
+    }
 
     private static GridInsertMode getInsertMode(int clickedButton) {
         return clickedButton == 1 ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;

@@ -92,7 +92,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHa
 
     @Override
     protected void mouseClickedInGrid(int clickedButton) {
-
+        // todo
     }
 
     private static GridInsertMode getInsertMode(int clickedButton) {
