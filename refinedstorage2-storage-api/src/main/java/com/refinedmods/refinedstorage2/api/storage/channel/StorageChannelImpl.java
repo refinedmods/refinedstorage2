@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.api.storage.channel;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.stack.list.StackList;
-import com.refinedmods.refinedstorage2.api.stack.list.listenable.ListenableStackList;
-import com.refinedmods.refinedstorage2.api.stack.list.listenable.StackListListener;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
+import com.refinedmods.refinedstorage2.api.resource.list.listenable.ListenableResourceList;
+import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
@@ -18,14 +18,14 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class StorageChannelImpl<T> implements StorageChannel<T> {
-    private final Supplier<StackList<T>> listFactory;
+    private final Supplier<ResourceList<T>> listFactory;
     private final StorageTracker<T> tracker;
-    private final Set<StackListListener<T>> listeners = new HashSet<>();
-    private ListenableStackList<T> list;
+    private final Set<ResourceListListener<T>> listeners = new HashSet<>();
+    private ListenableResourceList<T> list;
     private CompositeStorage<T> storage;
     private final List<Storage<T>> sources = new ArrayList<>();
 
-    public StorageChannelImpl(Supplier<StackList<T>> listFactory, StorageTracker<T> tracker, CompositeStorage<T> defaultStorage) {
+    public StorageChannelImpl(Supplier<ResourceList<T>> listFactory, StorageTracker<T> tracker, CompositeStorage<T> defaultStorage) {
         this.listFactory = listFactory;
         this.tracker = tracker;
         this.storage = defaultStorage;
@@ -33,7 +33,7 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
 
     @Override
     public void invalidate() {
-        this.list = new ListenableStackList<>(listFactory.get(), listeners);
+        this.list = new ListenableResourceList<>(listFactory.get(), listeners);
         this.storage = new CompositeStorage<>(sources, list);
         sortSources();
     }
@@ -56,12 +56,12 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
     }
 
     @Override
-    public void addListener(StackListListener<T> listener) {
+    public void addListener(ResourceListListener<T> listener) {
         listeners.add(listener);
     }
 
     @Override
-    public void removeListener(StackListListener<T> listener) {
+    public void removeListener(ResourceListListener<T> listener) {
         listeners.remove(listener);
     }
 

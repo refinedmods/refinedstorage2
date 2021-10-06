@@ -1,12 +1,12 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.node.container.FakeNetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
-import com.refinedmods.refinedstorage2.api.stack.filter.FilterMode;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
+import com.refinedmods.refinedstorage2.api.resource.Rs2Stack;
+import com.refinedmods.refinedstorage2.api.resource.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.resource.test.ItemStubs;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
@@ -31,8 +31,8 @@ import org.mockito.verification.VerificationMode;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.STORAGE_CHANNEL_TYPE_REGISTRY;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createWithInfiniteEnergyStorage;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.itemStorageChannelOf;
-import static com.refinedmods.refinedstorage2.api.stack.test.ItemStackAssertions.assertItemStack;
-import static com.refinedmods.refinedstorage2.api.stack.test.ItemStackAssertions.assertItemStackListContents;
+import static com.refinedmods.refinedstorage2.api.resource.test.ItemStackAssertions.assertItemStack;
+import static com.refinedmods.refinedstorage2.api.resource.test.ItemStackAssertions.assertItemStackListContents;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;

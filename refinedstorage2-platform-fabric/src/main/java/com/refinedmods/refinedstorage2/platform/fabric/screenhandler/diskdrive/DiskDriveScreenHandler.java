@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.diskdrive;
 
+import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
-import com.refinedmods.refinedstorage2.api.stack.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;

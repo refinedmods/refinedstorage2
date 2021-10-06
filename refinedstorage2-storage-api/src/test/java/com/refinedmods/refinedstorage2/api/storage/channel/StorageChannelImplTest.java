@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.api.storage.channel;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
-import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
-import com.refinedmods.refinedstorage2.api.stack.list.listenable.StackListListener;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
+import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage2.api.storage.composite.PrioritizedStorage;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
@@ -35,9 +35,9 @@ class StorageChannelImplTest {
     @BeforeEach
     void setUp() {
         channel = new StorageChannelImpl<>(
-                StackListImpl::new,
+                ResourceListImpl::new,
                 new StorageTracker<>(System::currentTimeMillis),
-                new CompositeStorage<>(Collections.emptyList(), new StackListImpl<>())
+                new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>())
         );
     }
 
@@ -47,10 +47,10 @@ class StorageChannelImplTest {
         // Arrange
         channel.addSource(new StorageDiskImpl<>(10));
 
-        StackListListener<String> listener = mock(StackListListener.class);
+        ResourceListListener<String> listener = mock(ResourceListListener.class);
         channel.addListener(listener);
 
-        ArgumentCaptor<StackListResult<String>> givenStack = ArgumentCaptor.forClass(StackListResult.class);
+        ArgumentCaptor<ResourceListOperationResult<String>> givenStack = ArgumentCaptor.forClass(ResourceListOperationResult.class);
 
         // Act
         channel.insert("A", 15, action);
@@ -75,10 +75,10 @@ class StorageChannelImplTest {
 
         channel.addSource(diskStorage);
 
-        StackListListener<String> listener = mock(StackListListener.class);
+        ResourceListListener<String> listener = mock(ResourceListListener.class);
         channel.addListener(listener);
 
-        ArgumentCaptor<StackListResult<String>> givenStack = ArgumentCaptor.forClass(StackListResult.class);
+        ArgumentCaptor<ResourceListOperationResult<String>> givenStack = ArgumentCaptor.forClass(ResourceListOperationResult.class);
 
         // Act
         channel.extract("A", 5, action);

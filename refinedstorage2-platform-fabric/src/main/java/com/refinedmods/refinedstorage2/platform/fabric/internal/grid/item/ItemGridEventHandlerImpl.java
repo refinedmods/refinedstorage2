@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 
@@ -49,7 +49,6 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         return remainder.map(Rs2PlatformApiFacade.INSTANCE::toItemStack).orElse(ItemStack.EMPTY);
     }
 
-    // TODO: Stop this going into the armor slots
     @Override
     public void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
         gridService.extract(itemResource, mode, (resource, amount, action) -> {

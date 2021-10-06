@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.api.storage.composite;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
@@ -32,7 +32,7 @@ class CompositeStorageTest {
         diskStorage3.insert("A", 3, Action.EXECUTE);
 
         // Act
-        CompositeStorage<String> channel = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), new StackListImpl<>());
+        CompositeStorage<String> channel = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), new ResourceListImpl<>());
 
         // Assert
         assertThat(channel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -45,7 +45,7 @@ class CompositeStorageTest {
     @Test
     void Test_inserting_without_any_sources_present() {
         // Arrange
-        CompositeStorage<String> storage = new CompositeStorage<>(Collections.emptyList(), new StackListImpl<>());
+        CompositeStorage<String> storage = new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>());
 
         // Act
         long remainder = storage.insert("A", 10, Action.EXECUTE);
@@ -60,7 +60,7 @@ class CompositeStorageTest {
         // Arrange
         StorageDisk<String> diskStorage = new StorageDiskImpl<>(20);
 
-        CompositeStorage<String> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), new StackListImpl<>());
+        CompositeStorage<String> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), new ResourceListImpl<>());
 
         // Act
         long remainder = storage.insert("A", 10, action);
@@ -89,7 +89,7 @@ class CompositeStorageTest {
         // Arrange
         StorageDisk<String> diskStorage = new StorageDiskImpl<>(20);
 
-        CompositeStorage<String> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), new StackListImpl<>());
+        CompositeStorage<String> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), new ResourceListImpl<>());
 
         // Act
         long remainder = storage.insert("A", 30, action);
@@ -122,7 +122,7 @@ class CompositeStorageTest {
         StorageDisk<String> diskStorage2 = new StorageDiskImpl<>(10);
         StorageDisk<String> diskStorage3 = new StorageDiskImpl<>(20);
 
-        CompositeStorage<String> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), new StackListImpl<>());
+        CompositeStorage<String> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), new ResourceListImpl<>());
 
         // Act
         long remainder = storage.insert("A", 17, action);
@@ -163,7 +163,7 @@ class CompositeStorageTest {
         StorageDisk<String> diskStorage2 = new StorageDiskImpl<>(10);
         StorageDisk<String> diskStorage3 = new StorageDiskImpl<>(20);
 
-        CompositeStorage<String> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), new StackListImpl<>());
+        CompositeStorage<String> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2, diskStorage3), new ResourceListImpl<>());
 
         // Act
         long remainder = storage.insert("A", 39, action);
@@ -199,7 +199,7 @@ class CompositeStorageTest {
     @Test
     void Test_extracting_without_any_sources_present() {
         // Arrange
-        CompositeStorage<String> storage = new CompositeStorage<>(Collections.emptyList(), new StackListImpl<>());
+        CompositeStorage<String> storage = new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>());
 
         // Act
         long extracted = storage.extract("A", 10, Action.EXECUTE);
@@ -214,7 +214,7 @@ class CompositeStorageTest {
         StorageDisk<String> diskStorage = new StorageDiskImpl<>(10);
         diskStorage.insert("A", 10, Action.EXECUTE);
 
-        CompositeStorage<String> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), new StackListImpl<>());
+        CompositeStorage<String> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), new ResourceListImpl<>());
 
         // Act
         long extracted = storage.extract("B", 10, Action.EXECUTE);
@@ -230,7 +230,7 @@ class CompositeStorageTest {
         StorageDisk<String> diskStorage = new StorageDiskImpl<>(10);
         diskStorage.insert("A", 10, Action.EXECUTE);
 
-        CompositeStorage<String> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), new StackListImpl<>());
+        CompositeStorage<String> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), new ResourceListImpl<>());
 
         // Act
         long extracted = storage.extract("A", 3, action);
@@ -266,7 +266,7 @@ class CompositeStorageTest {
         StorageDisk<String> diskStorage = new StorageDiskImpl<>(10);
         diskStorage.insert("A", 10, Action.EXECUTE);
 
-        CompositeStorage<String> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), new StackListImpl<>());
+        CompositeStorage<String> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), new ResourceListImpl<>());
 
         // Act
         long extracted = storage.extract("A", 10, action);
@@ -298,7 +298,7 @@ class CompositeStorageTest {
         StorageDisk<String> diskStorage = new StorageDiskImpl<>(10);
         diskStorage.insert("A", 4, Action.EXECUTE);
 
-        CompositeStorage<String> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), new StackListImpl<>());
+        CompositeStorage<String> storage = new CompositeStorage<>(Collections.singletonList(diskStorage), new ResourceListImpl<>());
 
         // Act
         long extracted = storage.extract("A", 7, action);
@@ -333,7 +333,7 @@ class CompositeStorageTest {
         StorageDisk<String> diskStorage2 = new StorageDiskImpl<>(5);
         diskStorage2.insert("A", 3, Action.EXECUTE);
 
-        CompositeStorage<String> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2), new StackListImpl<>());
+        CompositeStorage<String> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2), new ResourceListImpl<>());
 
         // Act
         long extracted = storage.extract("A", 12, action);
@@ -376,7 +376,7 @@ class CompositeStorageTest {
         StorageDisk<String> diskStorage2 = new StorageDiskImpl<>(5);
         diskStorage2.insert("A", 3, Action.EXECUTE);
 
-        CompositeStorage<String> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2), new StackListImpl<>());
+        CompositeStorage<String> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2), new ResourceListImpl<>());
 
         // Act
         long extracted = storage.extract("A", 13, action);
@@ -415,7 +415,7 @@ class CompositeStorageTest {
         StorageDisk<String> diskStorage2 = new StorageDiskImpl<>(5);
         diskStorage2.insert("A", 3, Action.EXECUTE);
 
-        CompositeStorage<String> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2), new StackListImpl<>());
+        CompositeStorage<String> storage = new CompositeStorage<>(Arrays.asList(diskStorage1, diskStorage2), new ResourceListImpl<>());
 
         // Act
         long extracted = storage.extract("A", 30, action);
@@ -451,7 +451,7 @@ class CompositeStorageTest {
         PrioritizedStorage<String> lowestPriority = new PrioritizedStorage<>(5, new StorageDiskImpl<>(10));
 
         // Act
-        CompositeStorage<String> channel = new CompositeStorage<>(Arrays.asList(lowestPriority, highestPriority), new StackListImpl<>());
+        CompositeStorage<String> channel = new CompositeStorage<>(Arrays.asList(lowestPriority, highestPriority), new ResourceListImpl<>());
 
         channel.insert("A", 11, Action.EXECUTE);
 
@@ -474,7 +474,7 @@ class CompositeStorageTest {
         lowestPriority.insert("A", 5, Action.EXECUTE);
 
         // Act
-        CompositeStorage<String> channel = new CompositeStorage<>(Arrays.asList(lowestPriority, highestPriority), new StackListImpl<>());
+        CompositeStorage<String> channel = new CompositeStorage<>(Arrays.asList(lowestPriority, highestPriority), new ResourceListImpl<>());
 
         channel.extract("A", 11, Action.EXECUTE);
 

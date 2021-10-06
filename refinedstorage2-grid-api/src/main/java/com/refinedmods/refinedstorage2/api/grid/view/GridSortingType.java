@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
-import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 
 import java.util.Comparator;
@@ -16,13 +15,13 @@ public enum GridSortingType {
         return Long.compare(lastModifiedA, lastModifiedB);
     });
 
-    private final Function<GridView<?>, Comparator<GridStack<?>>> comparator;
+    private final Function<GridView<?>, Comparator<GridResource<?>>> comparator;
 
-    GridSortingType(Function<GridView<?>, Comparator<GridStack<?>>> comparator) {
+    GridSortingType(Function<GridView<?>, Comparator<GridResource<?>>> comparator) {
         this.comparator = comparator;
     }
 
-    public Function<GridView<?>, Comparator<GridStack<?>>> getComparator() {
+    public Function<GridView<?>, Comparator<GridResource<?>>> getComparator() {
         return comparator;
     }
 

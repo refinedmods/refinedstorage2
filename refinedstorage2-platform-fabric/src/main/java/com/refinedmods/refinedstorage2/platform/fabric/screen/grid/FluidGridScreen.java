@@ -1,8 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.util.FabricQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.FluidGridScreenHandler;
@@ -22,6 +21,7 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
 public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHandler> {
@@ -30,7 +30,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHa
     }
 
     @Override
-    protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<FluidResource> stack) {
+    protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridResource<FluidResource> stack) {
         FluidVariant variant = stack.getResourceAmount().getResource().getFluidVariant();
         Sprite sprite = FluidVariantRendering.getSprite(variant);
         if (sprite != null) {
@@ -39,7 +39,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHa
     }
 
     @Override
-    protected String getAmount(GridStack<FluidResource> stack) {
+    protected String getAmount(GridResource<FluidResource> stack) {
         return FabricQuantityFormatter.formatDropletsAsBucket(stack.isZeroed() ? 0 : stack.getResourceAmount().getAmount());
     }
 
@@ -83,7 +83,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHa
     }
 
     @Override
-    protected List<Text> getTooltip(GridStack<FluidResource> stack) {
+    protected List<Text> getTooltip(GridResource<FluidResource> stack) {
         return FluidVariantRendering.getTooltip(
                 stack.getResourceAmount().getResource().getFluidVariant(),
                 client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.NORMAL
@@ -100,17 +100,17 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHa
     }
 
     @Override
-    protected void mouseClickedInGrid(int clickedButton, GridStack<FluidResource> stack) {
-        // no op
+    protected void mouseClickedInGrid(int clickedButton, GridResource<FluidResource> stack) {
+        // todo
     }
 
     @Override
-    protected void mouseScrolledInInventory(boolean up, Rs2ItemStack stack, int slotIndex) {
-        // no op
+    protected void mouseScrolledInInventory(boolean up, ItemStack stack, int slotIndex) {
+        // todo
     }
 
     @Override
-    protected void mouseScrolledInGrid(boolean up, GridStack<FluidResource> stack) {
-        // no op
+    protected void mouseScrolledInGrid(boolean up, GridResource<FluidResource> stack) {
+        // todo
     }
 }

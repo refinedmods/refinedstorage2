@@ -1,9 +1,8 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
-import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.stack.list.StackList;
-import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 
 import java.util.ArrayList;
@@ -23,21 +22,21 @@ import org.apache.logging.log4j.Logger;
 public class GridViewImpl<T> implements GridView<T> {
     private static final Logger LOGGER = LogManager.getLogger(GridViewImpl.class);
 
-    private final StackList<T> list;
-    private final Comparator<GridStack<?>> identitySort;
-    private final Function<ResourceAmount<T>, GridStack<T>> stackFactory;
+    private final ResourceList<T> list;
+    private final Comparator<GridResource<?>> identitySort;
+    private final Function<ResourceAmount<T>, GridResource<T>> gridResourceFactory;
     private final Map<T, StorageTracker.Entry> trackerEntries = new HashMap<>();
-    private final Map<T, GridStack<T>> stackIndex = new HashMap<>();
+    private final Map<T, GridResource<T>> resourceIndex = new HashMap<>();
 
-    private List<GridStack<T>> stacks = new ArrayList<>();
+    private List<GridResource<T>> resources = new ArrayList<>();
     private GridSortingType sortingType;
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
-    private Predicate<GridStack<T>> filter = stack -> true;
+    private Predicate<GridResource<T>> filter = resource -> true;
     private Runnable listener;
     private boolean preventSorting;
 
-    public GridViewImpl(Function<ResourceAmount<T>, GridStack<T>> stackFactory, StackList<T> list) {
-        this.stackFactory = stackFactory;
+    public GridViewImpl(Function<ResourceAmount<T>, GridResource<T>> gridResourceFactory, ResourceList<T> list) {
+        this.gridResourceFactory = gridResourceFactory;
         this.identitySort = GridSortingType.NAME.getComparator().apply(this);
         this.list = list;
     }
@@ -58,7 +57,7 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     @Override
-    public void setFilter(Predicate<GridStack<T>> filter) {
+    public void setFilter(Predicate<GridResource<T>> filter) {
         this.filter = filter;
     }
 
@@ -72,13 +71,13 @@ public class GridViewImpl<T> implements GridView<T> {
         this.preventSorting = preventSorting;
     }
 
-    private Comparator<GridStack<?>> getComparator() {
+    private Comparator<GridResource<?>> getComparator() {
         if (sortingType == null) {
             return sortingDirection == GridSortingDirection.ASCENDING ? identitySort : identitySort.reversed();
         }
 
         // An identity sort is necessary so the order of items is preserved in quantity sorting mode.
-        // If two grid stacks have the same quantity, their order would not be preserved.
+        // If two grid resources have the same quantity, their order would not be preserved.
         if (sortingDirection == GridSortingDirection.ASCENDING) {
             return sortingType.getComparator().apply(this).thenComparing(identitySort);
         }
@@ -103,35 +102,35 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     @Override
-    public Optional<StorageTracker.Entry> getTrackerEntry(Object template) {
-        return Optional.ofNullable(trackerEntries.get((T) template));
+    public Optional<StorageTracker.Entry> getTrackerEntry(Object resource) {
+        return Optional.ofNullable(trackerEntries.get((T) resource));
     }
 
     @Override
     public void sort() {
         LOGGER.info("Sorting grid view");
 
-        stackIndex.clear();
-        stacks = list
+        resourceIndex.clear();
+        resources = list
                 .getAll()
                 .stream()
-                .map(stackFactory)
+                .map(gridResourceFactory)
                 .sorted(getComparator())
                 .filter(filter)
                 .collect(Collectors.toList());
 
-        stacks.forEach(stack -> stackIndex.put(stack.getResourceAmount().getResource(), stack));
+        resources.forEach(resource -> resourceIndex.put(resource.getResourceAmount().getResource(), resource));
 
         notifyListener();
     }
 
     @Override
     public void onChange(T resource, long amount, StorageTracker.Entry trackerEntry) {
-        StackListResult<T> stack;
+        ResourceListOperationResult<T> operationResult;
         if (amount < 0) {
-            stack = list.remove(resource, Math.abs(amount)).orElseThrow(RuntimeException::new);
+            operationResult = list.remove(resource, Math.abs(amount)).orElseThrow(RuntimeException::new);
         } else {
-            stack = list.add(resource, amount);
+            operationResult = list.add(resource, amount);
         }
 
         if (trackerEntry == null) {
@@ -140,58 +139,58 @@ public class GridViewImpl<T> implements GridView<T> {
             trackerEntries.put(resource, trackerEntry);
         }
 
-        GridStack<T> gridStack = stackIndex.get(resource);
-        if (gridStack != null) {
-            if (gridStack.isZeroed()) {
-                handleChangeForZeroedStack(resource, stack, gridStack);
+        GridResource<T> gridResource = resourceIndex.get(resource);
+        if (gridResource != null) {
+            if (gridResource.isZeroed()) {
+                handleChangeForZeroedResource(resource, operationResult, gridResource);
             } else {
-                handleChangeForExistingStack(resource, stack, gridStack);
+                handleChangeForExistingResource(resource, operationResult, gridResource);
             }
         } else {
-            handleChangeForNewStack(resource, stack);
+            handleChangeForNewResource(resource, operationResult);
         }
     }
 
-    private void handleChangeForNewStack(T resource, StackListResult<T> stack) {
-        GridStack<T> gridStack = stackFactory.apply(stack.resourceAmount());
-        if (filter.test(gridStack)) {
-            stackIndex.put(resource, gridStack);
-            addIntoView(gridStack);
+    private void handleChangeForNewResource(T resource, ResourceListOperationResult<T> operationResult) {
+        GridResource<T> gridResource = gridResourceFactory.apply(operationResult.resourceAmount());
+        if (filter.test(gridResource)) {
+            resourceIndex.put(resource, gridResource);
+            addIntoView(gridResource);
             notifyListener();
         }
     }
 
-    private void handleChangeForExistingStack(T resource, StackListResult<T> stack, GridStack<T> gridStack) {
+    private void handleChangeForExistingResource(T resource, ResourceListOperationResult<T> operationResult, GridResource<T> gridResource) {
         if (!preventSorting) {
-            if (!filter.test(gridStack) || !stack.available()) {
-                stacks.remove(gridStack);
-                stackIndex.remove(resource);
+            if (!filter.test(gridResource) || !operationResult.available()) {
+                resources.remove(gridResource);
+                resourceIndex.remove(resource);
                 notifyListener();
-            } else if (stack.available()) {
-                stacks.remove(gridStack);
-                addIntoView(gridStack);
+            } else if (operationResult.available()) {
+                resources.remove(gridResource);
+                addIntoView(gridResource);
                 notifyListener();
             }
-        } else if (!stack.available()) {
-            gridStack.setZeroed(true);
+        } else if (!operationResult.available()) {
+            gridResource.setZeroed(true);
         }
     }
 
-    private void handleChangeForZeroedStack(T resource, StackListResult<T> stack, GridStack<T> oldGridStack) {
-        GridStack<T> newStack = stackFactory.apply(stack.resourceAmount());
+    private void handleChangeForZeroedResource(T resource, ResourceListOperationResult<T> operationResult, GridResource<T> oldGridResource) {
+        GridResource<T> newResource = gridResourceFactory.apply(operationResult.resourceAmount());
 
-        stackIndex.put(resource, newStack);
+        resourceIndex.put(resource, newResource);
 
-        int index = stacks.indexOf(oldGridStack);
-        stacks.set(index, newStack);
+        int index = resources.indexOf(oldGridResource);
+        resources.set(index, newResource);
     }
 
-    private void addIntoView(GridStack<T> stack) {
-        int pos = Collections.binarySearch(stacks, stack, getComparator());
+    private void addIntoView(GridResource<T> resource) {
+        int pos = Collections.binarySearch(resources, resource, getComparator());
         if (pos < 0) {
             pos = -pos - 1;
         }
-        stacks.add(pos, stack);
+        resources.add(pos, resource);
     }
 
     private void notifyListener() {
@@ -201,7 +200,7 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     @Override
-    public List<GridStack<T>> getStacks() {
-        return stacks;
+    public List<GridResource<T>> getAll() {
+        return resources;
     }
 }

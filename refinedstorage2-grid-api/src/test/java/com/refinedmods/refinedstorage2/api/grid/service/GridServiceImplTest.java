@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.api.grid.service;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
@@ -31,9 +31,9 @@ class GridServiceImplTest {
     @BeforeEach
     void setUp() {
         storageChannel = new StorageChannelImpl<>(
-                StackListImpl::new,
+                ResourceListImpl::new,
                 new StorageTracker<>(() -> 0L),
-                new CompositeStorage<>(Collections.emptyList(), new StackListImpl<>())
+                new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>())
         );
         sut = new GridServiceImpl<>(storageChannel, () -> "Test source", r -> MAX_COUNT);
     }

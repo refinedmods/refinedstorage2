@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block.entity;
 
-import com.refinedmods.refinedstorage2.api.stack.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 
 public class FilterModeSettings {
     private static final int BLOCK = 0;

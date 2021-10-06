@@ -8,8 +8,8 @@ import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerTyp
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageDiskProviderManager;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
+import com.refinedmods.refinedstorage2.api.resource.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.resource.test.ItemStubs;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;

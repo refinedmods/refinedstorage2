@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.api.grid.search;
 
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
-import com.refinedmods.refinedstorage2.api.grid.view.FakeGridStack;
+import com.refinedmods.refinedstorage2.api.grid.view.FakeGridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
-import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
@@ -20,7 +20,7 @@ class GridSearchBoxModeImplTest {
     @Test
     void Test_changing_text() {
         // Arrange
-        GridView<String> view = new GridViewImpl<>(FakeGridStack::new, new StackListImpl<>());
+        GridView<String> view = new GridViewImpl<>(FakeGridResource::new, new ResourceListImpl<>());
 
         view.onChange("A", 64, null);
         view.onChange("B", 64, null);
@@ -29,8 +29,8 @@ class GridSearchBoxModeImplTest {
         boolean success = searchBoxMode.onTextChanged(view, "A");
 
         // Assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("A", 64)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("A", 64)
         );
         assertThat(success).isTrue();
     }
@@ -38,7 +38,7 @@ class GridSearchBoxModeImplTest {
     @Test
     void Test_changing_text_for_invalid_query() {
         // Arrange
-        GridView<String> view = new GridViewImpl<>(FakeGridStack::new, new StackListImpl<>());
+        GridView<String> view = new GridViewImpl<>(FakeGridResource::new, new ResourceListImpl<>());
 
         view.onChange("A", 64, null);
         view.onChange("B", 64, null);
@@ -47,7 +47,7 @@ class GridSearchBoxModeImplTest {
         boolean success = searchBoxMode.onTextChanged(view, "|");
 
         // Assert
-        assertThat(view.getStacks()).isEmpty();
+        assertThat(view.getAll()).isEmpty();
         assertThat(success).isFalse();
     }
 }

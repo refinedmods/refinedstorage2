@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk;
 
-import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelImpl;
@@ -18,20 +18,20 @@ public final class StorageChannelTypes {
         @Override
         public StorageChannel<ItemResource> create() {
             return new StorageChannelImpl<>(
-                    StackListImpl::new,
+                    ResourceListImpl::new,
                     new StorageTracker<>(System::currentTimeMillis),
-                    new CompositeStorage<>(Collections.emptyList(), new StackListImpl<>())
+                    new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>())
             );
         }
 
         @Override
         public CompositeStorage<ItemResource> createEmptyCompositeStorage() {
-            return new CompositeStorage<>(Collections.emptyList(), new StackListImpl<>());
+            return new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>());
         }
 
         @Override
         public CompositeStorage<ItemResource> createCompositeStorage(List<Storage<ItemResource>> sources) {
-            return new CompositeStorage<>(sources, new StackListImpl<>());
+            return new CompositeStorage<>(sources, new ResourceListImpl<>());
         }
     };
 
@@ -39,20 +39,20 @@ public final class StorageChannelTypes {
         @Override
         public StorageChannel<FluidResource> create() {
             return new StorageChannelImpl<>(
-                    StackListImpl::new,
+                    ResourceListImpl::new,
                     new StorageTracker<>(System::currentTimeMillis),
-                    new CompositeStorage<>(Collections.emptyList(), new StackListImpl<>())
+                    new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>())
             );
         }
 
         @Override
         public CompositeStorage<FluidResource> createEmptyCompositeStorage() {
-            return new CompositeStorage<>(Collections.emptyList(), new StackListImpl<>());
+            return new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>());
         }
 
         @Override
         public CompositeStorage<FluidResource> createCompositeStorage(List<Storage<FluidResource>> sources) {
-            return new CompositeStorage<>(sources, new StackListImpl<>());
+            return new CompositeStorage<>(sources, new ResourceListImpl<>());
         }
     };
 

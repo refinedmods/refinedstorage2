@@ -5,9 +5,9 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.service.GridServiceImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
-import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
@@ -15,7 +15,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlo
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ClientItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ItemGridEventHandlerImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.ItemGridStackFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.ItemGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
@@ -52,7 +52,7 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
     }
 
     private static GridViewImpl<ItemResource> createView() {
-        return new GridViewImpl<>(new ItemGridStackFactory(), new StackListImpl<>());
+        return new GridViewImpl<>(new ItemGridResourceFactory(), new ResourceListImpl<>());
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
     }
 
     @Override
-    public void onChanged(StackListResult<ItemResource> change) {
+    public void onChanged(ResourceListOperationResult<ItemResource> change) {
         LOGGER.info("Received a change of {} for {}", change.change(), change.resourceAmount().getResource());
 
         ServerPacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, PacketIds.GRID_ITEM_UPDATE, buf -> {
