@@ -10,14 +10,22 @@ public class FakeGridStack extends GridStack<String> {
         this(new ResourceAmount<>(name, amount));
     }
 
-    public FakeGridStack(ResourceAmount<String> resource) {
+    public FakeGridStack(String name) {
+        this(new ResourceAmount<>(name, 1));
+    }
+
+    public FakeGridStack(ResourceAmount<String> resourceAmount) {
         super(
-                resource,
-                resource.getResource(),
-                resource.getResource(),
-                resource.getResource(),
+                resourceAmount,
+                resourceAmount.getResource(),
+                resourceAmount.getResource(),
+                resourceAmount.getResource(),
                 Set.of()
         );
+    }
+
+    public FakeGridStack(String name, long amount, String modId, String modName, Set<String> tags) {
+        super(new ResourceAmount<>(name, amount), name, modId, modName, tags);
     }
 
     public FakeGridStack zeroed() {

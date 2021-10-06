@@ -30,16 +30,29 @@ public class GridServiceImpl<T> implements GridService<T> {
 
     @Override
     public void extract(T resource, GridExtractMode extractMode, InsertableStorage<T> destination) {
-        switch (extractMode) {
-            case ENTIRE_RESOURCE -> extractEntireResource(resource, destination);
-            case HALF_RESOURCE -> {
-                throw new UnsupportedOperationException();
-            }
+        long amount = getAmount(resource, extractMode);
+        if (amount == 0) {
+            return;
         }
+        extract(resource, amount, destination);
     }
 
-    private void extractEntireResource(T resource, InsertableStorage<T> destination) {
-        long extractedFromSource = storageChannel.extract(resource, maxCountProvider.apply(resource), Action.SIMULATE);
+    private long getAmount(T resource, GridExtractMode extractMode) {
+        long extractableAmount = getExtractableAmount(resource);
+        return switch (extractMode) {
+            case ENTIRE_RESOURCE -> extractableAmount;
+            case HALF_RESOURCE -> extractableAmount == 1 ? 1 : extractableAmount / 2;
+        };
+    }
+
+    private long getExtractableAmount(T resource) {
+        long maxCount = maxCountProvider.apply(resource);
+        long totalSize = storageChannel.get(resource).map(ResourceAmount::getAmount).orElse(0L);
+        return Math.min(maxCount, totalSize);
+    }
+
+    private void extract(T resource, long amount, InsertableStorage<T> destination) {
+        long extractedFromSource = storageChannel.extract(resource, amount, Action.SIMULATE);
         if (extractedFromSource > 0) {
             long remainderFromDestination = destination.insert(resource, extractedFromSource, Action.SIMULATE);
             boolean insertedSomething = remainderFromDestination != extractedFromSource;
