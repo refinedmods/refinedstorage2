@@ -3,17 +3,13 @@ package com.refinedmods.refinedstorage2.api.grid.query;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserException;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
+import com.refinedmods.refinedstorage2.api.grid.view.FakeGridStack;
 import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
-import com.refinedmods.refinedstorage2.api.grid.view.stack.ItemGridStack;
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.stack.test.ItemStubs;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
@@ -35,8 +31,8 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse(query);
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.DIRT)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS)))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Dirt"))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass"))).isTrue();
     }
 
     @ParameterizedTest
@@ -46,8 +42,8 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse(query);
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.DIRT)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS)))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Dirt"))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass"))).isFalse();
     }
 
     @ParameterizedTest
@@ -57,8 +53,8 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse(query);
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.SPONGE), "rs", "Refined Storage"))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS)))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Sponge", 1, "rs", "Refined Storage", Set.of()))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass"))).isFalse();
     }
 
     @ParameterizedTest
@@ -68,8 +64,8 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse(query);
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.SPONGE), "mc", "Minecraft", "underwater", "unrelated"))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS), "mc", "Minecraft", "transparent"))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Sponge", 1, "mc", "Minecraft", Set.of("unrelated")))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Dirt", 1, "mc", "Minecraft", Set.of("transparent")))).isFalse();
     }
 
     @Test
@@ -88,8 +84,8 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse("DirT di RT");
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.DIRT)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS)))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Dirt"))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass"))).isFalse();
     }
 
     @Test
@@ -98,9 +94,9 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse("(DirT di RT) || (sto stone)");
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.DIRT)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS)))).isFalse();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.STONE)))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Dirt"))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass"))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Stone"))).isTrue();
     }
 
     @Test
@@ -109,10 +105,10 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse("@minecraft >5");
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.DIRT, 6)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 5)))).isFalse();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.SPONGE, 5), "rs", "Refined Storage"))).isFalse();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.COBBLESTONE, 6), "rs", "Refined Storage"))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Dirt", 6, "minecraft", "Minecraft", Set.of()))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass", 5, "minecraft", "Minecraft", Set.of()))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Sponge", 5, "rs", "Refined Storage", Set.of()))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Cobblestone", 6, "rs", "Refined Storage", Set.of()))).isFalse();
     }
 
     @Test
@@ -121,8 +117,8 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse("DirT && di && RT");
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.DIRT)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS)))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Dirt"))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass"))).isFalse();
     }
 
     @Test
@@ -131,13 +127,13 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse("dir || glass || StoNe");
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.DIRT)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.STONE)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.COBBLESTONE)))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Dirt"))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass"))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Stone"))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Cobblestone"))).isTrue();
 
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.SPONGE)))).isFalse();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.FURNACE)))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Sponge"))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Furnace"))).isFalse();
     }
 
     @Test
@@ -146,11 +142,11 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse("!stone");
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.DIRT)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS)))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Dirt"))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass"))).isTrue();
 
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.STONE)))).isFalse();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.COBBLESTONE)))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Stone"))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Cobblestone"))).isFalse();
     }
 
     @Test
@@ -159,11 +155,11 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse("!(stone || dirt)");
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.SPONGE)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS)))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Sponge"))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass"))).isTrue();
 
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.STONE)))).isFalse();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.DIRT)))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Stone"))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Dirt"))).isFalse();
     }
 
     @Test
@@ -172,12 +168,12 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse("((spo || buck) && @refined) || (glass && @mine)");
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.SPONGE), "rs", "Refined Storage"))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.BUCKET), "rs", "Refined Storage"))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.SADDLE), "rs", "Refined Storage"))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Sponge", 1, "rs", "Refined Storage", Set.of()))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Bucket", 1, "rs", "Refined Storage", Set.of()))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Saddle", 1, "rs", "Refined Storage", Set.of()))).isFalse();
 
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS), "mc", "Minecraft"))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.FURNACE), "mc", "Minecraft"))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Glass", 1, "mc", "Minecraft", Set.of()))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Furnace", 1, "mc", "Minecraft", Set.of()))).isFalse();
     }
 
     @Test
@@ -186,8 +182,8 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse("<5");
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 5)))).isFalse();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 4)))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass", 5))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Glass", 4))).isTrue();
     }
 
     @Test
@@ -196,9 +192,9 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse("<=5");
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 6)))).isFalse();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 5)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 4)))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass", 6))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Glass", 5))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass", 4))).isTrue();
     }
 
     @Test
@@ -207,8 +203,8 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse(">5");
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 5)))).isFalse();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 6)))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass", 5))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Glass", 6))).isTrue();
     }
 
     @Test
@@ -217,9 +213,9 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse(">=5");
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 4)))).isFalse();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 5)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 6)))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass", 4))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Glass", 5))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass", 6))).isTrue();
     }
 
     @Test
@@ -228,9 +224,9 @@ class GridQueryParserImplTest {
         Predicate<GridStack<?>> predicate = queryParser.parse("=5");
 
         // Assert
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 4)))).isFalse();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 5)))).isTrue();
-        assertThat(predicate.test(stack(new Rs2ItemStack(ItemStubs.GLASS, 6)))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Glass", 4))).isFalse();
+        assertThat(predicate.test(new FakeGridStack("Glass", 5))).isTrue();
+        assertThat(predicate.test(new FakeGridStack("Glass", 6))).isFalse();
     }
 
     @ParameterizedTest
@@ -251,19 +247,5 @@ class GridQueryParserImplTest {
 
         // Assert
         assertThat(e.getMessage()).isEqualTo("Count filtering expects an integer number");
-    }
-
-    private GridStack<Rs2ItemStack> stack(Rs2ItemStack stack) {
-        return stack(stack, "mc", "Minecraft");
-    }
-
-    private GridStack<Rs2ItemStack> stack(Rs2ItemStack stack, String modId, String modName, String... tags) {
-        return new ItemGridStack(
-                new ResourceAmount<>(stack, stack.getAmount()),
-                stack.getItem().getIdentifier(),
-                modId,
-                modName,
-                new HashSet<>(Arrays.asList(tags))
-        );
     }
 }
