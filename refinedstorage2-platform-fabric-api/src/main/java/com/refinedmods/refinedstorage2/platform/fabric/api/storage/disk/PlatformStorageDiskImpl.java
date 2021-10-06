@@ -1,36 +1,32 @@
 package com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
-import com.refinedmods.refinedstorage2.api.stack.list.StackList;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
 
-import java.util.Optional;
-
 // TODO: Add test
-public class PlatformStorageDiskImpl<T extends Rs2Stack> extends StorageDiskImpl<T> implements PlatformStorageDisk<T> {
+public class PlatformStorageDiskImpl<T> extends StorageDiskImpl<T> implements PlatformStorageDisk<T> {
     private final Runnable listener;
     private final StorageDiskType<T> type;
 
-    public PlatformStorageDiskImpl(long capacity, StackList<T> list, StorageDiskType<T> type, Runnable listener) {
-        super(capacity, list);
+    public PlatformStorageDiskImpl(long capacity, StorageDiskType<T> type, Runnable listener) {
+        super(capacity);
         this.listener = listener;
         this.type = type;
     }
 
     @Override
-    public Optional<T> extract(T resource, long amount, Action action) {
-        Optional<T> extracted = super.extract(resource, amount, action);
-        if (extracted.isPresent() && action == Action.EXECUTE) {
+    public long extract(T resource, long amount, Action action) {
+        long extracted = super.extract(resource, amount, action);
+        if (extracted > 0 && action == Action.EXECUTE) {
             listener.run();
         }
         return extracted;
     }
 
     @Override
-    public Optional<T> insert(T resource, long amount, Action action) {
-        Optional<T> remainder = super.insert(resource, amount, action);
-        boolean insertedSomething = !remainder.isPresent() || remainder.get().getAmount() != amount;
+    public long insert(T resource, long amount, Action action) {
+        long remainder = super.insert(resource, amount, action);
+        boolean insertedSomething = remainder != amount;
         if (insertedSomething && action == Action.EXECUTE) {
             listener.run();
         }

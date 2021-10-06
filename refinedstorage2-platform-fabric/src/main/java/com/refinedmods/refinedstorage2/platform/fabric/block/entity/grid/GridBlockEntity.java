@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridSize;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
-import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
+import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
@@ -23,7 +23,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
-public abstract class GridBlockEntity<T extends Rs2Stack> extends FabricNetworkNodeContainerBlockEntity<GridNetworkNode<T>> implements ExtendedScreenHandlerFactory {
+public abstract class GridBlockEntity<T> extends FabricNetworkNodeContainerBlockEntity<GridNetworkNode<T>> implements ExtendedScreenHandlerFactory {
     private static final String TAG_SORTING_DIRECTION = "sd";
     private static final String TAG_SORTING_TYPE = "st";
     private static final String TAG_SIZE = "s";
@@ -94,7 +94,7 @@ public abstract class GridBlockEntity<T extends Rs2Stack> extends FabricNetworkN
         });
     }
 
-    protected abstract void writeStack(PacketByteBuf buf, T stack);
+    protected abstract void writeStack(PacketByteBuf buf, ResourceAmount<T> stack);
 
     public GridSortingType getSortingType() {
         return getContainer().getNode().getSortingType();

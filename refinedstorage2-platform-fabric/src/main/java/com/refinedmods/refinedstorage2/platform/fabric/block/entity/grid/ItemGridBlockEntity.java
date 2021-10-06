@@ -1,8 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid;
 
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.ItemGridScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
@@ -14,14 +15,14 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-public class ItemGridBlockEntity extends GridBlockEntity<Rs2ItemStack> {
+public class ItemGridBlockEntity extends GridBlockEntity<ItemResource> {
     public ItemGridBlockEntity(BlockPos pos, BlockState state) {
         super(Rs2Mod.BLOCK_ENTITIES.getGrid(), pos, state, StorageChannelTypes.ITEM);
     }
 
     @Override
-    protected void writeStack(PacketByteBuf buf, Rs2ItemStack stack) {
-        PacketUtil.writeItemStack(buf, stack, true);
+    protected void writeStack(PacketByteBuf buf, ResourceAmount<ItemResource> stack) {
+        PacketUtil.writeItemResourceAmount(buf, stack);
     }
 
     @Nullable

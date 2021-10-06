@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
 import java.util.Optional;
 import java.util.Set;
 
+// TODO: Move to internal storage-api.
 public class ListenableStackList<T> extends ProxyStackList<T> {
     private final Set<StackListListener<T>> listeners;
 

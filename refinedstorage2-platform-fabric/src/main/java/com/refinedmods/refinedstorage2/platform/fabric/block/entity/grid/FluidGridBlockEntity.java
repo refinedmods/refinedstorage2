@@ -1,8 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid;
 
-import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.FluidGridScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
@@ -15,7 +16,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-public class FluidGridBlockEntity extends GridBlockEntity<Rs2FluidStack> {
+public class FluidGridBlockEntity extends GridBlockEntity<FluidResource> {
     public FluidGridBlockEntity(BlockPos pos, BlockState state) {
         super(Rs2Mod.BLOCK_ENTITIES.getFluidGrid(), pos, state, StorageChannelTypes.FLUID);
     }
@@ -26,8 +27,8 @@ public class FluidGridBlockEntity extends GridBlockEntity<Rs2FluidStack> {
     }
 
     @Override
-    protected void writeStack(PacketByteBuf buf, Rs2FluidStack stack) {
-        PacketUtil.writeFluidStack(buf, stack, true);
+    protected void writeStack(PacketByteBuf buf, ResourceAmount<FluidResource> resourceAmount) {
+        PacketUtil.writeFluidResourceAmount(buf, resourceAmount);
     }
 
     @Nullable

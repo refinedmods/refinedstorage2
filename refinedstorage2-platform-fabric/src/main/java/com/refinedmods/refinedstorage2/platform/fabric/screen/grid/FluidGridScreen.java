@@ -1,12 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.FluidGridEventHandler;
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
-import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.util.FabricQuantityFormatter;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.stack.FabricFluidGridStack;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.FluidGridScreenHandler;
 
 import java.util.List;
@@ -26,17 +24,14 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 
-public class FluidGridScreen extends GridScreen<Rs2FluidStack, FluidGridScreenHandler> {
-    private final FluidGridEventHandler eventHandler;
-
+public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHandler> {
     public FluidGridScreen(FluidGridScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
-        this.eventHandler = handler;
     }
 
     @Override
-    protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<Rs2FluidStack> stack) {
-        FluidVariant variant = ((FabricFluidGridStack) stack).getPlatformStack();
+    protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<FluidResource> stack) {
+        FluidVariant variant = stack.getResourceAmount().getResource().getFluidVariant();
         Sprite sprite = FluidVariantRendering.getSprite(variant);
         if (sprite != null) {
             renderFluidSprite(matrices, slotX, slotY, variant, sprite);
@@ -44,8 +39,8 @@ public class FluidGridScreen extends GridScreen<Rs2FluidStack, FluidGridScreenHa
     }
 
     @Override
-    protected String getAmount(GridStack<Rs2FluidStack> stack) {
-        return FabricQuantityFormatter.formatDropletsAsBucket(stack.isZeroed() ? 0 : stack.getAmount());
+    protected String getAmount(GridStack<FluidResource> stack) {
+        return FabricQuantityFormatter.formatDropletsAsBucket(stack.isZeroed() ? 0 : stack.getResourceAmount().getAmount());
     }
 
     private void renderFluidSprite(MatrixStack matrices, int slotX, int slotY, FluidVariant variant, Sprite sprite) {
@@ -88,22 +83,24 @@ public class FluidGridScreen extends GridScreen<Rs2FluidStack, FluidGridScreenHa
     }
 
     @Override
-    protected List<Text> getTooltip(GridStack<Rs2FluidStack> stack) {
-        FluidVariant variant = ((FabricFluidGridStack) stack).getPlatformStack();
-        return FluidVariantRendering.getTooltip(variant, client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.NORMAL);
+    protected List<Text> getTooltip(GridStack<FluidResource> stack) {
+        return FluidVariantRendering.getTooltip(
+                stack.getResourceAmount().getResource().getFluidVariant(),
+                client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.NORMAL
+        );
     }
 
     @Override
     protected void mouseClickedInGrid(int clickedButton) {
-        eventHandler.onInsertFromCursor(getInsertMode(clickedButton));
+
     }
 
     private static GridInsertMode getInsertMode(int clickedButton) {
-        return clickedButton == 1 ? GridInsertMode.SINGLE : GridInsertMode.ENTIRE_STACK;
+        return clickedButton == 1 ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
     }
 
     @Override
-    protected void mouseClickedInGrid(int clickedButton, GridStack<Rs2FluidStack> stack) {
+    protected void mouseClickedInGrid(int clickedButton, GridStack<FluidResource> stack) {
         // no op
     }
 
@@ -113,7 +110,7 @@ public class FluidGridScreen extends GridScreen<Rs2FluidStack, FluidGridScreenHa
     }
 
     @Override
-    protected void mouseScrolledInGrid(boolean up, GridStack<Rs2FluidStack> stack) {
+    protected void mouseScrolledInGrid(boolean up, GridStack<FluidResource> stack) {
         // no op
     }
 }

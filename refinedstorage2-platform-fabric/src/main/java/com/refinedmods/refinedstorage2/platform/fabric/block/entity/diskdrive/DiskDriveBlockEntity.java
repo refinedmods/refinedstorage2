@@ -13,12 +13,10 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricNetworkNodeContainerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 import alexiil.mc.lib.attributes.item.FixedItemInv;
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
@@ -111,24 +109,10 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
                 diskDrive.setPriority(tag.getInt(TAG_PRIORITY));
             }
 
-            if (tag.contains(TAG_FILTER_MODE)) {
-                diskDrive.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
-            }
-
-            if (tag.contains(TAG_EXACT_MODE)) {
-                diskDrive.setExactMode(tag.getBoolean(TAG_EXACT_MODE));
-            }
-
             if (tag.contains(TAG_ACCESS_MODE)) {
                 diskDrive.setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
             }
         }
-
-        diskDrive.setFilterTemplates(StreamSupport
-                .stream(filterInventory.getFixedView().stackIterable().spliterator(), false)
-                .filter(s -> !s.isEmpty())
-                .map(Rs2PlatformApiFacade.INSTANCE.itemStackConversion()::toDomain)
-                .toList());
 
         return diskDrive;
     }
@@ -151,9 +135,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
         tag = super.writeNbt(tag);
         tag.put(TAG_DISK_INVENTORY, diskInventory.toTag());
         tag.put(TAG_FILTER_INVENTORY, filterInventory.toTag());
-        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getContainer().getNode().getFilterMode()));
         tag.putInt(TAG_PRIORITY, getContainer().getNode().getPriority());
-        tag.putBoolean(TAG_EXACT_MODE, getContainer().getNode().isExactMode());
         tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getContainer().getNode().getAccessMode()));
         return tag;
     }
@@ -163,20 +145,18 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     public FilterMode getFilterMode() {
-        return getContainer().getNode().getFilterMode();
+        return FilterMode.BLOCK;
     }
 
     public void setFilterMode(FilterMode mode) {
-        getContainer().getNode().setFilterMode(mode);
         markDirty();
     }
 
     public boolean isExactMode() {
-        return getContainer().getNode().isExactMode();
+        return false;
     }
 
     public void setExactMode(boolean exactMode) {
-        getContainer().getNode().setExactMode(exactMode);
         markDirty();
     }
 
@@ -190,7 +170,6 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     public void setFilterTemplates(List<ItemStack> templates) {
-        getContainer().getNode().setFilterTemplates(templates.stream().map(Rs2PlatformApiFacade.INSTANCE.itemStackConversion()::toDomain).toList());
         markDirty();
     }
 

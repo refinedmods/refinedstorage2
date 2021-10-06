@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface GridService<T> {
     Optional<ResourceAmount<T>> insert(ResourceAmount<T> resourceAmount, GridInsertMode insertMode);
 
-    void extract(T resourceAmount, GridExtractMode extractMode, InsertableStorage<T> destination);
+    void extract(T resource, GridExtractMode extractMode, InsertableStorage<T> destination);
 }

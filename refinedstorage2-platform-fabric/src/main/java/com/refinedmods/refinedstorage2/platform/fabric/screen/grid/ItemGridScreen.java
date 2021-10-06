@@ -1,13 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridExtractMode;
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.GridScrollMode;
-import com.refinedmods.refinedstorage2.api.grid.eventhandler.ItemGridEventHandler;
+import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.stack.FabricItemGridStack;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.ItemGridScreenHandler;
 
 import java.util.List;
@@ -16,58 +12,47 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 
-public class ItemGridScreen extends GridScreen<Rs2ItemStack, ItemGridScreenHandler> {
-    private final ItemGridEventHandler eventHandler;
-
+public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandler> {
     public ItemGridScreen(ItemGridScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
-        this.eventHandler = handler;
     }
 
     @Override
-    protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<Rs2ItemStack> stack) {
-        itemRenderer.renderInGuiWithOverrides(((FabricItemGridStack) stack).getPlatformStack(), slotX, slotY);
+    protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<ItemResource> stack) {
+        itemRenderer.renderInGuiWithOverrides(stack.getResourceAmount().getResource().getItemStack(), slotX, slotY);
     }
 
     @Override
-    protected String getAmount(GridStack<Rs2ItemStack> stack) {
-        return stack.isZeroed() ? "0" : String.valueOf(stack.getAmount());
+    protected String getAmount(GridStack<ItemResource> stack) {
+        return stack.isZeroed() ? "0" : String.valueOf(stack.getResourceAmount().getAmount());
     }
 
     @Override
-    protected List<Text> getTooltip(GridStack<Rs2ItemStack> stack) {
-        return getTooltipFromItem(((FabricItemGridStack) stack).getPlatformStack());
+    protected List<Text> getTooltip(GridStack<ItemResource> stack) {
+        return getTooltipFromItem(stack.getResourceAmount().getResource().getItemStack());
     }
 
     @Override
     protected void mouseClickedInGrid(int clickedButton) {
-        eventHandler.onInsertFromCursor(getInsertMode(clickedButton));
+        getScreenHandler().insert(getInsertMode(clickedButton));
     }
 
     @Override
-    protected void mouseClickedInGrid(int clickedButton, GridStack<Rs2ItemStack> stack) {
-        eventHandler.onExtract(stack.getResourceAmount(), getExtractMode(clickedButton));
+    protected void mouseClickedInGrid(int clickedButton, GridStack<ItemResource> stack) {
+
     }
 
     @Override
     protected void mouseScrolledInInventory(boolean up, Rs2ItemStack stack, int slotIndex) {
-        GridScrollMode mode = getScrollModeWhenScrollingOnInventoryArea(up);
-        if (mode == null) {
-            return;
-        }
-        eventHandler.onScroll(stack, slotIndex, mode);
+
     }
 
     @Override
-    protected void mouseScrolledInGrid(boolean up, GridStack<Rs2ItemStack> stack) {
-        int slotIndex = getScreenHandler().getPlayerInventorySlotThatHasStack(Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toPlatform(stack.getResourceAmount()));
-        GridScrollMode mode = getScrollModeWhenScrollingOnGridArea(up);
-        if (mode == null) {
-            return;
-        }
-        eventHandler.onScroll(stack.getResourceAmount(), slotIndex, mode);
+    protected void mouseScrolledInGrid(boolean up, GridStack<ItemResource> stack) {
+
     }
 
+    /*
     private static GridExtractMode getExtractMode(int clickedButton) {
         if (clickedButton == 1) {
             return GridExtractMode.CURSOR_HALF;
@@ -76,12 +61,13 @@ public class ItemGridScreen extends GridScreen<Rs2ItemStack, ItemGridScreenHandl
             return GridExtractMode.PLAYER_INVENTORY_STACK;
         }
         return GridExtractMode.CURSOR_STACK;
-    }
+    }*/
 
     private static GridInsertMode getInsertMode(int clickedButton) {
-        return clickedButton == 1 ? GridInsertMode.SINGLE : GridInsertMode.ENTIRE_STACK;
+        return clickedButton == 1 ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
     }
 
+    /*
     private static GridScrollMode getScrollModeWhenScrollingOnInventoryArea(boolean up) {
         if (hasShiftDown()) {
             return up ? GridScrollMode.INVENTORY_TO_GRID : GridScrollMode.GRID_TO_INVENTORY;
@@ -109,5 +95,5 @@ public class ItemGridScreen extends GridScreen<Rs2ItemStack, ItemGridScreenHandl
         }
 
         return null;
-    }
+    }*/
 }

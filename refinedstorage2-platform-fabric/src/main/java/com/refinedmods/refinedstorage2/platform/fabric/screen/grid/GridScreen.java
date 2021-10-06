@@ -3,13 +3,10 @@ package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 import com.refinedmods.refinedstorage2.api.core.LastModified;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
-import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
 import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
-import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
-import com.refinedmods.refinedstorage2.platform.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.BaseScreen;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.ScrollbarWidget;
@@ -42,7 +39,7 @@ import net.minecraft.util.math.Matrix4f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler<S>> extends BaseScreen<T> {
+public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends BaseScreen<T> {
     private static final Logger LOGGER = LogManager.getLogger(GridScreen.class);
 
     private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/grid.png");
@@ -217,12 +214,12 @@ public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler
     }
 
     private void renderColumnInRow(MatrixStack matrices, int mouseX, int mouseY, int rowX, int rowY, int idx, int column) {
-        GridView<S> view = getScreenHandler().getView();
+        GridView<R> view = getScreenHandler().getView();
 
         int slotX = rowX + 1 + (column * 18);
         int slotY = rowY + 1;
 
-        GridStack<S> stack = null;
+        GridStack<R> stack = null;
         if (idx < view.getStacks().size()) {
             stack = view.getStacks().get(idx);
             renderStackWithAmount(matrices, slotX, slotY, stack);
@@ -238,7 +235,7 @@ public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler
         }
     }
 
-    private void renderStackWithAmount(MatrixStack matrices, int slotX, int slotY, GridStack<S> stack) {
+    private void renderStackWithAmount(MatrixStack matrices, int slotX, int slotY, GridStack<R> stack) {
         renderStack(matrices, slotX, slotY, stack);
 
         String text = getAmount(stack);
@@ -247,9 +244,9 @@ public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler
         renderAmount(matrices, slotX, slotY, text, color);
     }
 
-    protected abstract void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<S> stack);
+    protected abstract void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<R> stack);
 
-    protected abstract String getAmount(GridStack<S> stack);
+    protected abstract String getAmount(GridStack<R> stack);
 
     private void renderDisabledSlot(MatrixStack matrices, int slotX, int slotY) {
         RenderSystem.disableDepthTest();
@@ -268,8 +265,8 @@ public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler
     }
 
     private void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
-        GridView<S> view = getScreenHandler().getView();
-        GridStack<S> stack = view.getStacks().get(gridSlotNumber);
+        GridView<R> view = getScreenHandler().getView();
+        GridStack<R> stack = view.getStacks().get(gridSlotNumber);
 
         List<OrderedText> lines = Lists.transform(getTooltip(stack), Text::asOrderedText);
 
@@ -285,7 +282,7 @@ public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler
         }
     }
 
-    protected abstract List<Text> getTooltip(GridStack<S> stack);
+    protected abstract List<Text> getTooltip(GridStack<R> stack);
 
     private MutableText getLastModifiedText(StorageTracker.Entry entry) {
         LastModified lastModified = LastModified.calculate(entry.time(), System.currentTimeMillis());
@@ -441,7 +438,7 @@ public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler
 
     protected abstract void mouseClickedInGrid(int clickedButton);
 
-    protected abstract void mouseClickedInGrid(int clickedButton, GridStack<S> stack);
+    protected abstract void mouseClickedInGrid(int clickedButton, GridStack<R> stack);
 
     @Override
     public void mouseMoved(double mx, double my) {
@@ -469,20 +466,20 @@ public abstract class GridScreen<S extends Rs2Stack, T extends GridScreenHandler
 
     private void mouseScrolledInInventory(boolean up) {
         getScreenHandler().getView().setPreventSorting(true);
-        Rs2ItemStack stack = Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toDomain(focusedSlot.getStack());
+        /* TODO Rs2ItemStack stack = Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toDomain(focusedSlot.getStack());
         int slotIndex = ((SlotAccessor) focusedSlot).getIndex();
-        mouseScrolledInInventory(up, stack, slotIndex);
+        mouseScrolledInInventory(up, stack, slotIndex);*/
     }
 
     protected abstract void mouseScrolledInInventory(boolean up, Rs2ItemStack stack, int slotIndex);
 
     private void mouseScrolledInGrid(boolean up) {
         getScreenHandler().getView().setPreventSorting(true);
-        GridStack<S> stack = getScreenHandler().getView().getStacks().get(gridSlotNumber);
+        GridStack<R> stack = getScreenHandler().getView().getStacks().get(gridSlotNumber);
         mouseScrolledInGrid(up, stack);
     }
 
-    protected abstract void mouseScrolledInGrid(boolean up, GridStack<S> stack);
+    protected abstract void mouseScrolledInGrid(boolean up, GridStack<R> stack);
 
     @Override
     public boolean charTyped(char unknown1, int unknown2) {
