@@ -27,18 +27,18 @@ public final class PacketUtil {
         return new ItemResource(Item.byRawId(id), nbt);
     }
 
-    public static void writeItemResourceAmount(PacketByteBuf buf, com.refinedmods.refinedstorage2.api.stack.ResourceAmount<ItemResource> resourceAmount) {
+    public static void writeItemResourceAmount(PacketByteBuf buf, com.refinedmods.refinedstorage2.api.resource.ResourceAmount<ItemResource> resourceAmount) {
         buf.writeVarInt(Item.getRawId(resourceAmount.getResource().getItem()));
         buf.writeLong(resourceAmount.getAmount());
         buf.writeNbt(resourceAmount.getResource().getTag());
     }
 
-    public static com.refinedmods.refinedstorage2.api.stack.ResourceAmount<ItemResource> readItemResourceAmount(PacketByteBuf buf) {
+    public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<ItemResource> readItemResourceAmount(PacketByteBuf buf) {
         int id = buf.readVarInt();
         long amount = buf.readLong();
         NbtCompound nbt = buf.readNbt();
 
-        return new com.refinedmods.refinedstorage2.api.stack.ResourceAmount<>(
+        return new com.refinedmods.refinedstorage2.api.resource.ResourceAmount<>(
                 new ItemResource(Item.byRawId(id), nbt),
                 amount
         );
@@ -56,18 +56,18 @@ public final class PacketUtil {
         return new FluidResource(Registry.FLUID.get(id), nbt);
     }
 
-    public static void writeFluidResourceAmount(PacketByteBuf buf, com.refinedmods.refinedstorage2.api.stack.ResourceAmount<FluidResource> resourceAmount) {
+    public static void writeFluidResourceAmount(PacketByteBuf buf, com.refinedmods.refinedstorage2.api.resource.ResourceAmount<FluidResource> resourceAmount) {
         buf.writeVarInt(Registry.FLUID.getRawId(resourceAmount.getResource().getFluid()));
         buf.writeLong(resourceAmount.getAmount());
         buf.writeNbt(resourceAmount.getResource().getTag());
     }
 
-    public static com.refinedmods.refinedstorage2.api.stack.ResourceAmount<FluidResource> readFluidResourceAmount(PacketByteBuf buf) {
+    public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<FluidResource> readFluidResourceAmount(PacketByteBuf buf) {
         int id = buf.readVarInt();
         long amount = buf.readLong();
         NbtCompound nbt = buf.readNbt();
 
-        return new com.refinedmods.refinedstorage2.api.stack.ResourceAmount<>(
+        return new com.refinedmods.refinedstorage2.api.resource.ResourceAmount<>(
                 new FluidResource(Registry.FLUID.get(id), nbt),
                 amount
         );

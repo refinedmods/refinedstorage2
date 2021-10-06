@@ -1,16 +1,16 @@
 package com.refinedmods.refinedstorage2.api.storage.channel;
 
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.stack.list.listenable.StackListListener;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 
 import java.util.Optional;
 
 public interface StorageChannel<T> extends Storage<T> {
-    void addListener(StackListListener<T> listener);
+    void addListener(ResourceListListener<T> listener);
 
-    void removeListener(StackListListener<T> listener);
+    void removeListener(ResourceListListener<T> listener);
 
     long extract(T resource, long amount, Source source);
 

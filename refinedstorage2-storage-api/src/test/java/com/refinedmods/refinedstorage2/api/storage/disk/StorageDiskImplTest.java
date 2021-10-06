@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.api.storage.disk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
@@ -103,14 +103,16 @@ class StorageDiskImplTest {
     }
 
     @Test
-    void Test_adding_invalid_resource_count() {
+    void Test_adding_invalid_resource() {
         // Act
         Executable action1 = () -> disk.insert("A", 0, Action.EXECUTE);
         Executable action2 = () -> disk.insert("A", -1, Action.EXECUTE);
+        Executable action3 = () -> disk.insert(null, 1, Action.EXECUTE);
 
         // Assert
         assertThrows(IllegalArgumentException.class, action1);
         assertThrows(IllegalArgumentException.class, action2);
+        assertThrows(IllegalArgumentException.class, action3);
     }
 
     @Test
@@ -199,9 +201,11 @@ class StorageDiskImplTest {
         // Act
         Executable action1 = () -> disk.extract("A", 0, Action.EXECUTE);
         Executable action2 = () -> disk.extract("A", -1, Action.EXECUTE);
+        Executable action3 = () -> disk.extract(null, 1, Action.EXECUTE);
 
         // Assert
         assertThrows(IllegalArgumentException.class, action1);
         assertThrows(IllegalArgumentException.class, action2);
+        assertThrows(IllegalArgumentException.class, action3);
     }
 }

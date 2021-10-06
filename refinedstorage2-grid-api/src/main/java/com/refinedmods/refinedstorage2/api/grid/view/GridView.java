@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
-import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 
 import java.util.List;
@@ -14,7 +13,7 @@ public interface GridView<T> {
 
     void setSortingType(GridSortingType sortingType);
 
-    void setFilter(Predicate<GridStack<T>> filter);
+    void setFilter(Predicate<GridResource<T>> filter);
 
     boolean isPreventSorting();
 
@@ -26,11 +25,11 @@ public interface GridView<T> {
 
     void loadResource(T resource, long amount, StorageTracker.Entry trackerEntry);
 
-    Optional<StorageTracker.Entry> getTrackerEntry(Object template);
+    Optional<StorageTracker.Entry> getTrackerEntry(Object resource);
 
     void sort();
 
     void onChange(T resource, long amount, StorageTracker.Entry trackerEntry);
 
-    List<GridStack<T>> getStacks();
+    List<GridResource<T>> getAll();
 }

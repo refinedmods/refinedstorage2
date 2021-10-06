@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
-import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
@@ -25,7 +25,7 @@ class GridViewImplTest {
 
     @BeforeEach
     void setUp() {
-        view = new GridViewImpl<>(FakeGridStack::new, new StackListImpl<>());
+        view = new GridViewImpl<>(FakeGridResource::new, new ResourceListImpl<>());
 
         view.setSortingType(GridSortingType.QUANTITY);
     }
@@ -45,10 +45,10 @@ class GridViewImplTest {
         view.sort();
 
         // Assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("A", 15),
-                new FakeGridStack("B", 2),
-                new FakeGridStack("C", 1)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("A", 15),
+                new FakeGridResource("B", 2),
+                new FakeGridResource("C", 1)
         );
     }
 
@@ -67,15 +67,15 @@ class GridViewImplTest {
         view.sort();
 
         // Assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("C", 2),
-                new FakeGridStack("B", 1),
-                new FakeGridStack("A", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("C", 2),
+                new FakeGridResource("B", 1),
+                new FakeGridResource("A", 15)
         );
     }
 
     @RepeatedTest(100)
-    void Test_sorting_when_both_stacks_match_should_preserve_order() {
+    void Test_sorting_when_both_resources_match_should_preserve_order() {
         // Arrange
         view.setSortingDirection(GridSortingDirection.DESCENDING);
 
@@ -85,10 +85,10 @@ class GridViewImplTest {
         view.onChange("B", 15, null);
         view.onChange("C", 2, null);
 
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("B", 15),
-                new FakeGridStack("A", 15),
-                new FakeGridStack("C", 2)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("B", 15),
+                new FakeGridResource("A", 15),
+                new FakeGridResource("C", 2)
         );
 
         view.onChange("A", -15, null);
@@ -97,10 +97,10 @@ class GridViewImplTest {
         view.onChange("B", -15, null);
         view.onChange("B", 15, null);
 
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("B", 15),
-                new FakeGridStack("A", 15),
-                new FakeGridStack("C", 2)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("B", 15),
+                new FakeGridResource("A", 15),
+                new FakeGridResource("C", 2)
         );
     }
 
@@ -121,25 +121,25 @@ class GridViewImplTest {
 
         // Assert
         switch (sortingType) {
-            case QUANTITY -> assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridStack("B", 1),
-                    new FakeGridStack("C", 2),
-                    new FakeGridStack("A", 15)
+            case QUANTITY -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                    new FakeGridResource("B", 1),
+                    new FakeGridResource("C", 2),
+                    new FakeGridResource("A", 15)
             );
-            case NAME -> assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridStack("A", 15),
-                    new FakeGridStack("B", 1),
-                    new FakeGridStack("C", 2)
+            case NAME -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                    new FakeGridResource("A", 15),
+                    new FakeGridResource("B", 1),
+                    new FakeGridResource("C", 2)
             );
-            case ID -> assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridStack("A", 15),
-                    new FakeGridStack("B", 1),
-                    new FakeGridStack("C", 2)
+            case ID -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                    new FakeGridResource("A", 15),
+                    new FakeGridResource("B", 1),
+                    new FakeGridResource("C", 2)
             );
-            case LAST_MODIFIED -> assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridStack("C", 2),
-                    new FakeGridStack("B", 1),
-                    new FakeGridStack("A", 15)
+            case LAST_MODIFIED -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                    new FakeGridResource("C", 2),
+                    new FakeGridResource("B", 1),
+                    new FakeGridResource("A", 15)
             );
             default -> fail();
         }
@@ -162,32 +162,32 @@ class GridViewImplTest {
 
         // Assert
         switch (sortingType) {
-            case QUANTITY -> assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridStack("A", 15),
-                    new FakeGridStack("C", 2),
-                    new FakeGridStack("B", 1)
+            case QUANTITY -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                    new FakeGridResource("A", 15),
+                    new FakeGridResource("C", 2),
+                    new FakeGridResource("B", 1)
             );
-            case NAME -> assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridStack("C", 2),
-                    new FakeGridStack("B", 1),
-                    new FakeGridStack("A", 15)
+            case NAME -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                    new FakeGridResource("C", 2),
+                    new FakeGridResource("B", 1),
+                    new FakeGridResource("A", 15)
             );
-            case ID -> assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridStack("C", 2),
-                    new FakeGridStack("B", 1),
-                    new FakeGridStack("A", 15)
+            case ID -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                    new FakeGridResource("C", 2),
+                    new FakeGridResource("B", 1),
+                    new FakeGridResource("A", 15)
             );
-            case LAST_MODIFIED -> assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridStack("A", 15),
-                    new FakeGridStack("B", 1),
-                    new FakeGridStack("C", 2)
+            case LAST_MODIFIED -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                    new FakeGridResource("A", 15),
+                    new FakeGridResource("B", 1),
+                    new FakeGridResource("C", 2)
             );
             default -> fail();
         }
     }
 
     @Test
-    void Test_loading_stack_with_storage_tracker_entry() {
+    void Test_loading_resource_with_storage_tracker_entry() {
         // Act
         view.loadResource("A", 1, new StorageTracker.Entry(1, "Raoul"));
         view.loadResource("A", 1, new StorageTracker.Entry(2, "RaoulA"));
@@ -211,7 +211,7 @@ class GridViewImplTest {
     }
 
     @Test
-    void Test_sending_addition_for_new_stack() {
+    void Test_sending_addition_for_new_resource() {
         // Arrange
         view.loadResource("B", 15, null);
         view.loadResource("D", 10, null);
@@ -224,16 +224,16 @@ class GridViewImplTest {
         view.onChange("A", 12, null);
 
         // Assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 12),
-                new FakeGridStack("B", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 12),
+                new FakeGridResource("B", 15)
         );
         verify(listener, times(1)).run();
     }
 
     @Test
-    void Test_sending_addition_for_new_stack_when_filtering() {
+    void Test_sending_addition_for_new_resource_when_filtering() {
         // Arrange
         view.loadResource("B", 15, null);
         view.loadResource("D", 10, null);
@@ -241,21 +241,21 @@ class GridViewImplTest {
 
         Runnable listener = mock(Runnable.class);
         view.setListener(listener);
-        view.setFilter(stack -> !stack.getResourceAmount().getResource().equals("A"));
+        view.setFilter(resource -> !resource.getResourceAmount().getResource().equals("A"));
 
         // Act
         view.onChange("A", 12, null);
 
         // Assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("B", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("B", 15)
         );
         verify(listener, never()).run();
     }
 
     @Test
-    void Test_sending_addition_for_new_stack_when_preventing_sort() {
+    void Test_sending_addition_for_new_resource_when_preventing_sort() {
         // Arrange
         view.loadResource("B", 15, null);
         view.loadResource("D", 10, null);
@@ -269,16 +269,16 @@ class GridViewImplTest {
         view.onChange("A", 12, null);
 
         // Assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 12),
-                new FakeGridStack("B", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 12),
+                new FakeGridResource("B", 15)
         );
         verify(listener, times(1)).run();
     }
 
     @Test
-    void Test_sending_addition_for_existing_stack() {
+    void Test_sending_addition_for_existing_resource() {
         // Arrange
         view.loadResource("B", 6, null);
         view.loadResource("A", 15, null);
@@ -292,16 +292,16 @@ class GridViewImplTest {
         view.onChange("B", 5, null);
 
         // Assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("B", 11),
-                new FakeGridStack("A", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("B", 11),
+                new FakeGridResource("A", 15)
         );
         verify(listener, times(1)).run();
     }
 
     @Test
-    void Test_sending_addition_for_existing_stack_when_filtering() {
+    void Test_sending_addition_for_existing_resource_when_filtering() {
         // Arrange
         view.loadResource("B", 6, null);
         view.loadResource("A", 15, null);
@@ -310,26 +310,26 @@ class GridViewImplTest {
 
         Runnable listener = mock(Runnable.class);
         view.setListener(listener);
-        view.setFilter(stack -> !stack.getResourceAmount().getResource().equals("B"));
+        view.setFilter(resource -> !resource.getResourceAmount().getResource().equals("B"));
 
         // Act
         view.onChange("B", 5, null);
 
         // Assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15)
         );
         verify(listener, times(1)).run();
     }
 
     @Test
-    void Test_sending_addition_for_existing_but_hidden_stack_when_filtering() {
+    void Test_sending_addition_for_existing_but_hidden_resource_when_filtering() {
         // Arrange
         view.loadResource("B", 6, null);
         view.loadResource("A", 15, null);
         view.loadResource("D", 10, null);
-        view.setFilter(stack -> !stack.getResourceAmount().getResource().equals("B"));
+        view.setFilter(resource -> !resource.getResourceAmount().getResource().equals("B"));
         view.sort();
 
         Runnable listener = mock(Runnable.class);
@@ -339,15 +339,15 @@ class GridViewImplTest {
         view.onChange("B", 5, null);
 
         // Assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15)
         );
         verify(listener, never()).run();
     }
 
     @Test
-    void Test_sending_addition_for_existing_stack_when_preventing_sort() {
+    void Test_sending_addition_for_existing_resource_when_preventing_sort() {
         // Arrange
         view.loadResource("B", 6, null);
         view.loadResource("A", 15, null);
@@ -358,10 +358,10 @@ class GridViewImplTest {
         view.setListener(listener);
 
         // Act & assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("B", 6),
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("B", 6),
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15)
         );
 
         view.setPreventSorting(true);
@@ -369,19 +369,19 @@ class GridViewImplTest {
         view.onChange("B", 5, null);
         verify(listener, never()).run();
 
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("B", 11),
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("B", 11),
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15)
         );
 
         view.setPreventSorting(false);
         view.sort();
 
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("B", 11),
-                new FakeGridStack("A", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("B", 11),
+                new FakeGridResource("A", 15)
         );
     }
 
@@ -424,10 +424,10 @@ class GridViewImplTest {
         view.onChange("B", -7, null);
 
         // Assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("B", 13),
-                new FakeGridStack("A", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("B", 13),
+                new FakeGridResource("A", 15)
         );
         verify(listener, times(1)).run();
     }
@@ -442,26 +442,26 @@ class GridViewImplTest {
 
         Runnable listener = mock(Runnable.class);
         view.setListener(listener);
-        view.setFilter(stack -> !stack.getResourceAmount().getResource().equals("B"));
+        view.setFilter(resource -> !resource.getResourceAmount().getResource().equals("B"));
 
         // Act
         view.onChange("B", -7, null);
 
         // Assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15)
         );
         verify(listener, times(1)).run();
     }
 
     @Test
-    void Test_sending_removal_for_hidden_stack_when_filtering() {
+    void Test_sending_removal_for_hidden_resource_when_filtering() {
         // Arrange
         view.loadResource("B", 20, null);
         view.loadResource("A", 15, null);
         view.loadResource("D", 10, null);
-        view.setFilter(stack -> !stack.getResourceAmount().getResource().equals("B"));
+        view.setFilter(resource -> !resource.getResourceAmount().getResource().equals("B"));
         view.sort();
 
         Runnable listener = mock(Runnable.class);
@@ -471,9 +471,9 @@ class GridViewImplTest {
         view.onChange("B", -7, null);
 
         // Assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15)
         );
         verify(listener, never()).run();
     }
@@ -490,10 +490,10 @@ class GridViewImplTest {
         view.setListener(listener);
 
         // Act & assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15),
-                new FakeGridStack("B", 20)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15),
+                new FakeGridResource("B", 20)
         );
 
         view.setPreventSorting(true);
@@ -501,19 +501,19 @@ class GridViewImplTest {
         view.onChange("B", -7, null);
         verify(listener, never()).run();
 
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15),
-                new FakeGridStack("B", 13)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15),
+                new FakeGridResource("B", 13)
         );
 
         view.setPreventSorting(false);
         view.sort();
 
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("B", 13),
-                new FakeGridStack("A", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("B", 13),
+                new FakeGridResource("A", 15)
         );
     }
 
@@ -532,9 +532,9 @@ class GridViewImplTest {
         view.onChange("B", -20, null);
 
         // Assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15)
         );
         verify(listener, times(1)).run();
     }
@@ -551,33 +551,33 @@ class GridViewImplTest {
         view.setListener(listener);
 
         // Act & assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15),
-                new FakeGridStack("B", 20)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15),
+                new FakeGridResource("B", 20)
         );
 
         view.setPreventSorting(true);
         view.onChange("B", -20, null);
         verify(listener, never()).run();
 
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15),
-                new FakeGridStack("B", 20).zeroed()
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15),
+                new FakeGridResource("B", 20).zeroed()
         );
 
         view.setPreventSorting(false);
         view.sort();
 
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15)
         );
     }
 
     @Test
-    void Test_sending_complete_removal_and_reinserting_stack_should_reuse_same_stack_when_preventing_sort() {
+    void Test_sending_complete_removal_and_reinserting_resource_should_reuse_same_resource_when_preventing_sort() {
         // Arrange
         view.loadResource("A", 15, null);
         view.loadResource("B", 20, null);
@@ -588,10 +588,10 @@ class GridViewImplTest {
         view.setListener(listener);
 
         // Act & assert
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15),
-                new FakeGridStack("B", 20)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15),
+                new FakeGridResource("B", 20)
         );
 
         // Delete the item
@@ -599,30 +599,30 @@ class GridViewImplTest {
         view.onChange("B", -20, null);
         verify(listener, never()).run();
 
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15),
-                new FakeGridStack("B", 20).zeroed()
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15),
+                new FakeGridResource("B", 20).zeroed()
         );
 
         // Re-insert the item
         view.onChange("B", 5, null);
         verify(listener, never()).run();
 
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15),
-                new FakeGridStack("B", 5)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15),
+                new FakeGridResource("B", 5)
         );
 
         // Re-insert the item again
         view.onChange("B", 3, null);
         verify(listener, never()).run();
 
-        assertThat(view.getStacks()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridStack("D", 10),
-                new FakeGridStack("A", 15),
-                new FakeGridStack("B", 8)
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new FakeGridResource("D", 10),
+                new FakeGridResource("A", 15),
+                new FakeGridResource("B", 8)
         );
     }
 }

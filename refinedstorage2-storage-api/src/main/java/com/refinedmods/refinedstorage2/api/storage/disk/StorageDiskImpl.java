@@ -1,14 +1,14 @@
 package com.refinedmods.refinedstorage2.api.storage.disk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.stack.list.StackList;
-import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 
 import java.util.Collection;
 
 public class StorageDiskImpl<T> implements StorageDisk<T> {
-    private final StackList<T> list = new StackListImpl<>();
+    private final ResourceList<T> list = new ResourceListImpl<>();
     private final long capacity;
     private long stored;
 
@@ -18,10 +18,7 @@ public class StorageDiskImpl<T> implements StorageDisk<T> {
 
     @Override
     public long extract(T resource, long amount, Action action) {
-        // TODO: add nullcheck
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Invalid amount");
-        }
+        ResourceAmount.validate(resource, amount);
 
         return list.get(resource).map(resourceAmount -> {
             if (amount > resourceAmount.getAmount()) {
@@ -52,10 +49,7 @@ public class StorageDiskImpl<T> implements StorageDisk<T> {
 
     @Override
     public long insert(T resource, long amount, Action action) {
-        // TODO: add nullcheck
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Invalid amount");
-        }
+        ResourceAmount.validate(resource, amount);
 
         if (capacity >= 0 && stored + amount > capacity) {
             return insertPartly(resource, capacity - stored, amount - (capacity - stored), action);

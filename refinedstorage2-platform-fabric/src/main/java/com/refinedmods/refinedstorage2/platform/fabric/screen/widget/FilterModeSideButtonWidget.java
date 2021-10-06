@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen.widget;
 
-import com.refinedmods.refinedstorage2.api.stack.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.FilterModeAccessor;

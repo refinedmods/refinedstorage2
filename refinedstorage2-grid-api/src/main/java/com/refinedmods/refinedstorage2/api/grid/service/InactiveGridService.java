@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.api.grid.service;
 
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 
 import java.util.Optional;

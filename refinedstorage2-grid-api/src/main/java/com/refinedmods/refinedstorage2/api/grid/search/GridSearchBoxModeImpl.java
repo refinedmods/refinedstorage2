@@ -23,7 +23,7 @@ public class GridSearchBoxModeImpl implements GridSearchBoxMode {
         try {
             view.setFilter((Predicate) queryParser.parse(text));
         } catch (GridQueryParserException e) {
-            view.setFilter(stack -> false);
+            view.setFilter(resource -> false);
             success = false;
         }
         view.sort();

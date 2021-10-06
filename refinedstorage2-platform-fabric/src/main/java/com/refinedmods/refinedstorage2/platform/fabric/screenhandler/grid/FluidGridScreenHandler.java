@@ -5,15 +5,15 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.service.GridServiceImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.stack.list.StackListImpl;
-import com.refinedmods.refinedstorage2.api.stack.list.StackListResult;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FluidGridStackFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FluidGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
@@ -48,7 +48,7 @@ public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> imp
     }
 
     private static GridViewImpl<FluidResource> createView() {
-        return new GridViewImpl<>(new FluidGridStackFactory(), new StackListImpl<>());
+        return new GridViewImpl<>(new FluidGridResourceFactory(), new ResourceListImpl<>());
     }
 
     @Override
@@ -65,7 +65,7 @@ public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> imp
     }
 
     @Override
-    public void onChanged(StackListResult<FluidResource> change) {
+    public void onChanged(ResourceListOperationResult<FluidResource> change) {
         LOGGER.info("Received a change of {} for {}", change.change(), change.resourceAmount().getResource());
 
         ServerPacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, PacketIds.GRID_ITEM_UPDATE, buf -> {

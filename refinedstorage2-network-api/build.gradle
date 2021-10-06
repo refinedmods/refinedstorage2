@@ -9,9 +9,8 @@ dependencies {
     testImplementation "org.mockito:mockito-core:${project.mockitoVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${project.junitVersion}"
     testImplementation project(':refinedstorage2-test')
-    testImplementation project(':refinedstorage2-stack-api-test')
     implementation project(':refinedstorage2-core-api')
-    implementation project(':refinedstorage2-stack-api')
+    implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-storage-api')
     implementation project(':refinedstorage2-grid-api')
 }

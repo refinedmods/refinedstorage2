@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.api.storage.composite;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.stack.list.StackList;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 
 import java.util.Collection;
@@ -10,9 +10,9 @@ import java.util.List;
 
 public class CompositeStorage<T> implements Storage<T> {
     private final List<Storage<T>> sources;
-    private final StackList<T> list;
+    private final ResourceList<T> list;
 
-    public CompositeStorage(List<Storage<T>> sources, StackList<T> list) {
+    public CompositeStorage(List<Storage<T>> sources, ResourceList<T> list) {
         this.sources = sources;
         this.list = list;
 

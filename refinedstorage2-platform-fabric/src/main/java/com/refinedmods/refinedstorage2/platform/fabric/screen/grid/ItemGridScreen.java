@@ -2,8 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.view.stack.GridStack;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.ItemGridScreenHandler;
 
@@ -11,6 +10,7 @@ import java.util.List;
 
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
 public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandler> {
@@ -19,17 +19,17 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandl
     }
 
     @Override
-    protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridStack<ItemResource> stack) {
+    protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridResource<ItemResource> stack) {
         itemRenderer.renderInGuiWithOverrides(stack.getResourceAmount().getResource().getItemStack(), slotX, slotY);
     }
 
     @Override
-    protected String getAmount(GridStack<ItemResource> stack) {
+    protected String getAmount(GridResource<ItemResource> stack) {
         return stack.isZeroed() ? "0" : String.valueOf(stack.getResourceAmount().getAmount());
     }
 
     @Override
-    protected List<Text> getTooltip(GridStack<ItemResource> stack) {
+    protected List<Text> getTooltip(GridResource<ItemResource> stack) {
         return getTooltipFromItem(stack.getResourceAmount().getResource().getItemStack());
     }
 
@@ -39,17 +39,17 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandl
     }
 
     @Override
-    protected void mouseClickedInGrid(int clickedButton, GridStack<ItemResource> stack) {
+    protected void mouseClickedInGrid(int clickedButton, GridResource<ItemResource> stack) {
         getScreenHandler().onExtract(stack.getResourceAmount().getResource(), getExtractMode(clickedButton), shouldExtractToCursor());
     }
 
     @Override
-    protected void mouseScrolledInInventory(boolean up, Rs2ItemStack stack, int slotIndex) {
+    protected void mouseScrolledInInventory(boolean up, ItemStack stack, int slotIndex) {
         // todo
     }
 
     @Override
-    protected void mouseScrolledInGrid(boolean up, GridStack<ItemResource> stack) {
+    protected void mouseScrolledInGrid(boolean up, GridResource<ItemResource> stack) {
         // todo
     }
 
