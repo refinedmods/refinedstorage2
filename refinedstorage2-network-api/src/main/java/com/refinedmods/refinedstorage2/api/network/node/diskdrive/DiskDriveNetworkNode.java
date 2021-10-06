@@ -2,17 +2,11 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
-import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
-import com.refinedmods.refinedstorage2.api.stack.filter.Filter;
-import com.refinedmods.refinedstorage2.api.stack.filter.FilterMode;
-import com.refinedmods.refinedstorage2.api.stack.filter.ItemFilter;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageSource;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskManager;
 
@@ -45,7 +39,8 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     private final Map<StorageChannelType<?>, DiskDriveStorage<?>> compositeStorages;
     private int diskCount;
 
-    private final Filter<Rs2ItemStack> itemFilter = new ItemFilter();
+    // TODO: Reimplement filter
+
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
     private int priority;
 
@@ -65,10 +60,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     }
 
     private DiskDriveStorage<?> createCompositeStorage(StorageChannelType<?> type) {
-        if (type == StorageChannelTypes.ITEM) {
-            return new DiskDriveItemStorage(this, itemFilter);
-        }
-        return new DiskDriveStorage<>(this, type);
+        return new DiskDriveStorage(this, type);
     }
 
     public void initialize(StorageDiskManager diskManager) {
@@ -102,12 +94,12 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
                 .count();
     }
 
-    private <T extends Rs2Stack> void invalidateChannel(StorageChannelType<T> channelType) {
+    private <T> void invalidateChannel(StorageChannelType<T> channelType) {
         List<Storage<T>> sources = getSourcesForChannel(channelType);
         ((DiskDriveStorage<T>) compositeStorages.get(channelType)).setSources(sources);
     }
 
-    private <T extends Rs2Stack> List<Storage<T>> getSourcesForChannel(StorageChannelType<T> channelType) {
+    private <T> List<Storage<T>> getSourcesForChannel(StorageChannelType<T> channelType) {
         List<Storage<T>> sources = new ArrayList<>();
         for (DiskDriveStorageDisk<?> disk : disks) {
             if (disk != null && disk.getStorageChannelType() == channelType) {
@@ -167,26 +159,6 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         return disk.getState();
     }
 
-    public boolean isExactMode() {
-        return itemFilter.isExact();
-    }
-
-    public void setExactMode(boolean exactMode) {
-        itemFilter.setExact(exactMode);
-    }
-
-    public FilterMode getFilterMode() {
-        return itemFilter.getMode();
-    }
-
-    public void setFilterMode(FilterMode mode) {
-        itemFilter.setMode(mode);
-    }
-
-    public void setFilterTemplates(List<Rs2ItemStack> templates) {
-        itemFilter.setTemplates(templates);
-    }
-
     public AccessMode getAccessMode() {
         return accessMode;
     }
@@ -207,7 +179,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     }
 
     @Override
-    public <T extends Rs2Stack> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
+    public <T> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
         DiskDriveStorage<?> storage = compositeStorages.get(channelType);
         if (storage != null) {
             return Optional.of((Storage<T>) storage);

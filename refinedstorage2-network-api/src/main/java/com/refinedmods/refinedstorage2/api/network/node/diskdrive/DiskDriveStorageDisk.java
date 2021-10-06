@@ -1,15 +1,14 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
+import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
 
 import java.util.Collection;
-import java.util.Optional;
 
-public class DiskDriveStorageDisk<T extends Rs2Stack> implements StorageDisk<T> {
+public class DiskDriveStorageDisk<T> implements StorageDisk<T> {
     private static final double DISK_NEAR_CAPACITY_THRESHOLD = .75;
 
     private final StorageDisk<T> parent;
@@ -49,25 +48,25 @@ public class DiskDriveStorageDisk<T extends Rs2Stack> implements StorageDisk<T> 
     }
 
     @Override
-    public Optional<T> extract(T resource, long amount, Action action) {
-        Optional<T> extracted = parent.extract(resource, amount, action);
-        if (action == Action.EXECUTE && extracted.isPresent()) {
+    public long extract(T resource, long amount, Action action) {
+        long extracted = parent.extract(resource, amount, action);
+        if (action == Action.EXECUTE && extracted > 0) {
             checkStateChanged();
         }
         return extracted;
     }
 
     @Override
-    public Optional<T> insert(T resource, long amount, Action action) {
-        Optional<T> remainder = parent.insert(resource, amount, action);
-        if (action == Action.EXECUTE && (remainder.isEmpty() || remainder.get().getAmount() != amount)) {
+    public long insert(T resource, long amount, Action action) {
+        long remainder = parent.insert(resource, amount, action);
+        if (action == Action.EXECUTE && remainder != amount) {
             checkStateChanged();
         }
         return remainder;
     }
 
     @Override
-    public Collection<T> getAll() {
+    public Collection<ResourceAmount<T>> getAll() {
         return parent.getAll();
     }
 

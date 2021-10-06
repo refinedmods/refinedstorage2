@@ -12,9 +12,7 @@ public final class PacketIds {
     public static final Identifier GRID_ITEM_UPDATE = Rs2Mod.createIdentifier("grid_item_update");
     public static final Identifier GRID_FLUID_UPDATE = Rs2Mod.createIdentifier("grid_fluid_update");
     public static final Identifier PROPERTY_CHANGE = Rs2Mod.createIdentifier("property_change");
-    public static final Identifier GRID_SCROLL = Rs2Mod.createIdentifier("grid_scroll");
-    public static final Identifier GRID_INSERT_FROM_CURSOR = Rs2Mod.createIdentifier("grid_insert_from_cursor");
-    public static final Identifier GRID_EXTRACT = Rs2Mod.createIdentifier("grid_extract");
+    public static final Identifier GRID_INSERT = Rs2Mod.createIdentifier("grid_insert");
 
     private PacketIds() {
     }

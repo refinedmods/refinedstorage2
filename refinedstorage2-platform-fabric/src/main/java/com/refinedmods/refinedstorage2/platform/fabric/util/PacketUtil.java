@@ -1,16 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.fabric.util;
 
-import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2Fluid;
-import com.refinedmods.refinedstorage2.api.stack.fluid.Rs2FluidStack;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2Item;
-import com.refinedmods.refinedstorage2.api.stack.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
-import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 
 import java.util.Optional;
 
-import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
-import net.fabricmc.fabric.impl.transfer.fluid.FluidVariantImpl;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -20,81 +15,62 @@ public final class PacketUtil {
     private PacketUtil() {
     }
 
-    public static void writeItemStack(PacketByteBuf buf, Rs2ItemStack stack, boolean withCount) {
-        if (stack.isEmpty()) {
-            buf.writeBoolean(false);
-        } else {
-            buf.writeBoolean(true);
-
-            Rs2Item item = stack.getItem();
-            buf.writeVarInt(item.getId());
-
-            if (withCount) {
-                buf.writeLong(stack.getAmount());
-            }
-
-            NbtCompound compoundTag = null;
-            if (stack.getTag() != null) {
-                compoundTag = (NbtCompound) stack.getTag();
-            }
-
-            buf.writeNbt(compoundTag);
-        }
+    public static void writeItemResource(PacketByteBuf buf, ItemResource itemResource) {
+        buf.writeVarInt(Item.getRawId(itemResource.getItem()));
+        buf.writeNbt(itemResource.getTag());
     }
 
-    public static Rs2ItemStack readItemStack(PacketByteBuf buf, boolean withCount) {
-        if (!buf.readBoolean()) {
-            return Rs2ItemStack.EMPTY;
-        } else {
-            int id = buf.readVarInt();
-            long amount = 1;
+    public static ItemResource readItemResource(PacketByteBuf buf) {
+        int id = buf.readVarInt();
+        NbtCompound nbt = buf.readNbt();
 
-            if (withCount) {
-                amount = buf.readLong();
-            }
-
-            return new Rs2ItemStack(Rs2PlatformApiFacade.INSTANCE.itemConversion().toDomain(Item.byRawId(id)), amount, buf.readNbt());
-        }
+        return new ItemResource(Item.byRawId(id), nbt);
     }
 
-    public static void writeFluidStack(PacketByteBuf buf, Rs2FluidStack stack, boolean withCount) {
-        if (stack.isEmpty()) {
-            buf.writeBoolean(false);
-        } else {
-            buf.writeBoolean(true);
-
-            Rs2Fluid fluid = stack.getFluid();
-            buf.writeVarInt(fluid.getId());
-
-            if (withCount) {
-                buf.writeLong(stack.getAmount());
-            }
-
-            NbtCompound compoundTag = null;
-            if (stack.getTag() != null) {
-                compoundTag = (NbtCompound) stack.getTag();
-            }
-
-            buf.writeNbt(compoundTag);
-        }
+    public static void writeItemResourceAmount(PacketByteBuf buf, com.refinedmods.refinedstorage2.api.stack.ResourceAmount<ItemResource> resourceAmount) {
+        buf.writeVarInt(Item.getRawId(resourceAmount.getResource().getItem()));
+        buf.writeLong(resourceAmount.getAmount());
+        buf.writeNbt(resourceAmount.getResource().getTag());
     }
 
-    public static Rs2FluidStack readFluidStack(PacketByteBuf buf, boolean withCount) {
-        if (!buf.readBoolean()) {
-            return Rs2FluidStack.EMPTY;
-        } else {
-            int id = buf.readVarInt();
-            long amount = 1;
+    public static com.refinedmods.refinedstorage2.api.stack.ResourceAmount<ItemResource> readItemResourceAmount(PacketByteBuf buf) {
+        int id = buf.readVarInt();
+        long amount = buf.readLong();
+        NbtCompound nbt = buf.readNbt();
 
-            if (withCount) {
-                amount = buf.readLong();
-            }
+        return new com.refinedmods.refinedstorage2.api.stack.ResourceAmount<>(
+                new ItemResource(Item.byRawId(id), nbt),
+                amount
+        );
+    }
 
-            return Rs2PlatformApiFacade.INSTANCE.fluidResourceAmountConversion().toDomain(new ResourceAmount<>(
-                    FluidVariantImpl.of(Registry.FLUID.get(id), buf.readNbt()),
-                    amount
-            ));
-        }
+    public static void writeFluidResource(PacketByteBuf buf, FluidResource itemResource) {
+        buf.writeVarInt(Registry.FLUID.getRawId(itemResource.getFluid()));
+        buf.writeNbt(itemResource.getTag());
+    }
+
+    public static FluidResource readFluidResource(PacketByteBuf buf) {
+        int id = buf.readVarInt();
+        NbtCompound nbt = buf.readNbt();
+
+        return new FluidResource(Registry.FLUID.get(id), nbt);
+    }
+
+    public static void writeFluidResourceAmount(PacketByteBuf buf, com.refinedmods.refinedstorage2.api.stack.ResourceAmount<FluidResource> resourceAmount) {
+        buf.writeVarInt(Registry.FLUID.getRawId(resourceAmount.getResource().getFluid()));
+        buf.writeLong(resourceAmount.getAmount());
+        buf.writeNbt(resourceAmount.getResource().getTag());
+    }
+
+    public static com.refinedmods.refinedstorage2.api.stack.ResourceAmount<FluidResource> readFluidResourceAmount(PacketByteBuf buf) {
+        int id = buf.readVarInt();
+        long amount = buf.readLong();
+        NbtCompound nbt = buf.readNbt();
+
+        return new com.refinedmods.refinedstorage2.api.stack.ResourceAmount<>(
+                new FluidResource(Registry.FLUID.get(id), nbt),
+                amount
+        );
     }
 
     public static void writeTrackerEntry(PacketByteBuf buf, Optional<StorageTracker.Entry> entry) {

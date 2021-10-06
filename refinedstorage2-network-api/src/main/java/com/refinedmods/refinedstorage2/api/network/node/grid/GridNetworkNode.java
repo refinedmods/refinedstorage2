@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
-import com.refinedmods.refinedstorage2.api.stack.Rs2Stack;
+import com.refinedmods.refinedstorage2.api.stack.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
@@ -20,7 +20,7 @@ import java.util.function.BiConsumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GridNetworkNode<T extends Rs2Stack> extends NetworkNodeImpl {
+public class GridNetworkNode<T> extends NetworkNodeImpl {
     private static final Logger LOGGER = LogManager.getLogger(GridNetworkNode.class);
 
     private final Set<GridWatcher> watchers = new HashSet<>();
@@ -77,9 +77,9 @@ public class GridNetworkNode<T extends Rs2Stack> extends NetworkNodeImpl {
         return getStorageChannel().getAll().size();
     }
 
-    public void forEachStack(BiConsumer<T, Optional<StorageTracker.Entry>> consumer) {
+    public void forEachStack(BiConsumer<ResourceAmount<T>, Optional<StorageTracker.Entry>> consumer) {
         StorageChannel<T> storageChannel = getStorageChannel();
-        storageChannel.getAll().forEach(stack -> consumer.accept(stack, storageChannel.getTracker().getEntry(stack)));
+        storageChannel.getAll().forEach(resourceAmount -> consumer.accept(resourceAmount, storageChannel.getTracker().getEntry(resourceAmount.getResource())));
     }
 
     @Override

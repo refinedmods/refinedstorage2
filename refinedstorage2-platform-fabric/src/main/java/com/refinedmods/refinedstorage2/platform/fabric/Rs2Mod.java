@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkCompone
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacadeProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskTypeRegistry;
@@ -22,11 +21,10 @@ import com.refinedmods.refinedstorage2.platform.fabric.integration.ReiIntegratio
 import com.refinedmods.refinedstorage2.platform.fabric.internal.Rs2PlatformApiFacadeImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.FluidStorageDiskType;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.ItemStorageDiskType;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.loot.Rs2LootFunctions;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridInsertFromCursorPacket;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridScrollPacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.PropertyChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.StorageDiskInfoRequestPacket;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
@@ -129,9 +127,7 @@ public class Rs2Mod implements ModInitializer {
 
     private void registerPackets() {
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.STORAGE_DISK_INFO_REQUEST, new StorageDiskInfoRequestPacket());
-        ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_INSERT_FROM_CURSOR, new GridInsertFromCursorPacket());
-        ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_EXTRACT, new GridExtractPacket());
-        ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_SCROLL, new GridScrollPacket());
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_INSERT, new GridInsertPacket());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.PROPERTY_CHANGE, new PropertyChangePacket());
     }
 
