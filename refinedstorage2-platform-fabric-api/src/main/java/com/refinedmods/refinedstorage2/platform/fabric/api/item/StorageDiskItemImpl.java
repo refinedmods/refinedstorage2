@@ -92,7 +92,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
         }
 
         return getDiskId(stack)
-                .flatMap(id -> Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world).disassembleDisk(id))
+                .flatMap(id -> Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world).disassemble(id))
                 .map(disk -> {
                     if (!user.getInventory().insertStack(storagePart.get().copy())) {
                         world.spawnEntity(new ItemEntity(world, user.getX(), user.getY(), user.getZ(), storagePart.get()));
@@ -116,7 +116,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
         if (!world.isClient() && !stack.hasNbt() && entity instanceof PlayerEntity) {
             UUID id = UUID.randomUUID();
 
-            Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world).setDisk(id, createStorageDisk(world));
+            Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world).set(id, createStorageDisk(world));
 
             stack.setNbt(new NbtCompound());
             stack.getNbt().putUuid(TAG_ID, id);

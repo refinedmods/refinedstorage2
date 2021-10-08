@@ -46,7 +46,7 @@ class DiskDriveNetworkNodeTest {
 
     private Network network;
     private DiskDriveNetworkNode diskDrive;
-    private FakeStorageDiskProviderManager storageDiskProviderManager;
+    private FakeStorageProviderManager storageDiskProviderManager;
     private DiskDriveListener diskDriveListener;
 
     // TODO: Test with additional storage channel types
@@ -54,14 +54,14 @@ class DiskDriveNetworkNodeTest {
     @BeforeEach
     void setUp() {
         diskDriveListener = mock(DiskDriveListener.class);
-        storageDiskProviderManager = new FakeStorageDiskProviderManager();
+        storageDiskProviderManager = new FakeStorageProviderManager();
 
         network = createWithInfiniteEnergyStorage();
 
         diskDrive = createDiskDriveContainer(network, storageDiskProviderManager, diskDriveListener).getNode();
     }
 
-    private FakeNetworkNodeContainer<DiskDriveNetworkNode> createDiskDriveContainer(Network network, FakeStorageDiskProviderManager storageDiskProviderManager, DiskDriveListener diskDriveListener) {
+    private FakeNetworkNodeContainer<DiskDriveNetworkNode> createDiskDriveContainer(Network network, FakeStorageProviderManager storageDiskProviderManager, DiskDriveListener diskDriveListener) {
         DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(storageDiskProviderManager, BASE_USAGE, USAGE_PER_DISK, diskDriveListener, STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(network);
 
@@ -546,7 +546,7 @@ class DiskDriveNetworkNodeTest {
         diskDrive.initialize(storageDiskProviderManager);
 
         StorageDisk<Rs2ItemStack> storageDisk2 = StorageDiskImpl.createItemStorageDisk(100);
-        FakeStorageDiskProviderManager storageDiskProviderManager2 = new FakeStorageDiskProviderManager();
+        FakeStorageProviderManager storageDiskProviderManager2 = new FakeStorageProviderManager();
         storageDiskProviderManager2.setDiskInSlot(1, storageDisk2);
         FakeNetworkNodeContainer<DiskDriveNetworkNode> diskDrive2 = createDiskDriveContainer(network, storageDiskProviderManager2, mock(DiskDriveListener.class));
         diskDrive2.getNode().initialize(storageDiskProviderManager2);

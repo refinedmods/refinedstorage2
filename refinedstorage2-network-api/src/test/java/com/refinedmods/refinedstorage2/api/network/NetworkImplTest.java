@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNet
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageDiskProviderManager;
+import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageProviderManager;
 import com.refinedmods.refinedstorage2.api.resource.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.resource.test.ItemStubs;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
@@ -29,7 +29,7 @@ class NetworkImplTest {
         // Arrange
         Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
 
-        FakeStorageDiskProviderManager fakeStorageDiskProviderManager = new FakeStorageDiskProviderManager();
+        FakeStorageProviderManager fakeStorageDiskProviderManager = new FakeStorageProviderManager();
         StorageDisk<Rs2ItemStack> disk = StorageDiskImpl.createItemStorageDisk(10);
         disk.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
         fakeStorageDiskProviderManager.setDiskInSlot(1, disk);

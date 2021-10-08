@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.api;
 import com.refinedmods.refinedstorage2.api.network.node.container.ConnectionProvider;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskManager;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskType;
 
 import net.minecraft.item.ItemStack;
@@ -21,7 +21,7 @@ public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public PlatformStorageDiskManager getStorageDiskManager(World world) {
+    public PlatformStorageManager getStorageDiskManager(World world) {
         return ensureLoaded().getStorageDiskManager(world);
     }
 

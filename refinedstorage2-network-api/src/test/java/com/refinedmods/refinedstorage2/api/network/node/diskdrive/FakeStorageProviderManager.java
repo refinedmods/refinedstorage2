@@ -1,17 +1,17 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
+import com.refinedmods.refinedstorage2.api.storage.StorageManager;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskManager;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class FakeStorageDiskProviderManager implements StorageDiskProvider, StorageDiskManager {
+public class FakeStorageProviderManager implements StorageDiskProvider, StorageManager {
     private final Map<Integer, UUID> slots = new HashMap<>();
     private final Map<UUID, StorageDisk<?>> disks = new HashMap<>();
 
@@ -29,7 +29,7 @@ public class FakeStorageDiskProviderManager implements StorageDiskProvider, Stor
     }
 
     @Override
-    public <T> Optional<StorageDisk<T>> getDisk(UUID id) {
+    public <T> Optional<StorageDisk<T>> get(UUID id) {
         StorageDisk<?> disk = disks.get(id);
         return Optional.ofNullable(disk == null ? null : (StorageDisk<T>) disk);
     }
@@ -49,12 +49,12 @@ public class FakeStorageDiskProviderManager implements StorageDiskProvider, Stor
     }
 
     @Override
-    public <T> void setDisk(UUID id, StorageDisk<T> disk) {
+    public <T> void set(UUID id, StorageDisk<T> disk) {
         throw new RuntimeException();
     }
 
     @Override
-    public <T> Optional<StorageDisk<T>> disassembleDisk(UUID id) {
+    public <T> Optional<StorageDisk<T>> disassemble(UUID id) {
         return Optional.empty();
     }
 

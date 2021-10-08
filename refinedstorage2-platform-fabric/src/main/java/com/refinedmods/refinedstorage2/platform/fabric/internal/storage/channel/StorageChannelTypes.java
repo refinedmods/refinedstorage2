@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk;
+package com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel;
 
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
