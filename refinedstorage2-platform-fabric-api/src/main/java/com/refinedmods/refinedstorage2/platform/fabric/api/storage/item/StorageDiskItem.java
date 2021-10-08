@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk;
+package com.refinedmods.refinedstorage2.platform.fabric.api.storage.item;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;

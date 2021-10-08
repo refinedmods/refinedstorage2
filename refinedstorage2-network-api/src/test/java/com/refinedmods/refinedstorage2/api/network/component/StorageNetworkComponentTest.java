@@ -8,9 +8,9 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetwo
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageProviderManager;
 import com.refinedmods.refinedstorage2.api.resource.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.resource.test.ItemStubs;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Collection;
@@ -35,7 +35,7 @@ class StorageNetworkComponentTest {
         sut = new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY);
 
         FakeStorageProviderManager fakeStorageDiskProviderManager = new FakeStorageProviderManager();
-        fakeStorageDiskProviderManager.setDiskInSlot(0, StorageDiskImpl.createItemStorageDisk(100));
+        fakeStorageDiskProviderManager.setDiskInSlot(0, BulkStorageImpl.createItemStorageDisk(100));
 
         diskDrive = new DiskDriveNetworkNode(fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(createWithInfiniteEnergyStorage());

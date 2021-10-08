@@ -3,11 +3,11 @@ package com.refinedmods.refinedstorage2.api.grid.service;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Collections;
@@ -43,7 +43,7 @@ class GridServiceImplTest {
         @Test
         void Test_inserting_entire_resource() {
             // Arrange
-            storageChannel.addSource(new StorageDiskImpl<>(100));
+            storageChannel.addSource(new BulkStorageImpl<>(100));
 
             // Act
             Optional<ResourceAmount<String>> remainder = sut.insert(new ResourceAmount<>("A", 100), GridInsertMode.ENTIRE_RESOURCE);
@@ -59,7 +59,7 @@ class GridServiceImplTest {
         @Test
         void Test_inserting_entire_resource_with_remainder() {
             // Arrange
-            storageChannel.addSource(new StorageDiskImpl<>(100));
+            storageChannel.addSource(new BulkStorageImpl<>(100));
 
             // Act
             Optional<ResourceAmount<String>> remainder = sut.insert(new ResourceAmount<>("A", 101), GridInsertMode.ENTIRE_RESOURCE);
@@ -76,7 +76,7 @@ class GridServiceImplTest {
         @Test
         void Test_inserting_entire_resource_with_no_space_in_storage() {
             // Arrange
-            storageChannel.addSource(new StorageDiskImpl<>(100));
+            storageChannel.addSource(new BulkStorageImpl<>(100));
             storageChannel.insert("A", 100, Action.EXECUTE);
 
             // Act
@@ -97,7 +97,7 @@ class GridServiceImplTest {
         @Test
         void Test_inserting_single_resource_of_large_amount() {
             // Arrange
-            storageChannel.addSource(new StorageDiskImpl<>(100));
+            storageChannel.addSource(new BulkStorageImpl<>(100));
 
             // Act
             Optional<ResourceAmount<String>> remainder = sut.insert(new ResourceAmount<>("A", 100), GridInsertMode.SINGLE_RESOURCE);
@@ -114,7 +114,7 @@ class GridServiceImplTest {
         @Test
         void Test_inserting_single_resource_of_single_amount() {
             // Arrange
-            storageChannel.addSource(new StorageDiskImpl<>(100));
+            storageChannel.addSource(new BulkStorageImpl<>(100));
 
             // Act
             Optional<ResourceAmount<String>> remainder = sut.insert(new ResourceAmount<>("A", 1), GridInsertMode.SINGLE_RESOURCE);
@@ -130,7 +130,7 @@ class GridServiceImplTest {
         @Test
         void Test_inserting_single_resource_of_large_amount_with_no_space_in_storage() {
             // Arrange
-            storageChannel.addSource(new StorageDiskImpl<>(100));
+            storageChannel.addSource(new BulkStorageImpl<>(100));
             storageChannel.insert("A", 100, Action.EXECUTE);
 
             // Act
@@ -148,7 +148,7 @@ class GridServiceImplTest {
         @Test
         void Test_inserting_single_resource_of_single_amount_with_no_space_in_storage() {
             // Arrange
-            storageChannel.addSource(new StorageDiskImpl<>(100));
+            storageChannel.addSource(new BulkStorageImpl<>(100));
             storageChannel.insert("A", 100, Action.EXECUTE);
 
             // Act
@@ -170,9 +170,9 @@ class GridServiceImplTest {
         @EnumSource(GridExtractMode.class)
         void Test_extracting(GridExtractMode extractMode) {
             // Arrange
-            StorageDiskImpl<String> destination = new StorageDiskImpl<>(100);
+            BulkStorageImpl<String> destination = new BulkStorageImpl<>(100);
 
-            storageChannel.addSource(new StorageDiskImpl<>(100));
+            storageChannel.addSource(new BulkStorageImpl<>(100));
             storageChannel.insert("A", 100, Action.EXECUTE);
 
             // Act
@@ -194,9 +194,9 @@ class GridServiceImplTest {
         @EnumSource(GridExtractMode.class)
         void Test_extracting_resource_that_does_not_exist(GridExtractMode extractMode) {
             // Arrange
-            StorageDiskImpl<String> destination = new StorageDiskImpl<>(100);
+            BulkStorageImpl<String> destination = new BulkStorageImpl<>(100);
 
-            storageChannel.addSource(new StorageDiskImpl<>(100));
+            storageChannel.addSource(new BulkStorageImpl<>(100));
 
             // Act
             sut.extract("A", extractMode, destination);
@@ -211,10 +211,10 @@ class GridServiceImplTest {
         @EnumSource(GridExtractMode.class)
         void Test_extracting_resource_with_no_space_in_destination(GridExtractMode extractMode) {
             // Arrange
-            StorageDiskImpl<String> destination = new StorageDiskImpl<>(100);
+            BulkStorageImpl<String> destination = new BulkStorageImpl<>(100);
             destination.insert("B", 100, Action.EXECUTE);
 
-            storageChannel.addSource(new StorageDiskImpl<>(100));
+            storageChannel.addSource(new BulkStorageImpl<>(100));
             storageChannel.insert("A", 100, Action.EXECUTE);
 
             // Act
@@ -236,9 +236,9 @@ class GridServiceImplTest {
         @Test
         void Test_extracting_entire_resource_that_has_less_than_max_count() {
             // Arrange
-            StorageDiskImpl<String> destination = new StorageDiskImpl<>(100);
+            BulkStorageImpl<String> destination = new BulkStorageImpl<>(100);
 
-            storageChannel.addSource(new StorageDiskImpl<>(100));
+            storageChannel.addSource(new BulkStorageImpl<>(100));
             storageChannel.insert("A", MAX_COUNT - 1, Action.EXECUTE);
 
             // Act
@@ -255,9 +255,9 @@ class GridServiceImplTest {
         @Test
         void Test_extracting_entire_resource_with_remainder_in_destination() {
             // Arrange
-            StorageDiskImpl<String> destination = new StorageDiskImpl<>(MAX_COUNT - 1);
+            BulkStorageImpl<String> destination = new BulkStorageImpl<>(MAX_COUNT - 1);
 
-            storageChannel.addSource(new StorageDiskImpl<>(100));
+            storageChannel.addSource(new BulkStorageImpl<>(100));
             storageChannel.insert("A", 100, Action.EXECUTE);
 
             // Act
@@ -279,9 +279,9 @@ class GridServiceImplTest {
         @Test
         void Test_extracting_half_resource_with_single_resource_amount() {
             // Arrange
-            StorageDiskImpl<String> destination = new StorageDiskImpl<>(MAX_COUNT);
+            BulkStorageImpl<String> destination = new BulkStorageImpl<>(MAX_COUNT);
 
-            storageChannel.addSource(new StorageDiskImpl<>(100));
+            storageChannel.addSource(new BulkStorageImpl<>(100));
             storageChannel.insert("A", 1, Action.EXECUTE);
 
             // Act

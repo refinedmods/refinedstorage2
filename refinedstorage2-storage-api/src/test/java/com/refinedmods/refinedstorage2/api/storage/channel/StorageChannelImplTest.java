@@ -5,10 +5,10 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage2.api.storage.composite.PrioritizedStorage;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Collections;
@@ -45,7 +45,7 @@ class StorageChannelImplTest {
     @EnumSource(Action.class)
     void Test_listener_on_insertion(Action action) {
         // Arrange
-        channel.addSource(new StorageDiskImpl<>(10));
+        channel.addSource(new BulkStorageImpl<>(10));
 
         ResourceListListener<String> listener = mock(ResourceListListener.class);
         channel.addListener(listener);
@@ -70,10 +70,10 @@ class StorageChannelImplTest {
     @EnumSource(Action.class)
     void Test_listener_on_extraction(Action action) {
         // Arrange
-        StorageDisk<String> diskStorage = new StorageDiskImpl<>(10);
-        diskStorage.insert("A", 10, Action.EXECUTE);
+        BulkStorage<String> storage = new BulkStorageImpl<>(10);
+        storage.insert("A", 10, Action.EXECUTE);
 
-        channel.addSource(diskStorage);
+        channel.addSource(storage);
 
         ResourceListListener<String> listener = mock(ResourceListListener.class);
         channel.addListener(listener);
@@ -97,7 +97,7 @@ class StorageChannelImplTest {
     @Test
     void Test_inserting() {
         // Arrange
-        channel.addSource(new StorageDiskImpl<>(10));
+        channel.addSource(new BulkStorageImpl<>(10));
 
         // Act
         channel.insert("A", 5, Action.EXECUTE);
@@ -113,10 +113,10 @@ class StorageChannelImplTest {
     @Test
     void Test_extracting() {
         // Arrange
-        StorageDisk<String> diskStorage = new StorageDiskImpl<>(100);
-        diskStorage.insert("A", 50, Action.EXECUTE);
+        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        storage.insert("A", 50, Action.EXECUTE);
 
-        channel.addSource(diskStorage);
+        channel.addSource(storage);
 
         // Act
         channel.extract("A", 49, Action.EXECUTE);
@@ -130,10 +130,10 @@ class StorageChannelImplTest {
     @Test
     void Test_getting_stack() {
         // Arrange
-        StorageDisk<String> diskStorage = new StorageDiskImpl<>(100);
-        diskStorage.insert("A", 50, Action.EXECUTE);
+        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        storage.insert("A", 50, Action.EXECUTE);
 
-        channel.addSource(diskStorage);
+        channel.addSource(storage);
 
         // Act
         Optional<ResourceAmount<String>> stack = channel.get("A");
@@ -146,7 +146,7 @@ class StorageChannelImplTest {
     @Test
     void Test_getting_non_existent_stack() {
         // Arrange
-        channel.addSource(new StorageDiskImpl<>(100));
+        channel.addSource(new BulkStorageImpl<>(100));
 
         // Act
         Optional<ResourceAmount<String>> stack = channel.get("A");
@@ -158,17 +158,17 @@ class StorageChannelImplTest {
     @RepeatedTest(100)
     void Test_sorting_sources() {
         // Arrange
-        PrioritizedStorage<String> disk1 = new PrioritizedStorage<>(0, new StorageDiskImpl<>(10));
-        PrioritizedStorage<String> disk2 = new PrioritizedStorage<>(0, new StorageDiskImpl<>(10));
-        PrioritizedStorage<String> disk3 = new PrioritizedStorage<>(0, new StorageDiskImpl<>(10));
+        PrioritizedStorage<String> storage1 = new PrioritizedStorage<>(0, new BulkStorageImpl<>(10));
+        PrioritizedStorage<String> storage2 = new PrioritizedStorage<>(0, new BulkStorageImpl<>(10));
+        PrioritizedStorage<String> storage3 = new PrioritizedStorage<>(0, new BulkStorageImpl<>(10));
 
-        channel.addSource(disk1);
-        channel.addSource(disk2);
-        channel.addSource(disk3);
+        channel.addSource(storage1);
+        channel.addSource(storage2);
+        channel.addSource(storage3);
 
-        disk1.setPriority(8);
-        disk2.setPriority(15);
-        disk3.setPriority(2);
+        storage1.setPriority(8);
+        storage2.setPriority(15);
+        storage3.setPriority(2);
 
         // Act
         channel.sortSources();
@@ -176,12 +176,12 @@ class StorageChannelImplTest {
         channel.insert("A", 15, Action.EXECUTE);
 
         // Assert
-        assertThat(disk2.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(storage2.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 10)
         );
-        assertThat(disk1.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(storage1.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 5)
         );
-        assertThat(disk3.getAll()).isEmpty();
+        assertThat(storage3.getAll()).isEmpty();
     }
 }

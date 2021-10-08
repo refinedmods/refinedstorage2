@@ -10,8 +10,8 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetwo
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageProviderManager;
 import com.refinedmods.refinedstorage2.api.resource.item.Rs2ItemStack;
 import com.refinedmods.refinedstorage2.api.resource.test.ItemStubs;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class NetworkImplTest {
         Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
 
         FakeStorageProviderManager fakeStorageDiskProviderManager = new FakeStorageProviderManager();
-        StorageDisk<Rs2ItemStack> disk = StorageDiskImpl.createItemStorageDisk(10);
+        BulkStorage<Rs2ItemStack> disk = BulkStorageImpl.createItemStorageDisk(10);
         disk.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
         fakeStorageDiskProviderManager.setDiskInSlot(1, disk);
         DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);

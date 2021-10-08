@@ -1,26 +1,24 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
-
 import java.util.Arrays;
 
 public class DiskDriveState {
-    private final DiskState[] states;
+    private final StorageDiskState[] states;
 
     public DiskDriveState(int disks) {
-        this.states = new DiskState[disks];
-        Arrays.fill(states, DiskState.NONE);
+        this.states = new StorageDiskState[disks];
+        Arrays.fill(states, StorageDiskState.NONE);
     }
 
-    public void setState(int id, DiskState state) {
+    public void setState(int id, StorageDiskState state) {
         this.states[id] = state;
     }
 
-    public DiskState getState(int id) {
+    public StorageDiskState getState(int id) {
         return states[id];
     }
 
-    public DiskState[] getStates() {
+    public StorageDiskState[] getStates() {
         return states;
     }
 }

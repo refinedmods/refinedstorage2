@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked;
 
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
-import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
+import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
 import com.refinedmods.refinedstorage2.platform.fabric.block.BaseBlock;
 
 import java.util.Random;
@@ -43,7 +43,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
             Object renderAttachment = renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
             if (renderAttachment instanceof DiskDriveState states) {
                 for (int i = 0; i < translators.length; ++i) {
-                    if (states.getState(i) != DiskState.NONE) {
+                    if (states.getState(i) != StorageDiskState.NONE) {
                         context.pushTransform(translators[i]);
                         context.fallbackConsumer().accept(diskModel);
                         context.popTransform();

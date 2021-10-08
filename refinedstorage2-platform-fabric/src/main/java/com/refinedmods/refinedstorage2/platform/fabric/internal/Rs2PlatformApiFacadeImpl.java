@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskType;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.StorageDiskType;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.FabricConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricClientStorageManager;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricStorageManager;
@@ -22,7 +22,7 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     private final PlatformStorageManager clientStorageDiskManager = new FabricClientStorageManager();
 
     @Override
-    public PlatformStorageManager getStorageDiskManager(World world) {
+    public PlatformStorageManager getStorageManager(World world) {
         if (world.getServer() == null) {
             return clientStorageDiskManager;
         }

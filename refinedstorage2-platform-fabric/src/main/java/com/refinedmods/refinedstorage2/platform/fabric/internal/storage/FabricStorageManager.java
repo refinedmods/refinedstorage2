@@ -2,10 +2,10 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.StorageManagerImpl;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDisk;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskTypeRegistry;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.PlatformBulkStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.StorageDiskTypeRegistry;
 
 import java.util.Map;
 import java.util.Optional;
@@ -37,22 +37,22 @@ public class FabricStorageManager extends PersistentState implements PlatformSto
     }
 
     @Override
-    public <T> Optional<StorageDisk<T>> get(UUID id) {
+    public <T> Optional<BulkStorage<T>> get(UUID id) {
         return parent.get(id);
     }
 
     @Override
-    public <T> void set(UUID id, StorageDisk<T> disk) {
-        parent.set(id, disk);
+    public <T> void set(UUID id, BulkStorage<T> storage) {
+        parent.set(id, storage);
         markDirty();
     }
 
     @Override
-    public <T> Optional<StorageDisk<T>> disassemble(UUID id) {
+    public <T> Optional<BulkStorage<T>> disassemble(UUID id) {
         return parent.disassemble(id)
                 .map(disk -> {
                     markDirty();
-                    return (StorageDisk<T>) disk;
+                    return (BulkStorage<T>) disk;
                 });
     }
 
@@ -79,8 +79,8 @@ public class FabricStorageManager extends PersistentState implements PlatformSto
     @Override
     public NbtCompound writeNbt(NbtCompound tag) {
         NbtList disksList = new NbtList();
-        for (Map.Entry<UUID, StorageDisk<?>> entry : parent.getDisks()) {
-            if (entry.getValue() instanceof PlatformStorageDisk<?> platformStorageDisk) {
+        for (Map.Entry<UUID, BulkStorage<?>> entry : parent.getAll()) {
+            if (entry.getValue() instanceof PlatformBulkStorage<?> platformStorageDisk) {
                 disksList.add(convertStorageDiskToTag(entry.getKey(), platformStorageDisk));
             } else {
                 LOGGER.warn("Tried to persist non-platform storage disk {}", entry.getKey());
@@ -90,12 +90,12 @@ public class FabricStorageManager extends PersistentState implements PlatformSto
         return tag;
     }
 
-    private NbtElement convertStorageDiskToTag(UUID id, PlatformStorageDisk<?> disk) {
+    private NbtElement convertStorageDiskToTag(UUID id, PlatformBulkStorage<?> disk) {
         Identifier typeIdentifier = StorageDiskTypeRegistry.INSTANCE.getIdentifier(disk.getType()).orElseThrow(() -> new RuntimeException("Disk type is not registered"));
 
         NbtCompound tag = new NbtCompound();
         tag.putUuid(TAG_DISK_ID, id);
-        tag.put(TAG_DISK_DATA, disk.getType().toTag((PlatformStorageDisk) disk));
+        tag.put(TAG_DISK_DATA, disk.getType().toTag((PlatformBulkStorage) disk));
         tag.putString(TAG_DISK_TYPE, typeIdentifier.toString());
         return tag;
     }

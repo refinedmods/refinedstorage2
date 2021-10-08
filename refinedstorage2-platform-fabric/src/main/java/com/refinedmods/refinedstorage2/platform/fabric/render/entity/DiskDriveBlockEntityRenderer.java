@@ -1,14 +1,20 @@
 package com.refinedmods.refinedstorage2.platform.fabric.render.entity;
 
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
-import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
+import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
 import com.refinedmods.refinedstorage2.platform.fabric.block.BaseBlock;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.render.CubeBuilder;
 import com.refinedmods.refinedstorage2.platform.fabric.util.BiDirection;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderPhase;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Direction;
@@ -62,9 +68,9 @@ public class DiskDriveBlockEntityRenderer implements BlockEntityRenderer<DiskDri
         int i = 0;
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 2; ++x) {
-                DiskState state = diskStates.getState(i++);
+                StorageDiskState state = diskStates.getState(i++);
 
-                if (state != DiskState.NONE) {
+                if (state != StorageDiskState.NONE) {
                     float x1 = LED_X1 - (x * 7F);
                     float y1 = LED_Y1 - (y * 3F);
 

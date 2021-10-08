@@ -1,6 +1,6 @@
-package com.refinedmods.refinedstorage2.api.storage.disk;
+package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
-public enum DiskState {
+public enum StorageDiskState {
     NONE(0),
     DISCONNECTED(0x323232),
     NORMAL(0x00E9FF),
@@ -9,7 +9,7 @@ public enum DiskState {
 
     private final int color;
 
-    DiskState(int color) {
+    StorageDiskState(int color) {
         this.color = color;
     }
 

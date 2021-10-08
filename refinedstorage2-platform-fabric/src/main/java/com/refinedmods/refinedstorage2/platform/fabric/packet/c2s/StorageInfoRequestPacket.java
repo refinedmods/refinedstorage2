@@ -21,7 +21,7 @@ public class StorageInfoRequestPacket implements ServerPlayNetworking.PlayChanne
 
         server.execute(() -> {
             StorageInfo info = Rs2PlatformApiFacade.INSTANCE
-                    .getStorageDiskManager(player.getEntityWorld())
+                    .getStorageManager(player.getEntityWorld())
                     .getInfo(id);
 
             ServerPacketUtil.sendToPlayer(player, PacketIds.STORAGE_INFO_RESPONSE, bufToSend -> {

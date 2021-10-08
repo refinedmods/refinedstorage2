@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacadeProxy;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskTypeRegistry;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.StorageDiskTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2BlockEntities;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2Blocks;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2Items;

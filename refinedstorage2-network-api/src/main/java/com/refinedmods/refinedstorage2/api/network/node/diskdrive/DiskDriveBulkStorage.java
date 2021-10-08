@@ -2,21 +2,20 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
 
 import java.util.Collection;
 
-public class DiskDriveStorageDisk<T> implements StorageDisk<T> {
+public class DiskDriveBulkStorage<T> implements BulkStorage<T> {
     private static final double DISK_NEAR_CAPACITY_THRESHOLD = .75;
 
-    private final StorageDisk<T> parent;
+    private final BulkStorage<T> parent;
     private final StorageChannelType<T> storageChannelType;
     private final DiskDriveListener listener;
-    private DiskState state;
+    private StorageDiskState state;
 
-    public DiskDriveStorageDisk(StorageDisk<T> parent, StorageChannelType<T> storageChannelType, DiskDriveListener listener) {
+    public DiskDriveBulkStorage(BulkStorage<T> parent, StorageChannelType<T> storageChannelType, DiskDriveListener listener) {
         this.parent = parent;
         this.storageChannelType = storageChannelType;
         this.listener = listener;
@@ -27,20 +26,20 @@ public class DiskDriveStorageDisk<T> implements StorageDisk<T> {
         return storageChannelType;
     }
 
-    public DiskState getState() {
+    public StorageDiskState getState() {
         double fullness = (double) parent.getStored() / (double) parent.getCapacity();
 
         if (fullness >= 1D) {
-            return DiskState.FULL;
+            return StorageDiskState.FULL;
         } else if (fullness >= DISK_NEAR_CAPACITY_THRESHOLD) {
-            return DiskState.NEAR_CAPACITY;
+            return StorageDiskState.NEAR_CAPACITY;
         } else {
-            return DiskState.NORMAL;
+            return StorageDiskState.NORMAL;
         }
     }
 
     private void checkStateChanged() {
-        DiskState currentDiskState = getState();
+        StorageDiskState currentDiskState = getState();
         if (state != currentDiskState) {
             this.state = currentDiskState;
             this.listener.onDiskChanged();
