@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.api.item;
 
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
+import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskItem;
 
@@ -44,7 +44,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
     }
 
     @Override
-    public Optional<StorageDiskInfo> getInfo(@Nullable World world, ItemStack stack) {
+    public Optional<StorageInfo> getInfo(@Nullable World world, ItemStack stack) {
         if (world == null) {
             return Optional.empty();
         }

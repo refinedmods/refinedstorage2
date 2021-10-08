@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.diskdrive;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
+import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.AccessModeSettings;
@@ -39,7 +39,7 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     private static final int FILTER_SLOT_X = 8;
     private static final int FILTER_SLOT_Y = 20;
 
-    private final StorageDiskInfoAccessor storageDiskInfoAccessor;
+    private final StorageInfoAccessor storageInfoAccessor;
     private final List<Slot> diskSlots = new ArrayList<>();
     private final TwoWaySyncProperty<Integer> priorityProperty;
     private final TwoWaySyncProperty<FilterMode> filterModeProperty;
@@ -97,12 +97,12 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
         addProperty(accessModeProperty);
         addProperty(redstoneModeProperty);
 
-        this.storageDiskInfoAccessor = new StorageDiskInfoAccessorImpl(playerInventory.player.getEntityWorld());
+        this.storageInfoAccessor = new StorageInfoAccessorImpl(playerInventory.player.getEntityWorld());
 
         addSlots(playerInventory.player, new DiskDriveInventory(), new FullFixedItemInv(9));
     }
 
-    public DiskDriveScreenHandler(int syncId, PlayerEntity player, FixedItemInv diskInventory, FixedItemInv filterInventory, DiskDriveBlockEntity diskDrive, StorageDiskInfoAccessor storageDiskInfoAccessor) {
+    public DiskDriveScreenHandler(int syncId, PlayerEntity player, FixedItemInv diskInventory, FixedItemInv filterInventory, DiskDriveBlockEntity diskDrive, StorageInfoAccessor storageInfoAccessor) {
         super(Rs2Mod.SCREEN_HANDLERS.getDiskDrive(), syncId);
 
         this.priorityProperty = TwoWaySyncProperty.forServer(
@@ -147,7 +147,7 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
         addProperty(accessModeProperty);
         addProperty(redstoneModeProperty);
 
-        this.storageDiskInfoAccessor = storageDiskInfoAccessor;
+        this.storageInfoAccessor = storageInfoAccessor;
 
         addSlots(player, diskInventory, filterInventory);
     }
@@ -185,19 +185,19 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     }
 
     public long getCapacity() {
-        return getStorageDiskInfo().mapToLong(StorageDiskInfo::capacity).sum();
+        return getStorageDiskInfo().mapToLong(StorageInfo::capacity).sum();
     }
 
     public long getStored() {
-        return getStorageDiskInfo().mapToLong(StorageDiskInfo::stored).sum();
+        return getStorageDiskInfo().mapToLong(StorageInfo::stored).sum();
     }
 
-    private Stream<StorageDiskInfo> getStorageDiskInfo() {
+    private Stream<StorageInfo> getStorageDiskInfo() {
         return diskSlots
                 .stream()
                 .map(Slot::getStack)
                 .filter(stack -> !stack.isEmpty())
-                .map(storageDiskInfoAccessor::getDiskInfo)
+                .map(storageInfoAccessor::getInfo)
                 .flatMap(info -> info.map(Stream::of).orElseGet(Stream::empty));
     }
 

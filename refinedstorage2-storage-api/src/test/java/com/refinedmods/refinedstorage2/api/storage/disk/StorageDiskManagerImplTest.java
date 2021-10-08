@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.storage.disk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;
@@ -51,7 +52,7 @@ class StorageDiskManagerImplTest {
         // Act
         storageDiskManager.setDisk(id, storage);
 
-        StorageDiskInfo info = storageDiskManager.getInfo(id);
+        StorageInfo info = storageDiskManager.getInfo(id);
 
         // Assert
         assertThat(info.capacity()).isEqualTo(10);
@@ -61,7 +62,7 @@ class StorageDiskManagerImplTest {
     @Test
     void Test_getting_info_of_non_existent_disk() {
         // Act
-        StorageDiskInfo info = storageDiskManager.getInfo(UUID.randomUUID());
+        StorageInfo info = storageDiskManager.getInfo(UUID.randomUUID());
 
         // Assert
         assertThat(info.capacity()).isZero();

@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
+import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskManager;
 
 import java.util.HashMap;
@@ -59,7 +59,7 @@ public class FakeStorageDiskProviderManager implements StorageDiskProvider, Stor
     }
 
     @Override
-    public StorageDiskInfo getInfo(UUID id) {
+    public StorageInfo getInfo(UUID id) {
         return null;
     }
 }

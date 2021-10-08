@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import net.minecraft.util.Identifier;
 
 public final class PacketIds {
-    public static final Identifier STORAGE_DISK_INFO_RESPONSE = Rs2Mod.createIdentifier("storage_disk_info_response");
-    public static final Identifier STORAGE_DISK_INFO_REQUEST = Rs2Mod.createIdentifier("storage_disk_info_request");
+    public static final Identifier STORAGE_INFO_RESPONSE = Rs2Mod.createIdentifier("storage_info_response");
+    public static final Identifier STORAGE_INFO_REQUEST = Rs2Mod.createIdentifier("storage_info_request");
     public static final Identifier CONTROLLER_ENERGY = Rs2Mod.createIdentifier("controller_energy");
     public static final Identifier GRID_ACTIVE = Rs2Mod.createIdentifier("grid_active");
     public static final Identifier GRID_ITEM_UPDATE = Rs2Mod.createIdentifier("grid_item_update");
