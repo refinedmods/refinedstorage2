@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEner
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridFluidUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridItemUpdatePacket;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.StorageDiskInfoResponsePacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.StorageInfoResponsePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.render.entity.DiskDriveBlockEntityRenderer;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.DiskDriveUnbakedModel;
@@ -83,7 +83,7 @@ public class Rs2ClientMod implements ClientModInitializer {
     }
 
     private void registerPackets() {
-        ClientPlayNetworking.registerGlobalReceiver(PacketIds.STORAGE_DISK_INFO_RESPONSE, new StorageDiskInfoResponsePacket());
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.STORAGE_INFO_RESPONSE, new StorageInfoResponsePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ITEM_UPDATE, new GridItemUpdatePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_FLUID_UPDATE, new GridFluidUpdatePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ACTIVE, new GridActivePacket());

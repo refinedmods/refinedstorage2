@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
+import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskItem;
 
 import java.util.Optional;
@@ -8,15 +8,15 @@ import java.util.Optional;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class StorageDiskInfoAccessorImpl implements StorageDiskInfoAccessor {
+public class StorageInfoAccessorImpl implements StorageInfoAccessor {
     private final World world;
 
-    public StorageDiskInfoAccessorImpl(World world) {
+    public StorageInfoAccessorImpl(World world) {
         this.world = world;
     }
 
     @Override
-    public Optional<StorageDiskInfo> getDiskInfo(ItemStack stack) {
+    public Optional<StorageInfo> getInfo(ItemStack stack) {
         if (stack.getItem() instanceof StorageDiskItem storageDiskItem) {
             return storageDiskItem.getInfo(world, stack);
         }

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk;
 
+import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskManagerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDisk;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskManager;
@@ -57,7 +57,7 @@ public class FabricStorageDiskManager extends PersistentState implements Platfor
     }
 
     @Override
-    public StorageDiskInfo getInfo(UUID id) {
+    public StorageInfo getInfo(UUID id) {
         return parent.getInfo(id);
     }
 

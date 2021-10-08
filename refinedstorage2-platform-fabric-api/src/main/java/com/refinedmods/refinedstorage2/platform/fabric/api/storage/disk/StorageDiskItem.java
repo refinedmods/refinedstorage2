@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk;
 
+import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskInfo;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -15,5 +15,5 @@ public interface StorageDiskItem {
 
     Optional<UUID> getDiskId(ItemStack stack);
 
-    Optional<StorageDiskInfo> getInfo(@Nullable World world, ItemStack stack);
+    Optional<StorageInfo> getInfo(@Nullable World world, ItemStack stack);
 }
