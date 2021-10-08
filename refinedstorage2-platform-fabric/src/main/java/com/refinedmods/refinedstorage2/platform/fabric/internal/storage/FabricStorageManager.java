@@ -1,10 +1,10 @@
-package com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk;
+package com.refinedmods.refinedstorage2.platform.fabric.internal.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
+import com.refinedmods.refinedstorage2.api.storage.StorageManagerImpl;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskManagerImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDisk;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskManager;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskTypeRegistry;
 
 import java.util.Map;
@@ -20,8 +20,8 @@ import net.minecraft.world.PersistentState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FabricStorageDiskManager extends PersistentState implements PlatformStorageDiskManager {
-    public static final String NAME = "refinedstorage2_disks2";
+public class FabricStorageManager extends PersistentState implements PlatformStorageManager {
+    public static final String NAME = "refinedstorage2_storages";
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -30,26 +30,26 @@ public class FabricStorageDiskManager extends PersistentState implements Platfor
     private static final String TAG_DISK_TYPE = "type";
     private static final String TAG_DISK_DATA = "data";
 
-    private final StorageDiskManagerImpl parent;
+    private final StorageManagerImpl parent;
 
-    public FabricStorageDiskManager(StorageDiskManagerImpl parent) {
+    public FabricStorageManager(StorageManagerImpl parent) {
         this.parent = parent;
     }
 
     @Override
-    public <T> Optional<StorageDisk<T>> getDisk(UUID id) {
-        return parent.getDisk(id);
+    public <T> Optional<StorageDisk<T>> get(UUID id) {
+        return parent.get(id);
     }
 
     @Override
-    public <T> void setDisk(UUID id, StorageDisk<T> disk) {
-        parent.setDisk(id, disk);
+    public <T> void set(UUID id, StorageDisk<T> disk) {
+        parent.set(id, disk);
         markDirty();
     }
 
     @Override
-    public <T> Optional<StorageDisk<T>> disassembleDisk(UUID id) {
-        return parent.disassembleDisk(id)
+    public <T> Optional<StorageDisk<T>> disassemble(UUID id) {
+        return parent.disassemble(id)
                 .map(disk -> {
                     markDirty();
                     return (StorageDisk<T>) disk;
@@ -69,7 +69,7 @@ public class FabricStorageDiskManager extends PersistentState implements Platfor
             NbtCompound data = ((NbtCompound) diskTag).getCompound(TAG_DISK_DATA);
 
             StorageDiskTypeRegistry.INSTANCE.getType(typeIdentifier).ifPresentOrElse(type -> {
-                parent.setDisk(id, type.fromTag(data, this));
+                parent.set(id, type.fromTag(data, this));
             }, () -> {
                 LOGGER.warn("Cannot find storage disk type {}", typeIdentifier);
             });

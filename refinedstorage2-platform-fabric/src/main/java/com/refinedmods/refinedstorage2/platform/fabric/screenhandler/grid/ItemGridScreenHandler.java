@@ -16,7 +16,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.Client
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ItemGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.ItemGridResourceFactory;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.PlayerSource;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;

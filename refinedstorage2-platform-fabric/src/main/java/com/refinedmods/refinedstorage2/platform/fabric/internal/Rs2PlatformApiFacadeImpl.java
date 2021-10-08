@@ -2,15 +2,15 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal;
 
 import com.refinedmods.refinedstorage2.api.network.node.container.ConnectionProvider;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskManagerImpl;
+import com.refinedmods.refinedstorage2.api.storage.StorageManagerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskManager;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskType;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.FabricConnectionProvider;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.FabricClientStorageDiskManager;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.FabricStorageDiskManager;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricClientStorageManager;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricStorageManager;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.ItemStorageDiskType;
 
 import net.minecraft.item.ItemStack;
@@ -19,10 +19,10 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
 
 public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
-    private final PlatformStorageDiskManager clientStorageDiskManager = new FabricClientStorageDiskManager();
+    private final PlatformStorageManager clientStorageDiskManager = new FabricClientStorageManager();
 
     @Override
-    public PlatformStorageDiskManager getStorageDiskManager(World world) {
+    public PlatformStorageManager getStorageDiskManager(World world) {
         if (world.getServer() == null) {
             return clientStorageDiskManager;
         }
@@ -31,7 +31,7 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
                 .getServer()
                 .getWorld(World.OVERWORLD)
                 .getPersistentStateManager()
-                .getOrCreate(this::createStorageDiskManager, this::createStorageDiskManager, FabricStorageDiskManager.NAME);
+                .getOrCreate(this::createStorageDiskManager, this::createStorageDiskManager, FabricStorageManager.NAME);
     }
 
     @Override
@@ -61,13 +61,13 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
         return Rs2Mod.createTranslation(category, value, args);
     }
 
-    private FabricStorageDiskManager createStorageDiskManager(NbtCompound tag) {
+    private FabricStorageManager createStorageDiskManager(NbtCompound tag) {
         var manager = createStorageDiskManager();
         manager.read(tag);
         return manager;
     }
 
-    private FabricStorageDiskManager createStorageDiskManager() {
-        return new FabricStorageDiskManager(new StorageDiskManagerImpl());
+    private FabricStorageManager createStorageDiskManager() {
+        return new FabricStorageManager(new StorageManagerImpl());
     }
 }

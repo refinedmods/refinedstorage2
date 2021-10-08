@@ -4,11 +4,11 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.StorageManager;
 import com.refinedmods.refinedstorage2.api.storage.StorageSource;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +28,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
 
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
 
-    private StorageDiskManager diskManager;
+    private StorageManager diskManager;
 
     private final StorageDiskProvider diskProvider;
     private final long energyUsage;
@@ -63,7 +63,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         return new DiskDriveStorage(this, type);
     }
 
-    public void initialize(StorageDiskManager diskManager) {
+    public void initialize(StorageManager diskManager) {
         this.diskManager = diskManager;
 
         Set<StorageChannelType<?>> affectedStorageChannelTypes = new HashSet<>();
@@ -118,7 +118,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         diskProvider.getStorageChannelType(slot).ifPresentOrElse(type -> {
             disks[slot] = diskProvider
                     .getDiskId(slot)
-                    .flatMap(diskManager::getDisk)
+                    .flatMap(diskManager::get)
                     .map(disk -> new DiskDriveStorageDisk(disk, type, listener))
                     .orElse(null);
 

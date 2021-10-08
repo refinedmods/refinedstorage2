@@ -7,8 +7,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.item.StorageDiskItemImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.api.util.FabricQuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.FluidStorageDiskType;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.StorageChannelTypes;
 
 import java.util.Optional;
 

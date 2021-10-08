@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk;
+package com.refinedmods.refinedstorage2.platform.fabric.internal.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Source;
 

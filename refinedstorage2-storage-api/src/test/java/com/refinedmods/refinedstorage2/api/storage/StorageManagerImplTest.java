@@ -1,7 +1,8 @@
-package com.refinedmods.refinedstorage2.api.storage.disk;
+package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;
@@ -14,26 +15,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
-class StorageDiskManagerImplTest {
-    private final StorageDiskManagerImpl storageDiskManager = new StorageDiskManagerImpl();
+class StorageManagerImplTest {
+    private final StorageManagerImpl sut = new StorageManagerImpl();
 
     @Test
-    void Test_whether_getting_non_existent_disk_is_not_present() {
+    void Test_whether_getting_non_existent_storage_is_not_present() {
         // Assert
-        assertThat(storageDiskManager.getDisk(UUID.randomUUID())).isEmpty();
+        assertThat(sut.get(UUID.randomUUID())).isEmpty();
     }
 
     @Test
-    void Test_whether_getting_disk_is_present() {
+    void Test_whether_getting_storage_is_present() {
         // Arrange
         UUID id = UUID.randomUUID();
         StorageDisk<String> storage = new StorageDiskImpl<>(1);
 
         // Act
-        storageDiskManager.setDisk(id, storage);
-        Optional<StorageDisk<String>> foundStorage = storageDiskManager.getDisk(id);
+        sut.set(id, storage);
+        Optional<StorageDisk<String>> foundStorage = sut.get(id);
 
-        Optional<StorageDisk<String>> nonExistent = storageDiskManager.getDisk(UUID.randomUUID());
+        Optional<StorageDisk<String>> nonExistent = sut.get(UUID.randomUUID());
 
         // Assert
         assertThat(foundStorage).isNotEmpty();
@@ -43,16 +44,16 @@ class StorageDiskManagerImplTest {
     }
 
     @Test
-    void Test_getting_info_of_disk() {
+    void Test_getting_info_of_storage() {
         // Arrange
         UUID id = UUID.randomUUID();
         StorageDisk<String> storage = new StorageDiskImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE);
 
         // Act
-        storageDiskManager.setDisk(id, storage);
+        sut.set(id, storage);
 
-        StorageInfo info = storageDiskManager.getInfo(id);
+        StorageInfo info = sut.getInfo(id);
 
         // Assert
         assertThat(info.capacity()).isEqualTo(10);
@@ -60,9 +61,9 @@ class StorageDiskManagerImplTest {
     }
 
     @Test
-    void Test_getting_info_of_non_existent_disk() {
+    void Test_getting_info_of_non_existent_storage() {
         // Act
-        StorageInfo info = storageDiskManager.getInfo(UUID.randomUUID());
+        StorageInfo info = sut.getInfo(UUID.randomUUID());
 
         // Assert
         assertThat(info.capacity()).isZero();
@@ -70,56 +71,56 @@ class StorageDiskManagerImplTest {
     }
 
     @Test
-    void Test_disassembling_a_non_existing_disk() {
+    void Test_disassembling_a_non_existing_storage() {
         // Act
-        Optional<StorageDisk<String>> disassembledDisk = storageDiskManager.disassembleDisk(UUID.randomUUID());
+        Optional<StorageDisk<String>> disassembledDisk = sut.disassemble(UUID.randomUUID());
 
         // Assert
         assertThat(disassembledDisk).isEmpty();
     }
 
     @Test
-    void Test_disassembling_a_non_empty_disk() {
+    void Test_disassembling_a_non_empty_storage() {
         // Arrange
         UUID id = UUID.randomUUID();
         StorageDisk<String> storage = new StorageDiskImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE);
-        storageDiskManager.setDisk(id, storage);
+        sut.set(id, storage);
 
         // Act
-        Optional<StorageDisk<String>> disassembledDisk = storageDiskManager.disassembleDisk(id);
-        Optional<StorageDisk<String>> disk = storageDiskManager.getDisk(id);
+        Optional<StorageDisk<String>> disassembledDisk = sut.disassemble(id);
+        Optional<StorageDisk<String>> afterDisassembly = sut.get(id);
 
         // Assert
         assertThat(disassembledDisk).isEmpty();
-        assertThat(disk).isPresent();
+        assertThat(afterDisassembly).isPresent();
     }
 
     @Test
-    void Test_disassembling_an_empty_disk() {
+    void Test_disassembling_an_empty_storage() {
         // Arrange
         UUID id = UUID.randomUUID();
         StorageDisk<String> storage = new StorageDiskImpl<>(1);
-        storageDiskManager.setDisk(id, storage);
+        sut.set(id, storage);
 
         // Act
-        Optional<StorageDisk<String>> disassembledDisk = storageDiskManager.disassembleDisk(id);
-        Optional<StorageDisk<String>> disk = storageDiskManager.getDisk(id);
+        Optional<StorageDisk<String>> disassembledDisk = sut.disassemble(id);
+        Optional<StorageDisk<String>> afterDisassembly = sut.get(id);
 
         // Assert
         assertThat(disassembledDisk).isNotEmpty();
         assertThat(disassembledDisk.get()).isSameAs(storage);
-        assertThat(disk).isNotPresent();
+        assertThat(afterDisassembly).isNotPresent();
     }
 
     @Test
-    void Test_inserting_duplicate_storage_disk_ids_should_fail() {
+    void Test_inserting_duplicate_storage_storage_ids_should_fail() {
         // Arrange
         UUID id = UUID.randomUUID();
-        storageDiskManager.setDisk(id, new StorageDiskImpl<>(1));
+        sut.set(id, new StorageDiskImpl<>(1));
 
         // Act
-        Executable action = () -> storageDiskManager.setDisk(id, new StorageDiskImpl<>(1));
+        Executable action = () -> sut.set(id, new StorageDiskImpl<>(1));
 
         // Assert
         assertThrows(IllegalArgumentException.class, action);

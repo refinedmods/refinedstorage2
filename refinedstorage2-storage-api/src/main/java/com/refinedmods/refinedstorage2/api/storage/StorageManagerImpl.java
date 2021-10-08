@@ -1,6 +1,6 @@
-package com.refinedmods.refinedstorage2.api.storage.disk;
+package com.refinedmods.refinedstorage2.api.storage;
 
-import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
+import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +10,7 @@ import java.util.UUID;
 
 import com.google.common.base.Preconditions;
 
-public class StorageDiskManagerImpl implements StorageDiskManager {
+public class StorageManagerImpl implements StorageManager {
     private final Map<UUID, StorageDisk<?>> disks = new HashMap<>();
 
     public Set<Map.Entry<UUID, StorageDisk<?>>> getDisks() {
@@ -18,12 +18,12 @@ public class StorageDiskManagerImpl implements StorageDiskManager {
     }
 
     @Override
-    public <T> Optional<StorageDisk<T>> getDisk(UUID id) {
+    public <T> Optional<StorageDisk<T>> get(UUID id) {
         return Optional.ofNullable((StorageDisk<T>) disks.get(id));
     }
 
     @Override
-    public <T> void setDisk(UUID id, StorageDisk<T> disk) {
+    public <T> void set(UUID id, StorageDisk<T> disk) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(disk);
 
@@ -35,8 +35,8 @@ public class StorageDiskManagerImpl implements StorageDiskManager {
     }
 
     @Override
-    public <T> Optional<StorageDisk<T>> disassembleDisk(UUID id) {
-        return getDisk(id)
+    public <T> Optional<StorageDisk<T>> disassemble(UUID id) {
+        return get(id)
                 .map(disk -> {
                     if (disk.getStored() == 0) {
                         disks.remove(id);
@@ -48,6 +48,6 @@ public class StorageDiskManagerImpl implements StorageDiskManager {
 
     @Override
     public StorageInfo getInfo(UUID id) {
-        return getDisk(id).map(StorageInfo::of).orElse(StorageInfo.UNKNOWN);
+        return get(id).map(StorageInfo::of).orElse(StorageInfo.UNKNOWN);
     }
 }

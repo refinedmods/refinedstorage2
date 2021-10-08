@@ -4,8 +4,8 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskManager;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskType;
 
 import net.fabricmc.fabric.api.util.NbtType;
@@ -23,7 +23,7 @@ public class FluidStorageDiskType implements StorageDiskType<FluidResource> {
     }
 
     @Override
-    public StorageDisk<FluidResource> fromTag(NbtCompound tag, PlatformStorageDiskManager platformStorageDiskManager) {
+    public StorageDisk<FluidResource> fromTag(NbtCompound tag, PlatformStorageManager platformStorageDiskManager) {
         StorageDisk<FluidResource> disk = new PlatformStorageDiskImpl<>(
                 tag.getLong(TAG_DISK_CAPACITY),
                 FluidStorageDiskType.INSTANCE,
