@@ -4,9 +4,9 @@ import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
+import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
-import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
@@ -85,7 +85,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     public void setWorld(World world) {
         super.setWorld(world);
         if (!world.isClient()) {
-            getContainer().getNode().initialize(Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world));
+            getContainer().getNode().initialize(Rs2PlatformApiFacade.INSTANCE.getStorageManager(world));
         }
     }
 
@@ -194,10 +194,10 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
 
             for (int i = 0; i < statesList.size(); ++i) {
                 int idx = ((NbtByte) statesList.get(i)).intValue();
-                if (idx < 0 || idx >= DiskState.values().length) {
-                    idx = DiskState.NONE.ordinal();
+                if (idx < 0 || idx >= StorageDiskState.values().length) {
+                    idx = StorageDiskState.NONE.ordinal();
                 }
-                driveState.setState(i, DiskState.values()[idx]);
+                driveState.setState(i, StorageDiskState.values()[idx]);
             }
 
             BlockState state = world.getBlockState(pos);
@@ -208,7 +208,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     @Override
     public NbtCompound toClientTag(NbtCompound tag) {
         NbtList statesList = new NbtList();
-        for (DiskState state : getContainer().getNode().createState().getStates()) {
+        for (StorageDiskState state : getContainer().getNode().createState().getStates()) {
             statesList.add(NbtByte.of((byte) state.ordinal()));
         }
         tag.put(TAG_STATES, statesList);

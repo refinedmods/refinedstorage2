@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 
 public record StorageInfo(long stored, long capacity) {
     public static final StorageInfo UNKNOWN = new StorageInfo(0, 0);
@@ -8,7 +8,7 @@ public record StorageInfo(long stored, long capacity) {
     public static StorageInfo of(Storage<?> storage) {
         return new StorageInfo(
                 storage.getStored(),
-                storage instanceof StorageDisk storageDisk ? storageDisk.getCapacity() : 0L
+                storage instanceof BulkStorage bulkStorage ? bulkStorage.getCapacity() : 0L
         );
     }
 }

@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk;
+package com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk;
 
 import java.util.Optional;
 

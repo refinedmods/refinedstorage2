@@ -2,9 +2,9 @@ package com.refinedmods.refinedstorage2.platform.fabric.api.item;
 
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskItem;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.item.StorageDiskItem;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +48,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
         if (world == null) {
             return Optional.empty();
         }
-        return getDiskId(stack).map(Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world)::getInfo);
+        return getDiskId(stack).map(Rs2PlatformApiFacade.INSTANCE.getStorageManager(world)::getInfo);
     }
 
     @Override
@@ -92,7 +92,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
         }
 
         return getDiskId(stack)
-                .flatMap(id -> Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world).disassemble(id))
+                .flatMap(id -> Rs2PlatformApiFacade.INSTANCE.getStorageManager(world).disassemble(id))
                 .map(disk -> {
                     if (!user.getInventory().insertStack(storagePart.get().copy())) {
                         world.spawnEntity(new ItemEntity(world, user.getX(), user.getY(), user.getZ(), storagePart.get()));
@@ -105,7 +105,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
 
     protected abstract Optional<ItemStack> createStoragePart(int count);
 
-    protected abstract StorageDisk<?> createStorageDisk(World world);
+    protected abstract BulkStorage<?> createStorageDisk(World world);
 
     protected abstract ItemStack createDisassemblyByproduct();
 
@@ -116,7 +116,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
         if (!world.isClient() && !stack.hasNbt() && entity instanceof PlayerEntity) {
             UUID id = UUID.randomUUID();
 
-            Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(world).set(id, createStorageDisk(world));
+            Rs2PlatformApiFacade.INSTANCE.getStorageManager(world).set(id, createStorageDisk(world));
 
             stack.setNbt(new NbtCompound());
             stack.getNbt().putUuid(TAG_ID, id);

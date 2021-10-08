@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.api.storage.StorageManager;
 import com.refinedmods.refinedstorage2.api.storage.StorageSource;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
-import com.refinedmods.refinedstorage2.api.storage.disk.DiskState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +34,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     private final long energyUsagePerDisk;
     private final DiskDriveListener listener;
 
-    private final DiskDriveStorageDisk[] disks = new DiskDriveStorageDisk[DISK_COUNT];
+    private final DiskDriveBulkStorage[] disks = new DiskDriveBulkStorage[DISK_COUNT];
     private final Map<StorageChannelType<?>, DiskDriveStorage<?>> compositeStorages;
     private int diskCount;
 
@@ -101,7 +100,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
 
     private <T> List<Storage<T>> getSourcesForChannel(StorageChannelType<T> channelType) {
         List<Storage<T>> sources = new ArrayList<>();
-        for (DiskDriveStorageDisk<?> disk : disks) {
+        for (DiskDriveBulkStorage<?> disk : disks) {
             if (disk != null && disk.getStorageChannelType() == channelType) {
                 sources.add((Storage<T>) disk);
             }
@@ -119,7 +118,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
             disks[slot] = diskProvider
                     .getDiskId(slot)
                     .flatMap(diskManager::get)
-                    .map(disk -> new DiskDriveStorageDisk(disk, type, listener))
+                    .map(disk -> new DiskDriveBulkStorage(disk, type, listener))
                     .orElse(null);
 
             affectedStorageChannelTypes.add(type);
@@ -150,11 +149,11 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         return states;
     }
 
-    private DiskState getState(DiskDriveStorageDisk<?> disk) {
+    private StorageDiskState getState(DiskDriveBulkStorage<?> disk) {
         if (disk == null) {
-            return DiskState.NONE;
+            return StorageDiskState.NONE;
         } else if (!isActive()) {
-            return DiskState.DISCONNECTED;
+            return StorageDiskState.DISCONNECTED;
         }
         return disk.getState();
     }

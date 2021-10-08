@@ -1,14 +1,14 @@
-package com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk;
+package com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
 
 // TODO: Add test
-public class PlatformStorageDiskImpl<T> extends StorageDiskImpl<T> implements PlatformStorageDisk<T> {
+public class PlatformBulkStorageImpl<T> extends BulkStorageImpl<T> implements PlatformBulkStorage<T> {
     private final Runnable listener;
     private final StorageDiskType<T> type;
 
-    public PlatformStorageDiskImpl(long capacity, StorageDiskType<T> type, Runnable listener) {
+    public PlatformBulkStorageImpl(long capacity, StorageDiskType<T> type, Runnable listener) {
         super(capacity);
         this.listener = listener;
         this.type = type;

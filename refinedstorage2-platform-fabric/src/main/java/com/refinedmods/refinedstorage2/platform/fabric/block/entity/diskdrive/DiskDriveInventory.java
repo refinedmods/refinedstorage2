@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.block.entity.diskdrive;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskProvider;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskItem;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.item.StorageDiskItem;
 
 import java.util.Optional;
 import java.util.UUID;

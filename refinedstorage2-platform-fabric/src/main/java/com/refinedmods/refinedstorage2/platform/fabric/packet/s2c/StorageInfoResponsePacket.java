@@ -18,6 +18,6 @@ public class StorageInfoResponsePacket implements ClientPlayNetworking.PlayChann
         long stored = buf.readLong();
         long capacity = buf.readLong();
 
-        client.execute(() -> ((FabricClientStorageManager) Rs2PlatformApiFacade.INSTANCE.getStorageDiskManager(client.world)).setInfo(id, stored, capacity));
+        client.execute(() -> ((FabricClientStorageManager) Rs2PlatformApiFacade.INSTANCE.getStorageManager(client.world)).setInfo(id, stored, capacity));
     }
 }

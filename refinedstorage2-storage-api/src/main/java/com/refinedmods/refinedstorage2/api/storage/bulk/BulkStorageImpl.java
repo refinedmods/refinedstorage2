@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.storage.disk;
+package com.refinedmods.refinedstorage2.api.storage.bulk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
@@ -7,12 +7,12 @@ import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 
 import java.util.Collection;
 
-public class StorageDiskImpl<T> implements StorageDisk<T> {
+public class BulkStorageImpl<T> implements BulkStorage<T> {
     private final ResourceList<T> list = new ResourceListImpl<>();
     private final long capacity;
     private long stored;
 
-    public StorageDiskImpl(long capacity) {
+    public BulkStorageImpl(long capacity) {
         this.capacity = capacity;
     }
 

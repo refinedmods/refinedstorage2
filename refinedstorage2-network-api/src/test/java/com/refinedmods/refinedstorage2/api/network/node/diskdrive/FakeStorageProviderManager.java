@@ -2,9 +2,9 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.StorageManager;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class FakeStorageProviderManager implements StorageDiskProvider, StorageManager {
     private final Map<Integer, UUID> slots = new HashMap<>();
-    private final Map<UUID, StorageDisk<?>> disks = new HashMap<>();
+    private final Map<UUID, BulkStorage<?>> disks = new HashMap<>();
 
     @Override
     public Optional<UUID> getDiskId(int slot) {
@@ -29,12 +29,12 @@ public class FakeStorageProviderManager implements StorageDiskProvider, StorageM
     }
 
     @Override
-    public <T> Optional<StorageDisk<T>> get(UUID id) {
-        StorageDisk<?> disk = disks.get(id);
-        return Optional.ofNullable(disk == null ? null : (StorageDisk<T>) disk);
+    public <T> Optional<BulkStorage<T>> get(UUID id) {
+        BulkStorage<?> disk = disks.get(id);
+        return Optional.ofNullable(disk == null ? null : (BulkStorage<T>) disk);
     }
 
-    public <T> void setDiskInSlot(int slot, StorageDisk<T> disk) {
+    public <T> void setDiskInSlot(int slot, BulkStorage<T> disk) {
         UUID id = UUID.randomUUID();
         disks.put(id, disk);
         setDiskInSlot(slot, id);
@@ -49,12 +49,12 @@ public class FakeStorageProviderManager implements StorageDiskProvider, StorageM
     }
 
     @Override
-    public <T> void set(UUID id, StorageDisk<T> disk) {
+    public <T> void set(UUID id, BulkStorage<T> storage) {
         throw new RuntimeException();
     }
 
     @Override
-    public <T> Optional<StorageDisk<T>> disassemble(UUID id) {
+    public <T> Optional<BulkStorage<T>> disassemble(UUID id) {
         return Optional.empty();
     }
 

@@ -2,11 +2,11 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskType;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.PlatformBulkStorageImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.StorageDiskType;
 
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.NbtCompound;
@@ -23,8 +23,8 @@ public class ItemStorageDiskType implements StorageDiskType<ItemResource> {
     }
 
     @Override
-    public StorageDisk<ItemResource> fromTag(NbtCompound tag, PlatformStorageManager platformStorageDiskManager) {
-        StorageDisk<ItemResource> disk = new PlatformStorageDiskImpl<>(
+    public BulkStorage<ItemResource> fromTag(NbtCompound tag, PlatformStorageManager platformStorageDiskManager) {
+        BulkStorage<ItemResource> disk = new PlatformBulkStorageImpl<>(
                 tag.getLong(TAG_DISK_CAPACITY),
                 ItemStorageDiskType.INSTANCE,
                 platformStorageDiskManager::markAsChanged
@@ -38,7 +38,7 @@ public class ItemStorageDiskType implements StorageDiskType<ItemResource> {
     }
 
     @Override
-    public NbtCompound toTag(StorageDisk<ItemResource> disk) {
+    public NbtCompound toTag(BulkStorage<ItemResource> disk) {
         NbtCompound tag = new NbtCompound();
         tag.putLong(TAG_DISK_CAPACITY, disk.getCapacity());
         NbtList stacks = new NbtList();

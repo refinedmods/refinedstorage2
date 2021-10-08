@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDiskImpl;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;
@@ -28,13 +28,13 @@ class StorageManagerImplTest {
     void Test_whether_getting_storage_is_present() {
         // Arrange
         UUID id = UUID.randomUUID();
-        StorageDisk<String> storage = new StorageDiskImpl<>(1);
+        BulkStorage<String> storage = new BulkStorageImpl<>(1);
 
         // Act
         sut.set(id, storage);
-        Optional<StorageDisk<String>> foundStorage = sut.get(id);
+        Optional<BulkStorage<String>> foundStorage = sut.get(id);
 
-        Optional<StorageDisk<String>> nonExistent = sut.get(UUID.randomUUID());
+        Optional<BulkStorage<String>> nonExistent = sut.get(UUID.randomUUID());
 
         // Assert
         assertThat(foundStorage).isNotEmpty();
@@ -47,7 +47,7 @@ class StorageManagerImplTest {
     void Test_getting_info_of_storage() {
         // Arrange
         UUID id = UUID.randomUUID();
-        StorageDisk<String> storage = new StorageDiskImpl<>(10);
+        BulkStorage<String> storage = new BulkStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE);
 
         // Act
@@ -73,26 +73,26 @@ class StorageManagerImplTest {
     @Test
     void Test_disassembling_a_non_existing_storage() {
         // Act
-        Optional<StorageDisk<String>> disassembledDisk = sut.disassemble(UUID.randomUUID());
+        Optional<BulkStorage<String>> disassembled = sut.disassemble(UUID.randomUUID());
 
         // Assert
-        assertThat(disassembledDisk).isEmpty();
+        assertThat(disassembled).isEmpty();
     }
 
     @Test
     void Test_disassembling_a_non_empty_storage() {
         // Arrange
         UUID id = UUID.randomUUID();
-        StorageDisk<String> storage = new StorageDiskImpl<>(10);
+        BulkStorage<String> storage = new BulkStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE);
         sut.set(id, storage);
 
         // Act
-        Optional<StorageDisk<String>> disassembledDisk = sut.disassemble(id);
-        Optional<StorageDisk<String>> afterDisassembly = sut.get(id);
+        Optional<BulkStorage<String>> disassembled = sut.disassemble(id);
+        Optional<BulkStorage<String>> afterDisassembly = sut.get(id);
 
         // Assert
-        assertThat(disassembledDisk).isEmpty();
+        assertThat(disassembled).isEmpty();
         assertThat(afterDisassembly).isPresent();
     }
 
@@ -100,16 +100,16 @@ class StorageManagerImplTest {
     void Test_disassembling_an_empty_storage() {
         // Arrange
         UUID id = UUID.randomUUID();
-        StorageDisk<String> storage = new StorageDiskImpl<>(1);
+        BulkStorage<String> storage = new BulkStorageImpl<>(1);
         sut.set(id, storage);
 
         // Act
-        Optional<StorageDisk<String>> disassembledDisk = sut.disassemble(id);
-        Optional<StorageDisk<String>> afterDisassembly = sut.get(id);
+        Optional<BulkStorage<String>> disassembled = sut.disassemble(id);
+        Optional<BulkStorage<String>> afterDisassembly = sut.get(id);
 
         // Assert
-        assertThat(disassembledDisk).isNotEmpty();
-        assertThat(disassembledDisk.get()).isSameAs(storage);
+        assertThat(disassembled).isNotEmpty();
+        assertThat(disassembled.get()).isSameAs(storage);
         assertThat(afterDisassembly).isNotPresent();
     }
 
@@ -117,10 +117,10 @@ class StorageManagerImplTest {
     void Test_inserting_duplicate_storage_storage_ids_should_fail() {
         // Arrange
         UUID id = UUID.randomUUID();
-        sut.set(id, new StorageDiskImpl<>(1));
+        sut.set(id, new BulkStorageImpl<>(1));
 
         // Act
-        Executable action = () -> sut.set(id, new StorageDiskImpl<>(1));
+        Executable action = () -> sut.set(id, new BulkStorageImpl<>(1));
 
         // Assert
         assertThrows(IllegalArgumentException.class, action);

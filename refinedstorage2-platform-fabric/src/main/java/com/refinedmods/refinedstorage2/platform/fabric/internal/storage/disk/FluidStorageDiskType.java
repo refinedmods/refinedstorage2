@@ -2,11 +2,11 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.disk.StorageDisk;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.PlatformStorageDiskImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.disk.StorageDiskType;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.PlatformBulkStorageImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.StorageDiskType;
 
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.NbtCompound;
@@ -23,8 +23,8 @@ public class FluidStorageDiskType implements StorageDiskType<FluidResource> {
     }
 
     @Override
-    public StorageDisk<FluidResource> fromTag(NbtCompound tag, PlatformStorageManager platformStorageDiskManager) {
-        StorageDisk<FluidResource> disk = new PlatformStorageDiskImpl<>(
+    public BulkStorage<FluidResource> fromTag(NbtCompound tag, PlatformStorageManager platformStorageDiskManager) {
+        BulkStorage<FluidResource> disk = new PlatformBulkStorageImpl<>(
                 tag.getLong(TAG_DISK_CAPACITY),
                 FluidStorageDiskType.INSTANCE,
                 platformStorageDiskManager::markAsChanged
@@ -38,7 +38,7 @@ public class FluidStorageDiskType implements StorageDiskType<FluidResource> {
     }
 
     @Override
-    public NbtCompound toTag(StorageDisk<FluidResource> disk) {
+    public NbtCompound toTag(BulkStorage<FluidResource> disk) {
         NbtCompound tag = new NbtCompound();
         tag.putLong(TAG_DISK_CAPACITY, disk.getCapacity());
         NbtList stacks = new NbtList();
