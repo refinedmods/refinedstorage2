@@ -1,14 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.slot;
 
-import alexiil.mc.lib.attributes.item.FixedItemInv;
-import alexiil.mc.lib.attributes.item.compat.SlotFixedItemInv;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 
-public class FilterSlot extends SlotFixedItemInv {
-    public FilterSlot(ScreenHandler container, FixedItemInv inv, boolean server, int slotIndex, int x, int y) {
-        super(container, inv, server, slotIndex, x, y);
+public class FilterSlot extends Slot {
+    public FilterSlot(Inventory inventory, int index, int x, int y) {
+        super(inventory, index, x, y);
     }
 
     @Override

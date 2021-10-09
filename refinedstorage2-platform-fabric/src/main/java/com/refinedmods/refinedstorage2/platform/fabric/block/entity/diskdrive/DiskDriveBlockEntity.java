@@ -18,14 +18,13 @@ import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.diskdrive.D
 import java.util.List;
 import java.util.Optional;
 
-import alexiil.mc.lib.attributes.item.FixedItemInv;
-import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtByte;
 import net.minecraft.nbt.NbtCompound;
@@ -53,9 +52,8 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
 
     private static final int DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
 
-    private final DiskDriveInventory diskInventory = new DiskDriveInventory();
-    // TODO: move away from LBA
-    private final FullFixedItemInv filterInventory = new FullFixedItemInv(9);
+    private final DiskDriveInventory diskInventory = new DiskDriveInventory(this);
+    private final SimpleInventory filterInventory = new SimpleInventory(9);
     private DiskDriveState driveState;
 
     private boolean syncRequested;
@@ -63,9 +61,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
 
     public DiskDriveBlockEntity(BlockPos pos, BlockState state) {
         super(Rs2Mod.BLOCK_ENTITIES.getDiskDrive(), pos, state);
-
-        diskInventory.setOwnerListener(new DiskInventoryListener(this));
-        filterInventory.setOwnerListener(new FilterInventoryListener(this));
+        filterInventory.addListener(new FilterInventoryChangedListener(this));
     }
 
     public void updateDiskStateIfNecessary() {
@@ -121,11 +117,11 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     @Override
     public void readNbt(NbtCompound tag) {
         if (tag.contains(TAG_DISK_INVENTORY)) {
-            diskInventory.fromTag(tag.getCompound(TAG_DISK_INVENTORY));
+            diskInventory.readNbtList(tag.getList(TAG_DISK_INVENTORY, NbtByte.COMPOUND_TYPE));
         }
 
         if (tag.contains(TAG_FILTER_INVENTORY)) {
-            filterInventory.fromTag(tag.getCompound(TAG_FILTER_INVENTORY));
+            filterInventory.readNbtList(tag.getList(TAG_FILTER_INVENTORY, NbtByte.COMPOUND_TYPE));
         }
 
         super.readNbt(tag);
@@ -134,14 +130,14 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     @Override
     public NbtCompound writeNbt(NbtCompound tag) {
         tag = super.writeNbt(tag);
-        tag.put(TAG_DISK_INVENTORY, diskInventory.toTag());
-        tag.put(TAG_FILTER_INVENTORY, filterInventory.toTag());
+        tag.put(TAG_DISK_INVENTORY, diskInventory.toNbtList());
+        tag.put(TAG_FILTER_INVENTORY, filterInventory.toNbtList());
         tag.putInt(TAG_PRIORITY, getContainer().getNode().getPriority());
         tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getContainer().getNode().getAccessMode()));
         return tag;
     }
 
-    public FixedItemInv getDiskInventory() {
+    public SimpleInventory getDiskInventory() {
         return diskInventory;
     }
 
@@ -228,7 +224,9 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     @Override
     public DefaultedList<ItemStack> getDrops() {
         DefaultedList<ItemStack> drops = DefaultedList.of();
-        diskInventory.stackIterable().forEach(drops::add);
+        for (int i = 0; i < diskInventory.size(); ++i) {
+            drops.add(diskInventory.getStack(i));
+        }
         return drops;
     }
 

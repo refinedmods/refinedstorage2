@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.AccessModeSe
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.fabric.block.entity.diskdrive.DiskDriveInventory;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.AccessModeAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.BaseScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.ExactModeAccessor;
@@ -24,11 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import alexiil.mc.lib.attributes.item.FixedItemInv;
-import alexiil.mc.lib.attributes.item.compat.SlotFixedItemInv;
-import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 
@@ -99,10 +96,10 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
 
         this.storageInfoAccessor = new StorageInfoAccessorImpl(playerInventory.player.getEntityWorld());
 
-        addSlots(playerInventory.player, new DiskDriveInventory(), new FullFixedItemInv(9));
+        addSlots(playerInventory.player, new SimpleInventory(DiskDriveNetworkNode.DISK_COUNT), new SimpleInventory(9));
     }
 
-    public DiskDriveScreenHandler(int syncId, PlayerEntity player, FixedItemInv diskInventory, FixedItemInv filterInventory, DiskDriveBlockEntity diskDrive, StorageInfoAccessor storageInfoAccessor) {
+    public DiskDriveScreenHandler(int syncId, PlayerEntity player, SimpleInventory diskInventory, SimpleInventory filterInventory, DiskDriveBlockEntity diskDrive, StorageInfoAccessor storageInfoAccessor) {
         super(Rs2Mod.SCREEN_HANDLERS.getDiskDrive(), syncId);
 
         this.priorityProperty = TwoWaySyncProperty.forServer(
@@ -152,9 +149,9 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
         addSlots(player, diskInventory, filterInventory);
     }
 
-    private void addSlots(PlayerEntity player, FixedItemInv diskInventory, FixedItemInv filterInventory) {
+    private void addSlots(PlayerEntity player, SimpleInventory diskInventory, SimpleInventory filterInventory) {
         for (int i = 0; i < DiskDriveNetworkNode.DISK_COUNT; ++i) {
-            diskSlots.add(addSlot(createDiskSlot(player, diskInventory, i)));
+            diskSlots.add(addSlot(createDiskSlot(diskInventory, i)));
         }
         for (int i = 0; i < 9; ++i) {
             addSlot(createFilterSlot(player, filterInventory, i));
@@ -162,15 +159,15 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
         addPlayerInventory(player.getInventory(), 8, 141);
     }
 
-    private SlotFixedItemInv createFilterSlot(PlayerEntity player, FixedItemInv filterInventory, int i) {
+    private FilterSlot createFilterSlot(PlayerEntity player, SimpleInventory filterInventory, int i) {
         int x = FILTER_SLOT_X + (18 * i);
-        return new FilterSlot(this, filterInventory, !player.world.isClient(), i, x, FILTER_SLOT_Y);
+        return new FilterSlot(filterInventory, i, x, FILTER_SLOT_Y);
     }
 
-    private SlotFixedItemInv createDiskSlot(PlayerEntity player, FixedItemInv diskInventory, int i) {
+    private Slot createDiskSlot(SimpleInventory diskInventory, int i) {
         int x = DISK_SLOT_X + ((i % 2) * 18);
         int y = DISK_SLOT_Y + Math.floorDiv(i, 2) * 18;
-        return new SlotFixedItemInv(this, diskInventory, !player.world.isClient(), i, x, y);
+        return new Slot(diskInventory, i, x, y);
     }
 
     public boolean hasInfiniteDisk() {

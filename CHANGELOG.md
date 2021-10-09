@@ -34,6 +34,10 @@ before updating.
 - The Wrench works on any block that has the `fabric:wrenchables` tag. Other mods can identify the Refined Storage
   wrench by checking the `fabric:wrenches` tag.
 
+### Removed
+
+- LibBlockAttributes is no longer used and thus no longer bundled with Refined Storage 2.
+
 ## [2.0.0-milestone.1.1] - 2021-08-16
 
 ### Added
