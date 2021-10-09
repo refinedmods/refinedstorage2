@@ -5,9 +5,9 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.item.StorageDiskItemImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.PlatformBulkStorageImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.BulkPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.ItemStorageDiskType;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemBulkStorageType;
 
 import java.util.Optional;
 
@@ -29,7 +29,7 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected Optional<ItemStack> createStoragePart(int count) {
-        if (type == ItemStorageType.CREATIVE) {
+        if (type == ItemStorageDiskItem.ItemStorageType.CREATIVE) {
             return Optional.empty();
         }
         return Optional.of(new ItemStack(Rs2Mod.ITEMS.getStoragePart(type), count));
@@ -37,9 +37,9 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected BulkStorage<?> createStorageDisk(World world) {
-        return new PlatformBulkStorageImpl<>(
+        return new BulkPlatformStorage<>(
                 type.getCapacity(),
-                ItemStorageDiskType.INSTANCE,
+                ItemBulkStorageType.INSTANCE,
                 Rs2PlatformApiFacade.INSTANCE.getStorageManager(world)::markAsChanged
         );
     }

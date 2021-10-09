@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacadeProxy;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.StorageDiskTypeRegistry;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2BlockEntities;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2Blocks;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2Items;
@@ -20,8 +20,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2ScreenHandlers;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.Rs2PlatformApiFacadeImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.FluidStorageDiskType;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.ItemStorageDiskType;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidBulkStorageType;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemBulkStorageType;
 import com.refinedmods.refinedstorage2.platform.fabric.loot.Rs2LootFunctions;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
@@ -98,8 +98,8 @@ public class Rs2Mod implements ModInitializer {
     }
 
     private void registerDiskTypes() {
-        StorageDiskTypeRegistry.INSTANCE.addType(createIdentifier("item_disk"), ItemStorageDiskType.INSTANCE);
-        StorageDiskTypeRegistry.INSTANCE.addType(createIdentifier("fluid_disk"), FluidStorageDiskType.INSTANCE);
+        StorageTypeRegistry.INSTANCE.addType(createIdentifier("item_disk"), ItemBulkStorageType.INSTANCE);
+        StorageTypeRegistry.INSTANCE.addType(createIdentifier("fluid_disk"), FluidBulkStorageType.INSTANCE);
     }
 
     private void initializePlatformApiFacade() {

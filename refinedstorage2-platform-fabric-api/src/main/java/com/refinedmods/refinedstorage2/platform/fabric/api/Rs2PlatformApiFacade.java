@@ -2,9 +2,10 @@ package com.refinedmods.refinedstorage2.platform.fabric.api;
 
 import com.refinedmods.refinedstorage2.api.network.node.container.ConnectionProvider;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.StorageDiskType;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TranslatableText;
@@ -15,7 +16,9 @@ public interface Rs2PlatformApiFacade {
 
     PlatformStorageManager getStorageManager(World world);
 
-    StorageDiskType<ItemResource> getItemStorageDiskType();
+    StorageType<ItemResource> getItemBulkStorageType();
+
+    StorageType<FluidResource> getFluidBulkStorageType();
 
     ResourceAmount<ItemResource> toItemResourceAmount(ItemStack stack);
 
