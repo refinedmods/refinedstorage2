@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.platform.fabric.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.ItemGridScreenHandler;
 
@@ -45,12 +46,20 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandl
 
     @Override
     protected void mouseScrolledInInventory(boolean up, ItemStack stack, int slotIndex) {
-        // todo
+        GridScrollMode scrollMode = getScrollModeWhenScrollingOnInventoryArea(up);
+        if (scrollMode == null) {
+            return;
+        }
+        getScreenHandler().onScroll(new ItemResource(stack), scrollMode, slotIndex);
     }
 
     @Override
     protected void mouseScrolledInGrid(boolean up, GridResource<ItemResource> stack) {
-        // todo
+        GridScrollMode scrollMode = getScrollModeWhenScrollingOnGridArea(up);
+        if (scrollMode == null) {
+            return;
+        }
+        getScreenHandler().onScroll(stack.getResourceAmount().getResource(), scrollMode, -1);
     }
 
     private static GridExtractMode getExtractMode(int clickedButton) {
@@ -68,7 +77,6 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandl
         return clickedButton == 1 ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
     }
 
-    /*
     private static GridScrollMode getScrollModeWhenScrollingOnInventoryArea(boolean up) {
         if (hasShiftDown()) {
             return up ? GridScrollMode.INVENTORY_TO_GRID : GridScrollMode.GRID_TO_INVENTORY;
@@ -96,5 +104,5 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandl
         }
 
         return null;
-    }*/
+    }
 }

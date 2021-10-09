@@ -42,6 +42,7 @@ public class GridServiceImpl<T> implements GridService<T> {
         return switch (extractMode) {
             case ENTIRE_RESOURCE -> extractableAmount;
             case HALF_RESOURCE -> extractableAmount == 1 ? 1 : extractableAmount / 2;
+            case SINGLE_RESOURCE -> Math.min(1, extractableAmount);
         };
     }
 

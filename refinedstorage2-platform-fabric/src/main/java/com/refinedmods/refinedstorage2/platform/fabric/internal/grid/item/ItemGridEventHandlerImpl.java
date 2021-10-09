@@ -6,12 +6,14 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.fabric.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 
 import java.util.Optional;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.impl.transfer.item.ItemVariantImpl;
@@ -64,10 +66,39 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         });
     }
 
-    private long insert(ItemVariant itemVariant, long amount, Transaction tx, boolean cursor) {
-        if (cursor) {
-            return playerCursorStorage.insert(itemVariant, amount, tx);
+    @Override
+    public void onScroll(ItemResource itemResource, GridScrollMode mode, int slot) {
+        Storage<ItemVariant> playerStorage = slot >= 0 ? playerInventoryStorage.getSlot(slot) : playerInventoryStorage;
+        switch (mode) {
+            case GRID_TO_INVENTORY -> handleGridToInventoryScroll(itemResource, playerStorage);
+            case INVENTORY_TO_GRID -> /* todo */{
+            }
+            case GRID_TO_CURSOR -> handleGridToInventoryScroll(itemResource, playerCursorStorage);
         }
-        return playerInventoryStorage.offer(itemVariant, amount, tx);
+    }
+
+    private void handleGridToInventoryScroll(ItemResource itemResource, Storage<ItemVariant> destinationStorage) {
+        gridService.extract(itemResource, GridExtractMode.SINGLE_RESOURCE, (resource, amount, action) -> {
+            ItemVariant itemVariant = ItemVariant.of(resource.getItem(), resource.getTag());
+            try (Transaction tx = Transaction.openOuter()) {
+                long inserted = insert(itemVariant, amount, tx, destinationStorage);
+                long remainder = amount - inserted;
+                if (action == Action.EXECUTE) {
+                    tx.commit();
+                }
+                return remainder;
+            }
+        });
+    }
+
+    private long insert(ItemVariant itemVariant, long amount, Transaction tx, boolean cursor) {
+        return insert(itemVariant, amount, tx, cursor ? playerCursorStorage : playerInventoryStorage);
+    }
+
+    private long insert(ItemVariant itemVariant, long amount, Transaction tx, Storage<ItemVariant> targetStorage) {
+        if (targetStorage instanceof PlayerInventoryStorage) {
+            return ((PlayerInventoryStorage) targetStorage).offer(itemVariant, amount, tx);
+        }
+        return targetStorage.insert(itemVariant, amount, tx);
     }
 }
