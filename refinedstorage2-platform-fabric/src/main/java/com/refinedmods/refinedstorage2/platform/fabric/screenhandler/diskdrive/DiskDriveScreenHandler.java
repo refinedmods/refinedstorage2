@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.item.StorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RedstoneModeSettings;
@@ -18,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.PriorityAcc
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.slot.FilterSlot;
+import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.slot.ValidatedSlot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -168,7 +170,7 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     private Slot createDiskSlot(SimpleInventory diskInventory, int i) {
         int x = DISK_SLOT_X + ((i % 2) * 18);
         int y = DISK_SLOT_Y + Math.floorDiv(i, 2) * 18;
-        return new Slot(diskInventory, i, x, y);
+        return new ValidatedSlot(diskInventory, i, x, y, stack -> stack.getItem() instanceof StorageDiskItem);
     }
 
     public boolean hasInfiniteDisk() {

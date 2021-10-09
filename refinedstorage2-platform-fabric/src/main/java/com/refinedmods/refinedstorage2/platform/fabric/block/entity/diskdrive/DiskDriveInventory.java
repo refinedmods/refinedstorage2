@@ -20,8 +20,8 @@ public class DiskDriveInventory extends SimpleInventory implements StorageDiskPr
     }
 
     @Override
-    public boolean canInsert(ItemStack stack) {
-        return super.canInsert(stack) && stack.getItem() instanceof StorageDiskItem;
+    public boolean isValid(int slot, ItemStack stack) {
+        return stack.getItem() instanceof StorageDiskItem;
     }
 
     @Override
