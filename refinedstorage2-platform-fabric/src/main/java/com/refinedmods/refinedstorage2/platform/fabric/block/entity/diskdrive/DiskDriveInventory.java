@@ -8,26 +8,29 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.storage.item.StorageD
 import java.util.Optional;
 import java.util.UUID;
 
-import alexiil.mc.lib.attributes.item.filter.ItemClassFilter;
-import alexiil.mc.lib.attributes.item.filter.ItemFilter;
-import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 
-public class DiskDriveInventory extends FullFixedItemInv implements StorageDiskProvider {
-    private static final ItemFilter DISK_FILTER = new ItemClassFilter(StorageDiskItem.class);
+public class DiskDriveInventory extends SimpleInventory implements StorageDiskProvider {
+    private final DiskDriveBlockEntity diskDrive;
 
-    public DiskDriveInventory() {
+    public DiskDriveInventory(DiskDriveBlockEntity diskDrive) {
         super(DiskDriveNetworkNode.DISK_COUNT);
+        this.diskDrive = diskDrive;
     }
 
     @Override
-    public boolean isItemValidForSlot(int slot, ItemStack stack) {
-        return DISK_FILTER.matches(stack);
+    public boolean canInsert(ItemStack stack) {
+        return super.canInsert(stack) && stack.getItem() instanceof StorageDiskItem;
     }
 
     @Override
-    public ItemFilter getFilterForSlot(int slot) {
-        return DISK_FILTER;
+    public void setStack(int slot, ItemStack stack) {
+        super.setStack(slot, stack);
+        if (diskDrive.getWorld() == null || diskDrive.getWorld().isClient()) {
+            return;
+        }
+        diskDrive.onDiskChanged(slot);
     }
 
     @Override
@@ -41,7 +44,7 @@ public class DiskDriveInventory extends FullFixedItemInv implements StorageDiskP
     }
 
     private Optional<ItemStack> validateAndGetStack(int slot) {
-        ItemStack stack = getInvStack(slot);
+        ItemStack stack = getStack(slot);
         if (stack.isEmpty() || !(stack.getItem() instanceof StorageDiskItem)) {
             return Optional.empty();
         }

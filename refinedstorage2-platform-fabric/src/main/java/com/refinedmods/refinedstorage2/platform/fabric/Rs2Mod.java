@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeReg
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacadeProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageTypeRegistry;
+import com.refinedmods.refinedstorage2.platform.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2BlockEntities;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2Blocks;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2Items;
@@ -39,6 +40,8 @@ import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvent;
@@ -85,8 +88,18 @@ public class Rs2Mod implements ModInitializer {
         registerGridSearchBoxModes();
         registerPackets();
         registerSounds();
+        registerInventories();
 
         LOGGER.info("Refined Storage 2 has loaded.");
+    }
+
+    private void registerInventories() {
+        ItemStorage.SIDED.registerForBlockEntities((blockEntity, context) -> {
+            if (blockEntity instanceof DiskDriveBlockEntity diskDrive) {
+                return InventoryStorage.of(diskDrive.getDiskInventory(), context);
+            }
+            return null;
+        }, BLOCK_ENTITIES.getDiskDrive());
     }
 
     private void registerSounds() {

@@ -8,14 +8,6 @@ targetCompatibility = JavaVersion.VERSION_16
 archivesBaseName = 'refinedstorage2-platform-fabric'
 
 repositories {
-    // Required for libblockattributes
-    maven {
-        name = 'BuildCraft'
-        url = 'https://mod-buildcraft.com/maven'
-        content {
-            includeGroup 'alexiil.mc.lib'
-        }
-    }
     maven {
         url 'https://maven.blamejared.com'
     }
@@ -55,9 +47,6 @@ dependencies {
 
     implementation project(':refinedstorage2-platform-fabric-api')
     include project(':refinedstorage2-platform-fabric-api')
-
-    modImplementation "alexiil.mc.lib:libblockattributes-all:${project.libBlockAttributesVersion}"
-    include "alexiil.mc.lib:libblockattributes-all:${project.libBlockAttributesVersion}"
 
     modApi("me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig1uVersion}") {
         exclude(group: 'net.fabricmc.fabric-api')
