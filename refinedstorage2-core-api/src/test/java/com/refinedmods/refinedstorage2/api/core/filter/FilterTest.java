@@ -11,11 +11,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
 class FilterTest {
-    private Filter<String> filter;
+    private Filter filter;
 
     @BeforeEach
     void setUp() {
-        filter = new Filter<>();
+        filter = new Filter();
     }
 
     @Test

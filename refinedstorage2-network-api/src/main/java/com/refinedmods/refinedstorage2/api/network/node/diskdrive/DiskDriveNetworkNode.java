@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
+import com.refinedmods.refinedstorage2.api.core.filter.Filter;
+import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
@@ -39,7 +41,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     private final Map<StorageChannelType<?>, DiskDriveStorage<?>> compositeStorages;
     private int diskCount;
 
-    // TODO: Reimplement filter
+    private final Filter filter = new Filter();
 
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
     private int priority;
@@ -60,7 +62,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     }
 
     private DiskDriveStorage<?> createCompositeStorage(StorageChannelType<?> type) {
-        return new DiskDriveStorage(this, type);
+        return new DiskDriveStorage(this, type, filter);
     }
 
     public void initialize(StorageManager diskManager) {
@@ -137,6 +139,18 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         if (network != null) {
             compositeStorages.keySet().forEach(type -> network.getComponent(StorageNetworkComponent.class).getStorageChannel(type).invalidate());
         }
+    }
+
+    public FilterMode getFilterMode() {
+        return filter.getMode();
+    }
+
+    public void setFilterMode(FilterMode mode) {
+        filter.setMode(mode);
+    }
+
+    public void setFilterTemplates(Set<Object> templates) {
+        filter.setTemplates(templates);
     }
 
     @Override

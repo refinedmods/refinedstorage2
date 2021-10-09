@@ -96,6 +96,7 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
 
         this.storageInfoAccessor = new StorageInfoAccessorImpl(playerInventory.player.getEntityWorld());
 
+        // TODO: add fluid filter slot
         addSlots(playerInventory.player, new SimpleInventory(DiskDriveNetworkNode.DISK_COUNT), new SimpleInventory(9));
     }
 

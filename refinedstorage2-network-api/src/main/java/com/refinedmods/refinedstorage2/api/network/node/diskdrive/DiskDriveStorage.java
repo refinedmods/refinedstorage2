@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
@@ -15,11 +16,13 @@ import java.util.List;
 public class DiskDriveStorage<T> extends ProxyStorage<T> implements Priority {
     protected final DiskDriveNetworkNode diskDrive;
     private final StorageChannelType<T> storageChannelType;
+    private final Filter filter;
 
-    protected DiskDriveStorage(DiskDriveNetworkNode diskDrive, StorageChannelType<T> type) {
+    protected DiskDriveStorage(DiskDriveNetworkNode diskDrive, StorageChannelType<T> type, Filter filter) {
         super(type.createEmptyCompositeStorage());
         this.diskDrive = diskDrive;
         this.storageChannelType = type;
+        this.filter = filter;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class DiskDriveStorage<T> extends ProxyStorage<T> implements Priority {
 
     @Override
     public long insert(T resource, long amount, Action action) {
-        if (diskDrive.getAccessMode() == AccessMode.EXTRACT || !diskDrive.isActive()) {
+        if (diskDrive.getAccessMode() == AccessMode.EXTRACT || !diskDrive.isActive() || !filter.isAllowed(resource)) {
             return amount;
         }
         return super.insert(resource, amount, action);
