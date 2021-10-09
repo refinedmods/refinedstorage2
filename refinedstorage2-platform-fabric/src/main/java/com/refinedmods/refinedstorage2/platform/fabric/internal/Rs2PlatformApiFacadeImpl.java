@@ -5,13 +5,15 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.StorageManagerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.StorageDiskType;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.FabricConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricClientStorageManager;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricStorageManager;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.disk.ItemStorageDiskType;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidBulkStorageType;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemBulkStorageType;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -19,24 +21,29 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
 
 public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
-    private final PlatformStorageManager clientStorageDiskManager = new FabricClientStorageManager();
+    private final PlatformStorageManager clientStorageManager = new FabricClientStorageManager();
 
     @Override
     public PlatformStorageManager getStorageManager(World world) {
         if (world.getServer() == null) {
-            return clientStorageDiskManager;
+            return clientStorageManager;
         }
 
         return world
                 .getServer()
                 .getWorld(World.OVERWORLD)
                 .getPersistentStateManager()
-                .getOrCreate(this::createStorageDiskManager, this::createStorageDiskManager, FabricStorageManager.NAME);
+                .getOrCreate(this::createStorageManager, this::createStorageManager, FabricStorageManager.NAME);
     }
 
     @Override
-    public StorageDiskType<ItemResource> getItemStorageDiskType() {
-        return ItemStorageDiskType.INSTANCE;
+    public StorageType<ItemResource> getItemBulkStorageType() {
+        return ItemBulkStorageType.INSTANCE;
+    }
+
+    @Override
+    public StorageType<FluidResource> getFluidBulkStorageType() {
+        return FluidBulkStorageType.INSTANCE;
     }
 
     @Override
@@ -61,13 +68,13 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
         return Rs2Mod.createTranslation(category, value, args);
     }
 
-    private FabricStorageManager createStorageDiskManager(NbtCompound tag) {
-        var manager = createStorageDiskManager();
+    private FabricStorageManager createStorageManager(NbtCompound tag) {
+        var manager = createStorageManager();
         manager.read(tag);
         return manager;
     }
 
-    private FabricStorageManager createStorageDiskManager() {
+    private FabricStorageManager createStorageManager() {
         return new FabricStorageManager(new StorageManagerImpl());
     }
 }

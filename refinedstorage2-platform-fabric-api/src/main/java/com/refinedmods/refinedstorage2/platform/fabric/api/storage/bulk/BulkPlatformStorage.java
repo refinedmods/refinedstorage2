@@ -2,13 +2,14 @@ package com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 
 // TODO: Add test
-public class PlatformBulkStorageImpl<T> extends BulkStorageImpl<T> implements PlatformBulkStorage<T> {
+public class BulkPlatformStorage<T> extends BulkStorageImpl<T> implements StorageTypeAccessor<T> {
     private final Runnable listener;
-    private final StorageDiskType<T> type;
+    private final StorageType<T> type;
 
-    public PlatformBulkStorageImpl(long capacity, StorageDiskType<T> type, Runnable listener) {
+    public BulkPlatformStorage(long capacity, StorageType<T> type, Runnable listener) {
         super(capacity);
         this.listener = listener;
         this.type = type;
@@ -34,7 +35,7 @@ public class PlatformBulkStorageImpl<T> extends BulkStorageImpl<T> implements Pl
     }
 
     @Override
-    public StorageDiskType<T> getType() {
+    public StorageType<T> getType() {
         return type;
     }
 }

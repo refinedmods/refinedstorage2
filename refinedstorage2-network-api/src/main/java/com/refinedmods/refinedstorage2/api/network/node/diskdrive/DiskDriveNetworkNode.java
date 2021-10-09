@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageManager;
 import com.refinedmods.refinedstorage2.api.storage.StorageSource;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 
@@ -118,7 +119,9 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
             disks[slot] = diskProvider
                     .getDiskId(slot)
                     .flatMap(diskManager::get)
-                    .map(disk -> new DiskDriveBulkStorage(disk, type, listener))
+                    .filter(BulkStorage.class::isInstance)
+                    .map(bulkStorage -> (BulkStorage) bulkStorage)
+                    .map(bulkStorage -> new DiskDriveBulkStorage(bulkStorage, type, listener))
                     .orElse(null);
 
             affectedStorageChannelTypes.add(type);

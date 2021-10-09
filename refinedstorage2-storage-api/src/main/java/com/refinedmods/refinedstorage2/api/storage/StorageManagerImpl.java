@@ -1,7 +1,5 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
-import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -11,19 +9,19 @@ import java.util.UUID;
 import com.google.common.base.Preconditions;
 
 public class StorageManagerImpl implements StorageManager {
-    private final Map<UUID, BulkStorage<?>> entries = new HashMap<>();
+    private final Map<UUID, Storage<?>> entries = new HashMap<>();
 
-    public Set<Map.Entry<UUID, BulkStorage<?>>> getAll() {
+    public Set<Map.Entry<UUID, Storage<?>>> getAll() {
         return entries.entrySet();
     }
 
     @Override
-    public <T> Optional<BulkStorage<T>> get(UUID id) {
-        return Optional.ofNullable((BulkStorage<T>) entries.get(id));
+    public <T> Optional<Storage<T>> get(UUID id) {
+        return Optional.ofNullable((Storage<T>) entries.get(id));
     }
 
     @Override
-    public <T> void set(UUID id, BulkStorage<T> storage) {
+    public <T> void set(UUID id, Storage<T> storage) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(storage);
 
@@ -35,11 +33,11 @@ public class StorageManagerImpl implements StorageManager {
     }
 
     @Override
-    public <T> Optional<BulkStorage<T>> disassemble(UUID id) {
+    public <T> Optional<Storage<T>> disassemble(UUID id) {
         return get(id).map(storage -> {
             if (storage.getStored() == 0) {
                 entries.remove(id);
-                return (BulkStorage<T>) storage;
+                return (Storage<T>) storage;
             }
             return null;
         });

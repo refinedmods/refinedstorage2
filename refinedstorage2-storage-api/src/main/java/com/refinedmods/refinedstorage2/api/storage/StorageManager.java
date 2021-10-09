@@ -1,16 +1,14 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
-import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
-
 import java.util.Optional;
 import java.util.UUID;
 
 public interface StorageManager {
-    <T> Optional<BulkStorage<T>> get(UUID id);
+    <T> Optional<Storage<T>> get(UUID id);
 
-    <T> void set(UUID id, BulkStorage<T> storage);
+    <T> void set(UUID id, Storage<T> storage);
 
-    <T> Optional<BulkStorage<T>> disassemble(UUID id);
+    <T> Optional<Storage<T>> disassemble(UUID id);
 
     StorageInfo getInfo(UUID id);
 }
