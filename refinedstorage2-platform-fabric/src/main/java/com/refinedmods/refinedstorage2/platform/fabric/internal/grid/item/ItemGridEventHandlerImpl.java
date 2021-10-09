@@ -71,9 +71,28 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         Storage<ItemVariant> playerStorage = slot >= 0 ? playerInventoryStorage.getSlot(slot) : playerInventoryStorage;
         switch (mode) {
             case GRID_TO_INVENTORY -> handleGridToInventoryScroll(itemResource, playerStorage);
-            case INVENTORY_TO_GRID -> /* todo */{
-            }
+            case INVENTORY_TO_GRID -> handleInventoryToGridScroll(itemResource, playerStorage);
             case GRID_TO_CURSOR -> handleGridToInventoryScroll(itemResource, playerCursorStorage);
+        }
+    }
+
+    private void handleInventoryToGridScroll(ItemResource itemResource, Storage<ItemVariant> sourceStorage) {
+        ItemVariant itemVariant = ItemVariant.of(itemResource.getItem(), itemResource.getTag());
+        try (Transaction tx = Transaction.openOuter()) {
+            long extracted = sourceStorage.extract(itemVariant, 1, tx);
+            if (extracted > 0) {
+                Optional<ResourceAmount<ItemResource>> remainder = gridService.insert(
+                        new ResourceAmount<>(itemResource, extracted),
+                        GridInsertMode.ENTIRE_RESOURCE
+                );
+                remainder.ifPresent(remainderResourceAmount -> insert(
+                        ItemVariantImpl.of(remainderResourceAmount.getResource().getItem(), remainderResourceAmount.getResource().getTag()),
+                        remainderResourceAmount.getAmount(),
+                        tx,
+                        sourceStorage
+                ));
+                tx.commit();
+            }
         }
     }
 
