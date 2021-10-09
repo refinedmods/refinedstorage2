@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.platform.fabric.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ClientItemGridEventHandler;
@@ -106,5 +107,10 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
     @Override
     public void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
         itemGridEventHandler.onExtract(itemResource, mode, cursor);
+    }
+
+    @Override
+    public void onScroll(ItemResource itemResource, GridScrollMode mode, int slot) {
+        itemGridEventHandler.onScroll(itemResource, mode, slot);
     }
 }

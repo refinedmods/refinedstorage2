@@ -179,7 +179,11 @@ class GridServiceImplTest {
             sut.extract("A", extractMode, destination);
 
             // Assert
-            long expectedExtracted = extractMode == GridExtractMode.ENTIRE_RESOURCE ? MAX_COUNT : MAX_COUNT / 2;
+            long expectedExtracted = switch (extractMode) {
+                case ENTIRE_RESOURCE -> MAX_COUNT;
+                case HALF_RESOURCE -> MAX_COUNT / 2;
+                case SINGLE_RESOURCE -> 1;
+            };
 
             assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new ResourceAmount<>("A", 100 - expectedExtracted)

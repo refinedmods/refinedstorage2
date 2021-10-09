@@ -2,9 +2,11 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
+import com.refinedmods.refinedstorage2.platform.fabric.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ClientPacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
@@ -27,6 +29,15 @@ public class ClientItemGridEventHandler implements ItemGridEventHandler {
             PacketUtil.writeItemResource(buf, itemResource);
             GridExtractPacket.writeMode(buf, mode);
             buf.writeBoolean(cursor);
+        });
+    }
+
+    @Override
+    public void onScroll(ItemResource itemResource, GridScrollMode mode, int slot) {
+        ClientPacketUtil.sendToServer(PacketIds.GRID_SCROLL, buf -> {
+            PacketUtil.writeItemResource(buf, itemResource);
+            GridScrollPacket.writeMode(buf, mode);
+            buf.writeInt(slot);
         });
     }
 }
