@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ItemGridEventHandler;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -20,7 +21,9 @@ public class GridInsertPacket implements ServerPlayNetworking.PlayChannelHandler
             ScreenHandler screenHandler = player.currentScreenHandler;
             GridInsertMode mode = single ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
             if (screenHandler instanceof ItemGridEventHandler itemGridEventHandler) {
-                itemGridEventHandler.insert(mode);
+                itemGridEventHandler.onInsert(mode);
+            } else if (screenHandler instanceof FluidGridEventHandler fluidGridEventHandler) {
+                fluidGridEventHandler.onInsert(mode);
             }
         });
     }

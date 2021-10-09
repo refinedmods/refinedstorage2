@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
+import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
@@ -92,7 +93,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHa
 
     @Override
     protected void mouseClickedInGrid(int clickedButton) {
-        // todo
+        getScreenHandler().onInsert(getInsertMode(clickedButton));
     }
 
     private static GridInsertMode getInsertMode(int clickedButton) {
@@ -100,8 +101,19 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHa
     }
 
     @Override
-    protected void mouseClickedInGrid(int clickedButton, GridResource<FluidResource> stack) {
-        // todo
+    protected void mouseClickedInGrid(int clickedButton, GridResource<FluidResource> resource) {
+        getScreenHandler().onExtract(resource.getResourceAmount().getResource(), getExtractMode(clickedButton), shouldExtractToCursor());
+    }
+
+    private static GridExtractMode getExtractMode(int clickedButton) {
+        if (clickedButton == 1) {
+            return GridExtractMode.HALF_RESOURCE;
+        }
+        return GridExtractMode.ENTIRE_RESOURCE;
+    }
+
+    private static boolean shouldExtractToCursor() {
+        return !hasShiftDown();
     }
 
     @Override
@@ -110,7 +122,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHa
     }
 
     @Override
-    protected void mouseScrolledInGrid(boolean up, GridResource<FluidResource> stack) {
+    protected void mouseScrolledInGrid(boolean up, GridResource<FluidResource> resource) {
         // no op
     }
 }

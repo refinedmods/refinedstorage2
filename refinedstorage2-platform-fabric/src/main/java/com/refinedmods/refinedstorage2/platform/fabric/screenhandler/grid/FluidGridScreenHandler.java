@@ -8,11 +8,13 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
-import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.ClientFluidGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.FluidGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.FluidGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FluidGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
@@ -31,20 +33,23 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> implements GridService<FluidResource> {
+public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> implements FluidGridEventHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final GridService<FluidResource> gridService;
+    private final FluidGridEventHandler fluidGridEventHandler;
 
     public FluidGridScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
         super(Rs2Mod.SCREEN_HANDLERS.getFluidGrid(), syncId, playerInventory, buf, createView());
         this.gridService = null;
+        this.fluidGridEventHandler = new ClientFluidGridEventHandler();
     }
 
     public FluidGridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity<FluidResource> grid) {
         super(Rs2Mod.SCREEN_HANDLERS.getFluidGrid(), syncId, playerInventory, grid, createView());
         this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), (resource) -> FluidConstants.BUCKET);
         this.grid.addWatcher(this);
+        this.fluidGridEventHandler = new FluidGridEventHandlerImpl(this, gridService, playerInventory);
     }
 
     private static GridViewImpl<FluidResource> createView() {
@@ -68,7 +73,7 @@ public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> imp
     public void onChanged(ResourceListOperationResult<FluidResource> change) {
         LOGGER.info("Received a change of {} for {}", change.change(), change.resourceAmount().getResource());
 
-        ServerPacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, PacketIds.GRID_ITEM_UPDATE, buf -> {
+        ServerPacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, PacketIds.GRID_FLUID_UPDATE, buf -> {
             PacketUtil.writeFluidResource(buf, change.resourceAmount().getResource());
             buf.writeLong(change.change());
 
@@ -93,12 +98,12 @@ public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> imp
     }
 
     @Override
-    public Optional<ResourceAmount<FluidResource>> insert(ResourceAmount<FluidResource> resourceAmount, GridInsertMode insertMode) {
-        return gridService.insert(resourceAmount, insertMode);
+    public void onInsert(GridInsertMode insertMode) {
+        fluidGridEventHandler.onInsert(insertMode);
     }
 
     @Override
-    public void extract(FluidResource resource, GridExtractMode extractMode, InsertableStorage<FluidResource> destination) {
-        gridService.extract(resource, extractMode, destination);
+    public void onExtract(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
+        fluidGridEventHandler.onExtract(fluidResource, mode, cursor);
     }
 }
