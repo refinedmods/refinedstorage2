@@ -438,7 +438,7 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
 
     protected abstract void mouseClickedInGrid(int clickedButton);
 
-    protected abstract void mouseClickedInGrid(int clickedButton, GridResource<R> stack);
+    protected abstract void mouseClickedInGrid(int clickedButton, GridResource<R> resource);
 
     @Override
     public void mouseMoved(double mx, double my) {
@@ -478,7 +478,7 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
         mouseScrolledInGrid(up, stack);
     }
 
-    protected abstract void mouseScrolledInGrid(boolean up, GridResource<R> stack);
+    protected abstract void mouseScrolledInGrid(boolean up, GridResource<R> resource);
 
     @Override
     public boolean charTyped(char unknown1, int unknown2) {

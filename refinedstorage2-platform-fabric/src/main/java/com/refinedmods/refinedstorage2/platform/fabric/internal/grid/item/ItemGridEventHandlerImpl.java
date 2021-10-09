@@ -35,7 +35,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     }
 
     @Override
-    public void insert(GridInsertMode insertMode) {
+    public void onInsert(GridInsertMode insertMode) {
         if (screenHandler.getCursorStack().isEmpty()) {
             return;
         }
@@ -45,7 +45,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     }
 
     @Override
-    public ItemStack transfer(ItemStack stack) {
+    public ItemStack onTransfer(ItemStack stack) {
         ResourceAmount<ItemResource> toInsert = Rs2PlatformApiFacade.INSTANCE.toItemResourceAmount(stack);
         Optional<ResourceAmount<ItemResource>> remainder = gridService.insert(toInsert, GridInsertMode.ENTIRE_RESOURCE);
         return remainder.map(Rs2PlatformApiFacade.INSTANCE::toItemStack).orElse(ItemStack.EMPTY);
@@ -54,6 +54,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     @Override
     public void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
         gridService.extract(itemResource, mode, (resource, amount, action) -> {
+            // todo: create util
             ItemVariant itemVariant = ItemVariantImpl.of(resource.getItem(), resource.getTag());
             try (Transaction tx = Transaction.openOuter()) {
                 long inserted = insert(itemVariant, amount, tx, cursor);
@@ -86,6 +87,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
                         GridInsertMode.ENTIRE_RESOURCE
                 );
                 remainder.ifPresent(remainderResourceAmount -> insert(
+                        // todo: create util
                         ItemVariantImpl.of(remainderResourceAmount.getResource().getItem(), remainderResourceAmount.getResource().getTag()),
                         remainderResourceAmount.getAmount(),
                         tx,

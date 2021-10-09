@@ -1,7 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
@@ -23,16 +25,17 @@ public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandle
 
     @Override
     public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        ItemResource itemResource = PacketUtil.readItemResource(buf);
         GridExtractMode mode = getMode(buf.readByte());
         boolean cursor = buf.readBoolean();
 
-        server.execute(() -> {
-            ScreenHandler screenHandler = player.currentScreenHandler;
-            if (screenHandler instanceof ItemGridEventHandler itemGridEventHandler) {
-                itemGridEventHandler.onExtract(itemResource, mode, cursor);
-            }
-        });
+        ScreenHandler screenHandler = player.currentScreenHandler;
+        if (screenHandler instanceof ItemGridEventHandler itemGridEventHandler) {
+            ItemResource itemResource = PacketUtil.readItemResource(buf);
+            server.execute(() -> itemGridEventHandler.onExtract(itemResource, mode, cursor));
+        } else if (screenHandler instanceof FluidGridEventHandler fluidGridEventHandler) {
+            FluidResource fluidResource = PacketUtil.readFluidResource(buf);
+            server.execute(() -> fluidGridEventHandler.onExtract(fluidResource, mode, cursor));
+        }
     }
 
     private GridExtractMode getMode(byte mode) {

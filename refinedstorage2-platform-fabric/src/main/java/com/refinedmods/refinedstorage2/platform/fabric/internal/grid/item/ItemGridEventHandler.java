@@ -8,9 +8,9 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource
 import net.minecraft.item.ItemStack;
 
 public interface ItemGridEventHandler {
-    void insert(GridInsertMode insertMode);
+    void onInsert(GridInsertMode insertMode);
 
-    ItemStack transfer(ItemStack stack);
+    ItemStack onTransfer(ItemStack stack);
 
     void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor);
 

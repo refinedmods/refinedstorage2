@@ -36,30 +36,16 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandl
 
     @Override
     protected void mouseClickedInGrid(int clickedButton) {
-        getScreenHandler().insert(getInsertMode(clickedButton));
+        getScreenHandler().onInsert(getInsertMode(clickedButton));
+    }
+
+    private static GridInsertMode getInsertMode(int clickedButton) {
+        return clickedButton == 1 ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
     }
 
     @Override
-    protected void mouseClickedInGrid(int clickedButton, GridResource<ItemResource> stack) {
-        getScreenHandler().onExtract(stack.getResourceAmount().getResource(), getExtractMode(clickedButton), shouldExtractToCursor());
-    }
-
-    @Override
-    protected void mouseScrolledInInventory(boolean up, ItemStack stack, int slotIndex) {
-        GridScrollMode scrollMode = getScrollModeWhenScrollingOnInventoryArea(up);
-        if (scrollMode == null) {
-            return;
-        }
-        getScreenHandler().onScroll(new ItemResource(stack), scrollMode, slotIndex);
-    }
-
-    @Override
-    protected void mouseScrolledInGrid(boolean up, GridResource<ItemResource> stack) {
-        GridScrollMode scrollMode = getScrollModeWhenScrollingOnGridArea(up);
-        if (scrollMode == null) {
-            return;
-        }
-        getScreenHandler().onScroll(stack.getResourceAmount().getResource(), scrollMode, -1);
+    protected void mouseClickedInGrid(int clickedButton, GridResource<ItemResource> resource) {
+        getScreenHandler().onExtract(resource.getResourceAmount().getResource(), getExtractMode(clickedButton), shouldExtractToCursor());
     }
 
     private static GridExtractMode getExtractMode(int clickedButton) {
@@ -73,8 +59,13 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandl
         return !hasShiftDown();
     }
 
-    private static GridInsertMode getInsertMode(int clickedButton) {
-        return clickedButton == 1 ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
+    @Override
+    protected void mouseScrolledInInventory(boolean up, ItemStack stack, int slotIndex) {
+        GridScrollMode scrollMode = getScrollModeWhenScrollingOnInventoryArea(up);
+        if (scrollMode == null) {
+            return;
+        }
+        getScreenHandler().onScroll(new ItemResource(stack), scrollMode, slotIndex);
     }
 
     private static GridScrollMode getScrollModeWhenScrollingOnInventoryArea(boolean up) {
@@ -82,6 +73,15 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandl
             return up ? GridScrollMode.INVENTORY_TO_GRID : GridScrollMode.GRID_TO_INVENTORY;
         }
         return null;
+    }
+
+    @Override
+    protected void mouseScrolledInGrid(boolean up, GridResource<ItemResource> resource) {
+        GridScrollMode scrollMode = getScrollModeWhenScrollingOnGridArea(up);
+        if (scrollMode == null) {
+            return;
+        }
+        getScreenHandler().onScroll(resource.getResourceAmount().getResource(), scrollMode, -1);
     }
 
     private static GridScrollMode getScrollModeWhenScrollingOnGridArea(boolean up) {

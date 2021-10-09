@@ -87,7 +87,7 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
         if (!playerEntity.world.isClient()) {
             Slot slot = getSlot(slotIndex);
             if (slot.hasStack()) {
-                slot.setStack(itemGridEventHandler.transfer(slot.getStack()));
+                slot.setStack(itemGridEventHandler.onTransfer(slot.getStack()));
                 sendContentUpdates();
             }
         }
@@ -95,13 +95,13 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
     }
 
     @Override
-    public void insert(GridInsertMode insertMode) {
-        itemGridEventHandler.insert(insertMode);
+    public void onInsert(GridInsertMode insertMode) {
+        itemGridEventHandler.onInsert(insertMode);
     }
 
     @Override
-    public ItemStack transfer(ItemStack stack) {
-        return itemGridEventHandler.transfer(stack);
+    public ItemStack onTransfer(ItemStack stack) {
+        return itemGridEventHandler.onTransfer(stack);
     }
 
     @Override

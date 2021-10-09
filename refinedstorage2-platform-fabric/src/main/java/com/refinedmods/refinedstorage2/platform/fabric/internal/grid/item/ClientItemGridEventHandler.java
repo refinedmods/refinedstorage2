@@ -14,21 +14,21 @@ import net.minecraft.item.ItemStack;
 
 public class ClientItemGridEventHandler implements ItemGridEventHandler {
     @Override
-    public void insert(GridInsertMode insertMode) {
+    public void onInsert(GridInsertMode insertMode) {
         ClientPacketUtil.sendToServer(PacketIds.GRID_INSERT, buf -> buf.writeBoolean(insertMode == GridInsertMode.SINGLE_RESOURCE));
     }
 
     @Override
-    public ItemStack transfer(ItemStack stack) {
+    public ItemStack onTransfer(ItemStack stack) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
         ClientPacketUtil.sendToServer(PacketIds.GRID_EXTRACT, buf -> {
-            PacketUtil.writeItemResource(buf, itemResource);
             GridExtractPacket.writeMode(buf, mode);
             buf.writeBoolean(cursor);
+            PacketUtil.writeItemResource(buf, itemResource);
         });
     }
 
