@@ -1,11 +1,10 @@
 package com.refinedmods.refinedstorage2.api.core.filter;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-public class Filter<T> {
-    private final Set<T> templates = new HashSet<>();
+public class Filter {
+    private final Set<Object> templates = new HashSet<>();
     private FilterMode mode = FilterMode.BLOCK;
 
     public FilterMode getMode() {
@@ -16,14 +15,14 @@ public class Filter<T> {
         this.mode = mode;
     }
 
-    public boolean isAllowed(T template) {
+    public boolean isAllowed(Object template) {
         return switch (mode) {
             case ALLOW -> templates.contains(template);
             case BLOCK -> !templates.contains(template);
         };
     }
 
-    public void setTemplates(List<T> templates) {
+    public void setTemplates(Set<Object> templates) {
         this.templates.clear();
         this.templates.addAll(templates);
     }

@@ -106,11 +106,11 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHa
 
     @Override
     protected void mouseScrolledInInventory(boolean up, ItemStack stack, int slotIndex) {
-        // todo
+        // no op
     }
 
     @Override
     protected void mouseScrolledInGrid(boolean up, GridResource<FluidResource> stack) {
-        // todo
+        // no op
     }
 }

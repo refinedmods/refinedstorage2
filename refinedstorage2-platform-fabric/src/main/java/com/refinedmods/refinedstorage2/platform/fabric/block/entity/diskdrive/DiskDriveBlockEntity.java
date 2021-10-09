@@ -10,13 +10,18 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeReg
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
@@ -106,10 +111,24 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
                 diskDrive.setPriority(tag.getInt(TAG_PRIORITY));
             }
 
+            if (tag.contains(TAG_FILTER_MODE)) {
+                diskDrive.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
+            }
+
             if (tag.contains(TAG_ACCESS_MODE)) {
                 diskDrive.setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
             }
         }
+
+        Set<Object> filterTemplates = new HashSet<>();
+        for (int i = 0; i < filterInventory.size(); ++i) {
+            ItemStack filter = filterInventory.getStack(i);
+            if (!filter.isEmpty()) {
+                filterTemplates.add(new ItemResource(filter));
+            }
+        }
+
+        diskDrive.setFilterTemplates(filterTemplates);
 
         return diskDrive;
     }
@@ -132,6 +151,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
         tag = super.writeNbt(tag);
         tag.put(TAG_DISK_INVENTORY, diskInventory.toNbtList());
         tag.put(TAG_FILTER_INVENTORY, filterInventory.toNbtList());
+        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getContainer().getNode().getFilterMode()));
         tag.putInt(TAG_PRIORITY, getContainer().getNode().getPriority());
         tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getContainer().getNode().getAccessMode()));
         return tag;
@@ -142,18 +162,21 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     public FilterMode getFilterMode() {
-        return FilterMode.BLOCK;
+        return getContainer().getNode().getFilterMode();
     }
 
     public void setFilterMode(FilterMode mode) {
+        getContainer().getNode().setFilterMode(mode);
         markDirty();
     }
 
     public boolean isExactMode() {
+        // todo
         return false;
     }
 
     public void setExactMode(boolean exactMode) {
+        // todo
         markDirty();
     }
 
@@ -167,6 +190,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     public void setFilterTemplates(List<ItemStack> templates) {
+        getContainer().getNode().setFilterTemplates(templates.stream().map(ItemResource::new).collect(Collectors.toSet()));
         markDirty();
     }
 

@@ -16,7 +16,7 @@ public class FilterInventoryChangedListener implements InventoryChangedListener 
 
     @Override
     public void onInventoryChanged(Inventory sender) {
-        if (diskDrive.getWorld().isClient()) {
+        if (diskDrive.getWorld() == null || diskDrive.getWorld().isClient()) {
             return;
         }
 
