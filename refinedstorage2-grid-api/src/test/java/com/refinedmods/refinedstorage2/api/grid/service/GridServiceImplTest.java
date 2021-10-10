@@ -39,6 +39,39 @@ class GridServiceImplTest {
     }
 
     @Nested
+    class InsertWithoutRemainder {
+        @Test
+        void Test_inserting_without_remainder() {
+            // Arrange
+            storageChannel.addSource(new BulkStorageImpl<>(100));
+
+            // Act
+            boolean success = sut.insert(new ResourceAmount<>("A", 100));
+
+            // Assert
+            assertThat(success).isTrue();
+            assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                    new ResourceAmount<>("A", 100)
+            );
+            assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
+        }
+
+        @Test
+        void Test_inserting_without_remainder_failing_when_there_is_remainder() {
+            // Arrange
+            storageChannel.addSource(new BulkStorageImpl<>(100));
+
+            // Act
+            boolean success = sut.insert(new ResourceAmount<>("A", 101));
+
+            // Assert
+            assertThat(success).isFalse();
+            assertThat(storageChannel.getAll()).isEmpty();
+            assertThat(storageChannel.getTracker().getEntry("A")).isEmpty();
+        }
+    }
+
+    @Nested
     class InsertEntireResource {
         @Test
         void Test_inserting_entire_resource() {
