@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.api.core.filter;
 
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
-import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,7 +50,7 @@ class FilterTest {
     void Test_exact_allowlist() {
         // Arrange
         filter.setMode(FilterMode.ALLOW);
-        filter.setTemplates(List.of("Dirt", "Stone"));
+        filter.setTemplates(Set.of("Dirt", "Stone"));
 
         // Act
         boolean allowsDirt = filter.isAllowed("Dirt");
@@ -66,7 +66,7 @@ class FilterTest {
     @Test
     void Test_exact_blocklist() {
         // Arrange
-        filter.setTemplates(List.of("Dirt", "Stone"));
+        filter.setTemplates(Set.of("Dirt", "Stone"));
 
         // Act
         boolean allowsDirt = filter.isAllowed("Dirt");
@@ -82,13 +82,13 @@ class FilterTest {
     @Test
     void Test_changing_templates() {
         // Arrange
-        filter.setTemplates(List.of("Stone"));
+        filter.setTemplates(Set.of("Stone"));
 
         boolean allowsDirt = filter.isAllowed("Dirt");
         boolean allowsStone = filter.isAllowed("Stone");
         boolean allowsSponge = filter.isAllowed("Sponge");
 
-        filter.setTemplates(List.of("Dirt", "Sponge"));
+        filter.setTemplates(Set.of("Dirt", "Sponge"));
 
         boolean allowsDirtAfter = filter.isAllowed("Dirt");
         boolean allowsStoneAfter = filter.isAllowed("Stone");

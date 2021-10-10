@@ -29,6 +29,16 @@ public class GridServiceImpl<T> implements GridService<T> {
     }
 
     @Override
+    public boolean insert(ResourceAmount<T> resourceAmount) {
+        long remainder = storageChannel.insert(resourceAmount.getResource(), resourceAmount.getAmount(), Action.SIMULATE);
+        if (remainder == 0) {
+            storageChannel.insert(resourceAmount.getResource(), resourceAmount.getAmount(), source);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void extract(T resource, GridExtractMode extractMode, InsertableStorage<T> destination) {
         long amount = getAmount(resource, extractMode);
         if (amount == 0) {
