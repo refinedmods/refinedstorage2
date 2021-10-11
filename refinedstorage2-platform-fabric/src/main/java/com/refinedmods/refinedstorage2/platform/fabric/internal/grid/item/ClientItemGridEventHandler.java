@@ -10,8 +10,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridScrollPack
 import com.refinedmods.refinedstorage2.platform.fabric.util.ClientPacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
-import net.minecraft.item.ItemStack;
-
 public class ClientItemGridEventHandler implements ItemGridEventHandler {
     @Override
     public void onInsert(GridInsertMode insertMode) {
@@ -19,7 +17,7 @@ public class ClientItemGridEventHandler implements ItemGridEventHandler {
     }
 
     @Override
-    public ItemStack onTransfer(ItemStack stack) {
+    public void onTransfer(int slotIndex) {
         throw new UnsupportedOperationException();
     }
 

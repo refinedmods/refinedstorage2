@@ -5,12 +5,10 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.platform.fabric.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 
-import net.minecraft.item.ItemStack;
-
 public interface ItemGridEventHandler {
     void onInsert(GridInsertMode insertMode);
 
-    ItemStack onTransfer(ItemStack stack);
+    void onTransfer(int slotIndex);
 
     void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor);
 

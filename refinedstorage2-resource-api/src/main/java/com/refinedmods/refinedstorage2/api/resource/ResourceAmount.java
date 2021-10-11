@@ -7,7 +7,7 @@ public class ResourceAmount<T> {
     private long amount;
 
     public static <T> void validate(T resource, long amount) {
-        Preconditions.checkArgument(amount > 0, "Amount be larger than 0");
+        Preconditions.checkArgument(amount > 0, "Amount must be larger than 0");
         Preconditions.checkNotNull(resource, "Resource must not be null");
     }
 

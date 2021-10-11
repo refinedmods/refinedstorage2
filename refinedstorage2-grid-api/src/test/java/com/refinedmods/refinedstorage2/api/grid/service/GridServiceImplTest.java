@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.api.grid.service;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
+import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelImpl;
@@ -11,7 +12,6 @@ import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Collections;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -39,34 +39,71 @@ class GridServiceImplTest {
     }
 
     @Nested
-    class InsertWithoutRemainder {
-        @Test
-        void Test_inserting_without_remainder() {
+    class Insert {
+        @ParameterizedTest
+        @EnumSource(GridInsertMode.class)
+        void Test_inserting(GridInsertMode insertMode) {
             // Arrange
+            BulkStorage<String> source = new BulkStorageImpl<>(100);
+            source.insert("A", MAX_COUNT * 3, Action.EXECUTE);
+
             storageChannel.addSource(new BulkStorageImpl<>(100));
 
             // Act
-            boolean success = sut.insert(new ResourceAmount<>("A", 100));
+            sut.insert("A", insertMode, source);
 
             // Assert
-            assertThat(success).isTrue();
+            long expectedAmount = switch (insertMode) {
+                case ENTIRE_RESOURCE -> MAX_COUNT;
+                case SINGLE_RESOURCE -> 1;
+            };
+
             assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new ResourceAmount<>("A", 100)
+                    new ResourceAmount<>("A", expectedAmount)
+            );
+            assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                    new ResourceAmount<>("A", (MAX_COUNT * 3) - expectedAmount)
             );
             assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
         }
 
-        @Test
-        void Test_inserting_without_remainder_failing_when_there_is_remainder() {
+        @ParameterizedTest
+        @EnumSource(GridInsertMode.class)
+        void Test_inserting_with_non_existent_resource(GridInsertMode insertMode) {
             // Arrange
+            BulkStorage<String> source = new BulkStorageImpl<>(100);
+
             storageChannel.addSource(new BulkStorageImpl<>(100));
 
             // Act
-            boolean success = sut.insert(new ResourceAmount<>("A", 101));
+            sut.insert("A", insertMode, source);
 
             // Assert
-            assertThat(success).isFalse();
             assertThat(storageChannel.getAll()).isEmpty();
+            assertThat(source.getAll()).isEmpty();
+            assertThat(storageChannel.getTracker().getEntry("A")).isEmpty();
+        }
+
+        @ParameterizedTest
+        @EnumSource(GridInsertMode.class)
+        void Test_inserting_with_no_space_in_storage(GridInsertMode insertMode) {
+            // Arrange
+            BulkStorage<String> source = new BulkStorageImpl<>(100);
+            source.insert("A", 100, Action.EXECUTE);
+
+            storageChannel.addSource(new BulkStorageImpl<>(100));
+            storageChannel.insert("A", 100, Action.EXECUTE);
+
+            // Act
+            sut.insert("A", insertMode, source);
+
+            // Assert
+            assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                    new ResourceAmount<>("A", 100)
+            );
+            assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                    new ResourceAmount<>("A", 100)
+            );
             assertThat(storageChannel.getTracker().getEntry("A")).isEmpty();
         }
     }
@@ -74,126 +111,60 @@ class GridServiceImplTest {
     @Nested
     class InsertEntireResource {
         @Test
-        void Test_inserting_entire_resource() {
+        void Test_inserting_with_remainder() {
             // Arrange
+            BulkStorage<String> source = new BulkStorageImpl<>(100);
+            source.insert("A", MAX_COUNT, Action.EXECUTE);
+
             storageChannel.addSource(new BulkStorageImpl<>(100));
+            storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE);
 
             // Act
-            Optional<ResourceAmount<String>> remainder = sut.insert(new ResourceAmount<>("A", 100), GridInsertMode.ENTIRE_RESOURCE);
+            sut.insert("A", GridInsertMode.ENTIRE_RESOURCE, source);
 
             // Assert
-            assertThat(remainder).isEmpty();
             assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new ResourceAmount<>("A", 100)
             );
-            assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
-        }
-
-        @Test
-        void Test_inserting_entire_resource_with_remainder() {
-            // Arrange
-            storageChannel.addSource(new BulkStorageImpl<>(100));
-
-            // Act
-            Optional<ResourceAmount<String>> remainder = sut.insert(new ResourceAmount<>("A", 101), GridInsertMode.ENTIRE_RESOURCE);
-
-            // Assert
-            assertThat(remainder).isPresent();
-            assertThat(remainder.get()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 1));
-            assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new ResourceAmount<>("A", 100)
-            );
-            assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
-        }
-
-        @Test
-        void Test_inserting_entire_resource_with_no_space_in_storage() {
-            // Arrange
-            storageChannel.addSource(new BulkStorageImpl<>(100));
-            storageChannel.insert("A", 100, Action.EXECUTE);
-
-            // Act
-            Optional<ResourceAmount<String>> remainder = sut.insert(new ResourceAmount<>("A", 1), GridInsertMode.ENTIRE_RESOURCE);
-
-            // Assert
-            assertThat(remainder).isPresent();
-            assertThat(remainder.get()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 1));
-            assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new ResourceAmount<>("A", 100)
-            );
-            assertThat(storageChannel.getTracker().getEntry("A")).isNotPresent();
-        }
-    }
-
-    @Nested
-    class InsertSingleResource {
-        @Test
-        void Test_inserting_single_resource_of_large_amount() {
-            // Arrange
-            storageChannel.addSource(new BulkStorageImpl<>(100));
-
-            // Act
-            Optional<ResourceAmount<String>> remainder = sut.insert(new ResourceAmount<>("A", 100), GridInsertMode.SINGLE_RESOURCE);
-
-            // Assert
-            assertThat(remainder).isPresent();
-            assertThat(remainder.get()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 99));
-            assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new ResourceAmount<>("A", 1)
             );
             assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
         }
 
         @Test
-        void Test_inserting_single_resource_of_single_amount() {
+        void Test_inserting_when_less_is_requested_from_source_because_storage_is_almost_full() {
+            // This tests the case for buckets. It is perfectly possible to extract 1 bucket (when simulating).
+            // But, if the storage only has space for half a bucket, we'll try to extract half a bucket instead of 1 bucket.
+            // However, extracting half a bucket isn't possible, so the code has to handle this as well.
+            // This is why we override extract to block extraction of non-entire buckets.
+
             // Arrange
+            BulkStorage<String> source = new BulkStorageImpl<>(100) {
+                @Override
+                public long extract(String resource, long amount, Action action) {
+                    if (amount != MAX_COUNT) {
+                        return 0;
+                    }
+                    return super.extract(resource, amount, action);
+                }
+            };
+            source.insert("A", MAX_COUNT, Action.EXECUTE);
+
             storageChannel.addSource(new BulkStorageImpl<>(100));
+            storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE);
 
             // Act
-            Optional<ResourceAmount<String>> remainder = sut.insert(new ResourceAmount<>("A", 1), GridInsertMode.SINGLE_RESOURCE);
+            sut.insert("A", GridInsertMode.ENTIRE_RESOURCE, source);
 
             // Assert
-            assertThat(remainder).isEmpty();
             assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new ResourceAmount<>("A", 1)
+                    new ResourceAmount<>("A", 100 - MAX_COUNT + 1)
             );
-            assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
-        }
-
-        @Test
-        void Test_inserting_single_resource_of_large_amount_with_no_space_in_storage() {
-            // Arrange
-            storageChannel.addSource(new BulkStorageImpl<>(100));
-            storageChannel.insert("A", 100, Action.EXECUTE);
-
-            // Act
-            Optional<ResourceAmount<String>> remainder = sut.insert(new ResourceAmount<>("A", 100), GridInsertMode.SINGLE_RESOURCE);
-
-            // Assert
-            assertThat(remainder).isPresent();
-            assertThat(remainder.get()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 100));
-            assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new ResourceAmount<>("A", 100)
+            assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                    new ResourceAmount<>("A", MAX_COUNT)
             );
-            assertThat(storageChannel.getTracker().getEntry("A")).isNotPresent();
-        }
-
-        @Test
-        void Test_inserting_single_resource_of_single_amount_with_no_space_in_storage() {
-            // Arrange
-            storageChannel.addSource(new BulkStorageImpl<>(100));
-            storageChannel.insert("A", 100, Action.EXECUTE);
-
-            // Act
-            Optional<ResourceAmount<String>> remainder = sut.insert(new ResourceAmount<>("A", 1), GridInsertMode.SINGLE_RESOURCE);
-
-            // Assert
-            assertThat(remainder).isPresent();
-            assertThat(remainder.get()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 1));
-            assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new ResourceAmount<>("A", 100)
-            );
-            assertThat(storageChannel.getTracker().getEntry("A")).isNotPresent();
+            assertThat(storageChannel.getTracker().getEntry("A")).isEmpty();
         }
     }
 

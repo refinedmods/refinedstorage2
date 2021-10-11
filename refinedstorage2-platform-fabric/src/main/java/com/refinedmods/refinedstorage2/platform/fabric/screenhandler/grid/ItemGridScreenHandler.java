@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ItemGr
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ItemGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.ItemGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.PlayerSource;
+import com.refinedmods.refinedstorage2.platform.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
@@ -87,8 +88,7 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
         if (!playerEntity.world.isClient()) {
             Slot slot = getSlot(slotIndex);
             if (slot.hasStack()) {
-                slot.setStack(itemGridEventHandler.onTransfer(slot.getStack()));
-                sendContentUpdates();
+                itemGridEventHandler.onTransfer(((SlotAccessor) slot).getIndex());
             }
         }
         return ItemStack.EMPTY;
@@ -100,8 +100,8 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
     }
 
     @Override
-    public ItemStack onTransfer(ItemStack stack) {
-        return itemGridEventHandler.onTransfer(stack);
+    public void onTransfer(int slotIndex) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
