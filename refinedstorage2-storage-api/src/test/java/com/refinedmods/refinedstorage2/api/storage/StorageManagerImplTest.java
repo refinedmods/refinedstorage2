@@ -32,9 +32,9 @@ class StorageManagerImplTest {
 
         // Act
         sut.set(id, storage);
-        Optional<BulkStorage<String>> foundStorage = sut.get(id);
+        Optional<Storage<String>> foundStorage = sut.get(id);
 
-        Optional<BulkStorage<String>> nonExistent = sut.get(UUID.randomUUID());
+        Optional<Storage<String>> nonExistent = sut.get(UUID.randomUUID());
 
         // Assert
         assertThat(foundStorage).isNotEmpty();
@@ -73,7 +73,7 @@ class StorageManagerImplTest {
     @Test
     void Test_disassembling_a_non_existing_storage() {
         // Act
-        Optional<BulkStorage<String>> disassembled = sut.disassemble(UUID.randomUUID());
+        Optional<Storage<String>> disassembled = sut.disassemble(UUID.randomUUID());
 
         // Assert
         assertThat(disassembled).isEmpty();
@@ -88,8 +88,8 @@ class StorageManagerImplTest {
         sut.set(id, storage);
 
         // Act
-        Optional<BulkStorage<String>> disassembled = sut.disassemble(id);
-        Optional<BulkStorage<String>> afterDisassembly = sut.get(id);
+        Optional<Storage<String>> disassembled = sut.disassemble(id);
+        Optional<Storage<String>> afterDisassembly = sut.get(id);
 
         // Assert
         assertThat(disassembled).isEmpty();
@@ -104,8 +104,8 @@ class StorageManagerImplTest {
         sut.set(id, storage);
 
         // Act
-        Optional<BulkStorage<String>> disassembled = sut.disassemble(id);
-        Optional<BulkStorage<String>> afterDisassembly = sut.get(id);
+        Optional<Storage<String>> disassembled = sut.disassemble(id);
+        Optional<Storage<String>> afterDisassembly = sut.get(id);
 
         // Assert
         assertThat(disassembled).isNotEmpty();

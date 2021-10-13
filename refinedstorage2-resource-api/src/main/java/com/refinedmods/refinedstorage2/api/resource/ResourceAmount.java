@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.api.resource;
 
 import com.google.common.base.Preconditions;
 
-public class ResourceAmount<T> {
+public final class ResourceAmount<T> {
     private final T resource;
     private long amount;
 
@@ -26,10 +26,13 @@ public class ResourceAmount<T> {
     }
 
     public void increment(long amount) {
+        Preconditions.checkArgument(amount > 0, "Amount to increment must be larger than 0");
         this.amount += amount;
     }
 
     public void decrement(long amount) {
+        Preconditions.checkArgument(amount > 0, "Amount to decrement must be larger than 0");
+        Preconditions.checkArgument((this.amount - amount) > 0, "Cannot decrement more than " + (amount - 1));
         this.amount -= amount;
     }
 
