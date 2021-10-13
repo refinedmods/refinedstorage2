@@ -23,6 +23,51 @@ class ResourceAmountTest {
     }
 
     @Test
+    void Test_invalid_increment_amount() {
+        // Arrange
+        ResourceAmount<String> sut = new ResourceAmount<>("A", 1);
+
+        // Act & assert
+        assertThrows(IllegalArgumentException.class, () -> sut.increment(0));
+        assertThrows(IllegalArgumentException.class, () -> sut.increment(-1));
+    }
+
+    @Test
+    void Test_invalid_decrement_amount() {
+        // Arrange
+        ResourceAmount<String> sut = new ResourceAmount<>("A", 3);
+
+        // Act & assert
+        assertThrows(IllegalArgumentException.class, () -> sut.decrement(3));
+        assertThrows(IllegalArgumentException.class, () -> sut.decrement(0));
+        assertThrows(IllegalArgumentException.class, () -> sut.decrement(-1));
+    }
+
+    @Test
+    void Test_incrementing() {
+        // Arrange
+        ResourceAmount<String> sut = new ResourceAmount<>("A", 3);
+
+        // Act
+        sut.increment(2);
+
+        // Assert
+        assertThat(sut.getAmount()).isEqualTo(5);
+    }
+
+    @Test
+    void Test_decrementing() {
+        // Arrange
+        ResourceAmount<String> sut = new ResourceAmount<>("A", 3);
+
+        // Act
+        sut.decrement(2);
+
+        // Assert
+        assertThat(sut.getAmount()).isEqualTo(1);
+    }
+
+    @Test
     void Test_valid_resource_amount() {
         // Act
         ResourceAmount<String> resourceAmount = new ResourceAmount<>("A", 1);
