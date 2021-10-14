@@ -21,7 +21,7 @@ public class ItemGridBlockEntity extends GridBlockEntity<ItemResource> {
     }
 
     @Override
-    protected void writeStack(PacketByteBuf buf, ResourceAmount<ItemResource> stack) {
+    protected void writeResourceAmount(PacketByteBuf buf, ResourceAmount<ItemResource> stack) {
         PacketUtil.writeItemResourceAmount(buf, stack);
     }
 

@@ -60,7 +60,7 @@ public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> imp
     }
 
     @Override
-    protected ResourceAmount<FluidResource> readStack(PacketByteBuf buf) {
+    protected ResourceAmount<FluidResource> readResourceAmount(PacketByteBuf buf) {
         return PacketUtil.readFluidResourceAmount(buf);
     }
 

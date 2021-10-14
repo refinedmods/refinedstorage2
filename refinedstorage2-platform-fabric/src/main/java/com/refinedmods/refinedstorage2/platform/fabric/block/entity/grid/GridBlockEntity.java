@@ -87,14 +87,14 @@ public abstract class GridBlockEntity<T> extends FabricNetworkNodeContainerBlock
         buf.writeInt(GridSettings.getSize(getSize()));
         buf.writeInt(GridSearchBoxModeRegistry.INSTANCE.getId(getSearchBoxMode()));
 
-        buf.writeInt(getContainer().getNode().getStackCount());
-        getContainer().getNode().forEachStack((stack, trackerEntry) -> {
-            writeStack(buf, stack);
+        buf.writeInt(getContainer().getNode().getResourceCount());
+        getContainer().getNode().forEachResource((stack, trackerEntry) -> {
+            writeResourceAmount(buf, stack);
             PacketUtil.writeTrackerEntry(buf, trackerEntry);
         });
     }
 
-    protected abstract void writeStack(PacketByteBuf buf, ResourceAmount<T> stack);
+    protected abstract void writeResourceAmount(PacketByteBuf buf, ResourceAmount<T> stack);
 
     public GridSortingType getSortingType() {
         return getContainer().getNode().getSortingType();
