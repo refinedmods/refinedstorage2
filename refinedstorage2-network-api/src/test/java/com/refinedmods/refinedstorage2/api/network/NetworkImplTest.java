@@ -8,8 +8,6 @@ import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerTyp
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageProviderManager;
-import com.refinedmods.refinedstorage2.api.resource.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.resource.test.ItemStubs;
 import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
@@ -18,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.NETWORK_COMPONENT_REGISTRY;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.STORAGE_CHANNEL_TYPE_REGISTRY;
-import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.itemStorageChannelOf;
+import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.fakeStorageChannelOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -29,13 +27,13 @@ class NetworkImplTest {
         // Arrange
         Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
 
-        FakeStorageProviderManager fakeStorageDiskProviderManager = new FakeStorageProviderManager();
-        BulkStorage<Rs2ItemStack> disk = BulkStorageImpl.createItemStorageDisk(10);
-        disk.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
-        fakeStorageDiskProviderManager.setDiskInSlot(1, disk);
-        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
+        FakeStorageProviderManager fakeStorageProviderManager = new FakeStorageProviderManager();
+        BulkStorage<String> storage = new BulkStorageImpl<>(10);
+        storage.insert("A", 10, Action.EXECUTE);
+        fakeStorageProviderManager.setInSlot(1, storage);
+        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(fakeStorageProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(network);
-        diskDrive.initialize(fakeStorageDiskProviderManager);
+        diskDrive.initialize(fakeStorageProviderManager);
         FakeNetworkNodeContainer<DiskDriveNetworkNode> diskDriveContainer = new FakeNetworkNodeContainer<>(diskDrive);
 
         ControllerNetworkNode controllerNetworkNode = new ControllerNetworkNode(100, 100, ControllerType.NORMAL, mock(ControllerListener.class));
@@ -47,6 +45,6 @@ class NetworkImplTest {
         network.addContainer(diskDriveContainer);
 
         // Assert
-        assertThat(itemStorageChannelOf(network).getAll()).isNotEmpty();
+        assertThat(fakeStorageChannelOf(network).getAll()).isNotEmpty();
     }
 }

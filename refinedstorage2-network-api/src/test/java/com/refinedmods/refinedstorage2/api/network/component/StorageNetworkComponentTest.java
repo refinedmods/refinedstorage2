@@ -6,15 +6,13 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageProviderManager;
-import com.refinedmods.refinedstorage2.api.resource.item.Rs2ItemStack;
-import com.refinedmods.refinedstorage2.api.resource.test.ItemStubs;
+import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Collection;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,12 +32,12 @@ class StorageNetworkComponentTest {
     void setUp() {
         sut = new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY);
 
-        FakeStorageProviderManager fakeStorageDiskProviderManager = new FakeStorageProviderManager();
-        fakeStorageDiskProviderManager.setDiskInSlot(0, BulkStorageImpl.createItemStorageDisk(100));
+        FakeStorageProviderManager fakeStorageProviderManager = new FakeStorageProviderManager();
+        fakeStorageProviderManager.setInSlot(0, new BulkStorageImpl<>(100));
 
-        diskDrive = new DiskDriveNetworkNode(fakeStorageDiskProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
+        diskDrive = new DiskDriveNetworkNode(fakeStorageProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(createWithInfiniteEnergyStorage());
-        diskDrive.initialize(fakeStorageDiskProviderManager);
+        diskDrive.initialize(fakeStorageProviderManager);
 
         diskDriveContainer = new FakeNetworkNodeContainer<>(diskDrive);
     }
@@ -47,43 +45,43 @@ class StorageNetworkComponentTest {
     @Test
     void Test_initial_state() {
         // Act
-        Collection<Rs2ItemStack> stacks = sut.getStorageChannel(StorageChannelTypes.ITEM).getAll();
+        Collection<ResourceAmount<String>> resources = sut.getStorageChannel(StorageChannelTypes.FAKE).getAll();
 
         // Assert
-        assertThat(stacks).isEmpty();
+        assertThat(resources).isEmpty();
     }
 
     @Test
     void Test_adding_storage_source_container() {
         // Arrange
-        StorageChannel<Rs2ItemStack> storageChannel = sut.getStorageChannel(StorageChannelTypes.ITEM);
+        StorageChannel<String> storageChannel = sut.getStorageChannel(StorageChannelTypes.FAKE);
 
         // Act
         sut.onContainerAdded(diskDriveContainer);
 
-        Optional<Rs2ItemStack> remainder = storageChannel.insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
+        long remainder = storageChannel.insert("A", 10, Action.EXECUTE);
 
         // Assert
-        assertThat(remainder).isEmpty();
+        assertThat(remainder).isZero();
         assertThat(storageChannel.getAll()).isNotEmpty();
     }
 
     @Test
     void Test_removing_storage_source_container() {
         // Arrange
-        diskDrive.getStorageForChannel(StorageChannelTypes.ITEM).get().insert(new Rs2ItemStack(ItemStubs.DIRT), 10, Action.EXECUTE);
+        diskDrive.getStorageForChannel(StorageChannelTypes.FAKE).get().insert("A", 10, Action.EXECUTE);
 
-        StorageChannel<Rs2ItemStack> storageChannel = sut.getStorageChannel(StorageChannelTypes.ITEM);
+        StorageChannel<String> storageChannel = sut.getStorageChannel(StorageChannelTypes.FAKE);
 
         sut.onContainerAdded(diskDriveContainer);
 
-        Collection<Rs2ItemStack> stacksBeforeRemoval = storageChannel.getAll();
+        Collection<ResourceAmount<String>> resourcesBeforeRemoval = storageChannel.getAll();
 
         // Act
         sut.onContainerRemoved(diskDriveContainer);
 
         // Assert
-        assertThat(stacksBeforeRemoval).isNotEmpty();
+        assertThat(resourcesBeforeRemoval).isNotEmpty();
         assertThat(storageChannel.getAll()).isEmpty();
     }
 }

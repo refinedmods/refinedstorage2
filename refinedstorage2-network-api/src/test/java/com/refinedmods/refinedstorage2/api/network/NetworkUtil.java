@@ -10,11 +10,10 @@ import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.EmptyNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainerImpl;
-import com.refinedmods.refinedstorage2.api.resource.item.Rs2ItemStack;
+import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistryImpl;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +58,7 @@ public class NetworkUtil {
     public static final StorageChannelTypeRegistry STORAGE_CHANNEL_TYPE_REGISTRY = new StorageChannelTypeRegistryImpl();
 
     static {
-        STORAGE_CHANNEL_TYPE_REGISTRY.addType(StorageChannelTypes.ITEM);
+        STORAGE_CHANNEL_TYPE_REGISTRY.addType(StorageChannelTypes.FAKE);
 
         NETWORK_COMPONENT_REGISTRY.addComponent(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
         NETWORK_COMPONENT_REGISTRY.addComponent(GraphNetworkComponent.class, GraphNetworkComponent::new);
@@ -109,11 +108,11 @@ public class NetworkUtil {
         return network.getComponent(NodeCallbackListenerComponent.class).removeCount;
     }
 
-    public static StorageNetworkComponent itemStorageComponentOf(Network network) {
+    public static StorageNetworkComponent storageComponentOf(Network network) {
         return network.getComponent(StorageNetworkComponent.class);
     }
 
-    public static StorageChannel<Rs2ItemStack> itemStorageChannelOf(Network network) {
-        return itemStorageComponentOf(network).getStorageChannel(StorageChannelTypes.ITEM);
+    public static StorageChannel<String> fakeStorageChannelOf(Network network) {
+        return storageComponentOf(network).getStorageChannel(StorageChannelTypes.FAKE);
     }
 }
