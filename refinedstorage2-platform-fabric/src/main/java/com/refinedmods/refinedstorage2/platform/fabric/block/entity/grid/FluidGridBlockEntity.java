@@ -1,8 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid;
 
+import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.FluidGridScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
@@ -34,6 +37,14 @@ public class FluidGridBlockEntity extends GridBlockEntity<FluidResource> {
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new FluidGridScreenHandler(syncId, inv, this);
+        return new FluidGridScreenHandler(syncId, inv, this, getBucketStorage());
+    }
+
+    private ExtractableStorage<ItemResource> getBucketStorage() {
+        return getContainer()
+                .getNode()
+                .getNetwork()
+                .getComponent(StorageNetworkComponent.class)
+                .getStorageChannel(StorageChannelTypes.ITEM);
     }
 }
