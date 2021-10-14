@@ -111,7 +111,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         gridService.extract(itemResource, GridExtractMode.SINGLE_RESOURCE, (resource, amount, action) -> {
             ItemVariant itemVariant = ItemVariant.of(resource.getItem(), resource.getTag());
             try (Transaction tx = Transaction.openOuter()) {
-                long inserted = insert(itemVariant, amount, tx, destinationStorage);
+                long inserted = destinationStorage.insert(itemVariant, amount, tx);
                 long remainder = amount - inserted;
                 if (action == Action.EXECUTE) {
                     tx.commit();
@@ -122,14 +122,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     }
 
     private long insert(ItemVariant itemVariant, long amount, Transaction tx, boolean cursor) {
-        return insert(itemVariant, amount, tx, cursor ? playerCursorStorage : playerInventoryStorage);
-    }
-
-    // TODO: remove when upgrading Fabric
-    private long insert(ItemVariant itemVariant, long amount, Transaction tx, Storage<ItemVariant> targetStorage) {
-        if (targetStorage instanceof PlayerInventoryStorage) {
-            return ((PlayerInventoryStorage) targetStorage).offer(itemVariant, amount, tx);
-        }
-        return targetStorage.insert(itemVariant, amount, tx);
+        Storage<ItemVariant> relevantStorage = cursor ? playerCursorStorage : playerInventoryStorage;
+        return relevantStorage.insert(itemVariant, amount, tx);
     }
 }

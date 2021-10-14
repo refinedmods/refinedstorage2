@@ -168,7 +168,8 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     }
 
     private boolean insertResultingBucketIntoInventory(FluidGridExtractionInterceptingStorage interceptingStorage, boolean cursor, Transaction innerTx) {
-        return insert(ItemVariant.of(interceptingStorage.getStack()), 1, innerTx, cursor ? playerCursorStorage : playerInventoryStorage) != 0;
+        Storage<ItemVariant> relevantStorage = cursor ? playerCursorStorage : playerInventoryStorage;
+        return relevantStorage.insert(ItemVariant.of(interceptingStorage.getStack()), 1, innerTx) != 0;
     }
 
     private boolean hasBucketInInventory() {
@@ -179,13 +180,5 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
 
     private boolean hasBucketInStorage() {
         return bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE) == 1;
-    }
-
-    // TODO: remove when upgrading Fabric
-    private long insert(ItemVariant itemVariant, long amount, Transaction tx, Storage<ItemVariant> targetStorage) {
-        if (targetStorage instanceof PlayerInventoryStorage) {
-            return ((PlayerInventoryStorage) targetStorage).offer(itemVariant, amount, tx);
-        }
-        return targetStorage.insert(itemVariant, amount, tx);
     }
 }
