@@ -7,5 +7,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResourc
 public interface FluidGridEventHandler {
     void onInsert(GridInsertMode insertMode);
 
+    void onTransfer(int slotIndex);
+
     void onExtract(FluidResource fluidResource, GridExtractMode mode, boolean cursor);
 }

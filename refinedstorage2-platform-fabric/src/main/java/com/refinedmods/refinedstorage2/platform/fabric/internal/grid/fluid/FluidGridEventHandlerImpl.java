@@ -15,6 +15,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -57,6 +58,33 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             FluidVariant fluidVariant = resource.getFluidVariant();
             try (Transaction tx = Transaction.openOuter()) {
                 long extracted = cursorStorage.extract(fluidVariant, amount, tx);
+                if (action == Action.EXECUTE) {
+                    tx.commit();
+                }
+                return extracted;
+            }
+        });
+    }
+
+    @Override
+    public void onTransfer(int slotIndex) {
+        SingleSlotStorage<ItemVariant> itemSlotStorage = playerInventoryStorage.getSlot(slotIndex);
+        if (itemSlotStorage == null) {
+            return;
+        }
+        Storage<FluidVariant> fluidSlotStorage = FluidStorage.ITEM.find(itemSlotStorage.getResource().toStack(), ContainerItemContext.ofPlayerSlot(player, itemSlotStorage));
+        if (fluidSlotStorage == null) {
+            return;
+        }
+        FluidVariant extractableResource = StorageUtil.findExtractableResource(fluidSlotStorage, null);
+        if (extractableResource == null) {
+            return;
+        }
+        FluidResource fluidResource = new FluidResource(extractableResource.getFluid(), extractableResource.getNbt());
+        gridService.insert(fluidResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action) -> {
+            FluidVariant fluidVariant = resource.getFluidVariant();
+            try (Transaction tx = Transaction.openOuter()) {
+                long extracted = fluidSlotStorage.extract(fluidVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
                 }

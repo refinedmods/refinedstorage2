@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.Fluid
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.FluidGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FluidGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.PlayerSource;
+import com.refinedmods.refinedstorage2.platform.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
@@ -89,11 +90,7 @@ public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> imp
         if (!playerEntity.world.isClient()) {
             Slot slot = getSlot(slotIndex);
             if (slot.hasStack()) {
-
-                /* TODO Rs2ItemStack slotStack = Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toDomain(slot.getStack());
-                ItemStack resultingStack = Rs2PlatformApiFacade.INSTANCE.itemStackConversion().toPlatform(eventHandler.onInsertFromTransfer(slotStack));
-                slot.setStack(resultingStack);*/
-                sendContentUpdates();
+                fluidGridEventHandler.onTransfer(((SlotAccessor) slot).getIndex());
             }
         }
         return ItemStack.EMPTY;
@@ -102,6 +99,11 @@ public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> imp
     @Override
     public void onInsert(GridInsertMode insertMode) {
         fluidGridEventHandler.onInsert(insertMode);
+    }
+
+    @Override
+    public void onTransfer(int slotIndex) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
