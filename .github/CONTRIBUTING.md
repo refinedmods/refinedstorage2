@@ -1,5 +1,8 @@
 # Contributing to Refined Storage
 
+**IMPORTANT:** This project won't accept contributions at this time. The repository has been made public for
+transparency, but it's too early to contribute for now.
+
 ## Versioning
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -9,6 +12,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Keep your PR as small as possible, this makes reviewing easier.
 - Commits serve a clear purpose and have a fitting commit message.
 - Branches are kept up to date by rebasing, preferably.
+- PRs are merged by rebasing the commits on top of the target branch.
 - Changes are added in `CHANGELOG.md`. Please refrain from using technical terminology, keep it user-friendly. The
   format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
@@ -18,7 +22,7 @@ This project uses [Gitflow](https://www.atlassian.com/git/tutorials/comparing-wo
 
 ## Documentation
 
-If you are adding functionality or are changing behavior, please update the Patchouli documentation.
+If you are adding functionality or are changing behavior, please update the Patchouli in-game documentation.
 
 ## Code style
 
