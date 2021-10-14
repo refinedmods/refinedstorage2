@@ -58,7 +58,7 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
     }
 
     @Override
-    protected ResourceAmount<ItemResource> readStack(PacketByteBuf buf) {
+    protected ResourceAmount<ItemResource> readResourceAmount(PacketByteBuf buf) {
         return PacketUtil.readItemResourceAmount(buf);
     }
 

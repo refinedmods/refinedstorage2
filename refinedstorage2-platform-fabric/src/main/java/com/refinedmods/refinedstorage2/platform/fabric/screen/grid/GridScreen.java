@@ -92,8 +92,8 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
 
         this.scrollbar = new ScrollbarWidget(x + 174, y + 20, 12, (visibleRows * 18) - 2);
         this.scrollbar.setScrollAnimation(Rs2Config.get().getGrid().isSmoothScrolling());
-        this.getScreenHandler().getView().setListener(this::stacksChanged);
-        stacksChanged();
+        this.getScreenHandler().getView().setListener(this::resourcesChanged);
+        resourcesChanged();
 
         addSelectableChild(scrollbar);
         addSelectableChild(searchField);
@@ -115,7 +115,7 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
         }
     }
 
-    private void stacksChanged() {
+    private void resourcesChanged() {
         totalRows = (int) Math.ceil((float) getScreenHandler().getView().getAll().size() / (float) COLUMNS);
 
         scrollbar.setEnabled(totalRows > visibleRows);

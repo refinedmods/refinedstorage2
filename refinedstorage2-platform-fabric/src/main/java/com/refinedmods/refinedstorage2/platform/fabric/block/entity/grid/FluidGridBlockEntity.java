@@ -30,7 +30,7 @@ public class FluidGridBlockEntity extends GridBlockEntity<FluidResource> {
     }
 
     @Override
-    protected void writeStack(PacketByteBuf buf, ResourceAmount<FluidResource> resourceAmount) {
+    protected void writeResourceAmount(PacketByteBuf buf, ResourceAmount<FluidResource> resourceAmount) {
         PacketUtil.writeFluidResourceAmount(buf, resourceAmount);
     }
 

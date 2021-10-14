@@ -26,7 +26,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -112,18 +111,18 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
         size = GridSettings.getSize(buf.readInt());
         searchBoxMode = GridSearchBoxModeRegistry.INSTANCE.get(buf.readInt());
 
-        int amountOfStacks = buf.readInt();
-        for (int i = 0; i < amountOfStacks; ++i) {
-            ResourceAmount<T> stack = readStack(buf);
+        int amountOfResources = buf.readInt();
+        for (int i = 0; i < amountOfResources; ++i) {
+            ResourceAmount<T> resourceAmount = readResourceAmount(buf);
             StorageTracker.Entry trackerEntry = PacketUtil.readTrackerEntry(buf);
-            view.loadResource(stack.getResource(), stack.getAmount(), trackerEntry);
+            view.loadResource(resourceAmount.getResource(), resourceAmount.getAmount(), trackerEntry);
         }
         view.sort();
 
         addSlots(0);
     }
 
-    protected abstract ResourceAmount<T> readStack(PacketByteBuf buf);
+    protected abstract ResourceAmount<T> readResourceAmount(PacketByteBuf buf);
 
     public GridScreenHandler(ScreenHandlerType<?> screenHandlerType, int syncId, PlayerInventory playerInventory, GridBlockEntity<T> grid, GridView<T> view) {
         super(screenHandlerType, syncId);
@@ -299,10 +298,6 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
     @Override
     public void setRedstoneMode(RedstoneMode redstoneMode) {
         redstoneModeProperty.syncToServer(redstoneMode);
-    }
-
-    public int getPlayerInventorySlotThatHasStack(ItemStack stack) {
-        return playerInventory.getSlotWithStack(stack);
     }
 
     @Override

@@ -50,17 +50,19 @@ class StorageChannelImplTest {
         ResourceListListener<String> listener = mock(ResourceListListener.class);
         channel.addListener(listener);
 
-        ArgumentCaptor<ResourceListOperationResult<String>> givenStack = ArgumentCaptor.forClass(ResourceListOperationResult.class);
+        ArgumentCaptor<ResourceListOperationResult<String>> givenOperationResult = ArgumentCaptor.forClass(ResourceListOperationResult.class);
 
         // Act
         channel.insert("A", 15, action);
 
         // Assert
         if (action == Action.EXECUTE) {
-            verify(listener, atMost(1)).onChanged(givenStack.capture());
+            verify(listener, atMost(1)).onChanged(givenOperationResult.capture());
 
-            assertThat(givenStack.getValue().change()).isEqualTo(10);
-            assertThat(givenStack.getValue().resourceAmount()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 10));
+            assertThat(givenOperationResult.getValue().change()).isEqualTo(10);
+            assertThat(givenOperationResult.getValue().resourceAmount()).usingRecursiveComparison().isEqualTo(
+                    new ResourceAmount<>("A", 10)
+            );
         } else {
             verify(listener, never()).onChanged(any());
         }
@@ -78,17 +80,19 @@ class StorageChannelImplTest {
         ResourceListListener<String> listener = mock(ResourceListListener.class);
         channel.addListener(listener);
 
-        ArgumentCaptor<ResourceListOperationResult<String>> givenStack = ArgumentCaptor.forClass(ResourceListOperationResult.class);
+        ArgumentCaptor<ResourceListOperationResult<String>> givenOperationResult = ArgumentCaptor.forClass(ResourceListOperationResult.class);
 
         // Act
         channel.extract("A", 5, action);
 
         // Assert
         if (action == Action.EXECUTE) {
-            verify(listener, atMost(1)).onChanged(givenStack.capture());
+            verify(listener, atMost(1)).onChanged(givenOperationResult.capture());
 
-            assertThat(givenStack.getValue().change()).isEqualTo(-5);
-            assertThat(givenStack.getValue().resourceAmount()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 5));
+            assertThat(givenOperationResult.getValue().change()).isEqualTo(-5);
+            assertThat(givenOperationResult.getValue().resourceAmount()).usingRecursiveComparison().isEqualTo(
+                    new ResourceAmount<>("A", 5)
+            );
         } else {
             verify(listener, never()).onChanged(any());
         }
@@ -128,7 +132,7 @@ class StorageChannelImplTest {
     }
 
     @Test
-    void Test_getting_stack() {
+    void Test_getting_resource() {
         // Arrange
         BulkStorage<String> storage = new BulkStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE);
@@ -136,23 +140,23 @@ class StorageChannelImplTest {
         channel.addSource(storage);
 
         // Act
-        Optional<ResourceAmount<String>> stack = channel.get("A");
+        Optional<ResourceAmount<String>> resource = channel.get("A");
 
         // Assert
-        assertThat(stack).isPresent();
-        assertThat(stack.get()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 50));
+        assertThat(resource).isPresent();
+        assertThat(resource.get()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 50));
     }
 
     @Test
-    void Test_getting_non_existent_stack() {
+    void Test_getting_non_existent_resource() {
         // Arrange
         channel.addSource(new BulkStorageImpl<>(100));
 
         // Act
-        Optional<ResourceAmount<String>> stack = channel.get("A");
+        Optional<ResourceAmount<String>> resource = channel.get("A");
 
         // Assert
-        assertThat(stack).isEmpty();
+        assertThat(resource).isEmpty();
     }
 
     @RepeatedTest(100)

@@ -73,11 +73,11 @@ public class GridNetworkNode<T> extends NetworkNodeImpl {
         return network.getComponent(StorageNetworkComponent.class).getStorageChannel(type);
     }
 
-    public int getStackCount() {
+    public int getResourceCount() {
         return getStorageChannel().getAll().size();
     }
 
-    public void forEachStack(BiConsumer<ResourceAmount<T>, Optional<StorageTracker.Entry>> consumer) {
+    public void forEachResource(BiConsumer<ResourceAmount<T>, Optional<StorageTracker.Entry>> consumer) {
         StorageChannel<T> storageChannel = getStorageChannel();
         storageChannel.getAll().forEach(resourceAmount -> consumer.accept(resourceAmount, storageChannel.getTracker().getEntry(resourceAmount.getResource())));
     }
