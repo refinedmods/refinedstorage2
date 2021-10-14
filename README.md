@@ -71,17 +71,17 @@ Found an issue? Please report it on our [issue tracker](https://github.com/refin
 
 1) Ensure that you are running on the latest Refined Storage 2 version.
 2) Ensure that your issue hasn't already been posted.
-3) Please respect the issue template.
-4) Be as detailed as possible.
-5) Try to reproduce the issue with only Refined Storage 2 installed, if possible.
+3) Be as detailed as possible.
+4) Try to reproduce the issue with only Refined Storage 2 installed, if possible.
 
 Respecting these guidelines will help us solve issues faster.
 
 We might close your issue, without explanation, if you do not follow these guidelines.
 
-## Feature requests
+## Enhancement
 
-Have a feature request? Please let us know on the [issue tracker](https://github.com/refinedmods/refinedstorage2/issues).
+Have an idea for an enhancement? Please let us know on
+the [issue tracker](https://github.com/refinedmods/refinedstorage2/issues).
 
 1) Ensure that you are running on the latest Refined Storage 2 version.
 2) Ensure that your feature request hasn't already been posted. Please look in the closed issues as well (for feature

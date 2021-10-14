@@ -2,15 +2,29 @@ name: Bug Report
 description: Found a bug or encountered a crash? Please report it here.
 labels: [ bug ]
 body:
-    -   type: textarea
-        id: what-happened
+    -   type: markdown
         attributes:
-            label: What happened? Please describe the bug.
-            description: If applicable, also tell us what you expected to happen instead.
+            value: |
+                Please follow following guidelines before reporting an issue:
+                1) Ensure that you are running on the latest Refined Storage 2 version.
+                2) Ensure that your issue hasn't already been posted.
+                3) Be as detailed as possible.
+                4) Try to reproduce the issue with only Refined Storage 2 installed, if possible.
+
+                Respecting these guidelines will help us solve issues faster.
+
+                We might close your issue, without explanation, if you do not follow these guidelines.
+    -   type: textarea
+        id: description
+        attributes:
+            label: Describe the bug
+            description: |
+                Ensure that you are using the most recent version.
+                If applicable, also tell us what you expected to happen instead.
         validations:
             required: true
     -   type: textarea
-        id: steps-to-reproduce
+        id: reproduce
         attributes:
             label: How can we reproduce this bug or crash?
             placeholder: |
@@ -20,19 +34,19 @@ body:
         validations:
             required: true
     -   type: dropdown
-        id: minecraft-version
+        id: minecraft
         attributes:
-            label: What Minecraft version is this happening on?
+            label: What Minecraft version is this bug happening on?
             options:
                 - Minecraft 1.17.1
     -   type: input
-        id: fabric-version
+        id: fabric
         attributes:
             label: What Fabric version is this happening on?
         validations:
             required: true
     -   type: input
-        id: rs-version
+        id: rs
         attributes:
             label: What Refined Storage version is this happening on?
         validations:

@@ -1,0 +1,18 @@
+name: Enhancement
+description: Do you have a suggestion for a new feature or a way to improve Refined Storage? Let us know.
+labels: [ enhancement ]
+body:
+    -   type: markdown
+        attributes:
+            value: |
+                Please follow following guidelines before proposing an enchancement:
+                1) Ensure that you are running on the latest Refined Storage 2 version.
+                2) Ensure that your feature request hasn't already been posted. Please look in the closed issues as well (for feature requests that have been denied).
+
+                We might close your issue, without explanation, if you do not follow these guidelines.
+    -   type: textarea
+        id: describe
+        attributes:
+            label: Describe your enhancement
+        validations:
+            required: true
