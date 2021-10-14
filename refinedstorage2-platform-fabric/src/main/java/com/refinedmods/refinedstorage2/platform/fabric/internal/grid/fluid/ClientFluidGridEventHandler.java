@@ -15,6 +15,11 @@ public class ClientFluidGridEventHandler implements FluidGridEventHandler {
     }
 
     @Override
+    public void onTransfer(int slotIndex) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void onExtract(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
         ClientPacketUtil.sendToServer(PacketIds.GRID_EXTRACT, buf -> {
             GridExtractPacket.writeMode(buf, mode);
