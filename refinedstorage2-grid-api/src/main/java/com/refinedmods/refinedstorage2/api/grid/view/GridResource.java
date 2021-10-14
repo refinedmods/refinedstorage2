@@ -6,6 +6,7 @@ import java.util.Set;
 
 public abstract class GridResource<T> {
     private final ResourceAmount<T> resourceAmount;
+    // todo: these fields are mc specific. move them?
     private final String name;
     private final String modId;
     private final String modName;
