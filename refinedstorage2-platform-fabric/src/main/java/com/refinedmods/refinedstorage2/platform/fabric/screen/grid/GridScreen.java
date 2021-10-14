@@ -219,34 +219,34 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
         int slotX = rowX + 1 + (column * 18);
         int slotY = rowY + 1;
 
-        GridResource<R> stack = null;
+        GridResource<R> resource = null;
         if (idx < view.getAll().size()) {
-            stack = view.getAll().get(idx);
-            renderStackWithAmount(matrices, slotX, slotY, stack);
+            resource = view.getAll().get(idx);
+            renderResourceWithAmount(matrices, slotX, slotY, resource);
         }
 
         if (!getScreenHandler().isActive()) {
             renderDisabledSlot(matrices, slotX, slotY);
         } else if (mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16 && isOverStorageArea(mouseX, mouseY)) {
             renderSelection(matrices, slotX, slotY);
-            if (stack != null) {
+            if (resource != null) {
                 gridSlotNumber = idx;
             }
         }
     }
 
-    private void renderStackWithAmount(MatrixStack matrices, int slotX, int slotY, GridResource<R> stack) {
-        renderStack(matrices, slotX, slotY, stack);
+    private void renderResourceWithAmount(MatrixStack matrices, int slotX, int slotY, GridResource<R> resource) {
+        renderResource(matrices, slotX, slotY, resource);
 
-        String text = getAmount(stack);
-        Integer color = stack.isZeroed() ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue();
+        String text = getAmount(resource);
+        Integer color = resource.isZeroed() ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue();
 
         renderAmount(matrices, slotX, slotY, text, color);
     }
 
-    protected abstract void renderStack(MatrixStack matrices, int slotX, int slotY, GridResource<R> stack);
+    protected abstract void renderResource(MatrixStack matrices, int slotX, int slotY, GridResource<R> resource);
 
-    protected abstract String getAmount(GridResource<R> stack);
+    protected abstract String getAmount(GridResource<R> resource);
 
     private void renderDisabledSlot(MatrixStack matrices, int slotX, int slotY) {
         RenderSystem.disableDepthTest();
@@ -266,23 +266,23 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
 
     private void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
         GridView<R> view = getScreenHandler().getView();
-        GridResource<R> stack = view.getAll().get(gridSlotNumber);
+        GridResource<R> resource = view.getAll().get(gridSlotNumber);
 
-        List<OrderedText> lines = Lists.transform(getTooltip(stack), Text::asOrderedText);
+        List<OrderedText> lines = Lists.transform(getTooltip(resource), Text::asOrderedText);
 
         if (!Rs2Config.get().getGrid().isDetailedTooltip()) {
             renderOrderedTooltip(matrices, lines, mouseX, mouseY);
         } else {
             List<OrderedText> smallLines = new ArrayList<>();
-            smallLines.add(Rs2Mod.createTranslation("misc", "total", getAmount(stack)).formatted(Formatting.GRAY).asOrderedText());
+            smallLines.add(Rs2Mod.createTranslation("misc", "total", getAmount(resource)).formatted(Formatting.GRAY).asOrderedText());
 
-            view.getTrackerEntry(stack.getResourceAmount()).ifPresent(entry -> smallLines.add(getLastModifiedText(entry).formatted(Formatting.GRAY).asOrderedText()));
+            view.getTrackerEntry(resource.getResourceAmount()).ifPresent(entry -> smallLines.add(getLastModifiedText(entry).formatted(Formatting.GRAY).asOrderedText()));
 
             renderTooltipWithSmallText(matrices, lines, smallLines, mouseX, mouseY);
         }
     }
 
-    protected abstract List<Text> getTooltip(GridResource<R> stack);
+    protected abstract List<Text> getTooltip(GridResource<R> resource);
 
     private MutableText getLastModifiedText(StorageTracker.Entry entry) {
         LastModified lastModified = LastModified.calculate(entry.time(), System.currentTimeMillis());
@@ -474,8 +474,8 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
 
     private void mouseScrolledInGrid(boolean up) {
         getScreenHandler().getView().setPreventSorting(true);
-        GridResource<R> stack = getScreenHandler().getView().getAll().get(gridSlotNumber);
-        mouseScrolledInGrid(up, stack);
+        GridResource<R> resource = getScreenHandler().getView().getAll().get(gridSlotNumber);
+        mouseScrolledInGrid(up, resource);
     }
 
     protected abstract void mouseScrolledInGrid(boolean up, GridResource<R> resource);

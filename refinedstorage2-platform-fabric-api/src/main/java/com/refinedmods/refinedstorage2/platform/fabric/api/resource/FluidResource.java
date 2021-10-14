@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.impl.transfer.fluid.FluidVariantImpl;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.nbt.NbtCompound;
@@ -15,12 +16,14 @@ import net.minecraft.util.registry.Registry;
 public final class FluidResource {
     private final Fluid fluid;
     private final NbtCompound tag;
-    private final FluidVariant fluidVariant;
+
+    public static FluidResource ofFluidVariant(FluidVariant fluidVariant) {
+        return new FluidResource(fluidVariant.getFluid(), fluidVariant.getNbt());
+    }
 
     public FluidResource(Fluid fluid, NbtCompound tag) {
         this.fluid = fluid;
         this.tag = tag;
-        this.fluidVariant = FluidVariant.of(fluid, tag);
     }
 
     public Fluid getFluid() {
@@ -31,8 +34,8 @@ public final class FluidResource {
         return tag;
     }
 
-    public FluidVariant getFluidVariant() {
-        return fluidVariant;
+    public FluidVariant toFluidVariant() {
+        return FluidVariantImpl.of(fluid, tag);
     }
 
     @Override

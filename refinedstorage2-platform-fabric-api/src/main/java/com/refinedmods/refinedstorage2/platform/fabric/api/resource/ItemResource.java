@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import java.util.Objects;
 import java.util.Optional;
 
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -15,13 +16,14 @@ import net.minecraft.util.registry.Registry;
 public final class ItemResource {
     private final Item item;
     private final NbtCompound tag;
-    private final ItemStack itemStack;
+
+    public static ItemResource ofItemVariant(ItemVariant itemVariant) {
+        return new ItemResource(itemVariant.getItem(), itemVariant.getNbt());
+    }
 
     public ItemResource(Item item, NbtCompound tag) {
         this.item = item;
         this.tag = tag;
-        this.itemStack = new ItemStack(item);
-        this.itemStack.setNbt(tag);
     }
 
     public ItemResource(ItemStack stack) {
@@ -36,8 +38,14 @@ public final class ItemResource {
         return tag;
     }
 
-    public ItemStack getItemStack() {
+    public ItemStack toItemStack() {
+        ItemStack itemStack = new ItemStack(item);
+        itemStack.setNbt(tag);
         return itemStack;
+    }
+
+    public ItemVariant toItemVariant() {
+        return ItemVariant.of(item, tag);
     }
 
     @Override
