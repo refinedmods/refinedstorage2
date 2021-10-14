@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.ItemGridResource;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.ItemGridScreenHandler;
 
 import java.util.List;
@@ -20,18 +21,18 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandl
     }
 
     @Override
-    protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridResource<ItemResource> stack) {
-        itemRenderer.renderInGuiWithOverrides(stack.getResourceAmount().getResource().getItemStack(), slotX, slotY);
+    protected void renderResource(MatrixStack matrices, int slotX, int slotY, GridResource<ItemResource> resource) {
+        itemRenderer.renderInGuiWithOverrides(((ItemGridResource) resource).getItemStack(), slotX, slotY);
     }
 
     @Override
-    protected String getAmount(GridResource<ItemResource> stack) {
-        return stack.isZeroed() ? "0" : String.valueOf(stack.getResourceAmount().getAmount());
+    protected String getAmount(GridResource<ItemResource> resource) {
+        return resource.isZeroed() ? "0" : String.valueOf(resource.getResourceAmount().getAmount());
     }
 
     @Override
-    protected List<Text> getTooltip(GridResource<ItemResource> stack) {
-        return getTooltipFromItem(stack.getResourceAmount().getResource().getItemStack());
+    protected List<Text> getTooltip(GridResource<ItemResource> resource) {
+        return getTooltipFromItem(((ItemGridResource) resource).getItemStack());
     }
 
     @Override

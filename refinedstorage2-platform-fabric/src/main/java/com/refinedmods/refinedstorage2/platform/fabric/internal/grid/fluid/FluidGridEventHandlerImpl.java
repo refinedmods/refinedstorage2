@@ -23,6 +23,8 @@ import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandler;
 import org.jetbrains.annotations.Nullable;
 
+import static com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource.ofFluidVariant;
+
 public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     private static final ItemVariant BUCKET_ITEM_VARIANT = ItemVariant.of(Items.BUCKET);
     private static final ItemResource BUCKET_ITEM_RESOURCE = new ItemResource(Items.BUCKET, null);
@@ -53,9 +55,9 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         if (extractableResource == null) {
             return;
         }
-        FluidResource fluidResource = new FluidResource(extractableResource.getFluid(), extractableResource.getNbt());
+        FluidResource fluidResource = ofFluidVariant(extractableResource);
         gridService.insert(fluidResource, insertMode, (resource, amount, action) -> {
-            FluidVariant fluidVariant = resource.getFluidVariant();
+            FluidVariant fluidVariant = resource.toFluidVariant();
             try (Transaction tx = Transaction.openOuter()) {
                 long extracted = cursorStorage.extract(fluidVariant, amount, tx);
                 if (action == Action.EXECUTE) {
@@ -80,9 +82,9 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         if (extractableResource == null) {
             return;
         }
-        FluidResource fluidResource = new FluidResource(extractableResource.getFluid(), extractableResource.getNbt());
+        FluidResource fluidResource = ofFluidVariant(extractableResource);
         gridService.insert(fluidResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action) -> {
-            FluidVariant fluidVariant = resource.getFluidVariant();
+            FluidVariant fluidVariant = resource.toFluidVariant();
             try (Transaction tx = Transaction.openOuter()) {
                 long extracted = fluidSlotStorage.extract(fluidVariant, amount, tx);
                 if (action == Action.EXECUTE) {
@@ -123,7 +125,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         }
         gridService.extract(fluidResource, mode, (resource, amount, action) -> {
             try (Transaction tx = Transaction.openOuter()) {
-                long inserted = destination.insert(FluidVariant.of(resource.getFluid(), resource.getTag()), amount, tx);
+                long inserted = destination.insert(resource.toFluidVariant(), amount, tx);
                 boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, tx);
                 if (!couldInsertBucket) {
                     return amount;
@@ -151,7 +153,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             }
             gridService.extract(fluidResource, mode, (resource, amount, action) -> {
                 try (Transaction innerTx = tx.openNested()) {
-                    long inserted = destination.insert(FluidVariant.of(resource.getFluid(), resource.getTag()), amount, innerTx);
+                    long inserted = destination.insert(resource.toFluidVariant(), amount, innerTx);
                     boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, innerTx);
                     if (!couldInsertBucket) {
                         return amount;
@@ -169,7 +171,8 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
 
     private boolean insertResultingBucketIntoInventory(FluidGridExtractionInterceptingStorage interceptingStorage, boolean cursor, Transaction innerTx) {
         Storage<ItemVariant> relevantStorage = cursor ? playerCursorStorage : playerInventoryStorage;
-        return relevantStorage.insert(ItemVariant.of(interceptingStorage.getStack()), 1, innerTx) != 0;
+        ItemVariant itemVariant = ItemVariant.of(interceptingStorage.getStack());
+        return relevantStorage.insert(itemVariant, 1, innerTx) != 0;
     }
 
     private boolean hasBucketInInventory() {

@@ -13,9 +13,10 @@ import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.fabricmc.fabric.impl.transfer.item.ItemVariantImpl;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
+
+import static com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource.ofItemVariant;
 
 public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     private final ScreenHandler screenHandler;
@@ -38,7 +39,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         ItemResource itemResource = new ItemResource(screenHandler.getCursorStack());
         gridService.insert(itemResource, insertMode, (resource, amount, action) -> {
             try (Transaction tx = Transaction.openOuter()) {
-                ItemVariant itemVariant = ItemVariant.of(resource.getItem(), resource.getTag());
+                ItemVariant itemVariant = resource.toItemVariant();
                 long extracted = playerCursorStorage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
@@ -55,10 +56,10 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         if (itemVariantInSlot == null) {
             return;
         }
-        ItemResource itemResource = new ItemResource(itemVariantInSlot.getItem(), itemVariantInSlot.getNbt());
+        ItemResource itemResource = ofItemVariant(itemVariantInSlot);
         gridService.insert(itemResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action) -> {
             try (Transaction tx = Transaction.openOuter()) {
-                ItemVariant itemVariant = ItemVariant.of(resource.getItem(), resource.getTag());
+                ItemVariant itemVariant = resource.toItemVariant();
                 long extracted = storage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
@@ -71,8 +72,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     @Override
     public void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
         gridService.extract(itemResource, mode, (resource, amount, action) -> {
-            // todo: create util
-            ItemVariant itemVariant = ItemVariantImpl.of(resource.getItem(), resource.getTag());
+            ItemVariant itemVariant = resource.toItemVariant();
             try (Transaction tx = Transaction.openOuter()) {
                 long inserted = insert(itemVariant, amount, tx, cursor);
                 long remainder = amount - inserted;
@@ -97,7 +97,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     private void handleInventoryToGridScroll(ItemResource itemResource, Storage<ItemVariant> sourceStorage) {
         gridService.insert(itemResource, GridInsertMode.SINGLE_RESOURCE, (resource, amount, action) -> {
             try (Transaction tx = Transaction.openOuter()) {
-                ItemVariant itemVariant = ItemVariant.of(resource.getItem(), resource.getTag());
+                ItemVariant itemVariant = resource.toItemVariant();
                 long extracted = sourceStorage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
@@ -109,7 +109,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
 
     private void handleGridToInventoryScroll(ItemResource itemResource, Storage<ItemVariant> destinationStorage) {
         gridService.extract(itemResource, GridExtractMode.SINGLE_RESOURCE, (resource, amount, action) -> {
-            ItemVariant itemVariant = ItemVariant.of(resource.getItem(), resource.getTag());
+            ItemVariant itemVariant = resource.toItemVariant();
             try (Transaction tx = Transaction.openOuter()) {
                 long inserted = destinationStorage.insert(itemVariant, amount, tx);
                 long remainder = amount - inserted;

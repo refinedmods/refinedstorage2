@@ -23,7 +23,6 @@ public final class PacketUtil {
     public static ItemResource readItemResource(PacketByteBuf buf) {
         int id = buf.readVarInt();
         NbtCompound nbt = buf.readNbt();
-
         return new ItemResource(Item.byRawId(id), nbt);
     }
 
@@ -37,7 +36,6 @@ public final class PacketUtil {
         int id = buf.readVarInt();
         long amount = buf.readLong();
         NbtCompound nbt = buf.readNbt();
-
         return new com.refinedmods.refinedstorage2.api.resource.ResourceAmount<>(
                 new ItemResource(Item.byRawId(id), nbt),
                 amount
@@ -52,7 +50,6 @@ public final class PacketUtil {
     public static FluidResource readFluidResource(PacketByteBuf buf) {
         int id = buf.readVarInt();
         NbtCompound nbt = buf.readNbt();
-
         return new FluidResource(Registry.FLUID.get(id), nbt);
     }
 
@@ -66,7 +63,6 @@ public final class PacketUtil {
         int id = buf.readVarInt();
         long amount = buf.readLong();
         NbtCompound nbt = buf.readNbt();
-
         return new com.refinedmods.refinedstorage2.api.resource.ResourceAmount<>(
                 new FluidResource(Registry.FLUID.get(id), nbt),
                 amount

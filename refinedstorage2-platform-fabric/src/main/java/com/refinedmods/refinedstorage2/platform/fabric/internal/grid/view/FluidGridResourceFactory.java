@@ -20,7 +20,7 @@ import net.minecraft.util.registry.Registry;
 public class FluidGridResourceFactory implements Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> {
     @Override
     public GridResource<FluidResource> apply(ResourceAmount<FluidResource> resourceAmount) {
-        FluidVariant fluidVariant = resourceAmount.getResource().getFluidVariant();
+        FluidVariant fluidVariant = resourceAmount.getResource().toFluidVariant();
         String name = FluidVariantRendering.getName(fluidVariant).getString();
         String modId = Registry.FLUID.getId(fluidVariant.getFluid()).getNamespace();
         String modName = FabricLoader.getInstance().getModContainer(modId).map(ModContainer::getMetadata).map(ModMetadata::getName).orElse("");

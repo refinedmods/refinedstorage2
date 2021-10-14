@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.util.FabricQuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FluidGridResource;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.FluidGridScreenHandler;
 
 import java.util.List;
@@ -31,8 +32,8 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHa
     }
 
     @Override
-    protected void renderStack(MatrixStack matrices, int slotX, int slotY, GridResource<FluidResource> stack) {
-        FluidVariant variant = stack.getResourceAmount().getResource().getFluidVariant();
+    protected void renderResource(MatrixStack matrices, int slotX, int slotY, GridResource<FluidResource> resource) {
+        FluidVariant variant = ((FluidGridResource) resource).getFluidVariant();
         Sprite sprite = FluidVariantRendering.getSprite(variant);
         if (sprite != null) {
             renderFluidSprite(matrices, slotX, slotY, variant, sprite);
@@ -40,8 +41,8 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHa
     }
 
     @Override
-    protected String getAmount(GridResource<FluidResource> stack) {
-        return FabricQuantityFormatter.formatDropletsAsBucket(stack.isZeroed() ? 0 : stack.getResourceAmount().getAmount());
+    protected String getAmount(GridResource<FluidResource> resource) {
+        return FabricQuantityFormatter.formatDropletsAsBucket(resource.isZeroed() ? 0 : resource.getResourceAmount().getAmount());
     }
 
     private void renderFluidSprite(MatrixStack matrices, int slotX, int slotY, FluidVariant variant, Sprite sprite) {
@@ -84,9 +85,9 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridScreenHa
     }
 
     @Override
-    protected List<Text> getTooltip(GridResource<FluidResource> stack) {
+    protected List<Text> getTooltip(GridResource<FluidResource> resource) {
         return FluidVariantRendering.getTooltip(
-                stack.getResourceAmount().getResource().getFluidVariant(),
+                ((FluidGridResource) resource).getFluidVariant(),
                 client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.NORMAL
         );
     }
