@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 
@@ -31,15 +31,15 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     private final GridService<FluidResource> gridService;
     private final PlayerInventoryStorage playerInventoryStorage;
     private final Storage<ItemVariant> playerCursorStorage;
-    private final StorageChannel<ItemResource> storageChannel;
+    private final ExtractableStorage<ItemResource> bucketStorage;
 
-    public FluidGridEventHandlerImpl(ScreenHandler screenHandler, GridService<FluidResource> gridService, PlayerInventory playerInventory, StorageChannel<ItemResource> storageChannel) {
+    public FluidGridEventHandlerImpl(ScreenHandler screenHandler, GridService<FluidResource> gridService, PlayerInventory playerInventory, ExtractableStorage<ItemResource> bucketStorage) {
         this.screenHandler = screenHandler;
         this.player = playerInventory.player;
         this.gridService = gridService;
         this.playerInventoryStorage = PlayerInventoryStorage.of(playerInventory);
         this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(screenHandler);
-        this.storageChannel = storageChannel;
+        this.bucketStorage = bucketStorage;
     }
 
     @Override
@@ -76,12 +76,38 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     @Override
     public void onExtract(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
         boolean bucketInInventory = hasBucketInInventory();
-        boolean bucketInStorageChannel = storageChannel.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE) == 1;
+        boolean bucketInStorageChannel = hasBucketInStorage();
         if (bucketInInventory) {
             extractWithBucketInInventory(fluidResource, mode, cursor);
         } else if (bucketInStorageChannel) {
-            // TODO extractWithBucketInStorageChannel(fluidResource, mode, cursor);
+            extractWithBucketInStorage(fluidResource, mode, cursor);
         }
+    }
+
+    private void extractWithBucketInStorage(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
+        FluidGridExtractionInterceptingStorage interceptingStorage = new FluidGridExtractionInterceptingStorage();
+        Storage<FluidVariant> destination = FluidStorage.ITEM.find(
+                interceptingStorage.getStack(),
+                ContainerItemContext.ofSingleSlot(interceptingStorage)
+        );
+        if (destination == null) {
+            return;
+        }
+        gridService.extract(fluidResource, mode, (resource, amount, action) -> {
+            try (Transaction tx = Transaction.openOuter()) {
+                long inserted = destination.insert(FluidVariant.of(resource.getFluid(), resource.getTag()), amount, tx);
+                boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, tx);
+                if (!couldInsertBucket) {
+                    return amount;
+                }
+                long remainder = amount - inserted;
+                if (action == Action.EXECUTE) {
+                    bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE);
+                    tx.commit();
+                }
+                return remainder;
+            }
+        });
     }
 
     private void extractWithBucketInInventory(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
@@ -121,6 +147,10 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         try (Transaction tx = Transaction.openOuter()) {
             return playerInventoryStorage.extract(BUCKET_ITEM_VARIANT, 1, tx) == 1;
         }
+    }
+
+    private boolean hasBucketInStorage() {
+        return bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE) == 1;
     }
 
     // TODO: remove when upgrading Fabric

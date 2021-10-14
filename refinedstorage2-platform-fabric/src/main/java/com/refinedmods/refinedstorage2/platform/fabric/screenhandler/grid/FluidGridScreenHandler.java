@@ -5,22 +5,20 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.service.GridServiceImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
-import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.ClientFluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.FluidGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FluidGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.PlayerSource;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
@@ -49,16 +47,11 @@ public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> imp
         this.fluidGridEventHandler = new ClientFluidGridEventHandler();
     }
 
-    public FluidGridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity<FluidResource> grid) {
+    public FluidGridScreenHandler(int syncId, PlayerInventory playerInventory, FluidGridBlockEntity grid, ExtractableStorage<ItemResource> bucketStorage) {
         super(Rs2Mod.SCREEN_HANDLERS.getFluidGrid(), syncId, playerInventory, grid, createView());
         this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), (resource) -> FluidConstants.BUCKET);
         this.grid.addWatcher(this);
-        this.fluidGridEventHandler = new FluidGridEventHandlerImpl(this, gridService, playerInventory, getItemStorageChannel(grid));
-    }
-
-    private StorageChannel<ItemResource> getItemStorageChannel(GridBlockEntity<FluidResource> grid) {
-        StorageNetworkComponent storageComponent = grid.getContainer().getNode().getNetwork().getComponent(StorageNetworkComponent.class);
-        return storageComponent.getStorageChannel(StorageChannelTypes.ITEM);
+        this.fluidGridEventHandler = new FluidGridEventHandlerImpl(this, gridService, playerInventory, bucketStorage);
     }
 
     private static GridViewImpl<FluidResource> createView() {
