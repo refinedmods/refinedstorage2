@@ -1,4 +1,4 @@
-name: Build
+name: Build 1.17
 on: [ pull_request, push ]
 jobs:
     build:
