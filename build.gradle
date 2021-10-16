@@ -55,7 +55,7 @@ subprojects {
 
 // http://csiebler.github.io/blog/2014/02/09/multi-project-code-coverage-using-gradle-and-jacoco/
 task codeCoverageReport(type: JacocoReport) {
-    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec").exclude("refinedstorage2-platform-fabric/**")
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
     subprojects.each {
         sourceSets it.sourceSets.main
     }
@@ -78,5 +78,6 @@ sonarqube {
         property "sonar.organization", "refinedmods"
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
+        property "sonar.coverage.exclusions", "refinedstorage2-platform-fabric/**/*"
     }
 }
