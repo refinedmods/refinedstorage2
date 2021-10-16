@@ -1,5 +1,8 @@
 name: Build
-on: [ pull_request, push ]
+on:
+    push:
+    pull_request:
+        types: [ opened, synchronize, reopened ]
 jobs:
     build:
         strategy:
@@ -25,6 +28,7 @@ jobs:
                 run: ./gradlew build jacocoTestReport sonarqube
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
             -   name: Upload build artifacts
                 if: ${{ runner.os == 'Linux' && matrix.java == '16' }}
                 uses: actions/upload-artifact@v2
