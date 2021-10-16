@@ -1,5 +1,7 @@
-name: Build
-on: [ pull_request, push ]
+name: Release
+on:
+    release:
+        types: [ published ]
 jobs:
     build:
         strategy:
