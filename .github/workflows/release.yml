@@ -1,5 +1,8 @@
-name: Build
-on: [ pull_request, push ]
+name: Release
+on:
+    workflow_dispatch:
+    release:
+        types: [ published ]
 jobs:
     build:
         strategy:
@@ -21,13 +24,7 @@ jobs:
             -   name: Make Gradle wrapper executable
                 if: ${{ runner.os != 'Windows' }}
                 run: chmod +x ./gradlew
-            -   name: Build
-                run: ./gradlew build jacocoTestReport sonarqube
+            -   name: Publish
+                run: ./gradlew publish
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            -   name: Upload build artifacts
-                if: ${{ runner.os == 'Linux' && matrix.java == '16' }}
-                uses: actions/upload-artifact@v2
-                with:
-                    name: Artifacts
-                    path: refinedstorage2-*/build/libs/

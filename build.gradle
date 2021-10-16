@@ -1,3 +1,8 @@
+plugins {
+    id("maven-publish")
+    id "org.sonarqube" version "3.3"
+}
+
 subprojects {
     group = 'com.refinedmods.refinedstorage2'
     version = '2.0.0-milestone.1.2'
@@ -22,5 +27,32 @@ subprojects {
         filesMatching('fabric.mod.json') {
             expand 'version': project.version
         }
+    }
+
+    apply plugin: "maven-publish"
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage2")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+        publications {
+            gpr(MavenPublication) {
+                from(components.java)
+            }
+        }
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "refinedmods_refinedstorage2"
+        property "sonar.organization", "refinedmods"
+        property "sonar.host.url", "https://sonarcloud.io"
     }
 }
