@@ -16,78 +16,13 @@ this mod that allow the player to setup auto-crafting, allowing the crafting of 
 ## Links
 
 - [GitHub](https://github.com/refinedmods/refinedstorage2)
+    - [Releases](https://github.com/refinedmods/refinedstorage2/releases)
+    - [Issues](https://github.com/refinedmods/refinedstorage2/issues)
+    - [Roadmap](https://github.com/refinedmods/refinedstorage2/projects)
+    - [Wiki](https://github.com/refinedmods/refinedstorage2/wiki)
     - [Refined Mods on GitHub](https://github.com/refinedmods)
 - [Discord](https://discordapp.com/invite/VYzsydb)
 - [Twitter](https://twitter.com/refinedmods)
-
-## Getting started
-
-### Setting up Fabric
-
-You'll need a Fabric instance to play Refined Storage 2.
-
-### Downloading the mod
-
-Refined Storage 2 hasn't been released yet so there are no builds available on CurseForge at the moment.
-
-A new version is built after every commit which you can
-download [here](https://github.com/refinedmods/refinedstorage2/actions/workflows/build.yml?query=branch%3Amain).
-
-If you want to use a more stable version, head over to
-the [releases](https://github.com/refinedmods/refinedstorage2/releases) page.
-
-### Installing the mod
-
-Place the Refined Storage 2 JAR file in the `mods/` directory of your instance, or, add it via the launcher that you are
-using.
-
-### Configuring the mod
-
-Refined Storage 2 auto-generates a `refinedstorage2.toml` config file in the `config/` directory of your instance.
-
-It is possible to edit the config in-game through [ClothConfig](https://github.com/shedaniel/cloth-config) as well.
-
-## Dependencies
-
-### Required dependencies
-
-Refined Storage 2 has no required dependencies, besides [Fabric API](https://github.com/FabricMC/fabric).
-
-The JAR is shipped with [autoconfig1u](https://github.com/shedaniel/AutoConfig)
-and [Team Reborn Energy](https://github.com/TechReborn/Energy).
-
-### Suggested dependencies
-
-Refined Storage 2 provides in-game documentation via [Patchouli](https://github.com/Vazkii/Patchouli).
-
-The Grid has integration with [Roughly Enough Items](https://github.com/shedaniel/RoughlyEnoughItems).
-
-You can edit the configuration in-game with [ClothConfig](https://github.com/shedaniel/cloth-config). This configuration
-screen is accessible via [ModMenu](https://github.com/TerraformersMC/ModMenu).
-
-## Issues
-
-Found an issue? Please report it on our [issue tracker](https://github.com/refinedmods/refinedstorage2/issues).
-
-1) Ensure that you are running on the latest Refined Storage 2 version.
-2) Ensure that your issue hasn't already been posted.
-3) Be as detailed as possible.
-4) Try to reproduce the issue with only Refined Storage 2 installed, if possible.
-
-Respecting these guidelines will help us solve issues faster.
-
-We might close your issue, without explanation, if you do not follow these guidelines.
-
-## Enhancement
-
-Have an idea for an enhancement? Please let us know on
-the [issue tracker](https://github.com/refinedmods/refinedstorage2/issues).
-
-1) Ensure that you are running on the latest Refined Storage 2 version.
-2) Ensure that your feature request hasn't already been posted. Please look in the closed issues as well (for feature
-   requests that have been denied).
-
-We might close your issue, without explanation, if you do not follow these guidelines.
 
 ## Building
 
