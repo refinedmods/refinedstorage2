@@ -1,5 +1,6 @@
 plugins {
     id("maven-publish")
+    id "org.sonarqube" version "3.3"
 }
 
 subprojects {
@@ -45,5 +46,13 @@ subprojects {
                 from(components.java)
             }
         }
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "refinedmods_refinedstorage2"
+        property "sonar.organization", "refinedmods"
+        property "sonar.host.url", "https://sonarcloud.io"
     }
 }
