@@ -29,13 +29,13 @@ this mod that allow the player to setup auto-crafting, allowing the crafting of 
 Clone the repository and import the Gradle project.
 
 ## Releasing
-~~
-1) Make sure the version number in `build.gradle` is correct.
-2) Move the "Unreleased" section to the correct version number.
-3) Create a release (and a tag) on GitHub with the proper artifacts.
-4) Merge `develop` to `main`.
-5) Release to CurseForge.
-6) Announce on Discord.
+
+~~1) Make sure the version number in `build.gradle` is correct.~~
+~~2) Move the "Unreleased" section to the correct version number.~~
+~~3) Create a release (and a tag) on GitHub with the proper artifacts.~~
+~~4) Merge `develop` to `main`.~~
+~~5) Release to CurseForge.~~
+~~6) Announce on Discord.~~
 
 In the future we'll be automating this process with a GitHub Action.
 ~~
