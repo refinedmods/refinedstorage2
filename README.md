@@ -37,8 +37,8 @@ Clone the repository and import the Gradle project.
 ~~5) Release to CurseForge.~~
 ~~6) Announce on Discord.~~
 
-In the future we'll be automating this process with a GitHub Action.
-~~
+~~In the future we'll be automating this process with a GitHub Action.~~
+
 We now have a `Release` action! Just run that and it'll release it for you!
 
 ## Contributing
