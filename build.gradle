@@ -3,6 +3,10 @@ plugins {
     id "org.sonarqube" version "3.3"
 }
 
+allprojects {
+    apply plugin: 'jacoco'
+}
+
 subprojects {
     group = 'com.refinedmods.refinedstorage2'
     version = '2.0.0-milestone.1.2'
@@ -49,10 +53,28 @@ subprojects {
     }
 }
 
+task codeCoverageReport(type: JacocoReport) {
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
+    reports {
+        xml.enabled true
+        html.enabled true
+        csv.enabled false
+    }
+}
+
+// always run the tests before generating the report
+codeCoverageReport.dependsOn {
+    subprojects*.test
+}
+
 sonarqube {
     properties {
         property "sonar.projectKey", "refinedmods_refinedstorage2"
         property "sonar.organization", "refinedmods"
         property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.jacoco.reportPaths", "build/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
     }
 }
