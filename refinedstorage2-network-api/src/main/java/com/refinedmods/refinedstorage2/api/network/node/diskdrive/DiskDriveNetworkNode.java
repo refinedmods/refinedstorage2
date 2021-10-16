@@ -52,6 +52,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         this.energyUsagePerDisk = energyUsagePerDisk;
         this.listener = listener;
         this.compositeStorages = createCompositeStorages(storageChannelTypeRegistry);
+        System.out.println("blabla");
     }
 
     private Map<StorageChannelType<?>, DiskDriveStorage<?>> createCompositeStorages(StorageChannelTypeRegistry storageChannelTypeRegistry) {
