@@ -10,7 +10,7 @@ jobs:
                 java: [
                         16
                 ]
-                os: [ ubuntu-20.04 ]
+                os: [ ubuntu-latest ]
         runs-on: ${{ matrix.os }}
         steps:
             -   name: Checkout repository
