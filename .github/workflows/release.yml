@@ -10,6 +10,9 @@ jobs:
             -   name: Get tag name
                 uses: olegtarasov/get-tag@v2.1
                 id: tagName
+            -   name: Validate semver
+                run: |
+                    echo $GIT_TAG_NAME | grep -oP '^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
             -   name: Checkout repository
                 uses: actions/checkout@v2
             -   name: Validate Gradle wrapper
