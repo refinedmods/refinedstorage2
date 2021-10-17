@@ -65,7 +65,7 @@ After that succeeds, it will publish to GitHub packages.
 The "Unreleased" section in `CHANGELOG.md` is parsed and a GitHub release is created with the changelog body and
 relevant artifacts.
 
-After that, a Discord notification is sent.
+After that, a Discord and Twitter notification is sent.
 
 ## Modules
 

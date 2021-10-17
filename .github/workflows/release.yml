@@ -50,8 +50,16 @@ jobs:
                 run: |
                     echo "RELEASE_URL=${{ steps.ghRelease.outputs.url }}" >> $GITHUB_ENV
             -   name: Notify Discord
-                env:
-                    DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
                 uses: Ilshidur/action-discord@master
                 with:
                     args: 'Refined Storage {{ GIT_TAG_NAME }} has been released! {{ RELEASE_URL }}'
+                env:
+                    DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+            -   name: Notify Twitter
+                uses: ethomson/send-tweet-action@v1
+                with:
+                    status: Refined Storage ${{ env.GIT_TAG_NAME }} has been released! ${{ env.RELEASE_URL }}
+                    consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+                    consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
+                    access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+                    access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
