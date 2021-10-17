@@ -49,11 +49,12 @@ jobs:
                     name: ${{ steps.tagName.outputs.tag }}
                     files: |
                         refinedstorage2-*/build/libs/*.jar
+            # This is necessary because the Discord action doesn't support GH actions variable expansion?
             -   name: Set release URL
                 run: |
                     echo "RELEASE_URL=${{ steps.ghRelease.outputs.url }}" >> $GITHUB_ENV
             -   name: Notify Discord
-                uses: Ilshidur/action-discord@master
+                uses: Ilshidur/action-discord@0.3.2
                 with:
                     args: 'Refined Storage {{ GIT_TAG_NAME }} has been released! {{ RELEASE_URL }}'
                 env:
