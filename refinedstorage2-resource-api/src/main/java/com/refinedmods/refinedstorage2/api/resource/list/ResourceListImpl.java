@@ -10,7 +10,15 @@ import java.util.UUID;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import org.apiguardian.api.API;
 
+/**
+ * An implementation of a {@link ResourceList} that stores the resource entries in a {@link HashMap}.
+ * This resource list implementation relies on object equality and hashCode.
+ *
+ * @param <T> the type of resource
+ */
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public class ResourceListImpl<T> implements ResourceList<T> {
     private final Map<T, ResourceAmount<T>> entries = new HashMap<>();
     private final BiMap<UUID, ResourceAmount<T>> index = HashBiMap.create();
