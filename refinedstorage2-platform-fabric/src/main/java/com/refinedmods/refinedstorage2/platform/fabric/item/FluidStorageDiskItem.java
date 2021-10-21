@@ -42,7 +42,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
         return new BulkPlatformStorage<>(
                 type.getCapacity(),
                 FluidBulkStorageType.INSTANCE,
-                Rs2PlatformApiFacade.INSTANCE.getStorageManager(world)::markAsChanged
+                Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world)::markAsChanged
         );
     }
 

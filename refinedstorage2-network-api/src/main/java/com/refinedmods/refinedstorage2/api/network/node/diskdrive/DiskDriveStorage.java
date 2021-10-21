@@ -19,7 +19,7 @@ public class DiskDriveStorage<T> extends ProxyStorage<T> implements Priority {
     private final Filter filter;
 
     protected DiskDriveStorage(DiskDriveNetworkNode diskDrive, StorageChannelType<T> type, Filter filter) {
-        super(type.createEmptyCompositeStorage());
+        super(type.createCompositeStorage(Collections.emptyList()));
         this.diskDrive = diskDrive;
         this.storageChannelType = type;
         this.filter = filter;

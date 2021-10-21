@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.api.storage.StorageManager;
+import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class FakeStorageProviderManager implements StorageDiskProvider, StorageManager {
+public class FakeStorageProviderRepository implements StorageDiskProvider, StorageRepository {
     private final Map<Integer, UUID> slots = new HashMap<>();
     private final Map<UUID, Storage<?>> storages = new HashMap<>();
 

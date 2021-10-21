@@ -16,15 +16,10 @@ public final class StorageChannelTypes {
         @Override
         public StorageChannel<String> create() {
             return new StorageChannelImpl<>(
+                    createCompositeStorage(Collections.emptyList()),
                     ResourceListImpl::new,
-                    new StorageTracker<>(System::currentTimeMillis),
-                    new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>())
+                    new StorageTracker<>(System::currentTimeMillis)
             );
-        }
-
-        @Override
-        public CompositeStorage<String> createEmptyCompositeStorage() {
-            return new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>());
         }
 
         @Override

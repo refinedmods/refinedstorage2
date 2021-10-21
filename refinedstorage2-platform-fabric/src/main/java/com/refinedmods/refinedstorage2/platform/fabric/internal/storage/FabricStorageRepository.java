@@ -2,9 +2,9 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.api.storage.StorageManagerImpl;
+import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.StorageTypeAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageTypeRegistry;
 
@@ -21,7 +21,7 @@ import net.minecraft.world.PersistentState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FabricStorageManager extends PersistentState implements PlatformStorageManager {
+public class FabricStorageRepository extends PersistentState implements PlatformStorageRepository {
     public static final String NAME = "refinedstorage2_storages";
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -31,9 +31,9 @@ public class FabricStorageManager extends PersistentState implements PlatformSto
     private static final String TAG_STORAGE_TYPE = "type";
     private static final String TAG_STORAGE_DATA = "data";
 
-    private final StorageManagerImpl parent;
+    private final StorageRepositoryImpl parent;
 
-    public FabricStorageManager(StorageManagerImpl parent) {
+    public FabricStorageRepository(StorageRepositoryImpl parent) {
         this.parent = parent;
     }
 

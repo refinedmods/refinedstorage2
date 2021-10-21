@@ -35,9 +35,8 @@ class StorageChannelImplTest {
     @BeforeEach
     void setUp() {
         channel = new StorageChannelImpl<>(
-                ResourceListImpl::new,
-                new StorageTracker<>(System::currentTimeMillis),
-                new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>())
+                new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>()), ResourceListImpl::new,
+                new StorageTracker<>(System::currentTimeMillis)
         );
     }
 

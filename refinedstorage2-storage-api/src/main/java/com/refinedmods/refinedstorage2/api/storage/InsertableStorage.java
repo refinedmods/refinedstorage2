@@ -2,6 +2,14 @@ package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 
+import org.apiguardian.api.API;
+
+/**
+ * Represents a storage that can be inserted into.
+ *
+ * @param <T> the type of resource
+ */
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public interface InsertableStorage<T> {
     /**
      * Inserts a resource into a storage.

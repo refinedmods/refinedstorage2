@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNet
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageProviderManager;
+import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageProviderRepository;
 import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
@@ -27,7 +27,7 @@ class NetworkImplTest {
         // Arrange
         Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
 
-        FakeStorageProviderManager fakeStorageProviderManager = new FakeStorageProviderManager();
+        FakeStorageProviderRepository fakeStorageProviderManager = new FakeStorageProviderRepository();
         BulkStorage<String> storage = new BulkStorageImpl<>(10);
         storage.insert("A", 10, Action.EXECUTE);
         fakeStorageProviderManager.setInSlot(1, storage);

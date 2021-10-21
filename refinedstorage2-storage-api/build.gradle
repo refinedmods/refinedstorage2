@@ -9,6 +9,7 @@ dependencies {
     implementation "com.google.guava:guava:${project.guavaVersion}"
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-core-api')
+    compileOnly "org.apiguardian:apiguardian-api:${project.apiGuardianVersion}"
 }
 
 test {

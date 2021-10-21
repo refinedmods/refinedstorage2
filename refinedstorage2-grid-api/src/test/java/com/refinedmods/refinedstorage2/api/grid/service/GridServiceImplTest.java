@@ -31,9 +31,8 @@ class GridServiceImplTest {
     @BeforeEach
     void setUp() {
         storageChannel = new StorageChannelImpl<>(
-                ResourceListImpl::new,
-                new StorageTracker<>(() -> 0L),
-                new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>())
+                new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>()), ResourceListImpl::new,
+                new StorageTracker<>(() -> 0L)
         );
         sut = new GridServiceImpl<>(storageChannel, () -> "Test source", r -> MAX_COUNT);
     }

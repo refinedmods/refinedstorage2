@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricClientStorageManager;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricClientStorageRepository;
 
 import java.util.UUID;
 
@@ -18,6 +18,6 @@ public class StorageInfoResponsePacket implements ClientPlayNetworking.PlayChann
         long stored = buf.readLong();
         long capacity = buf.readLong();
 
-        client.execute(() -> ((FabricClientStorageManager) Rs2PlatformApiFacade.INSTANCE.getStorageManager(client.world)).setInfo(id, stored, capacity));
+        client.execute(() -> ((FabricClientStorageRepository) Rs2PlatformApiFacade.INSTANCE.getStorageRepository(client.world)).setInfo(id, stored, capacity));
     }
 }

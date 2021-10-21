@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.BulkPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 
@@ -24,7 +24,7 @@ public class ItemBulkStorageType implements StorageType<ItemResource> {
     }
 
     @Override
-    public BulkStorage<ItemResource> fromTag(NbtCompound tag, PlatformStorageManager storageManager) {
+    public BulkStorage<ItemResource> fromTag(NbtCompound tag, PlatformStorageRepository storageManager) {
         BulkStorage<ItemResource> storage = new BulkPlatformStorage<>(
                 tag.getLong(TAG_CAPACITY),
                 ItemBulkStorageType.INSTANCE,

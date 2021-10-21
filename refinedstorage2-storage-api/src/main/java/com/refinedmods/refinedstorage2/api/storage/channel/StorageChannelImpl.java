@@ -17,6 +17,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import com.google.common.base.Preconditions;
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class StorageChannelImpl<T> implements StorageChannel<T> {
     private final Supplier<ResourceList<T>> listFactory;
     private final StorageTracker<T> tracker;
@@ -25,10 +29,15 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
     private CompositeStorage<T> storage;
     private final List<Storage<T>> sources = new ArrayList<>();
 
-    public StorageChannelImpl(Supplier<ResourceList<T>> listFactory, StorageTracker<T> tracker, CompositeStorage<T> defaultStorage) {
+    /**
+     * @param storage     the backing {@link CompositeStorage}
+     * @param listFactory a supplier for the backing list of the {@link CompositeStorage}
+     * @param tracker     the storage tracker
+     */
+    public StorageChannelImpl(CompositeStorage<T> storage, Supplier<ResourceList<T>> listFactory, StorageTracker<T> tracker) {
         this.listFactory = listFactory;
         this.tracker = tracker;
-        this.storage = defaultStorage;
+        this.storage = storage;
     }
 
     @Override
@@ -67,12 +76,16 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
 
     @Override
     public long extract(T resource, long amount, Source source) {
+        Preconditions.checkNotNull(resource);
+        Preconditions.checkNotNull(source);
         tracker.onChanged(resource, source.getName());
         return extract(resource, amount, Action.EXECUTE);
     }
 
     @Override
     public long insert(T resource, long amount, Source source) {
+        Preconditions.checkNotNull(resource);
+        Preconditions.checkNotNull(source);
         tracker.onChanged(resource, source.getName());
         return insert(resource, amount, Action.EXECUTE);
     }

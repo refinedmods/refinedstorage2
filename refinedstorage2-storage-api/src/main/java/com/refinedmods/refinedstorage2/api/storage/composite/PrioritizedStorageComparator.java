@@ -4,8 +4,8 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 
 import java.util.Comparator;
 
-public class PrioritizedStorageComparator implements Comparator<Storage<?>> {
-    public static final Comparator<Storage<?>> INSTANCE = new PrioritizedStorageComparator();
+class PrioritizedStorageComparator implements Comparator<Storage<?>> {
+    static final Comparator<Storage<?>> INSTANCE = new PrioritizedStorageComparator();
 
     private static int getPriority(Storage<?> storage) {
         if (storage instanceof Priority priority) {

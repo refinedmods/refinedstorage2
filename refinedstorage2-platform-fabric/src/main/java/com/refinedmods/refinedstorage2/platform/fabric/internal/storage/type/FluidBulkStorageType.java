@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.BulkPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 
@@ -24,7 +24,7 @@ public class FluidBulkStorageType implements StorageType<FluidResource> {
     }
 
     @Override
-    public BulkStorage<FluidResource> fromTag(NbtCompound tag, PlatformStorageManager storageManager) {
+    public BulkStorage<FluidResource> fromTag(NbtCompound tag, PlatformStorageRepository storageManager) {
         BulkStorage<FluidResource> storage = new BulkPlatformStorage<>(
                 tag.getLong(TAG_CAPACITY),
                 FluidBulkStorageType.INSTANCE,
