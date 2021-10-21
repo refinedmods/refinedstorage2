@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.storage.bulk;
+package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
@@ -10,12 +10,12 @@ import java.util.Collection;
 import org.apiguardian.api.API;
 
 /**
- * An implementation of a {@link BulkStorage} which has a resource list as a backing list.
+ * An implementation of a {@link Storage} which has an in-memory resource list as a backing list.
  *
  * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public class BulkStorageImpl<T> implements BulkStorage<T> {
+public class InMemoryStorageImpl<T> implements Storage<T>, StorageCapacity {
     private final ResourceList<T> list = new ResourceListImpl<>();
     private final long capacity;
     private long stored;
@@ -23,7 +23,7 @@ public class BulkStorageImpl<T> implements BulkStorage<T> {
     /**
      * @param capacity the capacity, use a negative number to represent infinite capacity
      */
-    public BulkStorageImpl(long capacity) {
+    public InMemoryStorageImpl(long capacity) {
         this.capacity = capacity;
     }
 

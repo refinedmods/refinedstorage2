@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.storage.bulk;
+package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
-class BulkStorageImplTest {
-    private final BulkStorage<String> sut = new BulkStorageImpl<>(100);
+class InMemoryStorageImplTest {
+    private final Storage<String> sut = new InMemoryStorageImpl<>(100);
 
     @ParameterizedTest
     @EnumSource(Action.class)
@@ -78,7 +78,7 @@ class BulkStorageImplTest {
     @Test
     void Test_adding_resource_with_negative_capacity_storage() {
         // Arrange
-        BulkStorage<String> storage = new BulkStorageImpl<>(-1);
+        Storage<String> storage = new InMemoryStorageImpl<>(-1);
 
         // Act
         long remainder = storage.insert("A", Integer.MAX_VALUE, Action.EXECUTE);
@@ -93,7 +93,7 @@ class BulkStorageImplTest {
     @Test
     void Test_adding_resource_with_zero_capacity_storage() {
         // Arrange
-        BulkStorage<String> storage = new BulkStorageImpl<>(0);
+        Storage<String> storage = new InMemoryStorageImpl<>(0);
 
         // Act
         long remainder = storage.insert("A", 1, Action.EXECUTE);

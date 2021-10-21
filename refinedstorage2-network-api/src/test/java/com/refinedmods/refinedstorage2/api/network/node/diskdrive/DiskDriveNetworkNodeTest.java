@@ -6,9 +6,8 @@ import com.refinedmods.refinedstorage2.api.network.node.container.FakeNetworkNod
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
+import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
-import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
@@ -75,7 +74,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_initial_state() {
         // Arrange
-        BulkStorage<String> storage = new BulkStorageImpl<>(10);
+        Storage<String> storage = new InMemoryStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage);
 
@@ -96,7 +95,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_initialization() {
         // Arrange
-        BulkStorage<String> storage = new BulkStorageImpl<>(10);
+        Storage<String> storage = new InMemoryStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage);
 
@@ -116,13 +115,13 @@ class DiskDriveNetworkNodeTest {
     @ValueSource(booleans = {true, false})
     void Test_disk_state(boolean inactive) {
         // Arrange
-        BulkStorage<String> normalStorage = new BulkStorageImpl<>(100);
+        Storage<String> normalStorage = new InMemoryStorageImpl<>(100);
         normalStorage.insert("A", 74, Action.EXECUTE);
 
-        BulkStorage<String> nearCapacityStorage = new BulkStorageImpl<>(100);
+        Storage<String> nearCapacityStorage = new InMemoryStorageImpl<>(100);
         nearCapacityStorage.insert("A", 75, Action.EXECUTE);
 
-        BulkStorage<String> fullStorage = new BulkStorageImpl<>(100);
+        Storage<String> fullStorage = new InMemoryStorageImpl<>(100);
         fullStorage.insert("A", 100, Action.EXECUTE);
 
         storageProviderManager.setInSlot(1, UUID.randomUUID());
@@ -156,7 +155,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.initialize(storageProviderManager);
 
-        BulkStorage<String> storage = new BulkStorageImpl<>(10);
+        Storage<String> storage = new InMemoryStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE);
         storageProviderManager.setInSlot(7, storage);
 
@@ -177,13 +176,13 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_changing_disk_in_slot() {
         // Arrange
-        BulkStorage<String> storage1 = new BulkStorageImpl<>(10);
+        Storage<String> storage1 = new InMemoryStorageImpl<>(10);
         storage1.insert("A", 5, Action.EXECUTE);
         storageProviderManager.setInSlot(7, storage1);
         diskDrive.initialize(storageProviderManager);
 
         // Act
-        BulkStorage<String> storage2 = new BulkStorageImpl<>(10);
+        Storage<String> storage2 = new InMemoryStorageImpl<>(10);
         storage2.insert("B", 2, Action.EXECUTE);
         storageProviderManager.setInSlot(7, storage2);
         diskDrive.onDiskChanged(7);
@@ -204,7 +203,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.initialize(storageProviderManager);
 
-        BulkStorage<String> storage = new BulkStorageImpl<>(10);
+        Storage<String> storage = new InMemoryStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE);
         storageProviderManager.setInSlot(7, storage);
 
@@ -240,7 +239,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.initialize(storageProviderManager);
 
-        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        Storage<String> storage = new InMemoryStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE);
         storage.insert("B", 50, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage);
@@ -270,7 +269,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.initialize(storageProviderManager);
 
-        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        Storage<String> storage = new InMemoryStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE);
         storage.insert("B", 50, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage);
@@ -293,13 +292,13 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_inserting() {
         // Arrange
-        BulkStorage<String> storage1 = new BulkStorageImpl<>(100);
+        Storage<String> storage1 = new InMemoryStorageImpl<>(100);
         storageProviderManager.setInSlot(1, storage1);
 
-        BulkStorage<String> storage2 = new BulkStorageImpl<>(100);
+        Storage<String> storage2 = new InMemoryStorageImpl<>(100);
         storageProviderManager.setInSlot(2, storage2);
 
-        BulkStorage<String> storage3 = new BulkStorageImpl<>(100);
+        Storage<String> storage3 = new InMemoryStorageImpl<>(100);
         storageProviderManager.setInSlot(3, storage3);
 
         diskDrive.initialize(storageProviderManager);
@@ -335,17 +334,17 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_extracting() {
         // Arrange
-        BulkStorage<String> storage1 = new BulkStorageImpl<>(100);
+        Storage<String> storage1 = new InMemoryStorageImpl<>(100);
         storage1.insert("A", 50, Action.EXECUTE);
         storage1.insert("B", 50, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage1);
 
-        BulkStorage<String> storage2 = new BulkStorageImpl<>(100);
+        Storage<String> storage2 = new InMemoryStorageImpl<>(100);
         storage2.insert("A", 50, Action.EXECUTE);
         storage2.insert("B", 50, Action.EXECUTE);
         storageProviderManager.setInSlot(2, storage2);
 
-        BulkStorage<String> storage3 = new BulkStorageImpl<>(100);
+        Storage<String> storage3 = new InMemoryStorageImpl<>(100);
         storage3.insert("C", 10, Action.EXECUTE);
         storageProviderManager.setInSlot(3, storage3);
 
@@ -384,7 +383,7 @@ class DiskDriveNetworkNodeTest {
         diskDrive.setExactMode(false);
         diskDrive.setFilterTemplates(Arrays.asList("B", new Rs2ItemStack(ItemStubs.STONE)));
 
-        BulkStorage<String> bulkStorage = new BulkStorageImpl<>(100);
+        Storage<String> bulkStorage = new BulkStorageImpl<>(100);
         storageDiskProviderManager.setDiskInSlot(1, bulkStorage);
 
         diskDrive.initialize(storageDiskProviderManager);
@@ -412,7 +411,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setAccessMode(accessMode);
 
-        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        Storage<String> storage = new InMemoryStorageImpl<>(100);
         storageProviderManager.setInSlot(1, storage);
 
         diskDrive.initialize(storageProviderManager);
@@ -433,7 +432,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setAccessMode(accessMode);
 
-        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        Storage<String> storage = new InMemoryStorageImpl<>(100);
         storageProviderManager.setInSlot(1, storage);
 
         diskDrive.initialize(storageProviderManager);
@@ -456,7 +455,7 @@ class DiskDriveNetworkNodeTest {
         diskDrive.setActive(false);
         diskDrive.initialize(storageProviderManager);
 
-        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        Storage<String> storage = new InMemoryStorageImpl<>(100);
         storageProviderManager.setInSlot(1, storage);
 
         // Act
@@ -471,7 +470,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setActive(false);
 
-        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        Storage<String> storage = new InMemoryStorageImpl<>(100);
         storageProviderManager.setInSlot(1, storage);
 
         diskDrive.initialize(storageProviderManager);
@@ -488,7 +487,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_disk_state_change_listener_should_not_be_called_when_not_necessary_on_extracting() {
         // Arrange
-        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        Storage<String> storage = new InMemoryStorageImpl<>(100);
         storage.insert("A", 76, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage);
         diskDrive.initialize(storageProviderManager);
@@ -503,7 +502,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_disk_state_change_listener_should_not_be_called_when_not_necessary_on_inserting() {
         // Arrange
-        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        Storage<String> storage = new InMemoryStorageImpl<>(100);
         storageProviderManager.setInSlot(1, storage);
         diskDrive.initialize(storageProviderManager);
 
@@ -518,7 +517,7 @@ class DiskDriveNetworkNodeTest {
     @EnumSource(Action.class)
     void Test_disk_state_change_listener_should_be_called_when_necessary_on_extracting(Action action) {
         // Arrange
-        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        Storage<String> storage = new InMemoryStorageImpl<>(100);
         storage.insert("A", 75, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage);
         diskDrive.initialize(storageProviderManager);
@@ -537,7 +536,7 @@ class DiskDriveNetworkNodeTest {
     @EnumSource(Action.class)
     void Test_disk_state_change_listener_should_be_called_when_necessary_on_inserting(Action action) {
         // Arrange
-        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        Storage<String> storage = new InMemoryStorageImpl<>(100);
         storageProviderManager.setInSlot(1, storage);
         diskDrive.initialize(storageProviderManager);
         storageOf(diskDrive).insert("A", 74, Action.EXECUTE);
@@ -556,11 +555,11 @@ class DiskDriveNetworkNodeTest {
     @ValueSource(booleans = {true, false})
     void Test_setting_priority(boolean oneHasPriority) {
         // Arrange
-        BulkStorage<String> storage1 = new BulkStorageImpl<>(100);
+        Storage<String> storage1 = new InMemoryStorageImpl<>(100);
         storageProviderManager.setInSlot(1, storage1);
         diskDrive.initialize(storageProviderManager);
 
-        BulkStorage<String> storage2 = new BulkStorageImpl<>(100);
+        Storage<String> storage2 = new InMemoryStorageImpl<>(100);
         FakeStorageProviderRepository storageProviderManager2 = new FakeStorageProviderRepository();
         storageProviderManager2.setInSlot(1, storage2);
         FakeNetworkNodeContainer<DiskDriveNetworkNode> diskDrive2 = createDiskDriveContainer(network, storageProviderManager2, mock(DiskDriveListener.class));

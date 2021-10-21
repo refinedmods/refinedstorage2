@@ -1,15 +1,16 @@
-package com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk;
+package com.refinedmods.refinedstorage2.platform.fabric.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 
 // TODO: Add test
-public class BulkPlatformStorage<T> extends BulkStorageImpl<T> implements StorageTypeAccessor<T> {
+// TODO: don't depend on InMemoryStorage?
+public class InMemoryPlatformStorage<T> extends InMemoryStorageImpl<T> implements StorageTypeAccessor<T> {
     private final Runnable listener;
     private final StorageType<T> type;
 
-    public BulkPlatformStorage(long capacity, StorageType<T> type, Runnable listener) {
+    public InMemoryPlatformStorage(long capacity, StorageType<T> type, Runnable listener) {
         super(capacity);
         this.listener = listener;
         this.type = type;
