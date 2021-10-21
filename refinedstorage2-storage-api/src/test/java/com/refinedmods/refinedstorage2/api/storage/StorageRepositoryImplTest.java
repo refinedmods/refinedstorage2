@@ -15,8 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
-class StorageManagerImplTest {
-    private final StorageManagerImpl sut = new StorageManagerImpl();
+class StorageRepositoryImplTest {
+    private final StorageRepositoryImpl sut = new StorageRepositoryImpl();
 
     @Test
     void Test_whether_getting_non_existent_storage_is_not_present() {

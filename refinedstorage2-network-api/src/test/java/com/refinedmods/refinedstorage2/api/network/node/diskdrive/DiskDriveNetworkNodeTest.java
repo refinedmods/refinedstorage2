@@ -38,7 +38,7 @@ class DiskDriveNetworkNodeTest {
 
     private Network network;
     private DiskDriveNetworkNode diskDrive;
-    private FakeStorageProviderManager storageProviderManager;
+    private FakeStorageProviderRepository storageProviderManager;
     private DiskDriveListener diskDriveListener;
 
     // TODO: Test with additional storage channel types
@@ -46,14 +46,14 @@ class DiskDriveNetworkNodeTest {
     @BeforeEach
     void setUp() {
         diskDriveListener = mock(DiskDriveListener.class);
-        storageProviderManager = new FakeStorageProviderManager();
+        storageProviderManager = new FakeStorageProviderRepository();
 
         network = createWithInfiniteEnergyStorage();
 
         diskDrive = createDiskDriveContainer(network, storageProviderManager, diskDriveListener).getNode();
     }
 
-    private FakeNetworkNodeContainer<DiskDriveNetworkNode> createDiskDriveContainer(Network network, FakeStorageProviderManager storageDiskProviderManager, DiskDriveListener diskDriveListener) {
+    private FakeNetworkNodeContainer<DiskDriveNetworkNode> createDiskDriveContainer(Network network, FakeStorageProviderRepository storageDiskProviderManager, DiskDriveListener diskDriveListener) {
         DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(storageDiskProviderManager, BASE_USAGE, USAGE_PER_DISK, diskDriveListener, STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(network);
 
@@ -561,7 +561,7 @@ class DiskDriveNetworkNodeTest {
         diskDrive.initialize(storageProviderManager);
 
         BulkStorage<String> storage2 = new BulkStorageImpl<>(100);
-        FakeStorageProviderManager storageProviderManager2 = new FakeStorageProviderManager();
+        FakeStorageProviderRepository storageProviderManager2 = new FakeStorageProviderRepository();
         storageProviderManager2.setInSlot(1, storage2);
         FakeNetworkNodeContainer<DiskDriveNetworkNode> diskDrive2 = createDiskDriveContainer(network, storageProviderManager2, mock(DiskDriveListener.class));
         diskDrive2.getNode().initialize(storageProviderManager2);

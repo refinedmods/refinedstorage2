@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageManager;
+import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.StorageSource;
 import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
@@ -30,7 +30,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
 
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
 
-    private StorageManager diskManager;
+    private StorageRepository diskManager;
 
     private final StorageDiskProvider diskProvider;
     private final long energyUsage;
@@ -65,7 +65,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         return new DiskDriveStorage(this, type, filter);
     }
 
-    public void initialize(StorageManager diskManager) {
+    public void initialize(StorageRepository diskManager) {
         this.diskManager = diskManager;
 
         Set<StorageChannelType<?>> affectedStorageChannelTypes = new HashSet<>();

@@ -21,15 +21,10 @@ public class SimpleStorageChannelType<T> implements StorageChannelType<T> {
     @Override
     public StorageChannel<T> create() {
         return new StorageChannelImpl<>(
+                createCompositeStorage(Collections.emptyList()),
                 ResourceListImpl::new,
-                new StorageTracker<>(System::currentTimeMillis),
-                new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>())
+                new StorageTracker<>(System::currentTimeMillis)
         );
-    }
-
-    @Override
-    public CompositeStorage<T> createEmptyCompositeStorage() {
-        return new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>());
     }
 
     @Override

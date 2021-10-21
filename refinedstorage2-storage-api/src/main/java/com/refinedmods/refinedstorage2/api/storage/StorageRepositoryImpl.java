@@ -7,8 +7,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.google.common.base.Preconditions;
+import org.apiguardian.api.API;
 
-public class StorageManagerImpl implements StorageManager {
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
+public class StorageRepositoryImpl implements StorageRepository {
     private final Map<UUID, Storage<?>> entries = new HashMap<>();
 
     public Set<Map.Entry<UUID, Storage<?>>> getAll() {

@@ -40,7 +40,7 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
         return new BulkPlatformStorage<>(
                 type.getCapacity(),
                 ItemBulkStorageType.INSTANCE,
-                Rs2PlatformApiFacade.INSTANCE.getStorageManager(world)::markAsChanged
+                Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world)::markAsChanged
         );
     }
 

@@ -86,7 +86,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     public void setWorld(World world) {
         super.setWorld(world);
         if (!world.isClient()) {
-            getContainer().getNode().initialize(Rs2PlatformApiFacade.INSTANCE.getStorageManager(world));
+            getContainer().getNode().initialize(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world));
         }
     }
 

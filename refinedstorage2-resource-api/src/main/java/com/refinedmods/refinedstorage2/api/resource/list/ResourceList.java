@@ -10,7 +10,7 @@ import org.apiguardian.api.API;
 
 /**
  * Represents a list of a resource of an arbitrary type.
- * A basic implementation of this class can be found in {@link ResourceListImpl}
+ * A basic implementation of this class can be found in {@link ResourceListImpl}.
  *
  * @param <T> the type of resource
  */
@@ -42,7 +42,7 @@ public interface ResourceList<T> {
      *
      * @param resource the resource, may not be null
      * @param amount   the amount, must be larger than 0
-     * @return a filled optional if the removal operation was successful
+     * @return a result if the removal operation was successful, otherwise an empty {@link Optional}
      */
     Optional<ResourceListOperationResult<T>> remove(T resource, long amount);
 
@@ -63,7 +63,7 @@ public interface ResourceList<T> {
     Optional<ResourceAmount<T>> get(UUID id);
 
     /**
-     * Retrieves all resources and their amount from the list.
+     * Retrieves all resources and their amounts from the list.
      *
      * @return a list of resource amounts
      */

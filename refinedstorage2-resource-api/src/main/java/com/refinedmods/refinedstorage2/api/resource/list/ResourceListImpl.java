@@ -14,7 +14,7 @@ import org.apiguardian.api.API;
 
 /**
  * An implementation of a {@link ResourceList} that stores the resource entries in a {@link HashMap}.
- * This resource list implementation relies on object equality and hashCode.
+ * This resource list implementation relies on {@link Object#equals(Object)} and {@link Object#hashCode()}.
  *
  * @param <T> the type of resource
  */

@@ -8,10 +8,22 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import java.util.Collection;
 import java.util.List;
 
+import org.apiguardian.api.API;
+
+/**
+ * This represents a single storage that can be backed by multiple storages.
+ *
+ * @param <T> the type of resource
+ */
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class CompositeStorage<T> implements Storage<T> {
     private final List<Storage<T>> sources;
     private final ResourceList<T> list;
 
+    /**
+     * @param sources the sources for this composite storage
+     * @param list    the backing list of this composite storage, used to retrieve a view of the sources
+     */
     public CompositeStorage(List<Storage<T>> sources, ResourceList<T> list) {
         this.sources = sources;
         this.list = list;
@@ -20,6 +32,10 @@ public class CompositeStorage<T> implements Storage<T> {
         sortSources();
     }
 
+    /**
+     * Sort the sources of this composite.
+     * If a storage implements {@link Priority}, the composite will account for this.
+     */
     public void sortSources() {
         sources.sort(PrioritizedStorageComparator.INSTANCE);
     }
@@ -53,14 +69,12 @@ public class CompositeStorage<T> implements Storage<T> {
     @Override
     public long insert(T resource, long amount, Action action) {
         long remainder = insertIntoStorages(resource, amount, action);
-
         if (action == Action.EXECUTE) {
             long inserted = amount - remainder;
             if (inserted > 0) {
                 list.add(resource, inserted);
             }
         }
-
         return remainder;
     }
 

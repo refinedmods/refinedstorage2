@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
 
 /**
- * A class representing a resource, of an arbitrary type, and an amount.
+ * A class representing a resource of an arbitrary type, and a corresponding amount.
  * The resource cannot be mutated but the amount can be modified.
  *
  * @param <T> the type of resource

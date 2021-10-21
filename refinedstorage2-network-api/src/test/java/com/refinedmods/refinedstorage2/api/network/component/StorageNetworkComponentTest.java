@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.node.container.FakeNetworkNod
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageProviderManager;
+import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageProviderRepository;
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
@@ -32,7 +32,7 @@ class StorageNetworkComponentTest {
     void setUp() {
         sut = new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY);
 
-        FakeStorageProviderManager fakeStorageProviderManager = new FakeStorageProviderManager();
+        FakeStorageProviderRepository fakeStorageProviderManager = new FakeStorageProviderRepository();
         fakeStorageProviderManager.setInSlot(0, new BulkStorageImpl<>(100));
 
         diskDrive = new DiskDriveNetworkNode(fakeStorageProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);

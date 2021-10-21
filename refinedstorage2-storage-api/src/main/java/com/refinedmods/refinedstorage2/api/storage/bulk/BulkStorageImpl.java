@@ -7,11 +7,22 @@ import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 
 import java.util.Collection;
 
+import org.apiguardian.api.API;
+
+/**
+ * An implementation of a {@link BulkStorage} which has a resource list as a backing list.
+ *
+ * @param <T> the type of resource
+ */
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class BulkStorageImpl<T> implements BulkStorage<T> {
     private final ResourceList<T> list = new ResourceListImpl<>();
     private final long capacity;
     private long stored;
 
+    /**
+     * @param capacity the capacity, use a negative number to represent infinite capacity
+     */
     public BulkStorageImpl(long capacity) {
         this.capacity = capacity;
     }

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageManager;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ClientPacketUtil;
 
@@ -15,7 +15,7 @@ import com.google.common.util.concurrent.RateLimiter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FabricClientStorageManager implements PlatformStorageManager {
+public class FabricClientStorageRepository implements PlatformStorageRepository {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Map<UUID, StorageInfo> info = new HashMap<>();

@@ -5,6 +5,14 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
 import java.util.Collection;
 
+import org.apiguardian.api.API;
+
+/**
+ * This is a utility class to easily decorate a {@link Storage}.
+ *
+ * @param <T> the type of resource
+ */
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public class ProxyStorage<T> implements Storage<T> {
     protected Storage<T> parent;
 
