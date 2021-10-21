@@ -15,17 +15,9 @@ import org.apiguardian.api.API;
  * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public class InMemoryStorageImpl<T> implements Storage<T>, StorageCapacity {
+public class InMemoryStorageImpl<T> implements Storage<T> {
     private final ResourceList<T> list = new ResourceListImpl<>();
-    private final long capacity;
     private long stored;
-
-    /**
-     * @param capacity the capacity, use a negative number to represent infinite capacity
-     */
-    public InMemoryStorageImpl(long capacity) {
-        this.capacity = capacity;
-    }
 
     @Override
     public long extract(T resource, long amount, Action action) {
@@ -61,27 +53,13 @@ public class InMemoryStorageImpl<T> implements Storage<T>, StorageCapacity {
     @Override
     public long insert(T resource, long amount, Action action) {
         ResourceAmount.validate(resource, amount);
-
-        if (capacity >= 0 && stored + amount > capacity) {
-            return insertPartly(resource, capacity - stored, amount - (capacity - stored), action);
-        } else {
-            insertCompletely(resource, amount, action);
-            return 0;
-        }
+        insertCompletely(resource, amount, action);
+        return 0;
     }
 
     @Override
     public Collection<ResourceAmount<T>> getAll() {
         return list.getAll();
-    }
-
-    private long insertPartly(T resource, long amount, long remainder, Action action) {
-        if (action == Action.EXECUTE && amount > 0) {
-            stored += amount;
-            list.add(resource, amount);
-        }
-
-        return remainder;
     }
 
     private void insertCompletely(T template, long amount, Action action) {
@@ -94,10 +72,5 @@ public class InMemoryStorageImpl<T> implements Storage<T>, StorageCapacity {
     @Override
     public long getStored() {
         return stored;
-    }
-
-    @Override
-    public long getCapacity() {
-        return capacity;
     }
 }

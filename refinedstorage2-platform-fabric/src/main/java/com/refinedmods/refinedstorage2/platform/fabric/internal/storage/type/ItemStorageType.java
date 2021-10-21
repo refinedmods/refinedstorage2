@@ -2,10 +2,10 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.InMemoryPlatformStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformCappedStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 
@@ -25,7 +25,7 @@ public class ItemStorageType implements StorageType<ItemResource> {
 
     @Override
     public Storage<ItemResource> fromTag(NbtCompound tag, PlatformStorageRepository storageManager) {
-        Storage<ItemResource> storage = new InMemoryPlatformStorage<>(
+        Storage<ItemResource> storage = new PlatformCappedStorage<>(
                 tag.getLong(TAG_CAPACITY),
                 ItemStorageType.INSTANCE,
                 storageManager::markAsChanged
@@ -41,7 +41,7 @@ public class ItemStorageType implements StorageType<ItemResource> {
     @Override
     public NbtCompound toTag(Storage<ItemResource> storage) {
         NbtCompound tag = new NbtCompound();
-        tag.putLong(TAG_CAPACITY, ((InMemoryStorageImpl) storage).getCapacity());
+        tag.putLong(TAG_CAPACITY, ((CappedStorage) storage).getCapacity());
         NbtList stacks = new NbtList();
         for (ResourceAmount<ItemResource> resourceAmount : storage.getAll()) {
             stacks.add(ItemResource.toTagWithAmount(resourceAmount));

@@ -2,21 +2,21 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageCapacity;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.Collection;
 
-public class DiskDriveDiskStorage<S extends Storage<T> & StorageCapacity, T> implements Storage<T>, StorageCapacity {
+public class DiskDriveDiskStorage<T> implements Storage<T> {
     private static final double DISK_NEAR_CAPACITY_THRESHOLD = .75;
 
-    private final S parent;
+    private final CappedStorage<T> parent;
     private final StorageChannelType<T> storageChannelType;
     private final DiskDriveListener listener;
     private StorageDiskState state;
 
-    public DiskDriveDiskStorage(S parent, StorageChannelType<T> storageChannelType, DiskDriveListener listener) {
+    public DiskDriveDiskStorage(CappedStorage<T> parent, StorageChannelType<T> storageChannelType, DiskDriveListener listener) {
         this.parent = parent;
         this.storageChannelType = storageChannelType;
         this.listener = listener;
@@ -73,10 +73,5 @@ public class DiskDriveDiskStorage<S extends Storage<T> & StorageCapacity, T> imp
     @Override
     public long getStored() {
         return parent.getStored();
-    }
-
-    @Override
-    public long getCapacity() {
-        return parent.getCapacity();
     }
 }

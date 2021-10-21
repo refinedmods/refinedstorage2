@@ -26,7 +26,7 @@ class StorageRepositoryImplTest {
     void Test_whether_getting_storage_is_present() {
         // Arrange
         UUID id = UUID.randomUUID();
-        Storage<String> storage = new InMemoryStorageImpl<>(1);
+        Storage<String> storage = new CappedStorage<>(1);
 
         // Act
         sut.set(id, storage);
@@ -45,7 +45,7 @@ class StorageRepositoryImplTest {
     void Test_getting_info_of_storage() {
         // Arrange
         UUID id = UUID.randomUUID();
-        Storage<String> storage = new InMemoryStorageImpl<>(10);
+        Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 5, Action.EXECUTE);
 
         // Act
@@ -81,7 +81,7 @@ class StorageRepositoryImplTest {
     void Test_disassembling_a_non_empty_storage() {
         // Arrange
         UUID id = UUID.randomUUID();
-        Storage<String> storage = new InMemoryStorageImpl<>(10);
+        Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 5, Action.EXECUTE);
         sut.set(id, storage);
 
@@ -98,7 +98,7 @@ class StorageRepositoryImplTest {
     void Test_disassembling_an_empty_storage() {
         // Arrange
         UUID id = UUID.randomUUID();
-        Storage<String> storage = new InMemoryStorageImpl<>(1);
+        Storage<String> storage = new CappedStorage<>(1);
         sut.set(id, storage);
 
         // Act
@@ -115,10 +115,10 @@ class StorageRepositoryImplTest {
     void Test_inserting_duplicate_storage_storage_ids_should_fail() {
         // Arrange
         UUID id = UUID.randomUUID();
-        sut.set(id, new InMemoryStorageImpl<>(1));
+        sut.set(id, new CappedStorage<>(1));
 
         // Act
-        Executable action = () -> sut.set(id, new InMemoryStorageImpl<>(1));
+        Executable action = () -> sut.set(id, new CappedStorage<>(1));
 
         // Assert
         assertThrows(IllegalArgumentException.class, action);

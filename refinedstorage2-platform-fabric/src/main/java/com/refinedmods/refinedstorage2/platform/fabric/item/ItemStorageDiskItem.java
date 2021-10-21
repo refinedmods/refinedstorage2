@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.item.StorageDiskItemImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.InMemoryPlatformStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformCappedStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
 
 import java.util.Optional;
@@ -36,7 +36,7 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected Storage<?> createStorage(World world) {
-        return new InMemoryPlatformStorage<>(
+        return new PlatformCappedStorage<>(
                 type.getCapacity(),
                 com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemStorageType.INSTANCE,
                 Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world)::markAsChanged

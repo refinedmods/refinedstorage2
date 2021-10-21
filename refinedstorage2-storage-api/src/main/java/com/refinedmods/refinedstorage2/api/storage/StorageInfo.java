@@ -9,7 +9,7 @@ public record StorageInfo(long stored, long capacity) {
     public static StorageInfo of(Storage<?> storage) {
         return new StorageInfo(
                 storage.getStored(),
-                storage instanceof StorageCapacity capacity ? capacity.getCapacity() : 0L
+                storage instanceof CappedStorage cappedStorage ? cappedStorage.getCapacity() : 0L
         );
     }
 }

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
 class InMemoryStorageImplTest {
-    private final Storage<String> sut = new InMemoryStorageImpl<>(100);
+    private final Storage<String> sut = new InMemoryStorageImpl<>();
 
     @ParameterizedTest
     @EnumSource(Action.class)
@@ -34,72 +34,6 @@ class InMemoryStorageImplTest {
             assertThat(sut.getAll()).isEmpty();
             assertThat(sut.getStored()).isZero();
         }
-    }
-
-    @ParameterizedTest
-    @EnumSource(Action.class)
-    void Test_adding_a_resource_and_exceeding_capacity(Action action) {
-        // Act
-        long remainder1 = sut.insert("A", 60, Action.EXECUTE);
-        long remainder2 = sut.insert("B", 45, action);
-
-        // Assert
-        assertThat(remainder1).isZero();
-        assertThat(remainder2).isEqualTo(5);
-
-        if (action == Action.EXECUTE) {
-            assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-                    new ResourceAmount<>("A", 60),
-                    new ResourceAmount<>("B", 40)
-            );
-            assertThat(sut.getStored()).isEqualTo(100);
-        } else {
-            assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new ResourceAmount<>("A", 60)
-            );
-            assertThat(sut.getStored()).isEqualTo(60);
-        }
-    }
-
-    @ParameterizedTest
-    @EnumSource(Action.class)
-    void Test_adding_resource_to_an_already_full_storage_and_exceeding_capacity(Action action) {
-        // Act
-        long remainder1 = sut.insert("A", 100, Action.EXECUTE);
-        long remainder2 = sut.insert("A", 101, action);
-
-        // Assert
-        assertThat(remainder1).isZero();
-        assertThat(remainder2).isEqualTo(101);
-
-        assertThat(sut.getStored()).isEqualTo(100);
-    }
-
-    @Test
-    void Test_adding_resource_with_negative_capacity_storage() {
-        // Arrange
-        Storage<String> storage = new InMemoryStorageImpl<>(-1);
-
-        // Act
-        long remainder = storage.insert("A", Integer.MAX_VALUE, Action.EXECUTE);
-
-        // Assert
-        assertThat(remainder).isZero();
-        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", Integer.MAX_VALUE)
-        );
-    }
-
-    @Test
-    void Test_adding_resource_with_zero_capacity_storage() {
-        // Arrange
-        Storage<String> storage = new InMemoryStorageImpl<>(0);
-
-        // Act
-        long remainder = storage.insert("A", 1, Action.EXECUTE);
-
-        // Assert
-        assertThat(remainder).isEqualTo(1);
     }
 
     @Test
