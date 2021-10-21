@@ -14,9 +14,9 @@ public interface Rs2PlatformApiFacade {
 
     PlatformStorageRepository getStorageRepository(World world);
 
-    StorageType<ItemResource> getItemBulkStorageType();
+    StorageType<ItemResource> getItemStorageType();
 
-    StorageType<FluidResource> getFluidBulkStorageType();
+    StorageType<FluidResource> getFluidStorageType();
 
     ConnectionProvider createConnectionProvider(World world);
 

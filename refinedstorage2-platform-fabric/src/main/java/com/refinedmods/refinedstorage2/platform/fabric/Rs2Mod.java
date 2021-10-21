@@ -21,8 +21,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2ScreenHandlers;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.Rs2PlatformApiFacadeImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidBulkStorageType;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemBulkStorageType;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.fabric.loot.Rs2LootFunctions;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
@@ -112,8 +112,8 @@ public class Rs2Mod implements ModInitializer {
     }
 
     private void registerDiskTypes() {
-        StorageTypeRegistry.INSTANCE.addType(createIdentifier("item_disk"), ItemBulkStorageType.INSTANCE);
-        StorageTypeRegistry.INSTANCE.addType(createIdentifier("fluid_disk"), FluidBulkStorageType.INSTANCE);
+        StorageTypeRegistry.INSTANCE.addType(createIdentifier("item_disk"), ItemStorageType.INSTANCE);
+        StorageTypeRegistry.INSTANCE.addType(createIdentifier("fluid_disk"), FluidStorageType.INSTANCE);
     }
 
     private void initializePlatformApiFacade() {

@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.api.item;
 
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.item.StorageDiskItem;
 
@@ -105,7 +105,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
 
     protected abstract Optional<ItemStack> createStoragePart(int count);
 
-    protected abstract BulkStorage<?> createStorageDisk(World world);
+    protected abstract Storage<?> createStorage(World world);
 
     protected abstract ItemStack createDisassemblyByproduct();
 
@@ -116,7 +116,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
         if (!world.isClient() && !stack.hasNbt() && entity instanceof PlayerEntity) {
             UUID id = UUID.randomUUID();
 
-            Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world).set(id, createStorageDisk(world));
+            Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world).set(id, createStorage(world));
 
             stack.setNbt(new NbtCompound());
             stack.getNbt().putUuid(TAG_ID, id);

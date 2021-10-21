@@ -1,13 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.fabric.item;
 
-import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.item.StorageDiskItemImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.BulkPlatformStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.InMemoryPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemBulkStorageType;
 
 import java.util.Optional;
 
@@ -36,10 +35,10 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    protected BulkStorage<?> createStorageDisk(World world) {
-        return new BulkPlatformStorage<>(
+    protected Storage<?> createStorage(World world) {
+        return new InMemoryPlatformStorage<>(
                 type.getCapacity(),
-                ItemBulkStorageType.INSTANCE,
+                com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemStorageType.INSTANCE,
                 Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world)::markAsChanged
         );
     }

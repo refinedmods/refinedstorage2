@@ -25,13 +25,13 @@ public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public StorageType<ItemResource> getItemBulkStorageType() {
-        return ensureLoaded().getItemBulkStorageType();
+    public StorageType<ItemResource> getItemStorageType() {
+        return ensureLoaded().getItemStorageType();
     }
 
     @Override
-    public StorageType<FluidResource> getFluidBulkStorageType() {
-        return ensureLoaded().getFluidBulkStorageType();
+    public StorageType<FluidResource> getFluidStorageType() {
+        return ensureLoaded().getFluidStorageType();
     }
 
     @Override

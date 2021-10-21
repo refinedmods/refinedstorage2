@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk;
+package com.refinedmods.refinedstorage2.platform.fabric.api.storage;
 
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 

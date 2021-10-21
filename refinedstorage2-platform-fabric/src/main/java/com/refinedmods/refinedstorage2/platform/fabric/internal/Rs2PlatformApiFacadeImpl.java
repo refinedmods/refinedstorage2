@@ -11,8 +11,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageT
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.FabricConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricClientStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricStorageRepository;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidBulkStorageType;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemBulkStorageType;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemStorageType;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.TranslatableText;
@@ -35,13 +35,13 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public StorageType<ItemResource> getItemBulkStorageType() {
-        return ItemBulkStorageType.INSTANCE;
+    public StorageType<ItemResource> getItemStorageType() {
+        return ItemStorageType.INSTANCE;
     }
 
     @Override
-    public StorageType<FluidResource> getFluidBulkStorageType() {
-        return FluidBulkStorageType.INSTANCE;
+    public StorageType<FluidResource> getFluidStorageType() {
+        return FluidStorageType.INSTANCE;
     }
 
     @Override

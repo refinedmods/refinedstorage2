@@ -6,9 +6,9 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.StorageCapacity;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.StorageSource;
-import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 
@@ -37,7 +37,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     private final long energyUsagePerDisk;
     private final DiskDriveListener listener;
 
-    private final DiskDriveBulkStorage[] disks = new DiskDriveBulkStorage[DISK_COUNT];
+    private final DiskDriveDiskStorage[] disks = new DiskDriveDiskStorage[DISK_COUNT];
     private final Map<StorageChannelType<?>, DiskDriveStorage<?>> compositeStorages;
     private int diskCount;
 
@@ -103,7 +103,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
 
     private <T> List<Storage<T>> getSourcesForChannel(StorageChannelType<T> channelType) {
         List<Storage<T>> sources = new ArrayList<>();
-        for (DiskDriveBulkStorage<?> disk : disks) {
+        for (DiskDriveDiskStorage<?, ?> disk : disks) {
             if (disk != null && disk.getStorageChannelType() == channelType) {
                 sources.add((Storage<T>) disk);
             }
@@ -121,15 +121,18 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
             disks[slot] = diskProvider
                     .getDiskId(slot)
                     .flatMap(diskManager::get)
-                    .filter(BulkStorage.class::isInstance)
-                    .map(bulkStorage -> (BulkStorage) bulkStorage)
-                    .map(bulkStorage -> new DiskDriveBulkStorage(bulkStorage, type, listener))
+                    .filter(this::isValidDisk)
+                    .map(storage -> new DiskDriveDiskStorage(storage, type, listener))
                     .orElse(null);
 
             affectedStorageChannelTypes.add(type);
         }, () -> disks[slot] = null);
 
         return affectedStorageChannelTypes;
+    }
+
+    private boolean isValidDisk(Storage<?> storage) {
+        return storage instanceof StorageCapacity;
     }
 
     @Override
@@ -166,7 +169,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         return states;
     }
 
-    private StorageDiskState getState(DiskDriveBulkStorage<?> disk) {
+    private StorageDiskState getState(DiskDriveDiskStorage<?, ?> disk) {
         if (disk == null) {
             return StorageDiskState.NONE;
         } else if (!isActive()) {

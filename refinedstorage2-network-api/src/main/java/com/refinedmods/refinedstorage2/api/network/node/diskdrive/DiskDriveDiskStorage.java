@@ -2,20 +2,21 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.StorageCapacity;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.Collection;
 
-public class DiskDriveBulkStorage<T> implements BulkStorage<T> {
+public class DiskDriveDiskStorage<S extends Storage<T> & StorageCapacity, T> implements Storage<T>, StorageCapacity {
     private static final double DISK_NEAR_CAPACITY_THRESHOLD = .75;
 
-    private final BulkStorage<T> parent;
+    private final S parent;
     private final StorageChannelType<T> storageChannelType;
     private final DiskDriveListener listener;
     private StorageDiskState state;
 
-    public DiskDriveBulkStorage(BulkStorage<T> parent, StorageChannelType<T> storageChannelType, DiskDriveListener listener) {
+    public DiskDriveDiskStorage(S parent, StorageChannelType<T> storageChannelType, DiskDriveListener listener) {
         this.parent = parent;
         this.storageChannelType = storageChannelType;
         this.listener = listener;

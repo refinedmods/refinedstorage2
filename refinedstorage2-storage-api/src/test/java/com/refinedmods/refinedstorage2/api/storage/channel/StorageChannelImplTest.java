@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
-import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
-import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage2.api.storage.composite.PrioritizedStorage;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
@@ -44,7 +44,7 @@ class StorageChannelImplTest {
     @EnumSource(Action.class)
     void Test_listener_on_insertion(Action action) {
         // Arrange
-        channel.addSource(new BulkStorageImpl<>(10));
+        channel.addSource(new InMemoryStorageImpl<>(10));
 
         ResourceListListener<String> listener = mock(ResourceListListener.class);
         channel.addListener(listener);
@@ -71,7 +71,7 @@ class StorageChannelImplTest {
     @EnumSource(Action.class)
     void Test_listener_on_extraction(Action action) {
         // Arrange
-        BulkStorage<String> storage = new BulkStorageImpl<>(10);
+        Storage<String> storage = new InMemoryStorageImpl<>(10);
         storage.insert("A", 10, Action.EXECUTE);
 
         channel.addSource(storage);
@@ -100,7 +100,7 @@ class StorageChannelImplTest {
     @Test
     void Test_inserting() {
         // Arrange
-        channel.addSource(new BulkStorageImpl<>(10));
+        channel.addSource(new InMemoryStorageImpl<>(10));
 
         // Act
         channel.insert("A", 5, Action.EXECUTE);
@@ -116,7 +116,7 @@ class StorageChannelImplTest {
     @Test
     void Test_extracting() {
         // Arrange
-        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        Storage<String> storage = new InMemoryStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE);
 
         channel.addSource(storage);
@@ -133,7 +133,7 @@ class StorageChannelImplTest {
     @Test
     void Test_getting_resource() {
         // Arrange
-        BulkStorage<String> storage = new BulkStorageImpl<>(100);
+        Storage<String> storage = new InMemoryStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE);
 
         channel.addSource(storage);
@@ -149,7 +149,7 @@ class StorageChannelImplTest {
     @Test
     void Test_getting_non_existent_resource() {
         // Arrange
-        channel.addSource(new BulkStorageImpl<>(100));
+        channel.addSource(new InMemoryStorageImpl<>(100));
 
         // Act
         Optional<ResourceAmount<String>> resource = channel.get("A");
@@ -161,9 +161,9 @@ class StorageChannelImplTest {
     @RepeatedTest(100)
     void Test_sorting_sources() {
         // Arrange
-        PrioritizedStorage<String> storage1 = new PrioritizedStorage<>(0, new BulkStorageImpl<>(10));
-        PrioritizedStorage<String> storage2 = new PrioritizedStorage<>(0, new BulkStorageImpl<>(10));
-        PrioritizedStorage<String> storage3 = new PrioritizedStorage<>(0, new BulkStorageImpl<>(10));
+        PrioritizedStorage<String> storage1 = new PrioritizedStorage<>(0, new InMemoryStorageImpl<>(10));
+        PrioritizedStorage<String> storage2 = new PrioritizedStorage<>(0, new InMemoryStorageImpl<>(10));
+        PrioritizedStorage<String> storage3 = new PrioritizedStorage<>(0, new InMemoryStorageImpl<>(10));
 
         channel.addSource(storage1);
         channel.addSource(storage2);

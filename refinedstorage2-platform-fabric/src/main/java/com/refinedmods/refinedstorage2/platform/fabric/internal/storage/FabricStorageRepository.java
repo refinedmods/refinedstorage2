@@ -3,9 +3,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.storage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
-import com.refinedmods.refinedstorage2.api.storage.bulk.BulkStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
-import com.refinedmods.refinedstorage2.platform.fabric.api.storage.bulk.StorageTypeAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.StorageTypeAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageTypeRegistry;
 
 import java.util.Map;
@@ -52,7 +51,7 @@ public class FabricStorageRepository extends PersistentState implements Platform
     public <T> Optional<Storage<T>> disassemble(UUID id) {
         return parent.disassemble(id).map(storage -> {
             markDirty();
-            return (BulkStorage<T>) storage;
+            return (Storage<T>) storage;
         });
     }
 
