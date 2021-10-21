@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
+import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageCapacity;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.StorageSource;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
@@ -103,7 +103,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
 
     private <T> List<Storage<T>> getSourcesForChannel(StorageChannelType<T> channelType) {
         List<Storage<T>> sources = new ArrayList<>();
-        for (DiskDriveDiskStorage<?, ?> disk : disks) {
+        for (DiskDriveDiskStorage<?> disk : disks) {
             if (disk != null && disk.getStorageChannelType() == channelType) {
                 sources.add((Storage<T>) disk);
             }
@@ -122,7 +122,8 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
                     .getDiskId(slot)
                     .flatMap(diskManager::get)
                     .filter(this::isValidDisk)
-                    .map(storage -> new DiskDriveDiskStorage(storage, type, listener))
+                    .map(CappedStorage.class::cast)
+                    .map(cappedStorage -> new DiskDriveDiskStorage(cappedStorage, type, listener))
                     .orElse(null);
 
             affectedStorageChannelTypes.add(type);
@@ -132,7 +133,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     }
 
     private boolean isValidDisk(Storage<?> storage) {
-        return storage instanceof StorageCapacity;
+        return storage instanceof CappedStorage;
     }
 
     @Override
@@ -169,7 +170,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         return states;
     }
 
-    private StorageDiskState getState(DiskDriveDiskStorage<?, ?> disk) {
+    private StorageDiskState getState(DiskDriveDiskStorage<?> disk) {
         if (disk == null) {
             return StorageDiskState.NONE;
         } else if (!isActive()) {

@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
 import java.util.Collection;
 
+import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
 
 /**
@@ -16,7 +17,11 @@ import org.apiguardian.api.API;
 public class ProxyStorage<T> implements Storage<T> {
     protected Storage<T> parent;
 
+    /**
+     * @param parent the parent storage, may not be null
+     */
     protected ProxyStorage(Storage<T> parent) {
+        Preconditions.checkNotNull(parent);
         this.parent = parent;
     }
 

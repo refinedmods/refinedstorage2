@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.node.container.FakeNetworkNod
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
@@ -74,7 +74,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_initial_state() {
         // Arrange
-        Storage<String> storage = new InMemoryStorageImpl<>(10);
+        Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 5, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage);
 
@@ -95,7 +95,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_initialization() {
         // Arrange
-        Storage<String> storage = new InMemoryStorageImpl<>(10);
+        Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 5, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage);
 
@@ -115,13 +115,13 @@ class DiskDriveNetworkNodeTest {
     @ValueSource(booleans = {true, false})
     void Test_disk_state(boolean inactive) {
         // Arrange
-        Storage<String> normalStorage = new InMemoryStorageImpl<>(100);
+        Storage<String> normalStorage = new CappedStorage<>(100);
         normalStorage.insert("A", 74, Action.EXECUTE);
 
-        Storage<String> nearCapacityStorage = new InMemoryStorageImpl<>(100);
+        Storage<String> nearCapacityStorage = new CappedStorage<>(100);
         nearCapacityStorage.insert("A", 75, Action.EXECUTE);
 
-        Storage<String> fullStorage = new InMemoryStorageImpl<>(100);
+        Storage<String> fullStorage = new CappedStorage<>(100);
         fullStorage.insert("A", 100, Action.EXECUTE);
 
         storageProviderManager.setInSlot(1, UUID.randomUUID());
@@ -155,7 +155,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.initialize(storageProviderManager);
 
-        Storage<String> storage = new InMemoryStorageImpl<>(10);
+        Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 5, Action.EXECUTE);
         storageProviderManager.setInSlot(7, storage);
 
@@ -176,13 +176,13 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_changing_disk_in_slot() {
         // Arrange
-        Storage<String> storage1 = new InMemoryStorageImpl<>(10);
+        Storage<String> storage1 = new CappedStorage<>(10);
         storage1.insert("A", 5, Action.EXECUTE);
         storageProviderManager.setInSlot(7, storage1);
         diskDrive.initialize(storageProviderManager);
 
         // Act
-        Storage<String> storage2 = new InMemoryStorageImpl<>(10);
+        Storage<String> storage2 = new CappedStorage<>(10);
         storage2.insert("B", 2, Action.EXECUTE);
         storageProviderManager.setInSlot(7, storage2);
         diskDrive.onDiskChanged(7);
@@ -203,7 +203,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.initialize(storageProviderManager);
 
-        Storage<String> storage = new InMemoryStorageImpl<>(10);
+        Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 5, Action.EXECUTE);
         storageProviderManager.setInSlot(7, storage);
 
@@ -239,7 +239,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.initialize(storageProviderManager);
 
-        Storage<String> storage = new InMemoryStorageImpl<>(100);
+        Storage<String> storage = new CappedStorage<>(100);
         storage.insert("A", 50, Action.EXECUTE);
         storage.insert("B", 50, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage);
@@ -269,7 +269,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.initialize(storageProviderManager);
 
-        Storage<String> storage = new InMemoryStorageImpl<>(100);
+        Storage<String> storage = new CappedStorage<>(100);
         storage.insert("A", 50, Action.EXECUTE);
         storage.insert("B", 50, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage);
@@ -292,13 +292,13 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_inserting() {
         // Arrange
-        Storage<String> storage1 = new InMemoryStorageImpl<>(100);
+        Storage<String> storage1 = new CappedStorage<>(100);
         storageProviderManager.setInSlot(1, storage1);
 
-        Storage<String> storage2 = new InMemoryStorageImpl<>(100);
+        Storage<String> storage2 = new CappedStorage<>(100);
         storageProviderManager.setInSlot(2, storage2);
 
-        Storage<String> storage3 = new InMemoryStorageImpl<>(100);
+        Storage<String> storage3 = new CappedStorage<>(100);
         storageProviderManager.setInSlot(3, storage3);
 
         diskDrive.initialize(storageProviderManager);
@@ -334,17 +334,17 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_extracting() {
         // Arrange
-        Storage<String> storage1 = new InMemoryStorageImpl<>(100);
+        Storage<String> storage1 = new CappedStorage<>(100);
         storage1.insert("A", 50, Action.EXECUTE);
         storage1.insert("B", 50, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage1);
 
-        Storage<String> storage2 = new InMemoryStorageImpl<>(100);
+        Storage<String> storage2 = new CappedStorage<>(100);
         storage2.insert("A", 50, Action.EXECUTE);
         storage2.insert("B", 50, Action.EXECUTE);
         storageProviderManager.setInSlot(2, storage2);
 
-        Storage<String> storage3 = new InMemoryStorageImpl<>(100);
+        Storage<String> storage3 = new CappedStorage<>(100);
         storage3.insert("C", 10, Action.EXECUTE);
         storageProviderManager.setInSlot(3, storage3);
 
@@ -411,7 +411,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setAccessMode(accessMode);
 
-        Storage<String> storage = new InMemoryStorageImpl<>(100);
+        Storage<String> storage = new CappedStorage<>(100);
         storageProviderManager.setInSlot(1, storage);
 
         diskDrive.initialize(storageProviderManager);
@@ -432,7 +432,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setAccessMode(accessMode);
 
-        Storage<String> storage = new InMemoryStorageImpl<>(100);
+        Storage<String> storage = new CappedStorage<>(100);
         storageProviderManager.setInSlot(1, storage);
 
         diskDrive.initialize(storageProviderManager);
@@ -455,7 +455,7 @@ class DiskDriveNetworkNodeTest {
         diskDrive.setActive(false);
         diskDrive.initialize(storageProviderManager);
 
-        Storage<String> storage = new InMemoryStorageImpl<>(100);
+        Storage<String> storage = new CappedStorage<>(100);
         storageProviderManager.setInSlot(1, storage);
 
         // Act
@@ -470,7 +470,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         diskDrive.setActive(false);
 
-        Storage<String> storage = new InMemoryStorageImpl<>(100);
+        Storage<String> storage = new CappedStorage<>(100);
         storageProviderManager.setInSlot(1, storage);
 
         diskDrive.initialize(storageProviderManager);
@@ -487,7 +487,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_disk_state_change_listener_should_not_be_called_when_not_necessary_on_extracting() {
         // Arrange
-        Storage<String> storage = new InMemoryStorageImpl<>(100);
+        Storage<String> storage = new CappedStorage<>(100);
         storage.insert("A", 76, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage);
         diskDrive.initialize(storageProviderManager);
@@ -502,7 +502,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_disk_state_change_listener_should_not_be_called_when_not_necessary_on_inserting() {
         // Arrange
-        Storage<String> storage = new InMemoryStorageImpl<>(100);
+        Storage<String> storage = new CappedStorage<>(100);
         storageProviderManager.setInSlot(1, storage);
         diskDrive.initialize(storageProviderManager);
 
@@ -517,7 +517,7 @@ class DiskDriveNetworkNodeTest {
     @EnumSource(Action.class)
     void Test_disk_state_change_listener_should_be_called_when_necessary_on_extracting(Action action) {
         // Arrange
-        Storage<String> storage = new InMemoryStorageImpl<>(100);
+        Storage<String> storage = new CappedStorage<>(100);
         storage.insert("A", 75, Action.EXECUTE);
         storageProviderManager.setInSlot(1, storage);
         diskDrive.initialize(storageProviderManager);
@@ -536,7 +536,7 @@ class DiskDriveNetworkNodeTest {
     @EnumSource(Action.class)
     void Test_disk_state_change_listener_should_be_called_when_necessary_on_inserting(Action action) {
         // Arrange
-        Storage<String> storage = new InMemoryStorageImpl<>(100);
+        Storage<String> storage = new CappedStorage<>(100);
         storageProviderManager.setInSlot(1, storage);
         diskDrive.initialize(storageProviderManager);
         storageOf(diskDrive).insert("A", 74, Action.EXECUTE);
@@ -555,11 +555,11 @@ class DiskDriveNetworkNodeTest {
     @ValueSource(booleans = {true, false})
     void Test_setting_priority(boolean oneHasPriority) {
         // Arrange
-        Storage<String> storage1 = new InMemoryStorageImpl<>(100);
+        Storage<String> storage1 = new CappedStorage<>(100);
         storageProviderManager.setInSlot(1, storage1);
         diskDrive.initialize(storageProviderManager);
 
-        Storage<String> storage2 = new InMemoryStorageImpl<>(100);
+        Storage<String> storage2 = new CappedStorage<>(100);
         FakeStorageProviderRepository storageProviderManager2 = new FakeStorageProviderRepository();
         storageProviderManager2.setInSlot(1, storage2);
         FakeNetworkNodeContainer<DiskDriveNetworkNode> diskDrive2 = createDiskDriveContainer(network, storageProviderManager2, mock(DiskDriveListener.class));
