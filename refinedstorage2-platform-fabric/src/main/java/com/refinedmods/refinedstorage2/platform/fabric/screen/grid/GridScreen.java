@@ -276,7 +276,7 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
             List<OrderedText> smallLines = new ArrayList<>();
             smallLines.add(Rs2Mod.createTranslation("misc", "total", getAmount(resource)).formatted(Formatting.GRAY).asOrderedText());
 
-            view.getTrackerEntry(resource.getResourceAmount()).ifPresent(entry -> smallLines.add(getLastModifiedText(entry).formatted(Formatting.GRAY).asOrderedText()));
+            view.getTrackerEntry(resource.getResourceAmount().getResource()).ifPresent(entry -> smallLines.add(getLastModifiedText(entry).formatted(Formatting.GRAY).asOrderedText()));
 
             renderTooltipWithSmallText(matrices, lines, smallLines, mouseX, mouseY);
         }

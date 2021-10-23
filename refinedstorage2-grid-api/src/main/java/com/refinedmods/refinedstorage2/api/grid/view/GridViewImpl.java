@@ -18,7 +18,9 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class GridViewImpl<T> implements GridView<T> {
     private static final Logger LOGGER = LogManager.getLogger(GridViewImpl.class);
 
@@ -35,6 +37,10 @@ public class GridViewImpl<T> implements GridView<T> {
     private Runnable listener;
     private boolean preventSorting;
 
+    /**
+     * @param gridResourceFactory a factory that transforms a resource amount to a grid resource
+     * @param list                the backing list
+     */
     public GridViewImpl(Function<ResourceAmount<T>, GridResource<T>> gridResourceFactory, ResourceList<T> list) {
         this.gridResourceFactory = gridResourceFactory;
         this.identitySort = GridSortingType.NAME.getComparator().apply(this);

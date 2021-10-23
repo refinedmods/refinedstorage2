@@ -4,6 +4,14 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
 import java.util.Set;
 
+import org.apiguardian.api.API;
+
+/**
+ * Represents a resource in the grid.
+ *
+ * @param <T> the resource type
+ */
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public abstract class GridResource<T> {
     private final ResourceAmount<T> resourceAmount;
     // todo: these fields are mc specific. move them?

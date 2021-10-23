@@ -9,12 +9,21 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
 import java.util.function.Function;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public class GridServiceImpl<T> implements GridService<T> {
     private final StorageChannel<T> storageChannel;
     private final Source source;
     private final Function<T, Long> maxCountProvider;
 
     // TODO: add singleAmount
+
+    /**
+     * @param storageChannel   the storage channel to act on
+     * @param source           the source performing the grid interactions
+     * @param maxCountProvider provider for the maximum amount of a given resource
+     */
     public GridServiceImpl(StorageChannel<T> storageChannel, Source source, Function<T, Long> maxCountProvider) {
         this.storageChannel = storageChannel;
         this.source = source;
