@@ -17,6 +17,7 @@ this mod that allow the player to setup auto-crafting, allowing the crafting of 
 
 - [GitHub](https://github.com/refinedmods/refinedstorage2)
     - [Releases](https://github.com/refinedmods/refinedstorage2/releases)
+    - [Packages](https://github.com/refinedmods/refinedstorage2/packages)
     - [Issues](https://github.com/refinedmods/refinedstorage2/issues)
     - [Roadmap](https://github.com/refinedmods/refinedstorage2/projects)
     - [Wiki](https://github.com/refinedmods/refinedstorage2/wiki)
