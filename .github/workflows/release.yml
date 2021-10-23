@@ -30,6 +30,15 @@ jobs:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
                     RELEASE: ${{ steps.tagName.outputs.tag }}
+            -   name: Build documentation
+                run: ./gradlew allJavadoc
+                env:
+                    RELEASE: ${{ steps.tagName.outputs.tag }}
+            -   name: Publish documentation
+                uses: JamesIves/github-pages-deploy-action@4.1.5
+                with:
+                    branch: gh-pages
+                    folder: build/docs/javadoc-all
             -   name: Publish
                 run: ./gradlew publish
                 env:
