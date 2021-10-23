@@ -1,11 +1,20 @@
 package com.refinedmods.refinedstorage2.api.grid.search.query;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
-import com.refinedmods.refinedstorage2.query.lexer.*;
+import com.refinedmods.refinedstorage2.query.lexer.Lexer;
+import com.refinedmods.refinedstorage2.query.lexer.LexerException;
+import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
+import com.refinedmods.refinedstorage2.query.lexer.Source;
+import com.refinedmods.refinedstorage2.query.lexer.Token;
+import com.refinedmods.refinedstorage2.query.lexer.TokenType;
 import com.refinedmods.refinedstorage2.query.parser.Parser;
 import com.refinedmods.refinedstorage2.query.parser.ParserException;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
-import com.refinedmods.refinedstorage2.query.parser.node.*;
+import com.refinedmods.refinedstorage2.query.parser.node.BinOpNode;
+import com.refinedmods.refinedstorage2.query.parser.node.LiteralNode;
+import com.refinedmods.refinedstorage2.query.parser.node.Node;
+import com.refinedmods.refinedstorage2.query.parser.node.ParenNode;
+import com.refinedmods.refinedstorage2.query.parser.node.UnaryOpNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +23,9 @@ import java.util.Locale;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class GridQueryParserImpl implements GridQueryParser {
     private final LexerTokenMappings tokenMappings;
     private final ParserOperatorMappings operatorMappings;
