@@ -8,10 +8,12 @@ import java.util.Set;
 public enum GridResourceAttributeKeys implements GridResourceAttributeKey {
     MOD_ID,
     MOD_NAME,
-    TAGS;
+    TAGS,
+    TOOLTIP;
 
     public static final Map<String, Set<GridResourceAttributeKey>> UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING = Map.of(
             "@", Set.of(GridResourceAttributeKeys.MOD_ID, GridResourceAttributeKeys.MOD_NAME),
-            "$", Set.of(GridResourceAttributeKeys.TAGS)
+            "$", Set.of(GridResourceAttributeKeys.TAGS),
+            "#", Set.of(GridResourceAttributeKeys.TOOLTIP)
     );
 }

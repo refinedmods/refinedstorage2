@@ -11,8 +11,11 @@ import java.util.stream.Collectors;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tag.ItemTags;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -20,11 +23,45 @@ public class ItemGridResourceFactory implements Function<ResourceAmount<ItemReso
     @Override
     public GridResource<ItemResource> apply(ResourceAmount<ItemResource> resourceAmount) {
         Item item = resourceAmount.getResource().getItem();
-        String name = item.getName().getString();
-        String modId = Registry.ITEM.getId(item).getNamespace();
-        String modName = FabricLoader.getInstance().getModContainer(modId).map(ModContainer::getMetadata).map(ModMetadata::getName).orElse("");
-        Set<String> tags = ItemTags.getTagGroup().getTagsFor(item).stream().map(Identifier::getPath).collect(Collectors.toSet());
+        ItemStack itemStack = resourceAmount.getResource().toItemStack();
 
-        return new ItemGridResource(resourceAmount, name, modId, modName, tags);
+        String name = item.getName().getString();
+        String modId = getModId(item);
+        String modName = getModName(modId);
+
+        Set<String> tags = getTags(item);
+        String tooltip = getTooltip(itemStack);
+
+        return new ItemGridResource(resourceAmount, itemStack, name, modId, modName, tags, tooltip);
+    }
+
+    private String getTooltip(ItemStack itemStack) {
+        return itemStack
+                .getTooltip(null, TooltipContext.Default.ADVANCED)
+                .stream()
+                .map(Text::asString)
+                .collect(Collectors.joining("\n"));
+    }
+
+    private Set<String> getTags(Item item) {
+        return ItemTags
+                .getTagGroup()
+                .getTagsFor(item)
+                .stream()
+                .map(Identifier::getPath)
+                .collect(Collectors.toSet());
+    }
+
+    private String getModName(String modId) {
+        return FabricLoader
+                .getInstance()
+                .getModContainer(modId)
+                .map(ModContainer::getMetadata)
+                .map(ModMetadata::getName)
+                .orElse("");
+    }
+
+    private String getModId(Item item) {
+        return Registry.ITEM.getId(item).getNamespace();
     }
 }

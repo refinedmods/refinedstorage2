@@ -14,11 +14,12 @@ public class FluidGridResource extends GridResource<FluidResource> {
     private final int id;
     private final FluidVariant fluidVariant;
 
-    public FluidGridResource(ResourceAmount<FluidResource> resourceAmount, String name, String modId, String modName, Set<String> tags) {
+    public FluidGridResource(ResourceAmount<FluidResource> resourceAmount, String name, String modId, String modName, Set<String> tags, String tooltip) {
         super(resourceAmount, name, Map.of(
                 GridResourceAttributeKeys.MOD_ID, Set.of(modId),
                 GridResourceAttributeKeys.MOD_NAME, Set.of(modName),
-                GridResourceAttributeKeys.TAGS, tags
+                GridResourceAttributeKeys.TAGS, tags,
+                GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
         ));
         this.id = Registry.FLUID.getRawId(getResourceAmount().getResource().getFluid());
         this.fluidVariant = resourceAmount.getResource().toFluidVariant();
