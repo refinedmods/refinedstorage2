@@ -14,22 +14,4 @@ public interface GridSearchBoxMode {
      * @return whether the search operation was successful
      */
     boolean onTextChanged(GridView<?> view, String text);
-
-    /**
-     * @return the search box value if it has to be modified, otherwise null
-     */
-    // TODO: mc specific
-    String getSearchBoxValue();
-
-    /**
-     * @return the display properties
-     */
-    // TODO: mc specific
-    GridSearchBoxModeDisplayProperties getDisplayProperties();
-
-    /**
-     * @return whether this search box mode autoselects
-     */
-    // TODO: mc specific
-    boolean shouldAutoSelect();
 }

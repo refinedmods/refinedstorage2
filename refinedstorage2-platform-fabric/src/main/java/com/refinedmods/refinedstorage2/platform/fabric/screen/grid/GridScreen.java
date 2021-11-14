@@ -109,7 +109,7 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
     protected void handledScreenTick() {
         super.handledScreenTick();
 
-        String newValue = getScreenHandler().getSearchBoxMode().getSearchBoxValue();
+        String newValue = getScreenHandler().getSearchBoxMode().getOverrideSearchBoxValue();
         if (searchField != null && newValue != null && !searchField.getText().equals(newValue)) {
             searchField.setText(newValue);
         }

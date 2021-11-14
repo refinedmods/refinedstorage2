@@ -11,13 +11,9 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class GridSearchBoxModeImpl implements GridSearchBoxMode {
     private final GridQueryParser queryParser;
-    private final boolean autoSelect;
-    private final GridSearchBoxModeDisplayProperties displayProperties;
 
-    public GridSearchBoxModeImpl(GridQueryParser queryParser, boolean autoSelect, GridSearchBoxModeDisplayProperties displayProperties) {
+    public GridSearchBoxModeImpl(GridQueryParser queryParser) {
         this.queryParser = queryParser;
-        this.autoSelect = autoSelect;
-        this.displayProperties = displayProperties;
     }
 
     @Override
@@ -31,20 +27,5 @@ public class GridSearchBoxModeImpl implements GridSearchBoxMode {
         }
         view.sort();
         return success;
-    }
-
-    @Override
-    public String getSearchBoxValue() {
-        return null;
-    }
-
-    @Override
-    public GridSearchBoxModeDisplayProperties getDisplayProperties() {
-        return displayProperties;
-    }
-
-    @Override
-    public boolean shouldAutoSelect() {
-        return autoSelect;
     }
 }
