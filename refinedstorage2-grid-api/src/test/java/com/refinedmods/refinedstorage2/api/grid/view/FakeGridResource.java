@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.grid.view;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
+import java.util.Map;
 import java.util.Set;
 
 public class FakeGridResource extends GridResource<String> {
@@ -17,14 +18,23 @@ public class FakeGridResource extends GridResource<String> {
         super(
                 resourceAmount,
                 resourceAmount.getResource(),
-                resourceAmount.getResource(),
-                resourceAmount.getResource(),
-                Set.of()
+                Map.of(
+                        FakeGridResourceAttributeKeys.MOD_ID, Set.of(resourceAmount.getResource()),
+                        FakeGridResourceAttributeKeys.MOD_NAME, Set.of(resourceAmount.getResource())
+                )
         );
     }
 
     public FakeGridResource(String name, long amount, String modId, String modName, Set<String> tags) {
-        super(new ResourceAmount<>(name, amount), name, modId, modName, tags);
+        super(
+                new ResourceAmount<>(name, amount),
+                name,
+                Map.of(
+                        FakeGridResourceAttributeKeys.MOD_ID, Set.of(modId),
+                        FakeGridResourceAttributeKeys.MOD_NAME, Set.of(modName),
+                        FakeGridResourceAttributeKeys.TAGS, tags
+                )
+        );
     }
 
     public FakeGridResource zeroed() {

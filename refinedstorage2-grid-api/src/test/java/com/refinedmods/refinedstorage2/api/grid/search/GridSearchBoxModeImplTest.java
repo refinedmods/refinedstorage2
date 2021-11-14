@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.grid.search;
 
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.FakeGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.FakeGridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
@@ -15,7 +16,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
 class GridSearchBoxModeImplTest {
-    private final GridSearchBoxMode searchBoxMode = new GridSearchBoxModeImpl(new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS), true, null);
+    private final GridSearchBoxMode searchBoxMode = new GridSearchBoxModeImpl(
+            new GridQueryParserImpl(
+                    LexerTokenMappings.DEFAULT_MAPPINGS,
+                    ParserOperatorMappings.DEFAULT_MAPPINGS,
+                    FakeGridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING
+            ),
+            true,
+            null
+    );
 
     @Test
     void Test_changing_text() {
