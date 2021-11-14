@@ -32,12 +32,12 @@ class StorageNetworkComponentTest {
     void setUp() {
         sut = new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY);
 
-        FakeStorageProviderRepository fakeStorageProviderManager = new FakeStorageProviderRepository();
-        fakeStorageProviderManager.setInSlot(0, new CappedStorage<>(100));
+        FakeStorageProviderRepository storageProviderRepository = new FakeStorageProviderRepository();
+        storageProviderRepository.setInSlot(0, new CappedStorage<>(100));
 
-        diskDrive = new DiskDriveNetworkNode(fakeStorageProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
+        diskDrive = new DiskDriveNetworkNode(storageProviderRepository, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(createWithInfiniteEnergyStorage());
-        diskDrive.initialize(fakeStorageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
 
         diskDriveContainer = new FakeNetworkNodeContainer<>(diskDrive);
     }

@@ -37,7 +37,7 @@ class DiskDriveNetworkNodeTest {
 
     private Network network;
     private DiskDriveNetworkNode diskDrive;
-    private FakeStorageProviderRepository storageProviderManager;
+    private FakeStorageProviderRepository storageProviderRepository;
     private DiskDriveListener diskDriveListener;
 
     // TODO: Test with additional storage channel types
@@ -45,11 +45,11 @@ class DiskDriveNetworkNodeTest {
     @BeforeEach
     void setUp() {
         diskDriveListener = mock(DiskDriveListener.class);
-        storageProviderManager = new FakeStorageProviderRepository();
+        storageProviderRepository = new FakeStorageProviderRepository();
 
         network = createWithInfiniteEnergyStorage();
 
-        diskDrive = createDiskDriveContainer(network, storageProviderManager, diskDriveListener).getNode();
+        diskDrive = createDiskDriveContainer(network, storageProviderRepository, diskDriveListener).getNode();
     }
 
     private FakeNetworkNodeContainer<DiskDriveNetworkNode> createDiskDriveContainer(Network network, FakeStorageProviderRepository storageDiskProviderManager, DiskDriveListener diskDriveListener) {
@@ -76,7 +76,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 5, Action.EXECUTE);
-        storageProviderManager.setInSlot(1, storage);
+        storageProviderRepository.setInSlot(1, storage);
 
         // Act
         diskDrive.setActive(true);
@@ -97,10 +97,10 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 5, Action.EXECUTE);
-        storageProviderManager.setInSlot(1, storage);
+        storageProviderRepository.setInSlot(1, storage);
 
         // Act
-        diskDrive.initialize(storageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
 
         // Assert
         assertThat(diskDrive.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_DISK);
@@ -124,17 +124,17 @@ class DiskDriveNetworkNodeTest {
         Storage<String> fullStorage = new CappedStorage<>(100);
         fullStorage.insert("A", 100, Action.EXECUTE);
 
-        storageProviderManager.setInSlot(1, UUID.randomUUID());
-        storageProviderManager.setInSlot(3, normalStorage);
-        storageProviderManager.setInSlot(5, nearCapacityStorage);
-        storageProviderManager.setInSlot(7, fullStorage);
+        storageProviderRepository.setInSlot(1, UUID.randomUUID());
+        storageProviderRepository.setInSlot(3, normalStorage);
+        storageProviderRepository.setInSlot(5, nearCapacityStorage);
+        storageProviderRepository.setInSlot(7, fullStorage);
 
         if (inactive) {
             diskDrive.setActive(false);
         }
 
         // Act
-        diskDrive.initialize(storageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
 
         DiskDriveState state = diskDrive.createState();
 
@@ -153,11 +153,11 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_setting_disk_in_slot() {
         // Arrange
-        diskDrive.initialize(storageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
 
         Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 5, Action.EXECUTE);
-        storageProviderManager.setInSlot(7, storage);
+        storageProviderRepository.setInSlot(7, storage);
 
         // Act
         diskDrive.onDiskChanged(7);
@@ -178,13 +178,13 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         Storage<String> storage1 = new CappedStorage<>(10);
         storage1.insert("A", 5, Action.EXECUTE);
-        storageProviderManager.setInSlot(7, storage1);
-        diskDrive.initialize(storageProviderManager);
+        storageProviderRepository.setInSlot(7, storage1);
+        diskDrive.initialize(storageProviderRepository);
 
         // Act
         Storage<String> storage2 = new CappedStorage<>(10);
         storage2.insert("B", 2, Action.EXECUTE);
-        storageProviderManager.setInSlot(7, storage2);
+        storageProviderRepository.setInSlot(7, storage2);
         diskDrive.onDiskChanged(7);
 
         // Assert
@@ -201,16 +201,16 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_removing_disk_in_slot() {
         // Arrange
-        diskDrive.initialize(storageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
 
         Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 5, Action.EXECUTE);
-        storageProviderManager.setInSlot(7, storage);
+        storageProviderRepository.setInSlot(7, storage);
 
         diskDrive.onDiskChanged(7);
 
         // Act
-        storageProviderManager.removeInSlot(7);
+        storageProviderRepository.removeInSlot(7);
         diskDrive.onDiskChanged(7);
 
         // Assert
@@ -237,12 +237,12 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_retrieving_resources() {
         // Arrange
-        diskDrive.initialize(storageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
 
         Storage<String> storage = new CappedStorage<>(100);
         storage.insert("A", 50, Action.EXECUTE);
         storage.insert("B", 50, Action.EXECUTE);
-        storageProviderManager.setInSlot(1, storage);
+        storageProviderRepository.setInSlot(1, storage);
 
         diskDrive.onDiskChanged(1);
 
@@ -267,12 +267,12 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_retrieving_resources_when_inactive() {
         // Arrange
-        diskDrive.initialize(storageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
 
         Storage<String> storage = new CappedStorage<>(100);
         storage.insert("A", 50, Action.EXECUTE);
         storage.insert("B", 50, Action.EXECUTE);
-        storageProviderManager.setInSlot(1, storage);
+        storageProviderRepository.setInSlot(1, storage);
 
         diskDrive.setActive(false);
         diskDrive.onDiskChanged(1);
@@ -293,15 +293,15 @@ class DiskDriveNetworkNodeTest {
     void Test_inserting() {
         // Arrange
         Storage<String> storage1 = new CappedStorage<>(100);
-        storageProviderManager.setInSlot(1, storage1);
+        storageProviderRepository.setInSlot(1, storage1);
 
         Storage<String> storage2 = new CappedStorage<>(100);
-        storageProviderManager.setInSlot(2, storage2);
+        storageProviderRepository.setInSlot(2, storage2);
 
         Storage<String> storage3 = new CappedStorage<>(100);
-        storageProviderManager.setInSlot(3, storage3);
+        storageProviderRepository.setInSlot(3, storage3);
 
-        diskDrive.initialize(storageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
 
         // Act
         long remainder1 = fakeStorageChannelOf(network).insert("A", 150, Action.EXECUTE);
@@ -337,18 +337,18 @@ class DiskDriveNetworkNodeTest {
         Storage<String> storage1 = new CappedStorage<>(100);
         storage1.insert("A", 50, Action.EXECUTE);
         storage1.insert("B", 50, Action.EXECUTE);
-        storageProviderManager.setInSlot(1, storage1);
+        storageProviderRepository.setInSlot(1, storage1);
 
         Storage<String> storage2 = new CappedStorage<>(100);
         storage2.insert("A", 50, Action.EXECUTE);
         storage2.insert("B", 50, Action.EXECUTE);
-        storageProviderManager.setInSlot(2, storage2);
+        storageProviderRepository.setInSlot(2, storage2);
 
         Storage<String> storage3 = new CappedStorage<>(100);
         storage3.insert("C", 10, Action.EXECUTE);
-        storageProviderManager.setInSlot(3, storage3);
+        storageProviderRepository.setInSlot(3, storage3);
 
-        diskDrive.initialize(storageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
         fakeStorageChannelOf(network).invalidate();
 
         // Act
@@ -412,9 +412,9 @@ class DiskDriveNetworkNodeTest {
         diskDrive.setAccessMode(accessMode);
 
         Storage<String> storage = new CappedStorage<>(100);
-        storageProviderManager.setInSlot(1, storage);
+        storageProviderRepository.setInSlot(1, storage);
 
-        diskDrive.initialize(storageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
 
         // Act
         long remainder = storageOf(diskDrive).insert("A", 5, Action.EXECUTE);
@@ -433,9 +433,9 @@ class DiskDriveNetworkNodeTest {
         diskDrive.setAccessMode(accessMode);
 
         Storage<String> storage = new CappedStorage<>(100);
-        storageProviderManager.setInSlot(1, storage);
+        storageProviderRepository.setInSlot(1, storage);
 
-        diskDrive.initialize(storageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
 
         storage.insert("A", 20, Action.EXECUTE);
 
@@ -453,10 +453,10 @@ class DiskDriveNetworkNodeTest {
     void Test_inserting_when_inactive() {
         // Arrange
         diskDrive.setActive(false);
-        diskDrive.initialize(storageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
 
         Storage<String> storage = new CappedStorage<>(100);
-        storageProviderManager.setInSlot(1, storage);
+        storageProviderRepository.setInSlot(1, storage);
 
         // Act
         long remainder = storageOf(diskDrive).insert("A", 5, Action.EXECUTE);
@@ -471,9 +471,9 @@ class DiskDriveNetworkNodeTest {
         diskDrive.setActive(false);
 
         Storage<String> storage = new CappedStorage<>(100);
-        storageProviderManager.setInSlot(1, storage);
+        storageProviderRepository.setInSlot(1, storage);
 
-        diskDrive.initialize(storageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
 
         storage.insert("A", 20, Action.EXECUTE);
 
@@ -489,8 +489,8 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         Storage<String> storage = new CappedStorage<>(100);
         storage.insert("A", 76, Action.EXECUTE);
-        storageProviderManager.setInSlot(1, storage);
-        diskDrive.initialize(storageProviderManager);
+        storageProviderRepository.setInSlot(1, storage);
+        diskDrive.initialize(storageProviderRepository);
 
         // Act
         fakeStorageChannelOf(network).extract("A", 1, Action.EXECUTE);
@@ -503,8 +503,8 @@ class DiskDriveNetworkNodeTest {
     void Test_disk_state_change_listener_should_not_be_called_when_not_necessary_on_inserting() {
         // Arrange
         Storage<String> storage = new CappedStorage<>(100);
-        storageProviderManager.setInSlot(1, storage);
-        diskDrive.initialize(storageProviderManager);
+        storageProviderRepository.setInSlot(1, storage);
+        diskDrive.initialize(storageProviderRepository);
 
         // Act
         fakeStorageChannelOf(network).insert("A", 74, Action.EXECUTE);
@@ -519,8 +519,8 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         Storage<String> storage = new CappedStorage<>(100);
         storage.insert("A", 75, Action.EXECUTE);
-        storageProviderManager.setInSlot(1, storage);
-        diskDrive.initialize(storageProviderManager);
+        storageProviderRepository.setInSlot(1, storage);
+        diskDrive.initialize(storageProviderRepository);
 
         // Act
         fakeStorageChannelOf(network).extract("A", 1, action);
@@ -537,8 +537,8 @@ class DiskDriveNetworkNodeTest {
     void Test_disk_state_change_listener_should_be_called_when_necessary_on_inserting(Action action) {
         // Arrange
         Storage<String> storage = new CappedStorage<>(100);
-        storageProviderManager.setInSlot(1, storage);
-        diskDrive.initialize(storageProviderManager);
+        storageProviderRepository.setInSlot(1, storage);
+        diskDrive.initialize(storageProviderRepository);
         storageOf(diskDrive).insert("A", 74, Action.EXECUTE);
 
         // Act
@@ -556,8 +556,8 @@ class DiskDriveNetworkNodeTest {
     void Test_setting_priority(boolean oneHasPriority) {
         // Arrange
         Storage<String> storage1 = new CappedStorage<>(100);
-        storageProviderManager.setInSlot(1, storage1);
-        diskDrive.initialize(storageProviderManager);
+        storageProviderRepository.setInSlot(1, storage1);
+        diskDrive.initialize(storageProviderRepository);
 
         Storage<String> storage2 = new CappedStorage<>(100);
         FakeStorageProviderRepository storageProviderManager2 = new FakeStorageProviderRepository();
