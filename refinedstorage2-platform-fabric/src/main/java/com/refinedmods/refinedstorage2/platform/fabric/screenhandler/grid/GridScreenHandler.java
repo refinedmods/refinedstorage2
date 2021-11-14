@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
-import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSize;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
@@ -16,6 +15,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.Redstone
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridSettings;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.search.PlatformSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.BaseScreenHandler;
@@ -43,14 +43,14 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
     private final TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty;
     private final TwoWaySyncProperty<GridSortingType> sortingTypeProperty;
     private final TwoWaySyncProperty<GridSize> sizeProperty;
-    private final TwoWaySyncProperty<GridSearchBoxMode> searchBoxModeProperty;
+    private final TwoWaySyncProperty<PlatformSearchBoxModeImpl> searchBoxModeProperty;
     protected GridBlockEntity<T> grid;
     protected StorageChannel<T> storageChannel; // TODO - Support changing of the channel.
     private Runnable sizeChangedListener;
     private GridSearchBox searchBox;
 
     private GridSize size;
-    private GridSearchBoxMode searchBoxMode;
+    private PlatformSearchBoxModeImpl searchBoxMode;
 
     private boolean active;
 
@@ -93,8 +93,8 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
         this.searchBoxModeProperty = TwoWaySyncProperty.forClient(
                 4,
                 GridSearchBoxModeRegistry.INSTANCE::getId,
-                GridSearchBoxModeRegistry.INSTANCE::get,
-                GridSearchBoxModeRegistry.INSTANCE.getDefault(),
+                id -> (PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.get(id),
+                (PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.getDefault(),
                 this::onSearchBoxModeChanged
         );
 
@@ -109,7 +109,7 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
         this.view.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
         this.view.setSortingType(GridSettings.getSortingType(buf.readInt()));
         size = GridSettings.getSize(buf.readInt());
-        searchBoxMode = GridSearchBoxModeRegistry.INSTANCE.get(buf.readInt());
+        searchBoxMode = (PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.get(buf.readInt());
 
         int amountOfResources = buf.readInt();
         for (int i = 0; i < amountOfResources; ++i) {
@@ -160,8 +160,8 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
         this.searchBoxModeProperty = TwoWaySyncProperty.forServer(
                 4,
                 GridSearchBoxModeRegistry.INSTANCE::getId,
-                GridSearchBoxModeRegistry.INSTANCE::get,
-                grid::getSearchBoxMode,
+                id -> (PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.get(id),
+                () -> (PlatformSearchBoxModeImpl) grid.getSearchBoxMode(),
                 grid::setSearchBoxMode
         );
 
@@ -212,11 +212,11 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
         sizeProperty.syncToServer(size);
     }
 
-    public GridSearchBoxMode getSearchBoxMode() {
+    public PlatformSearchBoxModeImpl getSearchBoxMode() {
         return searchBoxModeProperty.getDeserialized();
     }
 
-    public void setSearchBoxMode(GridSearchBoxMode searchBoxMode) {
+    public void setSearchBoxMode(PlatformSearchBoxModeImpl searchBoxMode) {
         searchBoxModeProperty.syncToServer(searchBoxMode);
     }
 
@@ -243,7 +243,7 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
         }
     }
 
-    private void onSearchBoxModeChanged(GridSearchBoxMode searchBoxMode) {
+    private void onSearchBoxModeChanged(PlatformSearchBoxModeImpl searchBoxMode) {
         if (this.searchBoxMode != searchBoxMode) {
             this.searchBoxMode = searchBoxMode;
             this.updateSearchBox();
@@ -259,7 +259,7 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
     }
 
     private void updateSearchBox() {
-        this.searchBox.setAutoSelected(searchBoxMode.shouldAutoSelect());
+        this.searchBox.setAutoSelected(searchBoxMode.isAutoSelected());
         this.searchBox.setListener(text -> {
             if (Rs2Config.get().getGrid().isRememberSearchQuery()) {
                 updateLastSearchQuery(text);

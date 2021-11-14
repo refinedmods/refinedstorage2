@@ -16,15 +16,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
 class GridSearchBoxModeImplTest {
-    private final GridSearchBoxMode searchBoxMode = new GridSearchBoxModeImpl(
-            new GridQueryParserImpl(
-                    LexerTokenMappings.DEFAULT_MAPPINGS,
-                    ParserOperatorMappings.DEFAULT_MAPPINGS,
-                    FakeGridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING
-            ),
-            true,
-            null
-    );
+    private final GridSearchBoxMode searchBoxMode = new GridSearchBoxModeImpl(new GridQueryParserImpl(
+            LexerTokenMappings.DEFAULT_MAPPINGS,
+            ParserOperatorMappings.DEFAULT_MAPPINGS,
+            FakeGridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING
+    ));
 
     @Test
     void Test_changing_text() {

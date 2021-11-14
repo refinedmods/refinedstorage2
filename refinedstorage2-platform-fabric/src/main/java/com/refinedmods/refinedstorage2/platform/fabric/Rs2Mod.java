@@ -1,7 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
-import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeDisplayProperties;
-import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
@@ -20,6 +18,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2Items;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2ScreenHandlers;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.Rs2PlatformApiFacadeImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.search.PlatformSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidStorageType;
@@ -69,7 +68,7 @@ public class Rs2Mod implements ModInitializer {
         return new Identifier(ID, value);
     }
 
-    public static String createTranslationKey(String category, String value) {
+    private static String createTranslationKey(String category, String value) {
         return String.format("%s.%s.%s", category, ID, value);
     }
 
@@ -157,20 +156,18 @@ public class Rs2Mod implements ModInitializer {
         );
 
         for (boolean autoSelected : new boolean[]{false, true}) {
-            GridSearchBoxModeRegistry.INSTANCE.add(new GridSearchBoxModeImpl(queryParser, autoSelected, createSearchBoxModeDisplayProperties(autoSelected)));
+            GridSearchBoxModeRegistry.INSTANCE.add(new PlatformSearchBoxModeImpl(
+                    queryParser,
+                    createIdentifier("textures/icons.png"),
+                    autoSelected ? 16 : 0,
+                    96,
+                    createTranslation("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : "")),
+                    autoSelected
+            ));
         }
 
         if (ReiIntegration.isLoaded()) {
             ReiIntegration.registerGridSearchBoxModes(queryParser);
         }
-    }
-
-    private GridSearchBoxModeDisplayProperties createSearchBoxModeDisplayProperties(boolean autoSelected) {
-        return new GridSearchBoxModeDisplayProperties(
-                createIdentifier("textures/icons.png").toString(),
-                autoSelected ? 16 : 0,
-                96,
-                createTranslationKey("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : ""))
-        );
     }
 }
