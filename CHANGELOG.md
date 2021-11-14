@@ -16,6 +16,7 @@ before updating.
 - Fluid Storage Disk
 - Fluid Grid
 - Wrench
+- Tooltip search in the Grid with unary operator "#".
 
 ### Fixed
 

@@ -14,14 +14,15 @@ public class ItemGridResource extends GridResource<ItemResource> {
     private final int id;
     private final ItemStack itemStack;
 
-    public ItemGridResource(ResourceAmount<ItemResource> resourceAmount, String name, String modId, String modName, Set<String> tags) {
+    public ItemGridResource(ResourceAmount<ItemResource> resourceAmount, ItemStack itemStack, String name, String modId, String modName, Set<String> tags, String tooltip) {
         super(resourceAmount, name, Map.of(
                 GridResourceAttributeKeys.MOD_ID, Set.of(modId),
                 GridResourceAttributeKeys.MOD_NAME, Set.of(modName),
-                GridResourceAttributeKeys.TAGS, tags
+                GridResourceAttributeKeys.TAGS, tags,
+                GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
         ));
         this.id = Item.getRawId(getResourceAmount().getResource().getItem());
-        this.itemStack = resourceAmount.getResource().toItemStack();
+        this.itemStack = itemStack;
     }
 
     public ItemStack getItemStack() {

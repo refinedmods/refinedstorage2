@@ -8,6 +8,7 @@ public class LexerTokenMappings {
             .addMapping(new LexerTokenMapping("!", TokenType.UNARY_OP))
             .addMapping(new LexerTokenMapping("@", TokenType.UNARY_OP))
             .addMapping(new LexerTokenMapping("$", TokenType.UNARY_OP))
+            .addMapping(new LexerTokenMapping("#", TokenType.UNARY_OP))
             .addMapping(new LexerTokenMapping(">", TokenType.UNARY_OP))
             .addMapping(new LexerTokenMapping(">=", TokenType.UNARY_OP))
             .addMapping(new LexerTokenMapping("<", TokenType.UNARY_OP))
