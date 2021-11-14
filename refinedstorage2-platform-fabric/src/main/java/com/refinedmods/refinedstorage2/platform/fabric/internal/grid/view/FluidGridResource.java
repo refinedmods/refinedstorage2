@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 
+import java.util.Map;
 import java.util.Set;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -14,7 +15,11 @@ public class FluidGridResource extends GridResource<FluidResource> {
     private final FluidVariant fluidVariant;
 
     public FluidGridResource(ResourceAmount<FluidResource> resourceAmount, String name, String modId, String modName, Set<String> tags) {
-        super(resourceAmount, name, modId, modName, tags);
+        super(resourceAmount, name, Map.of(
+                GridResourceAttributeKeys.MOD_ID, Set.of(modId),
+                GridResourceAttributeKeys.MOD_NAME, Set.of(modName),
+                GridResourceAttributeKeys.TAGS, tags
+        ));
         this.id = Registry.FLUID.getRawId(getResourceAmount().getResource().getFluid());
         this.fluidVariant = resourceAmount.getResource().toFluidVariant();
     }

@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserException;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.FakeGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.FakeGridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
@@ -22,7 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
 class GridQueryParserImplTest {
-    private final GridQueryParser queryParser = new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS);
+    private final GridQueryParser queryParser = new GridQueryParserImpl(
+            LexerTokenMappings.DEFAULT_MAPPINGS,
+            ParserOperatorMappings.DEFAULT_MAPPINGS,
+            FakeGridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING
+    );
 
     @ParameterizedTest
     @ValueSource(strings = {"", "   "})
@@ -69,13 +74,13 @@ class GridQueryParserImplTest {
     }
 
     @Test
-    void Test_mod_query_with_invalid_node() {
+    void Test_attribute_query_with_invalid_node() {
         // Act
         Executable action = () -> queryParser.parse("@!true");
 
         // Assert
         GridQueryParserException e = assertThrows(GridQueryParserException.class, action);
-        assertThat(e.getMessage()).isEqualTo("Mod filtering expects a literal");
+        assertThat(e.getMessage()).isEqualTo("Expected a literal");
     }
 
     @Test

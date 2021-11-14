@@ -2,6 +2,8 @@ package com.refinedmods.refinedstorage2.api.grid.view;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import org.apiguardian.api.API;
@@ -14,19 +16,14 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public abstract class GridResource<T> {
     private final ResourceAmount<T> resourceAmount;
-    // todo: these fields are mc specific. move them?
     private final String name;
-    private final String modId;
-    private final String modName;
-    private final Set<String> tags;
+    private final Map<GridResourceAttributeKey, Set<String>> attributes;
     private boolean zeroed;
 
-    protected GridResource(ResourceAmount<T> resourceAmount, String name, String modId, String modName, Set<String> tags) {
+    protected GridResource(ResourceAmount<T> resourceAmount, String name, Map<GridResourceAttributeKey, Set<String>> attributes) {
         this.resourceAmount = resourceAmount;
         this.name = name;
-        this.modId = modId;
-        this.modName = modName;
-        this.tags = tags;
+        this.attributes = attributes;
     }
 
     public ResourceAmount<T> getResourceAmount() {
@@ -39,16 +36,8 @@ public abstract class GridResource<T> {
         return name;
     }
 
-    public String getModId() {
-        return modId;
-    }
-
-    public String getModName() {
-        return modName;
-    }
-
-    public Set<String> getTags() {
-        return tags;
+    public Set<String> getAttribute(GridResourceAttributeKey key) {
+        return attributes.getOrDefault(key, Collections.emptySet());
     }
 
     public boolean isZeroed() {

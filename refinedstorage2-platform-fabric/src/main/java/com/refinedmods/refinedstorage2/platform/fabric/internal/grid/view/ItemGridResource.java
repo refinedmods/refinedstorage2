@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 
+import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.item.Item;
@@ -14,7 +15,11 @@ public class ItemGridResource extends GridResource<ItemResource> {
     private final ItemStack itemStack;
 
     public ItemGridResource(ResourceAmount<ItemResource> resourceAmount, String name, String modId, String modName, Set<String> tags) {
-        super(resourceAmount, name, modId, modName, tags);
+        super(resourceAmount, name, Map.of(
+                GridResourceAttributeKeys.MOD_ID, Set.of(modId),
+                GridResourceAttributeKeys.MOD_NAME, Set.of(modName),
+                GridResourceAttributeKeys.TAGS, tags
+        ));
         this.id = Item.getRawId(getResourceAmount().getResource().getItem());
         this.itemStack = resourceAmount.getResource().toItemStack();
     }

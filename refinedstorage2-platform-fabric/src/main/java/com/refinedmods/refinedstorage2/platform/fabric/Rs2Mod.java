@@ -20,6 +20,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2Items;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2ScreenHandlers;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.Rs2PlatformApiFacadeImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemStorageType;
@@ -149,7 +150,11 @@ public class Rs2Mod implements ModInitializer {
     }
 
     private void registerGridSearchBoxModes() {
-        GridQueryParser queryParser = new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS);
+        GridQueryParser queryParser = new GridQueryParserImpl(
+                LexerTokenMappings.DEFAULT_MAPPINGS,
+                ParserOperatorMappings.DEFAULT_MAPPINGS,
+                GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING
+        );
 
         for (boolean autoSelected : new boolean[]{false, true}) {
             GridSearchBoxModeRegistry.INSTANCE.add(new GridSearchBoxModeImpl(queryParser, autoSelected, createSearchBoxModeDisplayProperties(autoSelected)));
