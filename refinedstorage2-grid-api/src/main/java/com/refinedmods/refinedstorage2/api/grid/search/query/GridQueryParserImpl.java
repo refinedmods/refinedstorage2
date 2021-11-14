@@ -163,7 +163,7 @@ public class GridQueryParserImpl implements GridQueryParser {
                 .stream()
                 .map(resource::getAttribute)
                 .flatMap(Collection::stream)
-                .anyMatch(tag -> normalize(tag).contains(normalize(query)));
+                .anyMatch(value -> normalize(value).contains(normalize(query)));
     }
 
     private static String normalize(String value) {

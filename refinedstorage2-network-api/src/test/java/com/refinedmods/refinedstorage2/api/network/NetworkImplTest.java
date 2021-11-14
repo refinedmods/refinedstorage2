@@ -27,13 +27,13 @@ class NetworkImplTest {
         // Arrange
         Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
 
-        FakeStorageProviderRepository fakeStorageProviderManager = new FakeStorageProviderRepository();
+        FakeStorageProviderRepository storageProviderRepository = new FakeStorageProviderRepository();
         Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 10, Action.EXECUTE);
-        fakeStorageProviderManager.setInSlot(1, storage);
-        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(fakeStorageProviderManager, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
+        storageProviderRepository.setInSlot(1, storage);
+        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(storageProviderRepository, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(network);
-        diskDrive.initialize(fakeStorageProviderManager);
+        diskDrive.initialize(storageProviderRepository);
         FakeNetworkNodeContainer<DiskDriveNetworkNode> diskDriveContainer = new FakeNetworkNodeContainer<>(diskDrive);
 
         ControllerNetworkNode controllerNetworkNode = new ControllerNetworkNode(100, 100, ControllerType.NORMAL, mock(ControllerListener.class));

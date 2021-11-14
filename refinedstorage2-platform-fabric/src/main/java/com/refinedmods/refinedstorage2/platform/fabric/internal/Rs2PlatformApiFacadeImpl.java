@@ -31,7 +31,7 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
                 .getServer()
                 .getWorld(World.OVERWORLD)
                 .getPersistentStateManager()
-                .getOrCreate(this::createStorageRepo, this::createStorageRepo, FabricStorageRepository.NAME);
+                .getOrCreate(this::createStorageRepository, this::createStorageRepository, FabricStorageRepository.NAME);
     }
 
     @Override
@@ -54,13 +54,13 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
         return Rs2Mod.createTranslation(category, value, args);
     }
 
-    private FabricStorageRepository createStorageRepo(NbtCompound tag) {
-        var manager = createStorageRepo();
+    private FabricStorageRepository createStorageRepository(NbtCompound tag) {
+        var manager = createStorageRepository();
         manager.read(tag);
         return manager;
     }
 
-    private FabricStorageRepository createStorageRepo() {
+    private FabricStorageRepository createStorageRepository() {
         return new FabricStorageRepository(new StorageRepositoryImpl());
     }
 }
