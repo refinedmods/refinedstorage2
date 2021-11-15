@@ -15,6 +15,8 @@ public final class PacketIds {
     public static final ResourceLocation GRID_INSERT = Rs2Mod.createIdentifier("grid_insert");
     public static final ResourceLocation GRID_EXTRACT = Rs2Mod.createIdentifier("grid_extract");
     public static final ResourceLocation GRID_SCROLL = Rs2Mod.createIdentifier("grid_scroll");
+    public static final ResourceLocation RESOURCE_FILTER_SLOT_UPDATE = Rs2Mod.createIdentifier("resource_filter_slot_update");
+    public static final ResourceLocation RESOURCE_TYPE_CHANGE = Rs2Mod.createIdentifier("resource_type_change");
 
     private PacketIds() {
     }

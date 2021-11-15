@@ -10,21 +10,18 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeReg
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.diskdrive.DiskDriveContainerMenu;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -32,7 +29,9 @@ import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -45,7 +44,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements RenderAttachmentBlockEntity, BlockEntityClientSerializable, MenuProvider, BlockEntityWithDrops, DiskDriveListener {
+public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements RenderAttachmentBlockEntity, BlockEntityClientSerializable, MenuProvider, BlockEntityWithDrops, DiskDriveListener, ExtendedScreenHandlerFactory {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_PRIORITY = "pri";
@@ -53,13 +52,14 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     private static final String TAG_EXACT_MODE = "em";
     private static final String TAG_ACCESS_MODE = "am";
     private static final String TAG_DISK_INVENTORY = "inv";
-    private static final String TAG_FILTER_INVENTORY = "fi";
     private static final String TAG_STATES = "states";
+    private static final String TAG_RESOURCE_FILTER = "rf";
 
     private static final int DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
 
     private final DiskDriveInventory diskInventory = new DiskDriveInventory(this);
-    private final SimpleContainer filterInventory = new SimpleContainer(9);
+    private final ResourceFilterContainer resourceFilterContainer = new ResourceFilterContainer(9, this::resourceFilterContainerChanged);
+
     private DiskDriveState driveState;
 
     private boolean syncRequested;
@@ -67,7 +67,6 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
 
     public DiskDriveBlockEntity(BlockPos pos, BlockState state) {
         super(Rs2Mod.BLOCK_ENTITIES.getDiskDrive(), pos, state);
-        filterInventory.addListener(new FilterInventoryChangedListener(this));
     }
 
     public void updateDiskStateIfNecessary() {
@@ -81,6 +80,11 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
             this.syncRequested = false;
             sync();
         }
+    }
+
+    private void resourceFilterContainerChanged() {
+        getContainer().getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
+        setChanged();
     }
 
     @Override
@@ -121,15 +125,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
             }
         }
 
-        Set<Object> filterTemplates = new HashSet<>();
-        for (int i = 0; i < filterInventory.getContainerSize(); ++i) {
-            ItemStack filter = filterInventory.getItem(i);
-            if (!filter.isEmpty()) {
-                filterTemplates.add(new ItemResource(filter));
-            }
-        }
-
-        diskDrive.setFilterTemplates(filterTemplates);
+        diskDrive.setFilterTemplates(resourceFilterContainer.getTemplates());
 
         return diskDrive;
     }
@@ -140,8 +136,8 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
             diskInventory.fromTag(tag.getList(TAG_DISK_INVENTORY, Tag.TAG_COMPOUND));
         }
 
-        if (tag.contains(TAG_FILTER_INVENTORY)) {
-            filterInventory.fromTag(tag.getList(TAG_FILTER_INVENTORY, Tag.TAG_COMPOUND));
+        if (tag.contains(TAG_RESOURCE_FILTER)) {
+            resourceFilterContainer.load(tag.getCompound(TAG_RESOURCE_FILTER));
         }
 
         super.load(tag);
@@ -151,7 +147,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     public CompoundTag save(CompoundTag tag) {
         tag = super.save(tag);
         tag.put(TAG_DISK_INVENTORY, diskInventory.createTag());
-        tag.put(TAG_FILTER_INVENTORY, filterInventory.createTag());
+        tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getContainer().getNode().getFilterMode()));
         tag.putInt(TAG_PRIORITY, getContainer().getNode().getPriority());
         tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getContainer().getNode().getAccessMode()));
@@ -187,11 +183,6 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
 
     public void setAccessMode(AccessMode accessMode) {
         getContainer().getNode().setAccessMode(accessMode);
-        setChanged();
-    }
-
-    public void setFilterTemplates(List<ItemStack> templates) {
-        getContainer().getNode().setFilterTemplates(templates.stream().map(ItemResource::new).collect(Collectors.toSet()));
         setChanged();
     }
 
@@ -243,7 +234,14 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
-        return new DiskDriveContainerMenu(syncId, player, diskInventory, filterInventory, this, stack -> Optional.empty());
+        return new DiskDriveContainerMenu(
+                syncId,
+                player,
+                diskInventory,
+                resourceFilterContainer,
+                this,
+                stack -> Optional.empty()
+        );
     }
 
     @Override
@@ -267,5 +265,10 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     @Override
     public void onDiskChanged() {
         this.syncRequested = true;
+    }
+
+    @Override
+    public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+        resourceFilterContainer.writeToUpdatePacket(buf);
     }
 }

@@ -6,9 +6,11 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.FabricConnectionProvider;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.resource.filter.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricClientStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidStorageType;
@@ -19,14 +21,14 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
 
 public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
-    private final PlatformStorageRepository clientStorageRepo = new FabricClientStorageRepository();
+    private final PlatformStorageRepository clientStorageRepository = new FabricClientStorageRepository();
+    private final ResourceTypeRegistry resourceTypeRegistry = new ResourceTypeRegistry(ItemResourceType.INSTANCE);
 
     @Override
     public PlatformStorageRepository getStorageRepository(Level level) {
         if (level.getServer() == null) {
-            return clientStorageRepo;
+            return clientStorageRepository;
         }
-
         return level
                 .getServer()
                 .getLevel(Level.OVERWORLD)
@@ -52,6 +54,11 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     @Override
     public TranslatableComponent createTranslation(String category, String value, Object... args) {
         return Rs2Mod.createTranslation(category, value, args);
+    }
+
+    @Override
+    public ResourceTypeRegistry getResourceTypeRegistry() {
+        return resourceTypeRegistry;
     }
 
     private FabricStorageRepository createStorageRepository(CompoundTag tag) {

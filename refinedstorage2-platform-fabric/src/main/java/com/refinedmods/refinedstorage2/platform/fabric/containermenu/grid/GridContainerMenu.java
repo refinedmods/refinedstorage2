@@ -282,7 +282,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     }
 
     public void addSlots(int playerInventoryY) {
-        slots.clear();
+        resetSlots();
         addPlayerInventory(playerInventory, 8, playerInventoryY);
     }
 

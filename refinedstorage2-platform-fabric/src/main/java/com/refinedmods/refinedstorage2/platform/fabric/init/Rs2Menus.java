@@ -16,7 +16,7 @@ public class Rs2Menus {
     private MenuType<ControllerContainerMenu> controller;
 
     public void register() {
-        diskDrive = ScreenHandlerRegistry.registerSimple(Rs2Mod.createIdentifier("disk_drive"), DiskDriveContainerMenu::new);
+        diskDrive = ScreenHandlerRegistry.registerExtended(Rs2Mod.createIdentifier("disk_drive"), DiskDriveContainerMenu::new);
         grid = ScreenHandlerRegistry.registerExtended(Rs2Mod.createIdentifier("grid"), ItemGridContainerMenu::new);
         fluidGrid = ScreenHandlerRegistry.registerExtended(Rs2Mod.createIdentifier("fluid_grid"), FluidGridContainerMenu::new);
         controller = ScreenHandlerRegistry.registerExtended(Rs2Mod.createIdentifier("controller"), ControllerContainerMenu::new);

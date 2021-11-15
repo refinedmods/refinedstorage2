@@ -6,19 +6,20 @@ import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.item.StorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.AccessModeAccessor;
-import com.refinedmods.refinedstorage2.platform.fabric.containermenu.BaseContainerMenu;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ExactModeAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.FilterModeAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.PriorityAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.RedstoneModeAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ResourceFilterableContainerMenu;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.property.TwoWaySyncProperty;
-import com.refinedmods.refinedstorage2.platform.fabric.containermenu.slot.FilterSlot;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.slot.ValidatedSlot;
 
 import java.util.ArrayList;
@@ -26,13 +27,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public class DiskDriveContainerMenu extends BaseContainerMenu implements PriorityAccessor, FilterModeAccessor, ExactModeAccessor, AccessModeAccessor, RedstoneModeAccessor {
+public class DiskDriveContainerMenu extends ResourceFilterableContainerMenu implements PriorityAccessor, FilterModeAccessor, ExactModeAccessor, AccessModeAccessor, RedstoneModeAccessor {
     private static final int DISK_SLOT_X = 61;
     private static final int DISK_SLOT_Y = 54;
 
@@ -47,8 +49,8 @@ public class DiskDriveContainerMenu extends BaseContainerMenu implements Priorit
     private final TwoWaySyncProperty<AccessMode> accessModeProperty;
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
 
-    public DiskDriveContainerMenu(int syncId, Inventory playerInventory) {
-        super(Rs2Mod.MENUS.getDiskDrive(), syncId);
+    public DiskDriveContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
+        super(Rs2Mod.MENUS.getDiskDrive(), syncId, buf);
 
         this.priorityProperty = TwoWaySyncProperty.forClient(
                 0,
@@ -99,12 +101,23 @@ public class DiskDriveContainerMenu extends BaseContainerMenu implements Priorit
 
         this.storageInfoAccessor = new StorageInfoAccessorImpl(playerInventory.player.getCommandSenderWorld());
 
-        // TODO: add fluid filter slot
-        addSlots(playerInventory.player, new SimpleContainer(DiskDriveNetworkNode.DISK_COUNT), new SimpleContainer(9));
+        addSlots(
+                playerInventory.player,
+                new SimpleContainer(DiskDriveNetworkNode.DISK_COUNT),
+                new ResourceFilterContainer(9, () -> {
+                })
+        );
+
+        initializeResourceFilterSlots(buf);
     }
 
-    public DiskDriveContainerMenu(int syncId, Player player, SimpleContainer diskInventory, SimpleContainer filterInventory, DiskDriveBlockEntity diskDrive, StorageInfoAccessor storageInfoAccessor) {
-        super(Rs2Mod.MENUS.getDiskDrive(), syncId);
+    public DiskDriveContainerMenu(int syncId,
+                                  Player player,
+                                  SimpleContainer diskInventory,
+                                  ResourceFilterContainer resourceFilterContainer,
+                                  DiskDriveBlockEntity diskDrive,
+                                  StorageInfoAccessor storageInfoAccessor) {
+        super(Rs2Mod.MENUS.getDiskDrive(), syncId, player, resourceFilterContainer);
 
         this.priorityProperty = TwoWaySyncProperty.forServer(
                 0,
@@ -150,22 +163,22 @@ public class DiskDriveContainerMenu extends BaseContainerMenu implements Priorit
 
         this.storageInfoAccessor = storageInfoAccessor;
 
-        addSlots(player, diskInventory, filterInventory);
+        addSlots(player, diskInventory, resourceFilterContainer);
     }
 
-    private void addSlots(Player player, SimpleContainer diskInventory, SimpleContainer filterInventory) {
+    private void addSlots(Player player, SimpleContainer diskInventory, ResourceFilterContainer resourceFilterContainer) {
         for (int i = 0; i < DiskDriveNetworkNode.DISK_COUNT; ++i) {
             diskSlots.add(addSlot(createDiskSlot(diskInventory, i)));
         }
         for (int i = 0; i < 9; ++i) {
-            addSlot(createFilterSlot(filterInventory, i));
+            addSlot(createFilterSlot(resourceFilterContainer, i));
         }
         addPlayerInventory(player.getInventory(), 8, 141);
     }
 
-    private FilterSlot createFilterSlot(SimpleContainer filterInventory, int i) {
+    private Slot createFilterSlot(ResourceFilterContainer resourceFilterContainer, int i) {
         int x = FILTER_SLOT_X + (18 * i);
-        return new FilterSlot(filterInventory, i, x, FILTER_SLOT_Y);
+        return new ResourceFilterSlot(resourceFilterContainer, i, x, FILTER_SLOT_Y);
     }
 
     private Slot createDiskSlot(SimpleContainer diskInventory, int i) {
