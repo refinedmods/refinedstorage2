@@ -95,6 +95,8 @@
     "misc.refinedstorage2.last_modified.weeks": "Last modified %d weeks ago by %s",
     "misc.refinedstorage2.last_modified.year": "Last modified %d year ago by %s",
     "misc.refinedstorage2.last_modified.years": "Last modified %d years ago by %s",
+    "misc.refinedstorage2.resource_type.item": "Item",
+    "misc.refinedstorage2.resource_type.fluid": "Fluid",
     "key.refinedstorage2.focus_search_bar": "Focus Search Bar",
     "refinedstorage2.subtitle.wrench": "Wrench used",
     "category.refinedstorage2.key_bindings": "Refined Storage 2",

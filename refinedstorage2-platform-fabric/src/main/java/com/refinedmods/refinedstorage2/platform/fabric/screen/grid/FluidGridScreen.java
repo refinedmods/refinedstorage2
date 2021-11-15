@@ -7,20 +7,13 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResourc
 import com.refinedmods.refinedstorage2.platform.fabric.api.util.FabricQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FluidGridResource;
+import com.refinedmods.refinedstorage2.platform.fabric.util.ScreenUtil;
 
 import java.util.List;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -49,54 +42,12 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
     @Override
     protected void renderResource(PoseStack poseStack, int slotX, int slotY, GridResource<FluidResource> resource) {
         FluidVariant variant = ((FluidGridResource) resource).getFluidVariant();
-        TextureAtlasSprite sprite = FluidVariantRendering.getSprite(variant);
-        if (sprite != null) {
-            renderFluidSprite(poseStack, slotX, slotY, variant, sprite);
-        }
+        ScreenUtil.renderFluid(poseStack, slotX, slotY, getBlitOffset(), variant);
     }
 
     @Override
     protected String getAmount(GridResource<FluidResource> resource) {
         return FabricQuantityFormatter.formatDropletsAsBucket(resource.isZeroed() ? 0 : resource.getResourceAmount().getAmount());
-    }
-
-    private void renderFluidSprite(PoseStack poseStack, int slotX, int slotY, FluidVariant variant, TextureAtlasSprite sprite) {
-        RenderSystem.setShaderTexture(0, sprite.atlas().location());
-
-        int packedRgb = FluidVariantRendering.getColor(variant);
-        int r = (packedRgb >> 16 & 255);
-        int g = (packedRgb >> 8 & 255);
-        int b = (packedRgb & 255);
-
-        int slotXEnd = slotX + 16;
-        int slotYEnd = slotY + 16;
-        int z = getBlitOffset();
-
-        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-        BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
-        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        bufferBuilder
-                .vertex(poseStack.last().pose(), slotX, slotYEnd, z)
-                .uv(sprite.getU0(), sprite.getV1())
-                .color(r, g, b, 255)
-                .endVertex();
-        bufferBuilder
-                .vertex(poseStack.last().pose(), slotXEnd, slotYEnd, z)
-                .uv(sprite.getU1(), sprite.getV1())
-                .color(r, g, b, 255)
-                .endVertex();
-        bufferBuilder
-                .vertex(poseStack.last().pose(), slotXEnd, slotY, z)
-                .uv(sprite.getU1(), sprite.getV0())
-                .color(r, g, b, 255)
-                .endVertex();
-        bufferBuilder
-                .vertex(poseStack.last().pose(), slotX, slotY, z)
-                .uv(sprite.getU0(), sprite.getV0())
-                .color(r, g, b, 255)
-                .endVertex();
-        bufferBuilder.end();
-        BufferUploader.end(bufferBuilder);
     }
 
     @Override

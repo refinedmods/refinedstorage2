@@ -20,6 +20,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.integration.ReiIntegratio
 import com.refinedmods.refinedstorage2.platform.fabric.internal.Rs2PlatformApiFacadeImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.search.PlatformSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.GridResourceAttributeKeys;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.resource.filter.FluidResourceType;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemStorageType;
@@ -29,6 +30,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPac
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.PropertyChangePacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceTypeChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
@@ -92,8 +94,13 @@ public class Rs2Mod implements ModInitializer {
         registerPackets();
         registerSounds();
         registerInventories();
+        registerResourceTypes();
 
         LOGGER.info("Refined Storage 2 has loaded.");
+    }
+
+    private void registerResourceTypes() {
+        Rs2PlatformApiFacade.INSTANCE.getResourceTypeRegistry().register(FluidResourceType.INSTANCE);
     }
 
     private void registerInventories() {
@@ -145,6 +152,7 @@ public class Rs2Mod implements ModInitializer {
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_EXTRACT, new GridExtractPacket());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_SCROLL, new GridScrollPacket());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.PROPERTY_CHANGE, new PropertyChangePacket());
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.RESOURCE_TYPE_CHANGE, new ResourceTypeChangePacket());
     }
 
     private void registerGridSearchBoxModes() {

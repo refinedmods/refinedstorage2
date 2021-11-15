@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEner
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridFluidUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridItemUpdatePacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ResourceFilterSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.StorageInfoResponsePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.render.entity.DiskDriveBlockEntityRenderer;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.ControllerModelPredicateProvider;
@@ -88,6 +89,7 @@ public class Rs2ClientMod implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_FLUID_UPDATE, new GridFluidUpdatePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ACTIVE, new GridActivePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.CONTROLLER_ENERGY, new ControllerEnergyPacket());
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.RESOURCE_FILTER_SLOT_UPDATE, new ResourceFilterSlotUpdatePacket());
     }
 
     private void registerKeyBindings() {

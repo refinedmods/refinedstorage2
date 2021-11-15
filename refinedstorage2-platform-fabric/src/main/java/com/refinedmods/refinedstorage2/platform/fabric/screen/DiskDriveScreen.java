@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.FilterModeS
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.PrioritySideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.ProgressWidget;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.RedstoneModeSideButtonWidget;
+import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.ResourceFilterButtonWidget;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ScreenUtil;
 
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveContainerMenu> {
         addSideButton(new ExactModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new AccessModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new PrioritySideButtonWidget(getMenu(), playerInventory, this, this::renderComponentTooltip));
+        addRenderableWidget(new ResourceFilterButtonWidget(leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7, topPos + 4, menu));
     }
 
     private List<Component> createTooltip() {
