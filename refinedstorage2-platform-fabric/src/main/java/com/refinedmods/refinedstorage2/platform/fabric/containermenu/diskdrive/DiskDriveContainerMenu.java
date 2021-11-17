@@ -23,6 +23,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.containermenu.slot.Valida
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import net.minecraft.world.SimpleContainer;
@@ -157,12 +158,12 @@ public class DiskDriveContainerMenu extends BaseContainerMenu implements Priorit
             diskSlots.add(addSlot(createDiskSlot(diskInventory, i)));
         }
         for (int i = 0; i < 9; ++i) {
-            addSlot(createFilterSlot(player, filterInventory, i));
+            addSlot(createFilterSlot(filterInventory, i));
         }
         addPlayerInventory(player.getInventory(), 8, 141);
     }
 
-    private FilterSlot createFilterSlot(Player player, SimpleContainer filterInventory, int i) {
+    private FilterSlot createFilterSlot(SimpleContainer filterInventory, int i) {
         int x = FILTER_SLOT_X + (18 * i);
         return new FilterSlot(filterInventory, i, x, FILTER_SLOT_Y);
     }
@@ -198,14 +199,14 @@ public class DiskDriveContainerMenu extends BaseContainerMenu implements Priorit
                 .map(Slot::getItem)
                 .filter(stack -> !stack.isEmpty())
                 .map(storageInfoAccessor::getInfo)
-                .flatMap(info -> info.map(Stream::of).orElseGet(Stream::empty));
+                .flatMap(Optional::stream);
     }
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
         ItemStack originalStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
-        if (slot != null && slot.hasItem()) {
+        if (slot.hasItem()) {
             ItemStack stackInSlot = slot.getItem();
             originalStack = stackInSlot.copy();
 

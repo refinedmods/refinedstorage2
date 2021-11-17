@@ -50,7 +50,7 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
 
     public FluidGridContainerMenu(int syncId, Inventory playerInventory, FluidGridBlockEntity grid, ExtractableStorage<ItemResource> bucketStorage) {
         super(Rs2Mod.MENUS.getFluidGrid(), syncId, playerInventory, grid, createView());
-        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), (resource) -> FluidConstants.BUCKET);
+        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), resource -> FluidConstants.BUCKET);
         this.grid.addWatcher(this);
         this.fluidGridEventHandler = new FluidGridEventHandlerImpl(this, gridService, playerInventory, bucketStorage);
     }

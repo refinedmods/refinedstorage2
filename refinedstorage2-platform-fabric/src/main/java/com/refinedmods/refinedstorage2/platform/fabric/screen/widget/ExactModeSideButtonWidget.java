@@ -15,15 +15,15 @@ import net.minecraft.network.chat.Component;
 public class ExactModeSideButtonWidget extends SideButtonWidget {
     private final ExactModeAccessor exactModeAccessor;
     private final TooltipRenderer tooltipRenderer;
-    private final List<Component> onTooltip;
-    private final List<Component> offTooltip;
+    private final List<Component> tooltipWhenOn;
+    private final List<Component> tooltipWhenOff;
 
     public ExactModeSideButtonWidget(ExactModeAccessor exactModeAccessor, TooltipRenderer tooltipRenderer) {
         super(createPressAction(exactModeAccessor));
         this.exactModeAccessor = exactModeAccessor;
         this.tooltipRenderer = tooltipRenderer;
-        this.onTooltip = calculateTooltip(true);
-        this.offTooltip = calculateTooltip(false);
+        this.tooltipWhenOn = calculateTooltip(true);
+        this.tooltipWhenOff = calculateTooltip(false);
     }
 
     private static OnPress createPressAction(ExactModeAccessor exactModeAccessor) {
@@ -49,6 +49,6 @@ public class ExactModeSideButtonWidget extends SideButtonWidget {
 
     @Override
     public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(poseStack, exactModeAccessor.isExactMode() ? onTooltip : offTooltip, mouseX, mouseY);
+        tooltipRenderer.render(poseStack, exactModeAccessor.isExactMode() ? tooltipWhenOn : tooltipWhenOff, mouseX, mouseY);
     }
 }

@@ -31,6 +31,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
@@ -136,11 +137,11 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     @Override
     public void load(CompoundTag tag) {
         if (tag.contains(TAG_DISK_INVENTORY)) {
-            diskInventory.fromTag(tag.getList(TAG_DISK_INVENTORY, ByteTag.TAG_COMPOUND));
+            diskInventory.fromTag(tag.getList(TAG_DISK_INVENTORY, Tag.TAG_COMPOUND));
         }
 
         if (tag.contains(TAG_FILTER_INVENTORY)) {
-            filterInventory.fromTag(tag.getList(TAG_FILTER_INVENTORY, ByteTag.TAG_COMPOUND));
+            filterInventory.fromTag(tag.getList(TAG_FILTER_INVENTORY, Tag.TAG_COMPOUND));
         }
 
         super.load(tag);
