@@ -25,8 +25,8 @@ public class ControllerBlock extends NetworkNodeContainerBlock {
 
     private final ControllerType type;
 
-    public ControllerBlock(Properties settings, ControllerType type) {
-        super(settings);
+    public ControllerBlock(Properties properties, ControllerType type) {
+        super(properties);
 
         this.type = type;
 
@@ -34,13 +34,13 @@ public class ControllerBlock extends NetworkNodeContainerBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        InteractionResult result = Rs2Mod.BLOCKS.getController().updateColor(state, player.getItemInHand(hand), world, pos, player);
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        InteractionResult result = Rs2Mod.BLOCKS.getController().updateColor(state, player.getItemInHand(hand), level, pos, player);
         if (result != InteractionResult.PASS) {
             return result;
         }
 
-        return super.use(state, world, pos, player, hand, hit);
+        return super.use(state, level, pos, player, hand, hit);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ControllerBlock extends NetworkNodeContainerBlock {
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return (BlockEntityTicker<T>) new ControllerBlockEntityTicker();
     }
 }

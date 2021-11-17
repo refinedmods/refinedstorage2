@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid;
+package com.refinedmods.refinedstorage2.platform.fabric.containermenu.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
@@ -15,12 +15,12 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.Redstone
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.GridSettings;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.BaseContainerMenu;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.RedstoneModeAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.search.PlatformSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.grid.GridSearchBox;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.BaseScreenHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.RedstoneModeAccessor;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
 
@@ -32,7 +32,7 @@ import net.minecraft.world.inventory.MenuType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class GridScreenHandler<T> extends BaseScreenHandler implements ResourceListListener<T>, RedstoneModeAccessor, GridWatcher {
+public abstract class GridContainerMenu<T> extends BaseContainerMenu implements ResourceListListener<T>, RedstoneModeAccessor, GridWatcher {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static String lastSearchQuery = "";
@@ -54,8 +54,8 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
 
     private boolean active;
 
-    public GridScreenHandler(MenuType<?> screenHandlerType, int syncId, Inventory playerInventory, FriendlyByteBuf buf, GridView<T> view) {
-        super(screenHandlerType, syncId);
+    public GridContainerMenu(MenuType<?> type, int syncId, Inventory playerInventory, FriendlyByteBuf buf, GridView<T> view) {
+        super(type, syncId);
 
         this.view = view;
 
@@ -122,7 +122,7 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
         addSlots(0);
     }
 
-    public GridScreenHandler(MenuType<?> screenHandlerType, int syncId, Inventory playerInventory, GridBlockEntity<T> grid, GridView<T> view) {
+    public GridContainerMenu(MenuType<?> screenHandlerType, int syncId, Inventory playerInventory, GridBlockEntity<T> grid, GridView<T> view) {
         super(screenHandlerType, syncId);
 
         this.view = view;

@@ -15,14 +15,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockColorMap<T extends Block> extends ColorMap<T> {
-    public InteractionResult updateColor(BlockState state, ItemStack heldItem, Level world, BlockPos pos, Player player) {
+    public InteractionResult updateColor(BlockState state, ItemStack heldItem, Level level, BlockPos pos, Player player) {
         DyeColor color = heldItem.getItem() instanceof DyeItem dye ? dye.getDyeColor() : null;
         if (color == null || state.getBlock().equals(map.get(color))) {
             return InteractionResult.PASS;
         }
 
-        if (!world.isClientSide()) {
-            world.setBlockAndUpdate(pos, getNewState(map.get(color), state));
+        if (!level.isClientSide()) {
+            level.setBlockAndUpdate(pos, getNewState(map.get(color), state));
             if (((ServerPlayer) player).gameMode.getGameModeForPlayer() != GameType.CREATIVE) {
                 heldItem.shrink(1);
             }

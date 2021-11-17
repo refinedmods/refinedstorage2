@@ -7,9 +7,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 public interface PlatformNetworkNodeContainer<T extends NetworkNode> extends NetworkNodeContainer<T> {
-    Level getContainerWorld();
+    Level getContainerLevel();
 
-    void setContainerWorld(Level world);
+    void setContainerLevel(Level level);
 
     BlockPos getContainerPosition();
 

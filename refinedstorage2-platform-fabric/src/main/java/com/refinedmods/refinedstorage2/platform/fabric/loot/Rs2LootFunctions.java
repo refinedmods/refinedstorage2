@@ -9,7 +9,7 @@ public class Rs2LootFunctions {
     private LootItemFunctionType controller;
 
     public void register() {
-        controller = Registry.register(Registry.LOOT_FUNCTION_TYPE, Rs2Mod.createIdentifier("controller"), new LootItemFunctionType(new ControllerLootFunction.Serializer()));
+        controller = Registry.register(Registry.LOOT_FUNCTION_TYPE, Rs2Mod.createIdentifier("controller"), new LootItemFunctionType(new ControllerLootItemFunction.Serializer()));
     }
 
     public LootItemFunctionType getController() {

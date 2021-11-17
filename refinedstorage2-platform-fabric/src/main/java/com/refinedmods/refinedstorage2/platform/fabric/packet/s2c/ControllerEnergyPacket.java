@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.ControllerScreenHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ControllerContainerMenu;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -17,7 +17,7 @@ public class ControllerEnergyPacket implements ClientPlayNetworking.PlayChannelH
 
         client.execute(() -> {
             AbstractContainerMenu screenHandler = client.player.containerMenu;
-            if (screenHandler instanceof ControllerScreenHandler controllerScreenHandler) {
+            if (screenHandler instanceof ControllerContainerMenu controllerScreenHandler) {
                 controllerScreenHandler.setEnergy(stored, capacity);
             }
         });

@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.slot;
+package com.refinedmods.refinedstorage2.platform.fabric.containermenu.slot;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;

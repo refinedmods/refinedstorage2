@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.property;
+package com.refinedmods.refinedstorage2.platform.fabric.containermenu.property;
 
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ClientPacketUtil;

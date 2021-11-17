@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.diskdrive;
+package com.refinedmods.refinedstorage2.platform.fabric.containermenu.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 

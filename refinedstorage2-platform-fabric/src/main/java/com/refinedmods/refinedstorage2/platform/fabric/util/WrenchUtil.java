@@ -27,7 +27,7 @@ public final class WrenchUtil {
         return blockState.is(WRENCHABLES);
     }
 
-    public static void playWrenchSound(Level world, BlockPos pos) {
-        world.playSound(null, pos, Rs2Mod.getWrenchSoundEvent(), SoundSource.BLOCKS, 1.0F, 1.0F);
+    public static void playWrenchSound(Level level, BlockPos pos) {
+        level.playSound(null, pos, Rs2Mod.getWrenchSoundEvent(), SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 }

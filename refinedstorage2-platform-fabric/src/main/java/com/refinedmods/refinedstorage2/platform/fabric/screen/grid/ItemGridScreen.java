@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.grid.ItemGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.ItemGridResource;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.ItemGridScreenHandler;
 
 import java.util.List;
 
@@ -15,9 +15,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandler> {
-    public ItemGridScreen(ItemGridScreenHandler handler, Inventory inventory, Component title) {
-        super(handler, inventory, title);
+public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMenu> {
+    public ItemGridScreen(ItemGridContainerMenu menu, Inventory inventory, Component title) {
+        super(menu, inventory, title);
     }
 
     private static GridInsertMode getInsertMode(int clickedButton) {
@@ -65,7 +65,7 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandl
     }
 
     @Override
-    protected void renderResource(PoseStack matrices, int slotX, int slotY, GridResource<ItemResource> resource) {
+    protected void renderResource(PoseStack poseStack, int slotX, int slotY, GridResource<ItemResource> resource) {
         itemRenderer.renderAndDecorateItem(((ItemGridResource) resource).getItemStack(), slotX, slotY);
     }
 

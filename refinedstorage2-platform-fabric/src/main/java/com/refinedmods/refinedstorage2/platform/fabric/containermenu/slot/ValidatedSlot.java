@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.slot;
+package com.refinedmods.refinedstorage2.platform.fabric.containermenu.slot;
 
 import java.util.function.Predicate;
 

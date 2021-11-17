@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen.widget;
 
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.PriorityAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.PriorityScreen;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.TooltipRenderer;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.PriorityAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +42,10 @@ public class PrioritySideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button button, PoseStack matrices, int mouseX, int mouseY) {
+    public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
         List<Component> lines = new ArrayList<>();
         lines.add(Rs2Mod.createTranslation("gui", "priority"));
         lines.add(new TextComponent(String.valueOf(priorityAccessor.getPriority())).withStyle(ChatFormatting.GRAY));
-        tooltipRenderer.render(matrices, lines, mouseX, mouseY);
+        tooltipRenderer.render(poseStack, lines, mouseX, mouseY);
     }
 }

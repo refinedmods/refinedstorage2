@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ControllerModelPredicateProvider implements ClampedItemPropertyFunction {
     @Override
-    public float unclampedCall(ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity entity, int seed) {
+    public float unclampedCall(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
         return ControllerBlockItem.getPercentFull(stack);
     }
 }

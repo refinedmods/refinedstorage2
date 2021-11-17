@@ -24,8 +24,8 @@ import org.jetbrains.annotations.Nullable;
 public class ControllerBlockItem extends ColoredBlockItem {
     private static final int MAX_DAMAGE = 100;
 
-    public ControllerBlockItem(Block block, Properties settings, DyeColor color, Component displayName) {
-        super(block, settings.durability(MAX_DAMAGE), color, displayName);
+    public ControllerBlockItem(Block block, Properties properties, DyeColor color, Component displayName) {
+        super(block, properties.durability(MAX_DAMAGE), color, displayName);
     }
 
     public static float getPercentFull(ItemStack stack) {
@@ -66,8 +66,8 @@ public class ControllerBlockItem extends ColoredBlockItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
-        super.appendHoverText(stack, world, tooltip, context);
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag context) {
+        super.appendHoverText(stack, level, tooltip, context);
 
         long cap = getCapacity(stack);
         if (cap > 0) {
@@ -81,10 +81,10 @@ public class ControllerBlockItem extends ColoredBlockItem {
     }
 
     @Override
-    protected boolean updateCustomBlockEntityTag(BlockPos pos, Level world, @Nullable Player player, ItemStack stack, BlockState state) {
-        boolean result = super.updateCustomBlockEntityTag(pos, world, player, stack, state);
-        if (!world.isClientSide()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
+    protected boolean updateCustomBlockEntityTag(BlockPos pos, Level level, @Nullable Player player, ItemStack stack, BlockState state) {
+        boolean result = super.updateCustomBlockEntityTag(pos, level, player, stack, state);
+        if (!level.isClientSide()) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof ControllerBlockEntity controllerBlockEntity) {
                 controllerBlockEntity.getContainer().getNode().receive(getStored(stack), Action.EXECUTE);
             }

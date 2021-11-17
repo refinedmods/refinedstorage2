@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 
 public class PlatformNetworkNodeContainerImpl<T extends NetworkNodeImpl> extends NetworkNodeContainerImpl<T> implements PlatformNetworkNodeContainer<T> {
     private final BlockPos pos;
-    private Level world;
+    private Level level;
     private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
     private ConnectionProvider connectionProvider;
 
@@ -30,14 +30,14 @@ public class PlatformNetworkNodeContainerImpl<T extends NetworkNodeImpl> extends
     }
 
     @Override
-    public Level getContainerWorld() {
-        return world;
+    public Level getContainerLevel() {
+        return level;
     }
 
     @Override
-    public void setContainerWorld(Level world) {
-        this.world = world;
-        this.connectionProvider = Rs2PlatformApiFacade.INSTANCE.createConnectionProvider(world);
+    public void setContainerLevel(Level level) {
+        this.level = level;
+        this.connectionProvider = Rs2PlatformApiFacade.INSTANCE.createConnectionProvider(level);
     }
 
     @Override
@@ -52,6 +52,6 @@ public class PlatformNetworkNodeContainerImpl<T extends NetworkNodeImpl> extends
 
     @Override
     protected boolean isActive() {
-        return super.isActive() && redstoneMode.isActive(world.hasNeighborSignal(pos));
+        return super.isActive() && redstoneMode.isActive(level.hasNeighborSignal(pos));
     }
 }

@@ -100,9 +100,9 @@ public class Rs2ClientMod implements ClientModInitializer {
     }
 
     private void registerScreens() {
-        ScreenRegistry.register(Rs2Mod.SCREEN_HANDLERS.getDiskDrive(), DiskDriveScreen::new);
-        ScreenRegistry.register(Rs2Mod.SCREEN_HANDLERS.getGrid(), ItemGridScreen::new);
-        ScreenRegistry.register(Rs2Mod.SCREEN_HANDLERS.getFluidGrid(), FluidGridScreen::new);
-        ScreenRegistry.register(Rs2Mod.SCREEN_HANDLERS.getController(), ControllerScreen::new);
+        ScreenRegistry.register(Rs2Mod.MENUS.getDiskDrive(), DiskDriveScreen::new);
+        ScreenRegistry.register(Rs2Mod.MENUS.getGrid(), ItemGridScreen::new);
+        ScreenRegistry.register(Rs2Mod.MENUS.getFluidGrid(), FluidGridScreen::new);
+        ScreenRegistry.register(Rs2Mod.MENUS.getController(), ControllerScreen::new);
     }
 }

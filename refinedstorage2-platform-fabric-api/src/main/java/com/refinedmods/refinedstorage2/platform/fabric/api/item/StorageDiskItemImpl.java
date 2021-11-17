@@ -31,8 +31,8 @@ import org.jetbrains.annotations.Nullable;
 public abstract class StorageDiskItemImpl extends Item implements StorageDiskItem {
     private static final String TAG_ID = "id";
 
-    protected StorageDiskItemImpl(Properties settings) {
-        super(settings);
+    protected StorageDiskItemImpl(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -44,18 +44,18 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
     }
 
     @Override
-    public Optional<StorageInfo> getInfo(@Nullable Level world, ItemStack stack) {
-        if (world == null) {
+    public Optional<StorageInfo> getInfo(@Nullable Level level, ItemStack stack) {
+        if (level == null) {
             return Optional.empty();
         }
-        return getDiskId(stack).map(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world)::getInfo);
+        return getDiskId(stack).map(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::getInfo);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
-        super.appendHoverText(stack, world, tooltip, context);
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag context) {
+        super.appendHoverText(stack, level, tooltip, context);
 
-        getInfo(world, stack).ifPresent(info -> {
+        getInfo(level, stack).ifPresent(info -> {
             if (info.capacity() == -1) {
                 tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
                         "misc",
@@ -82,20 +82,20 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player user, InteractionHand hand) {
         ItemStack stack = user.getItemInHand(hand);
 
         Optional<ItemStack> storagePart = createStoragePart(stack.getCount());
 
-        if (!(world instanceof ServerLevel) || !user.isShiftKeyDown() || storagePart.isEmpty()) {
+        if (!(level instanceof ServerLevel) || !user.isShiftKeyDown() || storagePart.isEmpty()) {
             return InteractionResultHolder.fail(stack);
         }
 
         return getDiskId(stack)
-                .flatMap(id -> Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world).disassemble(id))
+                .flatMap(id -> Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level).disassemble(id))
                 .map(disk -> {
                     if (!user.getInventory().add(storagePart.get().copy())) {
-                        world.addFreshEntity(new ItemEntity(world, user.getX(), user.getY(), user.getZ(), storagePart.get()));
+                        level.addFreshEntity(new ItemEntity(level, user.getX(), user.getY(), user.getZ(), storagePart.get()));
                     }
 
                     return InteractionResultHolder.success(createDisassemblyByproduct());
@@ -105,18 +105,18 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
 
     protected abstract Optional<ItemStack> createStoragePart(int count);
 
-    protected abstract Storage<?> createStorage(Level world);
+    protected abstract Storage<?> createStorage(Level level);
 
     protected abstract ItemStack createDisassemblyByproduct();
 
     @Override
-    public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected) {
-        super.inventoryTick(stack, world, entity, slot, selected);
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
+        super.inventoryTick(stack, level, entity, slot, selected);
 
-        if (!world.isClientSide() && !stack.hasTag() && entity instanceof Player) {
+        if (!level.isClientSide() && !stack.hasTag() && entity instanceof Player) {
             UUID id = UUID.randomUUID();
 
-            Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world).set(id, createStorage(world));
+            Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level).set(id, createStorage(level));
 
             stack.setTag(new CompoundTag());
             stack.getTag().putUUID(TAG_ID, id);

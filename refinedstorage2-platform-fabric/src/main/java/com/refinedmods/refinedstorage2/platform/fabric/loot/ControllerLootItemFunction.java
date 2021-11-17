@@ -14,7 +14,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
-public class ControllerLootFunction implements LootItemFunction {
+public class ControllerLootItemFunction implements LootItemFunction {
     @Override
     public LootItemFunctionType getType() {
         return Rs2Mod.LOOT_FUNCTIONS.getController();
@@ -36,15 +36,15 @@ public class ControllerLootFunction implements LootItemFunction {
         return stack;
     }
 
-    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<ControllerLootFunction> {
+    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<ControllerLootItemFunction> {
         @Override
-        public void serialize(JsonObject json, ControllerLootFunction value, JsonSerializationContext serializationContext) {
+        public void serialize(JsonObject json, ControllerLootItemFunction value, JsonSerializationContext serializationContext) {
             // no serialization necessary
         }
 
         @Override
-        public ControllerLootFunction deserialize(JsonObject json, JsonDeserializationContext context) {
-            return new ControllerLootFunction();
+        public ControllerLootItemFunction deserialize(JsonObject json, JsonDeserializationContext context) {
+            return new ControllerLootItemFunction();
         }
     }
 }

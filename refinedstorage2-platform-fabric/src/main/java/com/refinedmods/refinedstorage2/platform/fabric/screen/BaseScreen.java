@@ -11,8 +11,8 @@ import org.lwjgl.opengl.GL11;
 public abstract class BaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     private int sideButtonY;
 
-    protected BaseScreen(T screenHandler, Inventory playerInventory, Component text) {
-        super(screenHandler, playerInventory, text);
+    protected BaseScreen(T menu, Inventory playerInventory, Component text) {
+        super(menu, playerInventory, text);
     }
 
     @Override

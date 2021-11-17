@@ -10,8 +10,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemGridBlock extends GridBlock {
-    public ItemGridBlock(Properties settings) {
-        super(settings);
+    public ItemGridBlock(Properties properties) {
+        super(properties);
     }
 
     @Override

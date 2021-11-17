@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class DiskDriveBlock extends NetworkNodeContainerBlock {
-    public DiskDriveBlock(Properties settings) {
-        super(settings);
+    public DiskDriveBlock(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class DiskDriveBlock extends NetworkNodeContainerBlock {
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return (BlockEntityTicker<T>) new DiskDriveBlockEntityTicker();
     }
 }

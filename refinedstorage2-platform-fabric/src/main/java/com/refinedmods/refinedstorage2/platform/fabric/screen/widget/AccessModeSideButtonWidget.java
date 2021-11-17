@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.screen.widget;
 
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.AccessModeAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.TooltipRenderer;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.AccessModeAccessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +60,7 @@ public class AccessModeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button button, PoseStack matrices, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrices, tooltips.get(accessModeAccessor.getAccessMode()), mouseX, mouseY);
+    public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
+        tooltipRenderer.render(poseStack, tooltips.get(accessModeAccessor.getAccessMode()), mouseX, mouseY);
     }
 }

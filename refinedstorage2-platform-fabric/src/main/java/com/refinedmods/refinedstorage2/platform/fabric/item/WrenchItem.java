@@ -9,8 +9,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class WrenchItem extends Item {
-    public WrenchItem(Properties settings) {
-        super(settings);
+    public WrenchItem(Properties properties) {
+        super(properties);
     }
 
     @Override

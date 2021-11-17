@@ -22,22 +22,22 @@ public abstract class NetworkNodeContainerBlockEntityImpl<T extends NetworkNodeI
     }
 
     @Override
-    public void setLevel(Level world) {
-        super.setLevel(world);
-        if (!world.isClientSide()) {
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        if (!level.isClientSide()) {
             if (container == null) {
-                T node = createNode(worldPosition, null);
+                T node = createNode(getBlockPos(), null);
                 node.setActive(false);
-                container = createContainer(worldPosition, node);
+                container = createContainer(getBlockPos(), node);
             }
-            container.setContainerWorld(world);
+            container.setContainerLevel(level);
         }
     }
 
     @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
-        container = createContainer(worldPosition, createNode(worldPosition, nbt));
+        container = createContainer(getBlockPos(), createNode(getBlockPos(), nbt));
     }
 
     // TODO: What about chunk unloading?

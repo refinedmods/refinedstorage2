@@ -20,10 +20,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
 public class FabricConnectionProvider implements ConnectionProvider {
-    private final Level world;
+    private final Level level;
 
-    public FabricConnectionProvider(Level world) {
-        this.world = world;
+    public FabricConnectionProvider(Level level) {
+        this.level = level;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class FabricConnectionProvider implements ConnectionProvider {
                 .stream()
                 .map(container -> new ScanEntry<>(
                         container,
-                        ((PlatformNetworkNodeContainer<?>) container).getContainerWorld(),
+                        ((PlatformNetworkNodeContainer<?>) container).getContainerLevel(),
                         ((PlatformNetworkNodeContainer<?>) container).getContainerPosition()
                 ))
                 .collect(Collectors.toSet());
@@ -64,8 +64,8 @@ public class FabricConnectionProvider implements ConnectionProvider {
     }
 
     private void depthScan(ScanState scanState, BlockPos position) {
-        if (world.getBlockEntity(position) instanceof NetworkNodeContainerBlockEntity<?> c) {
-            addEntry(scanState, new ScanEntry<>(c.getContainer(), world, position));
+        if (level.getBlockEntity(position) instanceof NetworkNodeContainerBlockEntity<?> c) {
+            addEntry(scanState, new ScanEntry<>(c.getContainer(), level, position));
         }
     }
 
@@ -82,17 +82,17 @@ public class FabricConnectionProvider implements ConnectionProvider {
 
         scanState.removedEntries.remove(entry);
 
-        Set<NetworkNodeContainer<?>> connections = findConnectionsAt(world, ((PlatformNetworkNodeContainer<?>) entry.getContainer()).getContainerPosition());
+        Set<NetworkNodeContainer<?>> connections = findConnectionsAt(level, ((PlatformNetworkNodeContainer<?>) entry.getContainer()).getContainerPosition());
         for (NetworkNodeContainer<?> connection : connections) {
             depthScan(scanState, ((PlatformNetworkNodeContainer<?>) connection).getContainerPosition());
         }
     }
 
-    private Set<NetworkNodeContainer<?>> findConnectionsAt(Level world, BlockPos pos) {
+    private Set<NetworkNodeContainer<?>> findConnectionsAt(Level level, BlockPos pos) {
         Set<NetworkNodeContainer<?>> containers = new HashSet<>();
         for (Direction direction : Direction.values()) {
             BlockPos offsetPos = pos.relative(direction);
-            if (world.getBlockEntity(offsetPos) instanceof NetworkNodeContainerBlockEntity<?> blockEntity) {
+            if (level.getBlockEntity(offsetPos) instanceof NetworkNodeContainerBlockEntity<?> blockEntity) {
                 containers.add(blockEntity.getContainer());
             }
         }

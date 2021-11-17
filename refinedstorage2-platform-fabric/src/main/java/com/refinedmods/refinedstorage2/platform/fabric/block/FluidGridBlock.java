@@ -10,8 +10,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class FluidGridBlock extends GridBlock {
-    public FluidGridBlock(Properties settings) {
-        super(settings);
+    public FluidGridBlock(Properties properties) {
+        super(properties);
     }
 
     @Override

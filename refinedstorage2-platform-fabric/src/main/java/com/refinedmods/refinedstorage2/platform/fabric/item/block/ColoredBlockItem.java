@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.Block;
 public class ColoredBlockItem extends BlockItem {
     private final Component displayName;
 
-    public ColoredBlockItem(Block block, Properties settings, DyeColor color, Component displayName) {
-        super(block, settings);
+    public ColoredBlockItem(Block block, Properties properties, DyeColor color, Component displayName) {
+        super(block, properties);
         if (color != ColorMap.NORMAL_COLOR) {
             this.displayName = new TranslatableComponent("color.minecraft." + color.getName()).append(" ").append(displayName);
         } else {

@@ -29,7 +29,7 @@ public abstract class SideButtonWidget extends Button implements Button.OnToolti
     }
 
     @Override
-    public void renderButton(PoseStack matrices, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, getTextureIdentifier());
@@ -40,14 +40,14 @@ public abstract class SideButtonWidget extends Button implements Button.OnToolti
         // Ensure that the tooltip is drawn over the side buttons (tooltips have a Z offset of 400).
         int originalZOffset = getBlitOffset();
         setBlitOffset(300);
-        blit(matrices, x, y, 238, isHovered ? 35 : 16, WIDTH, HEIGHT);
-        blit(matrices, x + 1, y + 1, getXTexture(), getYTexture(), WIDTH, HEIGHT);
+        blit(poseStack, x, y, 238, isHovered ? 35 : 16, WIDTH, HEIGHT);
+        blit(poseStack, x + 1, y + 1, getXTexture(), getYTexture(), WIDTH, HEIGHT);
 
         if (isHovered) {
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.5f);
-            blit(matrices, x, y, 238, 54, WIDTH, HEIGHT);
+            blit(poseStack, x, y, 238, 54, WIDTH, HEIGHT);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.disableBlend();
         }
@@ -55,7 +55,7 @@ public abstract class SideButtonWidget extends Button implements Button.OnToolti
         setBlitOffset(originalZOffset);
 
         if (isHovered) {
-            onTooltip(this, matrices, mouseX, mouseY);
+            onTooltip(this, poseStack, mouseX, mouseY);
         }
 
         RenderSystem.disableDepthTest();

@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.fabric.block.ControllerEnergyType;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.ControllerScreenHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ControllerContainerMenu;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
@@ -87,7 +87,7 @@ public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
-        return new ControllerScreenHandler(syncId, inv, this, player);
+        return new ControllerContainerMenu(syncId, inv, this, player);
     }
 
     @Override

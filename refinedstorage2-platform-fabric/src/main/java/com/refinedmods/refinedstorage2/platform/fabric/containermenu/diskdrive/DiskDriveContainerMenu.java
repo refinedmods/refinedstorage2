@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.diskdrive;
+package com.refinedmods.refinedstorage2.platform.fabric.containermenu.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
@@ -11,15 +11,15 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.AccessModeSe
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.AccessModeAccessor;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.BaseScreenHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.ExactModeAccessor;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.FilterModeAccessor;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.PriorityAccessor;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.RedstoneModeAccessor;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.property.TwoWaySyncProperty;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.slot.FilterSlot;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.slot.ValidatedSlot;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.AccessModeAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.BaseContainerMenu;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ExactModeAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.FilterModeAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.PriorityAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.RedstoneModeAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.property.TwoWaySyncProperty;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.slot.FilterSlot;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.slot.ValidatedSlot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public class DiskDriveScreenHandler extends BaseScreenHandler implements PriorityAccessor, FilterModeAccessor, ExactModeAccessor, AccessModeAccessor, RedstoneModeAccessor {
+public class DiskDriveContainerMenu extends BaseContainerMenu implements PriorityAccessor, FilterModeAccessor, ExactModeAccessor, AccessModeAccessor, RedstoneModeAccessor {
     private static final int DISK_SLOT_X = 61;
     private static final int DISK_SLOT_Y = 54;
 
@@ -46,8 +46,8 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     private final TwoWaySyncProperty<AccessMode> accessModeProperty;
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
 
-    public DiskDriveScreenHandler(int syncId, Inventory playerInventory) {
-        super(Rs2Mod.SCREEN_HANDLERS.getDiskDrive(), syncId);
+    public DiskDriveContainerMenu(int syncId, Inventory playerInventory) {
+        super(Rs2Mod.MENUS.getDiskDrive(), syncId);
 
         this.priorityProperty = TwoWaySyncProperty.forClient(
                 0,
@@ -102,8 +102,8 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
         addSlots(playerInventory.player, new SimpleContainer(DiskDriveNetworkNode.DISK_COUNT), new SimpleContainer(9));
     }
 
-    public DiskDriveScreenHandler(int syncId, Player player, SimpleContainer diskInventory, SimpleContainer filterInventory, DiskDriveBlockEntity diskDrive, StorageInfoAccessor storageInfoAccessor) {
-        super(Rs2Mod.SCREEN_HANDLERS.getDiskDrive(), syncId);
+    public DiskDriveContainerMenu(int syncId, Player player, SimpleContainer diskInventory, SimpleContainer filterInventory, DiskDriveBlockEntity diskDrive, StorageInfoAccessor storageInfoAccessor) {
+        super(Rs2Mod.MENUS.getDiskDrive(), syncId);
 
         this.priorityProperty = TwoWaySyncProperty.forServer(
                 0,

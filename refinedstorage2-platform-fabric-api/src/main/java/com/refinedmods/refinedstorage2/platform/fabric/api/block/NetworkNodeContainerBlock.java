@@ -18,7 +18,7 @@ public abstract class NetworkNodeContainerBlock extends Block implements EntityB
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> type) {
         return (BlockEntityTicker<T>) new NetworkNodeContainerBlockEntityTicker<>();
     }
 }

@@ -37,11 +37,11 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    protected Storage<?> createStorage(Level world) {
+    protected Storage<?> createStorage(Level level) {
         return new PlatformCappedStorage<>(
                 type.getCapacity(),
                 com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidStorageType.INSTANCE,
-                Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world)::markAsChanged
+                Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
         );
     }
 

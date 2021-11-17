@@ -16,8 +16,8 @@ import org.jetbrains.annotations.Nullable;
 public abstract class NetworkNodeContainerBlock extends BaseBlock implements EntityBlock {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
-    protected NetworkNodeContainerBlock(Properties settings) {
-        super(settings);
+    protected NetworkNodeContainerBlock(Properties properties) {
+        super(properties);
 
         if (hasActive()) {
             registerDefaultState(getStateDefinition().any()
@@ -40,7 +40,7 @@ public abstract class NetworkNodeContainerBlock extends BaseBlock implements Ent
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return new FabricNetworkNodeContainerBlockEntityTicker();
     }
 }
