@@ -8,18 +8,18 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
-public class ProgressWidget extends DrawableHelper implements Drawable, Element, Selectable {
-    private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/widgets.png");
+public class ProgressWidget extends GuiComponent implements Widget, GuiEventListener, NarratableEntry {
+    private static final ResourceLocation TEXTURE = Rs2Mod.createIdentifier("textures/gui/widgets.png");
 
     private final int x;
     private final int y;
@@ -27,9 +27,9 @@ public class ProgressWidget extends DrawableHelper implements Drawable, Element,
     private final int height;
     private final DoubleSupplier progressSupplier;
     private final TooltipRenderer tooltipRenderer;
-    private final Supplier<List<Text>> tooltipSupplier;
+    private final Supplier<List<Component>> tooltipSupplier;
 
-    public ProgressWidget(int x, int y, int width, int height, DoubleSupplier progressSupplier, TooltipRenderer tooltipRenderer, Supplier<List<Text>> tooltipSupplier) {
+    public ProgressWidget(int x, int y, int width, int height, DoubleSupplier progressSupplier, TooltipRenderer tooltipRenderer, Supplier<List<Component>> tooltipSupplier) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -40,7 +40,7 @@ public class ProgressWidget extends DrawableHelper implements Drawable, Element,
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
         int correctedHeight = (int) (progressSupplier.getAsDouble() * height);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -48,10 +48,10 @@ public class ProgressWidget extends DrawableHelper implements Drawable, Element,
         RenderSystem.setShaderTexture(0, TEXTURE);
 
         RenderSystem.enableDepthTest();
-        int zOffset = getZOffset();
-        setZOffset(200);
-        drawTexture(matrices, x, y + height - correctedHeight, 179, height - correctedHeight, width, correctedHeight);
-        setZOffset(zOffset);
+        int zOffset = getBlitOffset();
+        setBlitOffset(200);
+        blit(matrices, x, y + height - correctedHeight, 179, height - correctedHeight, width, correctedHeight);
+        setBlitOffset(zOffset);
         RenderSystem.disableDepthTest();
 
         boolean hovered = mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
@@ -61,12 +61,12 @@ public class ProgressWidget extends DrawableHelper implements Drawable, Element,
     }
 
     @Override
-    public SelectionType getType() {
-        return SelectionType.NONE;
+    public NarrationPriority narrationPriority() {
+        return NarrationPriority.NONE;
     }
 
     @Override
-    public void appendNarrations(NarrationMessageBuilder builder) {
+    public void updateNarration(NarrationElementOutput builder) {
         // intentionally empty
     }
 }

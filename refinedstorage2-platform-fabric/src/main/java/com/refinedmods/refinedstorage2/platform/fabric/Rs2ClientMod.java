@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
-import com.refinedmods.refinedstorage2.platform.fabric.mixin.ModelPredicateProviderRegistryAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEnergyPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridActivePacket;
@@ -15,6 +15,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.screen.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.grid.FluidGridScreen;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.grid.ItemGridScreen;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -22,16 +23,15 @@ import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 
 public class Rs2ClientMod implements ClientModInitializer {
-    private static KeyBinding focusSearchBar;
+    private static KeyMapping focusSearchBar;
 
-    public static KeyBinding getFocusSearchBarKeyBinding() {
+    public static KeyMapping getFocusSearchBarKeyBinding() {
         return focusSearchBar;
     }
 
@@ -47,7 +47,7 @@ public class Rs2ClientMod implements ClientModInitializer {
     }
 
     private void registerModelPredicates() {
-        Rs2Mod.ITEMS.getControllers().forEach(controllerBlockItem -> ModelPredicateProviderRegistryAccessor.register(
+        Rs2Mod.ITEMS.getControllers().forEach(controllerBlockItem -> ItemPropertiesAccessor.register(
                 controllerBlockItem,
                 Rs2Mod.createIdentifier("stored_in_controller"),
                 new ControllerModelPredicateProvider()
@@ -55,16 +55,16 @@ public class Rs2ClientMod implements ClientModInitializer {
     }
 
     private void setRenderLayers() {
-        BlockRenderLayerMap.INSTANCE.putBlock(Rs2Mod.BLOCKS.getCable(), RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(Rs2Mod.BLOCKS.getCable(), RenderType.cutout());
 
         if (Rs2Mod.FEATURES.contains(FeatureFlag.RELAY)) {
-            BlockRenderLayerMap.INSTANCE.putBlock(Rs2Mod.BLOCKS.getRelay(), RenderLayer.getCutout());
+            BlockRenderLayerMap.INSTANCE.putBlock(Rs2Mod.BLOCKS.getRelay(), RenderType.cutout());
         }
 
-        Rs2Mod.BLOCKS.getGrid().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout()));
-        Rs2Mod.BLOCKS.getFluidGrid().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout()));
-        Rs2Mod.BLOCKS.getController().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout()));
-        Rs2Mod.BLOCKS.getCreativeController().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderLayer.getCutout()));
+        Rs2Mod.BLOCKS.getGrid().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
+        Rs2Mod.BLOCKS.getFluidGrid().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
+        Rs2Mod.BLOCKS.getController().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
+        Rs2Mod.BLOCKS.getCreativeController().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
     }
 
     private void registerBlockEntityRenderers() {
@@ -72,7 +72,7 @@ public class Rs2ClientMod implements ClientModInitializer {
     }
 
     private void registerCustomModels() {
-        Identifier diskDriveIdentifier = Rs2Mod.createIdentifier("block/disk_drive");
+        ResourceLocation diskDriveIdentifier = Rs2Mod.createIdentifier("block/disk_drive");
 
         ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (identifier, modelProviderContext) -> {
             if (identifier.equals(diskDriveIdentifier)) {
@@ -91,9 +91,9 @@ public class Rs2ClientMod implements ClientModInitializer {
     }
 
     private void registerKeyBindings() {
-        focusSearchBar = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        focusSearchBar = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 String.format("key.%s.focus_search_bar", Rs2Mod.ID),
-                InputUtil.Type.KEYSYM,
+                InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_TAB,
                 String.format("category.%s.key_bindings", Rs2Mod.ID)
         ));

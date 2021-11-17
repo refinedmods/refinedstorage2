@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.item;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
 public class StorageHousingItem extends Item {
-    public StorageHousingItem(Settings settings) {
+    public StorageHousingItem(Properties settings) {
         super(settings);
     }
 }

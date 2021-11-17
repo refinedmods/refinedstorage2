@@ -7,44 +7,43 @@ import com.refinedmods.refinedstorage2.platform.fabric.item.block.ControllerBloc
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.loot.function.LootFunction;
-import net.minecraft.loot.function.LootFunctionType;
-import net.minecraft.util.JsonSerializer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
-public class ControllerLootFunction implements LootFunction {
+public class ControllerLootFunction implements LootItemFunction {
     @Override
-    public LootFunctionType getType() {
+    public LootItemFunctionType getType() {
         return Rs2Mod.LOOT_FUNCTIONS.getController();
     }
 
     @Override
     public ItemStack apply(ItemStack stack, LootContext lootContext) {
-        BlockEntity controller = lootContext.get(LootContextParameters.BLOCK_ENTITY);
+        BlockEntity controller = lootContext.getParamOrNull(LootContextParams.BLOCK_ENTITY);
 
         if (controller instanceof ControllerBlockEntity controllerBlockEntity) {
             long stored = controllerBlockEntity.getActualStored();
             long capacity = controllerBlockEntity.getActualCapacity();
             int damage = ControllerBlockItem.calculateDamage(stored, capacity);
 
-            stack.setDamage(damage);
+            stack.setDamageValue(damage);
             ControllerBlockItem.setEnergy(stack, stored, capacity);
         }
 
         return stack;
     }
 
-    public static class Serializer implements JsonSerializer<ControllerLootFunction> {
+    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<ControllerLootFunction> {
         @Override
-        public void toJson(JsonObject json, ControllerLootFunction object, JsonSerializationContext context) {
+        public void serialize(JsonObject json, ControllerLootFunction value, JsonSerializationContext serializationContext) {
             // no serialization necessary
         }
 
         @Override
-        public ControllerLootFunction fromJson(JsonObject json, JsonDeserializationContext context) {
+        public ControllerLootFunction deserialize(JsonObject json, JsonDeserializationContext context) {
             return new ControllerLootFunction();
         }
     }

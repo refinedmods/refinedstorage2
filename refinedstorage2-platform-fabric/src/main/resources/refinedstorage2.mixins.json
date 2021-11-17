@@ -7,10 +7,9 @@
         "SlotAccessor"
     ],
     "client": [
-        "TextFieldWidgetAccessor",
-        "KeyBindingAccessor",
-        "BakedQuadAccessor",
-        "ModelPredicateProviderRegistryAccessor"
+        "EditBoxAccessor",
+        "ItemPropertiesAccessor",
+        "KeyMappingAccessor"
     ],
     "injectors": {
         "defaultRequire": 1

@@ -2,32 +2,32 @@ package com.refinedmods.refinedstorage2.platform.fabric.item.block;
 
 import com.refinedmods.refinedstorage2.platform.fabric.init.ColorMap;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.DyeColor;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 
 public class ColoredBlockItem extends BlockItem {
-    private final Text displayName;
+    private final Component displayName;
 
-    public ColoredBlockItem(Block block, Settings settings, DyeColor color, Text displayName) {
+    public ColoredBlockItem(Block block, Properties settings, DyeColor color, Component displayName) {
         super(block, settings);
         if (color != ColorMap.NORMAL_COLOR) {
-            this.displayName = new TranslatableText("color.minecraft." + color.getName()).append(" ").append(displayName);
+            this.displayName = new TranslatableComponent("color.minecraft." + color.getName()).append(" ").append(displayName);
         } else {
             this.displayName = displayName;
         }
     }
 
     @Override
-    public Text getName() {
+    public Component getDescription() {
         return displayName;
     }
 
     @Override
-    public Text getName(ItemStack stack) {
+    public Component getName(ItemStack stack) {
         return displayName;
     }
 }

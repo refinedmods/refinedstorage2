@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import java.util.Optional;
 import java.util.UUID;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public interface StorageDiskItem {
@@ -15,5 +15,5 @@ public interface StorageDiskItem {
 
     Optional<UUID> getDiskId(ItemStack stack);
 
-    Optional<StorageInfo> getInfo(@Nullable World world, ItemStack stack);
+    Optional<StorageInfo> getInfo(@Nullable Level world, ItemStack stack);
 }

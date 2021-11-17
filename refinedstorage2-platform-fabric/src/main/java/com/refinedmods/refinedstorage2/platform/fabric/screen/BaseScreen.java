@@ -2,39 +2,39 @@ package com.refinedmods.refinedstorage2.platform.fabric.screen;
 
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.SideButtonWidget;
 
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.lwjgl.opengl.GL11;
 
-public abstract class BaseScreen<T extends ScreenHandler> extends HandledScreen<T> {
+public abstract class BaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     private int sideButtonY;
 
-    protected BaseScreen(T screenHandler, PlayerInventory playerInventory, Text text) {
+    protected BaseScreen(T screenHandler, Inventory playerInventory, Component text) {
         super(screenHandler, playerInventory, text);
     }
 
     @Override
     protected void init() {
-        clearChildren();
+        clearWidgets();
         super.init();
         sideButtonY = 6;
     }
 
     public void addSideButton(SideButtonWidget button) {
-        button.x = x - button.getWidth() - 2;
-        button.y = y + sideButtonY;
+        button.x = leftPos - button.getWidth() - 2;
+        button.y = topPos + sideButtonY;
 
         sideButtonY += button.getHeight() + 2;
 
-        addDrawableChild(button);
+        addRenderableWidget(button);
     }
 
     protected void setScissor(int x, int y, int w, int h) {
-        double scale = client.getWindow().getScaleFactor();
+        double scale = minecraft.getWindow().getGuiScale();
         int sx = (int) (x * scale);
-        int sy = (int) ((client.getWindow().getScaledHeight() - (y + h)) * scale);
+        int sy = (int) ((minecraft.getWindow().getGuiScaledHeight() - (y + h)) * scale);
         int sw = (int) (w * scale);
         int sh = (int) (h * scale);
 

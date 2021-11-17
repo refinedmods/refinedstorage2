@@ -7,12 +7,12 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.ItemGridScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemGridBlockEntity extends GridBlockEntity<ItemResource> {
@@ -21,13 +21,13 @@ public class ItemGridBlockEntity extends GridBlockEntity<ItemResource> {
     }
 
     @Override
-    protected void writeResourceAmount(PacketByteBuf buf, ResourceAmount<ItemResource> stack) {
+    protected void writeResourceAmount(FriendlyByteBuf buf, ResourceAmount<ItemResource> stack) {
         PacketUtil.writeItemResourceAmount(buf, stack);
     }
 
     @Nullable
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
         return new ItemGridScreenHandler(syncId, inv, this);
     }
 }

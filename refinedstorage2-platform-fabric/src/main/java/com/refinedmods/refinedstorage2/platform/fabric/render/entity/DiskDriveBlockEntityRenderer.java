@@ -7,28 +7,28 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.diskdrive.Di
 import com.refinedmods.refinedstorage2.platform.fabric.render.CubeBuilder;
 import com.refinedmods.refinedstorage2.platform.fabric.util.BiDirection;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.RenderPhase;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Quaternion;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Quaternion;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class DiskDriveBlockEntityRenderer implements BlockEntityRenderer<DiskDriveBlockEntity> {
-    private static final RenderLayer RENDER_LAYER = RenderLayer.of(
+    private static final RenderType RENDER_LAYER = RenderType.create(
             "drive_leds",
-            VertexFormats.POSITION_COLOR,
-            VertexFormat.DrawMode.QUADS,
+            DefaultVertexFormat.POSITION_COLOR,
+            VertexFormat.Mode.QUADS,
             32565,
             false,
             true,
-            RenderLayer.MultiPhaseParameters.builder().shader(new RenderPhase.Shader(GameRenderer::getPositionColorShader)).build(false)
+            RenderType.CompositeState.builder().setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionColorShader)).createCompositeState(false)
     );
 
     private static final int LED_X1 = 10;
@@ -40,27 +40,27 @@ public class DiskDriveBlockEntityRenderer implements BlockEntityRenderer<DiskDri
     private static final int LED_Z2 = 0;
 
     private Quaternion createQuaternion(BiDirection direction) {
-        return new Quaternion(direction.getVec().getX(), direction.getVec().getY(), direction.getVec().getZ(), true);
+        return new Quaternion(direction.getVec().x(), direction.getVec().y(), direction.getVec().z(), true);
     }
 
     @Override
-    public void render(DiskDriveBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+    public void render(DiskDriveBlockEntity entity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
         if (!(entity.getRenderAttachmentData() instanceof DiskDriveState)) {
             return;
         }
 
         // Always sanity check the block state first, these may not always be correct and can cause crashes (see #20).
-        BlockState blockState = entity.getWorld().getBlockState(entity.getPos());
-        if (!blockState.contains(BaseBlock.DIRECTION)) {
+        BlockState blockState = entity.getLevel().getBlockState(entity.getBlockPos());
+        if (!blockState.hasProperty(BaseBlock.DIRECTION)) {
             return;
         }
 
         DiskDriveState diskStates = (DiskDriveState) entity.getRenderAttachmentData();
 
-        matrices.push();
+        matrices.pushPose();
 
         matrices.translate(0.5F, 0.5F, 0.5F);
-        matrices.multiply(createQuaternion(blockState.get(BaseBlock.DIRECTION)));
+        matrices.mulPose(createQuaternion(blockState.getValue(BaseBlock.DIRECTION)));
         matrices.translate(-0.5F, -0.5F, -0.5F);
 
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RENDER_LAYER);
@@ -96,6 +96,6 @@ public class DiskDriveBlockEntityRenderer implements BlockEntityRenderer<DiskDri
             }
         }
 
-        matrices.pop();
+        matrices.popPose();
     }
 }

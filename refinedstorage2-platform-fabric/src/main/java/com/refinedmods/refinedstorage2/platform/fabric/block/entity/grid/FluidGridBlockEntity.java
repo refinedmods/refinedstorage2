@@ -10,13 +10,13 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.FluidGridScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class FluidGridBlockEntity extends GridBlockEntity<FluidResource> {
@@ -25,18 +25,18 @@ public class FluidGridBlockEntity extends GridBlockEntity<FluidResource> {
     }
 
     @Override
-    public Text getDisplayName() {
+    public Component getDisplayName() {
         return Rs2Mod.createTranslation("block", "fluid_grid");
     }
 
     @Override
-    protected void writeResourceAmount(PacketByteBuf buf, ResourceAmount<FluidResource> resourceAmount) {
+    protected void writeResourceAmount(FriendlyByteBuf buf, ResourceAmount<FluidResource> resourceAmount) {
         PacketUtil.writeFluidResourceAmount(buf, resourceAmount);
     }
 
     @Nullable
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
         return new FluidGridScreenHandler(syncId, inv, this, getBucketStorage());
     }
 

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import net.minecraft.util.DyeColor;
+import net.minecraft.world.item.DyeColor;
 import org.apache.logging.log4j.util.TriConsumer;
 
 public class ColorMap<T> {
@@ -24,7 +24,7 @@ public class ColorMap<T> {
         if (color == NORMAL_COLOR) {
             return name;
         }
-        return color.asString() + "_" + name;
+        return color.getSerializedName() + "_" + name;
     }
 
     public void forEach(TriConsumer<DyeColor, T, Function<String, String>> consumer) {

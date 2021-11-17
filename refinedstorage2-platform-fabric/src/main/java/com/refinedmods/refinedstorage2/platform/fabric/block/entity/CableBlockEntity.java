@@ -5,9 +5,9 @@ import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class CableBlockEntity extends FabricNetworkNodeContainerBlockEntity<NetworkNodeImpl> {
     public CableBlockEntity(BlockPos pos, BlockState state) {
@@ -15,7 +15,7 @@ public class CableBlockEntity extends FabricNetworkNodeContainerBlockEntity<Netw
     }
 
     @Override
-    protected NetworkNodeImpl createNode(BlockPos pos, NbtCompound tag) {
+    protected NetworkNodeImpl createNode(BlockPos pos, CompoundTag tag) {
         return new CableNetworkNode(Rs2Config.get().getCable().getEnergyUsage());
     }
 }

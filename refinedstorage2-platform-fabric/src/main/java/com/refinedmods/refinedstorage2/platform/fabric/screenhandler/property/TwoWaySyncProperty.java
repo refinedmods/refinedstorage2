@@ -7,9 +7,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.minecraft.screen.Property;
+import net.minecraft.world.inventory.DataSlot;
 
-public class TwoWaySyncProperty<T> extends Property {
+public class TwoWaySyncProperty<T> extends DataSlot {
     private final int index;
     private final Function<T, Integer> serializer;
     private final Function<Integer, T> deserializer;

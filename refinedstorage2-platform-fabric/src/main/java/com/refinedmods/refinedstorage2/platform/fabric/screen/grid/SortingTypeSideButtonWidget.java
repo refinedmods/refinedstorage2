@@ -13,15 +13,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
 
 public class SortingTypeSideButtonWidget extends SideButtonWidget {
     private final GridScreenHandler screenHandler;
     private final TooltipRenderer tooltipRenderer;
-    private final Map<GridSortingType, List<Text>> tooltips = new EnumMap<>(GridSortingType.class);
+    private final Map<GridSortingType, List<Component>> tooltips = new EnumMap<>(GridSortingType.class);
 
     public SortingTypeSideButtonWidget(GridScreenHandler screenHandler, TooltipRenderer tooltipRenderer) {
         super(createPressAction(screenHandler));
@@ -30,14 +30,14 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
         Arrays.stream(GridSortingType.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private static PressAction createPressAction(GridScreenHandler screenHandler) {
+    private static OnPress createPressAction(GridScreenHandler screenHandler) {
         return btn -> screenHandler.setSortingType(screenHandler.getSortingType().toggle());
     }
 
-    private List<Text> calculateTooltip(GridSortingType type) {
-        List<Text> lines = new ArrayList<>();
+    private List<Component> calculateTooltip(GridSortingType type) {
+        List<Component> lines = new ArrayList<>();
         lines.add(Rs2Mod.createTranslation("gui", "grid.sorting.type"));
-        lines.add(Rs2Mod.createTranslation("gui", "grid.sorting.type." + type.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
+        lines.add(Rs2Mod.createTranslation("gui", "grid.sorting.type." + type.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
         return lines;
     }
 
@@ -57,7 +57,7 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int mouseX, int mouseY) {
+    public void onTooltip(Button buttonWidget, PoseStack matrixStack, int mouseX, int mouseY) {
         tooltipRenderer.render(matrixStack, tooltips.get(screenHandler.getSortingType()), mouseX, mouseY);
     }
 }

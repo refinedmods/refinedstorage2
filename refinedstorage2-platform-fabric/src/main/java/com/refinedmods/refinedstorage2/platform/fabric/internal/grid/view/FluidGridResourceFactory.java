@@ -13,11 +13,11 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.tag.FluidTags;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.item.TooltipFlag;
 
 public class FluidGridResourceFactory implements Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> {
     @Override
@@ -36,18 +36,18 @@ public class FluidGridResourceFactory implements Function<ResourceAmount<FluidRe
 
     private String getTooltip(FluidVariant fluidVariant) {
         return FluidVariantRendering
-                .getTooltip(fluidVariant, TooltipContext.Default.ADVANCED)
+                .getTooltip(fluidVariant, TooltipFlag.Default.ADVANCED)
                 .stream()
-                .map(Text::asString)
+                .map(Component::getContents)
                 .collect(Collectors.joining("\n"));
     }
 
     private Set<String> getTags(FluidVariant fluidVariant) {
         return FluidTags
-                .getTagGroup()
-                .getTagsFor(fluidVariant.getFluid())
+                .getAllTags()
+                .getMatchingTags(fluidVariant.getFluid())
                 .stream()
-                .map(Identifier::getPath)
+                .map(ResourceLocation::getPath)
                 .collect(Collectors.toSet());
     }
 
@@ -61,7 +61,7 @@ public class FluidGridResourceFactory implements Function<ResourceAmount<FluidRe
     }
 
     private String getModId(FluidVariant fluidVariant) {
-        return Registry.FLUID.getId(fluidVariant.getFluid()).getNamespace();
+        return Registry.FLUID.getKey(fluidVariant.getFluid()).getNamespace();
     }
 
     private String getName(FluidVariant fluidVariant) {

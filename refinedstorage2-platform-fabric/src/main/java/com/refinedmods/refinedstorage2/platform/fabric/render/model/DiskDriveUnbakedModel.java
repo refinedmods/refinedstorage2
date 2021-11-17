@@ -7,28 +7,28 @@ import java.util.Collection;
 import java.util.function.Function;
 
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.ModelBakeSettings;
-import net.minecraft.client.render.model.ModelLoader;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 public class DiskDriveUnbakedModel implements BasicUnbakedModel {
-    private static final Identifier BASE_MODEL = Rs2Mod.createIdentifier("block/disk_drive_base");
-    private static final Identifier DISK_MODEL = Rs2Mod.createIdentifier("block/disk");
+    private static final ResourceLocation BASE_MODEL = Rs2Mod.createIdentifier("block/disk_drive_base");
+    private static final ResourceLocation DISK_MODEL = Rs2Mod.createIdentifier("block/disk");
 
     @Override
-    public Collection<Identifier> getModelDependencies() {
-        return new ImmutableSet.Builder<Identifier>()
+    public Collection<ResourceLocation> getDependencies() {
+        return new ImmutableSet.Builder<ResourceLocation>()
                 .add(BASE_MODEL)
                 .add(DISK_MODEL)
                 .build();
     }
 
     @Override
-    public @Nullable BakedModel bake(ModelLoader loader, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
+    public @Nullable BakedModel bake(ModelBakery loader, Function<Material, TextureAtlasSprite> textureGetter, ModelState rotationContainer, ResourceLocation modelId) {
         return new DiskDriveBakedModel(
                 loader.bake(BASE_MODEL, rotationContainer),
                 loader.bake(DISK_MODEL, rotationContainer)

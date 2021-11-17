@@ -2,33 +2,33 @@ package com.refinedmods.refinedstorage2.platform.fabric.init;
 
 import com.refinedmods.refinedstorage2.platform.fabric.block.BaseBlock;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameMode;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockColorMap<T extends Block> extends ColorMap<T> {
-    public ActionResult updateColor(BlockState state, ItemStack heldItem, World world, BlockPos pos, PlayerEntity player) {
-        DyeColor color = heldItem.getItem() instanceof DyeItem dye ? dye.getColor() : null;
+    public InteractionResult updateColor(BlockState state, ItemStack heldItem, Level world, BlockPos pos, Player player) {
+        DyeColor color = heldItem.getItem() instanceof DyeItem dye ? dye.getDyeColor() : null;
         if (color == null || state.getBlock().equals(map.get(color))) {
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         }
 
-        if (!world.isClient()) {
-            world.setBlockState(pos, getNewState(map.get(color), state));
-            if (((ServerPlayerEntity) player).interactionManager.getGameMode() != GameMode.CREATIVE) {
-                heldItem.decrement(1);
+        if (!world.isClientSide()) {
+            world.setBlockAndUpdate(pos, getNewState(map.get(color), state));
+            if (((ServerPlayer) player).gameMode.getGameModeForPlayer() != GameType.CREATIVE) {
+                heldItem.shrink(1);
             }
         }
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     public Block[] toArray() {
@@ -36,9 +36,9 @@ public class BlockColorMap<T extends Block> extends ColorMap<T> {
     }
 
     private BlockState getNewState(Block newBlock, BlockState oldState) {
-        BlockState newState = newBlock.getDefaultState();
-        if (newState.contains(BaseBlock.DIRECTION)) {
-            newState = newState.with(BaseBlock.DIRECTION, oldState.get(BaseBlock.DIRECTION));
+        BlockState newState = newBlock.defaultBlockState();
+        if (newState.hasProperty(BaseBlock.DIRECTION)) {
+            newState = newState.setValue(BaseBlock.DIRECTION, oldState.getValue(BaseBlock.DIRECTION));
         }
         return newState;
     }

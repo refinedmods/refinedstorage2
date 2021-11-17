@@ -5,14 +5,14 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiProxy;
 
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 public class ReiGridSearchBoxMode extends PlatformSearchBoxModeImpl {
     private final boolean twoWay;
     private final ReiProxy reiProxy;
 
-    public ReiGridSearchBoxMode(GridQueryParser queryParser, Identifier textureIdentifier, int textureX, int textureY, TranslatableText name, boolean autoSelect, boolean twoWay, ReiProxy reiProxy) {
+    public ReiGridSearchBoxMode(GridQueryParser queryParser, ResourceLocation textureIdentifier, int textureX, int textureY, TranslatableComponent name, boolean autoSelect, boolean twoWay, ReiProxy reiProxy) {
         super(queryParser, textureIdentifier, textureX, textureY, name, autoSelect);
         this.twoWay = twoWay;
         this.reiProxy = reiProxy;
@@ -31,7 +31,7 @@ public class ReiGridSearchBoxMode extends PlatformSearchBoxModeImpl {
         );
     }
 
-    private static TranslatableText createTranslation(boolean autoSelected, boolean twoWay) {
+    private static TranslatableComponent createTranslation(boolean autoSelected, boolean twoWay) {
         String twoWayText = twoWay ? "_two_way" : "";
         String autoSelectedText = autoSelected ? "_autoselected" : "";
         return Rs2Mod.createTranslation("gui", String.format("grid.search_box_mode.rei%s%s", twoWayText, autoSelectedText));

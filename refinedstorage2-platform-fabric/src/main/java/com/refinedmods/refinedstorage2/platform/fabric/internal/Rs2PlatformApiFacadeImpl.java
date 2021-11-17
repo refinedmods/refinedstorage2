@@ -14,24 +14,24 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricSt
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemStorageType;
 
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 
 public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     private final PlatformStorageRepository clientStorageRepo = new FabricClientStorageRepository();
 
     @Override
-    public PlatformStorageRepository getStorageRepository(World world) {
+    public PlatformStorageRepository getStorageRepository(Level world) {
         if (world.getServer() == null) {
             return clientStorageRepo;
         }
 
         return world
                 .getServer()
-                .getWorld(World.OVERWORLD)
-                .getPersistentStateManager()
-                .getOrCreate(this::createStorageRepository, this::createStorageRepository, FabricStorageRepository.NAME);
+                .getLevel(Level.OVERWORLD)
+                .getDataStorage()
+                .computeIfAbsent(this::createStorageRepository, this::createStorageRepository, FabricStorageRepository.NAME);
     }
 
     @Override
@@ -45,16 +45,16 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public ConnectionProvider createConnectionProvider(World world) {
+    public ConnectionProvider createConnectionProvider(Level world) {
         return new FabricConnectionProvider(world);
     }
 
     @Override
-    public TranslatableText createTranslation(String category, String value, Object... args) {
+    public TranslatableComponent createTranslation(String category, String value, Object... args) {
         return Rs2Mod.createTranslation(category, value, args);
     }
 
-    private FabricStorageRepository createStorageRepository(NbtCompound tag) {
+    private FabricStorageRepository createStorageRepository(CompoundTag tag) {
         var manager = createStorageRepository();
         manager.read(tag);
         return manager;

@@ -5,24 +5,24 @@ import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.PriorityAcc
 import com.refinedmods.refinedstorage2.platform.fabric.util.ScreenUtil;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.lwjgl.glfw.GLFW;
 
-public class PriorityScreen extends HandledScreen<ScreenHandler> {
-    private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/priority.png");
+public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMenu> {
+    private static final ResourceLocation TEXTURE = Rs2Mod.createIdentifier("textures/gui/priority.png");
 
     private static final int ACTION_BUTTON_WIDTH = 50;
     private static final int ACTION_BUTTON_X = 107;
@@ -31,10 +31,10 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
     private static final int AMOUNT_X = 19;
     private static final int AMOUNT_Y = 48;
 
-    private static final TranslatableText PRIORITY_TEXT = Rs2Mod.createTranslation("gui", "priority");
-    private static final TranslatableText SET_TEXT = Rs2Mod.createTranslation("gui", "priority.set");
-    private static final TranslatableText RESET_TEXT = Rs2Mod.createTranslation("gui", "priority.reset");
-    private static final TranslatableText CANCEL_TEXT = new TranslatableText("gui.cancel");
+    private static final TranslatableComponent PRIORITY_TEXT = Rs2Mod.createTranslation("gui", "priority");
+    private static final TranslatableComponent SET_TEXT = Rs2Mod.createTranslation("gui", "priority.set");
+    private static final TranslatableComponent RESET_TEXT = Rs2Mod.createTranslation("gui", "priority.reset");
+    private static final TranslatableComponent CANCEL_TEXT = new TranslatableComponent("gui.cancel");
 
     private static final int[] INCREMENTS_TOP = {1, 5, 10};
     private static final int[] INCREMENTS_BOTTOM = {-1, -5, -10};
@@ -46,46 +46,46 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
     private final Screen parent;
     private final PriorityAccessor priorityAccessor;
 
-    private TextFieldWidget amountField;
+    private EditBox amountField;
 
-    public PriorityScreen(PriorityAccessor priorityAccessor, Screen parent, PlayerInventory playerInventory) {
+    public PriorityScreen(PriorityAccessor priorityAccessor, Screen parent, Inventory playerInventory) {
         super(new DummyScreenHandler(), playerInventory, PriorityScreen.PRIORITY_TEXT);
 
         this.parent = parent;
         this.priorityAccessor = priorityAccessor;
 
-        this.titleX = 7;
-        this.titleY = 7;
-        this.backgroundWidth = 164;
-        this.backgroundHeight = 92;
+        this.titleLabelX = 7;
+        this.titleLabelY = 7;
+        this.imageWidth = 164;
+        this.imageHeight = 92;
     }
 
     @Override
     protected void init() {
         super.init();
 
-        addDrawableChild(new ButtonWidget(x + ACTION_BUTTON_X, y + ACTION_BUTTON_Y, ACTION_BUTTON_WIDTH, 20, RESET_TEXT, btn -> reset()));
-        addDrawableChild(new ButtonWidget(x + ACTION_BUTTON_X, y + ACTION_BUTTON_Y + 24, ACTION_BUTTON_WIDTH, 20, SET_TEXT, btn -> ok()));
-        addDrawableChild(new ButtonWidget(x + ACTION_BUTTON_X, y + ACTION_BUTTON_Y + 48, ACTION_BUTTON_WIDTH, 20, CANCEL_TEXT, btn -> close()));
+        addRenderableWidget(new Button(leftPos + ACTION_BUTTON_X, topPos + ACTION_BUTTON_Y, ACTION_BUTTON_WIDTH, 20, RESET_TEXT, btn -> reset()));
+        addRenderableWidget(new Button(leftPos + ACTION_BUTTON_X, topPos + ACTION_BUTTON_Y + 24, ACTION_BUTTON_WIDTH, 20, SET_TEXT, btn -> ok()));
+        addRenderableWidget(new Button(leftPos + ACTION_BUTTON_X, topPos + ACTION_BUTTON_Y + 48, ACTION_BUTTON_WIDTH, 20, CANCEL_TEXT, btn -> close()));
 
-        amountField = new TextFieldWidget(textRenderer, x + AMOUNT_X, y + AMOUNT_Y, 69 - 6, textRenderer.fontHeight, new LiteralText(""));
-        amountField.setDrawsBackground(false);
-        amountField.setText(String.valueOf(priorityAccessor.getPriority()));
+        amountField = new EditBox(font, leftPos + AMOUNT_X, topPos + AMOUNT_Y, 69 - 6, font.lineHeight, new TextComponent(""));
+        amountField.setBordered(false);
+        amountField.setValue(String.valueOf(priorityAccessor.getPriority()));
         amountField.setVisible(true);
-        amountField.setFocusUnlocked(false);
-        amountField.setTextFieldFocused(true);
+        amountField.setCanLoseFocus(false);
+        amountField.setFocus(true);
 
-        addDrawableChild(amountField);
+        addRenderableWidget(amountField);
 
-        addIncrementButtons(INCREMENTS_TOP, x + INCREMENT_BUTTON_X, y + INCREMENT_BUTTON_TOP_Y);
-        addIncrementButtons(INCREMENTS_BOTTOM, x + INCREMENT_BUTTON_X, y + INCREMENT_BUTTON_BOTTOM_Y);
+        addIncrementButtons(INCREMENTS_TOP, leftPos + INCREMENT_BUTTON_X, topPos + INCREMENT_BUTTON_TOP_Y);
+        addIncrementButtons(INCREMENTS_BOTTOM, leftPos + INCREMENT_BUTTON_X, topPos + INCREMENT_BUTTON_BOTTOM_Y);
     }
 
     private void addIncrementButtons(int[] increments, int x, int y) {
         for (int increment : increments) {
-            Text text = new LiteralText((increment > 0 ? "+" : "") + increment);
+            Component text = new TextComponent((increment > 0 ? "+" : "") + increment);
 
-            addDrawableChild(new ButtonWidget(x, y, INCREMENT_BUTTON_WIDTH, 20, text, btn -> changeAmount(increment)));
+            addRenderableWidget(new Button(x, y, INCREMENT_BUTTON_WIDTH, 20, text, btn -> changeAmount(increment)));
 
             x += INCREMENT_BUTTON_WIDTH + 3;
         }
@@ -94,12 +94,12 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
     private void changeAmount(int delta) {
         int oldAmount = getAmount();
         int newAmount = oldAmount + delta;
-        amountField.setText(String.valueOf(newAmount));
+        amountField.setValue(String.valueOf(newAmount));
     }
 
     private int getAmount() {
         try {
-            return Integer.parseInt(amountField.getText());
+            return Integer.parseInt(amountField.getValue());
         } catch (NumberFormatException e) {
             return 0;
         }
@@ -116,29 +116,29 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
     }
 
     @Override
-    protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
-        ScreenUtil.drawVersionInformation(matrices, textRenderer);
+    protected void renderBg(PoseStack matrices, float delta, int mouseX, int mouseY) {
+        ScreenUtil.drawVersionInformation(matrices, font);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
+        int x = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2;
 
-        drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
+        blit(matrices, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
-        textRenderer.draw(matrices, title, titleX, titleY, 4210752);
+    protected void renderLabels(PoseStack matrices, int mouseX, int mouseY) {
+        font.draw(matrices, title, titleLabelX, titleLabelY, 4210752);
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
         super.render(matrices, mouseX, mouseY, delta);
-        drawMouseoverTooltip(matrices, mouseX, mouseY);
+        renderTooltip(matrices, mouseX, mouseY);
     }
 
     @Override
@@ -161,7 +161,7 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
     }
 
     private void reset() {
-        amountField.setText("0");
+        amountField.setValue("0");
     }
 
     private void ok() {
@@ -170,16 +170,16 @@ public class PriorityScreen extends HandledScreen<ScreenHandler> {
     }
 
     private void close() {
-        MinecraftClient.getInstance().setScreen(parent);
+        Minecraft.getInstance().setScreen(parent);
     }
 
-    private static class DummyScreenHandler extends ScreenHandler {
+    private static class DummyScreenHandler extends AbstractContainerMenu {
         protected DummyScreenHandler() {
             super(null, 0);
         }
 
         @Override
-        public boolean canUse(PlayerEntity player) {
+        public boolean stillValid(Player player) {
             return true;
         }
     }

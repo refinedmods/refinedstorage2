@@ -12,15 +12,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.PersistentState;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.saveddata.SavedData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FabricStorageRepository extends PersistentState implements PlatformStorageRepository {
+public class FabricStorageRepository extends SavedData implements PlatformStorageRepository {
     public static final String NAME = "refinedstorage2_storages";
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -44,13 +44,13 @@ public class FabricStorageRepository extends PersistentState implements Platform
     @Override
     public <T> void set(UUID id, Storage<T> storage) {
         parent.set(id, storage);
-        markDirty();
+        setDirty();
     }
 
     @Override
     public <T> Optional<Storage<T>> disassemble(UUID id) {
         return parent.disassemble(id).map(storage -> {
-            markDirty();
+            setDirty();
             return (Storage<T>) storage;
         });
     }
@@ -60,12 +60,12 @@ public class FabricStorageRepository extends PersistentState implements Platform
         return parent.getInfo(id);
     }
 
-    public void read(NbtCompound tag) {
-        NbtList storages = tag.getList(TAG_STORAGES, NbtType.COMPOUND);
-        for (NbtElement storageTag : storages) {
-            UUID id = ((NbtCompound) storageTag).getUuid(TAG_STORAGE_ID);
-            Identifier typeIdentifier = new Identifier(((NbtCompound) storageTag).getString(TAG_STORAGE_TYPE));
-            NbtCompound data = ((NbtCompound) storageTag).getCompound(TAG_STORAGE_DATA);
+    public void read(CompoundTag tag) {
+        ListTag storages = tag.getList(TAG_STORAGES, NbtType.COMPOUND);
+        for (Tag storageTag : storages) {
+            UUID id = ((CompoundTag) storageTag).getUUID(TAG_STORAGE_ID);
+            ResourceLocation typeIdentifier = new ResourceLocation(((CompoundTag) storageTag).getString(TAG_STORAGE_TYPE));
+            CompoundTag data = ((CompoundTag) storageTag).getCompound(TAG_STORAGE_DATA);
 
             StorageTypeRegistry.INSTANCE.getType(typeIdentifier).ifPresentOrElse(type -> {
                 parent.set(id, type.fromTag(data, this));
@@ -76,8 +76,8 @@ public class FabricStorageRepository extends PersistentState implements Platform
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
-        NbtList storageList = new NbtList();
+    public CompoundTag save(CompoundTag tag) {
+        ListTag storageList = new ListTag();
         for (Map.Entry<UUID, Storage<?>> entry : parent.getAll()) {
             if (entry.getValue() instanceof StorageTypeAccessor storageTypeAccessor) {
                 storageList.add(convertStorageToTag(entry.getKey(), entry.getValue(), storageTypeAccessor));
@@ -89,14 +89,14 @@ public class FabricStorageRepository extends PersistentState implements Platform
         return tag;
     }
 
-    private NbtElement convertStorageToTag(UUID id, Storage<?> storage, StorageTypeAccessor typeAccessor) {
-        Identifier typeIdentifier = StorageTypeRegistry
+    private Tag convertStorageToTag(UUID id, Storage<?> storage, StorageTypeAccessor typeAccessor) {
+        ResourceLocation typeIdentifier = StorageTypeRegistry
                 .INSTANCE
                 .getIdentifier(typeAccessor.getType())
                 .orElseThrow(() -> new RuntimeException("Storage type is not registered"));
 
-        NbtCompound tag = new NbtCompound();
-        tag.putUuid(TAG_STORAGE_ID, id);
+        CompoundTag tag = new CompoundTag();
+        tag.putUUID(TAG_STORAGE_ID, id);
         tag.put(TAG_STORAGE_DATA, typeAccessor.getType().toTag(storage));
         tag.putString(TAG_STORAGE_TYPE, typeIdentifier.toString());
         return tag;
@@ -104,6 +104,6 @@ public class FabricStorageRepository extends PersistentState implements Platform
 
     @Override
     public void markAsChanged() {
-        markDirty();
+        setDirty();
     }
 }

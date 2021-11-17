@@ -27,12 +27,12 @@ import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
 import java.util.Optional;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,13 +42,13 @@ public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> imp
     private final GridService<FluidResource> gridService;
     private final FluidGridEventHandler fluidGridEventHandler;
 
-    public FluidGridScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
+    public FluidGridScreenHandler(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
         super(Rs2Mod.SCREEN_HANDLERS.getFluidGrid(), syncId, playerInventory, buf, createView());
         this.gridService = null;
         this.fluidGridEventHandler = new ClientFluidGridEventHandler();
     }
 
-    public FluidGridScreenHandler(int syncId, PlayerInventory playerInventory, FluidGridBlockEntity grid, ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridScreenHandler(int syncId, Inventory playerInventory, FluidGridBlockEntity grid, ExtractableStorage<ItemResource> bucketStorage) {
         super(Rs2Mod.SCREEN_HANDLERS.getFluidGrid(), syncId, playerInventory, grid, createView());
         this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), (resource) -> FluidConstants.BUCKET);
         this.grid.addWatcher(this);
@@ -60,13 +60,13 @@ public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> imp
     }
 
     @Override
-    protected ResourceAmount<FluidResource> readResourceAmount(PacketByteBuf buf) {
+    protected ResourceAmount<FluidResource> readResourceAmount(FriendlyByteBuf buf) {
         return PacketUtil.readFluidResourceAmount(buf);
     }
 
     @Override
-    public void close(PlayerEntity playerEntity) {
-        super.close(playerEntity);
+    public void removed(Player playerEntity) {
+        super.removed(playerEntity);
         if (grid != null) {
             grid.removeWatcher(this);
         }
@@ -76,7 +76,7 @@ public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> imp
     public void onChanged(ResourceListOperationResult<FluidResource> change) {
         LOGGER.info("Received a change of {} for {}", change.change(), change.resourceAmount().getResource());
 
-        ServerPacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, PacketIds.GRID_FLUID_UPDATE, buf -> {
+        ServerPacketUtil.sendToPlayer((ServerPlayer) playerInventory.player, PacketIds.GRID_FLUID_UPDATE, buf -> {
             PacketUtil.writeFluidResource(buf, change.resourceAmount().getResource());
             buf.writeLong(change.change());
 
@@ -86,11 +86,11 @@ public class FluidGridScreenHandler extends GridScreenHandler<FluidResource> imp
     }
 
     @Override
-    public ItemStack transferSlot(PlayerEntity playerEntity, int slotIndex) {
-        if (!playerEntity.world.isClient()) {
+    public ItemStack quickMoveStack(Player playerEntity, int slotIndex) {
+        if (!playerEntity.level.isClientSide()) {
             Slot slot = getSlot(slotIndex);
-            if (slot.hasStack()) {
-                fluidGridEventHandler.onTransfer(((SlotAccessor) slot).getIndex());
+            if (slot.hasItem()) {
+                fluidGridEventHandler.onTransfer(((SlotAccessor) slot).getSlot());
             }
         }
         return ItemStack.EMPTY;

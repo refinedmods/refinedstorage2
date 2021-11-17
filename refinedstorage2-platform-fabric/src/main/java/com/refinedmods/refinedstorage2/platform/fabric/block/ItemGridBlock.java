@@ -4,13 +4,13 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.init.BlockColorMap;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemGridBlock extends GridBlock {
-    public ItemGridBlock(Settings settings) {
+    public ItemGridBlock(Properties settings) {
         super(settings);
     }
 
@@ -21,7 +21,7 @@ public class ItemGridBlock extends GridBlock {
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ItemGridBlockEntity(pos, state);
     }
 }

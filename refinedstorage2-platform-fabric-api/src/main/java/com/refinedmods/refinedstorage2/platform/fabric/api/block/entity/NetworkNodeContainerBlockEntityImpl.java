@@ -7,12 +7,12 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.container.PlatformNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.container.PlatformNetworkNodeContainerImpl;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class NetworkNodeContainerBlockEntityImpl<T extends NetworkNodeImpl, C extends PlatformNetworkNodeContainer<T>> extends BlockEntity implements NetworkNodeContainerBlockEntity<T> {
     private C container;
@@ -22,42 +22,42 @@ public abstract class NetworkNodeContainerBlockEntityImpl<T extends NetworkNodeI
     }
 
     @Override
-    public void setWorld(World world) {
-        super.setWorld(world);
-        if (!world.isClient()) {
+    public void setLevel(Level world) {
+        super.setLevel(world);
+        if (!world.isClientSide()) {
             if (container == null) {
-                T node = createNode(pos, null);
+                T node = createNode(worldPosition, null);
                 node.setActive(false);
-                container = createContainer(pos, node);
+                container = createContainer(worldPosition, node);
             }
             container.setContainerWorld(world);
         }
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
-        container = createContainer(pos, createNode(pos, nbt));
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
+        container = createContainer(worldPosition, createNode(worldPosition, nbt));
     }
 
     // TODO: What about chunk unloading?
     @Override
-    public void markRemoved() {
-        super.markRemoved();
-        if (world != null && !world.isClient()) {
+    public void setRemoved() {
+        super.setRemoved();
+        if (level != null && !level.isClientSide()) {
             container.remove(createConnectionProvider(), NetworkComponentRegistry.INSTANCE);
         }
     }
 
     protected ConnectionProvider createConnectionProvider() {
-        return Rs2PlatformApiFacade.INSTANCE.createConnectionProvider(world);
+        return Rs2PlatformApiFacade.INSTANCE.createConnectionProvider(level);
     }
 
     protected C createContainer(BlockPos pos, T node) {
         return (C) new PlatformNetworkNodeContainerImpl<T>(node, pos);
     }
 
-    protected abstract T createNode(BlockPos pos, NbtCompound tag);
+    protected abstract T createNode(BlockPos pos, CompoundTag tag);
 
     @Override
     public C getContainer() {

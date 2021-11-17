@@ -15,13 +15,13 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricNetwor
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class GridBlockEntity<T> extends FabricNetworkNodeContainerBlockEntity<GridNetworkNode<T>> implements ExtendedScreenHandlerFactory {
     private static final String TAG_SORTING_DIRECTION = "sd";
@@ -37,7 +37,7 @@ public abstract class GridBlockEntity<T> extends FabricNetworkNodeContainerBlock
     }
 
     @Override
-    protected GridNetworkNode<T> createNode(BlockPos pos, NbtCompound tag) {
+    protected GridNetworkNode<T> createNode(BlockPos pos, CompoundTag tag) {
         GridNetworkNode<T> grid = new GridNetworkNode<>(
                 GridSearchBoxModeRegistry.INSTANCE.getDefault(),
                 Rs2Config.get().getGrid().getEnergyUsage(),
@@ -66,21 +66,21 @@ public abstract class GridBlockEntity<T> extends FabricNetworkNodeContainerBlock
     }
 
     @Override
-    public Text getDisplayName() {
+    public Component getDisplayName() {
         return Rs2Mod.createTranslation("block", "grid");
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
+    public CompoundTag save(CompoundTag tag) {
         tag.putInt(TAG_SORTING_DIRECTION, GridSettings.getSortingDirection(getContainer().getNode().getSortingDirection()));
         tag.putInt(TAG_SORTING_TYPE, GridSettings.getSortingType(getContainer().getNode().getSortingType()));
         tag.putInt(TAG_SIZE, GridSettings.getSize(getContainer().getNode().getSize()));
         tag.putInt(TAG_SEARCH_BOX_MODE, GridSearchBoxModeRegistry.INSTANCE.getId(getContainer().getNode().getSearchBoxMode()));
-        return super.writeNbt(tag);
+        return super.save(tag);
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+    public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
         buf.writeBoolean(getContainer().getNode().isActive());
         buf.writeInt(GridSettings.getSortingDirection(getSortingDirection()));
         buf.writeInt(GridSettings.getSortingType(getSortingType()));
@@ -94,7 +94,7 @@ public abstract class GridBlockEntity<T> extends FabricNetworkNodeContainerBlock
         });
     }
 
-    protected abstract void writeResourceAmount(PacketByteBuf buf, ResourceAmount<T> stack);
+    protected abstract void writeResourceAmount(FriendlyByteBuf buf, ResourceAmount<T> stack);
 
     public GridSortingType getSortingType() {
         return getContainer().getNode().getSortingType();
@@ -102,7 +102,7 @@ public abstract class GridBlockEntity<T> extends FabricNetworkNodeContainerBlock
 
     public void setSortingType(GridSortingType sortingType) {
         getContainer().getNode().setSortingType(sortingType);
-        markDirty();
+        setChanged();
     }
 
     public GridSortingDirection getSortingDirection() {
@@ -111,7 +111,7 @@ public abstract class GridBlockEntity<T> extends FabricNetworkNodeContainerBlock
 
     public void setSortingDirection(GridSortingDirection sortingDirection) {
         getContainer().getNode().setSortingDirection(sortingDirection);
-        markDirty();
+        setChanged();
     }
 
     public GridSearchBoxMode getSearchBoxMode() {
@@ -120,7 +120,7 @@ public abstract class GridBlockEntity<T> extends FabricNetworkNodeContainerBlock
 
     public void setSearchBoxMode(GridSearchBoxMode searchBoxMode) {
         getContainer().getNode().setSearchBoxMode(searchBoxMode);
-        markDirty();
+        setChanged();
     }
 
     public GridSize getSize() {
@@ -129,7 +129,7 @@ public abstract class GridBlockEntity<T> extends FabricNetworkNodeContainerBlock
 
     public void setSize(GridSize size) {
         getContainer().getNode().setSize(size);
-        markDirty();
+        setChanged();
     }
 
     public void addWatcher(GridWatcher watcher) {

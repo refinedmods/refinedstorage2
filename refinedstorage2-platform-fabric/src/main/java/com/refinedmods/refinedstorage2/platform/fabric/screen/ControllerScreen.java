@@ -11,74 +11,74 @@ import java.util.Collections;
 import java.util.List;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 
 public class ControllerScreen extends BaseScreen<ControllerScreenHandler> {
-    private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/controller.png");
+    private static final ResourceLocation TEXTURE = Rs2Mod.createIdentifier("textures/gui/controller.png");
 
     private final ProgressWidget progressWidget;
 
-    public ControllerScreen(ControllerScreenHandler screenHandler, PlayerInventory playerInventory, Text text) {
+    public ControllerScreen(ControllerScreenHandler screenHandler, Inventory playerInventory, Component text) {
         super(screenHandler, playerInventory, text);
 
-        this.titleX = 7;
-        this.titleY = 7;
-        this.playerInventoryTitleX = 7;
-        this.playerInventoryTitleY = 94;
-        this.backgroundWidth = 176;
-        this.backgroundHeight = 189;
+        this.titleLabelX = 7;
+        this.titleLabelY = 7;
+        this.inventoryLabelX = 7;
+        this.inventoryLabelY = 94;
+        this.imageWidth = 176;
+        this.imageHeight = 189;
 
-        this.progressWidget = new ProgressWidget(80, 20, 16, 70, this::getPercentageFull, this::renderTooltip, this::createTooltip);
-        addDrawableChild(progressWidget);
+        this.progressWidget = new ProgressWidget(80, 20, 16, 70, this::getPercentageFull, this::renderComponentTooltip, this::createTooltip);
+        addRenderableWidget(progressWidget);
     }
 
     @Override
     protected void init() {
         super.init();
-        addSideButton(new RedstoneModeSideButtonWidget(getScreenHandler(), this::renderTooltip));
+        addSideButton(new RedstoneModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
     }
 
     private double getPercentageFull() {
-        return (double) getScreenHandler().getStored() / (double) getScreenHandler().getCapacity();
+        return (double) getMenu().getStored() / (double) getMenu().getCapacity();
     }
 
-    private List<Text> createTooltip() {
+    private List<Component> createTooltip() {
         return Collections.singletonList(Rs2Mod.createTranslation(
                 "misc",
                 "stored_with_capacity",
-                QuantityFormatter.format(getScreenHandler().getStored()),
-                QuantityFormatter.format(getScreenHandler().getCapacity())
+                QuantityFormatter.format(getMenu().getStored()),
+                QuantityFormatter.format(getMenu().getCapacity())
         ));
     }
 
     @Override
-    protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
-        ScreenUtil.drawVersionInformation(matrices, textRenderer);
+    protected void renderBg(PoseStack matrices, float delta, int mouseX, int mouseY) {
+        ScreenUtil.drawVersionInformation(matrices, font);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
+        int x = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2;
 
-        drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
+        blit(matrices, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
-        super.drawForeground(matrices, mouseX, mouseY);
-        progressWidget.render(matrices, mouseX - x, mouseY - y, 0);
+    protected void renderLabels(PoseStack matrices, int mouseX, int mouseY) {
+        super.renderLabels(matrices, mouseX, mouseY);
+        progressWidget.render(matrices, mouseX - leftPos, mouseY - topPos, 0);
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
         super.render(matrices, mouseX, mouseY, delta);
-        drawMouseoverTooltip(matrices, mouseX, mouseY);
+        renderTooltip(matrices, mouseX, mouseY);
     }
 }

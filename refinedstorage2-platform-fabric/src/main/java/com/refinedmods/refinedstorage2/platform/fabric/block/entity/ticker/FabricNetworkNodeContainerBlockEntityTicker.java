@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.block.entity.ticker;
 import com.refinedmods.refinedstorage2.platform.fabric.api.block.entity.ticker.NetworkNodeContainerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricNetworkNodeContainerBlockEntity;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class FabricNetworkNodeContainerBlockEntityTicker<T extends FabricNetworkNodeContainerBlockEntity<?>> extends NetworkNodeContainerBlockEntityTicker<T> {
     @Override

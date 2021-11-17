@@ -2,28 +2,28 @@ package com.refinedmods.refinedstorage2.platform.fabric.item;
 
 import com.refinedmods.refinedstorage2.platform.fabric.util.WrenchUtil;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class WrenchItem extends Item {
-    public WrenchItem(Settings settings) {
+    public WrenchItem(Properties settings) {
         super(settings);
     }
 
     @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        BlockState state = context.getWorld().getBlockState(context.getBlockPos());
+    public InteractionResult useOn(UseOnContext context) {
+        BlockState state = context.getLevel().getBlockState(context.getClickedPos());
         if (WrenchUtil.isWrenchable(state)) {
-            return state.onUse(
-                    context.getWorld(),
+            return state.use(
+                    context.getLevel(),
                     context.getPlayer(),
                     context.getHand(),
-                    new BlockHitResult(context.getHitPos(), context.getSide(), context.getBlockPos(), context.hitsInsideBlock())
+                    new BlockHitResult(context.getClickLocation(), context.getClickedFace(), context.getClickedPos(), context.isInside())
             );
         }
-        return super.useOnBlock(context);
+        return super.useOn(context);
     }
 }

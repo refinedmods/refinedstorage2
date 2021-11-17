@@ -13,18 +13,18 @@ import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 
 import static com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource.ofItemVariant;
 
 public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
-    private final ScreenHandler screenHandler;
+    private final AbstractContainerMenu screenHandler;
     private final GridService<ItemResource> gridService;
     private final PlayerInventoryStorage playerInventoryStorage;
     private final SingleSlotStorage<ItemVariant> playerCursorStorage;
 
-    public ItemGridEventHandlerImpl(ScreenHandler screenHandler, GridService<ItemResource> gridService, PlayerInventory playerInventory) {
+    public ItemGridEventHandlerImpl(AbstractContainerMenu screenHandler, GridService<ItemResource> gridService, Inventory playerInventory) {
         this.screenHandler = screenHandler;
         this.gridService = gridService;
         this.playerInventoryStorage = PlayerInventoryStorage.of(playerInventory);
@@ -33,10 +33,10 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
 
     @Override
     public void onInsert(GridInsertMode insertMode) {
-        if (screenHandler.getCursorStack().isEmpty()) {
+        if (screenHandler.getCarried().isEmpty()) {
             return;
         }
-        ItemResource itemResource = new ItemResource(screenHandler.getCursorStack());
+        ItemResource itemResource = new ItemResource(screenHandler.getCarried());
         gridService.insert(itemResource, insertMode, (resource, amount, action) -> {
             try (Transaction tx = Transaction.openOuter()) {
                 ItemVariant itemVariant = resource.toItemVariant();

@@ -17,10 +17,10 @@ import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Items;
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource.ofFluidVariant;
@@ -29,14 +29,14 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     private static final ItemVariant BUCKET_ITEM_VARIANT = ItemVariant.of(Items.BUCKET);
     private static final ItemResource BUCKET_ITEM_RESOURCE = new ItemResource(Items.BUCKET, null);
 
-    private final ScreenHandler screenHandler;
-    private final PlayerEntity player;
+    private final AbstractContainerMenu screenHandler;
+    private final Player player;
     private final GridService<FluidResource> gridService;
     private final PlayerInventoryStorage playerInventoryStorage;
     private final Storage<ItemVariant> playerCursorStorage;
     private final ExtractableStorage<ItemResource> bucketStorage;
 
-    public FluidGridEventHandlerImpl(ScreenHandler screenHandler, GridService<FluidResource> gridService, PlayerInventory playerInventory, ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridEventHandlerImpl(AbstractContainerMenu screenHandler, GridService<FluidResource> gridService, Inventory playerInventory, ExtractableStorage<ItemResource> bucketStorage) {
         this.screenHandler = screenHandler;
         this.player = playerInventory.player;
         this.gridService = gridService;
@@ -98,7 +98,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     @Nullable
     private Storage<FluidVariant> getFluidCursorStorage() {
         return FluidStorage.ITEM.find(
-                screenHandler.getCursorStack(),
+                screenHandler.getCarried(),
                 ContainerItemContext.ofPlayerCursor(player, screenHandler)
         );
     }

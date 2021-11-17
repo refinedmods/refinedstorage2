@@ -7,8 +7,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemGridResource extends GridResource<ItemResource> {
     private final int id;
@@ -21,7 +21,7 @@ public class ItemGridResource extends GridResource<ItemResource> {
                 GridResourceAttributeKeys.TAGS, tags,
                 GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
         ));
-        this.id = Item.getRawId(getResourceAmount().getResource().getItem());
+        this.id = Item.getId(getResourceAmount().getResource().getItem());
         this.itemStack = itemStack;
     }
 

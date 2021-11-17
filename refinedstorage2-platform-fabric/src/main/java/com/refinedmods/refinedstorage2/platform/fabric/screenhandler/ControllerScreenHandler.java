@@ -8,23 +8,21 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 
 public class ControllerScreenHandler extends BaseScreenHandler implements RedstoneModeAccessor {
+    private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
     private long stored;
     private long capacity;
-
     private long serverStored;
     private long serverCapacity;
     private ControllerBlockEntity controller;
-    private PlayerEntity playerEntity;
+    private Player playerEntity;
 
-    private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
-
-    public ControllerScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
+    public ControllerScreenHandler(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
         super(Rs2Mod.SCREEN_HANDLERS.getController(), syncId);
         addPlayerInventory(playerInventory, 8, 107);
 
@@ -40,10 +38,10 @@ public class ControllerScreenHandler extends BaseScreenHandler implements Redsto
                 }
         );
 
-        addProperty(redstoneModeProperty);
+        addDataSlot(redstoneModeProperty);
     }
 
-    public ControllerScreenHandler(int syncId, PlayerInventory playerInventory, ControllerBlockEntity controller, PlayerEntity playerEntity) {
+    public ControllerScreenHandler(int syncId, Inventory playerInventory, ControllerBlockEntity controller, Player playerEntity) {
         super(Rs2Mod.SCREEN_HANDLERS.getController(), syncId);
         this.controller = controller;
         this.serverStored = controller.getActualStored();
@@ -59,17 +57,17 @@ public class ControllerScreenHandler extends BaseScreenHandler implements Redsto
                 controller::setRedstoneMode
         );
 
-        addProperty(redstoneModeProperty);
+        addDataSlot(redstoneModeProperty);
     }
 
     @Override
-    public void sendContentUpdates() {
-        super.sendContentUpdates();
+    public void broadcastChanges() {
+        super.broadcastChanges();
         if (serverStored != controller.getActualStored() || serverCapacity != controller.getActualCapacity()) {
             serverStored = controller.getActualStored();
             serverCapacity = controller.getActualCapacity();
 
-            ServerPacketUtil.sendToPlayer((ServerPlayerEntity) playerEntity, PacketIds.CONTROLLER_ENERGY, buf -> {
+            ServerPacketUtil.sendToPlayer((ServerPlayer) playerEntity, PacketIds.CONTROLLER_ENERGY, buf -> {
                 buf.writeLong(serverStored);
                 buf.writeLong(serverCapacity);
             });

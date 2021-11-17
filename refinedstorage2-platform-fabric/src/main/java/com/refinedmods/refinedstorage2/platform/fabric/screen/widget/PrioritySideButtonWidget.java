@@ -8,27 +8,27 @@ import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.PriorityAcc
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.player.Inventory;
 
 public class PrioritySideButtonWidget extends SideButtonWidget {
     private final PriorityAccessor priorityAccessor;
     private final TooltipRenderer tooltipRenderer;
 
-    public PrioritySideButtonWidget(PriorityAccessor priorityAccessor, PlayerInventory playerInventory, Screen parent, TooltipRenderer tooltipRenderer) {
+    public PrioritySideButtonWidget(PriorityAccessor priorityAccessor, Inventory playerInventory, Screen parent, TooltipRenderer tooltipRenderer) {
         super(createPressAction(priorityAccessor, playerInventory, parent));
         this.priorityAccessor = priorityAccessor;
         this.tooltipRenderer = tooltipRenderer;
     }
 
-    private static PressAction createPressAction(PriorityAccessor priorityAccessor, PlayerInventory playerInventory, Screen parent) {
-        return btn -> MinecraftClient.getInstance().setScreen(new PriorityScreen(priorityAccessor, parent, playerInventory));
+    private static OnPress createPressAction(PriorityAccessor priorityAccessor, Inventory playerInventory, Screen parent) {
+        return btn -> Minecraft.getInstance().setScreen(new PriorityScreen(priorityAccessor, parent, playerInventory));
     }
 
     @Override
@@ -42,10 +42,10 @@ public class PrioritySideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(ButtonWidget button, MatrixStack matrices, int mouseX, int mouseY) {
-        List<Text> lines = new ArrayList<>();
+    public void onTooltip(Button button, PoseStack matrices, int mouseX, int mouseY) {
+        List<Component> lines = new ArrayList<>();
         lines.add(Rs2Mod.createTranslation("gui", "priority"));
-        lines.add(new LiteralText(String.valueOf(priorityAccessor.getPriority())).formatted(Formatting.GRAY));
+        lines.add(new TextComponent(String.valueOf(priorityAccessor.getPriority())).withStyle(ChatFormatting.GRAY));
         tooltipRenderer.render(matrices, lines, mouseX, mouseY);
     }
 }

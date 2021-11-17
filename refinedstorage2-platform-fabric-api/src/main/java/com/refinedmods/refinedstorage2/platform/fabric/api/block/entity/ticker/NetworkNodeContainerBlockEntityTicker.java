@@ -2,16 +2,16 @@ package com.refinedmods.refinedstorage2.platform.fabric.api.block.entity.ticker;
 
 import com.refinedmods.refinedstorage2.platform.fabric.api.block.entity.NetworkNodeContainerBlockEntity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class NetworkNodeContainerBlockEntityTicker<T extends BlockEntity & NetworkNodeContainerBlockEntity<?>> implements BlockEntityTicker<T> {
     @Override
-    public void tick(World world, BlockPos pos, BlockState state, T blockEntity) {
-        if (world.isClient()) {
+    public void tick(Level world, BlockPos pos, BlockState state, T blockEntity) {
+        if (world.isClientSide()) {
             return;
         }
         performContainerUpdate(blockEntity, state);

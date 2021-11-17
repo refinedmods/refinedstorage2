@@ -2,14 +2,14 @@ package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked;
 
 import com.refinedmods.refinedstorage2.platform.fabric.util.BiDirection;
 
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3f;
-import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.math.Vector4f;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 
 public class QuadRotator implements RenderContext.QuadTransform {
     private final BiDirection direction;
@@ -20,29 +20,29 @@ public class QuadRotator implements RenderContext.QuadTransform {
 
     @Override
     public boolean transform(MutableQuadView quad) {
-        Vec3f tmp = new Vec3f();
+        Vector3f tmp = new Vector3f();
 
         for (int i = 0; i < 4; ++i) {
             quad.copyPos(i, tmp);
 
             tmp.add(-0.5F, -0.5F, -0.5F);
-            tmp.rotate(createQuaternion(direction));
+            tmp.transform(createQuaternion(direction));
             tmp.add(0.5F, 0.5F, 0.5F);
 
             quad.pos(i, tmp);
 
             if (quad.hasNormal(i)) {
                 quad.copyNormal(i, tmp);
-                tmp.rotate(createQuaternion(direction));
+                tmp.transform(createQuaternion(direction));
                 quad.normal(i, tmp);
             }
         }
 
         Matrix4f mat = new Matrix4f();
-        mat.loadIdentity();
-        mat.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(direction.getVec().getX()));
-        mat.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(direction.getVec().getY()));
-        mat.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(direction.getVec().getZ()));
+        mat.setIdentity();
+        mat.multiply(Vector3f.XP.rotationDegrees(direction.getVec().x()));
+        mat.multiply(Vector3f.YP.rotationDegrees(direction.getVec().y()));
+        mat.multiply(Vector3f.ZP.rotationDegrees(direction.getVec().z()));
 
         Direction nominalFace = quad.nominalFace();
         Direction cullFace = quad.cullFace();
@@ -56,13 +56,13 @@ public class QuadRotator implements RenderContext.QuadTransform {
     }
 
     private Quaternion createQuaternion(BiDirection direction) {
-        return new Quaternion(direction.getVec().getX(), direction.getVec().getY(), direction.getVec().getZ(), true);
+        return new Quaternion(direction.getVec().x(), direction.getVec().y(), direction.getVec().z(), true);
     }
 
     private Direction rotate(Direction facing, Matrix4f mat) {
-        Vec3i dir = facing.getVector();
+        Vec3i dir = facing.getNormal();
         Vector4f vec = new Vector4f(dir.getX(), dir.getY(), dir.getZ(), 1.0F);
         vec.transform(mat);
-        return Direction.getFacing(vec.getX(), vec.getY(), vec.getZ());
+        return Direction.getNearest(vec.x(), vec.y(), vec.z());
     }
 }

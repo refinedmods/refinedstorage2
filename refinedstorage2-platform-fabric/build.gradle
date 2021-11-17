@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom'
+    id 'fabric-loom' version '0.10-SNAPSHOT'
 }
 
 sourceCompatibility = JavaVersion.VERSION_16
@@ -19,11 +19,18 @@ repositories {
     maven {
         url 'https://maven.shedaniel.me/'
     }
+    // Parchment
+    maven {
+        url 'https://maven.parchmentmc.org'
+    }
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraftVersion}"
-    mappings "net.fabricmc:yarn:${project.yarnVersion}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${project.minecraftVersion}:${project.parchmentVersion}@zip")
+    }
     modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricApiVersion}"
 
@@ -45,7 +52,7 @@ dependencies {
     implementation project(':refinedstorage2-grid-api')
     include project(':refinedstorage2-grid-api')
 
-    implementation project(':refinedstorage2-platform-fabric-api')
+    implementation project(path: ':refinedstorage2-platform-fabric-api', configuration: 'namedElements')
     include project(':refinedstorage2-platform-fabric-api')
 
     modApi("me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig1uVersion}") {
@@ -63,13 +70,13 @@ dependencies {
     include "teamreborn:energy:${project.energyVersion}"
 
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api:${project.reiVersion}"
-    modRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}"
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}"
     modImplementation "com.terraformersmc:modmenu:${project.modMenuVersion}"
     modImplementation "vazkii.patchouli:Patchouli:${project.patchouliVersion}"
 }
 
 loom {
-    accessWidener = file("src/main/resources/refinedstorage2.accesswidener")
+    accessWidenerPath = file("src/main/resources/refinedstorage2.accesswidener")
 }
 
 test {

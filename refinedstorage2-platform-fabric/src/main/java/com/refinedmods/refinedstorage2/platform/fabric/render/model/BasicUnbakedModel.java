@@ -5,17 +5,17 @@ import java.util.Set;
 import java.util.function.Function;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.render.model.UnbakedModel;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.resources.ResourceLocation;
 
 public interface BasicUnbakedModel extends UnbakedModel {
     @Override
-    default Collection<SpriteIdentifier> getTextureDependencies(Function<Identifier, UnbakedModel> unbakedModelGetter, Set<Pair<String, String>> unresolvedTextureReferences) {
-        return getModelDependencies()
+    default Collection<Material> getMaterials(Function<ResourceLocation, UnbakedModel> unbakedModelGetter, Set<Pair<String, String>> unresolvedTextureReferences) {
+        return getDependencies()
                 .stream()
                 .map(unbakedModelGetter)
-                .flatMap(unbakedModel -> unbakedModel.getTextureDependencies(unbakedModelGetter, unresolvedTextureReferences).stream())
+                .flatMap(unbakedModel -> unbakedModel.getMaterials(unbakedModelGetter, unresolvedTextureReferences).stream())
                 .toList();
     }
 }

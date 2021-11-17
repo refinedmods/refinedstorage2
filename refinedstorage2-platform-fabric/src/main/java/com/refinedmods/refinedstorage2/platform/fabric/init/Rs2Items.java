@@ -21,10 +21,10 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 
 public class Rs2Items {
     private static final String BLOCK_TRANSLATION_CATEGORY = "block";
@@ -34,14 +34,14 @@ public class Rs2Items {
     private final List<ControllerBlockItem> controllers = new ArrayList<>();
     private StorageHousingItem storageHousing;
 
-    public void register(Rs2Blocks blocks, ItemGroup itemGroup) {
+    public void register(Rs2Blocks blocks, CreativeModeTab itemGroup) {
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("cable"), new BlockItem(blocks.getCable(), createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("quartz_enriched_iron"), new QuartzEnrichedIronItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("quartz_enriched_iron_block"), new BlockItem(blocks.getQuartzEnrichedIron(), createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("silicon"), new SiliconItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("processor_binding"), new ProcessorBindingItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("disk_drive"), new BlockItem(blocks.getDiskDrive(), createSettings(itemGroup)));
-        Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("wrench"), new WrenchItem(createSettings(itemGroup).maxCount(1)));
+        Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("wrench"), new WrenchItem(createSettings(itemGroup).stacksTo(1)));
 
         if (Rs2Mod.FEATURES.contains(FeatureFlag.RELAY)) {
             Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("relay"), new BlockItem(blocks.getRelay(), createSettings(itemGroup)));
@@ -54,12 +54,12 @@ public class Rs2Items {
         blocks.getController().forEach((color, block, nameFactory) -> controllers.add(Registry.register(
                 Registry.ITEM,
                 Rs2Mod.createIdentifier(nameFactory.apply("controller")),
-                new ControllerBlockItem(block, createSettings(itemGroup).maxCount(1), color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller"))
+                new ControllerBlockItem(block, createSettings(itemGroup).stacksTo(1), color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller"))
         )));
         blocks.getCreativeController().forEach((color, block, nameFactory) -> Registry.register(
                 Registry.ITEM,
                 Rs2Mod.createIdentifier(nameFactory.apply("creative_controller")),
-                new ColoredBlockItem(block, createSettings(itemGroup).maxCount(1), color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller"))
+                new ColoredBlockItem(block, createSettings(itemGroup).stacksTo(1), color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller"))
         ));
 
         for (ProcessorItem.Type type : ProcessorItem.Type.values()) {
@@ -79,19 +79,19 @@ public class Rs2Items {
         }
 
         for (ItemStorageDiskItem.ItemStorageType type : ItemStorageDiskItem.ItemStorageType.values()) {
-            Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_storage_disk"), new ItemStorageDiskItem(createSettings(itemGroup).maxCount(1).fireproof(), type));
+            Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_storage_disk"), new ItemStorageDiskItem(createSettings(itemGroup).stacksTo(1).fireResistant(), type));
         }
 
         for (FluidStorageDiskItem.FluidStorageType type : FluidStorageDiskItem.FluidStorageType.values()) {
-            Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_fluid_storage_disk"), new FluidStorageDiskItem(createSettings(itemGroup).maxCount(1).fireproof(), type));
+            Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(type.getName() + "_fluid_storage_disk"), new FluidStorageDiskItem(createSettings(itemGroup).stacksTo(1).fireResistant(), type));
         }
 
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("construction_core"), new CoreItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("destruction_core"), new CoreItem(createSettings(itemGroup)));
     }
 
-    private Item.Settings createSettings(ItemGroup itemGroup) {
-        return new Item.Settings().group(itemGroup);
+    private Item.Properties createSettings(CreativeModeTab itemGroup) {
+        return new Item.Properties().tab(itemGroup);
     }
 
     public List<ControllerBlockItem> getControllers() {

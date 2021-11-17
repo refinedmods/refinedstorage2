@@ -4,24 +4,24 @@ import java.util.Optional;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 // TODO: Add test
 public class StorageTypeRegistryImpl implements StorageTypeRegistry {
-    private final BiMap<Identifier, StorageType<?>> types = HashBiMap.create();
+    private final BiMap<ResourceLocation, StorageType<?>> types = HashBiMap.create();
 
     @Override
-    public void addType(Identifier identifier, StorageType<?> type) {
+    public void addType(ResourceLocation identifier, StorageType<?> type) {
         types.put(identifier, type);
     }
 
     @Override
-    public Optional<StorageType<?>> getType(Identifier identifier) {
+    public Optional<StorageType<?>> getType(ResourceLocation identifier) {
         return Optional.ofNullable(types.get(identifier));
     }
 
     @Override
-    public Optional<Identifier> getIdentifier(StorageType<?> type) {
+    public Optional<ResourceLocation> getIdentifier(StorageType<?> type) {
         return Optional.ofNullable(types.inverse().get(type));
     }
 }

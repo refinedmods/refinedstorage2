@@ -9,14 +9,14 @@ import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandler {
-    public static void writeMode(PacketByteBuf buf, GridExtractMode mode) {
+    public static void writeMode(FriendlyByteBuf buf, GridExtractMode mode) {
         switch (mode) {
             case ENTIRE_RESOURCE -> buf.writeByte(0);
             case HALF_RESOURCE -> buf.writeByte(1);
@@ -24,11 +24,11 @@ public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandle
     }
 
     @Override
-    public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+    public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         GridExtractMode mode = getMode(buf.readByte());
         boolean cursor = buf.readBoolean();
 
-        ScreenHandler screenHandler = player.currentScreenHandler;
+        AbstractContainerMenu screenHandler = player.containerMenu;
         if (screenHandler instanceof ItemGridEventHandler itemGridEventHandler) {
             ItemResource itemResource = PacketUtil.readItemResource(buf);
             server.execute(() -> itemGridEventHandler.onExtract(itemResource, mode, cursor));

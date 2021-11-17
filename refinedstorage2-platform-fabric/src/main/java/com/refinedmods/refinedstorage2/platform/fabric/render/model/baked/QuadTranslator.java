@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked;
 
+import com.mojang.math.Vector3f;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.minecraft.util.math.Vec3f;
 
 public class QuadTranslator implements RenderContext.QuadTransform {
     private final float x;
@@ -16,7 +16,7 @@ public class QuadTranslator implements RenderContext.QuadTransform {
     }
 
     public boolean transform(MutableQuadView quad) {
-        Vec3f target = new Vec3f();
+        Vector3f target = new Vector3f();
 
         for (int i = 0; i < 4; ++i) {
             quad.copyPos(i, target);

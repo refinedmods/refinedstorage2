@@ -2,10 +2,10 @@ package com.refinedmods.refinedstorage2.platform.fabric.screen;
 
 import java.util.List;
 
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.network.chat.Component;
 
 @FunctionalInterface
 public interface TooltipRenderer {
-    void render(MatrixStack matrices, List<Text> lines, int x, int y);
+    void render(PoseStack matrices, List<Component> lines, int x, int y);
 }

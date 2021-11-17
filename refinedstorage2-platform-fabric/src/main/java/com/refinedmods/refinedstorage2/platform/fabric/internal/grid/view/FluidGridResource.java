@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
 
 public class FluidGridResource extends GridResource<FluidResource> {
     private final int id;
@@ -21,7 +21,7 @@ public class FluidGridResource extends GridResource<FluidResource> {
                 GridResourceAttributeKeys.TAGS, tags,
                 GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
         ));
-        this.id = Registry.FLUID.getRawId(getResourceAmount().getResource().getFluid());
+        this.id = Registry.FLUID.getId(getResourceAmount().getResource().getFluid());
         this.fluidVariant = resourceAmount.getResource().toFluidVariant();
     }
 

@@ -10,43 +10,18 @@ import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.ItemGr
 
 import java.util.List;
 
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandler> {
-    public ItemGridScreen(ItemGridScreenHandler handler, PlayerInventory inventory, Text title) {
+    public ItemGridScreen(ItemGridScreenHandler handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
-    }
-
-    @Override
-    protected void renderResource(MatrixStack matrices, int slotX, int slotY, GridResource<ItemResource> resource) {
-        itemRenderer.renderInGuiWithOverrides(((ItemGridResource) resource).getItemStack(), slotX, slotY);
-    }
-
-    @Override
-    protected String getAmount(GridResource<ItemResource> resource) {
-        return resource.isZeroed() ? "0" : String.valueOf(resource.getResourceAmount().getAmount());
-    }
-
-    @Override
-    protected List<Text> getTooltip(GridResource<ItemResource> resource) {
-        return getTooltipFromItem(((ItemGridResource) resource).getItemStack());
-    }
-
-    @Override
-    protected void mouseClickedInGrid(int clickedButton) {
-        getScreenHandler().onInsert(getInsertMode(clickedButton));
     }
 
     private static GridInsertMode getInsertMode(int clickedButton) {
         return clickedButton == 1 ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
-    }
-
-    @Override
-    protected void mouseClickedInGrid(int clickedButton, GridResource<ItemResource> resource) {
-        getScreenHandler().onExtract(resource.getResourceAmount().getResource(), getExtractMode(clickedButton), shouldExtractToCursor());
     }
 
     private static GridExtractMode getExtractMode(int clickedButton) {
@@ -60,29 +35,11 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandl
         return !hasShiftDown();
     }
 
-    @Override
-    protected void mouseScrolledInInventory(boolean up, ItemStack stack, int slotIndex) {
-        GridScrollMode scrollMode = getScrollModeWhenScrollingOnInventoryArea(up);
-        if (scrollMode == null) {
-            return;
-        }
-        getScreenHandler().onScroll(new ItemResource(stack), scrollMode, slotIndex);
-    }
-
     private static GridScrollMode getScrollModeWhenScrollingOnInventoryArea(boolean up) {
         if (hasShiftDown()) {
             return up ? GridScrollMode.INVENTORY_TO_GRID : GridScrollMode.GRID_TO_INVENTORY;
         }
         return null;
-    }
-
-    @Override
-    protected void mouseScrolledInGrid(boolean up, GridResource<ItemResource> resource) {
-        GridScrollMode scrollMode = getScrollModeWhenScrollingOnGridArea(up);
-        if (scrollMode == null) {
-            return;
-        }
-        getScreenHandler().onScroll(resource.getResourceAmount().getResource(), scrollMode, -1);
     }
 
     private static GridScrollMode getScrollModeWhenScrollingOnGridArea(boolean up) {
@@ -105,5 +62,48 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridScreenHandl
         }
 
         return null;
+    }
+
+    @Override
+    protected void renderResource(PoseStack matrices, int slotX, int slotY, GridResource<ItemResource> resource) {
+        itemRenderer.renderAndDecorateItem(((ItemGridResource) resource).getItemStack(), slotX, slotY);
+    }
+
+    @Override
+    protected String getAmount(GridResource<ItemResource> resource) {
+        return resource.isZeroed() ? "0" : String.valueOf(resource.getResourceAmount().getAmount());
+    }
+
+    @Override
+    protected List<Component> getTooltip(GridResource<ItemResource> resource) {
+        return getTooltipFromItem(((ItemGridResource) resource).getItemStack());
+    }
+
+    @Override
+    protected void mouseClickedInGrid(int clickedButton) {
+        getMenu().onInsert(getInsertMode(clickedButton));
+    }
+
+    @Override
+    protected void mouseClickedInGrid(int clickedButton, GridResource<ItemResource> resource) {
+        getMenu().onExtract(resource.getResourceAmount().getResource(), getExtractMode(clickedButton), shouldExtractToCursor());
+    }
+
+    @Override
+    protected void mouseScrolledInInventory(boolean up, ItemStack stack, int slotIndex) {
+        GridScrollMode scrollMode = getScrollModeWhenScrollingOnInventoryArea(up);
+        if (scrollMode == null) {
+            return;
+        }
+        getMenu().onScroll(new ItemResource(stack), scrollMode, slotIndex);
+    }
+
+    @Override
+    protected void mouseScrolledInGrid(boolean up, GridResource<ItemResource> resource) {
+        GridScrollMode scrollMode = getScrollModeWhenScrollingOnGridArea(up);
+        if (scrollMode == null) {
+            return;
+        }
+        getMenu().onScroll(resource.getResourceAmount().getResource(), scrollMode, -1);
     }
 }

@@ -25,11 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 public class DiskDriveScreenHandler extends BaseScreenHandler implements PriorityAccessor, FilterModeAccessor, ExactModeAccessor, AccessModeAccessor, RedstoneModeAccessor {
     private static final int DISK_SLOT_X = 61;
@@ -46,7 +46,7 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     private final TwoWaySyncProperty<AccessMode> accessModeProperty;
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
 
-    public DiskDriveScreenHandler(int syncId, PlayerInventory playerInventory) {
+    public DiskDriveScreenHandler(int syncId, Inventory playerInventory) {
         super(Rs2Mod.SCREEN_HANDLERS.getDiskDrive(), syncId);
 
         this.priorityProperty = TwoWaySyncProperty.forClient(
@@ -90,19 +90,19 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
                 }
         );
 
-        addProperty(priorityProperty);
-        addProperty(filterModeProperty);
-        addProperty(exactModeProperty);
-        addProperty(accessModeProperty);
-        addProperty(redstoneModeProperty);
+        addDataSlot(priorityProperty);
+        addDataSlot(filterModeProperty);
+        addDataSlot(exactModeProperty);
+        addDataSlot(accessModeProperty);
+        addDataSlot(redstoneModeProperty);
 
-        this.storageInfoAccessor = new StorageInfoAccessorImpl(playerInventory.player.getEntityWorld());
+        this.storageInfoAccessor = new StorageInfoAccessorImpl(playerInventory.player.getCommandSenderWorld());
 
         // TODO: add fluid filter slot
-        addSlots(playerInventory.player, new SimpleInventory(DiskDriveNetworkNode.DISK_COUNT), new SimpleInventory(9));
+        addSlots(playerInventory.player, new SimpleContainer(DiskDriveNetworkNode.DISK_COUNT), new SimpleContainer(9));
     }
 
-    public DiskDriveScreenHandler(int syncId, PlayerEntity player, SimpleInventory diskInventory, SimpleInventory filterInventory, DiskDriveBlockEntity diskDrive, StorageInfoAccessor storageInfoAccessor) {
+    public DiskDriveScreenHandler(int syncId, Player player, SimpleContainer diskInventory, SimpleContainer filterInventory, DiskDriveBlockEntity diskDrive, StorageInfoAccessor storageInfoAccessor) {
         super(Rs2Mod.SCREEN_HANDLERS.getDiskDrive(), syncId);
 
         this.priorityProperty = TwoWaySyncProperty.forServer(
@@ -141,18 +141,18 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
                 diskDrive::setRedstoneMode
         );
 
-        addProperty(priorityProperty);
-        addProperty(filterModeProperty);
-        addProperty(exactModeProperty);
-        addProperty(accessModeProperty);
-        addProperty(redstoneModeProperty);
+        addDataSlot(priorityProperty);
+        addDataSlot(filterModeProperty);
+        addDataSlot(exactModeProperty);
+        addDataSlot(accessModeProperty);
+        addDataSlot(redstoneModeProperty);
 
         this.storageInfoAccessor = storageInfoAccessor;
 
         addSlots(player, diskInventory, filterInventory);
     }
 
-    private void addSlots(PlayerEntity player, SimpleInventory diskInventory, SimpleInventory filterInventory) {
+    private void addSlots(Player player, SimpleContainer diskInventory, SimpleContainer filterInventory) {
         for (int i = 0; i < DiskDriveNetworkNode.DISK_COUNT; ++i) {
             diskSlots.add(addSlot(createDiskSlot(diskInventory, i)));
         }
@@ -162,12 +162,12 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
         addPlayerInventory(player.getInventory(), 8, 141);
     }
 
-    private FilterSlot createFilterSlot(PlayerEntity player, SimpleInventory filterInventory, int i) {
+    private FilterSlot createFilterSlot(Player player, SimpleContainer filterInventory, int i) {
         int x = FILTER_SLOT_X + (18 * i);
         return new FilterSlot(filterInventory, i, x, FILTER_SLOT_Y);
     }
 
-    private Slot createDiskSlot(SimpleInventory diskInventory, int i) {
+    private Slot createDiskSlot(SimpleContainer diskInventory, int i) {
         int x = DISK_SLOT_X + ((i % 2) * 18);
         int y = DISK_SLOT_Y + Math.floorDiv(i, 2) * 18;
         return new ValidatedSlot(diskInventory, i, x, y, stack -> stack.getItem() instanceof StorageDiskItem);
@@ -195,32 +195,32 @@ public class DiskDriveScreenHandler extends BaseScreenHandler implements Priorit
     private Stream<StorageInfo> getStorageDiskInfo() {
         return diskSlots
                 .stream()
-                .map(Slot::getStack)
+                .map(Slot::getItem)
                 .filter(stack -> !stack.isEmpty())
                 .map(storageInfoAccessor::getInfo)
                 .flatMap(info -> info.map(Stream::of).orElseGet(Stream::empty));
     }
 
     @Override
-    public ItemStack transferSlot(PlayerEntity player, int index) {
+    public ItemStack quickMoveStack(Player player, int index) {
         ItemStack originalStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
-        if (slot != null && slot.hasStack()) {
-            ItemStack stackInSlot = slot.getStack();
+        if (slot != null && slot.hasItem()) {
+            ItemStack stackInSlot = slot.getItem();
             originalStack = stackInSlot.copy();
 
             if (index < 8) {
-                if (!insertItem(stackInSlot, 8, slots.size(), true)) {
+                if (!moveItemStackTo(stackInSlot, 8, slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!insertItem(stackInSlot, 0, 8, false)) {
+            } else if (!moveItemStackTo(stackInSlot, 0, 8, false)) {
                 return ItemStack.EMPTY;
             }
 
             if (stackInSlot.isEmpty()) {
-                slot.setStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
-                slot.markDirty();
+                slot.setChanged();
             }
         }
 
