@@ -54,7 +54,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
 
     private boolean active;
 
-    public GridContainerMenu(MenuType<?> type, int syncId, Inventory playerInventory, FriendlyByteBuf buf, GridView<T> view) {
+    protected GridContainerMenu(MenuType<?> type, int syncId, Inventory playerInventory, FriendlyByteBuf buf, GridView<T> view) {
         super(type, syncId);
 
         this.view = view;
@@ -122,7 +122,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         addSlots(0);
     }
 
-    public GridContainerMenu(MenuType<?> screenHandlerType, int syncId, Inventory playerInventory, GridBlockEntity<T> grid, GridView<T> view) {
+    protected GridContainerMenu(MenuType<?> screenHandlerType, int syncId, Inventory playerInventory, GridBlockEntity<T> grid, GridView<T> view) {
         super(screenHandlerType, syncId);
 
         this.view = view;

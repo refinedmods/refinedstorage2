@@ -76,22 +76,22 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
         BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
         bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         bufferBuilder
-                .vertex(poseStack.last().pose(), (float) slotX, (float) slotYEnd, (float) z)
+                .vertex(poseStack.last().pose(), slotX, slotYEnd, z)
                 .uv(sprite.getU0(), sprite.getV1())
                 .color(r, g, b, 255)
                 .endVertex();
         bufferBuilder
-                .vertex(poseStack.last().pose(), (float) slotXEnd, (float) slotYEnd, (float) z)
+                .vertex(poseStack.last().pose(), slotXEnd, slotYEnd, z)
                 .uv(sprite.getU1(), sprite.getV1())
                 .color(r, g, b, 255)
                 .endVertex();
         bufferBuilder
-                .vertex(poseStack.last().pose(), (float) slotXEnd, (float) slotY, (float) z)
+                .vertex(poseStack.last().pose(), slotXEnd, slotY, z)
                 .uv(sprite.getU1(), sprite.getV0())
                 .color(r, g, b, 255)
                 .endVertex();
         bufferBuilder
-                .vertex(poseStack.last().pose(), (float) slotX, (float) slotY, (float) z)
+                .vertex(poseStack.last().pose(), slotX, slotY, z)
                 .uv(sprite.getU0(), sprite.getV0())
                 .color(r, g, b, 255)
                 .endVertex();
