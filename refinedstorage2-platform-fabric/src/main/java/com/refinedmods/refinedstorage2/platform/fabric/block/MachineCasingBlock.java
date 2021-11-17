@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block;
 
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 
 public class MachineCasingBlock extends Block {
-    public MachineCasingBlock(Settings settings) {
+    public MachineCasingBlock(Properties settings) {
         super(settings);
     }
 }

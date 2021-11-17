@@ -24,11 +24,11 @@ import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.property.Tw
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,7 +37,7 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
 
     private static String lastSearchQuery = "";
 
-    protected final PlayerInventory playerInventory;
+    protected final Inventory playerInventory;
     protected final GridView<T> view;
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
     private final TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty;
@@ -54,7 +54,7 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
 
     private boolean active;
 
-    public GridScreenHandler(ScreenHandlerType<?> screenHandlerType, int syncId, PlayerInventory playerInventory, PacketByteBuf buf, GridView<T> view) {
+    public GridScreenHandler(MenuType<?> screenHandlerType, int syncId, Inventory playerInventory, FriendlyByteBuf buf, GridView<T> view) {
         super(screenHandlerType, syncId);
 
         this.view = view;
@@ -98,11 +98,11 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
                 this::onSearchBoxModeChanged
         );
 
-        addProperty(redstoneModeProperty);
-        addProperty(sortingDirectionProperty);
-        addProperty(sortingTypeProperty);
-        addProperty(sizeProperty);
-        addProperty(searchBoxModeProperty);
+        addDataSlot(redstoneModeProperty);
+        addDataSlot(sortingDirectionProperty);
+        addDataSlot(sortingTypeProperty);
+        addDataSlot(sizeProperty);
+        addDataSlot(searchBoxModeProperty);
 
         active = buf.readBoolean();
 
@@ -122,9 +122,7 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
         addSlots(0);
     }
 
-    protected abstract ResourceAmount<T> readResourceAmount(PacketByteBuf buf);
-
-    public GridScreenHandler(ScreenHandlerType<?> screenHandlerType, int syncId, PlayerInventory playerInventory, GridBlockEntity<T> grid, GridView<T> view) {
+    public GridScreenHandler(MenuType<?> screenHandlerType, int syncId, Inventory playerInventory, GridBlockEntity<T> grid, GridView<T> view) {
         super(screenHandlerType, syncId);
 
         this.view = view;
@@ -165,11 +163,11 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
                 grid::setSearchBoxMode
         );
 
-        addProperty(redstoneModeProperty);
-        addProperty(sortingDirectionProperty);
-        addProperty(sortingTypeProperty);
-        addProperty(sizeProperty);
-        addProperty(searchBoxModeProperty);
+        addDataSlot(redstoneModeProperty);
+        addDataSlot(sortingDirectionProperty);
+        addDataSlot(sortingTypeProperty);
+        addDataSlot(sizeProperty);
+        addDataSlot(searchBoxModeProperty);
 
         this.playerInventory = playerInventory;
         this.storageChannel = grid.getContainer().getNode().getStorageChannel();
@@ -178,6 +176,12 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
 
         addSlots(0);
     }
+
+    private static void updateLastSearchQuery(String query) {
+        lastSearchQuery = query;
+    }
+
+    protected abstract ResourceAmount<T> readResourceAmount(FriendlyByteBuf buf);
 
     public void onResourceUpdate(T template, long amount, StorageTracker.Entry trackerEntry) {
         LOGGER.info("{} got updated with {}", template, amount);
@@ -254,7 +258,7 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
         this.searchBox = searchBox;
         this.updateSearchBox();
         if (Rs2Config.get().getGrid().isRememberSearchQuery()) {
-            this.searchBox.setText(lastSearchQuery);
+            this.searchBox.setValue(lastSearchQuery);
         }
     }
 
@@ -268,13 +272,9 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
         });
     }
 
-    private static void updateLastSearchQuery(String query) {
-        lastSearchQuery = query;
-    }
-
     @Override
-    public void close(PlayerEntity playerEntity) {
-        super.close(playerEntity);
+    public void removed(Player playerEntity) {
+        super.removed(playerEntity);
 
         if (storageChannel != null) {
             storageChannel.removeListener(this);
@@ -303,7 +303,7 @@ public abstract class GridScreenHandler<T> extends BaseScreenHandler implements 
     @Override
     public void onActiveChanged(boolean active) {
         this.active = active;
-        if (this.playerInventory.player instanceof ServerPlayerEntity serverPlayerEntity) {
+        if (this.playerInventory.player instanceof ServerPlayer serverPlayerEntity) {
             ServerPacketUtil.sendToPlayer(serverPlayerEntity, PacketIds.GRID_ACTIVE, buf -> buf.writeBoolean(active));
         }
     }

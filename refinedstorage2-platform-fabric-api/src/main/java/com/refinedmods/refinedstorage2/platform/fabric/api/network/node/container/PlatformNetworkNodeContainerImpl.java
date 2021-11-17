@@ -7,12 +7,12 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.RedstoneMode;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class PlatformNetworkNodeContainerImpl<T extends NetworkNodeImpl> extends NetworkNodeContainerImpl<T> implements PlatformNetworkNodeContainer<T> {
-    private World world;
     private final BlockPos pos;
+    private Level world;
     private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
     private ConnectionProvider connectionProvider;
 
@@ -30,19 +30,19 @@ public class PlatformNetworkNodeContainerImpl<T extends NetworkNodeImpl> extends
     }
 
     @Override
-    public World getContainerWorld() {
+    public Level getContainerWorld() {
         return world;
+    }
+
+    @Override
+    public void setContainerWorld(Level world) {
+        this.world = world;
+        this.connectionProvider = Rs2PlatformApiFacade.INSTANCE.createConnectionProvider(world);
     }
 
     @Override
     public BlockPos getContainerPosition() {
         return pos;
-    }
-
-    @Override
-    public void setContainerWorld(World world) {
-        this.world = world;
-        this.connectionProvider = Rs2PlatformApiFacade.INSTANCE.createConnectionProvider(world);
     }
 
     @Override
@@ -52,6 +52,6 @@ public class PlatformNetworkNodeContainerImpl<T extends NetworkNodeImpl> extends
 
     @Override
     protected boolean isActive() {
-        return super.isActive() && redstoneMode.isActive(world.isReceivingRedstonePower(pos));
+        return super.isActive() && redstoneMode.isActive(world.hasNeighborSignal(pos));
     }
 }

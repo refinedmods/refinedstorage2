@@ -13,26 +13,27 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.QuartzEnrichedIronB
 import com.refinedmods.refinedstorage2.platform.fabric.block.RelayBlock;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.Material;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
 
 public class Rs2Blocks {
-    private static final FabricBlockSettings STONE_SETTINGS = FabricBlockSettings
+    private static final BlockBehaviour.Properties STONE_SETTINGS = FabricBlockSettings
             .of(Material.STONE)
-            .hardness(1.9F)
-            .resistance(1.9F)
-            .sounds(BlockSoundGroup.STONE);
+            .destroyTime(1.9F)
+            .explosionResistance(1.9F)
+            .sound(SoundType.STONE);
 
     private final BlockColorMap<ItemGridBlock> grid = new BlockColorMap<>();
     private final BlockColorMap<FluidGridBlock> fluidGrid = new BlockColorMap<>();
+    private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
+    private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
     private CableBlock cable;
     private QuartzEnrichedIronBlock quartzEnrichedIron;
     private DiskDriveBlock diskDrive;
     private MachineCasingBlock machineCasing;
     private RelayBlock relay;
-    private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
-    private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
 
     public void register() {
         cable = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("cable"), new CableBlock());

@@ -5,59 +5,59 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.ticker.ControllerBlockEntityTicker;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class ControllerBlock extends NetworkNodeContainerBlock {
-    public static final EnumProperty<ControllerEnergyType> ENERGY_TYPE = EnumProperty.of("energy_type", ControllerEnergyType.class);
+    public static final EnumProperty<ControllerEnergyType> ENERGY_TYPE = EnumProperty.create("energy_type", ControllerEnergyType.class);
 
     private final ControllerType type;
 
-    public ControllerBlock(Settings settings, ControllerType type) {
+    public ControllerBlock(Properties settings, ControllerType type) {
         super(settings);
 
         this.type = type;
 
-        setDefaultState(getStateManager().getDefaultState().with(ENERGY_TYPE, ControllerEnergyType.OFF));
+        registerDefaultState(getStateDefinition().any().setValue(ENERGY_TYPE, ControllerEnergyType.OFF));
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        ActionResult result = Rs2Mod.BLOCKS.getController().updateColor(state, player.getStackInHand(hand), world, pos, player);
-        if (result != ActionResult.PASS) {
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        InteractionResult result = Rs2Mod.BLOCKS.getController().updateColor(state, player.getItemInHand(hand), world, pos, player);
+        if (result != InteractionResult.PASS) {
             return result;
         }
 
-        return super.onUse(state, world, pos, player, hand, hit);
+        return super.use(state, world, pos, player, hand, hit);
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
 
         builder.add(ENERGY_TYPE);
     }
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ControllerBlockEntity(type, pos, state);
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
         return (BlockEntityTicker<T>) new ControllerBlockEntityTicker();
     }
 }

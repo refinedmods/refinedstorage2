@@ -12,15 +12,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
 
 public class AccessModeSideButtonWidget extends SideButtonWidget {
     private final AccessModeAccessor accessModeAccessor;
     private final TooltipRenderer tooltipRenderer;
-    private final Map<AccessMode, List<Text>> tooltips = new EnumMap<>(AccessMode.class);
+    private final Map<AccessMode, List<Component>> tooltips = new EnumMap<>(AccessMode.class);
 
     public AccessModeSideButtonWidget(AccessModeAccessor accessModeAccessor, TooltipRenderer tooltipRenderer) {
         super(createPressAction(accessModeAccessor));
@@ -29,14 +29,14 @@ public class AccessModeSideButtonWidget extends SideButtonWidget {
         Arrays.stream(AccessMode.values()).forEach(accessMode -> tooltips.put(accessMode, calculateTooltip(accessMode)));
     }
 
-    private static PressAction createPressAction(AccessModeAccessor accessModeAccessor) {
+    private static OnPress createPressAction(AccessModeAccessor accessModeAccessor) {
         return btn -> accessModeAccessor.setAccessMode(accessModeAccessor.getAccessMode().toggle());
     }
 
-    private List<Text> calculateTooltip(AccessMode accessMode) {
-        List<Text> lines = new ArrayList<>();
+    private List<Component> calculateTooltip(AccessMode accessMode) {
+        List<Component> lines = new ArrayList<>();
         lines.add(Rs2Mod.createTranslation("gui", "access_mode"));
-        lines.add(Rs2Mod.createTranslation("gui", "access_mode." + accessMode.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
+        lines.add(Rs2Mod.createTranslation("gui", "access_mode." + accessMode.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
         return lines;
     }
 
@@ -60,7 +60,7 @@ public class AccessModeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(ButtonWidget button, MatrixStack matrices, int mouseX, int mouseY) {
+    public void onTooltip(Button button, PoseStack matrices, int mouseX, int mouseY) {
         tooltipRenderer.render(matrices, tooltips.get(accessModeAccessor.getAccessMode()), mouseX, mouseY);
     }
 }

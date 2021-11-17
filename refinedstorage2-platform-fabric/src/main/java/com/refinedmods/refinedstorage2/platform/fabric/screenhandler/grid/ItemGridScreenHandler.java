@@ -25,12 +25,12 @@ import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
 
 import java.util.Optional;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,15 +40,15 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
     private final GridService<ItemResource> gridService;
     private final ItemGridEventHandler itemGridEventHandler;
 
-    public ItemGridScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
+    public ItemGridScreenHandler(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
         super(Rs2Mod.SCREEN_HANDLERS.getGrid(), syncId, playerInventory, buf, createView());
         this.gridService = null;
         this.itemGridEventHandler = new ClientItemGridEventHandler();
     }
 
-    public ItemGridScreenHandler(int syncId, PlayerInventory playerInventory, GridBlockEntity<ItemResource> grid) {
+    public ItemGridScreenHandler(int syncId, Inventory playerInventory, GridBlockEntity<ItemResource> grid) {
         super(Rs2Mod.SCREEN_HANDLERS.getGrid(), syncId, playerInventory, grid, createView());
-        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), itemResource -> (long) itemResource.getItem().getMaxCount());
+        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), itemResource -> (long) itemResource.getItem().getMaxStackSize());
         this.grid.addWatcher(this);
         this.itemGridEventHandler = new ItemGridEventHandlerImpl(this, gridService, playerInventory);
     }
@@ -58,13 +58,13 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
     }
 
     @Override
-    protected ResourceAmount<ItemResource> readResourceAmount(PacketByteBuf buf) {
+    protected ResourceAmount<ItemResource> readResourceAmount(FriendlyByteBuf buf) {
         return PacketUtil.readItemResourceAmount(buf);
     }
 
     @Override
-    public void close(PlayerEntity playerEntity) {
-        super.close(playerEntity);
+    public void removed(Player playerEntity) {
+        super.removed(playerEntity);
         if (grid != null) {
             grid.removeWatcher(this);
         }
@@ -74,7 +74,7 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
     public void onChanged(ResourceListOperationResult<ItemResource> change) {
         LOGGER.info("Received a change of {} for {}", change.change(), change.resourceAmount().getResource());
 
-        ServerPacketUtil.sendToPlayer((ServerPlayerEntity) playerInventory.player, PacketIds.GRID_ITEM_UPDATE, buf -> {
+        ServerPacketUtil.sendToPlayer((ServerPlayer) playerInventory.player, PacketIds.GRID_ITEM_UPDATE, buf -> {
             PacketUtil.writeItemResource(buf, change.resourceAmount().getResource());
             buf.writeLong(change.change());
 
@@ -84,11 +84,11 @@ public class ItemGridScreenHandler extends GridScreenHandler<ItemResource> imple
     }
 
     @Override
-    public ItemStack transferSlot(PlayerEntity playerEntity, int slotIndex) {
-        if (!playerEntity.world.isClient()) {
+    public ItemStack quickMoveStack(Player playerEntity, int slotIndex) {
+        if (!playerEntity.level.isClientSide()) {
             Slot slot = getSlot(slotIndex);
-            if (slot.hasStack()) {
-                itemGridEventHandler.onTransfer(((SlotAccessor) slot).getIndex());
+            if (slot.hasItem()) {
+                itemGridEventHandler.onTransfer(((SlotAccessor) slot).getSlot());
             }
         }
         return ItemStack.EMPTY;

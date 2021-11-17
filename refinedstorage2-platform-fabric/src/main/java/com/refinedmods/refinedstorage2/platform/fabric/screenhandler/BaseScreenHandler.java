@@ -2,21 +2,21 @@ package com.refinedmods.refinedstorage2.platform.fabric.screenhandler;
 
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.slot.FilterSlot;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseScreenHandler extends ScreenHandler {
-    protected BaseScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId) {
+public class BaseScreenHandler extends AbstractContainerMenu {
+    protected BaseScreenHandler(@Nullable MenuType<?> type, int syncId) {
         super(type, syncId);
     }
 
-    protected void addPlayerInventory(PlayerInventory inventory, int xInventory, int yInventory) {
+    protected void addPlayerInventory(Inventory inventory, int xInventory, int yInventory) {
         int id = 9;
 
         for (int y = 0; y < 3; y++) {
@@ -36,33 +36,33 @@ public class BaseScreenHandler extends ScreenHandler {
     }
 
     @Override
-    public boolean canInsertIntoSlot(ItemStack stack, Slot slot) {
+    public boolean canTakeItemForPickAll(ItemStack stack, Slot slot) {
         return !(slot instanceof FilterSlot);
     }
 
     @Override
-    public void onSlotClick(int id, int dragType, SlotActionType actionType, PlayerEntity player) {
+    public void clicked(int id, int dragType, ClickType actionType, Player player) {
         Slot slot = id >= 0 ? getSlot(id) : null;
 
         if (slot instanceof FilterSlot) {
-            ItemStack cursorStack = getCursorStack();
+            ItemStack cursorStack = getCarried();
             if (cursorStack.isEmpty()) {
-                slot.setStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
-                slot.setStack(cursorStack.copy());
+                slot.set(cursorStack.copy());
             }
         } else {
-            super.onSlotClick(id, dragType, actionType, player);
+            super.clicked(id, dragType, actionType, player);
         }
     }
 
     @Override
-    public boolean canUse(PlayerEntity player) {
+    public boolean stillValid(Player player) {
         return true;
     }
 
     @Override
-    public ItemStack transferSlot(PlayerEntity player, int index) {
+    public ItemStack quickMoveStack(Player player, int index) {
         return ItemStack.EMPTY;
     }
 }

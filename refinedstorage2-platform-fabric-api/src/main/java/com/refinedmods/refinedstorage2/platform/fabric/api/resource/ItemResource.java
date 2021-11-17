@@ -6,41 +6,73 @@ import java.util.Objects;
 import java.util.Optional;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public final class ItemResource {
+    private static final String TAG_TAG = "tag";
+    private static final String TAG_ID = "id";
+    private static final String TAG_AMOUNT = "amount";
     private final Item item;
-    private final NbtCompound tag;
+    private final CompoundTag tag;
 
-    public static ItemResource ofItemVariant(ItemVariant itemVariant) {
-        return new ItemResource(itemVariant.getItem(), itemVariant.getNbt());
-    }
-
-    public ItemResource(Item item, NbtCompound tag) {
+    public ItemResource(Item item, CompoundTag tag) {
         this.item = item;
         this.tag = tag;
     }
 
     public ItemResource(ItemStack stack) {
-        this(stack.getItem(), stack.getNbt());
+        this(stack.getItem(), stack.getTag());
+    }
+
+    public static ItemResource ofItemVariant(ItemVariant itemVariant) {
+        return new ItemResource(itemVariant.getItem(), itemVariant.getNbt());
+    }
+
+    public static CompoundTag toTag(ItemResource itemResource) {
+        CompoundTag tag = new CompoundTag();
+        if (itemResource.getTag() != null) {
+            tag.put(TAG_TAG, itemResource.getTag());
+        }
+        tag.putString(TAG_ID, Registry.ITEM.getKey(itemResource.getItem()).toString());
+        return tag;
+    }
+
+    public static CompoundTag toTagWithAmount(ResourceAmount<ItemResource> resourceAmount) {
+        CompoundTag tag = toTag(resourceAmount.getResource());
+        tag.putLong(TAG_AMOUNT, resourceAmount.getAmount());
+        return tag;
+    }
+
+    public static Optional<ItemResource> fromTag(CompoundTag tag) {
+        ResourceLocation id = new ResourceLocation(tag.getString(TAG_ID));
+        Item item = Registry.ITEM.get(id);
+        if (item == Items.AIR) {
+            return Optional.empty();
+        }
+        CompoundTag itemTag = tag.contains(TAG_TAG) ? tag.getCompound(TAG_TAG) : null;
+        return Optional.of(new ItemResource(item, itemTag));
+    }
+
+    public static Optional<ResourceAmount<ItemResource>> fromTagWithAmount(CompoundTag tag) {
+        return fromTag(tag).map(itemResource -> new ResourceAmount<>(itemResource, tag.getLong(TAG_AMOUNT)));
     }
 
     public Item getItem() {
         return item;
     }
 
-    public NbtCompound getTag() {
+    public CompoundTag getTag() {
         return tag;
     }
 
     public ItemStack toItemStack() {
         ItemStack itemStack = new ItemStack(item);
-        itemStack.setNbt(tag);
+        itemStack.setTag(tag);
         return itemStack;
     }
 
@@ -67,38 +99,5 @@ public final class ItemResource {
                 "item=" + item +
                 ", tag=" + tag +
                 '}';
-    }
-
-    private static final String TAG_TAG = "tag";
-    private static final String TAG_ID = "id";
-    private static final String TAG_AMOUNT = "amount";
-
-    public static NbtCompound toTag(ItemResource itemResource) {
-        NbtCompound tag = new NbtCompound();
-        if (itemResource.getTag() != null) {
-            tag.put(TAG_TAG, itemResource.getTag());
-        }
-        tag.putString(TAG_ID, Registry.ITEM.getId(itemResource.getItem()).toString());
-        return tag;
-    }
-
-    public static NbtCompound toTagWithAmount(ResourceAmount<ItemResource> resourceAmount) {
-        NbtCompound tag = toTag(resourceAmount.getResource());
-        tag.putLong(TAG_AMOUNT, resourceAmount.getAmount());
-        return tag;
-    }
-
-    public static Optional<ItemResource> fromTag(NbtCompound tag) {
-        Identifier id = new Identifier(tag.getString(TAG_ID));
-        Item item = Registry.ITEM.get(id);
-        if (item == Items.AIR) {
-            return Optional.empty();
-        }
-        NbtCompound itemTag = tag.contains(TAG_TAG) ? tag.getCompound(TAG_TAG) : null;
-        return Optional.of(new ItemResource(item, itemTag));
-    }
-
-    public static Optional<ResourceAmount<ItemResource>> fromTagWithAmount(NbtCompound tag) {
-        return fromTag(tag).map(itemResource -> new ResourceAmount<>(itemResource, tag.getLong(TAG_AMOUNT)));
     }
 }

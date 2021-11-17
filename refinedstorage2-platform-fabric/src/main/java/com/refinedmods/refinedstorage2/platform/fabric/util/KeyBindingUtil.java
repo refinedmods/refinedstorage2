@@ -1,16 +1,16 @@
 package com.refinedmods.refinedstorage2.platform.fabric.util;
 
-import com.refinedmods.refinedstorage2.platform.fabric.mixin.KeyBindingAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.mixin.KeyMappingAccessor;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 
 public final class KeyBindingUtil {
     private KeyBindingUtil() {
     }
 
-    public static boolean isKeyDown(KeyBinding keybinding) {
-        return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), ((KeyBindingAccessor) keybinding).getBoundKey().getCode());
+    public static boolean isKeyDown(KeyMapping keybinding) {
+        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), ((KeyMappingAccessor) keybinding).getKey().getValue());
     }
 }

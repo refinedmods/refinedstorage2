@@ -42,12 +42,12 @@ import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,23 +57,26 @@ public class Rs2Mod implements ModInitializer {
     public static final Rs2BlockEntities BLOCK_ENTITIES = new Rs2BlockEntities();
     public static final Rs2ScreenHandlers SCREEN_HANDLERS = new Rs2ScreenHandlers();
     public static final Rs2LootFunctions LOOT_FUNCTIONS = new Rs2LootFunctions();
+    public static final Set<FeatureFlag> FEATURES = Set.of();
     static final String ID = "refinedstorage2";
     private static final Logger LOGGER = LogManager.getLogger(Rs2Mod.class);
-    private static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(createIdentifier("general"), () -> new ItemStack(BLOCKS.getController().getNormal()));
-    public static final Set<FeatureFlag> FEATURES = Set.of();
-
+    private static final CreativeModeTab ITEM_GROUP = FabricItemGroupBuilder.build(createIdentifier("general"), () -> new ItemStack(BLOCKS.getController().getNormal()));
     private static SoundEvent wrenchSoundEvent;
 
-    public static Identifier createIdentifier(String value) {
-        return new Identifier(ID, value);
+    public static ResourceLocation createIdentifier(String value) {
+        return new ResourceLocation(ID, value);
     }
 
     private static String createTranslationKey(String category, String value) {
         return String.format("%s.%s.%s", category, ID, value);
     }
 
-    public static TranslatableText createTranslation(String category, String value, Object... args) {
-        return new TranslatableText(createTranslationKey(category, value), args);
+    public static TranslatableComponent createTranslation(String category, String value, Object... args) {
+        return new TranslatableComponent(createTranslationKey(category, value), args);
+    }
+
+    public static SoundEvent getWrenchSoundEvent() {
+        return wrenchSoundEvent;
     }
 
     @Override
@@ -103,12 +106,8 @@ public class Rs2Mod implements ModInitializer {
     }
 
     private void registerSounds() {
-        Identifier wrenchSoundEventId = Rs2Mod.createIdentifier("wrench");
+        ResourceLocation wrenchSoundEventId = Rs2Mod.createIdentifier("wrench");
         wrenchSoundEvent = Registry.register(Registry.SOUND_EVENT, wrenchSoundEventId, new SoundEvent(wrenchSoundEventId));
-    }
-
-    public static SoundEvent getWrenchSoundEvent() {
-        return wrenchSoundEvent;
     }
 
     private void registerDiskTypes() {

@@ -6,85 +6,85 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource
 
 import java.util.Optional;
 
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.Item;
 
 public final class PacketUtil {
     private PacketUtil() {
     }
 
-    public static void writeItemResource(PacketByteBuf buf, ItemResource itemResource) {
-        buf.writeVarInt(Item.getRawId(itemResource.getItem()));
+    public static void writeItemResource(FriendlyByteBuf buf, ItemResource itemResource) {
+        buf.writeVarInt(Item.getId(itemResource.getItem()));
         buf.writeNbt(itemResource.getTag());
     }
 
-    public static ItemResource readItemResource(PacketByteBuf buf) {
+    public static ItemResource readItemResource(FriendlyByteBuf buf) {
         int id = buf.readVarInt();
-        NbtCompound nbt = buf.readNbt();
-        return new ItemResource(Item.byRawId(id), nbt);
+        CompoundTag nbt = buf.readNbt();
+        return new ItemResource(Item.byId(id), nbt);
     }
 
-    public static void writeItemResourceAmount(PacketByteBuf buf, com.refinedmods.refinedstorage2.api.resource.ResourceAmount<ItemResource> resourceAmount) {
-        buf.writeVarInt(Item.getRawId(resourceAmount.getResource().getItem()));
+    public static void writeItemResourceAmount(FriendlyByteBuf buf, com.refinedmods.refinedstorage2.api.resource.ResourceAmount<ItemResource> resourceAmount) {
+        buf.writeVarInt(Item.getId(resourceAmount.getResource().getItem()));
         buf.writeLong(resourceAmount.getAmount());
         buf.writeNbt(resourceAmount.getResource().getTag());
     }
 
-    public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<ItemResource> readItemResourceAmount(PacketByteBuf buf) {
+    public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<ItemResource> readItemResourceAmount(FriendlyByteBuf buf) {
         int id = buf.readVarInt();
         long amount = buf.readLong();
-        NbtCompound nbt = buf.readNbt();
+        CompoundTag nbt = buf.readNbt();
         return new com.refinedmods.refinedstorage2.api.resource.ResourceAmount<>(
-                new ItemResource(Item.byRawId(id), nbt),
+                new ItemResource(Item.byId(id), nbt),
                 amount
         );
     }
 
-    public static void writeFluidResource(PacketByteBuf buf, FluidResource itemResource) {
-        buf.writeVarInt(Registry.FLUID.getRawId(itemResource.getFluid()));
+    public static void writeFluidResource(FriendlyByteBuf buf, FluidResource itemResource) {
+        buf.writeVarInt(Registry.FLUID.getId(itemResource.getFluid()));
         buf.writeNbt(itemResource.getTag());
     }
 
-    public static FluidResource readFluidResource(PacketByteBuf buf) {
+    public static FluidResource readFluidResource(FriendlyByteBuf buf) {
         int id = buf.readVarInt();
-        NbtCompound nbt = buf.readNbt();
-        return new FluidResource(Registry.FLUID.get(id), nbt);
+        CompoundTag nbt = buf.readNbt();
+        return new FluidResource(Registry.FLUID.byId(id), nbt);
     }
 
-    public static void writeFluidResourceAmount(PacketByteBuf buf, com.refinedmods.refinedstorage2.api.resource.ResourceAmount<FluidResource> resourceAmount) {
-        buf.writeVarInt(Registry.FLUID.getRawId(resourceAmount.getResource().getFluid()));
+    public static void writeFluidResourceAmount(FriendlyByteBuf buf, com.refinedmods.refinedstorage2.api.resource.ResourceAmount<FluidResource> resourceAmount) {
+        buf.writeVarInt(Registry.FLUID.getId(resourceAmount.getResource().getFluid()));
         buf.writeLong(resourceAmount.getAmount());
         buf.writeNbt(resourceAmount.getResource().getTag());
     }
 
-    public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<FluidResource> readFluidResourceAmount(PacketByteBuf buf) {
+    public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<FluidResource> readFluidResourceAmount(FriendlyByteBuf buf) {
         int id = buf.readVarInt();
         long amount = buf.readLong();
-        NbtCompound nbt = buf.readNbt();
+        CompoundTag nbt = buf.readNbt();
         return new com.refinedmods.refinedstorage2.api.resource.ResourceAmount<>(
-                new FluidResource(Registry.FLUID.get(id), nbt),
+                new FluidResource(Registry.FLUID.byId(id), nbt),
                 amount
         );
     }
 
-    public static void writeTrackerEntry(PacketByteBuf buf, Optional<StorageTracker.Entry> entry) {
+    public static void writeTrackerEntry(FriendlyByteBuf buf, Optional<StorageTracker.Entry> entry) {
         if (!entry.isPresent()) {
             buf.writeBoolean(false);
         } else {
             buf.writeBoolean(true);
             buf.writeLong(entry.get().time());
-            buf.writeString(entry.get().name());
+            buf.writeUtf(entry.get().name());
         }
     }
 
-    public static StorageTracker.Entry readTrackerEntry(PacketByteBuf buf) {
+    public static StorageTracker.Entry readTrackerEntry(FriendlyByteBuf buf) {
         if (!buf.readBoolean()) {
             return null;
         }
         long time = buf.readLong();
-        String name = buf.readString(32767);
+        String name = buf.readUtf(32767);
         return new StorageTracker.Entry(time, name);
     }
 }

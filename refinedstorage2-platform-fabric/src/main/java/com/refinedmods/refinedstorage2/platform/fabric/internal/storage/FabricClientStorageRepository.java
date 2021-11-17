@@ -51,7 +51,7 @@ public class FabricClientStorageRepository implements PlatformStorageRepository 
             return;
         }
         LOGGER.debug("Sending request info packet for {}", id);
-        ClientPacketUtil.sendToServer(PacketIds.STORAGE_INFO_REQUEST, data -> data.writeUuid(id));
+        ClientPacketUtil.sendToServer(PacketIds.STORAGE_INFO_REQUEST, data -> data.writeUUID(id));
     }
 
     @Override

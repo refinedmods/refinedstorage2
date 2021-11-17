@@ -13,20 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Style;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 
 public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
 
     private boolean invalid;
 
-    public GridSearchBoxWidget(TextRenderer textRenderer, int x, int y, int width, SyntaxHighlighter syntaxHighlighter) {
+    public GridSearchBoxWidget(Font textRenderer, int x, int y, int width, SyntaxHighlighter syntaxHighlighter) {
         super(textRenderer, x, y, width, new History(SEARCH_FIELD_HISTORY));
 
-        setRenderTextProvider((text, firstCharacterIndex) -> {
+        setFormatter((text, firstCharacterIndex) -> {
             if (invalid) {
                 return invalidText(text);
             }
@@ -43,21 +43,21 @@ public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearch
         });
     }
 
-    private OrderedText invalidText(String text) {
-        return OrderedText.styledForwardsVisitedString(text, Style.EMPTY.withFormatting(Formatting.RED));
+    private FormattedCharSequence invalidText(String text) {
+        return FormattedCharSequence.forward(text, Style.EMPTY.applyFormat(ChatFormatting.RED));
     }
 
-    private OrderedText convertCharactersToOrderedText(List<SyntaxHighlightedCharacter> characters) {
-        OrderedText orderedText = OrderedText.EMPTY;
+    private FormattedCharSequence convertCharactersToOrderedText(List<SyntaxHighlightedCharacter> characters) {
+        FormattedCharSequence orderedText = FormattedCharSequence.EMPTY;
         for (SyntaxHighlightedCharacter character : characters) {
-            orderedText = OrderedText.concat(orderedText, convertCharacterToOrderedText(character));
+            orderedText = FormattedCharSequence.composite(orderedText, convertCharacterToOrderedText(character));
         }
         return orderedText;
     }
 
-    private OrderedText convertCharacterToOrderedText(SyntaxHighlightedCharacter character) {
-        Formatting color = Formatting.byName(character.getColor());
-        return OrderedText.styledForwardsVisitedString(character.getCharacter(), Style.EMPTY.withColor(color));
+    private FormattedCharSequence convertCharacterToOrderedText(SyntaxHighlightedCharacter character) {
+        ChatFormatting color = ChatFormatting.getByName(character.getColor());
+        return FormattedCharSequence.forward(character.getCharacter(), Style.EMPTY.withColor(color));
     }
 
     private Lexer createLexer(String text) {
@@ -67,17 +67,17 @@ public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearch
     @Override
     public void setAutoSelected(boolean autoSelected) {
         setFocused(autoSelected);
-        setFocusUnlocked(!autoSelected);
+        setCanLoseFocus(!autoSelected);
     }
 
     @Override
     public void setListener(Consumer<String> listener) {
-        setChangedListener(listener);
+        setResponder(listener);
     }
 
     @Override
     public void setInvalid(boolean invalid) {
         this.invalid = invalid;
-        setEditableColor(invalid ? Formatting.RED.getColorValue() : Formatting.WHITE.getColorValue());
+        setTextColor(invalid ? ChatFormatting.RED.getColor() : ChatFormatting.WHITE.getColor());
     }
 }

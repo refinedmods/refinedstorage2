@@ -14,15 +14,15 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 
 public class FabricConnectionProvider implements ConnectionProvider {
-    private final World world;
+    private final Level world;
 
-    public FabricConnectionProvider(World world) {
+    public FabricConnectionProvider(Level world) {
         this.world = world;
     }
 
@@ -88,10 +88,10 @@ public class FabricConnectionProvider implements ConnectionProvider {
         }
     }
 
-    private Set<NetworkNodeContainer<?>> findConnectionsAt(World world, BlockPos pos) {
+    private Set<NetworkNodeContainer<?>> findConnectionsAt(Level world, BlockPos pos) {
         Set<NetworkNodeContainer<?>> containers = new HashSet<>();
         for (Direction direction : Direction.values()) {
-            BlockPos offsetPos = pos.offset(direction);
+            BlockPos offsetPos = pos.relative(direction);
             if (world.getBlockEntity(offsetPos) instanceof NetworkNodeContainerBlockEntity<?> blockEntity) {
                 containers.add(blockEntity.getContainer());
             }
@@ -113,12 +113,12 @@ public class FabricConnectionProvider implements ConnectionProvider {
 
     private static class ScanEntry<T extends NetworkNode> {
         private final NetworkNodeContainer<T> container;
-        private final RegistryKey<World> dimension;
+        private final ResourceKey<Level> dimension;
         private final BlockPos position;
 
-        public ScanEntry(NetworkNodeContainer<T> container, World dimension, BlockPos position) {
+        public ScanEntry(NetworkNodeContainer<T> container, Level dimension, BlockPos position) {
             this.container = container;
-            this.dimension = dimension.getRegistryKey();
+            this.dimension = dimension.dimension();
             this.position = position;
         }
 

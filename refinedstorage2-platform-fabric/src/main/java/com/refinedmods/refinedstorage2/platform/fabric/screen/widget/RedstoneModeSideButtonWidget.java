@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
 
 public class RedstoneModeSideButtonWidget extends SideButtonWidget {
-    private final Map<RedstoneMode, List<Text>> tooltips = new EnumMap<>(RedstoneMode.class);
+    private final Map<RedstoneMode, List<Component>> tooltips = new EnumMap<>(RedstoneMode.class);
     private final TooltipRenderer tooltipRenderer;
     private final RedstoneModeAccessor redstoneModeAccessor;
 
@@ -29,14 +29,14 @@ public class RedstoneModeSideButtonWidget extends SideButtonWidget {
         Arrays.stream(RedstoneMode.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private static PressAction createPressAction(RedstoneModeAccessor redstoneModeAccessor) {
+    private static OnPress createPressAction(RedstoneModeAccessor redstoneModeAccessor) {
         return btn -> redstoneModeAccessor.setRedstoneMode(redstoneModeAccessor.getRedstoneMode().toggle());
     }
 
-    private List<Text> calculateTooltip(RedstoneMode type) {
-        List<Text> lines = new ArrayList<>();
+    private List<Component> calculateTooltip(RedstoneMode type) {
+        List<Component> lines = new ArrayList<>();
         lines.add(Rs2Mod.createTranslation("gui", "redstone_mode"));
-        lines.add(Rs2Mod.createTranslation("gui", "redstone_mode." + type.toString().toLowerCase(Locale.ROOT)).formatted(Formatting.GRAY));
+        lines.add(Rs2Mod.createTranslation("gui", "redstone_mode." + type.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
         return lines;
     }
 
@@ -60,7 +60,7 @@ public class RedstoneModeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(ButtonWidget button, MatrixStack matrixStack, int mouseX, int mouseY) {
+    public void onTooltip(Button button, PoseStack matrixStack, int mouseX, int mouseY) {
         tooltipRenderer.render(matrixStack, tooltips.get(redstoneModeAccessor.getRedstoneMode()), mouseX, mouseY);
     }
 }

@@ -6,19 +6,19 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 
-import net.minecraft.text.TranslatableText;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 
 public interface Rs2PlatformApiFacade {
     Rs2PlatformApiFacade INSTANCE = new Rs2PlatformApiFacadeProxy();
 
-    PlatformStorageRepository getStorageRepository(World world);
+    PlatformStorageRepository getStorageRepository(Level world);
 
     StorageType<ItemResource> getItemStorageType();
 
     StorageType<FluidResource> getFluidStorageType();
 
-    ConnectionProvider createConnectionProvider(World world);
+    ConnectionProvider createConnectionProvider(Level world);
 
-    TranslatableText createTranslation(String category, String value, Object... args);
+    TranslatableComponent createTranslation(String category, String value, Object... args);
 }

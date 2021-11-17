@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.item;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
 public class FluidStoragePartItem extends Item {
-    public FluidStoragePartItem(Settings settings) {
+    public FluidStoragePartItem(Properties settings) {
         super(settings);
     }
 }

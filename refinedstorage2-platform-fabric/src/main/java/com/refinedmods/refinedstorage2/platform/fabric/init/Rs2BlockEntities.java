@@ -11,8 +11,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.FluidGr
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.ItemGridBlockEntity;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class Rs2BlockEntities {
     private BlockEntityType<CableBlockEntity> cable;

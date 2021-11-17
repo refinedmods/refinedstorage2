@@ -1,25 +1,25 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screenhandler.slot;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 public class FilterSlot extends Slot {
-    public FilterSlot(Inventory inventory, int index, int x, int y) {
+    public FilterSlot(Container inventory, int index, int x, int y) {
         super(inventory, index, x, y);
     }
 
     @Override
-    public void setStack(ItemStack stack) {
+    public void set(ItemStack stack) {
         if (!stack.isEmpty()) {
             stack.setCount(1);
         }
-        super.setStack(stack);
+        super.set(stack);
     }
 
     @Override
-    public boolean canTakeItems(PlayerEntity playerEntity) {
+    public boolean mayPickup(Player playerEntity) {
         return false;
     }
 }

@@ -5,13 +5,13 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.storage.item.StorageD
 
 import java.util.Optional;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class StorageInfoAccessorImpl implements StorageInfoAccessor {
-    private final World world;
+    private final Level world;
 
-    public StorageInfoAccessorImpl(World world) {
+    public StorageInfoAccessorImpl(Level world) {
         this.world = world;
     }
 

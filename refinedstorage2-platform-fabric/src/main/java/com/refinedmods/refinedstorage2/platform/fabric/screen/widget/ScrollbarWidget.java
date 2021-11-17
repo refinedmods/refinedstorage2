@@ -3,17 +3,17 @@ package com.refinedmods.refinedstorage2.platform.fabric.screen.widget;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.resources.ResourceLocation;
 
-public class ScrollbarWidget extends DrawableHelper implements Element, Drawable, Selectable {
-    private static final Identifier TEXTURE = Rs2Mod.createIdentifier("textures/gui/widgets.png");
+public class ScrollbarWidget extends GuiComponent implements GuiEventListener, Widget, NarratableEntry {
+    private static final ResourceLocation TEXTURE = Rs2Mod.createIdentifier("textures/gui/widgets.png");
     private static final int SCROLLER_HEIGHT = 15;
 
     private static final int ANIMATION_SCROLL_DURATION_IN_TICKS = 10;
@@ -42,12 +42,12 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
         this.height = height;
     }
 
-    public void setScrollAnimation(boolean scrollAnimation) {
-        this.scrollAnimation = scrollAnimation;
-    }
-
     public boolean isScrollAnimation() {
         return scrollAnimation;
+    }
+
+    public void setScrollAnimation(boolean scrollAnimation) {
+        this.scrollAnimation = scrollAnimation;
     }
 
     public void setEnabled(boolean enabled) {
@@ -55,7 +55,7 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (isAnimatingScroll()) {
             updateScrollingAnimation(partialTicks);
         }
@@ -67,7 +67,7 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
         int enabledU = clicked ? 220 : 232;
         int u = enabled ? enabledU : 244;
 
-        drawTexture(matrixStack, x, y + (int) ((float) offset / (float) maxOffset * (height - SCROLLER_HEIGHT)), u, 0, 12, 15);
+        blit(matrixStack, x, y + (int) ((float) offset / (float) maxOffset * (height - SCROLLER_HEIGHT)), u, 0, 12, 15);
     }
 
     private boolean isAnimatingScroll() {
@@ -167,12 +167,12 @@ public class ScrollbarWidget extends DrawableHelper implements Element, Drawable
     }
 
     @Override
-    public SelectionType getType() {
-        return SelectionType.NONE;
+    public NarrationPriority narrationPriority() {
+        return NarrationPriority.NONE;
     }
 
     @Override
-    public void appendNarrations(NarrationMessageBuilder builder) {
+    public void updateNarration(NarrationElementOutput builder) {
         // intentionally empty
     }
 }

@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.render;
 
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Direction;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.core.Direction;
 
 public class CubeBuilder {
     public static final CubeBuilder INSTANCE = new CubeBuilder();
@@ -10,21 +10,21 @@ public class CubeBuilder {
     private CubeBuilder() {
     }
 
-    public void putCube(MatrixStack matrixStack, VertexConsumer builder, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b, int a) {
+    public void putCube(PoseStack matrixStack, VertexConsumer builder, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b, int a) {
         putCube(matrixStack, builder, x1, y1, z1, x2, y2, z2, r, g, b, a, null);
     }
 
-    public void putCube(MatrixStack matrixStack, VertexConsumer builder, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b, int a, Direction exclude) {
-        matrixStack.push();
+    public void putCube(PoseStack matrixStack, VertexConsumer builder, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b, int a, Direction exclude) {
+        matrixStack.pushPose();
         for (Direction face : Direction.values()) {
             if (face != exclude) {
                 putFace(matrixStack, builder, x1, y1, z1, x2, y2, z2, r, g, b, a, face);
             }
         }
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
-    public void putFace(MatrixStack matrixStack, VertexConsumer builder, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b, int a, Direction face) {
+    public void putFace(PoseStack matrixStack, VertexConsumer builder, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b, int a, Direction face) {
         switch (face) {
             case DOWN -> {
                 this.putVertex(builder, matrixStack, r, g, b, a, x2, y1, z1);
@@ -65,7 +65,7 @@ public class CubeBuilder {
         }
     }
 
-    private void putVertex(VertexConsumer builder, MatrixStack matrixStack, int r, int g, int b, int a, float x, float y, float z) {
-        builder.vertex(matrixStack.peek().getModel(), x, y, z).color(r, g, b, a).next();
+    private void putVertex(VertexConsumer builder, PoseStack matrixStack, int r, int g, int b, int a, float x, float y, float z) {
+        builder.vertex(matrixStack.last().pose(), x, y, z).color(r, g, b, a).endVertex();
     }
 }

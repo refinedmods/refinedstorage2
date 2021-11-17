@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
 
 public final class ScreenUtil {
     private static final List<String> VERSION_INFO_LINES = new ArrayList<>();
@@ -16,7 +16,7 @@ public final class ScreenUtil {
     private ScreenUtil() {
     }
 
-    public static void drawVersionInformation(MatrixStack matrixStack, TextRenderer textRenderer) {
+    public static void drawVersionInformation(PoseStack matrixStack, Font textRenderer) {
         if (VERSION_INFO_LINES.isEmpty()) {
             loadVersionInformationLines();
         }
@@ -25,7 +25,7 @@ public final class ScreenUtil {
         int y = 5;
 
         for (String line : VERSION_INFO_LINES) {
-            textRenderer.drawWithShadow(matrixStack, line, x, y, Formatting.WHITE.getColorValue());
+            textRenderer.drawShadow(matrixStack, line, x, y, ChatFormatting.WHITE.getColor());
             y += 9;
         }
     }

@@ -10,9 +10,9 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStora
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 
 public class ItemStorageType implements StorageType<ItemResource> {
     public static final ItemStorageType INSTANCE = new ItemStorageType();
@@ -24,25 +24,25 @@ public class ItemStorageType implements StorageType<ItemResource> {
     }
 
     @Override
-    public Storage<ItemResource> fromTag(NbtCompound tag, PlatformStorageRepository storageManager) {
+    public Storage<ItemResource> fromTag(CompoundTag tag, PlatformStorageRepository storageManager) {
         Storage<ItemResource> storage = new PlatformCappedStorage<>(
                 tag.getLong(TAG_CAPACITY),
                 ItemStorageType.INSTANCE,
                 storageManager::markAsChanged
         );
 
-        NbtList stacks = tag.getList(TAG_STACKS, NbtType.COMPOUND);
-        for (NbtElement stackTag : stacks) {
-            ItemResource.fromTagWithAmount((NbtCompound) stackTag).ifPresent(resourceAmount -> storage.insert(resourceAmount.getResource(), resourceAmount.getAmount(), Action.EXECUTE));
+        ListTag stacks = tag.getList(TAG_STACKS, NbtType.COMPOUND);
+        for (Tag stackTag : stacks) {
+            ItemResource.fromTagWithAmount((CompoundTag) stackTag).ifPresent(resourceAmount -> storage.insert(resourceAmount.getResource(), resourceAmount.getAmount(), Action.EXECUTE));
         }
         return storage;
     }
 
     @Override
-    public NbtCompound toTag(Storage<ItemResource> storage) {
-        NbtCompound tag = new NbtCompound();
+    public CompoundTag toTag(Storage<ItemResource> storage) {
+        CompoundTag tag = new CompoundTag();
         tag.putLong(TAG_CAPACITY, ((CappedStorage) storage).getCapacity());
-        NbtList stacks = new NbtList();
+        ListTag stacks = new ListTag();
         for (ResourceAmount<ItemResource> resourceAmount : storage.getAll()) {
             stacks.add(ItemResource.toTagWithAmount(resourceAmount));
         }

@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom'
+    id 'fabric-loom' version '0.10-SNAPSHOT'
 }
 
 sourceCompatibility = JavaVersion.VERSION_16
@@ -7,9 +7,19 @@ targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = 'refinedstorage2-platform-fabric-api'
 
+repositories {
+    // Parchment
+    maven {
+        url 'https://maven.parchmentmc.org'
+    }
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraftVersion}"
-    mappings "net.fabricmc:yarn:${project.yarnVersion}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${project.minecraftVersion}:${project.parchmentVersion}@zip")
+    }
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricApiVersion}"
     implementation project(':refinedstorage2-core-api')
     implementation project(':refinedstorage2-storage-api')

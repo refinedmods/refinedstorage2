@@ -7,30 +7,62 @@ import java.util.Optional;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.impl.transfer.fluid.FluidVariantImpl;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 
 public final class FluidResource {
+    private static final String TAG_TAG = "tag";
+    private static final String TAG_ID = "id";
+    private static final String TAG_AMOUNT = "amount";
     private final Fluid fluid;
-    private final NbtCompound tag;
+    private final CompoundTag tag;
+
+    public FluidResource(Fluid fluid, CompoundTag tag) {
+        this.fluid = fluid;
+        this.tag = tag;
+    }
 
     public static FluidResource ofFluidVariant(FluidVariant fluidVariant) {
         return new FluidResource(fluidVariant.getFluid(), fluidVariant.getNbt());
     }
 
-    public FluidResource(Fluid fluid, NbtCompound tag) {
-        this.fluid = fluid;
-        this.tag = tag;
+    public static CompoundTag toTag(FluidResource fluidResource) {
+        CompoundTag tag = new CompoundTag();
+        if (fluidResource.getTag() != null) {
+            tag.put(TAG_TAG, fluidResource.getTag());
+        }
+        tag.putString(TAG_ID, Registry.FLUID.getKey(fluidResource.getFluid()).toString());
+        return tag;
+    }
+
+    public static CompoundTag toTagWithAmount(ResourceAmount<FluidResource> resourceAmount) {
+        CompoundTag tag = toTag(resourceAmount.getResource());
+        tag.putLong(TAG_AMOUNT, resourceAmount.getAmount());
+        return tag;
+    }
+
+    public static Optional<FluidResource> fromTag(CompoundTag tag) {
+        ResourceLocation id = new ResourceLocation(tag.getString(TAG_ID));
+        Fluid fluid = Registry.FLUID.get(id);
+        if (fluid == Fluids.EMPTY) {
+            return Optional.empty();
+        }
+        CompoundTag itemTag = tag.contains(TAG_TAG) ? tag.getCompound(TAG_TAG) : null;
+        return Optional.of(new FluidResource(fluid, itemTag));
+    }
+
+    public static Optional<ResourceAmount<FluidResource>> fromTagWithAmount(CompoundTag tag) {
+        return fromTag(tag).map(fluidResource -> new ResourceAmount<>(fluidResource, tag.getLong(TAG_AMOUNT)));
     }
 
     public Fluid getFluid() {
         return fluid;
     }
 
-    public NbtCompound getTag() {
+    public CompoundTag getTag() {
         return tag;
     }
 
@@ -57,38 +89,5 @@ public final class FluidResource {
                 "fluid=" + fluid +
                 ", tag=" + tag +
                 '}';
-    }
-
-    private static final String TAG_TAG = "tag";
-    private static final String TAG_ID = "id";
-    private static final String TAG_AMOUNT = "amount";
-
-    public static NbtCompound toTag(FluidResource fluidResource) {
-        NbtCompound tag = new NbtCompound();
-        if (fluidResource.getTag() != null) {
-            tag.put(TAG_TAG, fluidResource.getTag());
-        }
-        tag.putString(TAG_ID, Registry.FLUID.getId(fluidResource.getFluid()).toString());
-        return tag;
-    }
-
-    public static NbtCompound toTagWithAmount(ResourceAmount<FluidResource> resourceAmount) {
-        NbtCompound tag = toTag(resourceAmount.getResource());
-        tag.putLong(TAG_AMOUNT, resourceAmount.getAmount());
-        return tag;
-    }
-
-    public static Optional<FluidResource> fromTag(NbtCompound tag) {
-        Identifier id = new Identifier(tag.getString(TAG_ID));
-        Fluid fluid = Registry.FLUID.get(id);
-        if (fluid == Fluids.EMPTY) {
-            return Optional.empty();
-        }
-        NbtCompound itemTag = tag.contains(TAG_TAG) ? tag.getCompound(TAG_TAG) : null;
-        return Optional.of(new FluidResource(fluid, itemTag));
-    }
-
-    public static Optional<ResourceAmount<FluidResource>> fromTagWithAmount(NbtCompound tag) {
-        return fromTag(tag).map(fluidResource -> new ResourceAmount<>(fluidResource, tag.getLong(TAG_AMOUNT)));
     }
 }

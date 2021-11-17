@@ -10,14 +10,14 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.
 
 import java.util.Optional;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class ItemStorageDiskItem extends StorageDiskItemImpl {
     private final ItemStorageType type;
 
-    public ItemStorageDiskItem(Settings settings, ItemStorageType type) {
-        super(settings);
+    public ItemStorageDiskItem(Properties properties, ItemStorageType type) {
+        super(properties);
         this.type = type;
     }
 
@@ -28,14 +28,14 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected Optional<ItemStack> createStoragePart(int count) {
-        if (type == ItemStorageDiskItem.ItemStorageType.CREATIVE) {
+        if (type == ItemStorageType.CREATIVE) {
             return Optional.empty();
         }
         return Optional.of(new ItemStack(Rs2Mod.ITEMS.getStoragePart(type), count));
     }
 
     @Override
-    protected Storage<?> createStorage(World world) {
+    protected Storage<?> createStorage(Level world) {
         return new PlatformCappedStorage<>(
                 type.getCapacity(),
                 com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemStorageType.INSTANCE,

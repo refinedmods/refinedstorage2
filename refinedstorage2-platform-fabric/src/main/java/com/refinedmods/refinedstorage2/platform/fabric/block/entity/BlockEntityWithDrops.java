@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block.entity;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.ItemStack;
 
 public interface BlockEntityWithDrops {
-    DefaultedList<ItemStack> getDrops();
+    NonNullList<ItemStack> getDrops();
 }

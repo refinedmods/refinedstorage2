@@ -2,16 +2,16 @@ package com.refinedmods.refinedstorage2.platform.fabric.block;
 
 import com.refinedmods.refinedstorage2.platform.fabric.init.BlockColorMap;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 public abstract class GridBlock extends NetworkNodeContainerBlock {
-    public GridBlock(Settings settings) {
+    public GridBlock(Properties settings) {
         super(settings);
     }
 
@@ -28,12 +28,12 @@ public abstract class GridBlock extends NetworkNodeContainerBlock {
     protected abstract BlockColorMap<?> getBlockColorMap();
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        ActionResult result = getBlockColorMap().updateColor(state, player.getStackInHand(hand), world, pos, player);
-        if (result != ActionResult.PASS) {
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        InteractionResult result = getBlockColorMap().updateColor(state, player.getItemInHand(hand), world, pos, player);
+        if (result != InteractionResult.PASS) {
             return result;
         }
 
-        return super.onUse(state, world, pos, player, hand, hit);
+        return super.use(state, world, pos, player, hand, hit);
     }
 }

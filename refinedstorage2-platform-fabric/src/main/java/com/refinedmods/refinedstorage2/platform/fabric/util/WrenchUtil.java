@@ -3,18 +3,18 @@ package com.refinedmods.refinedstorage2.platform.fabric.util;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 
 import net.fabricmc.fabric.api.tag.TagFactory;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.tag.Tag;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public final class WrenchUtil {
-    private static final Tag<Item> WRENCHES = TagFactory.ITEM.create(new Identifier("fabric:wrenches"));
-    private static final Tag<Block> WRENCHABLES = TagFactory.BLOCK.create(new Identifier("fabric:wrenchables"));
+    private static final Tag<Item> WRENCHES = TagFactory.ITEM.create(new ResourceLocation("fabric:wrenches"));
+    private static final Tag<Block> WRENCHABLES = TagFactory.BLOCK.create(new ResourceLocation("fabric:wrenchables"));
 
     private WrenchUtil() {
     }
@@ -24,10 +24,10 @@ public final class WrenchUtil {
     }
 
     public static boolean isWrenchable(BlockState blockState) {
-        return blockState.isIn(WRENCHABLES);
+        return blockState.is(WRENCHABLES);
     }
 
-    public static void playWrenchSound(World world, BlockPos pos) {
-        world.playSound(null, pos, Rs2Mod.getWrenchSoundEvent(), SoundCategory.BLOCKS, 1.0F, 1.0F);
+    public static void playWrenchSound(Level world, BlockPos pos) {
+        world.playSound(null, pos, Rs2Mod.getWrenchSoundEvent(), SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 }

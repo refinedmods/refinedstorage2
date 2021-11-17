@@ -8,10 +8,10 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.storage.item.StorageD
 import java.util.Optional;
 import java.util.UUID;
 
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
 
-public class DiskDriveInventory extends SimpleInventory implements StorageDiskProvider {
+public class DiskDriveInventory extends SimpleContainer implements StorageDiskProvider {
     private final DiskDriveBlockEntity diskDrive;
 
     public DiskDriveInventory(DiskDriveBlockEntity diskDrive) {
@@ -20,14 +20,14 @@ public class DiskDriveInventory extends SimpleInventory implements StorageDiskPr
     }
 
     @Override
-    public boolean isValid(int slot, ItemStack stack) {
+    public boolean canPlaceItem(int slot, ItemStack stack) {
         return stack.getItem() instanceof StorageDiskItem;
     }
 
     @Override
-    public void setStack(int slot, ItemStack stack) {
-        super.setStack(slot, stack);
-        if (diskDrive.getWorld() == null || diskDrive.getWorld().isClient()) {
+    public void setItem(int slot, ItemStack stack) {
+        super.setItem(slot, stack);
+        if (diskDrive.getLevel() == null || diskDrive.getLevel().isClientSide()) {
             return;
         }
         diskDrive.onDiskChanged(slot);
@@ -44,7 +44,7 @@ public class DiskDriveInventory extends SimpleInventory implements StorageDiskPr
     }
 
     private Optional<ItemStack> validateAndGetStack(int slot) {
-        ItemStack stack = getStack(slot);
+        ItemStack stack = getItem(slot);
         if (stack.isEmpty() || !(stack.getItem() instanceof StorageDiskItem)) {
             return Optional.empty();
         }

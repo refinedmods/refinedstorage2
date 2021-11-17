@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block;
 
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 
 public class QuartzEnrichedIronBlock extends Block {
-    public QuartzEnrichedIronBlock(Settings settings) {
+    public QuartzEnrichedIronBlock(Properties settings) {
         super(settings);
     }
 }

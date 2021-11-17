@@ -11,7 +11,9 @@
     "custom": {
         "modmenu": {
             "parent": "refinedstorage2",
-            "badges": ["library"]
+            "badges": [
+                "library"
+            ]
         }
     }
 }

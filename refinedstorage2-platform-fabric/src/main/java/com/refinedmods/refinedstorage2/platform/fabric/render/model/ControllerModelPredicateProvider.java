@@ -2,15 +2,15 @@ package com.refinedmods.refinedstorage2.platform.fabric.render.model;
 
 import com.refinedmods.refinedstorage2.platform.fabric.item.block.ControllerBlockItem;
 
-import net.minecraft.client.item.UnclampedModelPredicateProvider;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public class ControllerModelPredicateProvider implements UnclampedModelPredicateProvider {
+public class ControllerModelPredicateProvider implements ClampedItemPropertyFunction {
     @Override
-    public float unclampedCall(ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity, int seed) {
+    public float unclampedCall(ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity entity, int seed) {
         return ControllerBlockItem.getPercentFull(stack);
     }
 }

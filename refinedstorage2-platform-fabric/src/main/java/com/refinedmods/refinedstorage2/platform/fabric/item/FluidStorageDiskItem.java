@@ -12,14 +12,14 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.
 import java.util.Optional;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class FluidStorageDiskItem extends StorageDiskItemImpl {
     private final FluidStorageType type;
 
-    public FluidStorageDiskItem(Settings settings, FluidStorageType type) {
-        super(settings);
+    public FluidStorageDiskItem(Properties properties, FluidStorageType type) {
+        super(properties);
         this.type = type;
     }
 
@@ -30,14 +30,14 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected Optional<ItemStack> createStoragePart(int count) {
-        if (type == FluidStorageDiskItem.FluidStorageType.CREATIVE) {
+        if (type == FluidStorageType.CREATIVE) {
             return Optional.empty();
         }
         return Optional.of(new ItemStack(Rs2Mod.ITEMS.getFluidStoragePart(type), count));
     }
 
     @Override
-    protected Storage<?> createStorage(World world) {
+    protected Storage<?> createStorage(Level world) {
         return new PlatformCappedStorage<>(
                 type.getCapacity(),
                 com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidStorageType.INSTANCE,

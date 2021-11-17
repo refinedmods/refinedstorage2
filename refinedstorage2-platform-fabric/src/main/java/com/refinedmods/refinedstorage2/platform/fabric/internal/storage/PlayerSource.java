@@ -2,12 +2,12 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Source;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class PlayerSource implements Source {
-    private final PlayerEntity player;
+    private final Player player;
 
-    public PlayerSource(PlayerEntity player) {
+    public PlayerSource(Player player) {
         this.player = player;
     }
 

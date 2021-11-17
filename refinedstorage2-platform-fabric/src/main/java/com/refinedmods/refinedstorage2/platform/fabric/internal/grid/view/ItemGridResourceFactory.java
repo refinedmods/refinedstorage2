@@ -11,13 +11,13 @@ import java.util.stream.Collectors;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tag.ItemTags;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 
 public class ItemGridResourceFactory implements Function<ResourceAmount<ItemResource>, GridResource<ItemResource>> {
     @Override
@@ -25,7 +25,7 @@ public class ItemGridResourceFactory implements Function<ResourceAmount<ItemReso
         Item item = resourceAmount.getResource().getItem();
         ItemStack itemStack = resourceAmount.getResource().toItemStack();
 
-        String name = item.getName().getString();
+        String name = item.getDescription().getString();
         String modId = getModId(item);
         String modName = getModName(modId);
 
@@ -37,18 +37,18 @@ public class ItemGridResourceFactory implements Function<ResourceAmount<ItemReso
 
     private String getTooltip(ItemStack itemStack) {
         return itemStack
-                .getTooltip(null, TooltipContext.Default.ADVANCED)
+                .getTooltipLines(null, TooltipFlag.Default.ADVANCED)
                 .stream()
-                .map(Text::asString)
+                .map(Component::getContents)
                 .collect(Collectors.joining("\n"));
     }
 
     private Set<String> getTags(Item item) {
         return ItemTags
-                .getTagGroup()
-                .getTagsFor(item)
+                .getAllTags()
+                .getMatchingTags(item)
                 .stream()
-                .map(Identifier::getPath)
+                .map(ResourceLocation::getPath)
                 .collect(Collectors.toSet());
     }
 
@@ -62,6 +62,6 @@ public class ItemGridResourceFactory implements Function<ResourceAmount<ItemReso
     }
 
     private String getModId(Item item) {
-        return Registry.ITEM.getId(item).getNamespace();
+        return Registry.ITEM.getKey(item).getNamespace();
     }
 }

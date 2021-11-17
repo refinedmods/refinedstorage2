@@ -2,22 +2,22 @@ package com.refinedmods.refinedstorage2.platform.fabric.screen.widget;
 
 import com.refinedmods.refinedstorage2.api.core.History;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2ClientMod;
-import com.refinedmods.refinedstorage2.platform.fabric.mixin.TextFieldWidgetAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.mixin.EditBoxAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.util.KeyBindingUtil;
 
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.LiteralText;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.TextComponent;
 import org.lwjgl.glfw.GLFW;
 
-public class SearchFieldWidget extends TextFieldWidget {
+public class SearchFieldWidget extends EditBox {
     private final History history;
 
-    public SearchFieldWidget(TextRenderer textRenderer, int x, int y, int width, History history) {
-        super(textRenderer, x, y, width, textRenderer.fontHeight, new LiteralText(""));
+    public SearchFieldWidget(Font textRenderer, int x, int y, int width, History history) {
+        super(textRenderer, x, y, width, textRenderer.lineHeight, new TextComponent(""));
 
         this.history = history;
-        this.setDrawsBackground(false);
+        this.setBordered(false);
         this.setMaxLength(256);
     }
 
@@ -28,7 +28,7 @@ public class SearchFieldWidget extends TextFieldWidget {
         boolean clickedWidget = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
 
         if (clickedWidget && mouseButton == 1) {
-            setText("");
+            setValue("");
             setFocused(true);
         } else if (wasFocused != isFocused()) {
             saveHistory();
@@ -41,19 +41,19 @@ public class SearchFieldWidget extends TextFieldWidget {
     public boolean keyPressed(int keyCode, int scanCode, int modifier) {
         boolean result = super.keyPressed(keyCode, scanCode, modifier);
 
-        boolean focusUnlocked = ((TextFieldWidgetAccessor) this).getFocusUnlocked();
+        boolean canLoseFocus = ((EditBoxAccessor) this).getCanLoseFocus();
 
         if (isFocused()) {
             if (keyCode == GLFW.GLFW_KEY_UP) {
-                setText(history.older());
+                setValue(history.older());
                 result = true;
             } else if (keyCode == GLFW.GLFW_KEY_DOWN) {
-                setText(history.newer());
+                setValue(history.newer());
                 result = true;
             } else if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
                 saveHistory();
 
-                if (focusUnlocked) {
+                if (canLoseFocus) {
                     setFocused(false);
                 }
 
@@ -63,7 +63,7 @@ public class SearchFieldWidget extends TextFieldWidget {
 
                 setFocused(false);
 
-                if (focusUnlocked) {
+                if (canLoseFocus) {
                     result = true;
                 } else {
                     result = false;
@@ -71,7 +71,7 @@ public class SearchFieldWidget extends TextFieldWidget {
             }
         }
 
-        if (KeyBindingUtil.isKeyDown(Rs2ClientMod.getFocusSearchBarKeyBinding()) && focusUnlocked) {
+        if (KeyBindingUtil.isKeyDown(Rs2ClientMod.getFocusSearchBarKeyBinding()) && canLoseFocus) {
             setFocused(!isFocused());
             saveHistory();
             result = true;
@@ -81,6 +81,6 @@ public class SearchFieldWidget extends TextFieldWidget {
     }
 
     private void saveHistory() {
-        history.save(getText());
+        history.save(getValue());
     }
 }

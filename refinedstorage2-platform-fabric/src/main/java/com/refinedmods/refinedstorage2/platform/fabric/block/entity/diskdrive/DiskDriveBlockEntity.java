@@ -26,25 +26,25 @@ import java.util.stream.Collectors;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtByte;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.Text;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.ByteTag;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements RenderAttachmentBlockEntity, BlockEntityClientSerializable, NamedScreenHandlerFactory, BlockEntityWithDrops, DiskDriveListener {
+public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements RenderAttachmentBlockEntity, BlockEntityClientSerializable, MenuProvider, BlockEntityWithDrops, DiskDriveListener {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_PRIORITY = "pri";
@@ -58,7 +58,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     private static final int DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
 
     private final DiskDriveInventory diskInventory = new DiskDriveInventory(this);
-    private final SimpleInventory filterInventory = new SimpleInventory(9);
+    private final SimpleContainer filterInventory = new SimpleContainer(9);
     private DiskDriveState driveState;
 
     private boolean syncRequested;
@@ -75,7 +75,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
         }
 
         if (lastStateChanged == 0 || (System.currentTimeMillis() - lastStateChanged) > DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS) {
-            LOGGER.info("Disk state change for block at {}", pos);
+            LOGGER.info("Disk state change for block at {}", getBlockPos());
             this.lastStateChanged = System.currentTimeMillis();
             this.syncRequested = false;
             sync();
@@ -83,10 +83,10 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     @Override
-    public void setWorld(World world) {
-        super.setWorld(world);
-        if (!world.isClient()) {
-            getContainer().getNode().initialize(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world));
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        if (!level.isClientSide()) {
+            getContainer().getNode().initialize(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level));
         }
     }
 
@@ -97,7 +97,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     @Override
-    protected DiskDriveNetworkNode createNode(BlockPos pos, NbtCompound tag) {
+    protected DiskDriveNetworkNode createNode(BlockPos pos, CompoundTag tag) {
         DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(
                 diskInventory,
                 Rs2Config.get().getDiskDrive().getEnergyUsage(),
@@ -121,8 +121,8 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
         }
 
         Set<Object> filterTemplates = new HashSet<>();
-        for (int i = 0; i < filterInventory.size(); ++i) {
-            ItemStack filter = filterInventory.getStack(i);
+        for (int i = 0; i < filterInventory.getContainerSize(); ++i) {
+            ItemStack filter = filterInventory.getItem(i);
             if (!filter.isEmpty()) {
                 filterTemplates.add(new ItemResource(filter));
             }
@@ -134,30 +134,30 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     @Override
-    public void readNbt(NbtCompound tag) {
+    public void load(CompoundTag tag) {
         if (tag.contains(TAG_DISK_INVENTORY)) {
-            diskInventory.readNbtList(tag.getList(TAG_DISK_INVENTORY, NbtByte.COMPOUND_TYPE));
+            diskInventory.fromTag(tag.getList(TAG_DISK_INVENTORY, ByteTag.TAG_COMPOUND));
         }
 
         if (tag.contains(TAG_FILTER_INVENTORY)) {
-            filterInventory.readNbtList(tag.getList(TAG_FILTER_INVENTORY, NbtByte.COMPOUND_TYPE));
+            filterInventory.fromTag(tag.getList(TAG_FILTER_INVENTORY, ByteTag.TAG_COMPOUND));
         }
 
-        super.readNbt(tag);
+        super.load(tag);
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
-        tag = super.writeNbt(tag);
-        tag.put(TAG_DISK_INVENTORY, diskInventory.toNbtList());
-        tag.put(TAG_FILTER_INVENTORY, filterInventory.toNbtList());
+    public CompoundTag save(CompoundTag tag) {
+        tag = super.save(tag);
+        tag.put(TAG_DISK_INVENTORY, diskInventory.createTag());
+        tag.put(TAG_FILTER_INVENTORY, filterInventory.createTag());
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getContainer().getNode().getFilterMode()));
         tag.putInt(TAG_PRIORITY, getContainer().getNode().getPriority());
         tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getContainer().getNode().getAccessMode()));
         return tag;
     }
 
-    public SimpleInventory getDiskInventory() {
+    public SimpleContainer getDiskInventory() {
         return diskInventory;
     }
 
@@ -167,7 +167,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
 
     public void setFilterMode(FilterMode mode) {
         getContainer().getNode().setFilterMode(mode);
-        markDirty();
+        setChanged();
     }
 
     public boolean isExactMode() {
@@ -177,7 +177,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
 
     public void setExactMode(boolean exactMode) {
         // todo
-        markDirty();
+        setChanged();
     }
 
     public AccessMode getAccessMode() {
@@ -186,12 +186,12 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
 
     public void setAccessMode(AccessMode accessMode) {
         getContainer().getNode().setAccessMode(accessMode);
-        markDirty();
+        setChanged();
     }
 
     public void setFilterTemplates(List<ItemStack> templates) {
         getContainer().getNode().setFilterTemplates(templates.stream().map(ItemResource::new).collect(Collectors.toSet()));
-        markDirty();
+        setChanged();
     }
 
     @Override
@@ -202,54 +202,54 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     void onDiskChanged(int slot) {
         getContainer().getNode().onDiskChanged(slot);
         sync();
-        markDirty();
+        setChanged();
     }
 
     @Override
-    public void fromClientTag(NbtCompound tag) {
+    public void fromClientTag(CompoundTag tag) {
         if (tag.contains(TAG_STATES)) {
-            NbtList statesList = tag.getList(TAG_STATES, NbtType.BYTE);
+            ListTag statesList = tag.getList(TAG_STATES, NbtType.BYTE);
 
             driveState = new DiskDriveState(statesList.size());
 
             for (int i = 0; i < statesList.size(); ++i) {
-                int idx = ((NbtByte) statesList.get(i)).intValue();
+                int idx = ((ByteTag) statesList.get(i)).getAsInt();
                 if (idx < 0 || idx >= StorageDiskState.values().length) {
                     idx = StorageDiskState.NONE.ordinal();
                 }
                 driveState.setState(i, StorageDiskState.values()[idx]);
             }
 
-            BlockState state = world.getBlockState(pos);
-            world.updateListeners(pos, state, state, 1 | 2);
+            BlockState state = level.getBlockState(getBlockPos());
+            level.sendBlockUpdated(getBlockPos(), state, state, 1 | 2);
         }
     }
 
     @Override
-    public NbtCompound toClientTag(NbtCompound tag) {
-        NbtList statesList = new NbtList();
+    public CompoundTag toClientTag(CompoundTag tag) {
+        ListTag statesList = new ListTag();
         for (StorageDiskState state : getContainer().getNode().createState().getStates()) {
-            statesList.add(NbtByte.of((byte) state.ordinal()));
+            statesList.add(ByteTag.valueOf((byte) state.ordinal()));
         }
         tag.put(TAG_STATES, statesList);
         return tag;
     }
 
     @Override
-    public Text getDisplayName() {
+    public Component getDisplayName() {
         return Rs2Mod.createTranslation("block", "disk_drive");
     }
 
     @Override
-    public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+    public @Nullable AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
         return new DiskDriveScreenHandler(syncId, player, diskInventory, filterInventory, this, stack -> Optional.empty());
     }
 
     @Override
-    public DefaultedList<ItemStack> getDrops() {
-        DefaultedList<ItemStack> drops = DefaultedList.of();
-        for (int i = 0; i < diskInventory.size(); ++i) {
-            drops.add(diskInventory.getStack(i));
+    public NonNullList<ItemStack> getDrops() {
+        NonNullList<ItemStack> drops = NonNullList.create();
+        for (int i = 0; i < diskInventory.getContainerSize(); ++i) {
+            drops.add(diskInventory.getItem(i));
         }
         return drops;
     }
@@ -260,7 +260,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
 
     public void setPriority(int priority) {
         getContainer().getNode().setPriority(priority);
-        markDirty();
+        setChanged();
     }
 
     @Override

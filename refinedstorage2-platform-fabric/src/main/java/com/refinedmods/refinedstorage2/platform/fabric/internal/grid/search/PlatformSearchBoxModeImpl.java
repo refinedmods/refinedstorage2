@@ -3,17 +3,17 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.grid.search;
 import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
 
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 public class PlatformSearchBoxModeImpl extends GridSearchBoxModeImpl {
-    private final Identifier textureIdentifier;
+    private final ResourceLocation textureIdentifier;
     private final int textureX;
     private final int textureY;
-    private final TranslatableText name;
+    private final TranslatableComponent name;
     private final boolean autoSelected;
 
-    public PlatformSearchBoxModeImpl(GridQueryParser queryParser, Identifier textureIdentifier, int textureX, int textureY, TranslatableText name, boolean autoSelected) {
+    public PlatformSearchBoxModeImpl(GridQueryParser queryParser, ResourceLocation textureIdentifier, int textureX, int textureY, TranslatableComponent name, boolean autoSelected) {
         super(queryParser);
         this.textureIdentifier = textureIdentifier;
         this.textureX = textureX;
@@ -22,7 +22,7 @@ public class PlatformSearchBoxModeImpl extends GridSearchBoxModeImpl {
         this.autoSelected = autoSelected;
     }
 
-    public Identifier getTextureIdentifier() {
+    public ResourceLocation getTextureIdentifier() {
         return textureIdentifier;
     }
 
@@ -34,7 +34,7 @@ public class PlatformSearchBoxModeImpl extends GridSearchBoxModeImpl {
         return textureY;
     }
 
-    public TranslatableText getName() {
+    public TranslatableComponent getName() {
         return name;
     }
 

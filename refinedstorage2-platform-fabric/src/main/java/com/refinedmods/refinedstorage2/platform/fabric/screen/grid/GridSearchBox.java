@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 public interface GridSearchBox {
     void setAutoSelected(boolean autoSelected);
 
-    void setText(String text);
+    void setValue(String value);
 
     void setListener(Consumer<String> listener);
 

@@ -7,14 +7,14 @@ import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class GridScrollPacket implements ServerPlayNetworking.PlayChannelHandler {
-    public static void writeMode(PacketByteBuf buf, GridScrollMode mode) {
+    public static void writeMode(FriendlyByteBuf buf, GridScrollMode mode) {
         switch (mode) {
             case GRID_TO_INVENTORY -> buf.writeByte(0);
             case GRID_TO_CURSOR -> buf.writeByte(1);
@@ -23,13 +23,13 @@ public class GridScrollPacket implements ServerPlayNetworking.PlayChannelHandler
     }
 
     @Override
-    public void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+    public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         ItemResource itemResource = PacketUtil.readItemResource(buf);
         GridScrollMode mode = getMode(buf.readByte());
         int slot = buf.readInt();
 
         server.execute(() -> {
-            ScreenHandler screenHandler = player.currentScreenHandler;
+            AbstractContainerMenu screenHandler = player.containerMenu;
             if (screenHandler instanceof ItemGridEventHandler gridEventHandler) {
                 gridEventHandler.onScroll(itemResource, mode, slot);
             }

@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 
-import net.minecraft.text.TranslatableText;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 
 public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
     private Rs2PlatformApiFacade facade;
@@ -20,7 +20,7 @@ public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public PlatformStorageRepository getStorageRepository(World world) {
+    public PlatformStorageRepository getStorageRepository(Level world) {
         return ensureLoaded().getStorageRepository(world);
     }
 
@@ -35,12 +35,12 @@ public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public ConnectionProvider createConnectionProvider(World world) {
+    public ConnectionProvider createConnectionProvider(Level world) {
         return ensureLoaded().createConnectionProvider(world);
     }
 
     @Override
-    public TranslatableText createTranslation(String category, String value, Object... args) {
+    public TranslatableComponent createTranslation(String category, String value, Object... args) {
         return ensureLoaded().createTranslation(category, value, args);
     }
 

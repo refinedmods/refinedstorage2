@@ -11,16 +11,16 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.ControllerEnergyTyp
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.ControllerScreenHandler;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -47,10 +47,10 @@ public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity
 
     public void updateEnergyType(BlockState state) {
         ControllerEnergyType energyType = ControllerEnergyType.ofState(getContainer().getNode().getState());
-        ControllerEnergyType inWorldEnergyType = state.get(ControllerBlock.ENERGY_TYPE);
+        ControllerEnergyType inWorldEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
 
         if (energyType != inWorldEnergyType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
-            LOGGER.info("Energy type state change for block at {}: {} -> {}", pos, inWorldEnergyType, energyType);
+            LOGGER.info("Energy type state change for block at {}: {} -> {}", getBlockPos(), inWorldEnergyType, energyType);
 
             this.lastTypeChanged = System.currentTimeMillis();
 
@@ -59,11 +59,11 @@ public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity
     }
 
     private void updateEnergyType(BlockState state, ControllerEnergyType type) {
-        world.setBlockState(pos, state.with(ControllerBlock.ENERGY_TYPE, type));
+        level.setBlockAndUpdate(getBlockPos(), state.setValue(ControllerBlock.ENERGY_TYPE, type));
     }
 
     @Override
-    protected ControllerNetworkNode createNode(BlockPos pos, NbtCompound tag) {
+    protected ControllerNetworkNode createNode(BlockPos pos, CompoundTag tag) {
         return new ControllerNetworkNode(
                 tag != null ? tag.getLong(TAG_STORED) : 0L,
                 Rs2Config.get().getController().getCapacity(),
@@ -73,25 +73,25 @@ public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
-        tag = super.writeNbt(tag);
+    public CompoundTag save(CompoundTag tag) {
+        tag = super.save(tag);
         tag.putLong(TAG_STORED, getContainer().getNode().getActualStored());
         return tag;
     }
 
     @Override
-    public Text getDisplayName() {
+    public Component getDisplayName() {
         return Rs2Mod.createTranslation("block", type == ControllerType.CREATIVE ? "creative_controller" : "controller");
     }
 
     @Nullable
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
         return new ControllerScreenHandler(syncId, inv, this, player);
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+    public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
         buf.writeLong(getActualStored());
         buf.writeLong(getActualCapacity());
     }
@@ -131,6 +131,6 @@ public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity
 
     @Override
     public void onEnergyChanged() {
-        markDirty();
+        setChanged();
     }
 }

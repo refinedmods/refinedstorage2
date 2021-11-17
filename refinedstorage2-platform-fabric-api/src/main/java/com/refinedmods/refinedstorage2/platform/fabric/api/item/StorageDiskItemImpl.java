@@ -10,20 +10,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 // TODO immunity for despawning
@@ -31,20 +31,20 @@ import org.jetbrains.annotations.Nullable;
 public abstract class StorageDiskItemImpl extends Item implements StorageDiskItem {
     private static final String TAG_ID = "id";
 
-    protected StorageDiskItemImpl(Settings settings) {
+    protected StorageDiskItemImpl(Properties settings) {
         super(settings);
     }
 
     @Override
     public Optional<UUID> getDiskId(ItemStack stack) {
-        if (stack.hasNbt() && stack.getNbt().containsUuid(TAG_ID)) {
-            return Optional.of(stack.getNbt().getUuid(TAG_ID));
+        if (stack.hasTag() && stack.getTag().hasUUID(TAG_ID)) {
+            return Optional.of(stack.getTag().getUUID(TAG_ID));
         }
         return Optional.empty();
     }
 
     @Override
-    public Optional<StorageInfo> getInfo(@Nullable World world, ItemStack stack) {
+    public Optional<StorageInfo> getInfo(@Nullable Level world, ItemStack stack) {
         if (world == null) {
             return Optional.empty();
         }
@@ -52,8 +52,8 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        super.appendTooltip(stack, world, tooltip, context);
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
+        super.appendHoverText(stack, world, tooltip, context);
 
         getInfo(world, stack).ifPresent(info -> {
             if (info.capacity() == -1) {
@@ -61,19 +61,19 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
                         "misc",
                         "stored",
                         formatQuantity(info.stored())
-                ).formatted(Formatting.GRAY));
+                ).withStyle(ChatFormatting.GRAY));
             } else {
                 tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
                         "misc",
                         "stored_with_capacity",
                         formatQuantity(info.stored()),
                         formatQuantity(info.capacity())
-                ).formatted(Formatting.GRAY));
+                ).withStyle(ChatFormatting.GRAY));
             }
         });
 
         if (context.isAdvanced()) {
-            getDiskId(stack).ifPresent(id -> tooltip.add(new LiteralText(id.toString()).formatted(Formatting.GRAY)));
+            getDiskId(stack).ifPresent(id -> tooltip.add(new TextComponent(id.toString()).withStyle(ChatFormatting.GRAY)));
         }
     }
 
@@ -82,44 +82,44 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        ItemStack stack = user.getStackInHand(hand);
+    public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+        ItemStack stack = user.getItemInHand(hand);
 
         Optional<ItemStack> storagePart = createStoragePart(stack.getCount());
 
-        if (!(world instanceof ServerWorld) || !user.isSneaking() || storagePart.isEmpty()) {
-            return TypedActionResult.fail(stack);
+        if (!(world instanceof ServerLevel) || !user.isShiftKeyDown() || storagePart.isEmpty()) {
+            return InteractionResultHolder.fail(stack);
         }
 
         return getDiskId(stack)
                 .flatMap(id -> Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world).disassemble(id))
                 .map(disk -> {
-                    if (!user.getInventory().insertStack(storagePart.get().copy())) {
-                        world.spawnEntity(new ItemEntity(world, user.getX(), user.getY(), user.getZ(), storagePart.get()));
+                    if (!user.getInventory().add(storagePart.get().copy())) {
+                        world.addFreshEntity(new ItemEntity(world, user.getX(), user.getY(), user.getZ(), storagePart.get()));
                     }
 
-                    return TypedActionResult.success(createDisassemblyByproduct());
+                    return InteractionResultHolder.success(createDisassemblyByproduct());
                 })
-                .orElse(TypedActionResult.fail(stack));
+                .orElse(InteractionResultHolder.fail(stack));
     }
 
     protected abstract Optional<ItemStack> createStoragePart(int count);
 
-    protected abstract Storage<?> createStorage(World world);
+    protected abstract Storage<?> createStorage(Level world);
 
     protected abstract ItemStack createDisassemblyByproduct();
 
     @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+    public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected) {
         super.inventoryTick(stack, world, entity, slot, selected);
 
-        if (!world.isClient() && !stack.hasNbt() && entity instanceof PlayerEntity) {
+        if (!world.isClientSide() && !stack.hasTag() && entity instanceof Player) {
             UUID id = UUID.randomUUID();
 
             Rs2PlatformApiFacade.INSTANCE.getStorageRepository(world).set(id, createStorage(world));
 
-            stack.setNbt(new NbtCompound());
-            stack.getNbt().putUuid(TAG_ID, id);
+            stack.setTag(new CompoundTag());
+            stack.getTag().putUUID(TAG_ID, id);
         }
     }
 }

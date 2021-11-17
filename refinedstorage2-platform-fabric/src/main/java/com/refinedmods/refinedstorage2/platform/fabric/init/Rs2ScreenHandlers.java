@@ -7,13 +7,13 @@ import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.FluidG
 import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.ItemGridScreenHandler;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
-import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.world.inventory.MenuType;
 
 public class Rs2ScreenHandlers {
-    private ScreenHandlerType<DiskDriveScreenHandler> diskDrive;
-    private ScreenHandlerType<ItemGridScreenHandler> grid;
-    private ScreenHandlerType<FluidGridScreenHandler> fluidGrid;
-    private ScreenHandlerType<ControllerScreenHandler> controller;
+    private MenuType<DiskDriveScreenHandler> diskDrive;
+    private MenuType<ItemGridScreenHandler> grid;
+    private MenuType<FluidGridScreenHandler> fluidGrid;
+    private MenuType<ControllerScreenHandler> controller;
 
     public void register() {
         diskDrive = ScreenHandlerRegistry.registerSimple(Rs2Mod.createIdentifier("disk_drive"), DiskDriveScreenHandler::new);
@@ -22,19 +22,19 @@ public class Rs2ScreenHandlers {
         controller = ScreenHandlerRegistry.registerExtended(Rs2Mod.createIdentifier("controller"), ControllerScreenHandler::new);
     }
 
-    public ScreenHandlerType<DiskDriveScreenHandler> getDiskDrive() {
+    public MenuType<DiskDriveScreenHandler> getDiskDrive() {
         return diskDrive;
     }
 
-    public ScreenHandlerType<ItemGridScreenHandler> getGrid() {
+    public MenuType<ItemGridScreenHandler> getGrid() {
         return grid;
     }
 
-    public ScreenHandlerType<FluidGridScreenHandler> getFluidGrid() {
+    public MenuType<FluidGridScreenHandler> getFluidGrid() {
         return fluidGrid;
     }
 
-    public ScreenHandlerType<ControllerScreenHandler> getController() {
+    public MenuType<ControllerScreenHandler> getController() {
         return controller;
     }
 }
