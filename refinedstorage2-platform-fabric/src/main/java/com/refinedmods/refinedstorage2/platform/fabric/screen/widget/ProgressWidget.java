@@ -40,7 +40,7 @@ public class ProgressWidget extends GuiComponent implements Widget, GuiEventList
     }
 
     @Override
-    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
         int correctedHeight = (int) (progressSupplier.getAsDouble() * height);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -50,13 +50,13 @@ public class ProgressWidget extends GuiComponent implements Widget, GuiEventList
         RenderSystem.enableDepthTest();
         int zOffset = getBlitOffset();
         setBlitOffset(200);
-        blit(matrices, x, y + height - correctedHeight, 179, height - correctedHeight, width, correctedHeight);
+        blit(poseStack, x, y + height - correctedHeight, 179, height - correctedHeight, width, correctedHeight);
         setBlitOffset(zOffset);
         RenderSystem.disableDepthTest();
 
         boolean hovered = mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
         if (hovered) {
-            tooltipRenderer.render(matrices, tooltipSupplier.get(), mouseX, mouseY);
+            tooltipRenderer.render(poseStack, tooltipSupplier.get(), mouseX, mouseY);
         }
     }
 

@@ -22,12 +22,12 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     private final PlatformStorageRepository clientStorageRepo = new FabricClientStorageRepository();
 
     @Override
-    public PlatformStorageRepository getStorageRepository(Level world) {
-        if (world.getServer() == null) {
+    public PlatformStorageRepository getStorageRepository(Level level) {
+        if (level.getServer() == null) {
             return clientStorageRepo;
         }
 
-        return world
+        return level
                 .getServer()
                 .getLevel(Level.OVERWORLD)
                 .getDataStorage()
@@ -45,8 +45,8 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public ConnectionProvider createConnectionProvider(Level world) {
-        return new FabricConnectionProvider(world);
+    public ConnectionProvider createConnectionProvider(Level level) {
+        return new FabricConnectionProvider(level);
     }
 
     @Override

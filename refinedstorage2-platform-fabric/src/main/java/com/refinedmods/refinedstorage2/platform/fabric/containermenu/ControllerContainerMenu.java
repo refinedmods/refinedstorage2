@@ -1,11 +1,11 @@
-package com.refinedmods.refinedstorage2.platform.fabric.screenhandler;
+package com.refinedmods.refinedstorage2.platform.fabric.containermenu;
 
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RedstoneModeSettings;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,7 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
-public class ControllerScreenHandler extends BaseScreenHandler implements RedstoneModeAccessor {
+public class ControllerContainerMenu extends BaseContainerMenu implements RedstoneModeAccessor {
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
     private long stored;
     private long capacity;
@@ -22,8 +22,8 @@ public class ControllerScreenHandler extends BaseScreenHandler implements Redsto
     private ControllerBlockEntity controller;
     private Player playerEntity;
 
-    public ControllerScreenHandler(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
-        super(Rs2Mod.SCREEN_HANDLERS.getController(), syncId);
+    public ControllerContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
+        super(Rs2Mod.MENUS.getController(), syncId);
         addPlayerInventory(playerInventory, 8, 107);
 
         this.stored = buf.readLong();
@@ -41,8 +41,8 @@ public class ControllerScreenHandler extends BaseScreenHandler implements Redsto
         addDataSlot(redstoneModeProperty);
     }
 
-    public ControllerScreenHandler(int syncId, Inventory playerInventory, ControllerBlockEntity controller, Player playerEntity) {
-        super(Rs2Mod.SCREEN_HANDLERS.getController(), syncId);
+    public ControllerContainerMenu(int syncId, Inventory playerInventory, ControllerBlockEntity controller, Player playerEntity) {
+        super(Rs2Mod.MENUS.getController(), syncId);
         this.controller = controller;
         this.serverStored = controller.getActualStored();
         this.serverCapacity = controller.getActualCapacity();

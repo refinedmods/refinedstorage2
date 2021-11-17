@@ -3,8 +3,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.item;
 import net.minecraft.world.item.Item;
 
 public class ProcessorItem extends Item {
-    public ProcessorItem(Properties settings) {
-        super(settings);
+    public ProcessorItem(Properties properties) {
+        super(properties);
     }
 
     public enum Type {

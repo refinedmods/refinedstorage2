@@ -27,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
 public abstract class BaseBlock extends Block {
     public static final EnumProperty<BiDirection> DIRECTION = EnumProperty.create("direction", BiDirection.class);
 
-    protected BaseBlock(Properties settings) {
-        super(settings);
+    protected BaseBlock(Properties properties) {
+        super(properties);
 
         if (hasBiDirection()) {
             registerDefaultState(getStateDefinition().any().setValue(DIRECTION, BiDirection.NORTH));
@@ -80,27 +80,27 @@ public abstract class BaseBlock extends Block {
 
     @Override
     @SuppressWarnings("deprecation")
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        return tryRotate(state, world, pos, player, hand)
-                .or(() -> tryOpenScreen(state, world, pos, player))
-                .orElseGet(() -> super.use(state, world, pos, player, hand, hit));
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        return tryRotate(state, level, pos, player, hand)
+                .or(() -> tryOpenScreen(state, level, pos, player))
+                .orElseGet(() -> super.use(state, level, pos, player, hand, hit));
     }
 
-    private Optional<InteractionResult> tryRotate(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand) {
+    private Optional<InteractionResult> tryRotate(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
         if (WrenchUtil.isWrench(player.getItemInHand(hand).getItem()) && WrenchUtil.isWrenchable(state)) {
-            if (!world.isClientSide()) {
-                world.setBlockAndUpdate(pos, state.rotate(Rotation.CLOCKWISE_90));
-                WrenchUtil.playWrenchSound(world, pos);
+            if (!level.isClientSide()) {
+                level.setBlockAndUpdate(pos, state.rotate(Rotation.CLOCKWISE_90));
+                WrenchUtil.playWrenchSound(level, pos);
             }
             return Optional.of(InteractionResult.CONSUME);
         }
         return Optional.empty();
     }
 
-    private Optional<InteractionResult> tryOpenScreen(BlockState state, Level world, BlockPos pos, Player player) {
-        MenuProvider screenHandlerFactory = state.getMenuProvider(world, pos);
+    private Optional<InteractionResult> tryOpenScreen(BlockState state, Level level, BlockPos pos, Player player) {
+        MenuProvider screenHandlerFactory = state.getMenuProvider(level, pos);
         if (screenHandlerFactory != null) {
-            if (!world.isClientSide()) {
+            if (!level.isClientSide()) {
                 player.openMenu(screenHandlerFactory);
             }
             return Optional.of(InteractionResult.SUCCESS);
@@ -110,22 +110,22 @@ public abstract class BaseBlock extends Block {
 
     @Override
     @SuppressWarnings("deprecation")
-    public @Nullable MenuProvider getMenuProvider(BlockState state, Level world, BlockPos pos) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
+    public @Nullable MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         return blockEntity instanceof MenuProvider factory ? factory : null;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock() && !state.getBlock().getClass().equals(newState.getBlock().getClass())) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
+            BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof BlockEntityWithDrops drops) {
-                Containers.dropContents(world, pos, drops.getDrops());
-                world.updateNeighbourForOutputSignal(pos, this);
+                Containers.dropContents(level, pos, drops.getDrops());
+                level.updateNeighbourForOutputSignal(pos, this);
             }
 
-            super.onRemove(state, world, pos, newState, moved);
+            super.onRemove(state, level, pos, newState, moved);
         }
     }
 }

@@ -55,7 +55,7 @@ public class CableBlock extends NetworkNodeContainerBlock implements SimpleWater
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter blockGetter, BlockPos pos) {
         return !state.getValue(BlockStateProperties.WATERLOGGED);
     }
 
@@ -67,8 +67,8 @@ public class CableBlock extends NetworkNodeContainerBlock implements SimpleWater
 
     @Override
     @SuppressWarnings("deprecation")
-    public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
-        return getState(state, world, pos);
+    public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor level, BlockPos pos, BlockPos posFrom) {
+        return getState(state, level, pos);
     }
 
     @Override

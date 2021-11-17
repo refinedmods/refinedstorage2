@@ -2,13 +2,13 @@ package com.refinedmods.refinedstorage2.platform.fabric.screen;
 
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.AccessModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.ExactModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.FilterModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.PrioritySideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.ProgressWidget;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.RedstoneModeSideButtonWidget;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ScreenUtil;
 
 import java.util.ArrayList;
@@ -23,15 +23,15 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
+public class DiskDriveScreen extends BaseScreen<DiskDriveContainerMenu> {
     private static final ResourceLocation TEXTURE = Rs2Mod.createIdentifier("textures/gui/disk_drive.png");
     private static final TranslatableComponent DISKS_TEXT = Rs2Mod.createTranslation("gui", "disk_drive.disks");
 
     private final ProgressWidget progressWidget;
     private final Inventory playerInventory;
 
-    public DiskDriveScreen(DiskDriveScreenHandler handler, Inventory inventory, Component title) {
-        super(handler, inventory, title);
+    public DiskDriveScreen(DiskDriveContainerMenu menu, Inventory inventory, Component title) {
+        super(menu, inventory, title);
 
         this.titleLabelX = 7;
         this.titleLabelY = 7;
@@ -41,7 +41,7 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
         this.imageHeight = 223;
         this.playerInventory = inventory;
 
-        this.progressWidget = new ProgressWidget(99, 54, 16, 70, handler::getProgress, this::renderComponentTooltip, this::createTooltip);
+        this.progressWidget = new ProgressWidget(99, 54, 16, 70, menu::getProgress, this::renderComponentTooltip, this::createTooltip);
         addRenderableWidget(progressWidget);
     }
 
@@ -73,8 +73,8 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
     }
 
     @Override
-    protected void renderBg(PoseStack matrices, float delta, int mouseX, int mouseY) {
-        ScreenUtil.drawVersionInformation(matrices, font);
+    protected void renderBg(PoseStack poseStack, float delta, int mouseX, int mouseY) {
+        ScreenUtil.drawVersionInformation(poseStack, font);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -83,20 +83,20 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveScreenHandler> {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        blit(matrices, x, y, 0, 0, imageWidth, imageHeight);
+        blit(poseStack, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrices, int mouseX, int mouseY) {
-        super.renderLabels(matrices, mouseX, mouseY);
-        font.draw(matrices, DISKS_TEXT, 60, 42, 4210752);
-        progressWidget.render(matrices, mouseX - leftPos, mouseY - topPos, 0);
+    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+        super.renderLabels(poseStack, mouseX, mouseY);
+        font.draw(poseStack, DISKS_TEXT, 60, 42, 4210752);
+        progressWidget.render(poseStack, mouseX - leftPos, mouseY - topPos, 0);
     }
 
     @Override
-    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
-        super.render(matrices, mouseX, mouseY, delta);
-        renderTooltip(matrices, mouseX, mouseY);
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+        renderBackground(poseStack);
+        super.render(poseStack, mouseX, mouseY, delta);
+        renderTooltip(poseStack, mouseX, mouseY);
     }
 }

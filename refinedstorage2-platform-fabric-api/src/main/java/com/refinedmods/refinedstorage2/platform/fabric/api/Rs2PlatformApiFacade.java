@@ -12,13 +12,13 @@ import net.minecraft.world.level.Level;
 public interface Rs2PlatformApiFacade {
     Rs2PlatformApiFacade INSTANCE = new Rs2PlatformApiFacadeProxy();
 
-    PlatformStorageRepository getStorageRepository(Level world);
+    PlatformStorageRepository getStorageRepository(Level level);
 
     StorageType<ItemResource> getItemStorageType();
 
     StorageType<FluidResource> getFluidStorageType();
 
-    ConnectionProvider createConnectionProvider(Level world);
+    ConnectionProvider createConnectionProvider(Level level);
 
     TranslatableComponent createTranslation(String category, String value, Object... args);
 }

@@ -15,5 +15,5 @@ public interface StorageDiskItem {
 
     Optional<UUID> getDiskId(ItemStack stack);
 
-    Optional<StorageInfo> getInfo(@Nullable Level world, ItemStack stack);
+    Optional<StorageInfo> getInfo(@Nullable Level level, ItemStack stack);
 }

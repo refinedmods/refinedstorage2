@@ -15,7 +15,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.diskdrive.Di
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2BlockEntities;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2Blocks;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2Items;
-import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2ScreenHandlers;
+import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2Menus;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.Rs2PlatformApiFacadeImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.search.PlatformSearchBoxModeImpl;
@@ -55,7 +55,7 @@ public class Rs2Mod implements ModInitializer {
     public static final Rs2Blocks BLOCKS = new Rs2Blocks();
     public static final Rs2Items ITEMS = new Rs2Items();
     public static final Rs2BlockEntities BLOCK_ENTITIES = new Rs2BlockEntities();
-    public static final Rs2ScreenHandlers SCREEN_HANDLERS = new Rs2ScreenHandlers();
+    public static final Rs2Menus MENUS = new Rs2Menus();
     public static final Rs2LootFunctions LOOT_FUNCTIONS = new Rs2LootFunctions();
     public static final Set<FeatureFlag> FEATURES = Set.of();
     static final String ID = "refinedstorage2";
@@ -135,7 +135,7 @@ public class Rs2Mod implements ModInitializer {
         BLOCKS.register();
         ITEMS.register(BLOCKS, ITEM_GROUP);
         BLOCK_ENTITIES.register(BLOCKS);
-        SCREEN_HANDLERS.register();
+        MENUS.register();
         LOOT_FUNCTIONS.register();
     }
 

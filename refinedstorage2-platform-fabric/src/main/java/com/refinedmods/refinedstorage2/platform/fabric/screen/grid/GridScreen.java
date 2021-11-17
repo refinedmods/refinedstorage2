@@ -6,11 +6,11 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.BaseScreen;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.ScrollbarWidget;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.GridScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ScreenUtil;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighterColors;
@@ -39,7 +39,7 @@ import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends BaseScreen<T> {
+public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends BaseScreen<T> {
     private static final Logger LOGGER = LogManager.getLogger(GridScreen.class);
 
     private static final ResourceLocation TEXTURE = Rs2Mod.createIdentifier("textures/gui/grid.png");
@@ -57,10 +57,10 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
     private int visibleRows;
     private int gridSlotNumber;
 
-    public GridScreen(T handler, Inventory inventory, Component title) {
-        super(handler, inventory, title);
+    public GridScreen(T menu, Inventory inventory, Component title) {
+        super(menu, inventory, title);
 
-        handler.setSizeChangedListener(this::init);
+        menu.setSizeChangedListener(this::init);
 
         this.titleLabelX = 7;
         this.titleLabelY = 7;
@@ -150,8 +150,8 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
     }
 
     @Override
-    protected void renderBg(PoseStack matrices, float delta, int mouseX, int mouseY) {
-        ScreenUtil.drawVersionInformation(matrices, font);
+    protected void renderBg(PoseStack poseStack, float delta, int mouseX, int mouseY) {
+        ScreenUtil.drawVersionInformation(poseStack, font);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -160,7 +160,7 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        blit(matrices, x, y, 0, 0, imageWidth - 34, TOP_HEIGHT);
+        blit(poseStack, x, y, 0, 0, imageWidth - 34, TOP_HEIGHT);
 
         for (int row = 0; row < visibleRows; ++row) {
             int textureY = 37;
@@ -170,25 +170,25 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
                 textureY = 55;
             }
 
-            blit(matrices, x, y + TOP_HEIGHT + (18 * row), 0, textureY, imageWidth - 34, 18);
+            blit(poseStack, x, y + TOP_HEIGHT + (18 * row), 0, textureY, imageWidth - 34, 18);
         }
 
-        blit(matrices, x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, imageWidth - 34, BOTTOM_HEIGHT);
+        blit(poseStack, x, y + TOP_HEIGHT + (18 * visibleRows), 0, 73, imageWidth - 34, BOTTOM_HEIGHT);
 
         gridSlotNumber = -1;
 
         setScissor(x + 7, y + TOP_HEIGHT, 18 * COLUMNS, visibleRows * 18);
         for (int row = 0; row < Math.max(totalRows, visibleRows); ++row) {
-            renderRow(matrices, mouseX, mouseY, x, y, row);
+            renderRow(poseStack, mouseX, mouseY, x, y, row);
         }
         disableScissor();
 
         if (gridSlotNumber != -1 && isOverStorageArea(mouseX, mouseY)) {
-            renderTooltipWithMaybeSmallLines(matrices, mouseX, mouseY);
+            renderTooltipWithMaybeSmallLines(poseStack, mouseX, mouseY);
         }
     }
 
-    private void renderRow(PoseStack matrices, int mouseX, int mouseY, int x, int y, int row) {
+    private void renderRow(PoseStack poseStack, int mouseX, int mouseY, int x, int y, int row) {
         int scrollbarOffset = (int) scrollbar.getOffset();
         if (!scrollbar.isScrollAnimation()) {
             scrollbarOffset *= 18;
@@ -206,14 +206,14 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
-        blit(matrices, rowX, rowY, 0, 238, 162, 18);
+        blit(poseStack, rowX, rowY, 0, 238, 162, 18);
 
         for (int column = 0; column < COLUMNS; ++column) {
-            renderColumnInRow(matrices, mouseX, mouseY, rowX, rowY, (row * COLUMNS) + column, column);
+            renderColumnInRow(poseStack, mouseX, mouseY, rowX, rowY, (row * COLUMNS) + column, column);
         }
     }
 
-    private void renderColumnInRow(PoseStack matrices, int mouseX, int mouseY, int rowX, int rowY, int idx, int column) {
+    private void renderColumnInRow(PoseStack poseStack, int mouseX, int mouseY, int rowX, int rowY, int idx, int column) {
         GridView<R> view = getMenu().getView();
 
         int slotX = rowX + 1 + (column * 18);
@@ -222,63 +222,63 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
         GridResource<R> resource = null;
         if (idx < view.getAll().size()) {
             resource = view.getAll().get(idx);
-            renderResourceWithAmount(matrices, slotX, slotY, resource);
+            renderResourceWithAmount(poseStack, slotX, slotY, resource);
         }
 
         if (!getMenu().isActive()) {
-            renderDisabledSlot(matrices, slotX, slotY);
+            renderDisabledSlot(poseStack, slotX, slotY);
         } else if (mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16 && isOverStorageArea(mouseX, mouseY)) {
-            renderSelection(matrices, slotX, slotY);
+            renderSelection(poseStack, slotX, slotY);
             if (resource != null) {
                 gridSlotNumber = idx;
             }
         }
     }
 
-    private void renderResourceWithAmount(PoseStack matrices, int slotX, int slotY, GridResource<R> resource) {
-        renderResource(matrices, slotX, slotY, resource);
+    private void renderResourceWithAmount(PoseStack poseStack, int slotX, int slotY, GridResource<R> resource) {
+        renderResource(poseStack, slotX, slotY, resource);
 
         String text = getAmount(resource);
         Integer color = resource.isZeroed() ? ChatFormatting.RED.getColor() : ChatFormatting.WHITE.getColor();
 
-        renderAmount(matrices, slotX, slotY, text, color);
+        renderAmount(poseStack, slotX, slotY, text, color);
     }
 
-    protected abstract void renderResource(PoseStack matrices, int slotX, int slotY, GridResource<R> resource);
+    protected abstract void renderResource(PoseStack poseStack, int slotX, int slotY, GridResource<R> resource);
 
     protected abstract String getAmount(GridResource<R> resource);
 
-    private void renderDisabledSlot(PoseStack matrices, int slotX, int slotY) {
+    private void renderDisabledSlot(PoseStack poseStack, int slotX, int slotY) {
         RenderSystem.disableDepthTest();
         RenderSystem.colorMask(true, true, true, false);
-        fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, DISABLED_SLOT_COLOR, DISABLED_SLOT_COLOR);
+        fillGradient(poseStack, slotX, slotY, slotX + 16, slotY + 16, DISABLED_SLOT_COLOR, DISABLED_SLOT_COLOR);
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.enableDepthTest();
     }
 
-    private void renderSelection(PoseStack matrices, int slotX, int slotY) {
+    private void renderSelection(PoseStack poseStack, int slotX, int slotY) {
         RenderSystem.disableDepthTest();
         RenderSystem.colorMask(true, true, true, false);
-        fillGradient(matrices, slotX, slotY, slotX + 16, slotY + 16, SELECTION_SLOT_COLOR, SELECTION_SLOT_COLOR);
+        fillGradient(poseStack, slotX, slotY, slotX + 16, slotY + 16, SELECTION_SLOT_COLOR, SELECTION_SLOT_COLOR);
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.enableDepthTest();
     }
 
-    private void renderTooltipWithMaybeSmallLines(PoseStack matrices, int mouseX, int mouseY) {
+    private void renderTooltipWithMaybeSmallLines(PoseStack poseStack, int mouseX, int mouseY) {
         GridView<R> view = getMenu().getView();
         GridResource<R> resource = view.getAll().get(gridSlotNumber);
 
         List<FormattedCharSequence> lines = Lists.transform(getTooltip(resource), Component::getVisualOrderText);
 
         if (!Rs2Config.get().getGrid().isDetailedTooltip()) {
-            renderTooltip(matrices, lines, mouseX, mouseY);
+            renderTooltip(poseStack, lines, mouseX, mouseY);
         } else {
             List<FormattedCharSequence> smallLines = new ArrayList<>();
             smallLines.add(Rs2Mod.createTranslation("misc", "total", getAmount(resource)).withStyle(ChatFormatting.GRAY).getVisualOrderText());
 
             view.getTrackerEntry(resource.getResourceAmount().getResource()).ifPresent(entry -> smallLines.add(getLastModifiedText(entry).withStyle(ChatFormatting.GRAY).getVisualOrderText()));
 
-            renderTooltipWithSmallText(matrices, lines, smallLines, mouseX, mouseY);
+            renderTooltipWithSmallText(poseStack, lines, smallLines, mouseX, mouseY);
         }
     }
 
@@ -406,13 +406,13 @@ public abstract class GridScreen<R, T extends GridScreenHandler<R>> extends Base
     }
 
     @Override
-    public void render(PoseStack matrices, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(matrices);
-        super.render(matrices, mouseX, mouseY, partialTicks);
-        renderTooltip(matrices, mouseX, mouseY);
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(poseStack);
+        super.render(poseStack, mouseX, mouseY, partialTicks);
+        renderTooltip(poseStack, mouseX, mouseY);
 
-        scrollbar.render(matrices, mouseX, mouseY, partialTicks);
-        searchField.render(matrices, 0, 0, 0);
+        scrollbar.render(poseStack, mouseX, mouseY, partialTicks);
+        searchField.render(poseStack, 0, 0, 0);
     }
 
     @Override

@@ -15,7 +15,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.AccessModeSe
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FilterModeSettings;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.diskdrive.DiskDriveScreenHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.diskdrive.DiskDriveContainerMenu;
 
 import java.util.HashSet;
 import java.util.List;
@@ -242,7 +242,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
-        return new DiskDriveScreenHandler(syncId, player, diskInventory, filterInventory, this, stack -> Optional.empty());
+        return new DiskDriveContainerMenu(syncId, player, diskInventory, filterInventory, this, stack -> Optional.empty());
     }
 
     @Override

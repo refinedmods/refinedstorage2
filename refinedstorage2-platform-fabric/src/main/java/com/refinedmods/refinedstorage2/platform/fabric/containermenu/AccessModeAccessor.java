@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.screenhandler;
+package com.refinedmods.refinedstorage2.platform.fabric.containermenu;
 
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 

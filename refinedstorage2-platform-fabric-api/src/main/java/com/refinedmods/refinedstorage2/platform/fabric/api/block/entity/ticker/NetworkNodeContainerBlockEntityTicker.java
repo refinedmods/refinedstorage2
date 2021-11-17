@@ -10,8 +10,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class NetworkNodeContainerBlockEntityTicker<T extends BlockEntity & NetworkNodeContainerBlockEntity<?>> implements BlockEntityTicker<T> {
     @Override
-    public void tick(Level world, BlockPos pos, BlockState state, T blockEntity) {
-        if (world.isClientSide()) {
+    public void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
+        if (level.isClientSide()) {
             return;
         }
         performContainerUpdate(blockEntity, state);

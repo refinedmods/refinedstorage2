@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.screen.widget;
 
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.FilterModeAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.TooltipRenderer;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.FilterModeAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,7 @@ public class FilterModeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button button, PoseStack matrices, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrices, filterModeAccessor.getFilterMode() == FilterMode.BLOCK ? blockModeTooltip : allowModeTooltip, mouseX, mouseY);
+    public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
+        tooltipRenderer.render(poseStack, filterModeAccessor.getFilterMode() == FilterMode.BLOCK ? blockModeTooltip : allowModeTooltip, mouseX, mouseY);
     }
 }

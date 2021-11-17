@@ -7,5 +7,5 @@ import net.minecraft.network.chat.Component;
 
 @FunctionalInterface
 public interface TooltipRenderer {
-    void render(PoseStack matrices, List<Component> lines, int x, int y);
+    void render(PoseStack poseStack, List<Component> lines, int x, int y);
 }

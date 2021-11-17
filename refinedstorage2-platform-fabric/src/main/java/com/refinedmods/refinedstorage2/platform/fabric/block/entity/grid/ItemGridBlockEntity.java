@@ -3,8 +3,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.grid.ItemGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.ItemGridScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
 import net.minecraft.core.BlockPos;
@@ -28,6 +28,6 @@ public class ItemGridBlockEntity extends GridBlockEntity<ItemResource> {
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
-        return new ItemGridScreenHandler(syncId, inv, this);
+        return new ItemGridContainerMenu(syncId, inv, this);
     }
 }

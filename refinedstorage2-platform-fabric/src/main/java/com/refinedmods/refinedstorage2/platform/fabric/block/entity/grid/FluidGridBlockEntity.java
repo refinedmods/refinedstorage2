@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.FluidGridScreenHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
 
 import net.minecraft.core.BlockPos;
@@ -37,7 +37,7 @@ public class FluidGridBlockEntity extends GridBlockEntity<FluidResource> {
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
-        return new FluidGridScreenHandler(syncId, inv, this, getBucketStorage());
+        return new FluidGridContainerMenu(syncId, inv, this, getBucketStorage());
     }
 
     private ExtractableStorage<ItemResource> getBucketStorage() {

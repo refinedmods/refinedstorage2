@@ -1,6 +1,6 @@
-package com.refinedmods.refinedstorage2.platform.fabric.screenhandler;
+package com.refinedmods.refinedstorage2.platform.fabric.containermenu;
 
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.slot.FilterSlot;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.slot.FilterSlot;
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -11,8 +11,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public class BaseScreenHandler extends AbstractContainerMenu {
-    protected BaseScreenHandler(@Nullable MenuType<?> type, int syncId) {
+public class BaseContainerMenu extends AbstractContainerMenu {
+    protected BaseContainerMenu(@Nullable MenuType<?> type, int syncId) {
         super(type, syncId);
     }
 

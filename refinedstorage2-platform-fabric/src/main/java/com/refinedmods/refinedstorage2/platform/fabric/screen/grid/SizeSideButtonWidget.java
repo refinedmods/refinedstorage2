@@ -2,9 +2,9 @@ package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSize;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.widget.SideButtonWidget;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.grid.GridScreenHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,18 +19,18 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
 public class SizeSideButtonWidget extends SideButtonWidget {
-    private final GridScreenHandler screenHandler;
+    private final GridContainerMenu screenHandler;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSize, List<Component>> tooltips = new EnumMap<>(GridSize.class);
 
-    public SizeSideButtonWidget(GridScreenHandler screenHandler, TooltipRenderer tooltipRenderer) {
+    public SizeSideButtonWidget(GridContainerMenu screenHandler, TooltipRenderer tooltipRenderer) {
         super(createPressAction(screenHandler));
         this.screenHandler = screenHandler;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(GridSize.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private static OnPress createPressAction(GridScreenHandler screenHandler) {
+    private static OnPress createPressAction(GridContainerMenu screenHandler) {
         return btn -> screenHandler.setSize(screenHandler.getSize().toggle());
     }
 

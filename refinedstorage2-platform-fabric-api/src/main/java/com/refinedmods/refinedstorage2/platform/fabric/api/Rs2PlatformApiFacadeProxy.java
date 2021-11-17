@@ -20,8 +20,8 @@ public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public PlatformStorageRepository getStorageRepository(Level world) {
-        return ensureLoaded().getStorageRepository(world);
+    public PlatformStorageRepository getStorageRepository(Level level) {
+        return ensureLoaded().getStorageRepository(level);
     }
 
     @Override
@@ -35,8 +35,8 @@ public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public ConnectionProvider createConnectionProvider(Level world) {
-        return ensureLoaded().createConnectionProvider(world);
+    public ConnectionProvider createConnectionProvider(Level level) {
+        return ensureLoaded().createConnectionProvider(level);
     }
 
     @Override

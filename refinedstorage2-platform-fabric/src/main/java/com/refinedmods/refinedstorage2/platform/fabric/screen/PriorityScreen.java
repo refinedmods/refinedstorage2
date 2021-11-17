@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen;
 
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
-import com.refinedmods.refinedstorage2.platform.fabric.screenhandler.PriorityAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.PriorityAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ScreenUtil;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -116,8 +116,8 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
     }
 
     @Override
-    protected void renderBg(PoseStack matrices, float delta, int mouseX, int mouseY) {
-        ScreenUtil.drawVersionInformation(matrices, font);
+    protected void renderBg(PoseStack poseStack, float delta, int mouseX, int mouseY) {
+        ScreenUtil.drawVersionInformation(poseStack, font);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -126,19 +126,19 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        blit(matrices, x, y, 0, 0, imageWidth, imageHeight);
+        blit(poseStack, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrices, int mouseX, int mouseY) {
-        font.draw(matrices, title, titleLabelX, titleLabelY, 4210752);
+    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+        font.draw(poseStack, title, titleLabelX, titleLabelY, 4210752);
     }
 
     @Override
-    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
-        super.render(matrices, mouseX, mouseY, delta);
-        renderTooltip(matrices, mouseX, mouseY);
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+        renderBackground(poseStack);
+        super.render(poseStack, mouseX, mouseY, delta);
+        renderTooltip(poseStack, mouseX, mouseY);
     }
 
     @Override
