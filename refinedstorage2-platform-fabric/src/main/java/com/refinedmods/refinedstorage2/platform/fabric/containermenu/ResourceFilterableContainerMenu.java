@@ -31,7 +31,7 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
         this.currentResourceType = container.determineDefaultType();
     }
 
-    public ResourceFilterableContainerMenu(@Nullable MenuType<?> type, int syncId) {
+    protected ResourceFilterableContainerMenu(@Nullable MenuType<?> type, int syncId) {
         super(type, syncId);
         this.player = null;
     }
