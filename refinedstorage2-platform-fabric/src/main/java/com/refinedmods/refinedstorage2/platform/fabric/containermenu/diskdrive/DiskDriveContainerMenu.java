@@ -50,7 +50,7 @@ public class DiskDriveContainerMenu extends ResourceFilterableContainerMenu impl
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
 
     public DiskDriveContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
-        super(Rs2Mod.MENUS.getDiskDrive(), syncId, buf);
+        super(Rs2Mod.MENUS.getDiskDrive(), syncId);
 
         this.priorityProperty = TwoWaySyncProperty.forClient(
                 0,

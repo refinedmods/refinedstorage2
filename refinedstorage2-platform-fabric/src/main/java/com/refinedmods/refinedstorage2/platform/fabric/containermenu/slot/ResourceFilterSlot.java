@@ -23,60 +23,64 @@ import org.apache.logging.log4j.Logger;
 public class ResourceFilterSlot extends Slot {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final ResourceFilterContainer container;
+    private final ResourceFilterContainer resourceFilterContainer;
     private final int containerIndex;
     private Object cachedResource;
 
-    public ResourceFilterSlot(ResourceFilterContainer container, int index, int x, int y) {
-        super(new SimpleContainer(1), 0, x, y);
-        this.container = container;
+    public ResourceFilterSlot(ResourceFilterContainer resourceFilterContainer, int index, int x, int y) {
+        super(createDummyContainer(), 0, x, y);
+        this.resourceFilterContainer = resourceFilterContainer;
         this.containerIndex = index;
-        this.cachedResource = container.getFilter(index);
+        this.cachedResource = resourceFilterContainer.getFilter(index);
+    }
+
+    private static SimpleContainer createDummyContainer() {
+        return new SimpleContainer(1);
     }
 
     public <T> void change(ItemStack carried, ResourceType<T> type) {
         type.translate(carried).ifPresentOrElse(
-                resource -> container.set(containerIndex, type, resource),
-                () -> container.remove(containerIndex)
+                resource -> resourceFilterContainer.set(containerIndex, type, resource),
+                () -> resourceFilterContainer.remove(containerIndex)
         );
     }
 
     public void broadcastChanges(Player player) {
-        Object current = container.getFilter(containerIndex);
+        Object current = resourceFilterContainer.getFilter(containerIndex);
         if (!Objects.equals(current, cachedResource)) {
             LOGGER.info("Resource filter slot {} has changed", containerIndex);
             cachedResource = current;
             ServerPacketUtil.sendToPlayer((ServerPlayer) player, PacketIds.RESOURCE_FILTER_SLOT_UPDATE, buf -> {
                 buf.writeInt(index);
-                container.writeToUpdatePacket(containerIndex, buf);
+                resourceFilterContainer.writeToUpdatePacket(containerIndex, buf);
             });
         }
     }
 
     @Override
-    public boolean mayPickup(Player playerEntity) {
+    public boolean mayPickup(Player player) {
         return false;
     }
 
     public void render(PoseStack poseStack, int x, int y, int z) {
-        ResourceType<Object> type = (ResourceType<Object>) container.getType(containerIndex);
+        ResourceType<Object> type = (ResourceType<Object>) resourceFilterContainer.getType(containerIndex);
         if (type == null) {
             return;
         }
-        Object value = container.getFilter(containerIndex);
+        Object value = resourceFilterContainer.getFilter(containerIndex);
         type.render(poseStack, value, x, y, z);
     }
 
     public List<Component> getTooltipLines() {
-        ResourceType<Object> type = (ResourceType<Object>) container.getType(containerIndex);
+        ResourceType<Object> type = (ResourceType<Object>) resourceFilterContainer.getType(containerIndex);
         if (type == null) {
             return Collections.emptyList();
         }
-        Object value = container.getFilter(containerIndex);
+        Object value = resourceFilterContainer.getFilter(containerIndex);
         return type.getTooltipLines(value);
     }
 
     public void readFromUpdatePacket(FriendlyByteBuf buf) {
-        container.readFromUpdatePacket(containerIndex, buf);
+        resourceFilterContainer.readFromUpdatePacket(containerIndex, buf);
     }
 }
