@@ -2,7 +2,10 @@ package com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter;
 
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import net.minecraft.nbt.CompoundTag;
@@ -59,7 +62,7 @@ public class ResourceFilterContainer {
     }
 
     public void writeToUpdatePacket(FriendlyByteBuf buf) {
-        buf.writeResourceLocation(getDefaultType().getId());
+        buf.writeResourceLocation(determineDefaultType().getId());
         for (int i = 0; i < filters.length; ++i) {
             writeToUpdatePacket(i, buf);
         }
@@ -118,24 +121,11 @@ public class ResourceFilterContainer {
         }
     }
 
-    public ResourceType<?> getDefaultType() {
-        ResourceType<?> type = null;
-        for (ResourceType<?> typeInSlot : this.types) {
-            if (typeInSlot == null) {
-                continue;
-            }
-            if (type == null) {
-                type = typeInSlot;
-                continue;
-            }
-            if (type != typeInSlot) {
-                type = null;
-                break;
-            }
+    public ResourceType<?> determineDefaultType() {
+        List<ResourceType> distinctTypes = Arrays.stream(types).filter(Objects::nonNull).distinct().toList();
+        if (distinctTypes.size() == 1) {
+            return distinctTypes.get(0);
         }
-        if (type == null) {
-            type = Rs2PlatformApiFacade.INSTANCE.getResourceTypeRegistry().getDefault();
-        }
-        return type;
+        return Rs2PlatformApiFacade.INSTANCE.getResourceTypeRegistry().getDefault();
     }
 }

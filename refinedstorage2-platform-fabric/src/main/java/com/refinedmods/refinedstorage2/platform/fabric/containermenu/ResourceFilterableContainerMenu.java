@@ -28,14 +28,10 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
     protected ResourceFilterableContainerMenu(@Nullable MenuType<?> type, int syncId, Player player, ResourceFilterContainer container) {
         super(type, syncId);
         this.player = player;
-        initializeResourceFilterSlots(container);
+        this.currentResourceType = container.determineDefaultType();
     }
 
-    private void initializeResourceFilterSlots(ResourceFilterContainer container) {
-        this.currentResourceType = container.getDefaultType();
-    }
-
-    public ResourceFilterableContainerMenu(@Nullable MenuType<?> type, int syncId, FriendlyByteBuf buf) {
+    public ResourceFilterableContainerMenu(@Nullable MenuType<?> type, int syncId) {
         super(type, syncId);
         this.player = null;
     }
