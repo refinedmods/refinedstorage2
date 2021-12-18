@@ -300,22 +300,22 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         return Rs2Mod.createTranslation("misc", "last_modified." + translationKey, lastModified.amount(), entry.name());
     }
 
-    protected void renderAmount(PoseStack matrixStack, int x, int y, String amount, int color) {
+    protected void renderAmount(PoseStack poseStack, int x, int y, String amount, int color) {
         boolean large = this.minecraft.isEnforceUnicode() || Rs2Config.get().getGrid().isLargeFont();
 
-        matrixStack.pushPose();
-        matrixStack.translate(x, y, 300);
+        poseStack.pushPose();
+        poseStack.translate(x, y, 300);
 
         if (!large) {
-            matrixStack.scale(0.5F, 0.5F, 1);
+            poseStack.scale(0.5F, 0.5F, 1);
         }
 
-        font.drawShadow(matrixStack, amount, (float) (large ? 16 : 30) - font.width(amount), large ? 8 : 22, color);
+        font.drawShadow(poseStack, amount, (float) (large ? 16 : 30) - font.width(amount), large ? 8 : 22, color);
 
-        matrixStack.popPose();
+        poseStack.popPose();
     }
 
-    private void renderTooltipWithSmallText(PoseStack matrixStack, List<? extends FormattedCharSequence> lines, List<? extends FormattedCharSequence> smallLines, int x, int y) {
+    private void renderTooltipWithSmallText(PoseStack poseStack, List<? extends FormattedCharSequence> lines, List<? extends FormattedCharSequence> smallLines, int x, int y) {
         if (lines.isEmpty()) {
             return;
         }
@@ -356,12 +356,12 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
             tooltipY = height - tooltipHeight - 6;
         }
 
-        matrixStack.pushPose();
+        poseStack.pushPose();
         Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuilder();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        Matrix4f matrix4f = matrixStack.last().pose();
+        Matrix4f matrix4f = poseStack.last().pose();
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 4, tooltipX + tooltipWidth + 3, tooltipY - 3, 400, -267386864, -267386864);
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY + tooltipHeight + 3, tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 4, 400, -267386864, -267386864);
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3, tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
@@ -380,7 +380,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         RenderSystem.disableBlend();
         RenderSystem.enableTexture();
         MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
-        matrixStack.translate(0.0D, 0.0D, 400.0D);
+        poseStack.translate(0.0D, 0.0D, 400.0D);
 
         for (int i = 0; i < lines.size(); ++i) {
             FormattedCharSequence text = lines.get(i);
@@ -392,17 +392,17 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         }
 
         for (FormattedCharSequence smallLine : smallLines) {
-            matrixStack.pushPose();
-            matrixStack.scale(smallTextScale, smallTextScale, 1);
+            poseStack.pushPose();
+            poseStack.scale(smallTextScale, smallTextScale, 1);
 
-            font.drawInBatch(smallLine, tooltipX / smallTextScale, tooltipY / smallTextScale, -1, true, matrixStack.last().pose(), immediate, false, 0, 15728880);
-            matrixStack.popPose();
+            font.drawInBatch(smallLine, tooltipX / smallTextScale, tooltipY / smallTextScale, -1, true, poseStack.last().pose(), immediate, false, 0, 15728880);
+            poseStack.popPose();
 
             tooltipY += 9;
         }
 
         immediate.endBatch();
-        matrixStack.popPose();
+        poseStack.popPose();
     }
 
     @Override

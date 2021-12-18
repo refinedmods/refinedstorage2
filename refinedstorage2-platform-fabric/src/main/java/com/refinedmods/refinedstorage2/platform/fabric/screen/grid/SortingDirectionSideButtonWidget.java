@@ -52,7 +52,7 @@ public class SortingDirectionSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button buttonWidget, PoseStack matrixStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrixStack, tooltips.get(screenHandler.getSortingDirection()), mouseX, mouseY);
+    public void onTooltip(Button buttonWidget, PoseStack poseStack, int mouseX, int mouseY) {
+        tooltipRenderer.render(poseStack, tooltips.get(screenHandler.getSortingDirection()), mouseX, mouseY);
     }
 }

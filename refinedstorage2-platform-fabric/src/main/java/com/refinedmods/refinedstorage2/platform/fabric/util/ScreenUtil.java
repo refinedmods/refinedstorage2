@@ -26,7 +26,7 @@ public final class ScreenUtil {
     private ScreenUtil() {
     }
 
-    public static void drawVersionInformation(PoseStack matrixStack, Font textRenderer) {
+    public static void drawVersionInformation(PoseStack poseStack, Font textRenderer) {
         if (VERSION_INFO_LINES.isEmpty()) {
             loadVersionInformationLines();
         }
@@ -35,7 +35,7 @@ public final class ScreenUtil {
         int y = 5;
 
         for (String line : VERSION_INFO_LINES) {
-            textRenderer.drawShadow(matrixStack, line, x, y, ChatFormatting.WHITE.getColor());
+            textRenderer.drawShadow(poseStack, line, x, y, ChatFormatting.WHITE.getColor());
             y += 9;
         }
     }

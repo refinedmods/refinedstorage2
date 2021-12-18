@@ -62,7 +62,7 @@ public class Rs2Mod implements ModInitializer {
     public static final Set<FeatureFlag> FEATURES = Set.of();
     static final String ID = "refinedstorage2";
     private static final Logger LOGGER = LogManager.getLogger(Rs2Mod.class);
-    private static final CreativeModeTab ITEM_GROUP = FabricItemGroupBuilder.build(createIdentifier("general"), () -> new ItemStack(BLOCKS.getController().getNormal()));
+    private static final CreativeModeTab CREATIVE_MODE_TAB = FabricItemGroupBuilder.build(createIdentifier("general"), () -> new ItemStack(BLOCKS.getController().getNormal()));
     private static SoundEvent wrenchSoundEvent;
 
     public static ResourceLocation createIdentifier(String value) {
@@ -140,7 +140,7 @@ public class Rs2Mod implements ModInitializer {
 
     private void registerContent() {
         BLOCKS.register();
-        ITEMS.register(BLOCKS, ITEM_GROUP);
+        ITEMS.register(BLOCKS, CREATIVE_MODE_TAB);
         BLOCK_ENTITIES.register(BLOCKS);
         MENUS.register();
         LOOT_FUNCTIONS.register();

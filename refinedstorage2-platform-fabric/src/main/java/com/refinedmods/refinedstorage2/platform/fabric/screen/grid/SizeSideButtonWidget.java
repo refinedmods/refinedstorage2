@@ -57,7 +57,7 @@ public class SizeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button buttonWidget, PoseStack matrixStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrixStack, tooltips.get(screenHandler.getSize()), mouseX, mouseY);
+    public void onTooltip(Button buttonWidget, PoseStack poseStack, int mouseX, int mouseY) {
+        tooltipRenderer.render(poseStack, tooltips.get(screenHandler.getSize()), mouseX, mouseY);
     }
 }

@@ -60,7 +60,7 @@ public class RedstoneModeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button button, PoseStack matrixStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrixStack, tooltips.get(redstoneModeAccessor.getRedstoneMode()), mouseX, mouseY);
+    public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
+        tooltipRenderer.render(poseStack, tooltips.get(redstoneModeAccessor.getRedstoneMode()), mouseX, mouseY);
     }
 }

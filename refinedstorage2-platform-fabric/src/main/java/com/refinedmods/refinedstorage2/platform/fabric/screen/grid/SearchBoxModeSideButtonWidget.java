@@ -56,7 +56,7 @@ public class SearchBoxModeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button buttonWidget, PoseStack matrixStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(matrixStack, tooltips.computeIfAbsent(screenHandler.getSearchBoxMode(), this::calculateTooltip), mouseX, mouseY);
+    public void onTooltip(Button buttonWidget, PoseStack poseStack, int mouseX, int mouseY) {
+        tooltipRenderer.render(poseStack, tooltips.computeIfAbsent(screenHandler.getSearchBoxMode(), this::calculateTooltip), mouseX, mouseY);
     }
 }

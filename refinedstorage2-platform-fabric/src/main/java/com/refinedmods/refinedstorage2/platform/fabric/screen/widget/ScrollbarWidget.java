@@ -55,7 +55,7 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         if (isAnimatingScroll()) {
             updateScrollingAnimation(partialTicks);
         }
@@ -67,7 +67,7 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
         int enabledU = clicked ? 220 : 232;
         int u = enabled ? enabledU : 244;
 
-        blit(matrixStack, x, y + (int) ((float) offset / (float) maxOffset * (height - SCROLLER_HEIGHT)), u, 0, 12, 15);
+        blit(poseStack, x, y + (int) ((float) offset / (float) maxOffset * (height - SCROLLER_HEIGHT)), u, 0, 12, 15);
     }
 
     private boolean isAnimatingScroll() {
