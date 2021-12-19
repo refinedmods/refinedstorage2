@@ -8,7 +8,7 @@ jobs:
         strategy:
             matrix:
                 java: [
-                        16
+                        17
                 ]
                 os: [ ubuntu-latest ]
         runs-on: ${{ matrix.os }}
@@ -45,7 +45,7 @@ jobs:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
             -   name: Upload build artifacts
-                if: ${{ runner.os == 'Linux' && matrix.java == '16' }}
+                if: ${{ runner.os == 'Linux' && matrix.java == '17' }}
                 uses: actions/upload-artifact@v2
                 with:
                     name: Artifacts
