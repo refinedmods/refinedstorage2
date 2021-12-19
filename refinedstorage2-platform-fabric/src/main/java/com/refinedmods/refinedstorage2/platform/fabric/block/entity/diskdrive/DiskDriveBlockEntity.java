@@ -19,10 +19,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.containermenu.diskdrive.D
 
 import java.util.Optional;
 
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.ByteTag;
@@ -31,6 +29,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
@@ -39,12 +40,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements RenderAttachmentBlockEntity, BlockEntityClientSerializable, MenuProvider, BlockEntityWithDrops, DiskDriveListener, ExtendedScreenHandlerFactory {
+public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements RenderAttachmentBlockEntity, MenuProvider, BlockEntityWithDrops, DiskDriveListener, ExtendedScreenHandlerFactory {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_PRIORITY = "pri";
@@ -80,6 +83,10 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
             this.syncRequested = false;
             sync();
         }
+    }
+
+    private void sync() {
+        this.getLevel().sendBlockUpdated(worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
     }
 
     private void resourceFilterContainerChanged() {
@@ -132,6 +139,8 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
 
     @Override
     public void load(CompoundTag tag) {
+        fromClientTag(tag);
+
         if (tag.contains(TAG_DISK_INVENTORY)) {
             diskInventory.fromTag(tag.getList(TAG_DISK_INVENTORY, Tag.TAG_COMPOUND));
         }
@@ -144,14 +153,13 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
-        tag = super.save(tag);
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         tag.put(TAG_DISK_INVENTORY, diskInventory.createTag());
         tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getContainer().getNode().getFilterMode()));
         tag.putInt(TAG_PRIORITY, getContainer().getNode().getPriority());
         tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getContainer().getNode().getAccessMode()));
-        return tag;
     }
 
     public SimpleContainer getDiskInventory() {
@@ -197,13 +205,11 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
         setChanged();
     }
 
-    @Override
-    public void fromClientTag(CompoundTag tag) {
+    private void fromClientTag(CompoundTag tag) {
         if (tag.contains(TAG_STATES)) {
-            ListTag statesList = tag.getList(TAG_STATES, NbtType.BYTE);
+            ListTag statesList = tag.getList(TAG_STATES, Tag.TAG_BYTE);
 
             driveState = new DiskDriveState(statesList.size());
-
             for (int i = 0; i < statesList.size(); ++i) {
                 int idx = ((ByteTag) statesList.get(i)).getAsInt();
                 if (idx < 0 || idx >= StorageDiskState.values().length) {
@@ -212,13 +218,21 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
                 driveState.setState(i, StorageDiskState.values()[idx]);
             }
 
+            // TODO: Still necessary?
             BlockState state = level.getBlockState(getBlockPos());
             level.sendBlockUpdated(getBlockPos(), state, state, 1 | 2);
         }
     }
 
+    @Nullable
     @Override
-    public CompoundTag toClientTag(CompoundTag tag) {
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this, BlockEntity::getUpdateTag);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = new CompoundTag();
         ListTag statesList = new ListTag();
         for (StorageDiskState state : getContainer().getNode().createState().getStates()) {
             statesList.add(ByteTag.valueOf((byte) state.ordinal()));

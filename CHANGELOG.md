@@ -26,6 +26,7 @@ before updating.
 
 ### Changed
 
+- Ported to Minecraft 1.18.1.
 - Modularized the codebase.
 - The capacity of the various fluid storage part and fluid storage disk tiers are now described in bucket form, no
   longer in mB form.

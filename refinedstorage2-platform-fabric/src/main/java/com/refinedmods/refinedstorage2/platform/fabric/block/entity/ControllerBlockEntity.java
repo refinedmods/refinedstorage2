@@ -73,10 +73,9 @@ public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
-        tag = super.save(tag);
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         tag.putLong(TAG_STORED, getContainer().getNode().getActualStored());
-        return tag;
     }
 
     @Override

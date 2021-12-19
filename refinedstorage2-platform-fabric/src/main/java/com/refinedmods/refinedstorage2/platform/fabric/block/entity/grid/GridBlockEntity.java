@@ -71,12 +71,12 @@ public abstract class GridBlockEntity<T> extends FabricNetworkNodeContainerBlock
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         tag.putInt(TAG_SORTING_DIRECTION, GridSettings.getSortingDirection(getContainer().getNode().getSortingDirection()));
         tag.putInt(TAG_SORTING_TYPE, GridSettings.getSortingType(getContainer().getNode().getSortingType()));
         tag.putInt(TAG_SIZE, GridSettings.getSize(getContainer().getNode().getSize()));
         tag.putInt(TAG_SEARCH_BOX_MODE, GridSearchBoxModeRegistry.INSTANCE.getId(getContainer().getNode().getSearchBoxMode()));
-        return super.save(tag);
     }
 
     @Override

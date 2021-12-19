@@ -27,16 +27,16 @@ public abstract class FabricNetworkNodeContainerBlockEntity<T extends NetworkNod
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt) {
-        nbt.putInt(TAG_REDSTONE_MODE, RedstoneModeSettings.getRedstoneMode(getRedstoneMode()));
-        return super.save(nbt);
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.putInt(TAG_REDSTONE_MODE, RedstoneModeSettings.getRedstoneMode(getRedstoneMode()));
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
-        if (nbt.contains(TAG_REDSTONE_MODE)) {
-            getContainer().setRedstoneMode(RedstoneModeSettings.getRedstoneMode(nbt.getInt(TAG_REDSTONE_MODE)));
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        if (tag.contains(TAG_REDSTONE_MODE)) {
+            getContainer().setRedstoneMode(RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE)));
         }
     }
 
