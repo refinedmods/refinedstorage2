@@ -21,8 +21,7 @@ import net.minecraft.world.level.material.Material;
 public class Rs2Blocks {
     private static final BlockBehaviour.Properties STONE_SETTINGS = FabricBlockSettings
             .of(Material.STONE)
-            .destroyTime(1.9F)
-            .explosionResistance(1.9F)
+            .strength(0.5F, 6.0F)
             .sound(SoundType.STONE);
 
     private final BlockColorMap<ItemGridBlock> grid = new BlockColorMap<>();

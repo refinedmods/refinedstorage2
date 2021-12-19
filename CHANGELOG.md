@@ -36,6 +36,7 @@ before updating.
 - Made energy usage by the Grid and Disk Drive less power-hungry.
 - The Controller now displays an energy bar on the item.
 - Upgrade Team Reborn Energy API.
+- Made block breaking faster.
 
 ### Removed
 
