@@ -23,6 +23,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class ControllerBlockItem extends ColoredBlockItem {
+    private static final String TAG_STORED = "stored";
+    private static final String TAG_CAPACITY = "cap";
+
     public ControllerBlockItem(Block block, Properties properties, DyeColor color, Component displayName) {
         super(block, properties, color, displayName);
     }
@@ -41,7 +44,7 @@ public class ControllerBlockItem extends ColoredBlockItem {
         if (tag == null) {
             return 0;
         }
-        return tag.getLong("stored");
+        return tag.getLong(TAG_STORED);
     }
 
     private static long getCapacity(ItemStack stack) {
@@ -49,20 +52,20 @@ public class ControllerBlockItem extends ColoredBlockItem {
         if (tag == null) {
             return 0;
         }
-        return tag.getLong("cap");
+        return tag.getLong(TAG_CAPACITY);
     }
 
     public static void setEnergy(ItemStack stack, long stored, long capacity) {
         if (!stack.hasTag()) {
             stack.setTag(new CompoundTag());
         }
-        stack.getTag().putLong("stored", stored);
-        stack.getTag().putLong("cap", capacity);
+        stack.getTag().putLong(TAG_STORED, stored);
+        stack.getTag().putLong(TAG_CAPACITY, capacity);
     }
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        return stack.hasTag() && stack.getTag().contains("stored") && stack.getTag().contains("cap");
+        return stack.hasTag() && stack.getTag().contains(TAG_STORED) && stack.getTag().contains(TAG_CAPACITY);
     }
 
     @Override
@@ -81,12 +84,7 @@ public class ControllerBlockItem extends ColoredBlockItem {
 
         long cap = getCapacity(stack);
         if (cap > 0) {
-            tooltip.add(Rs2Mod.createTranslation(
-                    "misc",
-                    "stored_with_capacity",
-                    QuantityFormatter.format(getStored(stack)),
-                    QuantityFormatter.format(cap)
-            ).withStyle(ChatFormatting.GRAY));
+            tooltip.add(Rs2Mod.createTranslation("misc", "stored_with_capacity", QuantityFormatter.format(getStored(stack)), QuantityFormatter.format(cap)).withStyle(ChatFormatting.GRAY));
         }
     }
 

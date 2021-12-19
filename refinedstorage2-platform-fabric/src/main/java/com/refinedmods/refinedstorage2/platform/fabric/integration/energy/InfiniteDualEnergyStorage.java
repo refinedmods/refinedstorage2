@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.fabric.integration.energy;
 
-import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 
-public class InfiniteDualEnergyStorage implements DualEnergyStorage {
+public class InfiniteDualEnergyStorage extends InfiniteEnergyStorage implements DualEnergyStorage {
     @Override
     public boolean supportsInsertion() {
         return false;
@@ -23,25 +23,5 @@ public class InfiniteDualEnergyStorage implements DualEnergyStorage {
     @Override
     public long getAmount() {
         return Long.MAX_VALUE;
-    }
-
-    @Override
-    public long getStored() {
-        return Long.MAX_VALUE;
-    }
-
-    @Override
-    public long getCapacity() {
-        return Long.MAX_VALUE;
-    }
-
-    @Override
-    public long receive(long amount, Action action) {
-        return amount;
-    }
-
-    @Override
-    public long extract(long amount, Action action) {
-        return amount;
     }
 }
