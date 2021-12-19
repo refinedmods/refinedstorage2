@@ -33,6 +33,7 @@ before updating.
 - The Wrench now plays a sound effect when used.
 - The Wrench works on any block that has the `fabric:wrenchables` tag. Other mods can identify the Refined Storage
   wrench by checking the `fabric:wrenches` tag.
+- Made energy usage by the Grid and Disk Drive less power-hungry.
 
 ### Removed
 
