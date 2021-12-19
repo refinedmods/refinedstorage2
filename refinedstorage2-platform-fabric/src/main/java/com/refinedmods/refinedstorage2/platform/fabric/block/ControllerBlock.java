@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block;
 
-import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.platform.fabric.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.ticker.ControllerBlockEntityTicker;
 

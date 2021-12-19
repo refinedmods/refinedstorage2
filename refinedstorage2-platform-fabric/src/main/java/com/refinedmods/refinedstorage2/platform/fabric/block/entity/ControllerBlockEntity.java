@@ -1,14 +1,15 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block.entity;
 
-import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerListener;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.platform.fabric.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.fabric.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.fabric.block.ControllerEnergyType;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.DualEnergyStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.DualEnergyStorageImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.InfiniteDualEnergyStorage;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
@@ -24,21 +25,42 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
-import team.reborn.energy.EnergySide;
-import team.reborn.energy.EnergyTier;
+import team.reborn.energy.api.EnergyStorage;
 
-public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity<ControllerNetworkNode> implements ExtendedScreenHandlerFactory, team.reborn.energy.EnergyStorage, ControllerListener {
+public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity<ControllerNetworkNode> implements ExtendedScreenHandlerFactory {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORED = "stored";
     private static final int ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
 
     private final ControllerType type;
+    private final DualEnergyStorage energyStorage;
     private long lastTypeChanged;
 
     public ControllerBlockEntity(ControllerType type, BlockPos pos, BlockState state) {
         super(getBlockEntityType(type), pos, state);
         this.type = type;
+        this.energyStorage = createEnergyStorage(type);
+    }
+
+    public EnergyStorage getEnergyStorage() {
+        return energyStorage;
+    }
+
+    private DualEnergyStorage createEnergyStorage(ControllerType type) {
+        return switch (type) {
+            case NORMAL -> createNormalEnergyStorage();
+            case CREATIVE -> new InfiniteDualEnergyStorage();
+        };
+    }
+
+    private DualEnergyStorage createNormalEnergyStorage() {
+        return new DualEnergyStorageImpl(Rs2Config.get().getController().getCapacity(), Rs2Config.get().getController().getCapacity()) {
+            @Override
+            protected void onFinalCommit() {
+                setChanged();
+            }
+        };
     }
 
     private static BlockEntityType<ControllerBlockEntity> getBlockEntityType(ControllerType type) {
@@ -66,9 +88,7 @@ public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity
     protected ControllerNetworkNode createNode(BlockPos pos, CompoundTag tag) {
         return new ControllerNetworkNode(
                 tag != null ? tag.getLong(TAG_STORED) : 0L,
-                Rs2Config.get().getController().getCapacity(),
-                type,
-                this
+                energyStorage
         );
     }
 
@@ -101,35 +121,5 @@ public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity
 
     public long getActualCapacity() {
         return getContainer().getNode().getActualCapacity();
-    }
-
-    @Override
-    public double getStored(EnergySide face) {
-        return getContainer().getNode().getStored();
-    }
-
-    @Override
-    public void setStored(double amount) {
-        long difference = (long) amount - getContainer().getNode().getStored();
-        if (difference > 0) {
-            getContainer().getNode().receive(difference, Action.EXECUTE);
-        } else {
-            getContainer().getNode().extract(Math.abs(difference), Action.EXECUTE);
-        }
-    }
-
-    @Override
-    public double getMaxStoredPower() {
-        return getContainer().getNode().getCapacity();
-    }
-
-    @Override
-    public EnergyTier getTier() {
-        return EnergyTier.INFINITE;
-    }
-
-    @Override
-    public void onEnergyChanged() {
-        setChanged();
     }
 }

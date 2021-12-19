@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.init;
 
-import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.platform.fabric.FeatureFlag;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.platform.fabric.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.fabric.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.fabric.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.fabric.block.DiskDriveBlock;

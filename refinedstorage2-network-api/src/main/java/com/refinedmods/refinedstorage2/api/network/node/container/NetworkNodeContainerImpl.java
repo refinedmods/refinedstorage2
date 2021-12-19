@@ -156,7 +156,6 @@ public class NetworkNodeContainerImpl<T extends NetworkNodeImpl> implements Netw
     }
 
     protected boolean isActive() {
-        // TODO controllers will stay on now when they run out of energy I guess?
         long energyUsage = getNode().getEnergyUsage();
         CompositeEnergyStorage energy = getNode().getNetwork().getComponent(EnergyNetworkComponent.class).getEnergyStorage();
         return energy.getStored() >= energyUsage;

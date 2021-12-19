@@ -1,10 +1,9 @@
 package com.refinedmods.refinedstorage2.api.network;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.api.network.node.container.FakeNetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerListener;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageProviderRepository;
@@ -36,7 +35,7 @@ class NetworkImplTest {
         diskDrive.initialize(storageProviderRepository);
         FakeNetworkNodeContainer<DiskDriveNetworkNode> diskDriveContainer = new FakeNetworkNodeContainer<>(diskDrive);
 
-        ControllerNetworkNode controllerNetworkNode = new ControllerNetworkNode(100, 100, ControllerType.NORMAL, mock(ControllerListener.class));
+        ControllerNetworkNode controllerNetworkNode = new ControllerNetworkNode(100, new EnergyStorageImpl(100));
         controllerNetworkNode.setNetwork(network);
         FakeNetworkNodeContainer<ControllerNetworkNode> controllerContainer = new FakeNetworkNodeContainer<>(controllerNetworkNode);
 
