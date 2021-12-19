@@ -1,16 +1,14 @@
 package com.refinedmods.refinedstorage2.api.network.component;
 
+import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.api.network.node.container.FakeNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerListener;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 @Rs2Test
 class EnergyNetworkComponentTest {
@@ -27,9 +25,7 @@ class EnergyNetworkComponentTest {
     private NetworkNodeContainer<ControllerNetworkNode> createControllerContainer() {
         return new FakeNetworkNodeContainer<>(new ControllerNetworkNode(
                 100,
-                1000,
-                ControllerType.NORMAL,
-                mock(ControllerListener.class)
+                new EnergyStorageImpl(1000)
         ));
     }
 

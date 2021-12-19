@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+// TODO: Try to remove this
 public abstract class FabricNetworkNodeContainerBlockEntity<T extends NetworkNodeImpl> extends NetworkNodeContainerBlockEntityImpl<T, PlatformNetworkNodeContainerImpl<T>> {
     private static final Logger LOGGER = LogManager.getLogger();
 

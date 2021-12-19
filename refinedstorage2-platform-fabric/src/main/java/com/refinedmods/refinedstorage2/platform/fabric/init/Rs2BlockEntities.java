@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.init;
 
-import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerType;
 import com.refinedmods.refinedstorage2.platform.fabric.FeatureFlag;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
+import com.refinedmods.refinedstorage2.platform.fabric.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RelayBlockEntity;
@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.ItemGri
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import team.reborn.energy.api.EnergyStorage;
 
 public class Rs2BlockEntities {
     private BlockEntityType<CableBlockEntity> cable;
@@ -34,6 +35,8 @@ public class Rs2BlockEntities {
         if (Rs2Mod.FEATURES.contains(FeatureFlag.RELAY)) {
             relay = Registry.register(Registry.BLOCK_ENTITY_TYPE, Rs2Mod.createIdentifier("relay"), FabricBlockEntityTypeBuilder.create(RelayBlockEntity::new, blocks.getRelay()).build(null));
         }
+
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.getEnergyStorage(), controller);
     }
 
     public BlockEntityType<CableBlockEntity> getCable() {
