@@ -41,13 +41,12 @@
         "fabric": "*",
         "minecraft": "1.18.x",
         "java": ">=17",
-        "autoconfig1u": "*",
+        "cloth-config2": "*",
         "team_reborn_energy": "*"
     },
     "suggests": {
         "patchouli": "*",
         "roughlyenoughitems": "*",
-        "modmenu": "*",
-        "cloth-config2": "*"
+        "modmenu": "*"
     }
 }

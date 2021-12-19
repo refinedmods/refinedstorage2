@@ -37,6 +37,7 @@ before updating.
 - The Controller now displays an energy bar on the item.
 - Upgrade Team Reborn Energy API.
 - Made block breaking faster.
+- Refined Storage now uses the bundled AutoConfig with ClothConfig and bundles ClothConfig.
 
 ### Removed
 

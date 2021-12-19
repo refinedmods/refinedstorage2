@@ -56,22 +56,22 @@ dependencies {
     implementation project(path: ':refinedstorage2-platform-fabric-api', configuration: 'namedElements')
     include project(':refinedstorage2-platform-fabric-api')
 
-    modApi("me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig1uVersion}") {
-        exclude(group: 'net.fabricmc.fabric-api')
-    }
-    include "me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig1uVersion}"
-
     modApi("me.shedaniel.cloth:cloth-config-fabric:${project.clothConfigVersion}") {
         exclude(group: 'net.fabricmc.fabric-api')
     }
+    include "me.shedaniel.cloth:cloth-config-fabric:${project.clothConfigVersion}"
 
     modApi("teamreborn:energy:${project.energyVersion}") {
         exclude(group: 'net.fabricmc.fabric-api')
     }
     include "teamreborn:energy:${project.energyVersion}"
 
-    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api:${project.reiVersion}"
-    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}"
+    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${project.reiVersion}") {
+        exclude(group: 'me.shedaniel.cloth')
+    }
+    modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}") {
+        exclude(group: 'me.shedaniel.cloth')
+    }
     modImplementation "com.terraformersmc:modmenu:${project.modMenuVersion}"
     modImplementation "vazkii.patchouli:Patchouli:${project.patchouliVersion}"
 }
