@@ -42,7 +42,7 @@ public class Rs2Config implements ConfigData {
     public static class Grid {
         private boolean largeFont = false;
 
-        private long energyUsage = 50;
+        private long energyUsage = 10;
 
         @ConfigEntry.BoundedDiscrete(min = 3L, max = 256)
         private int maxRowsStretch = 256;
@@ -85,9 +85,9 @@ public class Rs2Config implements ConfigData {
     }
 
     public static class DiskDrive {
-        private long energyUsage = 100;
+        private long energyUsage = 10;
 
-        private long energyUsagePerDisk = 10;
+        private long energyUsagePerDisk = 5;
 
         public long getEnergyUsage() {
             return energyUsage;
