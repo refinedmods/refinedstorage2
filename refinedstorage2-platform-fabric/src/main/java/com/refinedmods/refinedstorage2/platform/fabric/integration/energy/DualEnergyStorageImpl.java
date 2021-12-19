@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
+// TODO: Use new stuff from https://github.com/TechReborn/Energy/pull/15
 public class DualEnergyStorageImpl extends SimpleEnergyStorage implements DualEnergyStorage {
     public DualEnergyStorageImpl(long capacity, long maxInsert) {
         super(capacity, maxInsert, 0);
