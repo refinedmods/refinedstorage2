@@ -11,6 +11,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -22,10 +23,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class ControllerBlockItem extends ColoredBlockItem {
-    private static final int MAX_DAMAGE = 100;
-
     public ControllerBlockItem(Block block, Properties properties, DyeColor color, Component displayName) {
-        super(block, properties.durability(MAX_DAMAGE), color, displayName);
+        super(block, properties, color, displayName);
     }
 
     public static float getPercentFull(ItemStack stack) {
@@ -61,8 +60,19 @@ public class ControllerBlockItem extends ColoredBlockItem {
         stack.getTag().putLong("cap", capacity);
     }
 
-    public static int calculateDamage(long stored, long capacity) {
-        return MAX_DAMAGE - (int) (((double) stored / (double) capacity) * MAX_DAMAGE);
+    @Override
+    public boolean isBarVisible(ItemStack stack) {
+        return stack.hasTag() && stack.getTag().contains("stored") && stack.getTag().contains("cap");
+    }
+
+    @Override
+    public int getBarWidth(ItemStack stack) {
+        return Math.round(getPercentFull(stack) * 13F);
+    }
+
+    @Override
+    public int getBarColor(ItemStack stack) {
+        return Mth.hsvToRgb(Math.max(0.0F, getPercentFull(stack)) / 3.0F, 1.0F, 1.0F);
     }
 
     @Override

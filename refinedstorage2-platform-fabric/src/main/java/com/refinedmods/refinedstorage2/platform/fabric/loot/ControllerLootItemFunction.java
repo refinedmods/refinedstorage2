@@ -27,9 +27,7 @@ public class ControllerLootItemFunction implements LootItemFunction {
         if (controller instanceof ControllerBlockEntity controllerBlockEntity) {
             long stored = controllerBlockEntity.getActualStored();
             long capacity = controllerBlockEntity.getActualCapacity();
-            int damage = ControllerBlockItem.calculateDamage(stored, capacity);
 
-            stack.setDamageValue(damage);
             ControllerBlockItem.setEnergy(stack, stored, capacity);
         }
 

@@ -34,6 +34,7 @@ before updating.
 - The Wrench works on any block that has the `fabric:wrenchables` tag. Other mods can identify the Refined Storage
   wrench by checking the `fabric:wrenches` tag.
 - Made energy usage by the Grid and Disk Drive less power-hungry.
+- The Controller now displays an energy bar on the item.
 
 ### Removed
 
