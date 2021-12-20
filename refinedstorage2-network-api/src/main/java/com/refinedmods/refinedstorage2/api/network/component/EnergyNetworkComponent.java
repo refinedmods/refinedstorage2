@@ -8,14 +8,14 @@ public class EnergyNetworkComponent implements NetworkComponent {
     private final CompositeEnergyStorage energyStorage = new CompositeEnergyStorage();
 
     @Override
-    public void onContainerAdded(NetworkNodeContainer<?> container) {
+    public void onContainerAdded(NetworkNodeContainer container) {
         if (container.getNode() instanceof EnergyStorage source) {
             energyStorage.addSource(source);
         }
     }
 
     @Override
-    public void onContainerRemoved(NetworkNodeContainer<?> container) {
+    public void onContainerRemoved(NetworkNodeContainer container) {
         if (container.getNode() instanceof EnergyStorage source) {
             energyStorage.removeSource(source);
         }

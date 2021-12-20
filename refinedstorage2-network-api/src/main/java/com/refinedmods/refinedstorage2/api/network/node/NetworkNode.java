@@ -9,7 +9,5 @@ public interface NetworkNode {
 
     boolean isActive();
 
-    void setActive(boolean active);
-
     void update();
 }

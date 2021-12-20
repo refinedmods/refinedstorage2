@@ -32,94 +32,45 @@ class ControllerNetworkNodeTest {
     @MethodSource("getStoredAndExpectedState")
     void Test_calculating_states(long stored, ControllerEnergyState expectedState) {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(0, new EnergyStorageImpl(100));
-
-        controller.receive(stored, Action.EXECUTE);
+        ControllerNetworkNode sut = new ControllerNetworkNode();
+        sut.setEnergyStorage(new EnergyStorageImpl(100));
+        sut.receive(stored, Action.EXECUTE);
 
         // Act
-        ControllerEnergyState state = controller.getState();
+        ControllerEnergyState state = sut.getState();
 
         // Assert
         assertThat(state).isEqualTo(expectedState);
     }
 
     @Test
-    void Test_calculating_state_when_inactive() {
-        // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(0, new EnergyStorageImpl(100));
-        controller.setActive(false);
-
-        // Act
-        ControllerEnergyState state = controller.getState();
-
-        // Assert
-        assertThat(state).isEqualTo(ControllerEnergyState.OFF);
-    }
-
-    @Test
     void Test_receiving_energy() {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(0, new EnergyStorageImpl(100));
+        ControllerNetworkNode sut = new ControllerNetworkNode();
+        sut.setEnergyStorage(new EnergyStorageImpl(100));
 
         // Act
-        long remainder = controller.receive(10, Action.EXECUTE);
+        long remainder = sut.receive(10, Action.EXECUTE);
 
         // Assert
         assertThat(remainder).isZero();
-        assertThat(controller.getCapacity()).isEqualTo(100);
-        assertThat(controller.getStored()).isEqualTo(10);
-    }
-
-    @Test
-    void Test_receiving_energy_when_inactive() {
-        // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(0, new EnergyStorageImpl(100));
-
-        controller.receive(5, Action.EXECUTE);
-        controller.setActive(false);
-
-        // Act
-        long remainder = controller.receive(10, Action.EXECUTE);
-
-        // Assert
-        assertThat(remainder).isZero();
-        assertThat(controller.getStored()).isZero();
-        assertThat(controller.getCapacity()).isZero();
-        assertThat(controller.getActualStored()).isEqualTo(15);
-        assertThat(controller.getActualCapacity()).isEqualTo(100);
+        assertThat(sut.getCapacity()).isEqualTo(100);
+        assertThat(sut.getStored()).isEqualTo(10);
     }
 
     @Test
     void Test_extracting_energy() {
         // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(0, new EnergyStorageImpl(100));
+        ControllerNetworkNode sut = new ControllerNetworkNode();
+        sut.setEnergyStorage(new EnergyStorageImpl(100));
 
         // Act
-        controller.receive(10, Action.EXECUTE);
-        long extracted = controller.extract(20, Action.EXECUTE);
+        sut.receive(10, Action.EXECUTE);
+        long extracted = sut.extract(20, Action.EXECUTE);
 
         // Assert
         assertThat(extracted).isEqualTo(10);
-        assertThat(controller.getCapacity()).isEqualTo(100);
-        assertThat(controller.getStored()).isZero();
-    }
-
-    @Test
-    void Test_extracting_energy_when_inactive() {
-        // Arrange
-        ControllerNetworkNode controller = new ControllerNetworkNode(0, new EnergyStorageImpl(100));
-
-        controller.receive(20, Action.EXECUTE);
-        controller.setActive(false);
-
-        // Act
-        long extracted = controller.extract(10, Action.EXECUTE);
-
-        // Assert
-        assertThat(extracted).isZero();
-        assertThat(controller.getStored()).isZero();
-        assertThat(controller.getCapacity()).isZero();
-        assertThat(controller.getActualStored()).isEqualTo(20);
-        assertThat(controller.getActualCapacity()).isEqualTo(100);
+        assertThat(sut.getCapacity()).isEqualTo(100);
+        assertThat(sut.getStored()).isZero();
     }
 }

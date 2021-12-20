@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.api.network;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
-import com.refinedmods.refinedstorage2.api.network.node.container.FakeNetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
@@ -30,14 +30,17 @@ class NetworkImplTest {
         Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 10, Action.EXECUTE);
         storageProviderRepository.setInSlot(1, storage);
-        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(storageProviderRepository, 0, 0, mock(DiskDriveListener.class), STORAGE_CHANNEL_TYPE_REGISTRY);
+        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(0, 0, STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(network);
+        diskDrive.setDiskProvider(storageProviderRepository);
         diskDrive.initialize(storageProviderRepository);
-        FakeNetworkNodeContainer<DiskDriveNetworkNode> diskDriveContainer = new FakeNetworkNodeContainer<>(diskDrive);
+        diskDrive.setListener(mock(DiskDriveListener.class));
+        NetworkNodeContainer diskDriveContainer = () -> diskDrive;
 
-        ControllerNetworkNode controllerNetworkNode = new ControllerNetworkNode(100, new EnergyStorageImpl(100));
+        ControllerNetworkNode controllerNetworkNode = new ControllerNetworkNode();
         controllerNetworkNode.setNetwork(network);
-        FakeNetworkNodeContainer<ControllerNetworkNode> controllerContainer = new FakeNetworkNodeContainer<>(controllerNetworkNode);
+        controllerNetworkNode.setEnergyStorage(new EnergyStorageImpl(1000));
+        NetworkNodeContainer controllerContainer = () -> controllerNetworkNode;
 
         // Act
         network.addContainer(controllerContainer);

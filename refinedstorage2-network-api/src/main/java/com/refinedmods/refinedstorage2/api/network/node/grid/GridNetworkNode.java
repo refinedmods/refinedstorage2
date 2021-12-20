@@ -98,8 +98,8 @@ public class GridNetworkNode<T> extends NetworkNodeImpl {
     }
 
     @Override
-    public void setActive(boolean active) {
-        super.setActive(active);
+    public void onActiveChanged(boolean active) {
+        super.onActiveChanged(active);
         watchers.forEach(watcher -> watcher.onActiveChanged(active));
     }
 }

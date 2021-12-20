@@ -2,20 +2,20 @@ package com.refinedmods.refinedstorage2.api.network.node;
 
 public class FakeNetworkNode extends NetworkNodeImpl {
     private final long energyUsage;
-    private int updateCount;
+    private int activenessChanges;
 
     public FakeNetworkNode(long energyUsage) {
         this.energyUsage = energyUsage;
     }
 
     @Override
-    public void update() {
-        super.update();
-        updateCount++;
+    protected void onActiveChanged(boolean active) {
+        super.onActiveChanged(active);
+        activenessChanges++;
     }
 
-    public int getUpdateCount() {
-        return updateCount;
+    public int getActivenessChanges() {
+        return activenessChanges;
     }
 
     @Override

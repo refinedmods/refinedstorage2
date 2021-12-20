@@ -1,11 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.network.node;
 
-import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.ConnectionProvider;
 import com.refinedmods.refinedstorage2.api.network.node.container.Connections;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.platform.fabric.api.block.entity.NetworkNodeContainerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.container.PlatformNetworkNodeContainer;
+import com.refinedmods.refinedstorage2.platform.fabric.api.blockentity.NetworkNodeContainerBlockEntity;
 
 import java.util.Comparator;
 import java.util.HashSet;
@@ -19,19 +17,19 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
-public class FabricConnectionProvider implements ConnectionProvider {
+public class LevelConnectionProvider implements ConnectionProvider {
     private final Level level;
 
-    public FabricConnectionProvider(Level level) {
+    public LevelConnectionProvider(Level level) {
         this.level = level;
     }
 
     @Override
-    public Connections findConnections(NetworkNodeContainer<?> pivot, Set<NetworkNodeContainer<?>> existingConnections) {
+    public Connections findConnections(NetworkNodeContainer pivot, Set<NetworkNodeContainer> existingConnections) {
         ScanState scanState = new ScanState(convertToScanEntries(existingConnections));
 
         // TODO: Convert to queue
-        depthScan(scanState, ((PlatformNetworkNodeContainer<?>) pivot).getContainerPosition());
+        depthScan(scanState, ((NetworkNodeContainerBlockEntity) pivot).getBlockPos());
 
         return new Connections(
                 convertToContainers(scanState.foundEntries),
@@ -40,36 +38,36 @@ public class FabricConnectionProvider implements ConnectionProvider {
         );
     }
 
-    private Set<NetworkNodeContainer<?>> convertToContainers(Set<ScanEntry<?>> foundEntries) {
+    private Set<NetworkNodeContainer> convertToContainers(Set<ScanEntry> foundEntries) {
         return foundEntries.stream().map(ScanEntry::getContainer).collect(Collectors.toSet());
     }
 
-    private Set<ScanEntry<?>> convertToScanEntries(Set<NetworkNodeContainer<?>> existingConnections) {
+    private Set<ScanEntry> convertToScanEntries(Set<NetworkNodeContainer> existingConnections) {
         return existingConnections
                 .stream()
-                .map(container -> new ScanEntry<>(
+                .map(container -> new ScanEntry(
                         container,
-                        ((PlatformNetworkNodeContainer<?>) container).getContainerLevel(),
-                        ((PlatformNetworkNodeContainer<?>) container).getContainerPosition()
+                        ((NetworkNodeContainerBlockEntity) container).getLevel(),
+                        ((NetworkNodeContainerBlockEntity) container).getBlockPos()
                 ))
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public List<NetworkNodeContainer<?>> sort(Set<NetworkNodeContainer<?>> containers) {
+    public List<NetworkNodeContainer> sort(Set<NetworkNodeContainer> containers) {
         return containers
                 .stream()
-                .sorted(Comparator.comparing(container -> ((PlatformNetworkNodeContainer<?>) container).getContainerPosition()))
+                .sorted(Comparator.comparing(container -> ((NetworkNodeContainerBlockEntity) container).getBlockPos()))
                 .toList();
     }
 
     private void depthScan(ScanState scanState, BlockPos position) {
-        if (level.getBlockEntity(position) instanceof NetworkNodeContainerBlockEntity<?> c) {
-            addEntry(scanState, new ScanEntry<>(c.getContainer(), level, position));
+        if (level.getBlockEntity(position) instanceof NetworkNodeContainerBlockEntity containerBlockEntity) {
+            addEntry(scanState, new ScanEntry(containerBlockEntity, level, position));
         }
     }
 
-    private void addEntry(ScanState scanState, ScanEntry<?> entry) {
+    private void addEntry(ScanState scanState, ScanEntry entry) {
         if (scanState.foundEntries.contains(entry)) {
             return;
         }
@@ -82,47 +80,47 @@ public class FabricConnectionProvider implements ConnectionProvider {
 
         scanState.removedEntries.remove(entry);
 
-        Set<NetworkNodeContainer<?>> connections = findConnectionsAt(level, ((PlatformNetworkNodeContainer<?>) entry.getContainer()).getContainerPosition());
-        for (NetworkNodeContainer<?> connection : connections) {
-            depthScan(scanState, ((PlatformNetworkNodeContainer<?>) connection).getContainerPosition());
+        Set<NetworkNodeContainer> connections = findConnectionsAt(level, ((NetworkNodeContainerBlockEntity) entry.getContainer()).getBlockPos());
+        for (NetworkNodeContainer connection : connections) {
+            depthScan(scanState, ((NetworkNodeContainerBlockEntity) connection).getBlockPos());
         }
     }
 
-    private Set<NetworkNodeContainer<?>> findConnectionsAt(Level level, BlockPos pos) {
-        Set<NetworkNodeContainer<?>> containers = new HashSet<>();
+    private Set<NetworkNodeContainer> findConnectionsAt(Level level, BlockPos pos) {
+        Set<NetworkNodeContainer> containers = new HashSet<>();
         for (Direction direction : Direction.values()) {
             BlockPos offsetPos = pos.relative(direction);
-            if (level.getBlockEntity(offsetPos) instanceof NetworkNodeContainerBlockEntity<?> blockEntity) {
-                containers.add(blockEntity.getContainer());
+            if (level.getBlockEntity(offsetPos) instanceof NetworkNodeContainerBlockEntity containerBlockEntity) {
+                containers.add(containerBlockEntity);
             }
         }
         return containers;
     }
 
     private static class ScanState {
-        private final Set<ScanEntry<?>> currentEntries;
-        private final Set<ScanEntry<?>> foundEntries = new HashSet<>();
-        private final Set<ScanEntry<?>> newEntries = new HashSet<>();
-        private final Set<ScanEntry<?>> removedEntries;
+        private final Set<ScanEntry> currentEntries;
+        private final Set<ScanEntry> foundEntries = new HashSet<>();
+        private final Set<ScanEntry> newEntries = new HashSet<>();
+        private final Set<ScanEntry> removedEntries;
 
-        public ScanState(Set<ScanEntry<?>> currentEntries) {
+        public ScanState(Set<ScanEntry> currentEntries) {
             this.currentEntries = currentEntries;
             this.removedEntries = new HashSet<>(currentEntries);
         }
     }
 
-    private static class ScanEntry<T extends NetworkNode> {
-        private final NetworkNodeContainer<T> container;
+    private static class ScanEntry {
+        private final NetworkNodeContainer container;
         private final ResourceKey<Level> dimension;
         private final BlockPos position;
 
-        public ScanEntry(NetworkNodeContainer<T> container, Level dimension, BlockPos position) {
+        public ScanEntry(NetworkNodeContainer container, Level dimension, BlockPos position) {
             this.container = container;
             this.dimension = dimension.dimension();
             this.position = position;
         }
 
-        public NetworkNodeContainer<T> getContainer() {
+        public NetworkNodeContainer getContainer() {
             return container;
         }
 
@@ -130,7 +128,7 @@ public class FabricConnectionProvider implements ConnectionProvider {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            ScanEntry<?> that = (ScanEntry<?>) o;
+            ScanEntry that = (ScanEntry) o;
             return Objects.equals(dimension, that.dimension) && Objects.equals(position, that.position);
         }
 

@@ -1,15 +1,17 @@
 package com.refinedmods.refinedstorage2.api.network;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistryImpl;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.EmptyNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainerImpl;
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
@@ -22,19 +24,19 @@ import java.util.function.Function;
 
 public class NetworkUtil {
     private static class NodeCallbackListenerComponent implements NetworkComponent {
-        private final List<NetworkNodeContainer<?>> added = new ArrayList<>();
-        private final List<NetworkNodeContainer<?>> removed = new ArrayList<>();
+        private final List<NetworkNodeContainer> added = new ArrayList<>();
+        private final List<NetworkNodeContainer> removed = new ArrayList<>();
         private final List<Set<Network>> splits = new ArrayList<>();
         private final List<Network> merges = new ArrayList<>();
         private int removeCount = 0;
 
         @Override
-        public void onContainerAdded(NetworkNodeContainer<?> container) {
+        public void onContainerAdded(NetworkNodeContainer container) {
             added.add(container);
         }
 
         @Override
-        public void onContainerRemoved(NetworkNodeContainer<?> container) {
+        public void onContainerRemoved(NetworkNodeContainer container) {
             removed.add(container);
         }
 
@@ -66,33 +68,55 @@ public class NetworkUtil {
         NETWORK_COMPONENT_REGISTRY.addComponent(NodeCallbackListenerComponent.class, network -> new NodeCallbackListenerComponent());
     }
 
+    public static void drainAllEnergy(Network network) {
+        network.getComponent(EnergyNetworkComponent.class).getEnergyStorage().extract(Long.MAX_VALUE, Action.EXECUTE);
+    }
+
+    public static void makeNodeInactive(NetworkNode node) {
+        NetworkUtil.drainAllEnergy(node.getNetwork());
+        node.update();
+    }
+
+    public static Network create(long energyStored, long energyCapacity) {
+        Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
+        EnergyNetworkComponent component = network.getComponent(EnergyNetworkComponent.class);
+        component.getEnergyStorage().addSource(new EnergyStorageImpl(energyCapacity));
+        component.getEnergyStorage().receive(energyStored, Action.EXECUTE);
+        return network;
+    }
+
+    public static Network create() {
+        return create(Long.MAX_VALUE, Long.MAX_VALUE);
+    }
+
     public static Network createWithInfiniteEnergyStorage() {
         Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
         network.getComponent(EnergyNetworkComponent.class).getEnergyStorage().addSource(new InfiniteEnergyStorage());
         return network;
     }
 
-    public static NetworkNodeContainer<?> createContainer() {
-        return new NetworkNodeContainerImpl<>(new EmptyNetworkNode());
+    public static NetworkNodeContainer createContainer() {
+        EmptyNetworkNode node = new EmptyNetworkNode();
+        return () -> node;
     }
 
-    public static NetworkNodeContainer<?> createContainerWithNetwork(Function<NetworkNodeContainer<?>, Network> networkFactory) {
-        NetworkNodeContainer<?> container = createContainer();
+    public static NetworkNodeContainer createContainerWithNetwork(Function<NetworkNodeContainer, Network> networkFactory) {
+        NetworkNodeContainer container = createContainer();
         Network network = networkFactory.apply(container);
         container.getNode().setNetwork(network);
         network.addContainer(container);
         return container;
     }
 
-    public static NetworkNodeContainer<?> createContainerWithNetwork() {
+    public static NetworkNodeContainer createContainerWithNetwork() {
         return createContainerWithNetwork(container -> new NetworkImpl(NETWORK_COMPONENT_REGISTRY));
     }
 
-    public static List<NetworkNodeContainer<?>> getAddedContainers(Network network) {
+    public static List<NetworkNodeContainer> getAddedContainers(Network network) {
         return network.getComponent(NodeCallbackListenerComponent.class).added;
     }
 
-    public static List<NetworkNodeContainer<?>> getRemovedContainers(Network network) {
+    public static List<NetworkNodeContainer> getRemovedContainers(Network network) {
         return network.getComponent(NodeCallbackListenerComponent.class).removed;
     }
 

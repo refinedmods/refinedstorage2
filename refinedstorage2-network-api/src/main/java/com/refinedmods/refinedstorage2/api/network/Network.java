@@ -8,9 +8,9 @@ import java.util.Set;
 public interface Network {
     <T extends NetworkComponent> T getComponent(Class<T> componentClass);
 
-    void addContainer(NetworkNodeContainer<?> container);
+    void addContainer(NetworkNodeContainer container);
 
-    void removeContainer(NetworkNodeContainer<?> container);
+    void removeContainer(NetworkNodeContainer container);
 
     void remove();
 

@@ -20,12 +20,12 @@ public class NetworkImpl implements Network {
     }
 
     @Override
-    public void addContainer(NetworkNodeContainer<?> container) {
+    public void addContainer(NetworkNodeContainer container) {
         components.values().forEach(c -> c.onContainerAdded(container));
     }
 
     @Override
-    public void removeContainer(NetworkNodeContainer<?> container) {
+    public void removeContainer(NetworkNodeContainer container) {
         components.values().forEach(c -> c.onContainerRemoved(container));
     }
 

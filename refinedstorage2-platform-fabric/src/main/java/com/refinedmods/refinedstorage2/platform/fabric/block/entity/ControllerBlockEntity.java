@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block.entity;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
@@ -20,6 +21,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
@@ -27,20 +29,26 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.EnergyStorage;
 
-public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity<ControllerNetworkNode> implements ExtendedScreenHandlerFactory {
+public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEntity<ControllerNetworkNode> implements ExtendedScreenHandlerFactory {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORED = "stored";
     private static final int ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
 
     private final ControllerType type;
-    private final DualEnergyStorage energyStorage;
+    private DualEnergyStorage energyStorage;
     private long lastTypeChanged;
 
     public ControllerBlockEntity(ControllerType type, BlockPos pos, BlockState state) {
-        super(getBlockEntityType(type), pos, state);
+        super(getBlockEntityType(type), pos, state, new ControllerNetworkNode());
         this.type = type;
         this.energyStorage = createEnergyStorage(type);
+        this.getNode().setEnergyStorage(energyStorage);
+    }
+
+    public static void serverTick(Level level, BlockPos pos, BlockState state, ControllerBlockEntity blockEntity) {
+        InternalNetworkNodeContainerBlockEntity.serverTick(level, pos, state, blockEntity);
+        blockEntity.updateEnergyTypeInLevel(state);
     }
 
     public EnergyStorage getEnergyStorage() {
@@ -67,35 +75,35 @@ public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity
         return type == ControllerType.CREATIVE ? Rs2Mod.BLOCK_ENTITIES.getCreativeController() : Rs2Mod.BLOCK_ENTITIES.getController();
     }
 
-    public void updateEnergyType(BlockState state) {
-        ControllerEnergyType energyType = ControllerEnergyType.ofState(getContainer().getNode().getState());
-        ControllerEnergyType inWorldEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
+    public void updateEnergyTypeInLevel(BlockState state) {
+        ControllerEnergyType energyType = ControllerEnergyType.ofState(getNode().getState());
+        ControllerEnergyType inLevelEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
 
-        if (energyType != inWorldEnergyType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
-            LOGGER.info("Energy type state change for block at {}: {} -> {}", getBlockPos(), inWorldEnergyType, energyType);
+        if (energyType != inLevelEnergyType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
+            LOGGER.info("Energy type state change for block at {}: {} -> {}", getBlockPos(), inLevelEnergyType, energyType);
 
             this.lastTypeChanged = System.currentTimeMillis();
 
-            updateEnergyType(state, energyType);
+            updateEnergyTypeInLevel(state, energyType);
         }
     }
 
-    private void updateEnergyType(BlockState state, ControllerEnergyType type) {
+    private void updateEnergyTypeInLevel(BlockState state, ControllerEnergyType type) {
         level.setBlockAndUpdate(getBlockPos(), state.setValue(ControllerBlock.ENERGY_TYPE, type));
-    }
-
-    @Override
-    protected ControllerNetworkNode createNode(BlockPos pos, CompoundTag tag) {
-        return new ControllerNetworkNode(
-                tag != null ? tag.getLong(TAG_STORED) : 0L,
-                energyStorage
-        );
     }
 
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.putLong(TAG_STORED, getContainer().getNode().getActualStored());
+        tag.putLong(TAG_STORED, getNode().getActualStored());
+    }
+
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        if (tag.contains(TAG_STORED)) {
+            getNode().receive(tag.getLong(TAG_STORED), Action.EXECUTE);
+        }
     }
 
     @Override
@@ -116,10 +124,10 @@ public class ControllerBlockEntity extends FabricNetworkNodeContainerBlockEntity
     }
 
     public long getActualStored() {
-        return getContainer().getNode().getActualStored();
+        return getNode().getActualStored();
     }
 
     public long getActualCapacity() {
-        return getContainer().getNode().getActualCapacity();
+        return getNode().getActualCapacity();
     }
 }

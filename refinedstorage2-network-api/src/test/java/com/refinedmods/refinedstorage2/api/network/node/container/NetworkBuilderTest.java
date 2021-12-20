@@ -1,9 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node.container;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.NetworkImpl;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.node.FakeNetworkNode;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.List;
@@ -15,7 +13,6 @@ import org.junit.jupiter.api.function.Executable;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.NETWORK_COMPONENT_REGISTRY;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createContainer;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createContainerWithNetwork;
-import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createWithInfiniteEnergyStorage;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getAddedContainers;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getNetworkMerges;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getNetworkRemovedCount;
@@ -25,19 +22,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
-class NetworkNodeContainerImplTest {
+class NetworkBuilderTest {
+    private final NetworkBuilder sut = new NetworkBuilder();
+
     @Test
     void Test_forming_new_network() {
         // Arrange
         FakeConnectionProvider connectionProvider = new FakeConnectionProvider();
 
-        NetworkNodeContainer<?> container = createContainer();
-        NetworkNodeContainer<?> unrelatedContainer = createContainerWithNetwork();
+        NetworkNodeContainer container = createContainer();
+        NetworkNodeContainer unrelatedContainer = createContainerWithNetwork();
 
         connectionProvider.with(container, unrelatedContainer);
 
         // Act
-        container.initialize(connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.initialize(container, connectionProvider, NETWORK_COMPONENT_REGISTRY);
 
         // Assert
         assertThat(container.getNode().getNetwork()).isNotNull();
@@ -57,10 +56,10 @@ class NetworkNodeContainerImplTest {
         // Arrange
         FakeConnectionProvider connectionProvider = new FakeConnectionProvider();
 
-        NetworkNodeContainer<?> existingContainer1 = createContainerWithNetwork();
-        NetworkNodeContainer<?> existingContainer2 = createContainerWithNetwork(container -> existingContainer1.getNode().getNetwork());
-        NetworkNodeContainer<?> newContainer = createContainer();
-        NetworkNodeContainer<?> unrelatedContainer = createContainerWithNetwork();
+        NetworkNodeContainer existingContainer1 = createContainerWithNetwork();
+        NetworkNodeContainer existingContainer2 = createContainerWithNetwork(container -> existingContainer1.getNode().getNetwork());
+        NetworkNodeContainer newContainer = createContainer();
+        NetworkNodeContainer unrelatedContainer = createContainerWithNetwork();
 
         connectionProvider
                 .with(existingContainer1)
@@ -71,7 +70,7 @@ class NetworkNodeContainerImplTest {
                 .connect(existingContainer1, newContainer);
 
         // Act
-        newContainer.initialize(connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.initialize(newContainer, connectionProvider, NETWORK_COMPONENT_REGISTRY);
 
         // Assert
         Network expectedNetwork = existingContainer1.getNode().getNetwork();
@@ -99,12 +98,12 @@ class NetworkNodeContainerImplTest {
         // Arrange
         FakeConnectionProvider connectionProvider = new FakeConnectionProvider();
 
-        NetworkNodeContainer<?> existingContainer0 = createContainerWithNetwork();
-        NetworkNodeContainer<?> existingContainer1 = createContainerWithNetwork(container -> existingContainer0.getNode().getNetwork());
-        NetworkNodeContainer<?> existingContainer2 = createContainerWithNetwork();
+        NetworkNodeContainer existingContainer0 = createContainerWithNetwork();
+        NetworkNodeContainer existingContainer1 = createContainerWithNetwork(container -> existingContainer0.getNode().getNetwork());
+        NetworkNodeContainer existingContainer2 = createContainerWithNetwork();
         Network initialNetworkOfExistingContainer2 = existingContainer2.getNode().getNetwork();
-        NetworkNodeContainer<?> unrelatedContainer = createContainerWithNetwork();
-        NetworkNodeContainer<?> newContainer = createContainer();
+        NetworkNodeContainer unrelatedContainer = createContainerWithNetwork();
+        NetworkNodeContainer newContainer = createContainer();
 
         connectionProvider
                 .with(existingContainer0, existingContainer1, existingContainer2, unrelatedContainer, newContainer)
@@ -113,7 +112,7 @@ class NetworkNodeContainerImplTest {
                 .connect(newContainer, existingContainer1);
 
         // Act
-        newContainer.initialize(connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.initialize(newContainer, connectionProvider, NETWORK_COMPONENT_REGISTRY);
 
         // Assert
         Network expectedNetwork = existingContainer1.getNode().getNetwork();
@@ -145,20 +144,20 @@ class NetworkNodeContainerImplTest {
         // Arrange
         FakeConnectionProvider connectionProvider = new FakeConnectionProvider();
 
-        NetworkNodeContainer<?> unrelatedContainer = createContainerWithNetwork();
+        NetworkNodeContainer unrelatedContainer = createContainerWithNetwork();
 
-        NetworkNodeContainer<?> container1 = createContainer();
-        NetworkNodeContainer<?> container2 = createContainer();
-        NetworkNodeContainer<?> container3 = createContainer();
+        NetworkNodeContainer container1 = createContainer();
+        NetworkNodeContainer container2 = createContainer();
+        NetworkNodeContainer container3 = createContainer();
 
         connectionProvider.with(container1, container2, container3)
                 .connect(container1, container2)
                 .connect(container2, container3);
 
         // Act
-        container1.initialize(connectionProvider, NETWORK_COMPONENT_REGISTRY);
-        container2.initialize(connectionProvider, NETWORK_COMPONENT_REGISTRY);
-        container3.initialize(connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.initialize(container1, connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.initialize(container2, connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.initialize(container3, connectionProvider, NETWORK_COMPONENT_REGISTRY);
 
         // Assert
         Network expectedNetwork = container1.getNode().getNetwork();
@@ -184,49 +183,13 @@ class NetworkNodeContainerImplTest {
     @Test
     void Test_cannot_remove_without_network_assigned() {
         // Arrange
-        NetworkNodeContainer<?> container = createContainer();
+        NetworkNodeContainer container = createContainer();
 
         // Act
-        Executable action = () -> container.remove(new FakeConnectionProvider(), NETWORK_COMPONENT_REGISTRY);
+        Executable action = () -> sut.remove(container, new FakeConnectionProvider(), NETWORK_COMPONENT_REGISTRY);
 
         // Assert
         assertThrows(IllegalStateException.class, action);
-    }
-
-    @Test
-    void Test_updating_when_inactive() {
-        // Arrange
-        Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
-
-        FakeNetworkNode networkNode = new FakeNetworkNode(1);
-        networkNode.setNetwork(network);
-
-        NetworkNodeContainer<FakeNetworkNode> container = new NetworkNodeContainerImpl<>(networkNode);
-
-        // Act
-        container.update();
-
-        // Assert
-        assertThat(networkNode.getUpdateCount()).isZero();
-        assertThat(networkNode.isActive()).isFalse();
-    }
-
-    @Test
-    void Test_updating_when_active() {
-        // Arrange
-        Network network = createWithInfiniteEnergyStorage();
-
-        FakeNetworkNode networkNode = new FakeNetworkNode(1);
-        networkNode.setNetwork(network);
-
-        NetworkNodeContainer<FakeNetworkNode> container = new NetworkNodeContainerImpl<>(networkNode);
-
-        // Act
-        container.update();
-
-        // Assert
-        assertThat(networkNode.getUpdateCount()).isEqualTo(1L);
-        assertThat(networkNode.isActive()).isTrue();
     }
 
     @Test
@@ -234,18 +197,18 @@ class NetworkNodeContainerImplTest {
         // Arrange
         FakeConnectionProvider connectionProvider = new FakeConnectionProvider();
 
-        NetworkNodeContainer<?> container1 = createContainerWithNetwork();
-        NetworkNodeContainer<?> container2 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
-        NetworkNodeContainer<?> container3 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
+        NetworkNodeContainer container1 = createContainerWithNetwork();
+        NetworkNodeContainer container2 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
+        NetworkNodeContainer container3 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
 
-        NetworkNodeContainer<?> unrelatedContainer = createContainerWithNetwork();
+        NetworkNodeContainer unrelatedContainer = createContainerWithNetwork();
 
         connectionProvider
                 .with(container1, container2, container3, unrelatedContainer)
                 .connect(container2, container3);
 
         // Act
-        container1.remove(connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.remove(container1, connectionProvider, NETWORK_COMPONENT_REGISTRY);
 
         // Assert
         assertThat(container1.getNode().getNetwork()).isNull();
@@ -270,15 +233,15 @@ class NetworkNodeContainerImplTest {
         // Arrange
         FakeConnectionProvider connectionProvider = new FakeConnectionProvider();
 
-        NetworkNodeContainer<?> container1 = createContainerWithNetwork();
-        NetworkNodeContainer<?> container2 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
+        NetworkNodeContainer container1 = createContainerWithNetwork();
+        NetworkNodeContainer container2 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
 
-        NetworkNodeContainer<?> container3 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
+        NetworkNodeContainer container3 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
 
-        NetworkNodeContainer<?> container4 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
-        NetworkNodeContainer<?> container5 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
+        NetworkNodeContainer container4 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
+        NetworkNodeContainer container5 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
 
-        NetworkNodeContainer<?> unrelatedContainer = createContainerWithNetwork();
+        NetworkNodeContainer unrelatedContainer = createContainerWithNetwork();
 
         connectionProvider
                 .with(container5, container4, container3, container2, container1, unrelatedContainer)
@@ -286,7 +249,7 @@ class NetworkNodeContainerImplTest {
                 .connect(container4, container5);
 
         // Act
-        container3.remove(connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.remove(container3, connectionProvider, NETWORK_COMPONENT_REGISTRY);
 
         // Assert
         assertThat(container3.getNode().getNetwork()).isNull();
@@ -332,23 +295,23 @@ class NetworkNodeContainerImplTest {
         // Arrange
         FakeConnectionProvider connectionProvider = new FakeConnectionProvider();
 
-        NetworkNodeContainer<?> container1 = createContainerWithNetwork();
+        NetworkNodeContainer container1 = createContainerWithNetwork();
 
-        NetworkNodeContainer<?> container2 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
+        NetworkNodeContainer container2 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
 
-        NetworkNodeContainer<?> container3 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
+        NetworkNodeContainer container3 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
 
-        NetworkNodeContainer<?> container4 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
-        NetworkNodeContainer<?> container5 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
+        NetworkNodeContainer container4 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
+        NetworkNodeContainer container5 = createContainerWithNetwork(container -> container1.getNode().getNetwork());
 
-        NetworkNodeContainer<?> unrelatedContainer = createContainerWithNetwork();
+        NetworkNodeContainer unrelatedContainer = createContainerWithNetwork();
 
         connectionProvider
                 .with(unrelatedContainer, container5, container4, container3, container2, container1)
                 .connect(container4, container5);
 
         // Act
-        container1.remove(connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.remove(container1, connectionProvider, NETWORK_COMPONENT_REGISTRY);
 
         // Assert
         assertThat(container1.getNode().getNetwork()).isNull();
@@ -408,15 +371,15 @@ class NetworkNodeContainerImplTest {
         // Arrange
         FakeConnectionProvider connectionProvider = new FakeConnectionProvider();
 
-        NetworkNodeContainer<?> container = createContainerWithNetwork();
-        NetworkNodeContainer<?> unrelatedContainer = createContainerWithNetwork();
+        NetworkNodeContainer container = createContainerWithNetwork();
+        NetworkNodeContainer unrelatedContainer = createContainerWithNetwork();
 
         connectionProvider.with(container, unrelatedContainer);
 
         Network network = container.getNode().getNetwork();
 
         // Act
-        container.remove(connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.remove(container, connectionProvider, NETWORK_COMPONENT_REGISTRY);
 
         // Assert
         assertThat(container.getNode().getNetwork()).isNull();
