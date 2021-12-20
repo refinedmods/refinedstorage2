@@ -68,12 +68,8 @@ public class NetworkUtil {
         NETWORK_COMPONENT_REGISTRY.addComponent(NodeCallbackListenerComponent.class, network -> new NodeCallbackListenerComponent());
     }
 
-    public static void drainAllEnergy(Network network) {
-        network.getComponent(EnergyNetworkComponent.class).getEnergyStorage().extract(Long.MAX_VALUE, Action.EXECUTE);
-    }
-
     public static void makeNodeInactive(NetworkNode node) {
-        NetworkUtil.drainAllEnergy(node.getNetwork());
+        node.getNetwork().getComponent(EnergyNetworkComponent.class).getEnergyStorage().extract(Long.MAX_VALUE, Action.EXECUTE);
         node.update();
     }
 

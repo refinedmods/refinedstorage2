@@ -39,6 +39,6 @@ public abstract class NetworkNodeContainerBlock extends BaseBlock implements Ent
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return !level.isClientSide ? (level2, pos, state2, blockEntity) -> InternalNetworkNodeContainerBlockEntity.serverTick(level2, pos, state2, (InternalNetworkNodeContainerBlockEntity) blockEntity) : null;
+        return !level.isClientSide ? (level2, pos, state2, blockEntity) -> InternalNetworkNodeContainerBlockEntity.serverTick(level2, state2, (InternalNetworkNodeContainerBlockEntity) blockEntity) : null;
     }
 }

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.network.node;
 
-import com.refinedmods.refinedstorage2.api.network.node.container.ConnectionProvider;
-import com.refinedmods.refinedstorage2.api.network.node.container.Connections;
+import com.refinedmods.refinedstorage2.api.network.node.ConnectionProvider;
+import com.refinedmods.refinedstorage2.api.network.node.Connections;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.fabric.api.blockentity.NetworkNodeContainerBlockEntity;
 

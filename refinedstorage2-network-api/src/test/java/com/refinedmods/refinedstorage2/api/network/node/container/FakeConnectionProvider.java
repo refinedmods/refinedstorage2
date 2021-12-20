@@ -1,5 +1,8 @@
 package com.refinedmods.refinedstorage2.api.network.node.container;
 
+import com.refinedmods.refinedstorage2.api.network.node.ConnectionProvider;
+import com.refinedmods.refinedstorage2.api.network.node.Connections;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

@@ -65,6 +65,6 @@ public class ControllerBlock extends NetworkNodeContainerBlock {
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return (type == Rs2Mod.BLOCK_ENTITIES.getController() || type == Rs2Mod.BLOCK_ENTITIES.getCreativeController()) && !level.isClientSide ? (level2, pos, state2, blockEntity) -> ControllerBlockEntity.serverTick(level2, pos, state2, (ControllerBlockEntity) blockEntity) : null;
+        return (type == Rs2Mod.BLOCK_ENTITIES.getController() || type == Rs2Mod.BLOCK_ENTITIES.getCreativeController()) && !level.isClientSide ? (level2, pos, state2, blockEntity) -> ControllerBlockEntity.serverTick(level2, state2, (ControllerBlockEntity) blockEntity) : null;
     }
 }
