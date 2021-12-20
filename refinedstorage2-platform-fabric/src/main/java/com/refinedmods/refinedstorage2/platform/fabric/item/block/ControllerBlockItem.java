@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class ControllerBlockItem extends ColoredBlockItem {
+public class ControllerBlockItem extends NameableBlockItem {
     private static final String TAG_STORED = "stored";
     private static final String TAG_CAPACITY = "cap";
 

@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.ControllerBl
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.ticker.ControllerBlockEntityTicker;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -24,13 +25,20 @@ public class ControllerBlock extends NetworkNodeContainerBlock {
     public static final EnumProperty<ControllerEnergyType> ENERGY_TYPE = EnumProperty.create("energy_type", ControllerEnergyType.class);
 
     private final ControllerType type;
+    private final MutableComponent name;
 
-    public ControllerBlock(Properties properties, ControllerType type) {
+    public ControllerBlock(Properties properties, ControllerType type, MutableComponent name) {
         super(properties);
 
         this.type = type;
+        this.name = name;
 
         registerDefaultState(getStateDefinition().any().setValue(ENERGY_TYPE, ControllerEnergyType.OFF));
+    }
+
+    @Override
+    public MutableComponent getName() {
+        return name;
     }
 
     @Override

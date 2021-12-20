@@ -23,6 +23,7 @@ before updating.
 - Fix Disk Drive item filters not being applied when reloading a world.
 - Fix Storage Disk contents being scrambled when other mods are being added or removed.
 - Fix rendering crash with the Disk Drive.
+- Fix colored blocks having incorrect names in WTHIT.
 
 ### Changed
 

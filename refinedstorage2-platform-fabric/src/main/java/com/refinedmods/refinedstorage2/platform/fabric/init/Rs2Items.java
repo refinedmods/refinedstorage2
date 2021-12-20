@@ -13,8 +13,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.item.SiliconItem;
 import com.refinedmods.refinedstorage2.platform.fabric.item.StorageHousingItem;
 import com.refinedmods.refinedstorage2.platform.fabric.item.StoragePartItem;
 import com.refinedmods.refinedstorage2.platform.fabric.item.WrenchItem;
-import com.refinedmods.refinedstorage2.platform.fabric.item.block.ColoredBlockItem;
 import com.refinedmods.refinedstorage2.platform.fabric.item.block.ControllerBlockItem;
+import com.refinedmods.refinedstorage2.platform.fabric.item.block.NameableBlockItem;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -27,8 +27,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 
 public class Rs2Items {
-    private static final String BLOCK_TRANSLATION_CATEGORY = "block";
-
     private final Map<ItemStorageDiskItem.ItemStorageType, StoragePartItem> storageParts = new EnumMap<>(ItemStorageDiskItem.ItemStorageType.class);
     private final Map<FluidStorageDiskItem.FluidStorageType, FluidStoragePartItem> fluidStorageParts = new EnumMap<>(FluidStorageDiskItem.FluidStorageType.class);
     private final List<ControllerBlockItem> controllers = new ArrayList<>();
@@ -49,17 +47,45 @@ public class Rs2Items {
 
         storageHousing = Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("storage_housing"), new StorageHousingItem(createSettings(itemGroup)));
         Registry.register(Registry.ITEM, Rs2Mod.createIdentifier("machine_casing"), new BlockItem(blocks.getMachineCasing(), createSettings(itemGroup)));
-        blocks.getGrid().forEach((color, block, nameFactory) -> Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(nameFactory.apply("grid")), new ColoredBlockItem(block, createSettings(itemGroup), color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid"))));
-        blocks.getFluidGrid().forEach((color, block, nameFactory) -> Registry.register(Registry.ITEM, Rs2Mod.createIdentifier(nameFactory.apply("fluid_grid")), new ColoredBlockItem(block, createSettings(itemGroup), color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid"))));
-        blocks.getController().forEach((color, block, nameFactory) -> controllers.add(Registry.register(
+        blocks.getGrid().forEach((color, block) -> Registry.register(
                 Registry.ITEM,
-                Rs2Mod.createIdentifier(nameFactory.apply("controller")),
-                new ControllerBlockItem(block, createSettings(itemGroup).stacksTo(1), color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller"))
+                blocks.getGrid().getId(color, "grid"),
+                new NameableBlockItem(
+                        block,
+                        createSettings(itemGroup),
+                        color,
+                        blocks.getGrid().getName(color, Rs2Mod.createTranslation(Rs2Blocks.BLOCK_TRANSLATION_CATEGORY, "grid"))
+                )
+        ));
+        blocks.getFluidGrid().forEach((color, block) -> Registry.register(
+                Registry.ITEM,
+                blocks.getFluidGrid().getId(color, "fluid_grid"),
+                new NameableBlockItem(
+                        block,
+                        createSettings(itemGroup),
+                        color,
+                        blocks.getFluidGrid().getName(color, Rs2Mod.createTranslation(Rs2Blocks.BLOCK_TRANSLATION_CATEGORY, "fluid_grid"))
+                )
+        ));
+        blocks.getController().forEach((color, block) -> controllers.add(Registry.register(
+                Registry.ITEM,
+                blocks.getController().getId(color, "controller"),
+                new ControllerBlockItem(
+                        block,
+                        createSettings(itemGroup).stacksTo(1),
+                        color,
+                        blocks.getController().getName(color, Rs2Mod.createTranslation(Rs2Blocks.BLOCK_TRANSLATION_CATEGORY, "controller"))
+                )
         )));
-        blocks.getCreativeController().forEach((color, block, nameFactory) -> Registry.register(
+        blocks.getCreativeController().forEach((color, block) -> Registry.register(
                 Registry.ITEM,
-                Rs2Mod.createIdentifier(nameFactory.apply("creative_controller")),
-                new ColoredBlockItem(block, createSettings(itemGroup).stacksTo(1), color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller"))
+                blocks.getCreativeController().getId(color, "creative_controller"),
+                new NameableBlockItem(
+                        block,
+                        createSettings(itemGroup).stacksTo(1),
+                        color,
+                        blocks.getCreativeController().getName(color, Rs2Mod.createTranslation(Rs2Blocks.BLOCK_TRANSLATION_CATEGORY, "creative_controller"))
+                )
         ));
 
         for (ProcessorItem.Type type : ProcessorItem.Type.values()) {

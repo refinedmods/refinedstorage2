@@ -5,13 +5,22 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.ItemGri
 import com.refinedmods.refinedstorage2.platform.fabric.init.BlockColorMap;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemGridBlock extends GridBlock {
-    public ItemGridBlock(Properties properties) {
+    private final MutableComponent name;
+
+    public ItemGridBlock(Properties properties, MutableComponent name) {
         super(properties);
+        this.name = name;
+    }
+
+    @Override
+    public MutableComponent getName() {
+        return this.name;
     }
 
     @Override

@@ -5,13 +5,22 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.grid.FluidGr
 import com.refinedmods.refinedstorage2.platform.fabric.init.BlockColorMap;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class FluidGridBlock extends GridBlock {
-    public FluidGridBlock(Properties properties) {
+    private final MutableComponent name;
+
+    public FluidGridBlock(Properties properties, MutableComponent name) {
         super(properties);
+        this.name = name;
+    }
+
+    @Override
+    public MutableComponent getName() {
+        return name;
     }
 
     @Override

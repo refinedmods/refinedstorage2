@@ -19,6 +19,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 
 public class Rs2Blocks {
+    public static final String BLOCK_TRANSLATION_CATEGORY = "block";
+
     private static final BlockBehaviour.Properties STONE_SETTINGS = FabricBlockSettings
             .of(Material.STONE)
             .strength(0.5F, 6.0F)
@@ -44,10 +46,40 @@ public class Rs2Blocks {
             relay = Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier("relay"), new RelayBlock());
         }
 
-        grid.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("grid")), new ItemGridBlock(STONE_SETTINGS)));
-        fluidGrid.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("fluid_grid")), new FluidGridBlock(STONE_SETTINGS)));
-        controller.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("controller")), new ControllerBlock(STONE_SETTINGS, ControllerType.NORMAL)));
-        creativeController.putAll((color, nameFactory) -> Registry.register(Registry.BLOCK, Rs2Mod.createIdentifier(nameFactory.apply("creative_controller")), new ControllerBlock(STONE_SETTINGS, ControllerType.CREATIVE)));
+        grid.putAll(color -> Registry.register(
+                Registry.BLOCK,
+                grid.getId(color, "grid"),
+                new ItemGridBlock(
+                        STONE_SETTINGS,
+                        grid.getName(color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid"))
+                )
+        ));
+        fluidGrid.putAll(color -> Registry.register(
+                Registry.BLOCK,
+                fluidGrid.getId(color, "fluid_grid"),
+                new FluidGridBlock(
+                        STONE_SETTINGS,
+                        fluidGrid.getName(color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid"))
+                )
+        ));
+        controller.putAll(color -> Registry.register(
+                Registry.BLOCK,
+                controller.getId(color, "controller"),
+                new ControllerBlock(
+                        STONE_SETTINGS,
+                        ControllerType.NORMAL,
+                        controller.getName(color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller"))
+                )
+        ));
+        creativeController.putAll(color -> Registry.register(
+                Registry.BLOCK,
+                creativeController.getId(color, "creative_controller"),
+                new ControllerBlock(
+                        STONE_SETTINGS,
+                        ControllerType.CREATIVE,
+                        creativeController.getName(color, Rs2Mod.createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller"))
+                )
+        ));
     }
 
     public CableBlock getCable() {
