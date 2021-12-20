@@ -30,7 +30,7 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
 
     @Override
     public boolean isActive() {
-        return activenessProvider.getAsBoolean();
+        return activenessProvider == null || activenessProvider.getAsBoolean();
     }
 
     @Override

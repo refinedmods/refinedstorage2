@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.NetworkUtil;
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
@@ -127,7 +126,7 @@ class DiskDriveNetworkNodeTest {
         storageProviderRepository.setInSlot(7, fullStorage);
 
         if (inactive) {
-            NetworkUtil.makeNodeInactive(sut);
+            sut.setActivenessProvider(() -> false);
         }
 
         // Act
@@ -271,7 +270,7 @@ class DiskDriveNetworkNodeTest {
         storage.insert("B", 50, Action.EXECUTE);
         storageProviderRepository.setInSlot(1, storage);
 
-        NetworkUtil.makeNodeInactive(sut);
+        sut.setActivenessProvider(() -> false);
         sut.onDiskChanged(1);
 
         // Act
@@ -449,7 +448,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_inserting_when_inactive() {
         // Arrange
-        NetworkUtil.makeNodeInactive(sut);
+        sut.setActivenessProvider(() -> false);
         sut.initialize(storageProviderRepository);
 
         Storage<String> storage = new CappedStorage<>(100);
@@ -465,7 +464,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_extracting_when_inactive() {
         // Arrange
-        NetworkUtil.makeNodeInactive(sut);
+        sut.setActivenessProvider(() -> false);
 
         Storage<String> storage = new CappedStorage<>(100);
         storageProviderRepository.setInSlot(1, storage);
