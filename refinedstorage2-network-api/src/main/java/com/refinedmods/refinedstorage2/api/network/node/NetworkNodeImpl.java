@@ -28,7 +28,7 @@ public abstract class NetworkNodeImpl implements NetworkNode {
 
     @Override
     public boolean isActive() {
-        if (!activenessProvider.getAsBoolean()) {
+        if (activenessProvider != null && !activenessProvider.getAsBoolean()) {
             return false;
         }
         CompositeEnergyStorage energy = network.getComponent(EnergyNetworkComponent.class).getEnergyStorage();

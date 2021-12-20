@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.EmptyNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
@@ -66,11 +65,6 @@ public class NetworkUtil {
         NETWORK_COMPONENT_REGISTRY.addComponent(GraphNetworkComponent.class, GraphNetworkComponent::new);
         NETWORK_COMPONENT_REGISTRY.addComponent(StorageNetworkComponent.class, network -> new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY));
         NETWORK_COMPONENT_REGISTRY.addComponent(NodeCallbackListenerComponent.class, network -> new NodeCallbackListenerComponent());
-    }
-
-    public static void makeNodeInactive(NetworkNode node) {
-        node.getNetwork().getComponent(EnergyNetworkComponent.class).getEnergyStorage().extract(Long.MAX_VALUE, Action.EXECUTE);
-        node.update();
     }
 
     public static Network create(long energyStored, long energyCapacity) {
