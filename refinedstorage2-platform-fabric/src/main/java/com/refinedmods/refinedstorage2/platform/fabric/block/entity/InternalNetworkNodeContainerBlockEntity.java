@@ -1,20 +1,19 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.api.block.entity.NetworkNodeContainerBlockEntityImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.api.blockentity.NetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.RedstoneMode;
-import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.container.PlatformNetworkNodeContainerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.block.NetworkNodeContainerBlock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// TODO: Try to remove this
-public abstract class FabricNetworkNodeContainerBlockEntity<T extends NetworkNodeImpl> extends NetworkNodeContainerBlockEntityImpl<T, PlatformNetworkNodeContainerImpl<T>> {
+public abstract class InternalNetworkNodeContainerBlockEntity<T extends NetworkNodeImpl> extends NetworkNodeContainerBlockEntity<T> {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final int ACTIVE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
@@ -22,9 +21,11 @@ public abstract class FabricNetworkNodeContainerBlockEntity<T extends NetworkNod
 
     private Boolean lastActive;
     private long lastActiveChanged;
+    private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
 
-    protected FabricNetworkNodeContainerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
-        super(type, pos, state);
+    protected InternalNetworkNodeContainerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, T node) {
+        super(type, pos, state, node);
+        getNode().setActivenessProvider(() -> redstoneMode.isActive(level.hasNeighborSignal(pos)));
     }
 
     @Override
@@ -37,18 +38,24 @@ public abstract class FabricNetworkNodeContainerBlockEntity<T extends NetworkNod
     public void load(CompoundTag tag) {
         super.load(tag);
         if (tag.contains(TAG_REDSTONE_MODE)) {
-            getContainer().setRedstoneMode(RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE)));
+            redstoneMode = RedstoneModeSettings.getRedstoneMode(tag.getInt(TAG_REDSTONE_MODE));
         }
     }
 
-    public void updateActiveness(BlockState state) {
+    public static void serverTick(Level level, BlockPos pos, BlockState state, InternalNetworkNodeContainerBlockEntity<?> blockEntity) {
+        NetworkNodeContainerBlockEntity.serverTick(level, pos, state, blockEntity);
+        blockEntity.getNode().update();
+        blockEntity.updateActivenessInLevel(state);
+    }
+
+    private void updateActivenessInLevel(BlockState state) {
         boolean supportsActivenessState = state.hasProperty(NetworkNodeContainerBlock.ACTIVE);
 
         if (lastActive == null) {
             lastActive = determineInitialActiveness(state, supportsActivenessState);
         }
 
-        boolean active = getContainer().getNode().isActive();
+        boolean active = getNode().isActive();
 
         if (active != lastActive && (lastActiveChanged == 0 || System.currentTimeMillis() - lastActiveChanged > ACTIVE_CHANGE_MINIMUM_INTERVAL_MS)) {
             LOGGER.info("Activeness state change for block at {}: {} -> {}", getBlockPos(), lastActive, active);
@@ -68,7 +75,7 @@ public abstract class FabricNetworkNodeContainerBlockEntity<T extends NetworkNod
         if (supportsActivenessState) {
             return state.getValue(NetworkNodeContainerBlock.ACTIVE);
         }
-        return getContainer().getNode().isActive();
+        return getNode().isActive();
     }
 
     private void updateActivenessState(BlockState state, boolean active) {
@@ -79,11 +86,11 @@ public abstract class FabricNetworkNodeContainerBlockEntity<T extends NetworkNod
     }
 
     public RedstoneMode getRedstoneMode() {
-        return getContainer().getRedstoneMode();
+        return redstoneMode;
     }
 
     public void setRedstoneMode(RedstoneMode redstoneMode) {
-        getContainer().setRedstoneMode(redstoneMode);
+        this.redstoneMode = redstoneMode;
         setChanged();
     }
 }

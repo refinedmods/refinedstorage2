@@ -5,11 +5,10 @@ import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 
 public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStorage {
-    private final EnergyStorage energyStorage;
+    private EnergyStorage energyStorage;
 
-    public ControllerNetworkNode(long stored, EnergyStorage energyStorage) {
+    public void setEnergyStorage(EnergyStorage energyStorage) {
         this.energyStorage = energyStorage;
-        this.energyStorage.receive(stored, Action.EXECUTE);
     }
 
     public ControllerEnergyState getState() {
@@ -29,12 +28,9 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
         return ControllerEnergyState.OFF;
     }
 
-    public long getActualStored() {
-        return energyStorage.getStored();
-    }
-
-    public long getActualCapacity() {
-        return energyStorage.getCapacity();
+    @Override
+    public boolean isActive() {
+        return activenessProvider.getAsBoolean();
     }
 
     @Override
@@ -42,6 +38,10 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
         if (!isActive()) {
             return 0;
         }
+        return getActualStored();
+    }
+
+    public long getActualStored() {
         return energyStorage.getStored();
     }
 
@@ -50,6 +50,10 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
         if (!isActive()) {
             return 0;
         }
+        return getActualCapacity();
+    }
+
+    public long getActualCapacity() {
         return energyStorage.getCapacity();
     }
 
@@ -60,9 +64,6 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
 
     @Override
     public long extract(long amount, Action action) {
-        if (!isActive()) {
-            return 0;
-        }
         return energyStorage.extract(amount, action);
     }
 

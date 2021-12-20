@@ -24,7 +24,7 @@ public class StorageNetworkComponent implements NetworkComponent {
     }
 
     @Override
-    public void onContainerAdded(NetworkNodeContainer<?> container) {
+    public void onContainerAdded(NetworkNodeContainer container) {
         if (container.getNode() instanceof StorageSource source) {
             for (Map.Entry<StorageChannelType<?>, StorageChannel<?>> entry : channels.entrySet()) {
                 tryAddSourceToChannel(source, entry.getKey(), entry.getValue());
@@ -40,7 +40,7 @@ public class StorageNetworkComponent implements NetworkComponent {
     }
 
     @Override
-    public void onContainerRemoved(NetworkNodeContainer<?> container) {
+    public void onContainerRemoved(NetworkNodeContainer container) {
         if (container.getNode() instanceof StorageSource source) {
             for (Map.Entry<StorageChannelType<?>, StorageChannel<?>> entry : channels.entrySet()) {
                 tryRemoveSourceFromChannel(source, entry.getKey(), entry.getValue());

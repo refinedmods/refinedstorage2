@@ -13,8 +13,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.BlockEntityWithDrops;
-import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FilterModeSettings;
+import com.refinedmods.refinedstorage2.platform.fabric.block.entity.InternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.diskdrive.DiskDriveContainerMenu;
 
 import java.util.Optional;
@@ -47,7 +47,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements RenderAttachmentBlockEntity, MenuProvider, BlockEntityWithDrops, DiskDriveListener, ExtendedScreenHandlerFactory {
+public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements RenderAttachmentBlockEntity, MenuProvider, BlockEntityWithDrops, DiskDriveListener, ExtendedScreenHandlerFactory {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_PRIORITY = "pri";
@@ -69,10 +69,21 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     private long lastStateChanged;
 
     public DiskDriveBlockEntity(BlockPos pos, BlockState state) {
-        super(Rs2Mod.BLOCK_ENTITIES.getDiskDrive(), pos, state);
+        super(Rs2Mod.BLOCK_ENTITIES.getDiskDrive(), pos, state, new DiskDriveNetworkNode(
+                Rs2Config.get().getDiskDrive().getEnergyUsage(),
+                Rs2Config.get().getDiskDrive().getEnergyUsagePerDisk(),
+                StorageChannelTypeRegistry.INSTANCE
+        ));
+        getNode().setDiskProvider(diskInventory);
+        getNode().setListener(this);
     }
 
-    public void updateDiskStateIfNecessary() {
+    public static void serverTick(Level level, BlockPos pos, BlockState state, DiskDriveBlockEntity blockEntity) {
+        InternalNetworkNodeContainerBlockEntity.serverTick(level, pos, state, blockEntity);
+        blockEntity.updateDiskStateIfNecessaryInLevel();
+    }
+
+    private void updateDiskStateIfNecessaryInLevel() {
         if (!syncRequested) {
             return;
         }
@@ -90,7 +101,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     private void resourceFilterContainerChanged() {
-        getContainer().getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
+        getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
         setChanged();
     }
 
@@ -98,7 +109,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     public void setLevel(Level level) {
         super.setLevel(level);
         if (!level.isClientSide()) {
-            getContainer().getNode().initialize(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level));
+            getNode().initialize(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level));
         }
     }
 
@@ -106,35 +117,6 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     public void activenessChanged(boolean active) {
         super.activenessChanged(active);
         sync();
-    }
-
-    @Override
-    protected DiskDriveNetworkNode createNode(BlockPos pos, CompoundTag tag) {
-        DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(
-                diskInventory,
-                Rs2Config.get().getDiskDrive().getEnergyUsage(),
-                Rs2Config.get().getDiskDrive().getEnergyUsagePerDisk(),
-                this,
-                StorageChannelTypeRegistry.INSTANCE
-        );
-
-        if (tag != null) {
-            if (tag.contains(TAG_PRIORITY)) {
-                diskDrive.setPriority(tag.getInt(TAG_PRIORITY));
-            }
-
-            if (tag.contains(TAG_FILTER_MODE)) {
-                diskDrive.setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
-            }
-
-            if (tag.contains(TAG_ACCESS_MODE)) {
-                diskDrive.setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
-            }
-        }
-
-        diskDrive.setFilterTemplates(resourceFilterContainer.getTemplates());
-
-        return diskDrive;
     }
 
     @Override
@@ -149,6 +131,20 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
             resourceFilterContainer.load(tag.getCompound(TAG_RESOURCE_FILTER));
         }
 
+        if (tag.contains(TAG_PRIORITY)) {
+            getNode().setPriority(tag.getInt(TAG_PRIORITY));
+        }
+
+        if (tag.contains(TAG_FILTER_MODE)) {
+            getNode().setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
+        }
+
+        if (tag.contains(TAG_ACCESS_MODE)) {
+            getNode().setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
+        }
+
+        getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
+
         super.load(tag);
     }
 
@@ -157,9 +153,9 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
         super.saveAdditional(tag);
         tag.put(TAG_DISK_INVENTORY, diskInventory.createTag());
         tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
-        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getContainer().getNode().getFilterMode()));
-        tag.putInt(TAG_PRIORITY, getContainer().getNode().getPriority());
-        tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getContainer().getNode().getAccessMode()));
+        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
+        tag.putInt(TAG_PRIORITY, getNode().getPriority());
+        tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getNode().getAccessMode()));
     }
 
     public SimpleContainer getDiskInventory() {
@@ -167,11 +163,11 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     public FilterMode getFilterMode() {
-        return getContainer().getNode().getFilterMode();
+        return getNode().getFilterMode();
     }
 
     public void setFilterMode(FilterMode mode) {
-        getContainer().getNode().setFilterMode(mode);
+        getNode().setFilterMode(mode);
         setChanged();
     }
 
@@ -186,11 +182,11 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     public AccessMode getAccessMode() {
-        return getContainer().getNode().getAccessMode();
+        return getNode().getAccessMode();
     }
 
     public void setAccessMode(AccessMode accessMode) {
-        getContainer().getNode().setAccessMode(accessMode);
+        getNode().setAccessMode(accessMode);
         setChanged();
     }
 
@@ -200,7 +196,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     void onDiskChanged(int slot) {
-        getContainer().getNode().onDiskChanged(slot);
+        getNode().onDiskChanged(slot);
         sync();
         setChanged();
     }
@@ -234,7 +230,7 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     public CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();
         ListTag statesList = new ListTag();
-        for (StorageDiskState state : getContainer().getNode().createState().getStates()) {
+        for (StorageDiskState state : getNode().createState().getStates()) {
             statesList.add(ByteTag.valueOf((byte) state.ordinal()));
         }
         tag.put(TAG_STATES, statesList);
@@ -268,11 +264,11 @@ public class DiskDriveBlockEntity extends FabricNetworkNodeContainerBlockEntity<
     }
 
     public int getPriority() {
-        return getContainer().getNode().getPriority();
+        return getNode().getPriority();
     }
 
     public void setPriority(int priority) {
-        getContainer().getNode().setPriority(priority);
+        getNode().setPriority(priority);
         setChanged();
     }
 

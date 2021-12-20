@@ -81,7 +81,7 @@ public interface StorageChannel<T> extends Storage<T> {
     void addSource(Storage<?> source);
 
     /**
-     * Removes a source from teh channel.
+     * Removes a source from the channel.
      * This should invalidate the backing storage.
      * This is an expensive operation and should be done with care.
      *

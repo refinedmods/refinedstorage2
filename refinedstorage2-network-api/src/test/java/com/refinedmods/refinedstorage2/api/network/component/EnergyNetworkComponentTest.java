@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.component;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
-import com.refinedmods.refinedstorage2.api.network.node.container.FakeNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
@@ -22,23 +22,21 @@ class EnergyNetworkComponentTest {
         assertThat(sut.getEnergyStorage().getCapacity()).isZero();
     }
 
-    private NetworkNodeContainer<ControllerNetworkNode> createControllerContainer() {
-        return new FakeNetworkNodeContainer<>(new ControllerNetworkNode(
-                100,
-                new EnergyStorageImpl(1000)
-        ));
-    }
-
     @Test
     void Test_adding_node_should_update_energy_storage() {
         // Arrange
         EnergyNetworkComponent sut = new EnergyNetworkComponent();
 
+        ControllerNetworkNode controller = new ControllerNetworkNode();
+        controller.setEnergyStorage(new EnergyStorageImpl(1000));
+        controller.receive(100, Action.EXECUTE);
+        NetworkNodeContainer container = () -> controller;
+
         long capacityBefore = sut.getEnergyStorage().getCapacity();
         long storedBefore = sut.getEnergyStorage().getStored();
 
         // Act
-        sut.onContainerAdded(createControllerContainer());
+        sut.onContainerAdded(container);
 
         long capacityAfter = sut.getEnergyStorage().getCapacity();
         long storedAfter = sut.getEnergyStorage().getStored();
@@ -56,7 +54,10 @@ class EnergyNetworkComponentTest {
         // Arrange
         EnergyNetworkComponent sut = new EnergyNetworkComponent();
 
-        NetworkNodeContainer<ControllerNetworkNode> container = createControllerContainer();
+        ControllerNetworkNode controller = new ControllerNetworkNode();
+        controller.setEnergyStorage(new EnergyStorageImpl(1000));
+        controller.receive(100, Action.EXECUTE);
+        NetworkNodeContainer container = () -> controller;
 
         sut.onContainerAdded(container);
 

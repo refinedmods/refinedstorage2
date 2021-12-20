@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.FabricConnectionProvider;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.resource.filter.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricClientStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricStorageRepository;
@@ -48,7 +48,7 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
 
     @Override
     public ConnectionProvider createConnectionProvider(Level level) {
-        return new FabricConnectionProvider(level);
+        return new LevelConnectionProvider(level);
     }
 
     @Override

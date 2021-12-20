@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block;
 
+import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.fabric.block.entity.ticker.DiskDriveBlockEntityTicker;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -29,6 +29,6 @@ public class DiskDriveBlock extends NetworkNodeContainerBlock {
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return (BlockEntityTicker<T>) new DiskDriveBlockEntityTicker();
+        return type == Rs2Mod.BLOCK_ENTITIES.getDiskDrive() && !level.isClientSide ? (level2, pos, state2, blockEntity) -> DiskDriveBlockEntity.serverTick(level2, pos, state2, (DiskDriveBlockEntity) blockEntity) : null;
     }
 }

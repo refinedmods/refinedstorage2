@@ -24,6 +24,10 @@ repositories {
     maven {
         url 'https://maven.parchmentmc.org'
     }
+    // wthit
+    maven {
+        url "https://maven.bai.lol"
+    }
 }
 
 dependencies {
@@ -69,11 +73,11 @@ dependencies {
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${project.reiVersion}") {
         exclude(group: 'me.shedaniel.cloth')
     }
-    modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}") {
-        exclude(group: 'me.shedaniel.cloth')
-    }
+    modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}")
     modImplementation "com.terraformersmc:modmenu:${project.modMenuVersion}"
     modImplementation "vazkii.patchouli:Patchouli:${project.patchouliVersion}"
+
+    modRuntimeOnly("mcp.mobius.waila:wthit:fabric-${project.wthitVersion}")
 }
 
 loom {

@@ -30,12 +30,12 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
 
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
 
-    private StorageRepository diskManager;
+    private StorageRepository storageRepository;
+    private StorageDiskProvider diskProvider;
+    private DiskDriveListener listener;
 
-    private final StorageDiskProvider diskProvider;
     private final long energyUsage;
     private final long energyUsagePerDisk;
-    private final DiskDriveListener listener;
 
     private final DiskDriveDiskStorage[] disks = new DiskDriveDiskStorage[DISK_COUNT];
     private final Map<StorageChannelType<?>, DiskDriveStorage<?>> compositeStorages;
@@ -46,11 +46,9 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
     private int priority;
 
-    public DiskDriveNetworkNode(StorageDiskProvider diskProvider, long energyUsage, long energyUsagePerDisk, DiskDriveListener listener, StorageChannelTypeRegistry storageChannelTypeRegistry) {
-        this.diskProvider = diskProvider;
+    public DiskDriveNetworkNode(long energyUsage, long energyUsagePerDisk, StorageChannelTypeRegistry storageChannelTypeRegistry) {
         this.energyUsage = energyUsage;
         this.energyUsagePerDisk = energyUsagePerDisk;
-        this.listener = listener;
         this.compositeStorages = createCompositeStorages(storageChannelTypeRegistry);
     }
 
@@ -65,8 +63,8 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         return new DiskDriveStorage(this, type, filter);
     }
 
-    public void initialize(StorageRepository diskManager) {
-        this.diskManager = diskManager;
+    public void initialize(StorageRepository storageRepository) {
+        this.storageRepository = storageRepository;
 
         Set<StorageChannelType<?>> affectedStorageChannelTypes = new HashSet<>();
         for (int i = 0; i < DISK_COUNT; ++i) {
@@ -120,7 +118,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         diskProvider.getStorageChannelType(slot).ifPresentOrElse(type -> {
             disks[slot] = diskProvider
                     .getDiskId(slot)
-                    .flatMap(diskManager::get)
+                    .flatMap(storageRepository::get)
                     .filter(this::isValidDisk)
                     .map(CappedStorage.class::cast)
                     .map(cappedStorage -> new DiskDriveDiskStorage(cappedStorage, type, listener))
@@ -137,8 +135,8 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     }
 
     @Override
-    public void setActive(boolean active) {
-        super.setActive(active);
+    public void onActiveChanged(boolean active) {
+        super.onActiveChanged(active);
         LOGGER.info("Invalidating storage due to disk drive activeness change");
         if (network != null) {
             compositeStorages.keySet().forEach(type -> network.getComponent(StorageNetworkComponent.class).getStorageChannel(type).invalidate());
@@ -155,6 +153,14 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
 
     public void setFilterTemplates(Set<Object> templates) {
         filter.setTemplates(templates);
+    }
+
+    public void setDiskProvider(StorageDiskProvider diskProvider) {
+        this.diskProvider = diskProvider;
+    }
+
+    public void setListener(DiskDriveListener listener) {
+        this.listener = listener;
     }
 
     @Override

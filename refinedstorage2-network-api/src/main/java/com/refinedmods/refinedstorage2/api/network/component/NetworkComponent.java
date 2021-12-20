@@ -6,11 +6,11 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import java.util.Set;
 
 public interface NetworkComponent {
-    default void onContainerAdded(NetworkNodeContainer<?> container) {
+    default void onContainerAdded(NetworkNodeContainer container) {
 
     }
 
-    default void onContainerRemoved(NetworkNodeContainer<?> container) {
+    default void onContainerRemoved(NetworkNodeContainer container) {
 
     }
 

@@ -94,7 +94,7 @@ public class ControllerBlockItem extends NameableBlockItem {
         if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof ControllerBlockEntity controllerBlockEntity) {
-                controllerBlockEntity.getContainer().getNode().receive(getStored(stack), Action.EXECUTE);
+                controllerBlockEntity.getNode().receive(getStored(stack), Action.EXECUTE);
             }
         }
         return result;

@@ -22,12 +22,12 @@ class NetworkComponentRegistryImplTest {
         }
 
         @Override
-        public void onContainerAdded(NetworkNodeContainer<?> container) {
+        public void onContainerAdded(NetworkNodeContainer container) {
 
         }
 
         @Override
-        public void onContainerRemoved(NetworkNodeContainer<?> container) {
+        public void onContainerRemoved(NetworkNodeContainer container) {
 
         }
 

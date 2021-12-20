@@ -170,7 +170,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         addDataSlot(searchBoxModeProperty);
 
         this.playerInventory = playerInventory;
-        this.storageChannel = grid.getContainer().getNode().getStorageChannel();
+        this.storageChannel = grid.getNode().getStorageChannel();
         this.storageChannel.addListener(this);
         this.grid = grid;
 

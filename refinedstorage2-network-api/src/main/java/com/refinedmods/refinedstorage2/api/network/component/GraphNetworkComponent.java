@@ -3,34 +3,34 @@ package com.refinedmods.refinedstorage2.api.network.component;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class GraphNetworkComponent implements NetworkComponent {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Network network;
-    private final Set<NetworkNodeContainer<?>> containers = new HashSet<>();
+    private final Set<NetworkNodeContainer> containers = new HashSet<>();
 
     public GraphNetworkComponent(Network network) {
         this.network = network;
     }
 
-    public Set<NetworkNodeContainer<?>> getContainers() {
+    public Set<NetworkNodeContainer> getContainers() {
         return containers;
     }
 
     @Override
-    public void onContainerAdded(NetworkNodeContainer<?> container) {
+    public void onContainerAdded(NetworkNodeContainer container) {
         LOGGER.info("Container added to network {}", network.hashCode());
         containers.add(container);
     }
 
     @Override
-    public void onContainerRemoved(NetworkNodeContainer<?> container) {
+    public void onContainerRemoved(NetworkNodeContainer container) {
         LOGGER.info("Container removed from network {}", network.hashCode());
         containers.remove(container);
     }
