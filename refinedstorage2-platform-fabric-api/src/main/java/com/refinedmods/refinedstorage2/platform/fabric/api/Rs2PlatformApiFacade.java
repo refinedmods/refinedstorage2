@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.api;
 
-import com.refinedmods.refinedstorage2.api.network.node.container.ConnectionProvider;
+import com.refinedmods.refinedstorage2.api.network.node.ConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceTypeRegistry;

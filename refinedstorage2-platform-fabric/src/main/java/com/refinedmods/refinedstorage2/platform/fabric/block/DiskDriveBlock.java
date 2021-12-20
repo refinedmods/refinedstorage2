@@ -29,6 +29,6 @@ public class DiskDriveBlock extends NetworkNodeContainerBlock {
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return type == Rs2Mod.BLOCK_ENTITIES.getDiskDrive() && !level.isClientSide ? (level2, pos, state2, blockEntity) -> DiskDriveBlockEntity.serverTick(level2, pos, state2, (DiskDriveBlockEntity) blockEntity) : null;
+        return type == Rs2Mod.BLOCK_ENTITIES.getDiskDrive() && !level.isClientSide ? (level2, pos, state2, blockEntity) -> DiskDriveBlockEntity.serverTick(level2, state2, (DiskDriveBlockEntity) blockEntity) : null;
     }
 }

@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal;
 
-import com.refinedmods.refinedstorage2.api.network.node.container.ConnectionProvider;
+import com.refinedmods.refinedstorage2.api.network.node.ConnectionProvider;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;

@@ -1,10 +1,10 @@
-package com.refinedmods.refinedstorage2.api.network.node.container;
+package com.refinedmods.refinedstorage2.api.network.node;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.NetworkImpl;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
-import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 
 public class NetworkBuilder {
-    public static NetworkBuilder INSTANCE = new NetworkBuilder();
+    public static final NetworkBuilder INSTANCE = new NetworkBuilder();
 
     public boolean initialize(NetworkNodeContainer container, ConnectionProvider connectionProvider, NetworkComponentRegistry networkComponentRegistry) {
         if (container.getNode().getNetwork() != null) {
