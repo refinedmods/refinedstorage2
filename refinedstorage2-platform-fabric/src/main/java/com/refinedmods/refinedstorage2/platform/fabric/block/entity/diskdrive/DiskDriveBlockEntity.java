@@ -200,6 +200,7 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
 
     public void setExactMode(boolean exactMode) {
         this.exactMode = exactMode;
+        initializeResourceFilter();
         setChanged();
     }
 
