@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.item;
 
+import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
+import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
@@ -39,12 +41,13 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     protected Storage<?> createStorage(Level level) {
         if (!type.hasCapacity()) {
             return new PlatformStorage<>(
+                    new InMemoryStorageImpl<>(),
                     com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemStorageType.INSTANCE,
                     Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
             );
         }
         return new PlatformCappedStorage<>(
-                type.getCapacity(),
+                new CappedStorage<>(type.getCapacity()),
                 com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemStorageType.INSTANCE,
                 Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
         );

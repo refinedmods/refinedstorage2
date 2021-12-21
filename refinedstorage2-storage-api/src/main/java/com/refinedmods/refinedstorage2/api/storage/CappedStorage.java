@@ -12,7 +12,7 @@ import org.apiguardian.api.API;
  * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public class CappedStorage<T> extends ProxyStorage<T> {
+public class CappedStorage<T> extends ProxyStorage<T> implements CapacityAccessor {
     private final long capacity;
 
     /**
@@ -54,6 +54,7 @@ public class CappedStorage<T> extends ProxyStorage<T> {
         return amountNotInserted + remainder;
     }
 
+    @Override
     public long getCapacity() {
         return capacity;
     }

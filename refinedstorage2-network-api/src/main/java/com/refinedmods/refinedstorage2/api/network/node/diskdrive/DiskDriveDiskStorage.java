@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
+import com.refinedmods.refinedstorage2.api.storage.CapacityAccessor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
@@ -28,8 +28,8 @@ public class DiskDriveDiskStorage<T> implements Storage<T> {
     }
 
     public StorageDiskState getState() {
-        if (parent instanceof CappedStorage<T> cappedStorage) {
-            return getStateWithCapacity(cappedStorage.getCapacity());
+        if (parent instanceof CapacityAccessor capacityAccessor) {
+            return getStateWithCapacity(capacityAccessor.getCapacity());
         }
         return StorageDiskState.NORMAL;
     }
