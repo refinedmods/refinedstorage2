@@ -29,7 +29,7 @@ public abstract class GridBlockEntity<T> extends InternalNetworkNodeContainerBlo
     private static final String TAG_SIZE = "s";
     private static final String TAG_SEARCH_BOX_MODE = "sbm";
 
-    public GridBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, StorageChannelType<T> storageChannelType) {
+    protected GridBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, StorageChannelType<T> storageChannelType) {
         super(type, pos, state, new GridNetworkNode<>(
                 GridSearchBoxModeRegistry.INSTANCE.getDefault(),
                 Rs2Config.get().getGrid().getEnergyUsage(),

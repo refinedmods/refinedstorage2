@@ -16,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class LevelConnectionProvider implements ConnectionProvider {
     private final Level level;
@@ -47,8 +48,8 @@ public class LevelConnectionProvider implements ConnectionProvider {
                 .stream()
                 .map(container -> new ScanEntry(
                         container,
-                        ((NetworkNodeContainerBlockEntity) container).getLevel(),
-                        ((NetworkNodeContainerBlockEntity) container).getBlockPos()
+                        ((BlockEntity) container).getLevel(),
+                        ((BlockEntity) container).getBlockPos()
                 ))
                 .collect(Collectors.toSet());
     }
@@ -57,12 +58,12 @@ public class LevelConnectionProvider implements ConnectionProvider {
     public List<NetworkNodeContainer> sort(Set<NetworkNodeContainer> containers) {
         return containers
                 .stream()
-                .sorted(Comparator.comparing(container -> ((NetworkNodeContainerBlockEntity) container).getBlockPos()))
+                .sorted(Comparator.comparing(container -> ((BlockEntity) container).getBlockPos()))
                 .toList();
     }
 
     private void depthScan(ScanState scanState, BlockPos position) {
-        if (level.getBlockEntity(position) instanceof NetworkNodeContainerBlockEntity containerBlockEntity) {
+        if (level.isLoaded(position) && level.getBlockEntity(position) instanceof NetworkNodeContainerBlockEntity containerBlockEntity) {
             addEntry(scanState, new ScanEntry(containerBlockEntity, level, position));
         }
     }
@@ -90,7 +91,7 @@ public class LevelConnectionProvider implements ConnectionProvider {
         Set<NetworkNodeContainer> containers = new HashSet<>();
         for (Direction direction : Direction.values()) {
             BlockPos offsetPos = pos.relative(direction);
-            if (level.getBlockEntity(offsetPos) instanceof NetworkNodeContainerBlockEntity containerBlockEntity) {
+            if (level.isLoaded(offsetPos) && level.getBlockEntity(offsetPos) instanceof NetworkNodeContainerBlockEntity containerBlockEntity) {
                 containers.add(containerBlockEntity);
             }
         }

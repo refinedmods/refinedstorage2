@@ -25,7 +25,7 @@ public abstract class InternalNetworkNodeContainerBlockEntity<T extends NetworkN
 
     protected InternalNetworkNodeContainerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, T node) {
         super(type, pos, state, node);
-        getNode().setActivenessProvider(() -> redstoneMode.isActive(level.hasNeighborSignal(pos)));
+        getNode().setActivenessProvider(() -> level.isLoaded(pos) && redstoneMode.isActive(level.hasNeighborSignal(pos)));
     }
 
     @Override
