@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
+import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
@@ -123,7 +124,10 @@ class DiskDriveNetworkNodeTest {
         Storage<String> fullStorage = new CappedStorage<>(100);
         fullStorage.insert("A", 100, Action.EXECUTE);
 
+        Storage<String> nonCappedStorage = new InMemoryStorageImpl<>();
+
         storageProviderRepository.setInSlot(1, UUID.randomUUID());
+        storageProviderRepository.setInSlot(2, nonCappedStorage);
         storageProviderRepository.setInSlot(3, normalStorage);
         storageProviderRepository.setInSlot(5, nearCapacityStorage);
         storageProviderRepository.setInSlot(7, fullStorage);
@@ -140,13 +144,13 @@ class DiskDriveNetworkNodeTest {
         // Assert
         assertThat(state.getState(0)).isEqualTo(StorageDiskState.NONE);
         assertThat(state.getState(1)).isEqualTo(StorageDiskState.NONE);
-        assertThat(state.getState(2)).isEqualTo(StorageDiskState.NONE);
+        assertThat(state.getState(2)).isEqualTo(inactive ? StorageDiskState.DISCONNECTED : StorageDiskState.NORMAL);
         assertThat(state.getState(3)).isEqualTo(inactive ? StorageDiskState.DISCONNECTED : StorageDiskState.NORMAL);
         assertThat(state.getState(4)).isEqualTo(StorageDiskState.NONE);
         assertThat(state.getState(5)).isEqualTo(inactive ? StorageDiskState.DISCONNECTED : StorageDiskState.NEAR_CAPACITY);
         assertThat(state.getState(6)).isEqualTo(StorageDiskState.NONE);
         assertThat(state.getState(7)).isEqualTo(inactive ? StorageDiskState.DISCONNECTED : StorageDiskState.FULL);
-        assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + (USAGE_PER_DISK * 3));
+        assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + (USAGE_PER_DISK * 4));
     }
 
     @Test
