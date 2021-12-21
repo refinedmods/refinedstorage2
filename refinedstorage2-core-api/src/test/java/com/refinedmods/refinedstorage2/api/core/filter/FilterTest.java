@@ -128,7 +128,12 @@ class FilterTest {
     @Test
     void Test_normalizing_with_blocklist() {
         // Arrange
-        sut.setNormalizer(n -> n + "!");
+        sut.setNormalizer(n -> {
+            if (n instanceof String str && !str.endsWith("!")) {
+                return str + "!";
+            }
+            return n;
+        });
         sut.setMode(FilterMode.BLOCK);
         sut.setTemplates(Set.of("A", "B"));
 
