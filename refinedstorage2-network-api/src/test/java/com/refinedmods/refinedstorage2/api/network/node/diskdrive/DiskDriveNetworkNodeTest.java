@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
@@ -11,6 +12,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -80,6 +82,7 @@ class DiskDriveNetworkNodeTest {
 
         // Assert
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE);
+        assertThat(sut.getFilterMode()).isEqualTo(FilterMode.BLOCK);
         assertThat(storageOf(sut).getAll()).isEmpty();
         assertThat(storageOf(sut).getStored()).isZero();
         assertThat(states.getStates())
@@ -372,34 +375,93 @@ class DiskDriveNetworkNodeTest {
         assertThat(storageOf(sut).getStored()).isEqualTo(125);
     }
 
-    /* TODO @Test
-    void Test_inserting_with_filter() {
+    @Test
+    void Test_inserting_with_allowlist_filter() {
         // Arrange
-        diskDrive.setFilterMode(FilterMode.BLOCK);
-        diskDrive.setExactMode(false);
-        diskDrive.setFilterTemplates(Arrays.asList("B", new Rs2ItemStack(ItemStubs.STONE)));
+        sut.setFilterMode(FilterMode.ALLOW);
+        sut.setFilterTemplates(Set.of("A", "B"));
 
-        Storage<String> bulkStorage = new BulkStorageImpl<>(100);
-        storageDiskProviderManager.setDiskInSlot(1, bulkStorage);
+        Storage<String> storage = new CappedStorage<>(100);
+        storageProviderRepository.setInSlot(1, storage);
 
-        diskDrive.initialize(storageDiskProviderManager);
+        sut.initialize(storageProviderRepository);
 
         // Act
-        Rs2ItemStack glassWithTag = new Rs2ItemStack(ItemStubs.GLASS, 12, "myTag");
-
-        Optional<Rs2ItemStack> remainder1 = storageOf(diskDrive).insert("B", 12, Action.EXECUTE);
-        Optional<Rs2ItemStack> remainder2 = storageOf(diskDrive).insert(glassWithTag, 12, Action.EXECUTE);
-        Optional<Rs2ItemStack> remainder3 = storageOf(diskDrive).insert("A", 10, Action.EXECUTE);
+        long remainder1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
+        long remainder2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
+        long remainder3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
 
         // Assert
-        assertThat(remainder1).isPresent();
-        assertItemStack(remainder1.get(), new Rs2ItemStack(ItemStubs.GLASS, 12));
+        assertThat(remainder1).isZero();
+        assertThat(remainder2).isZero();
+        assertThat(remainder3).isEqualTo(10);
+    }
 
-        assertThat(remainder2).isPresent();
-        assertItemStack(remainder2.get(), glassWithTag);
+    @Test
+    void Test_inserting_with_empty_allowlist_filter() {
+        // Arrange
+        sut.setFilterMode(FilterMode.ALLOW);
+        sut.setFilterTemplates(Set.of());
 
-        assertThat(remainder3).isEmpty();
-    }*/
+        Storage<String> storage = new CappedStorage<>(100);
+        storageProviderRepository.setInSlot(1, storage);
+
+        sut.initialize(storageProviderRepository);
+
+        // Act
+        long remainder1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
+        long remainder2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
+        long remainder3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
+
+        // Assert
+        assertThat(remainder1).isEqualTo(12);
+        assertThat(remainder2).isEqualTo(12);
+        assertThat(remainder3).isEqualTo(10);
+    }
+
+    @Test
+    void Test_inserting_with_blocklist_filter() {
+        // Arrange
+        sut.setFilterMode(FilterMode.BLOCK);
+        sut.setFilterTemplates(Set.of("A", "B"));
+
+        Storage<String> storage = new CappedStorage<>(100);
+        storageProviderRepository.setInSlot(1, storage);
+
+        sut.initialize(storageProviderRepository);
+
+        // Act
+        long remainder1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
+        long remainder2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
+        long remainder3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
+
+        // Assert
+        assertThat(remainder1).isEqualTo(12);
+        assertThat(remainder2).isEqualTo(12);
+        assertThat(remainder3).isZero();
+    }
+
+    @Test
+    void Test_inserting_with_empty_blocklist_filter() {
+        // Arrange
+        sut.setFilterMode(FilterMode.BLOCK);
+        sut.setFilterTemplates(Set.of());
+
+        Storage<String> storage = new CappedStorage<>(100);
+        storageProviderRepository.setInSlot(1, storage);
+
+        sut.initialize(storageProviderRepository);
+
+        // Act
+        long remainder1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
+        long remainder2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
+        long remainder3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
+
+        // Assert
+        assertThat(remainder1).isZero();
+        assertThat(remainder2).isZero();
+        assertThat(remainder3).isZero();
+    }
 
     @ParameterizedTest
     @EnumSource(AccessMode.class)
