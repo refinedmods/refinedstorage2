@@ -43,7 +43,6 @@ public abstract class InternalNetworkNodeContainerBlockEntity<T extends NetworkN
     }
 
     public static void serverTick(Level level, BlockState state, InternalNetworkNodeContainerBlockEntity<?> blockEntity) {
-        NetworkNodeContainerBlockEntity.serverTick(level, blockEntity);
         blockEntity.getNode().update();
         blockEntity.updateActivenessInLevel(state);
     }

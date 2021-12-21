@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
+// TODO: Improve
 public class NetworkBuilder {
     public static final NetworkBuilder INSTANCE = new NetworkBuilder();
 

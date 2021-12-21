@@ -24,6 +24,8 @@ before updating.
 - Fix Storage Disk contents being scrambled when other mods are being added or removed.
 - Fix rendering crash with the Disk Drive.
 - Fix colored blocks having incorrect names in WTHIT.
+- Prevent loading unloaded chunks.
+- Fix various bugs related to networks and chunk loading/unloading.
 
 ### Changed
 

@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2Items;
 import com.refinedmods.refinedstorage2.platform.fabric.init.Rs2Menus;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.Rs2PlatformApiFacadeImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.search.PlatformSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.resource.filter.FluidResourceType;
@@ -95,6 +96,7 @@ public class Rs2Mod implements ModInitializer {
         registerSounds();
         registerInventories();
         registerResourceTypes();
+        TickHandler.register();
 
         LOGGER.info("Refined Storage 2 has loaded.");
     }

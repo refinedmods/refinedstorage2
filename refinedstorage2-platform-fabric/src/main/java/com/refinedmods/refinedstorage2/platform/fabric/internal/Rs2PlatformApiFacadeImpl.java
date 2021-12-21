@@ -1,6 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal;
 
+import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.api.network.node.ConnectionProvider;
+import com.refinedmods.refinedstorage2.api.network.node.NetworkBuilder;
+import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
@@ -59,6 +62,11 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     @Override
     public ResourceTypeRegistry getResourceTypeRegistry() {
         return resourceTypeRegistry;
+    }
+
+    @Override
+    public void requestNetworkNodeInitialization(NetworkNodeContainer container, ConnectionProvider connectionProvider, NetworkComponentRegistry networkComponentRegistry) {
+        TickHandler.runWhenReady(() -> NetworkBuilder.INSTANCE.initialize(container, connectionProvider, networkComponentRegistry));
     }
 
     private FabricStorageRepository createStorageRepository(CompoundTag tag) {

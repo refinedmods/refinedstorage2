@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,10 +19,13 @@ public abstract class NetworkNodeContainerBlockEntity<T extends NetworkNode> ext
         this.node = node;
     }
 
-    // TODO: Consistency of these serverTick methods
-    // TODO: Find better way to do initialization
-    public static void serverTick(Level level, NetworkNodeContainerBlockEntity<?> blockEntity) {
-        NetworkBuilder.INSTANCE.initialize(blockEntity, Rs2PlatformApiFacade.INSTANCE.createConnectionProvider(level), NetworkComponentRegistry.INSTANCE);
+    @Override
+    public void clearRemoved() {
+        super.clearRemoved();
+        if (level.isClientSide) {
+            return;
+        }
+        Rs2PlatformApiFacade.INSTANCE.requestNetworkNodeInitialization(this, Rs2PlatformApiFacade.INSTANCE.createConnectionProvider(level), NetworkComponentRegistry.INSTANCE);
     }
 
     @Override
@@ -32,7 +34,6 @@ public abstract class NetworkNodeContainerBlockEntity<T extends NetworkNode> ext
         if (level.isClientSide) {
             return;
         }
-        // TODO: Check here for chunk unloading.
         NetworkBuilder.INSTANCE.remove(this, Rs2PlatformApiFacade.INSTANCE.createConnectionProvider(level), NetworkComponentRegistry.INSTANCE);
     }
 
