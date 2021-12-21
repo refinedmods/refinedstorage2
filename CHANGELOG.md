@@ -26,6 +26,7 @@ before updating.
 - Fix colored blocks having incorrect names in WTHIT.
 - Prevent loading unloaded chunks.
 - Fix various bugs related to networks and chunk loading/unloading.
+- Fix not being able to move network devices with mods like Carrier.
 
 ### Changed
 

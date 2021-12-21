@@ -17,6 +17,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 public class LevelConnectionProvider implements ConnectionProvider {
     private final Level level;
@@ -63,7 +64,7 @@ public class LevelConnectionProvider implements ConnectionProvider {
     }
 
     private void depthScan(ScanState scanState, BlockPos position) {
-        if (level.isLoaded(position) && level.getBlockEntity(position) instanceof NetworkNodeContainerBlockEntity containerBlockEntity) {
+        if (getBlockEntity(level, position) instanceof NetworkNodeContainerBlockEntity containerBlockEntity) {
             addEntry(scanState, new ScanEntry(containerBlockEntity, level, position));
         }
     }
@@ -91,11 +92,28 @@ public class LevelConnectionProvider implements ConnectionProvider {
         Set<NetworkNodeContainer> containers = new HashSet<>();
         for (Direction direction : Direction.values()) {
             BlockPos offsetPos = pos.relative(direction);
-            if (level.isLoaded(offsetPos) && level.getBlockEntity(offsetPos) instanceof NetworkNodeContainerBlockEntity containerBlockEntity) {
+            if (getBlockEntity(level, offsetPos) instanceof NetworkNodeContainerBlockEntity containerBlockEntity) {
                 containers.add(containerBlockEntity);
             }
         }
         return containers;
+    }
+
+    private BlockEntity getBlockEntity(Level level, BlockPos pos) {
+        if (!level.isLoaded(pos)) {
+            return null;
+        }
+        // Avoid using EntityCreationType.IMMEDIATE.
+        // By default, the block is removed first and then the block entity (see BaseBlock#onRemove).
+        // But, when using mods like Carrier or Carpet that allow for moving block entities,
+        // they remove the block entity first and then the block.
+        // When removing a block with Carrier for example,
+        // this causes a problematic situation that the block entity IS gone,
+        // but that the #getBlockEntity() call here with type IMMEDIATE would recreate the block entity because
+        // the block is still there.
+        // If the block entity is returned here again even if it is removed, the preconditions in NetworkBuilder will fail
+        // as the "removed" block entity/connection would still be present.
+        return level.getChunkAt(pos).getBlockEntity(pos, LevelChunk.EntityCreationType.CHECK);
     }
 
     private static class ScanState {
