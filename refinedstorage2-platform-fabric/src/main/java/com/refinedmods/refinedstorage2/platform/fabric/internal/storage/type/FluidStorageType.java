@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformCappedStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 
@@ -24,13 +25,8 @@ public class FluidStorageType implements StorageType<FluidResource> {
     }
 
     @Override
-    public Storage<FluidResource> fromTag(CompoundTag tag, PlatformStorageRepository storageManager) {
-        Storage<FluidResource> storage = new PlatformCappedStorage<>(
-                tag.getLong(TAG_CAPACITY),
-                FluidStorageType.INSTANCE,
-                storageManager::markAsChanged
-        );
-
+    public Storage<FluidResource> fromTag(CompoundTag tag, PlatformStorageRepository storageRepository) {
+        Storage<FluidResource> storage = createStorage(tag, storageRepository);
         ListTag stacks = tag.getList(TAG_STACKS, NbtType.COMPOUND);
         for (Tag stackTag : stacks) {
             FluidResource.fromTagWithAmount((CompoundTag) stackTag).ifPresent(resourceAmount -> storage.insert(resourceAmount.getResource(), resourceAmount.getAmount(), Action.EXECUTE));
@@ -38,10 +34,26 @@ public class FluidStorageType implements StorageType<FluidResource> {
         return storage;
     }
 
+    private Storage<FluidResource> createStorage(CompoundTag tag, PlatformStorageRepository storageRepository) {
+        if (tag.contains(TAG_CAPACITY)) {
+            return new PlatformCappedStorage<>(
+                    tag.getLong(TAG_CAPACITY),
+                    FluidStorageType.INSTANCE,
+                    storageRepository::markAsChanged
+            );
+        }
+        return new PlatformStorage<>(
+                FluidStorageType.INSTANCE,
+                storageRepository::markAsChanged
+        );
+    }
+
     @Override
     public CompoundTag toTag(Storage<FluidResource> storage) {
         CompoundTag tag = new CompoundTag();
-        tag.putLong(TAG_CAPACITY, ((CappedStorage) storage).getCapacity());
+        if (storage instanceof CappedStorage<FluidResource> cappedStorage) {
+            tag.putLong(TAG_CAPACITY, cappedStorage.getCapacity());
+        }
         ListTag stacks = new ListTag();
         for (ResourceAmount<FluidResource> resourceAmount : storage.getAll()) {
             stacks.add(FluidResource.toTagWithAmount(resourceAmount));

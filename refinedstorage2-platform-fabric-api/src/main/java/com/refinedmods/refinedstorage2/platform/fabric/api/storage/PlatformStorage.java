@@ -1,15 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.fabric.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
+import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 
-public class PlatformCappedStorage<T> extends CappedStorage<T> implements StorageTypeAccessor<T> {
+public class PlatformStorage<T> extends InMemoryStorageImpl<T> implements StorageTypeAccessor<T> {
     private final Runnable listener;
     private final StorageType<T> type;
 
-    public PlatformCappedStorage(long capacity, StorageType<T> type, Runnable listener) {
-        super(capacity);
+    public PlatformStorage(StorageType<T> type, Runnable listener) {
         this.listener = listener;
         this.type = type;
     }

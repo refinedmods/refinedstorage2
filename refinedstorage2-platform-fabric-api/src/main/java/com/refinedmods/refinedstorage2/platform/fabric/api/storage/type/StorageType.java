@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStora
 import net.minecraft.nbt.CompoundTag;
 
 public interface StorageType<T> {
-    Storage<T> fromTag(CompoundTag tag, PlatformStorageRepository storageManager);
+    Storage<T> fromTag(CompoundTag tag, PlatformStorageRepository storageRepository);
 
     CompoundTag toTag(Storage<T> storage);
 }
