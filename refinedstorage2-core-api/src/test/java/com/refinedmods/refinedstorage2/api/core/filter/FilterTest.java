@@ -11,24 +11,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
 class FilterTest {
-    private Filter filter;
+    private Filter sut;
 
     @BeforeEach
     void setUp() {
-        filter = new Filter();
+        sut = new Filter();
     }
 
     @Test
     void Test_defaults() {
         // Assert
-        assertThat(filter.getMode()).isEqualTo(FilterMode.BLOCK);
+        assertThat(sut.getMode()).isEqualTo(FilterMode.BLOCK);
     }
 
     @Test
     void Test_empty_blocklist_allows_all() {
         // Arrange
         // Act
-        boolean allowed = filter.isAllowed("Dirt");
+        boolean allowed = sut.isAllowed("Dirt");
 
         // Assert
         assertThat(allowed).isTrue();
@@ -37,10 +37,10 @@ class FilterTest {
     @Test
     void Test_empty_allowlist_allows_none() {
         // Arrange
-        filter.setMode(FilterMode.ALLOW);
+        sut.setMode(FilterMode.ALLOW);
 
         // Act
-        boolean allowed = filter.isAllowed("Dirt");
+        boolean allowed = sut.isAllowed("Dirt");
 
         // Assert
         assertThat(allowed).isFalse();
@@ -49,13 +49,13 @@ class FilterTest {
     @Test
     void Test_exact_allowlist() {
         // Arrange
-        filter.setMode(FilterMode.ALLOW);
-        filter.setTemplates(Set.of("Dirt", "Stone"));
+        sut.setMode(FilterMode.ALLOW);
+        sut.setTemplates(Set.of("Dirt", "Stone"));
 
         // Act
-        boolean allowsDirt = filter.isAllowed("Dirt");
-        boolean allowsStone = filter.isAllowed("Stone");
-        boolean allowsSponge = filter.isAllowed("Sponge");
+        boolean allowsDirt = sut.isAllowed("Dirt");
+        boolean allowsStone = sut.isAllowed("Stone");
+        boolean allowsSponge = sut.isAllowed("Sponge");
 
         // Assert
         assertThat(allowsDirt).isTrue();
@@ -66,12 +66,12 @@ class FilterTest {
     @Test
     void Test_exact_blocklist() {
         // Arrange
-        filter.setTemplates(Set.of("Dirt", "Stone"));
+        sut.setTemplates(Set.of("Dirt", "Stone"));
 
         // Act
-        boolean allowsDirt = filter.isAllowed("Dirt");
-        boolean allowsStone = filter.isAllowed("Stone");
-        boolean allowsSponge = filter.isAllowed("Sponge");
+        boolean allowsDirt = sut.isAllowed("Dirt");
+        boolean allowsStone = sut.isAllowed("Stone");
+        boolean allowsSponge = sut.isAllowed("Sponge");
 
         // Assert
         assertThat(allowsDirt).isFalse();
@@ -82,17 +82,17 @@ class FilterTest {
     @Test
     void Test_changing_templates() {
         // Arrange
-        filter.setTemplates(Set.of("Stone"));
+        sut.setTemplates(Set.of("Stone"));
 
-        boolean allowsDirt = filter.isAllowed("Dirt");
-        boolean allowsStone = filter.isAllowed("Stone");
-        boolean allowsSponge = filter.isAllowed("Sponge");
+        boolean allowsDirt = sut.isAllowed("Dirt");
+        boolean allowsStone = sut.isAllowed("Stone");
+        boolean allowsSponge = sut.isAllowed("Sponge");
 
-        filter.setTemplates(Set.of("Dirt", "Sponge"));
+        sut.setTemplates(Set.of("Dirt", "Sponge"));
 
-        boolean allowsDirtAfter = filter.isAllowed("Dirt");
-        boolean allowsStoneAfter = filter.isAllowed("Stone");
-        boolean allowsSpongeAfter = filter.isAllowed("Sponge");
+        boolean allowsDirtAfter = sut.isAllowed("Dirt");
+        boolean allowsStoneAfter = sut.isAllowed("Stone");
+        boolean allowsSpongeAfter = sut.isAllowed("Sponge");
 
         // Assert
         assertThat(allowsDirt).isTrue();
@@ -102,5 +102,42 @@ class FilterTest {
         assertThat(allowsDirtAfter).isFalse();
         assertThat(allowsStoneAfter).isTrue();
         assertThat(allowsSpongeAfter).isFalse();
+    }
+
+    @Test
+    void Test_normalizing_with_allowlist() {
+        // Arrange
+        sut.setNormalizer(n -> {
+            if (n instanceof String str && !str.endsWith("!")) {
+                return str + "!";
+            }
+            return n;
+        });
+        sut.setMode(FilterMode.ALLOW);
+        sut.setTemplates(Set.of("A", "B"));
+
+        // Act & assert
+        assertThat(sut.isAllowed("A")).isTrue();
+        assertThat(sut.isAllowed("A!")).isTrue();
+        assertThat(sut.isAllowed("B")).isTrue();
+        assertThat(sut.isAllowed("B!")).isTrue();
+        assertThat(sut.isAllowed("C")).isFalse();
+        assertThat(sut.isAllowed("C!")).isFalse();
+    }
+
+    @Test
+    void Test_normalizing_with_blocklist() {
+        // Arrange
+        sut.setNormalizer(n -> n + "!");
+        sut.setMode(FilterMode.BLOCK);
+        sut.setTemplates(Set.of("A", "B"));
+
+        // Act & assert
+        assertThat(sut.isAllowed("A")).isFalse();
+        assertThat(sut.isAllowed("A!")).isFalse();
+        assertThat(sut.isAllowed("B")).isFalse();
+        assertThat(sut.isAllowed("B!")).isFalse();
+        assertThat(sut.isAllowed("C")).isTrue();
+        assertThat(sut.isAllowed("C!")).isTrue();
     }
 }

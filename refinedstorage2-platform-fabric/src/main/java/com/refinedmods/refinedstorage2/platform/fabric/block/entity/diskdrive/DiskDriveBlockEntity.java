@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeReg
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.BlockEntityWithDrops;
@@ -68,6 +69,8 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
     private boolean syncRequested;
     private long lastStateChanged;
 
+    private boolean exactMode;
+
     public DiskDriveBlockEntity(BlockPos pos, BlockState state) {
         super(Rs2Mod.BLOCK_ENTITIES.getDiskDrive(), pos, state, new DiskDriveNetworkNode(
                 Rs2Config.get().getDiskDrive().getEnergyUsage(),
@@ -76,6 +79,7 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
         ));
         getNode().setDiskProvider(diskInventory);
         getNode().setListener(this);
+        getNode().setNormalizer(this::normalize);
     }
 
     public static void serverTick(Level level, BlockState state, DiskDriveBlockEntity blockEntity) {
@@ -101,8 +105,22 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
     }
 
     private void resourceFilterContainerChanged() {
-        getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
+        initializeResourceFilter();
         setChanged();
+    }
+
+    private void initializeResourceFilter() {
+        getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
+    }
+
+    private Object normalize(Object value) {
+        if (exactMode) {
+            return value;
+        }
+        if (value instanceof FuzzyModeNormalizer<?> fuzzyModeNormalizer) {
+            return fuzzyModeNormalizer.normalize();
+        }
+        return value;
     }
 
     @Override
@@ -143,7 +161,11 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
             getNode().setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
         }
 
-        getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
+        if (tag.contains(TAG_EXACT_MODE)) {
+            this.exactMode = tag.getBoolean(TAG_EXACT_MODE);
+        }
+
+        initializeResourceFilter();
 
         super.load(tag);
     }
@@ -156,6 +178,7 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
         tag.putInt(TAG_PRIORITY, getNode().getPriority());
         tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getNode().getAccessMode()));
+        tag.putBoolean(TAG_EXACT_MODE, exactMode);
     }
 
     public SimpleContainer getDiskInventory() {
@@ -172,12 +195,11 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
     }
 
     public boolean isExactMode() {
-        // todo
-        return false;
+        return exactMode;
     }
 
     public void setExactMode(boolean exactMode) {
-        // todo
+        this.exactMode = exactMode;
         setChanged();
     }
 

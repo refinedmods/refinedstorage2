@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
-public final class FluidResource {
+public final class FluidResource implements FuzzyModeNormalizer<FluidResource> {
     private static final String TAG_TAG = "tag";
     private static final String TAG_ID = "id";
     private static final String TAG_AMOUNT = "amount";
@@ -68,6 +68,11 @@ public final class FluidResource {
 
     public FluidVariant toFluidVariant() {
         return FluidVariantImpl.of(fluid, tag);
+    }
+
+    @Override
+    public FluidResource normalize() {
+        return new FluidResource(fluid, null);
     }
 
     @Override

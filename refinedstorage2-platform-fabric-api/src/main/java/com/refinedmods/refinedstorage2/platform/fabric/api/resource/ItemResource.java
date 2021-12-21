@@ -13,7 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-public final class ItemResource {
+public final class ItemResource implements FuzzyModeNormalizer<ItemResource> {
     private static final String TAG_TAG = "tag";
     private static final String TAG_ID = "id";
     private static final String TAG_AMOUNT = "amount";
@@ -78,6 +78,11 @@ public final class ItemResource {
 
     public ItemVariant toItemVariant() {
         return ItemVariant.of(item, tag);
+    }
+
+    @Override
+    public ItemResource normalize() {
+        return new ItemResource(item, null);
     }
 
     @Override

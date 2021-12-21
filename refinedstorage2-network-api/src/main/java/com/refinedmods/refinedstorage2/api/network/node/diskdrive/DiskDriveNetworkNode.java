@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.logging.log4j.LogManager;
@@ -153,6 +154,10 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
 
     public void setFilterTemplates(Set<Object> templates) {
         filter.setTemplates(templates);
+    }
+
+    public void setNormalizer(UnaryOperator<Object> normalizer) {
+        filter.setNormalizer(normalizer);
     }
 
     public void setDiskProvider(StorageDiskProvider diskProvider) {
