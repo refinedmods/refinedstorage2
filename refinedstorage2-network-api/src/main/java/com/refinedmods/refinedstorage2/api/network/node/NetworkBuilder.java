@@ -1,9 +1,8 @@
 package com.refinedmods.refinedstorage2.api.network.node;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.NetworkImpl;
+import com.refinedmods.refinedstorage2.api.network.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 
 import java.util.Collections;
@@ -15,26 +14,26 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
-// TODO: Improve
 public class NetworkBuilder {
-    public static final NetworkBuilder INSTANCE = new NetworkBuilder();
+    private final NetworkFactory networkFactory;
 
-    public boolean initialize(NetworkNodeContainer container, ConnectionProvider connectionProvider, NetworkComponentRegistry networkComponentRegistry) {
+    public NetworkBuilder(NetworkFactory networkFactory) {
+        this.networkFactory = networkFactory;
+    }
+
+    public boolean initialize(NetworkNodeContainer container, ConnectionProvider connectionProvider) {
         if (container.getNode().getNetwork() != null) {
             return false;
         }
-
         Connections connections = connectionProvider.findConnections(container, Collections.emptySet());
-
         Preconditions.checkArgument(connections.removedEntries().isEmpty(), "Cannot have removed entries");
-
-        mergeNetworksOfNodes(connectionProvider, container, connections.foundEntries(), networkComponentRegistry);
-
+        mergeNetworksOfNodes(connectionProvider, container, connections.foundEntries());
         return true;
     }
 
-    private void mergeNetworksOfNodes(ConnectionProvider connectionProvider, NetworkNodeContainer pivot, Set<NetworkNodeContainer> foundEntries, NetworkComponentRegistry networkComponentRegistry) {
-        Network pivotNetwork = findPivotNetworkForMerge(connectionProvider, pivot, foundEntries).orElseGet(() -> createNetwork(pivot, networkComponentRegistry));
+    private void mergeNetworksOfNodes(ConnectionProvider connectionProvider, NetworkNodeContainer pivot, Set<NetworkNodeContainer> foundEntries) {
+        Network pivotNetwork = findPivotNetworkForMerge(connectionProvider, pivot, foundEntries)
+                .orElseGet(() -> createNetwork(pivot));
 
         Set<Network> mergedNetworks = new HashSet<>();
 
@@ -54,15 +53,13 @@ public class NetworkBuilder {
 
     private Network mergeNetworkOfNode(Network newNetwork, NetworkNodeContainer entry, NetworkNode entryNode) {
         Network oldNetwork = entryNode.getNetwork();
-
         entryNode.setNetwork(newNetwork);
         newNetwork.addContainer(entry);
-
         return oldNetwork;
     }
 
-    private NetworkImpl createNetwork(NetworkNodeContainer container, NetworkComponentRegistry networkComponentRegistry) {
-        NetworkImpl network = new NetworkImpl(networkComponentRegistry);
+    private Network createNetwork(NetworkNodeContainer container) {
+        Network network = networkFactory.create();
         container.getNode().setNetwork(network);
         network.addContainer(container);
         return network;
@@ -78,11 +75,10 @@ public class NetworkBuilder {
                 return Optional.of(entryNetwork);
             }
         }
-
         return Optional.empty();
     }
 
-    public void remove(NetworkNodeContainer container, ConnectionProvider connectionProvider, NetworkComponentRegistry networkComponentRegistry) {
+    public void remove(NetworkNodeContainer container, ConnectionProvider connectionProvider) {
         Network network = container.getNode().getNetwork();
         if (network == null) {
             throw new IllegalStateException("Cannot remove node that has no network yet");
@@ -99,10 +95,8 @@ public class NetworkBuilder {
         }
 
         Connections connections = connectionProvider.findConnections(pivot, containers);
-
         Preconditions.checkState(connections.removedEntries().contains(container), "The removed container isn't present in the removed entries");
-
-        splitNetworks(connectionProvider, connections.removedEntries(), networkComponentRegistry, container);
+        splitNetworks(connectionProvider, connections.removedEntries(), container);
     }
 
     private NetworkNodeContainer findPivotNodeForRemove(ConnectionProvider connectionProvider, NetworkNodeContainer removedContainer, Set<NetworkNodeContainer> containers) {
@@ -114,10 +108,7 @@ public class NetworkBuilder {
         return null;
     }
 
-    private void splitNetworks(ConnectionProvider connectionProvider,
-                               Set<NetworkNodeContainer> removedEntries,
-                               NetworkComponentRegistry networkComponentRegistry,
-                               NetworkNodeContainer removedEntry) {
+    private void splitNetworks(ConnectionProvider connectionProvider, Set<NetworkNodeContainer> removedEntries, NetworkNodeContainer removedEntry) {
         Network networkOfRemovedNode = removedEntry.getNode().getNetwork();
 
         removedEntries.forEach(e -> {
@@ -129,7 +120,7 @@ public class NetworkBuilder {
                 .stream()
                 .filter(e -> !e.equals(removedEntry))
                 .map(e -> {
-                    boolean establishedNetwork = initialize(e, connectionProvider, networkComponentRegistry);
+                    boolean establishedNetwork = initialize(e, connectionProvider);
                     if (establishedNetwork) {
                         return e.getNode().getNetwork();
                     }

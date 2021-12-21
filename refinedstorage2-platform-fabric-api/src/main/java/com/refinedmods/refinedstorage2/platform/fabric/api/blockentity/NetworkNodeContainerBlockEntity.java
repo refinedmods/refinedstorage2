@@ -1,7 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.fabric.api.blockentity;
 
-import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
-import com.refinedmods.refinedstorage2.api.network.node.NetworkBuilder;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
@@ -25,7 +23,7 @@ public abstract class NetworkNodeContainerBlockEntity<T extends NetworkNode> ext
         if (level.isClientSide) {
             return;
         }
-        Rs2PlatformApiFacade.INSTANCE.requestNetworkNodeInitialization(this, Rs2PlatformApiFacade.INSTANCE.createConnectionProvider(level), NetworkComponentRegistry.INSTANCE);
+        Rs2PlatformApiFacade.INSTANCE.requestNetworkNodeInitialization(this, level);
     }
 
     @Override
@@ -34,7 +32,7 @@ public abstract class NetworkNodeContainerBlockEntity<T extends NetworkNode> ext
         if (level.isClientSide) {
             return;
         }
-        NetworkBuilder.INSTANCE.remove(this, Rs2PlatformApiFacade.INSTANCE.createConnectionProvider(level), NetworkComponentRegistry.INSTANCE);
+        Rs2PlatformApiFacade.INSTANCE.requestNetworkNodeRemoval(this, level);
     }
 
     @Override

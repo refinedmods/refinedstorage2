@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
@@ -134,9 +133,9 @@ public class Rs2Mod implements ModInitializer {
     }
 
     private void registerNetworkComponents() {
-        NetworkComponentRegistry.INSTANCE.addComponent(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
-        NetworkComponentRegistry.INSTANCE.addComponent(GraphNetworkComponent.class, GraphNetworkComponent::new);
-        NetworkComponentRegistry.INSTANCE.addComponent(StorageNetworkComponent.class, network ->
+        Rs2PlatformApiFacade.INSTANCE.getNetworkComponentRegistry().addComponent(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
+        Rs2PlatformApiFacade.INSTANCE.getNetworkComponentRegistry().addComponent(GraphNetworkComponent.class, GraphNetworkComponent::new);
+        Rs2PlatformApiFacade.INSTANCE.getNetworkComponentRegistry().addComponent(StorageNetworkComponent.class, network ->
                 new StorageNetworkComponent(StorageChannelTypeRegistry.INSTANCE));
     }
 

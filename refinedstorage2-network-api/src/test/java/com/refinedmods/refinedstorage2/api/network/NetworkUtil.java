@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentReg
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistryImpl;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
-import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.EmptyNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
@@ -21,40 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-public class NetworkUtil {
-    private static class NodeCallbackListenerComponent implements NetworkComponent {
-        private final List<NetworkNodeContainer> added = new ArrayList<>();
-        private final List<NetworkNodeContainer> removed = new ArrayList<>();
-        private final List<Set<Network>> splits = new ArrayList<>();
-        private final List<Network> merges = new ArrayList<>();
-        private int removeCount = 0;
-
-        @Override
-        public void onContainerAdded(NetworkNodeContainer container) {
-            added.add(container);
-        }
-
-        @Override
-        public void onContainerRemoved(NetworkNodeContainer container) {
-            removed.add(container);
-        }
-
-        @Override
-        public void onNetworkRemoved() {
-            removeCount++;
-        }
-
-        @Override
-        public void onNetworkSplit(Set<Network> networks) {
-            splits.add(networks);
-        }
-
-        @Override
-        public void onNetworkMerge(Network network) {
-            merges.add(network);
-        }
-    }
-
+public final class NetworkUtil {
     public static final NetworkComponentRegistry NETWORK_COMPONENT_REGISTRY = new NetworkComponentRegistryImpl();
     public static final StorageChannelTypeRegistry STORAGE_CHANNEL_TYPE_REGISTRY = new StorageChannelTypeRegistryImpl();
 
@@ -67,6 +33,9 @@ public class NetworkUtil {
         NETWORK_COMPONENT_REGISTRY.addComponent(NodeCallbackListenerComponent.class, network -> new NodeCallbackListenerComponent());
     }
 
+    private NetworkUtil() {
+    }
+
     public static Network create(long energyStored, long energyCapacity) {
         Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
         EnergyNetworkComponent component = network.getComponent(EnergyNetworkComponent.class);
@@ -77,12 +46,6 @@ public class NetworkUtil {
 
     public static Network create() {
         return create(Long.MAX_VALUE, Long.MAX_VALUE);
-    }
-
-    public static Network createWithInfiniteEnergyStorage() {
-        Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
-        network.getComponent(EnergyNetworkComponent.class).getEnergyStorage().addSource(new InfiniteEnergyStorage());
-        return network;
     }
 
     public static NetworkNodeContainer createContainer() {
@@ -128,5 +91,38 @@ public class NetworkUtil {
 
     public static StorageChannel<String> fakeStorageChannelOf(Network network) {
         return storageComponentOf(network).getStorageChannel(StorageChannelTypes.FAKE);
+    }
+
+    private static class NodeCallbackListenerComponent implements NetworkComponent {
+        private final List<NetworkNodeContainer> added = new ArrayList<>();
+        private final List<NetworkNodeContainer> removed = new ArrayList<>();
+        private final List<Set<Network>> splits = new ArrayList<>();
+        private final List<Network> merges = new ArrayList<>();
+        private int removeCount = 0;
+
+        @Override
+        public void onContainerAdded(NetworkNodeContainer container) {
+            added.add(container);
+        }
+
+        @Override
+        public void onContainerRemoved(NetworkNodeContainer container) {
+            removed.add(container);
+        }
+
+        @Override
+        public void onNetworkRemoved() {
+            removeCount++;
+        }
+
+        @Override
+        public void onNetworkSplit(Set<Network> networks) {
+            splits.add(networks);
+        }
+
+        @Override
+        public void onNetworkMerge(Network network) {
+            merges.add(network);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.component;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.network.NetworkUtil;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
@@ -17,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.STORAGE_CHANNEL_TYPE_REGISTRY;
-import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createWithInfiniteEnergyStorage;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -35,7 +35,7 @@ class StorageNetworkComponentTest {
         storageProviderRepository.setInSlot(0, new CappedStorage<>(100));
 
         diskDrive = new DiskDriveNetworkNode(0, 0, STORAGE_CHANNEL_TYPE_REGISTRY);
-        diskDrive.setNetwork(createWithInfiniteEnergyStorage());
+        diskDrive.setNetwork(NetworkUtil.create());
         diskDrive.setListener(mock(DiskDriveListener.class));
         diskDrive.setDiskProvider(storageProviderRepository);
         diskDrive.initialize(storageProviderRepository);

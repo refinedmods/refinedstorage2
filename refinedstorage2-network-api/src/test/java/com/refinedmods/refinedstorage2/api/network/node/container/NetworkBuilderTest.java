@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node.container;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
+import com.refinedmods.refinedstorage2.api.network.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkBuilder;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
 class NetworkBuilderTest {
-    private final NetworkBuilder sut = new NetworkBuilder();
+    private final NetworkBuilder sut = new NetworkBuilder(new NetworkFactory(NETWORK_COMPONENT_REGISTRY));
 
     @Test
     void Test_forming_new_network() {
@@ -37,7 +38,7 @@ class NetworkBuilderTest {
         connectionProvider.with(container, unrelatedContainer);
 
         // Act
-        sut.initialize(container, connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.initialize(container, connectionProvider);
 
         // Assert
         assertThat(container.getNode().getNetwork()).isNotNull();
@@ -71,7 +72,7 @@ class NetworkBuilderTest {
                 .connect(existingContainer1, newContainer);
 
         // Act
-        sut.initialize(newContainer, connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.initialize(newContainer, connectionProvider);
 
         // Assert
         Network expectedNetwork = existingContainer1.getNode().getNetwork();
@@ -113,7 +114,7 @@ class NetworkBuilderTest {
                 .connect(newContainer, existingContainer1);
 
         // Act
-        sut.initialize(newContainer, connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.initialize(newContainer, connectionProvider);
 
         // Assert
         Network expectedNetwork = existingContainer1.getNode().getNetwork();
@@ -156,9 +157,9 @@ class NetworkBuilderTest {
                 .connect(container2, container3);
 
         // Act
-        sut.initialize(container1, connectionProvider, NETWORK_COMPONENT_REGISTRY);
-        sut.initialize(container2, connectionProvider, NETWORK_COMPONENT_REGISTRY);
-        sut.initialize(container3, connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.initialize(container1, connectionProvider);
+        sut.initialize(container2, connectionProvider);
+        sut.initialize(container3, connectionProvider);
 
         // Assert
         Network expectedNetwork = container1.getNode().getNetwork();
@@ -187,7 +188,7 @@ class NetworkBuilderTest {
         NetworkNodeContainer container = createContainer();
 
         // Act
-        Executable action = () -> sut.remove(container, new FakeConnectionProvider(), NETWORK_COMPONENT_REGISTRY);
+        Executable action = () -> sut.remove(container, new FakeConnectionProvider());
 
         // Assert
         assertThrows(IllegalStateException.class, action);
@@ -209,7 +210,7 @@ class NetworkBuilderTest {
                 .connect(container2, container3);
 
         // Act
-        sut.remove(container1, connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.remove(container1, connectionProvider);
 
         // Assert
         assertThat(container1.getNode().getNetwork()).isNull();
@@ -250,7 +251,7 @@ class NetworkBuilderTest {
                 .connect(container4, container5);
 
         // Act
-        sut.remove(container3, connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.remove(container3, connectionProvider);
 
         // Assert
         assertThat(container3.getNode().getNetwork()).isNull();
@@ -312,7 +313,7 @@ class NetworkBuilderTest {
                 .connect(container4, container5);
 
         // Act
-        sut.remove(container1, connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.remove(container1, connectionProvider);
 
         // Assert
         assertThat(container1.getNode().getNetwork()).isNull();
@@ -380,7 +381,7 @@ class NetworkBuilderTest {
         Network network = container.getNode().getNetwork();
 
         // Act
-        sut.remove(container, connectionProvider, NETWORK_COMPONENT_REGISTRY);
+        sut.remove(container, connectionProvider);
 
         // Assert
         assertThat(container.getNode().getNetwork()).isNull();

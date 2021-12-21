@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.api;
 
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
-import com.refinedmods.refinedstorage2.api.network.node.ConnectionProvider;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
@@ -38,11 +37,6 @@ public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public ConnectionProvider createConnectionProvider(Level level) {
-        return ensureLoaded().createConnectionProvider(level);
-    }
-
-    @Override
     public TranslatableComponent createTranslation(String category, String value, Object... args) {
         return ensureLoaded().createTranslation(category, value, args);
     }
@@ -53,8 +47,18 @@ public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public void requestNetworkNodeInitialization(NetworkNodeContainer container, ConnectionProvider connectionProvider, NetworkComponentRegistry networkComponentRegistry) {
-        ensureLoaded().requestNetworkNodeInitialization(container, connectionProvider, networkComponentRegistry);
+    public NetworkComponentRegistry getNetworkComponentRegistry() {
+        return ensureLoaded().getNetworkComponentRegistry();
+    }
+
+    @Override
+    public void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level) {
+        ensureLoaded().requestNetworkNodeInitialization(container, level);
+    }
+
+    @Override
+    public void requestNetworkNodeRemoval(NetworkNodeContainer container, Level level) {
+        ensureLoaded().requestNetworkNodeRemoval(container, level);
     }
 
     private Rs2PlatformApiFacade ensureLoaded() {

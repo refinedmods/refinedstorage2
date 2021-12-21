@@ -1,7 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal;
 
+import com.refinedmods.refinedstorage2.api.network.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
-import com.refinedmods.refinedstorage2.api.network.node.ConnectionProvider;
+import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistryImpl;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkBuilder;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
@@ -26,6 +27,8 @@ import net.minecraft.world.level.Level;
 public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     private final PlatformStorageRepository clientStorageRepository = new FabricClientStorageRepository();
     private final ResourceTypeRegistry resourceTypeRegistry = new ResourceTypeRegistry(ItemResourceType.INSTANCE);
+    private final NetworkComponentRegistry networkComponentRegistry = new NetworkComponentRegistryImpl();
+    private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentRegistry));
 
     @Override
     public PlatformStorageRepository getStorageRepository(Level level) {
@@ -50,11 +53,6 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public ConnectionProvider createConnectionProvider(Level level) {
-        return new LevelConnectionProvider(level);
-    }
-
-    @Override
     public TranslatableComponent createTranslation(String category, String value, Object... args) {
         return Rs2Mod.createTranslation(category, value, args);
     }
@@ -65,8 +63,20 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public void requestNetworkNodeInitialization(NetworkNodeContainer container, ConnectionProvider connectionProvider, NetworkComponentRegistry networkComponentRegistry) {
-        TickHandler.runWhenReady(() -> NetworkBuilder.INSTANCE.initialize(container, connectionProvider, networkComponentRegistry));
+    public NetworkComponentRegistry getNetworkComponentRegistry() {
+        return networkComponentRegistry;
+    }
+
+    @Override
+    public void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level) {
+        LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
+        TickHandler.runWhenReady(() -> networkBuilder.initialize(container, connectionProvider));
+    }
+
+    @Override
+    public void requestNetworkNodeRemoval(NetworkNodeContainer container, Level level) {
+        LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
+        networkBuilder.remove(container, connectionProvider);
     }
 
     private FabricStorageRepository createStorageRepository(CompoundTag tag) {
