@@ -1,14 +1,16 @@
 package com.refinedmods.refinedstorage2.platform.fabric.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 
-public class PlatformStorage<T> extends InMemoryStorageImpl<T> implements StorageTypeAccessor<T> {
+public class PlatformStorage<T> extends ProxyStorage<T> implements StorageTypeAccessor<T> {
     private final Runnable listener;
     private final StorageType<T> type;
 
-    public PlatformStorage(StorageType<T> type, Runnable listener) {
+    public PlatformStorage(Storage<T> parent, StorageType<T> type, Runnable listener) {
+        super(parent);
         this.listener = listener;
         this.type = type;
     }
