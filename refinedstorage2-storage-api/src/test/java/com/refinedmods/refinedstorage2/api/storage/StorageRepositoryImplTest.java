@@ -42,7 +42,7 @@ class StorageRepositoryImplTest {
     }
 
     @Test
-    void Test_getting_info_of_storage() {
+    void Test_getting_info_of_capped_storage() {
         // Arrange
         UUID id = UUID.randomUUID();
         Storage<String> storage = new CappedStorage<>(10);
@@ -55,6 +55,23 @@ class StorageRepositoryImplTest {
 
         // Assert
         assertThat(info.capacity()).isEqualTo(10);
+        assertThat(info.stored()).isEqualTo(5);
+    }
+
+    @Test
+    void Test_getting_info_of_storage() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Storage<String> storage = new InMemoryStorageImpl<>();
+        storage.insert("A", 5, Action.EXECUTE);
+
+        // Act
+        sut.set(id, storage);
+
+        StorageInfo info = sut.getInfo(id);
+
+        // Assert
+        assertThat(info.capacity()).isZero();
         assertThat(info.stored()).isEqualTo(5);
     }
 
