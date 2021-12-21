@@ -188,7 +188,7 @@ public class DiskDriveContainerMenu extends ResourceFilterableContainerMenu impl
     }
 
     public boolean hasInfiniteDisk() {
-        return getStorageDiskInfo().anyMatch(info -> info.capacity() == -1);
+        return getStorageDiskInfo().anyMatch(info -> info.capacity() == 0);
     }
 
     public double getProgress() {

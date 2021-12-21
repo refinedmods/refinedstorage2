@@ -11,12 +11,12 @@ import java.util.Collection;
 public class DiskDriveDiskStorage<T> implements Storage<T> {
     private static final double DISK_NEAR_CAPACITY_THRESHOLD = .75;
 
-    private final CappedStorage<T> parent;
+    private final Storage<T> parent;
     private final StorageChannelType<T> storageChannelType;
     private final DiskDriveListener listener;
     private StorageDiskState state;
 
-    public DiskDriveDiskStorage(CappedStorage<T> parent, StorageChannelType<T> storageChannelType, DiskDriveListener listener) {
+    public DiskDriveDiskStorage(Storage<T> parent, StorageChannelType<T> storageChannelType, DiskDriveListener listener) {
         this.parent = parent;
         this.storageChannelType = storageChannelType;
         this.listener = listener;
@@ -28,7 +28,14 @@ public class DiskDriveDiskStorage<T> implements Storage<T> {
     }
 
     public StorageDiskState getState() {
-        double fullness = (double) parent.getStored() / (double) parent.getCapacity();
+        if (parent instanceof CappedStorage<T> cappedStorage) {
+            return getStateWithCapacity(cappedStorage.getCapacity());
+        }
+        return StorageDiskState.NORMAL;
+    }
+
+    private StorageDiskState getStateWithCapacity(long capacity) {
+        double fullness = (double) parent.getStored() / capacity;
 
         if (fullness >= 1D) {
             return StorageDiskState.FULL;

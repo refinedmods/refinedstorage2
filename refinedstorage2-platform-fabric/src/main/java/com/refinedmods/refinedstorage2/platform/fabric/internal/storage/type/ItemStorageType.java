@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformCappedStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
 
@@ -24,13 +25,8 @@ public class ItemStorageType implements StorageType<ItemResource> {
     }
 
     @Override
-    public Storage<ItemResource> fromTag(CompoundTag tag, PlatformStorageRepository storageManager) {
-        Storage<ItemResource> storage = new PlatformCappedStorage<>(
-                tag.getLong(TAG_CAPACITY),
-                ItemStorageType.INSTANCE,
-                storageManager::markAsChanged
-        );
-
+    public Storage<ItemResource> fromTag(CompoundTag tag, PlatformStorageRepository storageRepository) {
+        Storage<ItemResource> storage = createStorage(tag, storageRepository);
         ListTag stacks = tag.getList(TAG_STACKS, NbtType.COMPOUND);
         for (Tag stackTag : stacks) {
             ItemResource.fromTagWithAmount((CompoundTag) stackTag).ifPresent(resourceAmount -> storage.insert(resourceAmount.getResource(), resourceAmount.getAmount(), Action.EXECUTE));
@@ -38,10 +34,26 @@ public class ItemStorageType implements StorageType<ItemResource> {
         return storage;
     }
 
+    private Storage<ItemResource> createStorage(CompoundTag tag, PlatformStorageRepository storageRepository) {
+        if (tag.contains(TAG_CAPACITY)) {
+            return new PlatformCappedStorage<>(
+                    tag.getLong(TAG_CAPACITY),
+                    ItemStorageType.INSTANCE,
+                    storageRepository::markAsChanged
+            );
+        }
+        return new PlatformStorage<>(
+                ItemStorageType.INSTANCE,
+                storageRepository::markAsChanged
+        );
+    }
+
     @Override
     public CompoundTag toTag(Storage<ItemResource> storage) {
         CompoundTag tag = new CompoundTag();
-        tag.putLong(TAG_CAPACITY, ((CappedStorage) storage).getCapacity());
+        if (storage instanceof CappedStorage<ItemResource> cappedStorage) {
+            tag.putLong(TAG_CAPACITY, cappedStorage.getCapacity());
+        }
         ListTag stacks = new ListTag();
         for (ResourceAmount<ItemResource> resourceAmount : storage.getAll()) {
             stacks.add(ItemResource.toTagWithAmount(resourceAmount));

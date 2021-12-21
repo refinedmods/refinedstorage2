@@ -56,7 +56,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
         super.appendHoverText(stack, level, tooltip, context);
 
         getInfo(level, stack).ifPresent(info -> {
-            if (info.capacity() == -1) {
+            if (info.capacity() == 0) {
                 tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
                         "misc",
                         "stored",

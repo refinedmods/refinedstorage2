@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.item.StorageDiskItemImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformCappedStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
 
 import java.util.Optional;
@@ -36,6 +37,12 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected Storage<?> createStorage(Level level) {
+        if (!type.hasCapacity()) {
+            return new PlatformStorage<>(
+                    com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemStorageType.INSTANCE,
+                    Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
+            );
+        }
         return new PlatformCappedStorage<>(
                 type.getCapacity(),
                 com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemStorageType.INSTANCE,
@@ -53,7 +60,7 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
         FOUR_K("4k", 4000),
         SIXTEEN_K("16k", 16_000),
         SIXTY_FOUR_K("64k", 64_000),
-        CREATIVE("creative", -1);
+        CREATIVE("creative", 0);
 
         private final String name;
         private final int capacity;
@@ -69,6 +76,10 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
 
         public int getCapacity() {
             return capacity;
+        }
+
+        public boolean hasCapacity() {
+            return capacity > 0;
         }
     }
 }

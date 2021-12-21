@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.StorageSource;
@@ -120,19 +119,13 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
             disks[slot] = diskProvider
                     .getDiskId(slot)
                     .flatMap(storageRepository::get)
-                    .filter(this::isValidDisk)
-                    .map(CappedStorage.class::cast)
-                    .map(cappedStorage -> new DiskDriveDiskStorage(cappedStorage, type, listener))
+                    .map(storage -> new DiskDriveDiskStorage(storage, type, listener))
                     .orElse(null);
 
             affectedStorageChannelTypes.add(type);
         }, () -> disks[slot] = null);
 
         return affectedStorageChannelTypes;
-    }
-
-    private boolean isValidDisk(Storage<?> storage) {
-        return storage instanceof CappedStorage;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.item.StorageDiskItemImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformCappedStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.util.FabricQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
 
@@ -29,6 +30,11 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
+    public Optional<StorageChannelType<?>> getType(ItemStack stack) {
+        return Optional.of(StorageChannelTypes.FLUID);
+    }
+
+    @Override
     protected Optional<ItemStack> createStoragePart(int count) {
         if (type == FluidStorageType.CREATIVE) {
             return Optional.empty();
@@ -38,6 +44,12 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected Storage<?> createStorage(Level level) {
+        if (!type.hasCapacity()) {
+            return new PlatformStorage<>(
+                    com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidStorageType.INSTANCE,
+                    Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
+            );
+        }
         return new PlatformCappedStorage<>(
                 type.getCapacity(),
                 com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidStorageType.INSTANCE,
@@ -50,17 +62,12 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
         return new ItemStack(Rs2Mod.ITEMS.getStorageHousing());
     }
 
-    @Override
-    public Optional<StorageChannelType<?>> getType(ItemStack stack) {
-        return Optional.of(StorageChannelTypes.FLUID);
-    }
-
     public enum FluidStorageType {
         SIXTY_FOUR_B("64b", 64 * FluidConstants.BUCKET),
         TWO_HUNDRED_FIFTY_SIX_B("256b", 256 * FluidConstants.BUCKET),
         THOUSAND_TWENTY_FOUR_B("1024b", 1024 * FluidConstants.BUCKET),
         FOUR_THOUSAND_NINETY_SIX_B("4096b", 4096 * FluidConstants.BUCKET),
-        CREATIVE("creative", -1);
+        CREATIVE("creative", 0);
 
         private final String name;
         private final long capacity;
@@ -76,6 +83,10 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
 
         public long getCapacity() {
             return capacity;
+        }
+
+        public boolean hasCapacity() {
+            return capacity > 0;
         }
     }
 }
