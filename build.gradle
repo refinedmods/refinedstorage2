@@ -56,6 +56,12 @@ subprojects {
     }
 }
 
+task allJavadoc(type: Javadoc) {
+    source subprojects*.sourceSets.main.allJava
+    classpath += files(subprojects*.sourceSets.main.compileClasspath)
+    destinationDir = file("build/docs/javadoc")
+}
+
 // http://csiebler.github.io/blog/2014/02/09/multi-project-code-coverage-using-gradle-and-jacoco/
 task codeCoverageReport(type: JacocoReport) {
     executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
