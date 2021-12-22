@@ -52,8 +52,8 @@ public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level) {
-        ensureLoaded().requestNetworkNodeInitialization(container, level);
+    public void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level, Runnable callback) {
+        ensureLoaded().requestNetworkNodeInitialization(container, level, callback);
     }
 
     @Override

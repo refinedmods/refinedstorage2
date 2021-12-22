@@ -17,6 +17,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.BlockEntityW
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.InternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.diskdrive.DiskDriveContainerMenu;
+import com.refinedmods.refinedstorage2.platform.fabric.util.WorldUtil;
 
 import java.util.Optional;
 
@@ -134,7 +135,7 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
     @Override
     public void activenessChanged(boolean active) {
         super.activenessChanged(active);
-        sync();
+        WorldUtil.updateBlock(level, worldPosition, this.getBlockState());
     }
 
     @Override
@@ -220,27 +221,35 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
 
     void onDiskChanged(int slot) {
         getNode().onDiskChanged(slot);
-        sync();
+        WorldUtil.updateBlock(level, worldPosition, this.getBlockState());
         setChanged();
     }
 
+    @Override
+    protected void onNetworkInNodeInitialized() {
+        super.onNetworkInNodeInitialized();
+        // It's important to sync here as the initial update packet might have failed as the network
+        // could possibly be not initialized yet.
+        WorldUtil.updateBlock(level, worldPosition, this.getBlockState());
+    }
+
     private void fromClientTag(CompoundTag tag) {
-        if (tag.contains(TAG_STATES)) {
-            ListTag statesList = tag.getList(TAG_STATES, Tag.TAG_BYTE);
-
-            driveState = new DiskDriveState(statesList.size());
-            for (int i = 0; i < statesList.size(); ++i) {
-                int idx = ((ByteTag) statesList.get(i)).getAsInt();
-                if (idx < 0 || idx >= StorageDiskState.values().length) {
-                    idx = StorageDiskState.NONE.ordinal();
-                }
-                driveState.setState(i, StorageDiskState.values()[idx]);
-            }
-
-            // TODO: Still necessary?
-            BlockState state = level.getBlockState(getBlockPos());
-            level.sendBlockUpdated(getBlockPos(), state, state, 1 | 2);
+        if (!tag.contains(TAG_STATES)) {
+            return;
         }
+
+        ListTag statesList = tag.getList(TAG_STATES, Tag.TAG_BYTE);
+
+        driveState = new DiskDriveState(statesList.size());
+        for (int i = 0; i < statesList.size(); ++i) {
+            int idx = ((ByteTag) statesList.get(i)).getAsInt();
+            if (idx < 0 || idx >= StorageDiskState.values().length) {
+                idx = StorageDiskState.NONE.ordinal();
+            }
+            driveState.setState(i, StorageDiskState.values()[idx]);
+        }
+
+        WorldUtil.updateBlock(level, worldPosition, this.getBlockState());
     }
 
     @Nullable
@@ -252,6 +261,10 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();
+        // This null check is important. #getUpdateTag() can be called before the node's network is initialized!
+        if (getNode().getNetwork() == null) {
+            return tag;
+        }
         ListTag statesList = new ListTag();
         for (StorageDiskState state : getNode().createState().getStates()) {
             statesList.add(ByteTag.valueOf((byte) state.ordinal()));

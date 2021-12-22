@@ -26,7 +26,7 @@ public interface Rs2PlatformApiFacade {
 
     NetworkComponentRegistry getNetworkComponentRegistry();
 
-    void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level);
+    void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level, Runnable callback);
 
     void requestNetworkNodeRemoval(NetworkNodeContainer container, Level level);
 }

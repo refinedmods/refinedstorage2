@@ -23,7 +23,10 @@ public abstract class NetworkNodeContainerBlockEntity<T extends NetworkNode> ext
         if (level.isClientSide) {
             return;
         }
-        Rs2PlatformApiFacade.INSTANCE.requestNetworkNodeInitialization(this, level);
+        Rs2PlatformApiFacade.INSTANCE.requestNetworkNodeInitialization(this, level, this::onNetworkInNodeInitialized);
+    }
+
+    protected void onNetworkInNodeInitialized() {
     }
 
     @Override

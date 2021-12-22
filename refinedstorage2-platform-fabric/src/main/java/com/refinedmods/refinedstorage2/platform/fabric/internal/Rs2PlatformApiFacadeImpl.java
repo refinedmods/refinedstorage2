@@ -68,9 +68,12 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level) {
+    public void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level, Runnable callback) {
         LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
-        TickHandler.runWhenReady(() -> networkBuilder.initialize(container, connectionProvider));
+        TickHandler.runWhenReady(() -> {
+            networkBuilder.initialize(container, connectionProvider);
+            callback.run();
+        });
     }
 
     @Override
