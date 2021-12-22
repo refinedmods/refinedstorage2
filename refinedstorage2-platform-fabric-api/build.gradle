@@ -25,4 +25,11 @@ dependencies {
     implementation project(':refinedstorage2-storage-api')
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-network-api')
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
+    testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
+    testImplementation project(':refinedstorage2-test')
+}
+
+test {
+    useJUnitPlatform()
 }

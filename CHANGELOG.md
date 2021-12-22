@@ -27,6 +27,7 @@ before updating.
 - Prevent loading unloaded chunks.
 - Fix various bugs related to networks and chunk loading/unloading.
 - Fix not being able to move network devices with mods like Carrier.
+- Fix item quantity not being formatted in the Grid.
 
 ### Changed
 
@@ -42,6 +43,7 @@ before updating.
 - Upgrade Team Reborn Energy API.
 - Made block breaking faster.
 - Refined Storage now uses the bundled AutoConfig with ClothConfig and bundles ClothConfig.
+- Item quantity of "1" is now always being rendered in the Grid.
 
 ### Removed
 

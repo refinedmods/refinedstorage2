@@ -9,14 +9,14 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.item.StorageDiskItemImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformCappedStorage;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorage;
-import com.refinedmods.refinedstorage2.platform.fabric.api.util.FabricQuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.fabric.api.util.DropletsQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
-
-import java.util.Optional;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+
+import java.util.Optional;
 
 public class FluidStorageDiskItem extends StorageDiskItemImpl {
     private final FluidStorageType type;
@@ -28,7 +28,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected String formatQuantity(long qty) {
-        return FabricQuantityFormatter.formatDropletsAsBucket(qty);
+        return DropletsQuantityFormatter.formatDropletsAsBucket(qty);
     }
 
     @Override

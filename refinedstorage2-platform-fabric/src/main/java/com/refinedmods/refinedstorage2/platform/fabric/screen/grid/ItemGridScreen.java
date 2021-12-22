@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.screen.grid;
 
+import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
@@ -71,7 +72,10 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
 
     @Override
     protected String getAmount(GridResource<ItemResource> resource) {
-        return resource.isZeroed() ? "0" : String.valueOf(resource.getResourceAmount().getAmount());
+        if (resource.isZeroed()) {
+            return "0";
+        }
+        return QuantityFormatter.formatWithUnits(resource.getResourceAmount().getAmount());
     }
 
     @Override

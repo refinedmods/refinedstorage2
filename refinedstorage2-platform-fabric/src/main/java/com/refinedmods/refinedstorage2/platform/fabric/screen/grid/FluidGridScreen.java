@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.fabric.api.util.FabricQuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.fabric.api.util.DropletsQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FluidGridResource;
 import com.refinedmods.refinedstorage2.platform.fabric.util.ScreenUtil;
@@ -47,7 +47,10 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
 
     @Override
     protected String getAmount(GridResource<FluidResource> resource) {
-        return FabricQuantityFormatter.formatDropletsAsBucket(resource.isZeroed() ? 0 : resource.getResourceAmount().getAmount());
+        if (resource.isZeroed()) {
+            return "0";
+        }
+        return DropletsQuantityFormatter.formatDropletsAsBucket(resource.getResourceAmount().getAmount());
     }
 
     @Override

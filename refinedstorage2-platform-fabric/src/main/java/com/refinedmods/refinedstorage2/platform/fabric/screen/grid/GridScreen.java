@@ -239,8 +239,10 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         renderResource(poseStack, slotX, slotY, resource);
 
         String text = getAmount(resource);
+        if (text == null) {
+            return;
+        }
         Integer color = resource.isZeroed() ? ChatFormatting.RED.getColor() : ChatFormatting.WHITE.getColor();
-
         renderAmount(poseStack, slotX, slotY, text, color);
     }
 
