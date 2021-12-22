@@ -20,9 +20,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 This project uses [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
 
-## Documentation
+## Way of working when adding functionality
 
 If you are adding functionality or are changing behavior, please update the wiki and Patchouli in-game documentation.
+
+If there are differences with the Refined Storage 1 implementation, document this in the changelog as well.
+
+Make sure to implement a Minecraft advancement if needed.
 
 ## Code style
 
@@ -33,8 +37,8 @@ Please use the `.editorconfig` file as provided.
 Our SonarQube Quality Gate requires a minimum test coverage percentage of 80%. This an aggregated percentage over all
 the modules.
 
-The `refinedstorage2-platform-fabric` module is excluded because this contains a lot of Minecraft-specific code and is
-harder to test.
+The `refinedstorage2-platform-fabric` and `refinedstorage2-platform-fabric-api` modules are excluded because they
+contain a lot of Minecraft-specific code and is harder to test.
 
 ## Releasing
 
