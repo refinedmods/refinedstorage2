@@ -11,21 +11,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Rs2Test
 class DropletsQuantityFormatterTest {
     @Test
-    void Test_formatting_complete_buckets() {
-        assertThat(DropletsQuantityFormatter.formatDropletsAsBucket(FluidConstants.BUCKET)).isEqualTo("1");
-        assertThat(DropletsQuantityFormatter.formatDropletsAsBucket(FluidConstants.BUCKET * 2)).isEqualTo("2");
-        assertThat(DropletsQuantityFormatter.formatDropletsAsBucket(FluidConstants.BUCKET * 3)).isEqualTo("3");
+    void Test_formatting_as_bucket_with_units_for_complete_buckets() {
+        assertThat(DropletsQuantityFormatter.formatAsBucketWithUnits(FluidConstants.BUCKET)).isEqualTo("1");
+        assertThat(DropletsQuantityFormatter.formatAsBucketWithUnits(FluidConstants.BUCKET * 2)).isEqualTo("2");
+        assertThat(DropletsQuantityFormatter.formatAsBucketWithUnits(FluidConstants.BUCKET * 3)).isEqualTo("3");
+        assertThat(DropletsQuantityFormatter.formatAsBucketWithUnits(FluidConstants.BUCKET * 1000)).isEqualTo("1K");
     }
 
     @Test
-    void Test_formatting_partial_buckets() {
-        assertThat(DropletsQuantityFormatter.formatDropletsAsBucket(FluidConstants.BUCKET + (FluidConstants.BUCKET / 2))).isEqualTo("1");
-        assertThat(DropletsQuantityFormatter.formatDropletsAsBucket(FluidConstants.BUCKET + 1)).isEqualTo("1");
+    void Test_formatting_as_bucket_with_units_for_partial_buckets() {
+        assertThat(DropletsQuantityFormatter.formatAsBucketWithUnits(FluidConstants.BUCKET + (FluidConstants.BUCKET / 2))).isEqualTo("1");
+        assertThat(DropletsQuantityFormatter.formatAsBucketWithUnits(FluidConstants.BUCKET + 1)).isEqualTo("1");
     }
 
     @Test
-    void Test_formatting_less_than_1_bucket() {
-        assertThat(DropletsQuantityFormatter.formatDropletsAsBucket(FluidConstants.BUCKET / 2)).isEqualTo("0.5");
-        assertThat(DropletsQuantityFormatter.formatDropletsAsBucket(FluidConstants.BUCKET / 3)).isEqualTo("0.3");
+    void Test_formatting_as_bucket_with_units_for_less_than_1_bucket() {
+        assertThat(DropletsQuantityFormatter.formatAsBucketWithUnits(FluidConstants.BUCKET / 2)).isEqualTo("0.5");
+        assertThat(DropletsQuantityFormatter.formatAsBucketWithUnits(FluidConstants.BUCKET / 3)).isEqualTo("0.3");
+    }
+
+    @Test
+    void Test_formatting_as_bucket() {
+        assertThat(DropletsQuantityFormatter.formatAsBucket(FluidConstants.BUCKET)).isEqualTo("1");
+        assertThat(DropletsQuantityFormatter.formatAsBucket(FluidConstants.BUCKET * 1000)).isEqualTo("1,000");
     }
 }

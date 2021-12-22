@@ -50,7 +50,15 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
         if (resource.isZeroed()) {
             return "0";
         }
-        return DropletsQuantityFormatter.formatDropletsAsBucket(resource.getResourceAmount().getAmount());
+        return DropletsQuantityFormatter.formatAsBucketWithUnits(resource.getResourceAmount().getAmount());
+    }
+
+    @Override
+    protected String getAmountInTooltip(GridResource<FluidResource> resource) {
+        if (resource.isZeroed()) {
+            return "0";
+        }
+        return DropletsQuantityFormatter.formatAsBucket(resource.getResourceAmount().getAmount());
     }
 
     @Override

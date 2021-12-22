@@ -237,11 +237,11 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
     private void renderResourceWithAmount(PoseStack poseStack, int slotX, int slotY, GridResource<R> resource) {
         renderResource(poseStack, slotX, slotY, resource);
+        renderAmount(poseStack, slotX, slotY, resource);
+    }
 
+    private void renderAmount(PoseStack poseStack, int slotX, int slotY, GridResource<R> resource) {
         String text = getAmount(resource);
-        if (text == null) {
-            return;
-        }
         Integer color = resource.isZeroed() ? ChatFormatting.RED.getColor() : ChatFormatting.WHITE.getColor();
         renderAmount(poseStack, slotX, slotY, text, color);
     }
@@ -249,6 +249,8 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     protected abstract void renderResource(PoseStack poseStack, int slotX, int slotY, GridResource<R> resource);
 
     protected abstract String getAmount(GridResource<R> resource);
+
+    protected abstract String getAmountInTooltip(GridResource<R> resource);
 
     private void renderDisabledSlot(PoseStack poseStack, int slotX, int slotY) {
         RenderSystem.disableDepthTest();
@@ -276,7 +278,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
             renderTooltip(poseStack, lines, mouseX, mouseY);
         } else {
             List<FormattedCharSequence> smallLines = new ArrayList<>();
-            smallLines.add(Rs2Mod.createTranslation("misc", "total", getAmount(resource)).withStyle(ChatFormatting.GRAY).getVisualOrderText());
+            smallLines.add(Rs2Mod.createTranslation("misc", "total", getAmountInTooltip(resource)).withStyle(ChatFormatting.GRAY).getVisualOrderText());
 
             view.getTrackerEntry(resource.getResourceAmount().getResource()).ifPresent(entry -> smallLines.add(getLastModifiedText(entry).withStyle(ChatFormatting.GRAY).getVisualOrderText()));
 

@@ -79,6 +79,14 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
     }
 
     @Override
+    protected String getAmountInTooltip(GridResource<ItemResource> resource) {
+        if (resource.isZeroed()) {
+            return "0";
+        }
+        return QuantityFormatter.format(resource.getResourceAmount().getAmount());
+    }
+
+    @Override
     protected List<Component> getTooltip(GridResource<ItemResource> resource) {
         return getTooltipFromItem(((ItemGridResource) resource).getItemStack());
     }
