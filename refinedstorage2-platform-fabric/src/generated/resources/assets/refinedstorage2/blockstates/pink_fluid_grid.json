@@ -1,0 +1,124 @@
+{
+    "variants": {
+        "direction=up_north,active=true": {
+            "model": "refinedstorage2:block/fluid_grid/pink",
+            "x": -90,
+            "y": 180
+        },
+        "direction=up_north,active=false": {
+            "model": "refinedstorage2:block/fluid_grid/disconnected",
+            "x": -90,
+            "y": 180
+        },
+        "direction=up_east,active=true": {
+            "model": "refinedstorage2:block/fluid_grid/pink",
+            "x": -90,
+            "y": -90
+        },
+        "direction=up_east,active=false": {
+            "model": "refinedstorage2:block/fluid_grid/disconnected",
+            "x": -90,
+            "y": -90
+        },
+        "direction=up_south,active=true": {
+            "model": "refinedstorage2:block/fluid_grid/pink",
+            "x": -90,
+            "y": 0
+        },
+        "direction=up_south,active=false": {
+            "model": "refinedstorage2:block/fluid_grid/disconnected",
+            "x": -90,
+            "y": 0
+        },
+        "direction=up_west,active=true": {
+            "model": "refinedstorage2:block/fluid_grid/pink",
+            "x": -90,
+            "y": 90
+        },
+        "direction=up_west,active=false": {
+            "model": "refinedstorage2:block/fluid_grid/disconnected",
+            "x": -90,
+            "y": 90
+        },
+        "direction=down_north,active=true": {
+            "model": "refinedstorage2:block/fluid_grid/pink",
+            "x": 90,
+            "y": 0
+        },
+        "direction=down_north,active=false": {
+            "model": "refinedstorage2:block/fluid_grid/disconnected",
+            "x": 90,
+            "y": 0
+        },
+        "direction=down_east,active=true": {
+            "model": "refinedstorage2:block/fluid_grid/pink",
+            "x": 90,
+            "y": 90
+        },
+        "direction=down_east,active=false": {
+            "model": "refinedstorage2:block/fluid_grid/disconnected",
+            "x": 90,
+            "y": 90
+        },
+        "direction=down_south,active=true": {
+            "model": "refinedstorage2:block/fluid_grid/pink",
+            "x": 90,
+            "y": 180
+        },
+        "direction=down_south,active=false": {
+            "model": "refinedstorage2:block/fluid_grid/disconnected",
+            "x": 90,
+            "y": 180
+        },
+        "direction=down_west,active=true": {
+            "model": "refinedstorage2:block/fluid_grid/pink",
+            "x": 90,
+            "y": -90
+        },
+        "direction=down_west,active=false": {
+            "model": "refinedstorage2:block/fluid_grid/disconnected",
+            "x": 90,
+            "y": -90
+        },
+        "direction=north,active=true": {
+            "model": "refinedstorage2:block/fluid_grid/pink",
+            "x": 0,
+            "y": 0
+        },
+        "direction=north,active=false": {
+            "model": "refinedstorage2:block/fluid_grid/disconnected",
+            "x": 0,
+            "y": 0
+        },
+        "direction=east,active=true": {
+            "model": "refinedstorage2:block/fluid_grid/pink",
+            "x": 0,
+            "y": 90
+        },
+        "direction=east,active=false": {
+            "model": "refinedstorage2:block/fluid_grid/disconnected",
+            "x": 0,
+            "y": 90
+        },
+        "direction=south,active=true": {
+            "model": "refinedstorage2:block/fluid_grid/pink",
+            "x": 0,
+            "y": 180
+        },
+        "direction=south,active=false": {
+            "model": "refinedstorage2:block/fluid_grid/disconnected",
+            "x": 0,
+            "y": 180
+        },
+        "direction=west,active=true": {
+            "model": "refinedstorage2:block/fluid_grid/pink",
+            "x": 0,
+            "y": 270
+        },
+        "direction=west,active=false": {
+            "model": "refinedstorage2:block/fluid_grid/disconnected",
+            "x": 0,
+            "y": 270
+        }
+    }
+}

@@ -7,6 +7,49 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+Storage Disks from the previous version are no longer valid. Please move all your items into another storage medium
+before updating.
+
+### Added
+
+- Fluid Storage Part
+- Fluid Storage Disk
+- Fluid Grid
+- Wrench
+- Tooltip search in the Grid with unary operator "#".
+
+### Fixed
+
+- Fix Disk Drive item filters not being applied when reloading a world.
+- Fix Storage Disk contents being scrambled when other mods are being added or removed.
+- Fix rendering crash with the Disk Drive.
+- Fix colored blocks having incorrect names in WTHIT.
+- Prevent loading unloaded chunks.
+- Fix various bugs related to networks and chunk loading/unloading.
+- Fix not being able to move network devices with mods like Carrier.
+- Fix item quantity not being formatted in the Grid.
+- Fix amount in detailed Grid tooltip being formatted with units.
+
+### Changed
+
+- Ported to Minecraft 1.18.1.
+- Modularized the codebase.
+- The capacity of the various fluid storage part and fluid storage disk tiers are now described in bucket form, no
+  longer in mB form.
+- The Wrench now plays a sound effect when used.
+- The Wrench works on any block that has the `fabric:wrenchables` tag. Other mods can identify the Refined Storage
+  wrench by checking the `fabric:wrenches` tag.
+- Made energy usage by the Grid and Disk Drive less power-hungry.
+- The Controller now displays an energy bar on the item.
+- Upgrade Team Reborn Energy API.
+- Made block breaking faster.
+- Refined Storage now uses the bundled AutoConfig with ClothConfig and bundles ClothConfig.
+- Item quantity of "1" is now always being rendered in the Grid.
+
+### Removed
+
+- LibBlockAttributes is no longer used and thus no longer bundled with Refined Storage 2.
+
 ## [2.0.0-milestone.1.1] - 2021-08-16
 
 ### Added
@@ -15,14 +58,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Fix crash when transferring items in the Controller screen
-- Fix Disk Drive leds not being stable
-- Fix block variants not being present on Patchouli book entries
+- Fix crash when transferring items in the Controller screen.
+- Fix Disk Drive leds not being stable.
+- Fix block variants not being present on Patchouli book entries.
 
 ### Changed
 
-- Ported to Minecraft 1.17.1
-- Implemented a new networking system
+- Ported to Minecraft 1.17.1.
+- Implemented a new networking system.
 
 ## [2.0.0-milestone.1.0] - 2021-05-21
 

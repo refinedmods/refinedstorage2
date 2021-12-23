@@ -6,8 +6,26 @@ pluginManagement {
         }
         gradlePluginPortal()
     }
+
+    plugins {
+        id 'fabric-loom' version '0.8-SNAPSHOT'
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
 }
 
 rootProject.name = 'refinedstorage2'
-include 'core'
-include 'fabric'
+include 'refinedstorage2-platform-fabric'
+include 'refinedstorage2-test'
+include 'refinedstorage2-core-api'
+include 'refinedstorage2-resource-api'
+include 'refinedstorage2-storage-api'
+include 'refinedstorage2-query-parser'
+include 'refinedstorage2-grid-api'
+include 'refinedstorage2-network-api'
+include 'refinedstorage2-platform-fabric-api'
+

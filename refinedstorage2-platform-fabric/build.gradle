@@ -1,0 +1,109 @@
+plugins {
+    id 'fabric-loom' version '0.10-SNAPSHOT'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+archivesBaseName = 'refinedstorage2-platform-fabric'
+
+repositories {
+    // Patchouli
+    maven {
+        url 'https://maven.blamejared.com'
+    }
+    // REI
+    maven {
+        url 'https://maven.terraformersmc.com/'
+    }
+    // Cloth Config
+    maven {
+        url 'https://maven.shedaniel.me/'
+    }
+    // Parchment
+    maven {
+        url 'https://maven.parchmentmc.org'
+    }
+    // wthit
+    maven {
+        url "https://maven.bai.lol"
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraftVersion}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${project.minecraftVersion}:${project.parchmentVersion}@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricApiVersion}"
+
+    implementation project(':refinedstorage2-core-api')
+    include project(':refinedstorage2-core-api')
+
+    implementation project(':refinedstorage2-resource-api')
+    include project(':refinedstorage2-resource-api')
+
+    implementation project(':refinedstorage2-storage-api')
+    include project(':refinedstorage2-storage-api')
+
+    implementation project(':refinedstorage2-network-api')
+    include project(':refinedstorage2-network-api')
+
+    implementation project(':refinedstorage2-query-parser')
+    include project(':refinedstorage2-query-parser')
+
+    implementation project(':refinedstorage2-grid-api')
+    include project(':refinedstorage2-grid-api')
+
+    implementation project(path: ':refinedstorage2-platform-fabric-api', configuration: 'namedElements')
+    include project(':refinedstorage2-platform-fabric-api')
+
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.clothConfigVersion}") {
+        exclude(group: 'net.fabricmc.fabric-api')
+    }
+    include "me.shedaniel.cloth:cloth-config-fabric:${project.clothConfigVersion}"
+
+    modApi("teamreborn:energy:${project.energyVersion}") {
+        exclude(group: 'net.fabricmc.fabric-api')
+    }
+    include "teamreborn:energy:${project.energyVersion}"
+
+    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${project.reiVersion}") {
+        exclude(group: 'me.shedaniel.cloth')
+    }
+    modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}")
+    modImplementation "com.terraformersmc:modmenu:${project.modMenuVersion}"
+    modImplementation "vazkii.patchouli:Patchouli:${project.patchouliVersion}"
+
+    modRuntimeOnly("mcp.mobius.waila:wthit:fabric-${project.wthitVersion}")
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/refinedstorage2.accesswidener")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+sourceSets {
+    main.resources.srcDirs += 'src/generated/resources'
+}
+
+processResources {
+    inputs.property 'version', project.version
+
+    filesMatching('data/refinedstorage2/patchouli_books/book/book.json') {
+        expand 'version': project.version
+    }
+}
+
+java {
+    withSourcesJar()
+}
+
+jar {
+    from '../LICENSE.md'
+}

@@ -1,0 +1,12 @@
+archivesBaseName = 'refinedstorage2-query-parser'
+
+dependencies {
+    testImplementation project(':refinedstorage2-test')
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
+    testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${project.junitVersion}"
+}
+
+test {
+    useJUnitPlatform()
+}

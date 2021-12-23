@@ -1,0 +1,5 @@
+accessWidener	v1	named
+accessible class  net/minecraft/client/renderer/RenderStateShard$ShaderStateShard
+accessible class  net/minecraft/client/renderer/RenderType$CompositeState
+accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
+extendable    method    net/minecraft/client/gui/screens/inventory/AbstractContainerScreen    renderSlot    (Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/inventory/Slot;)V

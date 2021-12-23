@@ -1,0 +1,17 @@
+{
+    "schemaVersion": 1,
+    "id": "refinedstorage2-storage-api",
+    "version": "${version}",
+    "name": "Refined Storage 2 Storage API",
+    "authors": [
+        "Refined Mods"
+    ],
+    "license": "MIT",
+    "environment": "*",
+    "custom": {
+        "modmenu": {
+            "parent": "refinedstorage2",
+            "badges": ["library"]
+        }
+    }
+}

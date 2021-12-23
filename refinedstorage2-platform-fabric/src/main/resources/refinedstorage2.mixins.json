@@ -1,0 +1,17 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.refinedmods.refinedstorage2.platform.fabric.mixin",
+    "compatibilityLevel": "JAVA_16",
+    "mixins": [
+        "SlotAccessor"
+    ],
+    "client": [
+        "EditBoxAccessor",
+        "ItemPropertiesAccessor",
+        "KeyMappingAccessor"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

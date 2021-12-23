@@ -1,0 +1,9 @@
+plugins {
+    id 'java-library'
+}
+
+archivesBaseName = 'refinedstorage2-test'
+
+dependencies {
+    api "org.junit.jupiter:junit-jupiter-api:${project.junitVersion}"
+}

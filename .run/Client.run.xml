@@ -1,14 +1,14 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Client" type="Application" factoryName="Application">
-      <option name="ALTERNATIVE_JRE_PATH" value="16"/>
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true"/>
-      <option name="MAIN_CLASS_NAME" value="net.fabricmc.devlaunchinjector.Main"/>
-      <module name="refinedstorage2.fabric.main"/>
-      <option name="VM_PARAMETERS"
-              value="-Dfabric.dli.config=$PROJECT_DIR$/../refinedstorage2\fabric\.gradle\loom-cache\launch.cfg -Dfabric.dli.env=client -Dfabric.dli.main=net.fabricmc.loader.launch.knot.KnotClient"/>
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run-client"/>
-      <method v="2">
-          <option name="Make" enabled="true"/>
-      </method>
-  </configuration>
+    <configuration default="false" name="Client" type="Application" factoryName="Application">
+        <option name="ALTERNATIVE_JRE_PATH" value="temurin-17"/>
+        <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true"/>
+        <option name="MAIN_CLASS_NAME" value="net.fabricmc.devlaunchinjector.Main"/>
+        <module name="refinedstorage2.refinedstorage2-platform-fabric.main"/>
+        <option name="VM_PARAMETERS"
+                value="-Dfabric.dli.config=$PROJECT_DIR$\refinedstorage2-platform-fabric\.gradle\loom-cache\launch.cfg -Dfabric.dli.env=client -Dfabric.dli.main=net.fabricmc.loader.launch.knot.KnotClient"/>
+        <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run-client"/>
+        <method v="2">
+            <option name="Make" enabled="true"/>
+        </method>
+    </configuration>
 </component>

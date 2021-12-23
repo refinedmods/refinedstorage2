@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "EPE",
+        "EEE",
+        " E "
+    ],
+    "key": {
+        "E": {
+            "item": "refinedstorage2:quartz_enriched_iron"
+        },
+        "P": {
+            "item": "refinedstorage2:basic_processor"
+        }
+    },
+    "result": {
+        "item": "refinedstorage2:wrench"
+    }
+}

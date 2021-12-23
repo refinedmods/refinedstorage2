@@ -1,0 +1,92 @@
+plugins {
+    id("maven-publish")
+    id "org.sonarqube" version "3.3"
+}
+
+allprojects {
+    apply plugin: 'jacoco'
+}
+
+subprojects {
+    group = 'com.refinedmods.refinedstorage2'
+    version = '2.0.0-milestone.1.2'
+
+    if (System.getenv('GITHUB_SHA') != null) {
+        version += '+' + System.getenv('GITHUB_SHA').substring(0, 7)
+    }
+
+    if (System.getenv('RELEASE') != null) {
+        version = System.getenv('RELEASE').substring(1) // remove 'v'
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
+    tasks.withType(JavaCompile).configureEach {
+        it.options.encoding = 'UTF-8'
+    }
+
+    processResources {
+        inputs.property 'version', project.version
+
+        filesMatching('fabric.mod.json') {
+            expand 'version': project.version
+        }
+    }
+
+    apply plugin: "maven-publish"
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage2")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+        publications {
+            gpr(MavenPublication) {
+                from(components.java)
+            }
+        }
+    }
+}
+
+task allJavadoc(type: Javadoc) {
+    source subprojects*.sourceSets.main.allJava
+    classpath += files(subprojects*.sourceSets.main.compileClasspath)
+    destinationDir = file("build/docs/javadoc")
+}
+
+// http://csiebler.github.io/blog/2014/02/09/multi-project-code-coverage-using-gradle-and-jacoco/
+task codeCoverageReport(type: JacocoReport) {
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
+    reports {
+        xml.enabled true
+        html.enabled true
+        csv.enabled false
+    }
+}
+
+// always run the tests before generating the report
+codeCoverageReport.dependsOn {
+    subprojects*.test
+}
+
+// https://docs.sonarqube.org/latest/analysis/github-integration/
+sonarqube {
+    properties {
+        property "sonar.projectKey", "refinedmods_refinedstorage2"
+        property "sonar.organization", "refinedmods"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
+        property "sonar.coverage.exclusions", "refinedstorage2-platform-fabric*/**/*"
+    }
+}
