@@ -33,6 +33,9 @@ class DropletsQuantityFormatterTest {
     @Test
     void Test_formatting_as_bucket() {
         assertThat(DropletsQuantityFormatter.formatAsBucket(FluidConstants.BUCKET)).isEqualTo("1");
+        assertThat(DropletsQuantityFormatter.formatAsBucket(FluidConstants.BUCKET + (FluidConstants.BUCKET / 2))).isEqualTo("1.5");
+        assertThat(DropletsQuantityFormatter.formatAsBucket(FluidConstants.BUCKET + (FluidConstants.BUCKET / 3))).isEqualTo("1.3");
         assertThat(DropletsQuantityFormatter.formatAsBucket(FluidConstants.BUCKET * 1000)).isEqualTo("1,000");
+        assertThat(DropletsQuantityFormatter.formatAsBucket((FluidConstants.BUCKET * 1000) + (FluidConstants.BUCKET / 3))).isEqualTo("1,000.3");
     }
 }
