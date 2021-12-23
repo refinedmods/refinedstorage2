@@ -71,13 +71,13 @@ public class ResourceFilterSlot extends Slot {
         type.render(poseStack, value, x, y, z);
     }
 
-    public List<Component> getTooltipLines() {
+    public List<Component> getTooltipLines(Player player) {
         ResourceType<Object> type = (ResourceType<Object>) resourceFilterContainer.getType(containerIndex);
         if (type == null) {
             return Collections.emptyList();
         }
         Object value = resourceFilterContainer.getFilter(containerIndex);
-        return type.getTooltipLines(value);
+        return type.getTooltipLines(value, player);
     }
 
     public void readFromUpdatePacket(FriendlyByteBuf buf) {

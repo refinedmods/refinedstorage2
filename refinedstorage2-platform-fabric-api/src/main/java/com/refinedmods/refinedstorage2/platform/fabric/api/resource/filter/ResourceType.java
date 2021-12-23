@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public interface ResourceType<T> {
@@ -27,5 +28,5 @@ public interface ResourceType<T> {
 
     Optional<T> fromTag(CompoundTag tag);
 
-    List<Component> getTooltipLines(T value);
+    List<Component> getTooltipLines(T value, Player player);
 }

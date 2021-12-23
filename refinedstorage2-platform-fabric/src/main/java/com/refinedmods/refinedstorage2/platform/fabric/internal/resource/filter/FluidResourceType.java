@@ -23,6 +23,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
@@ -86,7 +87,7 @@ public class FluidResourceType implements ResourceType<FluidResource> {
     }
 
     @Override
-    public List<Component> getTooltipLines(FluidResource value) {
+    public List<Component> getTooltipLines(FluidResource value, Player player) {
         TooltipFlag.Default flag = Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL;
         return FluidVariantRendering.getTooltip(value.toFluidVariant(), flag);
     }
