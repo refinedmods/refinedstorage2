@@ -48,7 +48,7 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
 
     public ItemGridContainerMenu(int syncId, Inventory playerInventory, GridBlockEntity<ItemResource> grid) {
         super(Rs2Mod.MENUS.getGrid(), syncId, playerInventory, grid, createView());
-        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), itemResource -> (long) itemResource.getItem().getMaxStackSize());
+        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), itemResource -> (long) itemResource.getItem().getMaxStackSize(), 1);
         this.grid.addWatcher(this);
         this.itemGridEventHandler = new ItemGridEventHandlerImpl(this, gridService, playerInventory);
     }

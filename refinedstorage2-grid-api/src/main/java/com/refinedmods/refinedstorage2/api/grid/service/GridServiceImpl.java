@@ -16,18 +16,19 @@ public class GridServiceImpl<T> implements GridService<T> {
     private final StorageChannel<T> storageChannel;
     private final Source source;
     private final Function<T, Long> maxCountProvider;
-
-    // TODO: add singleAmount
+    private final long singleAmount;
 
     /**
      * @param storageChannel   the storage channel to act on
      * @param source           the source performing the grid interactions
      * @param maxCountProvider provider for the maximum amount of a given resource
+     * @param singleAmount     amount that needs to be extracted when using {@link GridInsertMode#SINGLE_RESOURCE} or {@link GridExtractMode#SINGLE_RESOURCE}
      */
-    public GridServiceImpl(StorageChannel<T> storageChannel, Source source, Function<T, Long> maxCountProvider) {
+    public GridServiceImpl(StorageChannel<T> storageChannel, Source source, Function<T, Long> maxCountProvider, long singleAmount) {
         this.storageChannel = storageChannel;
         this.source = source;
         this.maxCountProvider = maxCountProvider;
+        this.singleAmount = singleAmount;
     }
 
     @Override
@@ -53,7 +54,7 @@ public class GridServiceImpl<T> implements GridService<T> {
         return switch (extractMode) {
             case ENTIRE_RESOURCE -> extractableAmount;
             case HALF_RESOURCE -> extractableAmount == 1 ? 1 : extractableAmount / 2;
-            case SINGLE_RESOURCE -> Math.min(1, extractableAmount);
+            case SINGLE_RESOURCE -> Math.min(singleAmount, extractableAmount);
         };
     }
 
@@ -67,7 +68,7 @@ public class GridServiceImpl<T> implements GridService<T> {
     public void insert(T resource, GridInsertMode insertMode, ExtractableStorage<T> source) {
         long amount = switch (insertMode) {
             case ENTIRE_RESOURCE -> maxCountProvider.apply(resource);
-            case SINGLE_RESOURCE -> 1;
+            case SINGLE_RESOURCE -> singleAmount;
         };
         long extractedFromSource = source.extract(resource, amount, Action.SIMULATE);
         if (extractedFromSource == 0) {

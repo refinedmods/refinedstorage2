@@ -34,7 +34,7 @@ class GridServiceImplTest {
                 new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>()), ResourceListImpl::new,
                 new StorageTracker<>(() -> 0L)
         );
-        sut = new GridServiceImpl<>(storageChannel, () -> "Test source", r -> MAX_COUNT);
+        sut = new GridServiceImpl<>(storageChannel, () -> "Test source", r -> MAX_COUNT, 1);
     }
 
     @Nested
