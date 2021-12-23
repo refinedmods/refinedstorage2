@@ -51,7 +51,7 @@ public interface GridView<T> {
     boolean isPreventSorting();
 
     /**
-     * Preventing sorting means that the changes will still arrive on the backing list, but,
+     * Preventing sorting means that the changes will still arrive at the backing list and view list, but,
      * the view list won't be resorted and if a resource is zeroed, will stay in view until sorting is enabled
      * again.
      * This still requires a call to {@link #sort()} when preventing sorting is disabled again.
