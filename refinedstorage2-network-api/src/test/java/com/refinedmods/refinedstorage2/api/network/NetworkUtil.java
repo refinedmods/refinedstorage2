@@ -7,9 +7,11 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistryImpl;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.api.network.node.EmptyNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
@@ -39,8 +41,11 @@ public final class NetworkUtil {
     public static Network create(long energyStored, long energyCapacity) {
         Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
         EnergyNetworkComponent component = network.getComponent(EnergyNetworkComponent.class);
-        component.getEnergyStorage().addSource(new EnergyStorageImpl(energyCapacity));
-        component.getEnergyStorage().receive(energyStored, Action.EXECUTE);
+        EnergyStorage storage = new EnergyStorageImpl(energyCapacity);
+        storage.receive(energyStored, Action.EXECUTE);
+        ControllerNetworkNode controller = new ControllerNetworkNode();
+        controller.setEnergyStorage(storage);
+        component.onContainerAdded(() -> controller);
         return network;
     }
 
