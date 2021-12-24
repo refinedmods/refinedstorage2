@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal;
 
+import com.refinedmods.refinedstorage2.api.network.NetworkBuilder;
 import com.refinedmods.refinedstorage2.api.network.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistryImpl;
-import com.refinedmods.refinedstorage2.api.network.node.NetworkBuilder;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
@@ -13,7 +13,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageType;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.LevelConnectionProvider;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.resource.filter.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricClientStorageRepository;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.FabricStorageRepository;

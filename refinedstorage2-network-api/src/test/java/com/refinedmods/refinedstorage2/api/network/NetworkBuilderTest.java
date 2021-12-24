@@ -1,9 +1,7 @@
-package com.refinedmods.refinedstorage2.api.network.node.container;
+package com.refinedmods.refinedstorage2.api.network;
 
-import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.node.NetworkBuilder;
+import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.List;
