@@ -1,12 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.fabric.containermenu;
 
+import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.property.TwoWaySyncProperty;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -66,11 +65,7 @@ public class ControllerContainerMenu extends BaseContainerMenu implements Redsto
         if (serverStored != controller.getActualStored() || serverCapacity != controller.getActualCapacity()) {
             serverStored = controller.getActualStored();
             serverCapacity = controller.getActualCapacity();
-
-            ServerPacketUtil.sendToPlayer((ServerPlayer) playerEntity, PacketIds.CONTROLLER_ENERGY, buf -> {
-                buf.writeLong(serverStored);
-                buf.writeLong(serverCapacity);
-            });
+            PlatformAbstractions.INSTANCE.getServerToClientCommunications().sendControllerEnergy((ServerPlayer) playerEntity, serverStored, serverCapacity);
         }
     }
 

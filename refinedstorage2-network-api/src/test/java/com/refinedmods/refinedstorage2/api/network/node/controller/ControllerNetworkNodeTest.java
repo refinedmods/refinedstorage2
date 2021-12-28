@@ -4,31 +4,18 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.stream.Stream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
 class ControllerNetworkNodeTest {
-    private static Stream<Arguments> getStoredAndExpectedState() {
-        return Stream.of(
-                Arguments.of(0, ControllerEnergyState.OFF),
-                Arguments.of(1, ControllerEnergyState.NEARLY_OFF),
-                Arguments.of(29, ControllerEnergyState.NEARLY_OFF),
-                Arguments.of(30, ControllerEnergyState.NEARLY_ON),
-                Arguments.of(39, ControllerEnergyState.NEARLY_ON),
-                Arguments.of(40, ControllerEnergyState.ON),
-                Arguments.of(50, ControllerEnergyState.ON),
-                Arguments.of(100, ControllerEnergyState.ON)
-        );
-    }
-
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void Test_always_active(boolean explicitlyActive) {
@@ -78,6 +65,19 @@ class ControllerNetworkNodeTest {
         assertThat(actualCapacity).isEqualTo(100);
     }
 
+    private static Stream<Arguments> getStoredAndExpectedState() {
+        return Stream.of(
+                Arguments.of(0, ControllerEnergyState.OFF),
+                Arguments.of(1, ControllerEnergyState.NEARLY_OFF),
+                Arguments.of(29, ControllerEnergyState.NEARLY_OFF),
+                Arguments.of(30, ControllerEnergyState.NEARLY_ON),
+                Arguments.of(39, ControllerEnergyState.NEARLY_ON),
+                Arguments.of(40, ControllerEnergyState.ON),
+                Arguments.of(50, ControllerEnergyState.ON),
+                Arguments.of(100, ControllerEnergyState.ON)
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("getStoredAndExpectedState")
     void Test_calculating_states(long stored, ControllerEnergyState expectedState) {
@@ -91,6 +91,21 @@ class ControllerNetworkNodeTest {
 
         // Assert
         assertThat(state).isEqualTo(expectedState);
+    }
+
+    @Test
+    void Test_state_when_inactive() {
+        // Arrange
+        ControllerNetworkNode sut = new ControllerNetworkNode();
+        sut.setEnergyStorage(new EnergyStorageImpl(100));
+        sut.receive(50, Action.EXECUTE);
+        sut.setActivenessProvider(() -> false);
+
+        // Act
+        ControllerEnergyState state = sut.getState();
+
+        // Assert
+        assertThat(state).isEqualTo(ControllerEnergyState.OFF);
     }
 
     @Test

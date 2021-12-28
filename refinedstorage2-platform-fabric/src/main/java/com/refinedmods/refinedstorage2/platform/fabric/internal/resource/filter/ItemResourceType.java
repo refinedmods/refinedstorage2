@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.resource.filter
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceType;
-import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketUtil;
 
 import java.util.List;
 import java.util.Optional;

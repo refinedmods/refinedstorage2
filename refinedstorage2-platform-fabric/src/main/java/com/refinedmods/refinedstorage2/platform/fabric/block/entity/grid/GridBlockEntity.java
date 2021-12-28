@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.InternalNetworkNodeContainerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketUtil;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
@@ -82,7 +82,7 @@ public abstract class GridBlockEntity<T> extends InternalNetworkNodeContainerBlo
         buf.writeInt(getNode().getResourceCount());
         getNode().forEachResource((stack, trackerEntry) -> {
             writeResourceAmount(buf, stack);
-            PacketUtil.writeTrackerEntry(buf, trackerEntry);
+            PacketUtil.writeTrackerEntry(buf, trackerEntry.orElse(null));
         });
     }
 

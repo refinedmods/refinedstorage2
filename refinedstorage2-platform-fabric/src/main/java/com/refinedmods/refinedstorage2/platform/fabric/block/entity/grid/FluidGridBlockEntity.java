@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResourc
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketUtil;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
@@ -20,11 +20,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.Fluid
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FluidGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.SlotAccessor;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
-import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
-
-import java.util.Optional;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketUtil;
 
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.network.FriendlyByteBuf;
@@ -74,15 +70,16 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
 
     @Override
     public void onChanged(ResourceListOperationResult<FluidResource> change) {
-        LOGGER.info("Received a change of {} for {}", change.change(), change.resourceAmount().getResource());
+        FluidResource resource = change.resourceAmount().getResource();
 
-        ServerPacketUtil.sendToPlayer((ServerPlayer) playerInventory.player, PacketIds.GRID_FLUID_UPDATE, buf -> {
-            PacketUtil.writeFluidResource(buf, change.resourceAmount().getResource());
-            buf.writeLong(change.change());
+        LOGGER.info("Received a change of {} for {}", change.change(), resource);
 
-            Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(change.resourceAmount().getResource());
-            PacketUtil.writeTrackerEntry(buf, entry);
-        });
+        PlatformAbstractions.INSTANCE.getServerToClientCommunications().sendGridFluidUpdate(
+                (ServerPlayer) playerInventory.player,
+                resource,
+                change.change(),
+                storageChannel.getTracker().getEntry(resource).orElse(null)
+        );
     }
 
     @Override

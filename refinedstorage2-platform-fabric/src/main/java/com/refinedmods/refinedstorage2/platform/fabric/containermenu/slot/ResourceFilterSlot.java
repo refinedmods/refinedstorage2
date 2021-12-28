@@ -1,9 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.containermenu.slot;
 
+import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceType;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,10 +49,11 @@ public class ResourceFilterSlot extends Slot {
         if (!Objects.equals(current, cachedResource)) {
             LOGGER.info("Resource filter slot {} has changed", containerIndex);
             cachedResource = current;
-            ServerPacketUtil.sendToPlayer((ServerPlayer) player, PacketIds.RESOURCE_FILTER_SLOT_UPDATE, buf -> {
-                buf.writeInt(index);
-                resourceFilterContainer.writeToUpdatePacket(containerIndex, buf);
-            });
+            PlatformAbstractions.INSTANCE.getServerToClientCommunications().sendResourceFilterSlotUpdate(
+                    (ServerPlayer) player,
+                    resourceFilterContainer,
+                    index
+            );
         }
     }
 

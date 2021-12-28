@@ -57,6 +57,9 @@ dependencies {
     implementation project(':refinedstorage2-grid-api')
     include project(':refinedstorage2-grid-api')
 
+    implementation project(path: ':refinedstorage2-platform-abstractions', configuration: 'namedElements')
+    include project(':refinedstorage2-platform-abstractions')
+
     implementation project(path: ':refinedstorage2-platform-fabric-api', configuration: 'namedElements')
     include project(':refinedstorage2-platform-fabric-api')
 

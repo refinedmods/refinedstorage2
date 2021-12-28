@@ -1,11 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.fabric.containermenu;
 
+import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.slot.ResourceFilterSlot;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.fabric.util.ClientPacketUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +97,7 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
     @Override
     public void toggleResourceType() {
         this.currentResourceType = Rs2PlatformApiFacade.INSTANCE.getResourceTypeRegistry().toggle(currentResourceType);
-        ClientPacketUtil.sendToServer(PacketIds.RESOURCE_TYPE_CHANGE, buf -> buf.writeResourceLocation(currentResourceType.getId()));
+        PlatformAbstractions.INSTANCE.getClientToServerCommunications().sendResourceTypeChange(this.currentResourceType);
     }
 
     @Override

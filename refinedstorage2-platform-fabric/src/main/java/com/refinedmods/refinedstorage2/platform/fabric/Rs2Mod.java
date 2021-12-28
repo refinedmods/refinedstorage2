@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkCompon
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
+import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacadeProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.type.StorageTypeRegistry;
@@ -26,12 +27,14 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.Flu
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.fabric.loot.Rs2LootFunctions;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ClientToServerCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridScrollPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.PropertyChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceTypeChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.StorageInfoRequestPacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ServerToClientCommunicationsImpl;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
@@ -84,6 +87,9 @@ public class Rs2Mod implements ModInitializer {
     @Override
     public void onInitialize() {
         AutoConfig.register(Rs2Config.class, Toml4jConfigSerializer::new);
+
+        PlatformAbstractions.INSTANCE.setServerToClientCommunications(new ServerToClientCommunicationsImpl());
+        PlatformAbstractions.INSTANCE.setClientToServerCommunications(new ClientToServerCommunicationsImpl());
 
         initializePlatformApiFacade();
         registerDiskTypes();
