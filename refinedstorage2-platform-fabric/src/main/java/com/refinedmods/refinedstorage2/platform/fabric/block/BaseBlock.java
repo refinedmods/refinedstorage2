@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.block;
 
+import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.fabric.util.BiDirection;
 import com.refinedmods.refinedstorage2.platform.fabric.util.WrenchUtil;
@@ -8,6 +9,7 @@ import java.util.Optional;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -98,10 +100,10 @@ public abstract class BaseBlock extends Block {
     }
 
     private Optional<InteractionResult> tryOpenScreen(BlockState state, Level level, BlockPos pos, Player player) {
-        MenuProvider screenHandlerFactory = state.getMenuProvider(level, pos);
-        if (screenHandlerFactory != null) {
-            if (!level.isClientSide()) {
-                player.openMenu(screenHandlerFactory);
+        MenuProvider menuProvider = state.getMenuProvider(level, pos);
+        if (menuProvider != null) {
+            if (player instanceof ServerPlayer serverPlayer) {
+                PlatformAbstractions.INSTANCE.getMenuOpener().openMenu(serverPlayer, menuProvider);
             }
             return Optional.of(InteractionResult.SUCCESS);
         }

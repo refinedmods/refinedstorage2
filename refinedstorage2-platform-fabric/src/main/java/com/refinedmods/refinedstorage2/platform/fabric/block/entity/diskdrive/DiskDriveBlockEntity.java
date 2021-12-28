@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
+import com.refinedmods.refinedstorage2.platform.abstractions.menu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
@@ -22,7 +23,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.util.WorldUtil;
 import java.util.Optional;
 
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.ByteTag;
@@ -49,7 +49,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements RenderAttachmentBlockEntity, MenuProvider, BlockEntityWithDrops, DiskDriveListener, ExtendedScreenHandlerFactory {
+public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements RenderAttachmentBlockEntity, MenuProvider, BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_PRIORITY = "pri";

@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.abstractions;
 
+import com.refinedmods.refinedstorage2.platform.abstractions.menu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.abstractions.packet.ClientToServerCommunications;
 import com.refinedmods.refinedstorage2.platform.abstractions.packet.ServerToClientCommunications;
 
@@ -8,6 +9,7 @@ public final class PlatformAbstractions {
 
     private ServerToClientCommunications serverToClientCommunications;
     private ClientToServerCommunications clientToServerCommunications;
+    private MenuOpener menuOpener;
 
     private PlatformAbstractions() {
     }
@@ -26,5 +28,13 @@ public final class PlatformAbstractions {
 
     public void setClientToServerCommunications(ClientToServerCommunications clientToServerCommunications) {
         this.clientToServerCommunications = clientToServerCommunications;
+    }
+
+    public MenuOpener getMenuOpener() {
+        return menuOpener;
+    }
+
+    public void setMenuOpener(MenuOpener menuOpener) {
+        this.menuOpener = menuOpener;
     }
 }

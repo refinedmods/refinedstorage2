@@ -21,6 +21,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.Rs2PlatformApiFa
 import com.refinedmods.refinedstorage2.platform.fabric.internal.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.search.PlatformSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.GridResourceAttributeKeys;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.menu.MenuOpenerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.resource.filter.FluidResourceType;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidStorageType;
@@ -90,6 +91,7 @@ public class Rs2Mod implements ModInitializer {
 
         PlatformAbstractions.INSTANCE.setServerToClientCommunications(new ServerToClientCommunicationsImpl());
         PlatformAbstractions.INSTANCE.setClientToServerCommunications(new ClientToServerCommunicationsImpl());
+        PlatformAbstractions.INSTANCE.setMenuOpener(new MenuOpenerImpl());
 
         initializePlatformApiFacade();
         registerDiskTypes();
