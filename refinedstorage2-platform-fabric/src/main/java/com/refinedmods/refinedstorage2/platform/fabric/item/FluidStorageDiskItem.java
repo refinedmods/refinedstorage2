@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.fabric.api.item.StorageDiskItemImpl;
@@ -14,7 +15,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.channel.
 
 import java.util.Optional;
 
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -54,7 +54,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
             );
         }
         return new PlatformCappedStorage<>(
-                new CappedStorage<>(type.getCapacity()),
+                new CappedStorage<>(type.getBuckets() * PlatformAbstractions.INSTANCE.getBucketAmount()),
                 com.refinedmods.refinedstorage2.platform.fabric.internal.storage.type.FluidStorageType.INSTANCE,
                 Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
         );
@@ -66,30 +66,30 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     }
 
     public enum FluidStorageType {
-        SIXTY_FOUR_B("64b", 64 * FluidConstants.BUCKET),
-        TWO_HUNDRED_FIFTY_SIX_B("256b", 256 * FluidConstants.BUCKET),
-        THOUSAND_TWENTY_FOUR_B("1024b", 1024 * FluidConstants.BUCKET),
-        FOUR_THOUSAND_NINETY_SIX_B("4096b", 4096 * FluidConstants.BUCKET),
+        SIXTY_FOUR_B("64b", 64),
+        TWO_HUNDRED_FIFTY_SIX_B("256b", 256),
+        THOUSAND_TWENTY_FOUR_B("1024b", 1024),
+        FOUR_THOUSAND_NINETY_SIX_B("4096b", 4096),
         CREATIVE("creative", 0);
 
         private final String name;
-        private final long capacity;
+        private final long buckets;
 
-        FluidStorageType(String name, long capacity) {
+        FluidStorageType(String name, long buckets) {
             this.name = name;
-            this.capacity = capacity;
+            this.buckets = buckets;
         }
 
         public String getName() {
             return name;
         }
 
-        public long getCapacity() {
-            return capacity;
+        public long getBuckets() {
+            return buckets;
         }
 
         public boolean hasCapacity() {
-            return capacity > 0;
+            return buckets > 0;
         }
     }
 }

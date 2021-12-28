@@ -22,7 +22,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.PlayerSo
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketUtil;
 
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -46,7 +45,7 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
 
     public FluidGridContainerMenu(int syncId, Inventory playerInventory, FluidGridBlockEntity grid, ExtractableStorage<ItemResource> bucketStorage) {
         super(Rs2Mod.MENUS.getFluidGrid(), syncId, playerInventory, grid, createView());
-        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), resource -> Long.MAX_VALUE, FluidConstants.BUCKET);
+        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), resource -> Long.MAX_VALUE, PlatformAbstractions.INSTANCE.getBucketAmount());
         this.grid.addWatcher(this);
         this.fluidGridEventHandler = new FluidGridEventHandlerImpl(this, gridService, playerInventory, bucketStorage);
     }
