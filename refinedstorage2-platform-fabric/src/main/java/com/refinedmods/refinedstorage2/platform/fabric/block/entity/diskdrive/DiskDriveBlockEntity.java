@@ -22,7 +22,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.util.WorldUtil;
 
 import java.util.Optional;
 
-import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.ByteTag;
@@ -49,7 +48,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements RenderAttachmentBlockEntity, MenuProvider, BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider {
+public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements MenuProvider, BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_PRIORITY = "pri";
@@ -212,11 +211,6 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
     public void setAccessMode(AccessMode accessMode) {
         getNode().setAccessMode(accessMode);
         setChanged();
-    }
-
-    @Override
-    public @Nullable Object getRenderAttachmentData() {
-        return driveState;
     }
 
     void onDiskChanged(int slot) {

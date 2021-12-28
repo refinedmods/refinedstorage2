@@ -12,6 +12,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Quaternion;
+import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
@@ -45,7 +46,11 @@ public class DiskDriveBlockEntityRenderer implements BlockEntityRenderer<DiskDri
 
     @Override
     public void render(DiskDriveBlockEntity entity, float tickDelta, PoseStack poseStack, MultiBufferSource vertexConsumers, int light, int overlay) {
-        if (!(entity.getRenderAttachmentData() instanceof DiskDriveState)) {
+        if (!(entity instanceof RenderAttachmentBlockEntity renderAttachmentBlockEntity)) {
+            return;
+        }
+
+        if (!(renderAttachmentBlockEntity.getRenderAttachmentData() instanceof DiskDriveState diskStates)) {
             return;
         }
 
@@ -54,8 +59,6 @@ public class DiskDriveBlockEntityRenderer implements BlockEntityRenderer<DiskDri
         if (!blockState.hasProperty(BaseBlock.DIRECTION)) {
             return;
         }
-
-        DiskDriveState diskStates = (DiskDriveState) entity.getRenderAttachmentData();
 
         poseStack.pushPose();
 
