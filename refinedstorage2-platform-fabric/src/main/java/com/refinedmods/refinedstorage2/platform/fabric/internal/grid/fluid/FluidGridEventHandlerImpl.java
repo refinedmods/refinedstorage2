@@ -5,8 +5,9 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -23,7 +24,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
-import static com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource.ofFluidVariant;
+import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.ofFluidVariant;
+import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toFluidVariant;
 
 public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     private static final ItemVariant BUCKET_ITEM_VARIANT = ItemVariant.of(Items.BUCKET);
@@ -57,7 +59,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         }
         FluidResource fluidResource = ofFluidVariant(extractableResource);
         gridService.insert(fluidResource, insertMode, (resource, amount, action) -> {
-            FluidVariant fluidVariant = resource.toFluidVariant();
+            FluidVariant fluidVariant = toFluidVariant(resource);
             try (Transaction tx = Transaction.openOuter()) {
                 long extracted = cursorStorage.extract(fluidVariant, amount, tx);
                 if (action == Action.EXECUTE) {
@@ -84,7 +86,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         }
         FluidResource fluidResource = ofFluidVariant(extractableResource);
         gridService.insert(fluidResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action) -> {
-            FluidVariant fluidVariant = resource.toFluidVariant();
+            FluidVariant fluidVariant = toFluidVariant(resource);
             try (Transaction tx = Transaction.openOuter()) {
                 long extracted = fluidSlotStorage.extract(fluidVariant, amount, tx);
                 if (action == Action.EXECUTE) {
@@ -125,7 +127,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         }
         gridService.extract(fluidResource, mode, (resource, amount, action) -> {
             try (Transaction tx = Transaction.openOuter()) {
-                long inserted = destination.insert(resource.toFluidVariant(), amount, tx);
+                long inserted = destination.insert(toFluidVariant(resource), amount, tx);
                 boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, tx);
                 if (!couldInsertBucket) {
                     return amount;
@@ -153,7 +155,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             }
             gridService.extract(fluidResource, mode, (resource, amount, action) -> {
                 try (Transaction innerTx = tx.openNested()) {
-                    long inserted = destination.insert(resource.toFluidVariant(), amount, innerTx);
+                    long inserted = destination.insert(toFluidVariant(resource), amount, innerTx);
                     boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, innerTx);
                     if (!couldInsertBucket) {
                         return amount;

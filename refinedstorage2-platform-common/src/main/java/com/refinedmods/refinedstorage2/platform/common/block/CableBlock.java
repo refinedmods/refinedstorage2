@@ -1,0 +1,150 @@
+package com.refinedmods.refinedstorage2.platform.common.block;
+
+import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
+
+public class CableBlock extends NetworkNodeContainerBlock implements SimpleWaterloggedBlock {
+    private static final BooleanProperty NORTH = BooleanProperty.create("north");
+    private static final BooleanProperty EAST = BooleanProperty.create("east");
+    private static final BooleanProperty SOUTH = BooleanProperty.create("south");
+    private static final BooleanProperty WEST = BooleanProperty.create("west");
+    private static final BooleanProperty UP = BooleanProperty.create("up");
+    private static final BooleanProperty DOWN = BooleanProperty.create("down");
+
+    private static final VoxelShape SHAPE_CORE = box(6, 6, 6, 10, 10, 10);
+    private static final VoxelShape SHAPE_NORTH = box(6, 6, 0, 10, 10, 6);
+    private static final VoxelShape SHAPE_EAST = box(10, 6, 6, 16, 10, 10);
+    private static final VoxelShape SHAPE_SOUTH = box(6, 6, 10, 10, 10, 16);
+    private static final VoxelShape SHAPE_WEST = box(0, 6, 6, 6, 10, 10);
+    private static final VoxelShape SHAPE_UP = box(6, 10, 6, 10, 16, 10);
+    private static final VoxelShape SHAPE_DOWN = box(6, 0, 6, 10, 6, 10);
+
+    public CableBlock() {
+        super(BlockBehaviour.Properties.of(Material.GLASS).sound(SoundType.GLASS).strength(0.35F, 0.35F));
+
+        registerDefaultState(getStateDefinition().any()
+                .setValue(NORTH, false)
+                .setValue(EAST, false)
+                .setValue(SOUTH, false)
+                .setValue(WEST, false)
+                .setValue(UP, false)
+                .setValue(DOWN, false)
+                .setValue(BlockStateProperties.WATERLOGGED, false));
+    }
+
+    @Override
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter blockGetter, BlockPos pos) {
+        return !state.getValue(BlockStateProperties.WATERLOGGED);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public FluidState getFluidState(BlockState state) {
+        return Boolean.TRUE.equals(state.getValue(BlockStateProperties.WATERLOGGED)) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor level, BlockPos pos, BlockPos posFrom) {
+        return getState(state, level, pos);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
+        return false;
+    }
+
+    @Override
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return getState(defaultBlockState(), ctx.getLevel(), ctx.getClickedPos());
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+
+        builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN, BlockStateProperties.WATERLOGGED);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        VoxelShape shape = SHAPE_CORE;
+
+        if (Boolean.TRUE.equals(state.getValue(NORTH))) {
+            shape = Shapes.or(shape, SHAPE_NORTH);
+        }
+
+        if (Boolean.TRUE.equals(state.getValue(EAST))) {
+            shape = Shapes.or(shape, SHAPE_EAST);
+        }
+
+        if (Boolean.TRUE.equals(state.getValue(SOUTH))) {
+            shape = Shapes.or(shape, SHAPE_SOUTH);
+        }
+
+        if (Boolean.TRUE.equals(state.getValue(WEST))) {
+            shape = Shapes.or(shape, SHAPE_WEST);
+        }
+
+        if (Boolean.TRUE.equals(state.getValue(UP))) {
+            shape = Shapes.or(shape, SHAPE_UP);
+        }
+
+        if (Boolean.TRUE.equals(state.getValue(DOWN))) {
+            shape = Shapes.or(shape, SHAPE_DOWN);
+        }
+
+        return shape;
+    }
+
+    private boolean hasConnection(LevelAccessor world, BlockPos pos) {
+        return world.getBlockState(pos).getBlock() instanceof NetworkNodeContainerBlock;
+    }
+
+    private BlockState getState(BlockState currentState, LevelAccessor world, BlockPos pos) {
+        boolean north = hasConnection(world, pos.relative(Direction.NORTH));
+        boolean east = hasConnection(world, pos.relative(Direction.EAST));
+        boolean south = hasConnection(world, pos.relative(Direction.SOUTH));
+        boolean west = hasConnection(world, pos.relative(Direction.WEST));
+        boolean up = hasConnection(world, pos.relative(Direction.UP));
+        boolean down = hasConnection(world, pos.relative(Direction.DOWN));
+
+        return currentState
+                .setValue(NORTH, north)
+                .setValue(EAST, east)
+                .setValue(SOUTH, south)
+                .setValue(WEST, west)
+                .setValue(UP, up)
+                .setValue(DOWN, down);
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new CableBlockEntity(pos, state);
+    }
+}

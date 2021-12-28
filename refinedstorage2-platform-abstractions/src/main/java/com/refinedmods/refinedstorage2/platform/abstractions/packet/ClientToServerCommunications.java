@@ -2,10 +2,10 @@ package com.refinedmods.refinedstorage2.platform.abstractions.packet;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.platform.fabric.api.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 
 import java.util.UUID;
 

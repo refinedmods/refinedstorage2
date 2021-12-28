@@ -2,7 +2,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.FluidGridResource;
 
 import java.util.Set;
 import java.util.function.Function;
@@ -19,10 +20,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.TooltipFlag;
 
+import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toFluidVariant;
+
 public class FluidGridResourceFactory implements Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> {
     @Override
     public GridResource<FluidResource> apply(ResourceAmount<FluidResource> resourceAmount) {
-        FluidVariant fluidVariant = resourceAmount.getResource().toFluidVariant();
+        FluidVariant fluidVariant = toFluidVariant(resourceAmount.getResource());
 
         String name = getName(fluidVariant);
         String modId = getModId(fluidVariant);

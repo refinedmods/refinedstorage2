@@ -17,10 +17,10 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod"
+            "com.refinedmods.refinedstorage2.platform.fabric.ModInitializerImpl"
         ],
         "client": [
-            "com.refinedmods.refinedstorage2.platform.fabric.Rs2ClientMod"
+            "com.refinedmods.refinedstorage2.platform.fabric.ClientModInitializerImpl"
         ],
         "modmenu": [
             "com.refinedmods.refinedstorage2.platform.fabric.integration.ModMenuIntegration"
