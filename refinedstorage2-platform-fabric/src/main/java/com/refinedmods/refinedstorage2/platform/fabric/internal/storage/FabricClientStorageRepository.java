@@ -2,9 +2,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
+import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.fabric.api.storage.PlatformStorageRepository;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.fabric.util.ClientPacketUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +50,7 @@ public class FabricClientStorageRepository implements PlatformStorageRepository 
             return;
         }
         LOGGER.debug("Sending request info packet for {}", id);
-        ClientPacketUtil.sendToServer(PacketIds.STORAGE_INFO_REQUEST, data -> data.writeUUID(id));
+        PlatformAbstractions.INSTANCE.getClientToServerCommunications().sendStorageInfoRequest(id);
     }
 
     @Override

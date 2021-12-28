@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
@@ -19,11 +19,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ItemGr
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.ItemGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.SlotAccessor;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
-import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
-
-import java.util.Optional;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -72,15 +68,16 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
 
     @Override
     public void onChanged(ResourceListOperationResult<ItemResource> change) {
-        LOGGER.info("Received a change of {} for {}", change.change(), change.resourceAmount().getResource());
+        ItemResource resource = change.resourceAmount().getResource();
 
-        ServerPacketUtil.sendToPlayer((ServerPlayer) playerInventory.player, PacketIds.GRID_ITEM_UPDATE, buf -> {
-            PacketUtil.writeItemResource(buf, change.resourceAmount().getResource());
-            buf.writeLong(change.change());
+        LOGGER.info("Received a change of {} for {}", change.change(), resource);
 
-            Optional<StorageTracker.Entry> entry = storageChannel.getTracker().getEntry(change.resourceAmount().getResource());
-            PacketUtil.writeTrackerEntry(buf, entry);
-        });
+        PlatformAbstractions.INSTANCE.getServerToClientCommunications().sendGridItemUpdate(
+                (ServerPlayer) playerInventory.player,
+                resource,
+                change.change(),
+                storageChannel.getTracker().getEntry(resource).orElse(null)
+        );
     }
 
     @Override

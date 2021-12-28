@@ -1,10 +1,8 @@
-package com.refinedmods.refinedstorage2.platform.fabric.util;
+package com.refinedmods.refinedstorage2.platform.fabric.packet;
 
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
-
-import java.util.Optional;
 
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -69,13 +67,13 @@ public final class PacketUtil {
         );
     }
 
-    public static void writeTrackerEntry(FriendlyByteBuf buf, Optional<StorageTracker.Entry> entry) {
-        if (!entry.isPresent()) {
+    public static void writeTrackerEntry(FriendlyByteBuf buf, StorageTracker.Entry entry) {
+        if (entry == null) {
             buf.writeBoolean(false);
         } else {
             buf.writeBoolean(true);
-            buf.writeLong(entry.get().time());
-            buf.writeUtf(entry.get().name());
+            buf.writeLong(entry.time());
+            buf.writeUtf(entry.name());
         }
     }
 

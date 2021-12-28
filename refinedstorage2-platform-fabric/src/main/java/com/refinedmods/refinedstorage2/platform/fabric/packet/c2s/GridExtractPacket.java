@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResourc
 import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ItemGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketUtil;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

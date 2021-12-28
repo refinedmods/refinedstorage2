@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
 import com.refinedmods.refinedstorage2.platform.fabric.api.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RedstoneModeSettings;
@@ -19,10 +20,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.containermenu.BaseContain
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.search.PlatformSearchBoxModeImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.screen.grid.GridSearchBox;
-import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
-import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -304,7 +303,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     public void onActiveChanged(boolean active) {
         this.active = active;
         if (this.playerInventory.player instanceof ServerPlayer serverPlayerEntity) {
-            ServerPacketUtil.sendToPlayer(serverPlayerEntity, PacketIds.GRID_ACTIVE, buf -> buf.writeBoolean(active));
+            PlatformAbstractions.INSTANCE.getServerToClientCommunications().sendGridActiveness(serverPlayerEntity, active);
         }
     }
 

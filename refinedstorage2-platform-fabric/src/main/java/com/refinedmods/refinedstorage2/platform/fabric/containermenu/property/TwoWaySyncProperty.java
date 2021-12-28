@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.containermenu.property;
 
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.fabric.util.ClientPacketUtil;
+import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -35,10 +34,7 @@ public class TwoWaySyncProperty<T> extends DataSlot {
     }
 
     public void syncToServer(T newValue) {
-        ClientPacketUtil.sendToServer(PacketIds.PROPERTY_CHANGE, buf -> {
-            buf.writeInt(index);
-            buf.writeInt(serializer.apply(newValue));
-        });
+        PlatformAbstractions.INSTANCE.getClientToServerCommunications().sendPropertyChange(index, serializer.apply(newValue));
     }
 
     public T getDeserialized() {

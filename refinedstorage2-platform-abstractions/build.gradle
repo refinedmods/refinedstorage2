@@ -1,0 +1,27 @@
+plugins {
+    id 'fabric-loom' version '0.10-SNAPSHOT'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+archivesBaseName = 'refinedstorage2-platform-abstractions'
+
+repositories {
+    // Parchment
+    maven {
+        url 'https://maven.parchmentmc.org'
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraftVersion}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${project.minecraftVersion}:${project.parchmentVersion}@zip")
+    }
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricApiVersion}"
+    implementation project(':refinedstorage2-platform-fabric-api')
+    implementation project(':refinedstorage2-storage-api')
+    implementation project(':refinedstorage2-grid-api')
+}
