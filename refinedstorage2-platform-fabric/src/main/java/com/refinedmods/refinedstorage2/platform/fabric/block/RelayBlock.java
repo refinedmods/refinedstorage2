@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.platform.fabric.block;
 
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.RelayBlockEntity;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -11,6 +10,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -39,7 +39,7 @@ public class RelayBlock extends NetworkNodeContainerBlock {
     private static final VoxelShape SHAPE_DOWN = box(6, 0, 6, 10, 6, 10);
 
     public RelayBlock() {
-        super(FabricBlockSettings.of(Material.GLASS).sound(SoundType.GLASS).strength(0.35F, 0.35F));
+        super(BlockBehaviour.Properties.of(Material.GLASS).sound(SoundType.GLASS).strength(0.35F, 0.35F));
 
         registerDefaultState(getStateDefinition().any()
                 .setValue(NORTH, false)
