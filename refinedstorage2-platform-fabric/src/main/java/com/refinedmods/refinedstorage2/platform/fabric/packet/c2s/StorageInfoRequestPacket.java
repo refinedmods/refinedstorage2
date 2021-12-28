@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
-import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 
 import java.util.UUID;
 

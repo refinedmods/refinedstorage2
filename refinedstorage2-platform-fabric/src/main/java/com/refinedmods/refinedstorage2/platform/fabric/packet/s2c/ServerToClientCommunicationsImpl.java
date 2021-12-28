@@ -3,11 +3,11 @@ package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.abstractions.packet.ServerToClientCommunications;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketUtil;
 
 import java.util.UUID;
 import java.util.function.Consumer;

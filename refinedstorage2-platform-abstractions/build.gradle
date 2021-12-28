@@ -1,27 +1,29 @@
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'java'
+    id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
 }
-
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = 'refinedstorage2-platform-abstractions'
 
-repositories {
-    // Parchment
-    maven {
-        url 'https://maven.parchmentmc.org'
-    }
+minecraft {
+    version(project.minecraftVersion)
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraftVersion}"
-    mappings loom.layered() {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${project.minecraftVersion}:${project.parchmentVersion}@zip")
-    }
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricApiVersion}"
-    implementation project(':refinedstorage2-platform-fabric-api')
+    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.4'
+}
+
+dependencies {
     implementation project(':refinedstorage2-storage-api')
     implementation project(':refinedstorage2-grid-api')
+    implementation project(':refinedstorage2-core-api')
+    implementation project(':refinedstorage2-platform-api')
+    implementation project(':refinedstorage2-resource-api')
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
+    testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
+    testImplementation project(':refinedstorage2-test')
+}
+
+test {
+    useJUnitPlatform()
 }

@@ -2,7 +2,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.ItemGridResource;
 
 import java.util.Set;
 import java.util.function.Function;

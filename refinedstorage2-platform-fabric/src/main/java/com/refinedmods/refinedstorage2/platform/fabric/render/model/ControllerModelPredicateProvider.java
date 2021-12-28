@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.render.model;
 
-import com.refinedmods.refinedstorage2.platform.fabric.item.block.ControllerBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;

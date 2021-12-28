@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.FluidGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ItemGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketUtil;
+import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

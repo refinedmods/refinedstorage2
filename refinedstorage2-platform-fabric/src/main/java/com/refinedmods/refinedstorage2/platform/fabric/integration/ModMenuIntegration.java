@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.integration;
 
-import com.refinedmods.refinedstorage2.platform.fabric.Rs2Config;
+import com.refinedmods.refinedstorage2.platform.fabric.ConfigImpl;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
@@ -12,6 +12,6 @@ import net.fabricmc.api.Environment;
 public class ModMenuIntegration implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> AutoConfig.getConfigScreen(Rs2Config.class, parent).get();
+        return parent -> AutoConfig.getConfigScreen(ConfigImpl.class, parent).get();
     }
 }

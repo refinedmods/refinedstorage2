@@ -4,8 +4,9 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.platform.fabric.api.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
@@ -16,7 +17,8 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
-import static com.refinedmods.refinedstorage2.platform.fabric.api.resource.ItemResource.ofItemVariant;
+import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.ofItemVariant;
+import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toItemVariant;
 
 public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     private final AbstractContainerMenu screenHandler;
@@ -39,7 +41,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         ItemResource itemResource = new ItemResource(screenHandler.getCarried());
         gridService.insert(itemResource, insertMode, (resource, amount, action) -> {
             try (Transaction tx = Transaction.openOuter()) {
-                ItemVariant itemVariant = resource.toItemVariant();
+                ItemVariant itemVariant = toItemVariant(resource);
                 long extracted = playerCursorStorage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
@@ -59,7 +61,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         ItemResource itemResource = ofItemVariant(itemVariantInSlot);
         gridService.insert(itemResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action) -> {
             try (Transaction tx = Transaction.openOuter()) {
-                ItemVariant itemVariant = resource.toItemVariant();
+                ItemVariant itemVariant = toItemVariant(resource);
                 long extracted = storage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
@@ -72,7 +74,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     @Override
     public void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
         gridService.extract(itemResource, mode, (resource, amount, action) -> {
-            ItemVariant itemVariant = resource.toItemVariant();
+            ItemVariant itemVariant = toItemVariant(resource);
             try (Transaction tx = Transaction.openOuter()) {
                 long inserted = insert(itemVariant, amount, tx, cursor);
                 long remainder = amount - inserted;
@@ -97,7 +99,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     private void handleInventoryToGridScroll(ItemResource itemResource, Storage<ItemVariant> sourceStorage) {
         gridService.insert(itemResource, GridInsertMode.SINGLE_RESOURCE, (resource, amount, action) -> {
             try (Transaction tx = Transaction.openOuter()) {
-                ItemVariant itemVariant = resource.toItemVariant();
+                ItemVariant itemVariant = toItemVariant(resource);
                 long extracted = sourceStorage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
@@ -109,7 +111,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
 
     private void handleGridToInventoryScroll(ItemResource itemResource, Storage<ItemVariant> destinationStorage) {
         gridService.extract(itemResource, GridExtractMode.SINGLE_RESOURCE, (resource, amount, action) -> {
-            ItemVariant itemVariant = resource.toItemVariant();
+            ItemVariant itemVariant = toItemVariant(resource);
             try (Transaction tx = Transaction.openOuter()) {
                 long inserted = destinationStorage.insert(itemVariant, amount, tx);
                 long remainder = amount - inserted;

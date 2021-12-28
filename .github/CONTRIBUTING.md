@@ -78,14 +78,16 @@ Refined Storage 2 is modularized. That means that API is split up into various m
 Important to note is that most modules aren't dependent on Minecraft or a mod loader. Only modules that start
 with `refinedstorage2-platform-*` have dependencies on Minecraft.
 
-|Name|Description|
-|----|-----------|
-|`refinedstorage2-core-api`|Contains some utility classes and enums.|
-|`refinedstorage2-grid-api`|Contains Grid related functionality.|
-|`refinedstorage2-network-api`|Contains storage networking related functionality.|
-|`refinedstorage2-platform-fabric`|The platform module for Fabric. This module contains the playable mod and some internal API implementations. Don't depend on this when integrating!|
-|`refinedstorage2-platform-fabric-api`|The API package for Fabric. Use this to integrate with Refined Storage on Fabric.|
-|`refinedstorage2-query-parser`|A query parser. Contains a lexer and parser. Only used for Grid query parsing.|
-|`refinedstorage2-resource-api`|Contains API for handling resources and resource lists.|
-|`refinedstorage2-storage-api`|Contains storage related functionality.|
-|`refinedstorage2-test`|This module is used in tests to provide the `@Rs2Test` annotation.|
+| Name                                    | Description                                                                                                       |
+|-----------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| `refinedstorage2-core-api`              | Contains some utility classes and enums.                                                                          |
+| `refinedstorage2-grid-api`              | Contains Grid related functionality.                                                                              |
+| `refinedstorage2-network-api`           | Contains storage networking related functionality.                                                                |
+| `refinedstorage2-query-parser`          | A query parser. Contains a lexer and parser. Only used for Grid query parsing.                                    |
+| `refinedstorage2-resource-api`          | Contains API for handling resources and resource lists.                                                           |
+| `refinedstorage2-storage-api`           | Contains storage related functionality.                                                                           |
+| `refinedstorage2-test`                  | This module is used in tests to provide the `@Rs2Test` annotation.                                                |
+| `refinedstorage2-platform-fabric`       | The platform module for Fabric. This module contains Fabric specific code. Don't depend on this when integrating! |
+| `refinedstorage2-platform-api`          | The API package. Use this to integrate with Refined Storage.                                                      |
+| `refinedstorage2-platform-common`       | Common mod code. Most gameplay code is in here. Don't depend on this when integrating!                            |
+| `refinedstorage2-platform-abstractions` | Platform abstractions used for Fabric and Forge. Don't depend on this when integrating!                           |

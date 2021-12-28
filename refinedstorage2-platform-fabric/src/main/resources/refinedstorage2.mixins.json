@@ -5,12 +5,14 @@
     "compatibilityLevel": "JAVA_16",
     "mixins": [
         "SlotAccessor",
-        "DiskDriveHasRenderAttachmentMixin"
+        "DiskDriveHasRenderAttachmentMixin",
+        "ControllerHasTeamRebornEnergyMixin"
     ],
     "client": [
         "EditBoxAccessor",
         "ItemPropertiesAccessor",
-        "KeyMappingAccessor"
+        "KeyMappingAccessor",
+        "ResourceFilterSlotRenderingMixin"
     ],
     "injectors": {
         "defaultRequire": 1

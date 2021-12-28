@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ResourceFilterableContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceFilterableContainerMenu;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

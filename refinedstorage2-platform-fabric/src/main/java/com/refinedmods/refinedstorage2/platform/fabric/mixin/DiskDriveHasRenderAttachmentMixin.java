@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.mixin;
 
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
-import com.refinedmods.refinedstorage2.platform.fabric.block.entity.diskdrive.DiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
 
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import org.jetbrains.annotations.Nullable;

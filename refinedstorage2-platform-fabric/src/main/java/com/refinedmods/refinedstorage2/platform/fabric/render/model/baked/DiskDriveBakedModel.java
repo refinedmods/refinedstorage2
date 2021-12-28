@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked;
 
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
-import com.refinedmods.refinedstorage2.platform.fabric.block.BaseBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.BaseBlock;
 
 import java.util.Random;
 import java.util.function.Supplier;

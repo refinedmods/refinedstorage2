@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked;
 
-import com.refinedmods.refinedstorage2.platform.fabric.util.BiDirection;
+import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
