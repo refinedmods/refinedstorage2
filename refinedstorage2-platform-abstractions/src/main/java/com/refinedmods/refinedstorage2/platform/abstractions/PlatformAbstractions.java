@@ -10,6 +10,7 @@ public final class PlatformAbstractions {
     private ServerToClientCommunications serverToClientCommunications;
     private ClientToServerCommunications clientToServerCommunications;
     private MenuOpener menuOpener;
+    private long bucketAmount;
 
     private PlatformAbstractions() {
     }
@@ -36,5 +37,13 @@ public final class PlatformAbstractions {
 
     public void setMenuOpener(MenuOpener menuOpener) {
         this.menuOpener = menuOpener;
+    }
+
+    public long getBucketAmount() {
+        return bucketAmount;
+    }
+
+    public void setBucketAmount(long bucketAmount) {
+        this.bucketAmount = bucketAmount;
     }
 }

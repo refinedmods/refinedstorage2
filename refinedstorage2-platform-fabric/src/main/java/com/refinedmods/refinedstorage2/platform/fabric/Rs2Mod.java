@@ -46,6 +46,7 @@ import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.core.Registry;
@@ -92,6 +93,7 @@ public class Rs2Mod implements ModInitializer {
         PlatformAbstractions.INSTANCE.setServerToClientCommunications(new ServerToClientCommunicationsImpl());
         PlatformAbstractions.INSTANCE.setClientToServerCommunications(new ClientToServerCommunicationsImpl());
         PlatformAbstractions.INSTANCE.setMenuOpener(new MenuOpenerImpl());
+        PlatformAbstractions.INSTANCE.setBucketAmount(FluidConstants.BUCKET);
 
         initializePlatformApiFacade();
         registerDiskTypes();
