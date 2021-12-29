@@ -25,7 +25,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
@@ -107,7 +106,6 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
         return createTranslation("block", type == ControllerBlock.ControllerType.CREATIVE ? "creative_controller" : "controller");
     }
 
-    @Nullable
     @Override
     public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
         return new ControllerContainerMenu(syncId, inv, this, player);

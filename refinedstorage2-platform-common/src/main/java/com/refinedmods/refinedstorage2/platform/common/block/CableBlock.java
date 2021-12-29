@@ -23,7 +23,6 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.Nullable;
 
 public class CableBlock extends NetworkNodeContainerBlock implements SimpleWaterloggedBlock {
     private static final BooleanProperty NORTH = BooleanProperty.create("north");
@@ -78,7 +77,7 @@ public class CableBlock extends NetworkNodeContainerBlock implements SimpleWater
     }
 
     @Override
-    public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         return getState(defaultBlockState(), ctx.getLevel(), ctx.getClickedPos());
     }
 
@@ -142,7 +141,6 @@ public class CableBlock extends NetworkNodeContainerBlock implements SimpleWater
                 .setValue(DOWN, down);
     }
 
-    @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new CableBlockEntity(pos, state);

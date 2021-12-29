@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 
 public class FluidGridBlock extends GridBlock {
     private final MutableComponent name;
@@ -28,7 +27,6 @@ public class FluidGridBlock extends GridBlock {
         return Blocks.INSTANCE.getFluidGrid();
     }
 
-    @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new FluidGridBlockEntity(pos, state);
