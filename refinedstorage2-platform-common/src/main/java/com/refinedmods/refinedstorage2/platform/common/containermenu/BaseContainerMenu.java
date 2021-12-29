@@ -6,10 +6,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseContainerMenu extends AbstractContainerMenu {
-    protected BaseContainerMenu(@Nullable MenuType<?> type, int syncId) {
+    protected BaseContainerMenu(MenuType<?> type, int syncId) {
         super(type, syncId);
     }
 

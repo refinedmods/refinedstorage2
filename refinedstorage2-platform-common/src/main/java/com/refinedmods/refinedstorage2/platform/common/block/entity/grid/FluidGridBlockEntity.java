@@ -17,7 +17,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
@@ -36,7 +35,6 @@ public class FluidGridBlockEntity extends GridBlockEntity<FluidResource> {
         PacketUtil.writeFluidResourceAmount(buf, resourceAmount);
     }
 
-    @Nullable
     @Override
     public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
         return new FluidGridContainerMenu(syncId, inv, this, getBucketStorage());

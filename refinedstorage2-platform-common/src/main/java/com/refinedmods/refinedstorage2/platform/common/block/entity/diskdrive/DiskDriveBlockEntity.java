@@ -46,7 +46,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
@@ -248,7 +247,6 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
         LevelUtil.updateBlock(level, worldPosition, this.getBlockState());
     }
 
-    @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this, BlockEntity::getUpdateTag);
@@ -275,7 +273,7 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
     }
 
     @Override
-    public @Nullable AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
         return new DiskDriveContainerMenu(
                 syncId,
                 player,

@@ -25,7 +25,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseBlock extends Block {
     public static final EnumProperty<BiDirection> DIRECTION = EnumProperty.create("direction", BiDirection.class);
@@ -115,7 +114,7 @@ public abstract class BaseBlock extends Block {
 
     @Override
     @SuppressWarnings("deprecation")
-    public @Nullable MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
+    public MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         return blockEntity instanceof MenuProvider factory ? factory : null;
     }

@@ -16,7 +16,6 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu implements ResourceTypeAccessor {
     private final List<ResourceFilterSlot> resourceFilterSlots = new ArrayList<>();
@@ -24,13 +23,13 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
 
     private ResourceType<?> currentResourceType;
 
-    protected ResourceFilterableContainerMenu(@Nullable MenuType<?> type, int syncId, Player player, ResourceFilterContainer container) {
+    protected ResourceFilterableContainerMenu(MenuType<?> type, int syncId, Player player, ResourceFilterContainer container) {
         super(type, syncId);
         this.player = player;
         this.currentResourceType = container.determineDefaultType();
     }
 
-    protected ResourceFilterableContainerMenu(@Nullable MenuType<?> type, int syncId) {
+    protected ResourceFilterableContainerMenu(MenuType<?> type, int syncId) {
         super(type, syncId);
         this.player = null;
     }
