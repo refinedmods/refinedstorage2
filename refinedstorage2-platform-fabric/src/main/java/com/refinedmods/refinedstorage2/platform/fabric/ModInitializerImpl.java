@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstraction
 import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractionsProxy;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacadeProxy;
+import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
@@ -57,8 +58,8 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockI
 import com.refinedmods.refinedstorage2.platform.common.loot.ControllerLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.ReiIntegration;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergyAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.PlatformAbstractionsImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.mixin.ControllerHasTeamRebornEnergyMixin;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridInsertPacket;
@@ -159,8 +160,8 @@ public class ModInitializerImpl implements ModInitializer {
 
         Blocks.INSTANCE.getGrid().putAll(color -> Registry.register(Registry.BLOCK, Blocks.INSTANCE.getGrid().getId(color, "grid"), new ItemGridBlock(Blocks.INSTANCE.getGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")))));
         Blocks.INSTANCE.getFluidGrid().putAll(color -> Registry.register(Registry.BLOCK, Blocks.INSTANCE.getFluidGrid().getId(color, "fluid_grid"), new FluidGridBlock(Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")))));
-        Blocks.INSTANCE.getController().putAll(color -> Registry.register(Registry.BLOCK, Blocks.INSTANCE.getController().getId(color, "controller"), new ControllerBlock(ControllerBlock.ControllerType.NORMAL, Blocks.INSTANCE.getController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")))));
-        Blocks.INSTANCE.getCreativeController().putAll(color -> Registry.register(Registry.BLOCK, Blocks.INSTANCE.getCreativeController().getId(color, "creative_controller"), new ControllerBlock(ControllerBlock.ControllerType.CREATIVE, Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")))));
+        Blocks.INSTANCE.getController().putAll(color -> Registry.register(Registry.BLOCK, Blocks.INSTANCE.getController().getId(color, "controller"), new ControllerBlock(ControllerType.NORMAL, Blocks.INSTANCE.getController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")))));
+        Blocks.INSTANCE.getCreativeController().putAll(color -> Registry.register(Registry.BLOCK, Blocks.INSTANCE.getCreativeController().getId(color, "creative_controller"), new ControllerBlock(ControllerType.CREATIVE, Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")))));
     }
 
     private void registerItems() {
@@ -216,10 +217,10 @@ public class ModInitializerImpl implements ModInitializer {
         BlockEntities.INSTANCE.setDiskDrive(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("disk_drive"), FabricBlockEntityTypeBuilder.create(DiskDriveBlockEntity::new, Blocks.INSTANCE.getDiskDrive()).build(null)));
         BlockEntities.INSTANCE.setGrid(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("grid"), FabricBlockEntityTypeBuilder.create(ItemGridBlockEntity::new, Blocks.INSTANCE.getGrid().toArray()).build(null)));
         BlockEntities.INSTANCE.setFluidGrid(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("fluid_grid"), FabricBlockEntityTypeBuilder.create(FluidGridBlockEntity::new, Blocks.INSTANCE.getFluidGrid().toArray()).build(null)));
-        BlockEntities.INSTANCE.setController(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("controller"), FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerBlock.ControllerType.NORMAL, pos, state), Blocks.INSTANCE.getController().toArray()).build(null)));
-        BlockEntities.INSTANCE.setCreativeController(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("creative_controller"), FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerBlock.ControllerType.CREATIVE, pos, state), Blocks.INSTANCE.getCreativeController().toArray()).build(null)));
+        BlockEntities.INSTANCE.setController(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("controller"), FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.NORMAL, pos, state), Blocks.INSTANCE.getController().toArray()).build(null)));
+        BlockEntities.INSTANCE.setCreativeController(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("creative_controller"), FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.CREATIVE, pos, state), Blocks.INSTANCE.getCreativeController().toArray()).build(null)));
 
-        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> ((ControllerHasTeamRebornEnergyMixin) ((Object) blockEntity)).getTeamRebornEnergy(), BlockEntities.INSTANCE.getController());
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> ((ControllerTeamRebornEnergyAccessor) blockEntity).getLimitingEnergyStorage(), BlockEntities.INSTANCE.getController());
     }
 
     private void registerMenus() {

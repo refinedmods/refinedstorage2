@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
+import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
@@ -65,10 +66,4 @@ public class ControllerBlock extends NetworkNodeContainerBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return (type == BlockEntities.INSTANCE.getController() || type == BlockEntities.INSTANCE.getCreativeController()) && !level.isClientSide ? (level2, pos, state2, blockEntity) -> ControllerBlockEntity.serverTick(level2, state2, (ControllerBlockEntity) blockEntity) : null;
     }
-
-    public enum ControllerType {
-        NORMAL,
-        CREATIVE
-    }
-
 }

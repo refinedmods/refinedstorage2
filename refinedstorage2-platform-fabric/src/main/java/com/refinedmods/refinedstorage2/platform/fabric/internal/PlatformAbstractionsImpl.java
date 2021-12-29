@@ -2,6 +2,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
+import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.abstractions.BucketQuantityFormatter;
@@ -14,9 +16,11 @@ import com.refinedmods.refinedstorage2.platform.abstractions.packet.ClientToServ
 import com.refinedmods.refinedstorage2.platform.abstractions.packet.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.ConfigImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid.FluidGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item.ItemGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FluidGridResourceFactory;
@@ -137,6 +141,21 @@ public final class PlatformAbstractionsImpl implements PlatformAbstractions {
             return Optional.empty();
         }
         return convertNonEmptyToFluid(stack);
+    }
+
+    @Override
+    public EnergyStorage createEnergyStorage(ControllerType controllerType, Runnable listener) {
+        return switch (controllerType) {
+            case NORMAL -> new ControllerTeamRebornEnergy(listener);
+            case CREATIVE -> new InfiniteEnergyStorage();
+        };
+    }
+
+    @Override
+    public void setEnergy(EnergyStorage energyStorage, long stored) {
+        if (energyStorage instanceof ControllerTeamRebornEnergy controllerTeamRebornEnergy) {
+            controllerTeamRebornEnergy.setStoredSilently(stored);
+        }
     }
 
     private Optional<FluidResource> convertNonEmptyToFluid(ItemStack stack) {
