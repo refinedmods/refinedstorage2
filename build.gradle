@@ -75,6 +75,7 @@ task codeCoverageReport(type: JacocoReport) {
     }
     reports {
         html.required
+        xml.required
     }
 }
 
