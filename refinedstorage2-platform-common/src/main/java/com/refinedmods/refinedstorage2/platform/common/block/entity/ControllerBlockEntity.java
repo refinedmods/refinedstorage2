@@ -1,16 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
-import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.abstractions.menu.ExtendedMenuProvider;
+import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.network.energy.PlatformEnergyStorage;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -34,14 +32,14 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
     private static final String TAG_STORED = "stored";
     private static final int ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
 
-    private final ControllerBlock.ControllerType type;
+    private final ControllerType type;
     private final EnergyStorage energyStorage;
     private long lastTypeChanged;
 
-    public ControllerBlockEntity(ControllerBlock.ControllerType type, BlockPos pos, BlockState state) {
+    public ControllerBlockEntity(ControllerType type, BlockPos pos, BlockState state) {
         super(getBlockEntityType(type), pos, state, new ControllerNetworkNode());
         this.type = type;
-        this.energyStorage = createEnergyStorage(type);
+        this.energyStorage = PlatformAbstractions.INSTANCE.createEnergyStorage(type, this::setChanged);
         this.getNode().setEnergyStorage(energyStorage);
     }
 
@@ -50,22 +48,8 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
         blockEntity.updateEnergyTypeInLevel(state);
     }
 
-    private EnergyStorage createEnergyStorage(ControllerBlock.ControllerType type) {
-        return switch (type) {
-            case NORMAL -> createNormalEnergyStorage();
-            case CREATIVE -> new InfiniteEnergyStorage();
-        };
-    }
-
-    private EnergyStorage createNormalEnergyStorage() {
-        return new PlatformEnergyStorage(
-                new EnergyStorageImpl(PlatformAbstractions.INSTANCE.getConfig().getController().getCapacity()),
-                this::setChanged
-        );
-    }
-
-    private static BlockEntityType<ControllerBlockEntity> getBlockEntityType(ControllerBlock.ControllerType type) {
-        return type == ControllerBlock.ControllerType.CREATIVE
+    private static BlockEntityType<ControllerBlockEntity> getBlockEntityType(ControllerType type) {
+        return type == ControllerType.CREATIVE
                 ? BlockEntities.INSTANCE.getCreativeController()
                 : BlockEntities.INSTANCE.getController();
     }
@@ -96,14 +80,14 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        if (tag.contains(TAG_STORED) && energyStorage instanceof PlatformEnergyStorage platformEnergyStorage) {
-            platformEnergyStorage.receiveSilently(tag.getLong(TAG_STORED));
+        if (tag.contains(TAG_STORED)) {
+            PlatformAbstractions.INSTANCE.setEnergy(energyStorage, tag.getLong(TAG_STORED));
         }
     }
 
     @Override
     public Component getDisplayName() {
-        return createTranslation("block", type == ControllerBlock.ControllerType.CREATIVE ? "creative_controller" : "controller");
+        return createTranslation("block", type == ControllerType.CREATIVE ? "creative_controller" : "controller");
     }
 
     @Override

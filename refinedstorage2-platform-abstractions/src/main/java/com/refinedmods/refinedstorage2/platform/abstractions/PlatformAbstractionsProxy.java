@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.abstractions;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.abstractions.menu.MenuOpener;
@@ -9,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.abstractions.packet.ClientToServ
 import com.refinedmods.refinedstorage2.platform.abstractions.packet.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 
@@ -110,6 +112,16 @@ public class PlatformAbstractionsProxy implements PlatformAbstractions {
     @Override
     public Optional<FluidResource> convertToFluid(ItemStack stack) {
         return ensureLoaded().convertToFluid(stack);
+    }
+
+    @Override
+    public EnergyStorage createEnergyStorage(ControllerType controllerType, Runnable listener) {
+        return ensureLoaded().createEnergyStorage(controllerType, listener);
+    }
+
+    @Override
+    public void setEnergy(EnergyStorage energyStorage, long stored) {
+        ensureLoaded().setEnergy(energyStorage, stored);
     }
 
     private PlatformAbstractions ensureLoaded() {
