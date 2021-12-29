@@ -72,6 +72,7 @@ public abstract class BaseBlock extends Block {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public BlockState rotate(BlockState state, Rotation rotation) {
         if (!hasBiDirection()) {
             return state;

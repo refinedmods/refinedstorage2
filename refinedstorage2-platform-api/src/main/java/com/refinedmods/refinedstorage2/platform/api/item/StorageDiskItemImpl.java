@@ -24,7 +24,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 // TODO immunity for despawning
 // TODO tags in recipes
@@ -44,7 +43,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
     }
 
     @Override
-    public Optional<StorageInfo> getInfo(@Nullable Level level, ItemStack stack) {
+    public Optional<StorageInfo> getInfo(Level level, ItemStack stack) {
         if (level == null) {
             return Optional.empty();
         }
@@ -52,7 +51,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag context) {
+    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
 
         getInfo(level, stack).ifPresent(info -> {

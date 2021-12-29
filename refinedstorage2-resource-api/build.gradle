@@ -6,7 +6,6 @@ dependencies {
     testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
     testImplementation "nl.jqno.equalsverifier:equalsverifier:${project.equalsverifierVersion}"
     implementation "com.google.guava:guava:${project.guavaVersion}"
-    compileOnly "org.apiguardian:apiguardian-api:${project.apiGuardianVersion}"
 }
 
 test {

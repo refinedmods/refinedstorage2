@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ResourceFilterContainer {
     private final Object[] filters;
-    private final ResourceType[] types;
+    private final ResourceType<?>[] types;
     private final Runnable listener;
 
     public ResourceFilterContainer(int size, Runnable listener) {
@@ -68,6 +68,7 @@ public class ResourceFilterContainer {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void writeToUpdatePacket(int slot, FriendlyByteBuf buf) {
         ResourceType<Object> type = (ResourceType<Object>) getType(slot);
         if (type == null) {
@@ -79,6 +80,7 @@ public class ResourceFilterContainer {
         type.writeToPacket(buf, getFilter(slot));
     }
 
+    @SuppressWarnings("unchecked")
     public void readFromUpdatePacket(int slot, FriendlyByteBuf buf) {
         boolean present = buf.readBoolean();
         if (!present) {
@@ -91,6 +93,7 @@ public class ResourceFilterContainer {
         set(slot, type, value);
     }
 
+    @SuppressWarnings("unchecked")
     public CompoundTag toTag() {
         CompoundTag tag = new CompoundTag();
         for (int i = 0; i < size(); ++i) {
@@ -107,6 +110,7 @@ public class ResourceFilterContainer {
         return tag;
     }
 
+    @SuppressWarnings("unchecked")
     public void load(CompoundTag tag) {
         for (int i = 0; i < size(); ++i) {
             String key = "s" + i;
@@ -122,7 +126,7 @@ public class ResourceFilterContainer {
     }
 
     public ResourceType<?> determineDefaultType() {
-        List<ResourceType> distinctTypes = Arrays.stream(types).filter(Objects::nonNull).distinct().toList();
+        List<ResourceType<?>> distinctTypes = Arrays.stream(types).filter(Objects::nonNull).distinct().toList();
         if (distinctTypes.size() == 1) {
             return distinctTypes.get(0);
         }

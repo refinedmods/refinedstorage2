@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ControllerBlockEntity.class)
 public abstract class ControllerHasTeamRebornEnergyMixin {
-    @Shadow
+    @Shadow(remap = false)
     private EnergyStorage energyStorage;
 
     private ControllerTeamRebornEnergy teamRebornEnergy;
