@@ -57,8 +57,8 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBloc
 import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.loot.ControllerLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergyAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.PlatformAbstractionsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;

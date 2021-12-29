@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.internal.grid.item;
+package com.refinedmods.refinedstorage2.platform.fabric.internal.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;

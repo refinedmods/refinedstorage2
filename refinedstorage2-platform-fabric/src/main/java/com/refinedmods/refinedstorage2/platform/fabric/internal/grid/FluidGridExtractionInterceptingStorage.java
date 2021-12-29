@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.internal.grid.fluid;
+package com.refinedmods.refinedstorage2.platform.fabric.internal.grid;
 
 import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
 import net.minecraft.world.item.ItemStack;

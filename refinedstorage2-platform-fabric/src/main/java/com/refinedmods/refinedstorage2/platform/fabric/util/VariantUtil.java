@@ -6,7 +6,10 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 
-public class VariantUtil {
+public final class VariantUtil {
+    private VariantUtil() {
+    }
+
     public static ItemVariant toItemVariant(ItemResource itemResource) {
         return ItemVariant.of(itemResource.getItem(), itemResource.getTag());
     }

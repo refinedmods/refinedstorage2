@@ -1,10 +1,9 @@
-package com.refinedmods.refinedstorage2.platform.fabric.internal.grid.search;
+package com.refinedmods.refinedstorage2.platform.fabric.integration.rei;
 
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.search.PlatformSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiProxy;
 
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
