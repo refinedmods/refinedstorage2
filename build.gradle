@@ -55,6 +55,10 @@ subprojects {
             }
         }
     }
+
+    dependencies {
+        implementation "org.apiguardian:apiguardian-api:${project.apiGuardianVersion}"
+    }
 }
 
 task allJavadoc(type: Javadoc) {
@@ -70,9 +74,7 @@ task codeCoverageReport(type: JacocoReport) {
         sourceSets it.sourceSets.main
     }
     reports {
-        xml.enabled true
-        html.enabled true
-        csv.enabled false
+        html.required
     }
 }
 

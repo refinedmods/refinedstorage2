@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(DiskDriveBlockEntity.class)
 public abstract class DiskDriveHasRenderAttachmentMixin implements RenderAttachmentBlockEntity {
-    @Shadow
+    @Shadow(remap = false)
     private DiskDriveState driveState;
 
     @Override

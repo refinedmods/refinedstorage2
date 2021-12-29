@@ -47,6 +47,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> Optional<Storage<T>> disassemble(UUID id) {
         return parent.disassemble(id).map(storage -> {
             setDirty();
@@ -88,6 +89,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
         return tag;
     }
 
+    @SuppressWarnings("unchecked")
     private Tag convertStorageToTag(UUID id, Storage<?> storage, StorageTypeAccessor typeAccessor) {
         ResourceLocation typeIdentifier = StorageTypeRegistry
                 .INSTANCE

@@ -11,7 +11,6 @@ dependencies {
     implementation project(':refinedstorage2-core-api')
     implementation project(':refinedstorage2-storage-api')
     implementation project(':refinedstorage2-query-parser')
-    compileOnly "org.apiguardian:apiguardian-api:${project.apiGuardianVersion}"
 }
 
 test {

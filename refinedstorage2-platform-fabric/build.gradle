@@ -105,6 +105,8 @@ processResources {
 
 tasks.withType(JavaCompile) {
     source(project(":refinedstorage2-platform-common").sourceSets.main.allSource)
+    source(project(":refinedstorage2-platform-abstractions").sourceSets.main.allSource)
+    source(project(":refinedstorage2-platform-api").sourceSets.main.allSource)
 }
 
 jar {

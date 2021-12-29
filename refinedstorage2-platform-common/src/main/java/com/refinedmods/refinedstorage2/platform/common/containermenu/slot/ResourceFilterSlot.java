@@ -62,6 +62,7 @@ public class ResourceFilterSlot extends Slot {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     public void render(PoseStack poseStack, int x, int y, int z) {
         ResourceType<Object> type = (ResourceType<Object>) resourceFilterContainer.getType(containerIndex);
         if (type == null) {
@@ -71,6 +72,7 @@ public class ResourceFilterSlot extends Slot {
         type.render(poseStack, value, x, y, z);
     }
 
+    @SuppressWarnings("unchecked")
     public List<Component> getTooltipLines(Player player) {
         ResourceType<Object> type = (ResourceType<Object>) resourceFilterContainer.getType(containerIndex);
         if (type == null) {
