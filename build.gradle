@@ -74,8 +74,8 @@ task codeCoverageReport(type: JacocoReport) {
         sourceSets it.sourceSets.main
     }
     reports {
-        html.required
-        xml.required
+        html.required = true
+        xml.required = true
     }
 }
 
