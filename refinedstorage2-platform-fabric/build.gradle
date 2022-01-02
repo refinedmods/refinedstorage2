@@ -36,27 +36,13 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricApiVersion}"
 
-    implementation project(':refinedstorage2-core-api')
-    include project(':refinedstorage2-core-api')
-
-    implementation project(':refinedstorage2-resource-api')
-    include project(':refinedstorage2-resource-api')
-
-    implementation project(':refinedstorage2-storage-api')
-    include project(':refinedstorage2-storage-api')
-
-    implementation project(':refinedstorage2-network-api')
-    include project(':refinedstorage2-network-api')
-
-    implementation project(':refinedstorage2-query-parser')
-    include project(':refinedstorage2-query-parser')
-
-    implementation project(':refinedstorage2-grid-api')
-    include project(':refinedstorage2-grid-api')
-
-    implementation project(':refinedstorage2-platform-abstractions')
-    implementation project(':refinedstorage2-platform-common')
-    implementation project(':refinedstorage2-platform-api')
+    project.ext.apis.collect {
+        implementation project(it)
+        include project(it)
+    }
+    project.ext.compileApis.collect {
+        implementation project(it)
+    }
 
     modApi("me.shedaniel.cloth:cloth-config-fabric:${project.clothConfigVersion}") {
         exclude(group: 'net.fabricmc.fabric-api')
@@ -101,9 +87,9 @@ processResources {
 }
 
 tasks.withType(JavaCompile) {
-    source(project(":refinedstorage2-platform-common").sourceSets.main.allSource)
-    source(project(":refinedstorage2-platform-abstractions").sourceSets.main.allSource)
-    source(project(":refinedstorage2-platform-api").sourceSets.main.allSource)
+    project.ext.compileApis.collect {
+        source(project(it).sourceSets.main.allSource)
+    }
 }
 
 jar {

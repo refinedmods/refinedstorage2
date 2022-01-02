@@ -24,15 +24,12 @@ minecraft {
             mods {
                 modClientRun {
                     source sourceSets.main
-                    source project(":refinedstorage2-platform-common").sourceSets.main
-                    source project(":refinedstorage2-platform-api").sourceSets.main
-                    source project(":refinedstorage2-platform-abstractions").sourceSets.main
-                    source project(':refinedstorage2-core-api').sourceSets.main
-                    source project(':refinedstorage2-resource-api').sourceSets.main
-                    source project(':refinedstorage2-storage-api').sourceSets.main
-                    source project(':refinedstorage2-network-api').sourceSets.main
-                    source project(':refinedstorage2-query-parser').sourceSets.main
-                    source project(':refinedstorage2-grid-api').sourceSets.main
+                    project.ext.apis.collect {
+                        source(project(it).sourceSets.main)
+                    }
+                    project.ext.compileApis.collect {
+                        source(project(it).sourceSets.main)
+                    }
                 }
             }
         }
@@ -44,9 +41,12 @@ minecraft {
             mods {
                 modServerRun {
                     source sourceSets.main
-                    source project(":refinedstorage2-platform-common").sourceSets.main
-                    source project(":refinedstorage2-platform-api").sourceSets.main
-                    source project(":refinedstorage2-platform-abstractions").sourceSets.main
+                    project.ext.apis.collect {
+                        source(project(it).sourceSets.main)
+                    }
+                    project.ext.compileApis.collect {
+                        source(project(it).sourceSets.main)
+                    }
                 }
             }
         }
@@ -57,15 +57,12 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 
 dependencies {
     minecraft "net.minecraftforge:forge:${project.minecraftVersion}-${project.forgeVersion}"
-    compileOnly project(":refinedstorage2-platform-common")
-    compileOnly project(':refinedstorage2-platform-abstractions')
-    compileOnly project(':refinedstorage2-platform-api')
-    implementation project(':refinedstorage2-core-api')
-    implementation project(':refinedstorage2-resource-api')
-    implementation project(':refinedstorage2-storage-api')
-    implementation project(':refinedstorage2-network-api')
-    implementation project(':refinedstorage2-query-parser')
-    implementation project(':refinedstorage2-grid-api')
+    project.ext.apis.collect {
+        implementation project(it)
+    }
+    project.ext.compileApis.collect {
+        implementation project(it)
+    }
 }
 
 processResources {
@@ -73,15 +70,12 @@ processResources {
 }
 
 tasks.withType(JavaCompile) {
-    source(project(":refinedstorage2-platform-common").sourceSets.main.allSource)
-    source(project(":refinedstorage2-platform-abstractions").sourceSets.main.allSource)
-    source(project(":refinedstorage2-platform-api").sourceSets.main.allSource)
-    source(project(':refinedstorage2-core-api').sourceSets.main.allSource)
-    source(project(':refinedstorage2-resource-api').sourceSets.main.allSource)
-    source(project(':refinedstorage2-storage-api').sourceSets.main.allSource)
-    source(project(':refinedstorage2-network-api').sourceSets.main.allSource)
-    source(project(':refinedstorage2-query-parser').sourceSets.main.allSource)
-    source(project(':refinedstorage2-grid-api').sourceSets.main.allSource)
+    project.ext.apis.collect {
+        source(project(it).sourceSets.main.allSource)
+    }
+    project.ext.compileApis.collect {
+        source(project(it).sourceSets.main.allSource)
+    }
 }
 
 jar.finalizedBy('reobfJar')

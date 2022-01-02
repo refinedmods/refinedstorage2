@@ -19,6 +19,21 @@ subprojects {
         version = System.getenv('RELEASE').substring(1) // remove 'v'
     }
 
+    project.ext.apis = [
+            ':refinedstorage2-core-api',
+            ':refinedstorage2-resource-api',
+            ':refinedstorage2-storage-api',
+            ':refinedstorage2-network-api',
+            ':refinedstorage2-grid-api',
+            ':refinedstorage2-query-parser'
+    ]
+
+    project.ext.compileApis = [
+            ':refinedstorage2-platform-abstractions',
+            ':refinedstorage2-platform-api',
+            ':refinedstorage2-platform-common',
+    ]
+
     apply plugin: 'java'
     apply plugin: 'jacoco'
 
