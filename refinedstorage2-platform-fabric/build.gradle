@@ -2,9 +2,6 @@ plugins {
     id 'fabric-loom' version '0.10-SNAPSHOT'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
 archivesBaseName = 'refinedstorage2-platform-fabric'
 
 repositories {
