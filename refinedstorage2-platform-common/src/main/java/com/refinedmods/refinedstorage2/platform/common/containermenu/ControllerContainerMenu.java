@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.RedstoneMode
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 
+import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -20,6 +21,7 @@ public class ControllerContainerMenu extends BaseContainerMenu implements Redsto
     private long serverCapacity;
     private ControllerBlockEntity controller;
     private Player playerEntity;
+    private final RateLimiter energyUpdateRateLimiter = RateLimiter.create(4);
 
     public ControllerContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getController(), syncId);
@@ -62,7 +64,7 @@ public class ControllerContainerMenu extends BaseContainerMenu implements Redsto
     @Override
     public void broadcastChanges() {
         super.broadcastChanges();
-        if (serverStored != controller.getActualStored() || serverCapacity != controller.getActualCapacity()) {
+        if ((serverStored != controller.getActualStored() || serverCapacity != controller.getActualCapacity()) && energyUpdateRateLimiter.tryAcquire()) {
             serverStored = controller.getActualStored();
             serverCapacity = controller.getActualCapacity();
             PlatformAbstractions.INSTANCE.getServerToClientCommunications().sendControllerEnergy((ServerPlayer) playerEntity, serverStored, serverCapacity);

@@ -20,6 +20,8 @@ import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.forge.integration.energy.ControllerForgeEnergy;
+import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
+import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ServerToClientCommunicationsImpl;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -39,6 +41,8 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
     private final ConfigImpl config = new ConfigImpl();
     private final MenuOpener menuOpener = new MenuOpenerImpl();
     private final WrenchHelper wrenchHelper = new WrenchHelperImpl();
+    private final NetworkManager networkManager = new NetworkManager();
+    private final ServerToClientCommunications serverToClientCommunications = new ServerToClientCommunicationsImpl(networkManager);
 
     public PlatformAbstractionsImpl() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getSpec());
@@ -46,7 +50,7 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
 
     @Override
     public ServerToClientCommunications getServerToClientCommunications() {
-        throw new UnsupportedOperationException();
+        return serverToClientCommunications;
     }
 
     @Override
