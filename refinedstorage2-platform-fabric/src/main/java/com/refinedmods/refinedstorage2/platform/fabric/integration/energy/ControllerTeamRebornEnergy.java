@@ -5,14 +5,25 @@ import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import team.reborn.energy.api.base.LimitingEnergyStorage;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements EnergyStorage {
     private final Runnable listener;
+    private final LimitingEnergyStorage exposedStorage;
 
     public ControllerTeamRebornEnergy(Runnable listener) {
         super(PlatformAbstractions.INSTANCE.getConfig().getController().getCapacity(), PlatformAbstractions.INSTANCE.getConfig().getController().getCapacity(), PlatformAbstractions.INSTANCE.getConfig().getController().getCapacity());
         this.listener = listener;
+        this.exposedStorage = new LimitingEnergyStorage(
+                this,
+                maxInsert,
+                0
+        );
+    }
+
+    public LimitingEnergyStorage getExposedStorage() {
+        return exposedStorage;
     }
 
     public void setStoredSilently(long stored) {

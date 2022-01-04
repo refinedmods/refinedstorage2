@@ -108,4 +108,8 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
     public long getActualCapacity() {
         return getNode().getActualCapacity();
     }
+
+    public EnergyStorage getEnergyStorage() {
+        return energyStorage;
+    }
 }

@@ -57,7 +57,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBloc
 import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.loot.ControllerLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergyAccessor;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.PlatformAbstractionsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
@@ -113,7 +113,7 @@ public class ModInitializerImpl implements ModInitializer {
         registerGridSearchBoxModes();
         registerPackets();
         registerSounds();
-        registerInventories();
+        registerSidedHandlers();
         registerResourceTypes();
         registerTickHandler();
 
@@ -219,8 +219,6 @@ public class ModInitializerImpl implements ModInitializer {
         BlockEntities.INSTANCE.setFluidGrid(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("fluid_grid"), FabricBlockEntityTypeBuilder.create(FluidGridBlockEntity::new, Blocks.INSTANCE.getFluidGrid().toArray()).build(null)));
         BlockEntities.INSTANCE.setController(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("controller"), FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.NORMAL, pos, state), Blocks.INSTANCE.getController().toArray()).build(null)));
         BlockEntities.INSTANCE.setCreativeController(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("creative_controller"), FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.CREATIVE, pos, state), Blocks.INSTANCE.getCreativeController().toArray()).build(null)));
-
-        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> ((ControllerTeamRebornEnergyAccessor) blockEntity).getLimitingEnergyStorage(), BlockEntities.INSTANCE.getController());
     }
 
     private void registerMenus() {
@@ -260,13 +258,22 @@ public class ModInitializerImpl implements ModInitializer {
         Sounds.INSTANCE.setWrench(Registry.register(Registry.SOUND_EVENT, wrenchSoundEventId, new SoundEvent(wrenchSoundEventId)));
     }
 
-    private void registerInventories() {
+    private void registerSidedHandlers() {
+        registerDiskDriveInventory();
+        registerControllerEnergy();
+    }
+
+    private void registerDiskDriveInventory() {
         ItemStorage.SIDED.registerForBlockEntities((blockEntity, context) -> {
             if (blockEntity instanceof DiskDriveBlockEntity diskDrive) {
                 return InventoryStorage.of(diskDrive.getDiskInventory(), context);
             }
             return null;
         }, BlockEntities.INSTANCE.getDiskDrive());
+    }
+
+    private void registerControllerEnergy() {
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> ((ControllerTeamRebornEnergy) blockEntity.getEnergyStorage()).getExposedStorage(), BlockEntities.INSTANCE.getController());
     }
 
     private void registerResourceTypes() {

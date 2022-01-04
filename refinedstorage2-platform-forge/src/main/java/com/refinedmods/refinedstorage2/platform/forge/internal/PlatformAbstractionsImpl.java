@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge.internal;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
+import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.abstractions.BucketQuantityFormatter;
@@ -18,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.forge.integration.energy.ControllerForgeEnergy;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -35,6 +37,8 @@ import net.minecraftforge.fml.config.ModConfig;
 public class PlatformAbstractionsImpl implements PlatformAbstractions {
     private final BucketQuantityFormatter bucketQuantityFormatter = new BucketQuantityFormatter(FluidAttributes.BUCKET_VOLUME);
     private final ConfigImpl config = new ConfigImpl();
+    private final MenuOpener menuOpener = new MenuOpenerImpl();
+    private final WrenchHelper wrenchHelper = new WrenchHelperImpl();
 
     public PlatformAbstractionsImpl() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getSpec());
@@ -52,7 +56,7 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
 
     @Override
     public MenuOpener getMenuOpener() {
-        throw new UnsupportedOperationException();
+        return menuOpener;
     }
 
     @Override
@@ -67,7 +71,7 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
 
     @Override
     public WrenchHelper getWrenchHelper() {
-        throw new UnsupportedOperationException();
+        return wrenchHelper;
     }
 
     @Override
@@ -122,11 +126,16 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
 
     @Override
     public EnergyStorage createEnergyStorage(ControllerType controllerType, Runnable listener) {
-        throw new UnsupportedOperationException();
+        return switch (controllerType) {
+            case NORMAL -> new ControllerForgeEnergy(listener);
+            case CREATIVE -> new InfiniteEnergyStorage();
+        };
     }
 
     @Override
     public void setEnergy(EnergyStorage energyStorage, long stored) {
-        throw new UnsupportedOperationException();
+        if (energyStorage instanceof ControllerForgeEnergy controllerForgeEnergy) {
+            controllerForgeEnergy.setSilently(stored);
+        }
     }
 }
