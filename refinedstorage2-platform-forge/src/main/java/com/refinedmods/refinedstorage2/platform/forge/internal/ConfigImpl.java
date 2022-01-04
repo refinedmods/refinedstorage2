@@ -8,10 +8,12 @@ public class ConfigImpl implements Config {
     private final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
     private final ForgeConfigSpec spec;
 
-    private CableImpl cable;
+    private final CableImpl cable;
+    private final ControllerImpl controller;
 
     public ConfigImpl() {
         cable = new CableImpl();
+        controller = new ControllerImpl();
         spec = builder.build();
     }
 
@@ -26,7 +28,7 @@ public class ConfigImpl implements Config {
 
     @Override
     public Controller getController() {
-        throw new UnsupportedOperationException();
+        return controller;
     }
 
     @Override
@@ -51,6 +53,21 @@ public class ConfigImpl implements Config {
         @Override
         public long getEnergyUsage() {
             return usage.get();
+        }
+    }
+
+    private class ControllerImpl implements Controller {
+        private final ForgeConfigSpec.IntValue capacity;
+
+        private ControllerImpl() {
+            builder.push("controller");
+            capacity = builder.comment("The energy capacity of the Controller").defineInRange("capacity", 1000, 0, Integer.MAX_VALUE);
+            builder.pop();
+        }
+
+        @Override
+        public long getCapacity() {
+            return capacity.get();
         }
     }
 }
