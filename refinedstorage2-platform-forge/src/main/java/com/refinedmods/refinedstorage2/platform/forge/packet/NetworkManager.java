@@ -1,6 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet;
 
+import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.PropertyChangePacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ControllerEnergyPacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.StorageInfoResponsePacket;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,9 +22,16 @@ public class NetworkManager {
     public NetworkManager() {
         int id = 0;
         handler.registerMessage(id++, ControllerEnergyPacket.class, ControllerEnergyPacket::encode, ControllerEnergyPacket::decode, ControllerEnergyPacket::handle);
+        handler.registerMessage(id++, PropertyChangePacket.class, PropertyChangePacket::encode, PropertyChangePacket::decode, PropertyChangePacket::handle);
+        handler.registerMessage(id++, StorageInfoRequestPacket.class, StorageInfoRequestPacket::encode, StorageInfoRequestPacket::decode, StorageInfoRequestPacket::handle);
+        handler.registerMessage(id++, StorageInfoResponsePacket.class, StorageInfoResponsePacket::encode, StorageInfoResponsePacket::decode, StorageInfoResponsePacket::handle);
     }
 
     public void send(ServerPlayer player, Object message) {
         handler.send(PacketDistributor.PLAYER.with(() -> player), message);
+    }
+
+    public void send(Object message) {
+        handler.sendToServer(message);
     }
 }

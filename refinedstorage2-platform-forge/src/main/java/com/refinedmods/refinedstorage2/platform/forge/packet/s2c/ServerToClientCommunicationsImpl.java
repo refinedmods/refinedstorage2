@@ -46,6 +46,6 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
 
     @Override
     public void sendStorageInfoResponse(ServerPlayer player, UUID id, StorageInfo storageInfo) {
-        throw new UnsupportedOperationException();
+        networkManager.send(player, new StorageInfoResponsePacket(id, storageInfo.stored(), storageInfo.capacity()));
     }
 }
