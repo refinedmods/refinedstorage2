@@ -1,8 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet;
 
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.PropertyChangePacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceTypeChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ControllerEnergyPacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ResourceFilterSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.StorageInfoResponsePacket;
 
 import net.minecraft.resources.ResourceLocation;
@@ -25,6 +27,8 @@ public class NetworkManager {
         handler.registerMessage(id++, PropertyChangePacket.class, PropertyChangePacket::encode, PropertyChangePacket::decode, PropertyChangePacket::handle);
         handler.registerMessage(id++, StorageInfoRequestPacket.class, StorageInfoRequestPacket::encode, StorageInfoRequestPacket::decode, StorageInfoRequestPacket::handle);
         handler.registerMessage(id++, StorageInfoResponsePacket.class, StorageInfoResponsePacket::encode, StorageInfoResponsePacket::decode, StorageInfoResponsePacket::handle);
+        handler.registerMessage(id++, ResourceTypeChangePacket.class, ResourceTypeChangePacket::encode, ResourceTypeChangePacket::decode, ResourceTypeChangePacket::handle);
+        handler.registerMessage(id++, ResourceFilterSlotUpdatePacket.class, ResourceFilterSlotUpdatePacket::encode, ResourceFilterSlotUpdatePacket::decode, ResourceFilterSlotUpdatePacket::handle);
     }
 
     public void send(ServerPlayer player, Object message) {

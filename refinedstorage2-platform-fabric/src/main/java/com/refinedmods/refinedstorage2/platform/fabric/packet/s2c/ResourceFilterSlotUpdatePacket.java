@@ -12,7 +12,6 @@ public class ResourceFilterSlotUpdatePacket implements ClientPlayNetworking.Play
     @Override
     public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
         int slotIndex = buf.readInt();
-        // TODO: Can we move this off-thread?
         if (client.player.containerMenu instanceof ResourceFilterableContainerMenu containerMenu) {
             containerMenu.readResourceFilterSlotUpdate(slotIndex, buf);
         }

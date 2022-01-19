@@ -45,7 +45,7 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
 
     @Override
     public void sendResourceTypeChange(ResourceType<?> type) {
-        throw new UnsupportedOperationException();
+        networkManager.send(new ResourceTypeChangePacket(type.getId()));
     }
 
     @Override

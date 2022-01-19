@@ -41,7 +41,7 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
 
     @Override
     public void sendResourceFilterSlotUpdate(ServerPlayer player, ResourceFilterContainer resourceFilterContainer, int slotIndex) {
-        throw new UnsupportedOperationException();
+        networkManager.send(player, new ResourceFilterSlotUpdatePacket(slotIndex));
     }
 
     @Override
