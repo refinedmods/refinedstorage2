@@ -18,7 +18,9 @@ import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -194,6 +196,11 @@ public class ModInitializer {
         creativeControllerBlockEntityType.setRegistryName(createIdentifier("creative_controller"));
         e.getRegistry().register(creativeControllerBlockEntityType);
         BlockEntities.INSTANCE.setCreativeController(creativeControllerBlockEntityType);
+
+        BlockEntityType<DiskDriveBlockEntity> diskDriveBlockEntityType = BlockEntityType.Builder.of(DiskDriveBlockEntity::new, Blocks.INSTANCE.getDiskDrive()).build(null);
+        diskDriveBlockEntityType.setRegistryName(createIdentifier("disk_drive"));
+        e.getRegistry().register(diskDriveBlockEntityType);
+        BlockEntities.INSTANCE.setDiskDrive(diskDriveBlockEntityType);
     }
 
     @SubscribeEvent
@@ -288,6 +295,11 @@ public class ModInitializer {
         controllerMenuType.setRegistryName(createIdentifier("controller"));
         e.getRegistry().register(controllerMenuType);
         Menus.INSTANCE.setController(controllerMenuType);
+
+        MenuType<DiskDriveContainerMenu> diskDriveMenuType = IForgeMenuType.create(DiskDriveContainerMenu::new);
+        diskDriveMenuType.setRegistryName(createIdentifier("disk_drive"));
+        e.getRegistry().register(diskDriveMenuType);
+        Menus.INSTANCE.setDiskDrive(diskDriveMenuType);
     }
 
     @SubscribeEvent

@@ -10,10 +10,12 @@ public class ConfigImpl implements Config {
 
     private final CableImpl cable;
     private final ControllerImpl controller;
+    private final DiskDriveImpl diskDrive;
 
     public ConfigImpl() {
         cable = new CableImpl();
         controller = new ControllerImpl();
+        diskDrive = new DiskDriveImpl();
         spec = builder.build();
     }
 
@@ -33,7 +35,7 @@ public class ConfigImpl implements Config {
 
     @Override
     public DiskDrive getDiskDrive() {
-        throw new UnsupportedOperationException();
+        return diskDrive;
     }
 
     @Override
@@ -68,6 +70,29 @@ public class ConfigImpl implements Config {
         @Override
         public long getCapacity() {
             return capacity.get();
+        }
+    }
+
+    private class DiskDriveImpl implements DiskDrive {
+        private final ForgeConfigSpec.IntValue usage;
+
+        private final ForgeConfigSpec.IntValue usagePerDisk;
+
+        private DiskDriveImpl() {
+            builder.push("diskDrive");
+            usage = builder.comment("The energy used by the Disk Drive").defineInRange("usage", 10, 0, Integer.MAX_VALUE);
+            usagePerDisk = builder.comment("The energy used per disk").defineInRange("usagePerDisk", 5, 0, Integer.MAX_VALUE);
+            builder.pop();
+        }
+
+        @Override
+        public long getEnergyUsage() {
+            return usage.get();
+        }
+
+        @Override
+        public long getEnergyUsagePerDisk() {
+            return usagePerDisk.get();
         }
     }
 }

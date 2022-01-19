@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
 
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -28,6 +29,7 @@ public final class ClientModInitializer {
 
     private static void registerScreens() {
         MenuScreens.register(Menus.INSTANCE.getController(), ControllerScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
     }
 
     private static void setRenderLayers() {
