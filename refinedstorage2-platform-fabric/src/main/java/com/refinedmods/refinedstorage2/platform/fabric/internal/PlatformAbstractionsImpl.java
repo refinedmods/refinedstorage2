@@ -58,7 +58,7 @@ public final class PlatformAbstractionsImpl implements PlatformAbstractions {
     private final MenuOpener menuOpener = new MenuOpenerImpl();
     private final BucketQuantityFormatter bucketQuantityFormatter = new BucketQuantityFormatter(FluidConstants.BUCKET);
     private final WrenchHelper wrenchHelper = new WrenchHelperImpl();
-    private final FluidRenderer fluidRenderer = new FluidRendererImpl();
+    private final FluidRenderer fluidRenderer = new FluidVariantFluidRenderer();
 
     @Override
     public ServerToClientCommunications getServerToClientCommunications() {
