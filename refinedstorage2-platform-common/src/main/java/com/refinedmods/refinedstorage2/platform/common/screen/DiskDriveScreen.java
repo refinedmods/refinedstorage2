@@ -85,6 +85,8 @@ public class DiskDriveScreen extends BaseScreen<DiskDriveContainerMenu> {
         int y = (height - imageHeight) / 2;
 
         blit(poseStack, x, y, 0, 0, imageWidth, imageHeight);
+
+        super.renderBg(poseStack, delta, mouseX, mouseY);
     }
 
     @Override

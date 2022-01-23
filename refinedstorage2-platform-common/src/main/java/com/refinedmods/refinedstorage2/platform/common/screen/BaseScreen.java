@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import org.lwjgl.opengl.GL11;
 
 public abstract class BaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
@@ -25,6 +26,19 @@ public abstract class BaseScreen<T extends AbstractContainerMenu> extends Abstra
         clearWidgets();
         super.init();
         sideButtonY = 6;
+    }
+
+    @Override
+    protected void renderBg(PoseStack poseStack, float delta, int mouseX, int mouseY) {
+        renderResourceFilterSlots(poseStack);
+    }
+
+    protected void renderResourceFilterSlots(PoseStack poseStack) {
+        for (Slot slot : menu.slots) {
+            if (slot instanceof ResourceFilterSlot resourceFilterSlot) {
+                resourceFilterSlot.render(poseStack, leftPos + slot.x, topPos + slot.y, getBlitOffset());
+            }
+        }
     }
 
     public void addSideButton(SideButtonWidget button) {

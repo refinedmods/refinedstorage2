@@ -34,6 +34,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 
@@ -45,6 +46,7 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
     private final NetworkManager networkManager = new NetworkManager();
     private final ServerToClientCommunications serverToClientCommunications = new ServerToClientCommunicationsImpl(networkManager);
     private final ClientToServerCommunications clientToServerCommunications = new ClientToServerCommunicationsImpl(networkManager);
+    private final FluidRenderer fluidRenderer = new FluidStackFluidRenderer();
 
     public PlatformAbstractionsImpl() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getSpec());
@@ -122,12 +124,15 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
 
     @Override
     public FluidRenderer getFluidRenderer() {
-        throw new UnsupportedOperationException();
+        return fluidRenderer;
     }
 
     @Override
     public Optional<FluidResource> convertToFluid(ItemStack stack) {
-        return Optional.empty();
+        return stack
+                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
+                .map(handler -> handler.getFluidInTank(0))
+                .map(contents -> contents.isEmpty() ? null : new FluidResource(contents.getFluid(), contents.getTag()));
     }
 
     @Override

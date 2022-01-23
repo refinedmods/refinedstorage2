@@ -10,8 +10,7 @@
     "client": [
         "EditBoxAccessor",
         "ItemPropertiesAccessor",
-        "KeyMappingAccessor",
-        "ResourceFilterSlotRenderingMixin"
+        "KeyMappingAccessor"
     ],
     "injectors": {
         "defaultRequire": 1
