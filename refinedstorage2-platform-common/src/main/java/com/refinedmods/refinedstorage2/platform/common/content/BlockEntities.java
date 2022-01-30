@@ -12,7 +12,7 @@ public final class BlockEntities {
     public static final BlockEntities INSTANCE = new BlockEntities();
 
     private BlockEntityType<CableBlockEntity> cable;
-    private BlockEntityType<DiskDriveBlockEntity> diskDrive;
+    private BlockEntityType<? extends DiskDriveBlockEntity> diskDrive;
     private BlockEntityType<ItemGridBlockEntity> grid;
     private BlockEntityType<FluidGridBlockEntity> fluidGrid;
     private BlockEntityType<ControllerBlockEntity> controller;
@@ -29,11 +29,11 @@ public final class BlockEntities {
         this.cable = cable;
     }
 
-    public BlockEntityType<DiskDriveBlockEntity> getDiskDrive() {
+    public BlockEntityType<? extends DiskDriveBlockEntity> getDiskDrive() {
         return diskDrive;
     }
 
-    public void setDiskDrive(BlockEntityType<DiskDriveBlockEntity> diskDrive) {
+    public void setDiskDrive(BlockEntityType<? extends DiskDriveBlockEntity> diskDrive) {
         this.diskDrive = diskDrive;
     }
 

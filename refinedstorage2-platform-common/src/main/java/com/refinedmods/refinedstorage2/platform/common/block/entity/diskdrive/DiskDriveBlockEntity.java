@@ -49,7 +49,7 @@ import org.apache.logging.log4j.Logger;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements MenuProvider, BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider {
+public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements MenuProvider, BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_PRIORITY = "pri";
@@ -65,14 +65,14 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
     private final DiskDriveInventory diskInventory = new DiskDriveInventory(this);
     private final ResourceFilterContainer resourceFilterContainer = new ResourceFilterContainer(9, this::resourceFilterContainerChanged);
 
-    private DiskDriveState driveState;
+    protected DiskDriveState driveState;
 
     private boolean syncRequested;
     private long lastStateChanged;
 
     private boolean exactMode;
 
-    public DiskDriveBlockEntity(BlockPos pos, BlockState state) {
+    protected DiskDriveBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new DiskDriveNetworkNode(
                 PlatformAbstractions.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
                 PlatformAbstractions.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
@@ -244,6 +244,10 @@ public class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntit
             driveState.setState(i, StorageDiskState.values()[idx]);
         }
 
+        onDriveStateUpdated();
+    }
+
+    protected void onDriveStateUpdated() {
         LevelUtil.updateBlock(level, worldPosition, this.getBlockState());
     }
 

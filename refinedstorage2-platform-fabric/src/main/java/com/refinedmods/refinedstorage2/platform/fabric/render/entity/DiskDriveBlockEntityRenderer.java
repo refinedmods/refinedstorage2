@@ -21,7 +21,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class DiskDriveBlockEntityRenderer implements BlockEntityRenderer<DiskDriveBlockEntity> {
+public class DiskDriveBlockEntityRenderer<T extends DiskDriveBlockEntity> implements BlockEntityRenderer<T> {
     private static final RenderType RENDER_LAYER = RenderType.create(
             "drive_leds",
             DefaultVertexFormat.POSITION_COLOR,

@@ -2,9 +2,8 @@ package com.refinedmods.refinedstorage2.platform.forge.render.model.baked;
 
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
-import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
+import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.math.Matrix4f;
@@ -13,11 +12,8 @@ import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.client.model.pipeline.TRSRTransformer;
 
@@ -25,12 +21,12 @@ public final class QuadTransformer {
     private QuadTransformer() {
     }
 
-    public static List<BakedQuad> getQuads(BakedModel model, BiDirection direction, @Nullable Vector3f translation, BlockState state, Random rand, Direction side) {
-        Transformation transformation = new Transformation(translation, createQuaternion(direction), null, null);
+    public static List<BakedQuad> transformSideAndRotate(Function<Direction, List<BakedQuad>> quadGetter, BiDirection direction, Direction side) {
+        Transformation transformation = new Transformation(null, createQuaternion(direction), null, null);
 
         ImmutableList.Builder<BakedQuad> rotated = ImmutableList.builder();
 
-        for (BakedQuad quad : model.getQuads(state, resultingRotate(side, transformation.getMatrix()), rand, EmptyModelData.INSTANCE)) {
+        for (BakedQuad quad : quadGetter.apply(transformSide(side, transformation.getMatrix()))) {
             BakedQuadBuilder builder = new BakedQuadBuilder(quad.getSprite());
             TRSRTransformer transformer = new TRSRTransformer(builder, transformation.blockCenterToCorner());
 
@@ -48,7 +44,7 @@ public final class QuadTransformer {
         return new Quaternion(direction.getVec().x(), direction.getVec().y(), direction.getVec().z(), true);
     }
 
-    public static Direction resultingRotate(Direction facing, Matrix4f mat) {
+    private static Direction transformSide(Direction facing, Matrix4f mat) {
         for (Direction face : Direction.values()) {
             if (rotate(face, mat) == facing) {
                 return face;
@@ -62,5 +58,22 @@ public final class QuadTransformer {
         Vector4f vec = new Vector4f(dir.getX(), dir.getY(), dir.getZ(), 1);
         vec.transform(mat);
         return Direction.getNearest(vec.x(), vec.y(), vec.z());
+    }
+
+    public static List<BakedQuad> translate(List<BakedQuad> quads, Vector3f translation) {
+        Transformation transformation = new Transformation(translation, null, null, null);
+
+        ImmutableList.Builder<BakedQuad> translated = ImmutableList.builder();
+
+        for (BakedQuad quad : quads) {
+            BakedQuadBuilder builder = new BakedQuadBuilder(quad.getSprite());
+            TRSRTransformer transformer = new TRSRTransformer(builder, transformation.blockCenterToCorner());
+
+            quad.pipe(transformer);
+
+            translated.add(builder.build());
+        }
+
+        return translated.build();
     }
 }

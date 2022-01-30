@@ -57,6 +57,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBloc
 import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.loot.ControllerLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
+import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.PlatformAbstractionsImpl;
@@ -155,7 +156,7 @@ public class ModInitializerImpl implements ModInitializer {
     private void registerBlocks() {
         Blocks.INSTANCE.setCable(Registry.register(Registry.BLOCK, createIdentifier("cable"), new CableBlock()));
         Blocks.INSTANCE.setQuartzEnrichedIron(Registry.register(Registry.BLOCK, createIdentifier("quartz_enriched_iron_block"), new QuartzEnrichedIronBlock()));
-        Blocks.INSTANCE.setDiskDrive(Registry.register(Registry.BLOCK, createIdentifier("disk_drive"), new DiskDriveBlock()));
+        Blocks.INSTANCE.setDiskDrive(Registry.register(Registry.BLOCK, createIdentifier("disk_drive"), new DiskDriveBlock(FabricDiskDriveBlockEntity::new)));
         Blocks.INSTANCE.setMachineCasing(Registry.register(Registry.BLOCK, createIdentifier("machine_casing"), new MachineCasingBlock()));
 
         Blocks.INSTANCE.getGrid().putAll(color -> Registry.register(Registry.BLOCK, Blocks.INSTANCE.getGrid().getId(color, "grid"), new ItemGridBlock(Blocks.INSTANCE.getGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")))));
@@ -214,7 +215,7 @@ public class ModInitializerImpl implements ModInitializer {
 
     private void registerBlockEntities() {
         BlockEntities.INSTANCE.setCable(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("cable"), FabricBlockEntityTypeBuilder.create(CableBlockEntity::new, Blocks.INSTANCE.getCable()).build(null)));
-        BlockEntities.INSTANCE.setDiskDrive(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("disk_drive"), FabricBlockEntityTypeBuilder.create(DiskDriveBlockEntity::new, Blocks.INSTANCE.getDiskDrive()).build(null)));
+        BlockEntities.INSTANCE.setDiskDrive(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("disk_drive"), FabricBlockEntityTypeBuilder.create(FabricDiskDriveBlockEntity::new, Blocks.INSTANCE.getDiskDrive()).build(null)));
         BlockEntities.INSTANCE.setGrid(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("grid"), FabricBlockEntityTypeBuilder.create(ItemGridBlockEntity::new, Blocks.INSTANCE.getGrid().toArray()).build(null)));
         BlockEntities.INSTANCE.setFluidGrid(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("fluid_grid"), FabricBlockEntityTypeBuilder.create(FluidGridBlockEntity::new, Blocks.INSTANCE.getFluidGrid().toArray()).build(null)));
         BlockEntities.INSTANCE.setController(Registry.register(Registry.BLOCK_ENTITY_TYPE, createIdentifier("controller"), FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.NORMAL, pos, state), Blocks.INSTANCE.getController().toArray()).build(null)));
