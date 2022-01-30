@@ -18,7 +18,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridFluidUpdat
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridItemUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ResourceFilterSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.StorageInfoResponsePacket;
-import com.refinedmods.refinedstorage2.platform.fabric.render.entity.DiskDriveBlockEntityRenderer;
+import com.refinedmods.refinedstorage2.platform.fabric.render.entity.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.DiskDriveUnbakedModel;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -67,7 +67,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void registerBlockEntityRenderers() {
-        BlockEntityRendererRegistry.register(BlockEntities.INSTANCE.getDiskDrive(), ctx -> new DiskDriveBlockEntityRenderer());
+        BlockEntityRendererRegistry.register(BlockEntities.INSTANCE.getDiskDrive(), ctx -> new DiskDriveBlockEntityRendererImpl<>());
     }
 
     private void registerCustomModels() {
