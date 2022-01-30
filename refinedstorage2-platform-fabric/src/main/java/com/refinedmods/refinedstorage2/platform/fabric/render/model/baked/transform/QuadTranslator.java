@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked;
+package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked.transform;
 
 import com.mojang.math.Vector3f;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;

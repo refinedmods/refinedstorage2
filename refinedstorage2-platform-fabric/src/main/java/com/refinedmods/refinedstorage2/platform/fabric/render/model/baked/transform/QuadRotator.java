@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked;
+package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked.transform;
 
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
