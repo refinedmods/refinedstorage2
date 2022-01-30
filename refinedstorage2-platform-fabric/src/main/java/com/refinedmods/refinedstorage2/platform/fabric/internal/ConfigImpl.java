@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric;
+package com.refinedmods.refinedstorage2.platform.fabric.internal;
 
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 
