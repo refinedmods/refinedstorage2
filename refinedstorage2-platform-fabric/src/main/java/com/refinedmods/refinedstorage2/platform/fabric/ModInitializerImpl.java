@@ -60,6 +60,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiIntegration;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.ConfigImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.PlatformAbstractionsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;

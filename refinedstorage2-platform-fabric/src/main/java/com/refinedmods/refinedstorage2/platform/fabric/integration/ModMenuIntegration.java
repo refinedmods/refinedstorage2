@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.integration;
 
-import com.refinedmods.refinedstorage2.platform.fabric.ConfigImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.ConfigImpl;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;

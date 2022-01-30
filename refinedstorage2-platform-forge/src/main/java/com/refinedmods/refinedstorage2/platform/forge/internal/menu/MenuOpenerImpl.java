@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.forge.internal;
+package com.refinedmods.refinedstorage2.platform.forge.internal.menu;
 
 import com.refinedmods.refinedstorage2.platform.abstractions.menu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.abstractions.menu.MenuOpener;

@@ -19,7 +19,6 @@ import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.fabric.ConfigImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridEventHandlerImpl;
