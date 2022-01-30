@@ -30,7 +30,7 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
 
     @Override
     public void sendGridInsert(GridInsertMode mode) {
-        throw new UnsupportedOperationException();
+        networkManager.send(new GridInsertPacket(mode == GridInsertMode.SINGLE_RESOURCE));
     }
 
     @Override

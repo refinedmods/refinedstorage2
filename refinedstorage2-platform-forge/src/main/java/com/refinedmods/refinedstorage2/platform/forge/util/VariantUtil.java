@@ -1,7 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.forge.util;
 
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -11,5 +13,13 @@ public final class VariantUtil {
 
     public static FluidStack toFluidStack(FluidResource fluidResource) {
         return new FluidStack(fluidResource.getFluid(), FluidAttributes.BUCKET_VOLUME, fluidResource.getTag());
+    }
+
+    public static ItemResource ofItemStack(ItemStack itemStack) {
+        return new ItemResource(itemStack.getItem(), itemStack.getTag());
+    }
+
+    public static ItemStack toItemStack(ItemResource itemResource) {
+        return new ItemStack(itemResource.getItem(), 1, itemResource.getTag());
     }
 }

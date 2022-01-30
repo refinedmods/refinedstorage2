@@ -110,7 +110,7 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
 
     @Override
     public ItemGridEventHandler createItemGridEventHandler(AbstractContainerMenu containerMenu, GridService<ItemResource> gridService, Inventory playerInventory) {
-        return new ItemGridEventHandlerImpl();
+        return new ItemGridEventHandlerImpl(containerMenu, gridService, playerInventory);
     }
 
     @Override

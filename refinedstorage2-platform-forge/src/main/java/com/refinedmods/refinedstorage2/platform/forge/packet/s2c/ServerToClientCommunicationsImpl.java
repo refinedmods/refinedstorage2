@@ -36,7 +36,7 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
 
     @Override
     public void sendGridItemUpdate(ServerPlayer player, ItemResource itemResource, long change, StorageTracker.Entry trackerEntry) {
-        throw new UnsupportedOperationException();
+        networkManager.send(player, new GridItemUpdatePacket(itemResource, change, trackerEntry));
     }
 
     @Override
