@@ -5,11 +5,11 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -24,8 +24,8 @@ public abstract class ItemGridResourceFactory implements Function<ResourceAmount
         ItemStack itemStack = resourceAmount.getResource().toItemStack();
 
         String name = item.getDescription().getString();
-        String modId = getModId(item);
-        String modName = getModName(modId);
+        String modId = getModId(itemStack);
+        String modName = getModName(modId).orElse("");
 
         Set<String> tags = getTags(item);
         String tooltip = getTooltip(itemStack);
@@ -50,9 +50,7 @@ public abstract class ItemGridResourceFactory implements Function<ResourceAmount
                 .collect(Collectors.toSet());
     }
 
-    public abstract String getModName(String modId);
+    public abstract String getModId(ItemStack itemStack);
 
-    private String getModId(Item item) {
-        return Registry.ITEM.getKey(item).getNamespace();
-    }
+    public abstract Optional<String> getModName(String modId);
 }

@@ -1,5 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
+import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
+import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
+import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
@@ -19,14 +22,18 @@ import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.Rs2PlatformApiFacadeImpl;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.search.PlatformSearchBoxModeImpl;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
@@ -49,6 +56,8 @@ import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.forge.internal.PlatformAbstractionsImpl;
+import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
+import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -101,6 +110,7 @@ public class ModInitializer {
         registerResourceTypes();
         registerTickHandler();
         registerLootFunctions();
+        registerGridSearchBoxModes();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onClientSetup);
@@ -216,6 +226,11 @@ public class ModInitializer {
         diskDriveBlockEntityType.setRegistryName(createIdentifier("disk_drive"));
         e.getRegistry().register(diskDriveBlockEntityType);
         BlockEntities.INSTANCE.setDiskDrive(diskDriveBlockEntityType);
+
+        BlockEntityType<ItemGridBlockEntity> gridBlockEntityType = BlockEntityType.Builder.of(ItemGridBlockEntity::new, Blocks.INSTANCE.getGrid().toArray()).build(null);
+        gridBlockEntityType.setRegistryName(createIdentifier("grid"));
+        e.getRegistry().register(gridBlockEntityType);
+        BlockEntities.INSTANCE.setGrid(gridBlockEntityType);
     }
 
     @SubscribeEvent
@@ -315,10 +330,25 @@ public class ModInitializer {
         diskDriveMenuType.setRegistryName(createIdentifier("disk_drive"));
         e.getRegistry().register(diskDriveMenuType);
         Menus.INSTANCE.setDiskDrive(diskDriveMenuType);
+
+        MenuType<ItemGridContainerMenu> itemGridMenuType = IForgeMenuType.create(ItemGridContainerMenu::new);
+        itemGridMenuType.setRegistryName(createIdentifier("grid"));
+        e.getRegistry().register(itemGridMenuType);
+        Menus.INSTANCE.setGrid(itemGridMenuType);
     }
 
     private void registerLootFunctions() {
         LootFunctions.INSTANCE.setController(Registry.register(Registry.LOOT_FUNCTION_TYPE, createIdentifier("controller"), new LootItemFunctionType(new ControllerLootItemFunction.Serializer())));
+    }
+
+    private void registerGridSearchBoxModes() {
+        GridQueryParser queryParser = new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS, GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING);
+
+        for (boolean autoSelected : new boolean[]{false, true}) {
+            GridSearchBoxModeRegistry.INSTANCE.add(new PlatformSearchBoxModeImpl(queryParser, createIdentifier("textures/icons.png"), autoSelected ? 16 : 0, 96, createTranslation("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : "")), autoSelected));
+        }
+
+        // TODO: JEI support
     }
 
     @SubscribeEvent

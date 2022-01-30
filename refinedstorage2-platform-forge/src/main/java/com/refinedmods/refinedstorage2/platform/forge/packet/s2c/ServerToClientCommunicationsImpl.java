@@ -26,7 +26,7 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
 
     @Override
     public void sendGridActiveness(ServerPlayer player, boolean active) {
-        throw new UnsupportedOperationException();
+        networkManager.send(player, new GridActivePacket(active));
     }
 
     @Override

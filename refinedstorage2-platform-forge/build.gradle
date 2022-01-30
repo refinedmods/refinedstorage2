@@ -15,6 +15,7 @@ archivesBaseName = 'refinedstorage2-platform-forge'
 
 minecraft {
     mappings channel: 'official', version: project.minecraftVersion
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
         client {
