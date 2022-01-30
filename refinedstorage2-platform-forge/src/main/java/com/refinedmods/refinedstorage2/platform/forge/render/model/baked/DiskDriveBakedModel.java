@@ -1,7 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.forge.render.model.baked;
 
+import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
+import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
 import com.refinedmods.refinedstorage2.platform.common.block.BaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
+import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +15,8 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.IModelData;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DiskDriveBakedModel extends ForwardingBakedModel {
@@ -30,18 +35,34 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         }
     }
 
+    @NotNull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) {
-        if (state == null) {
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull IModelData extraData) {
+        if (state == null || !state.hasProperty(BaseBlock.DIRECTION)) {
             return super.getQuads(state, side, rand);
         }
-
-        List<BakedQuad> quads = new ArrayList<>();
-
         BiDirection direction = state.getValue(BaseBlock.DIRECTION);
+        return QuadTransformer.transformSideAndRotate((resultingSide) -> getQuads(state, rand, extraData, resultingSide), direction, side);
+    }
 
-        quads.addAll(QuadTransformer.getQuads(this.baseModel, direction, null, state, rand, side));
-
+    @NotNull
+    private List<BakedQuad> getQuads(@NotNull BlockState state, @NotNull Random rand, @NotNull IModelData extraData, Direction side) {
+        List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(state, side, rand));
+        DiskDriveState driveState = extraData.getData(ForgeDiskDriveBlockEntity.STATE_PROPERTY);
+        if (driveState == null) {
+            return quads;
+        }
+        for (int i = 0; i < translators.length; ++i) {
+            StorageDiskState diskState = driveState.getState(i);
+            if (diskState != StorageDiskState.NONE) {
+                quads.addAll(getDiskModel(state, rand, side, translators[i]));
+            }
+        }
         return quads;
+    }
+
+    private List<BakedQuad> getDiskModel(@NotNull BlockState state, @NotNull Random rand, Direction side, Vector3f translation) {
+        List<BakedQuad> diskQuads = diskModel.getQuads(state, side, rand);
+        return QuadTransformer.translate(diskQuads, translation);
     }
 }

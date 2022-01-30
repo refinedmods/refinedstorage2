@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstraction
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacadeProxy;
 import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
+import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
@@ -18,7 +19,6 @@ import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -29,6 +29,8 @@ import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.Rs2PlatformApiFacadeImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.CoreItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStoragePartItem;
@@ -45,6 +47,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockI
 import com.refinedmods.refinedstorage2.platform.common.loot.ControllerLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
+import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.forge.internal.PlatformAbstractionsImpl;
 
 import net.minecraft.core.Direction;
@@ -92,6 +95,7 @@ public class ModInitializer {
     public ModInitializer() {
         initializePlatformAbstractions();
         initializePlatformApiFacade();
+        registerDiskTypes();
         registerStorageChannelTypes();
         registerNetworkComponents();
         registerResourceTypes();
@@ -117,6 +121,11 @@ public class ModInitializer {
 
     private void initializePlatformApiFacade() {
         ((Rs2PlatformApiFacadeProxy) Rs2PlatformApiFacade.INSTANCE).setFacade(new Rs2PlatformApiFacadeImpl());
+    }
+
+    private void registerDiskTypes() {
+        StorageTypeRegistry.INSTANCE.addType(createIdentifier("item_disk"), ItemStorageType.INSTANCE);
+        StorageTypeRegistry.INSTANCE.addType(createIdentifier("fluid_disk"), FluidStorageType.INSTANCE);
     }
 
     private void registerStorageChannelTypes() {
@@ -150,7 +159,7 @@ public class ModInitializer {
         Blocks.INSTANCE.setQuartzEnrichedIron(quartzEnrichedIronBlock);
         e.getRegistry().register(quartzEnrichedIronBlock);
 
-        DiskDriveBlock diskDriveBlock = new DiskDriveBlock();
+        DiskDriveBlock diskDriveBlock = new DiskDriveBlock(ForgeDiskDriveBlockEntity::new);
         diskDriveBlock.setRegistryName(createIdentifier("disk_drive"));
         Blocks.INSTANCE.setDiskDrive(diskDriveBlock);
         e.getRegistry().register(diskDriveBlock);
@@ -203,7 +212,7 @@ public class ModInitializer {
         e.getRegistry().register(creativeControllerBlockEntityType);
         BlockEntities.INSTANCE.setCreativeController(creativeControllerBlockEntityType);
 
-        BlockEntityType<DiskDriveBlockEntity> diskDriveBlockEntityType = BlockEntityType.Builder.of(DiskDriveBlockEntity::new, Blocks.INSTANCE.getDiskDrive()).build(null);
+        BlockEntityType<ForgeDiskDriveBlockEntity> diskDriveBlockEntityType = BlockEntityType.Builder.of(ForgeDiskDriveBlockEntity::new, Blocks.INSTANCE.getDiskDrive()).build(null);
         diskDriveBlockEntityType.setRegistryName(createIdentifier("disk_drive"));
         e.getRegistry().register(diskDriveBlockEntityType);
         BlockEntities.INSTANCE.setDiskDrive(diskDriveBlockEntityType);

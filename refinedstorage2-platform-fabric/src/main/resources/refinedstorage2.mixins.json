@@ -4,8 +4,7 @@
     "package": "com.refinedmods.refinedstorage2.platform.fabric.mixin",
     "compatibilityLevel": "JAVA_16",
     "mixins": [
-        "SlotAccessor",
-        "DiskDriveHasRenderAttachmentMixin"
+        "SlotAccessor"
     ],
     "client": [
         "EditBoxAccessor",
