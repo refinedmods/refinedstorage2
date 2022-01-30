@@ -14,14 +14,6 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class GridScrollPacket implements ServerPlayNetworking.PlayChannelHandler {
-    public static void writeMode(FriendlyByteBuf buf, GridScrollMode mode) {
-        switch (mode) {
-            case GRID_TO_INVENTORY -> buf.writeByte(0);
-            case GRID_TO_CURSOR -> buf.writeByte(1);
-            case INVENTORY_TO_GRID -> buf.writeByte(2);
-        }
-    }
-
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         ItemResource itemResource = PacketUtil.readItemResource(buf);
@@ -43,5 +35,13 @@ public class GridScrollPacket implements ServerPlayNetworking.PlayChannelHandler
             return GridScrollMode.GRID_TO_CURSOR;
         }
         return GridScrollMode.INVENTORY_TO_GRID;
+    }
+
+    public static void writeMode(FriendlyByteBuf buf, GridScrollMode mode) {
+        switch (mode) {
+            case GRID_TO_INVENTORY -> buf.writeByte(0);
+            case GRID_TO_CURSOR -> buf.writeByte(1);
+            case INVENTORY_TO_GRID -> buf.writeByte(2);
+        }
     }
 }
