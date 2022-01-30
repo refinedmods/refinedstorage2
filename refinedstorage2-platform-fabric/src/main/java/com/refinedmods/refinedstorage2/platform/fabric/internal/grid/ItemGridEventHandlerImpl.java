@@ -21,24 +21,24 @@ import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.o
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toItemVariant;
 
 public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
-    private final AbstractContainerMenu screenHandler;
+    private final AbstractContainerMenu containerMenu;
     private final GridService<ItemResource> gridService;
     private final PlayerInventoryStorage playerInventoryStorage;
     private final SingleSlotStorage<ItemVariant> playerCursorStorage;
 
-    public ItemGridEventHandlerImpl(AbstractContainerMenu screenHandler, GridService<ItemResource> gridService, Inventory playerInventory) {
-        this.screenHandler = screenHandler;
+    public ItemGridEventHandlerImpl(AbstractContainerMenu containerMenu, GridService<ItemResource> gridService, Inventory playerInventory) {
+        this.containerMenu = containerMenu;
         this.gridService = gridService;
         this.playerInventoryStorage = PlayerInventoryStorage.of(playerInventory);
-        this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(screenHandler);
+        this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(containerMenu);
     }
 
     @Override
     public void onInsert(GridInsertMode insertMode) {
-        if (screenHandler.getCarried().isEmpty()) {
+        if (containerMenu.getCarried().isEmpty()) {
             return;
         }
-        ItemResource itemResource = new ItemResource(screenHandler.getCarried());
+        ItemResource itemResource = new ItemResource(containerMenu.getCarried());
         gridService.insert(itemResource, insertMode, (resource, amount, action) -> {
             try (Transaction tx = Transaction.openOuter()) {
                 ItemVariant itemVariant = toItemVariant(resource);

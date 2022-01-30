@@ -35,7 +35,7 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
 
     @Override
     public void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slot) {
-        throw new UnsupportedOperationException();
+        networkManager.send(new GridScrollPacket(itemResource, mode, slot));
     }
 
     @Override

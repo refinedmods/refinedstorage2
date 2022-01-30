@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
@@ -20,36 +21,29 @@ import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.of
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toItemStack;
 
 public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
-    private final AbstractContainerMenu screenHandler;
+    private final AbstractContainerMenu containerMenu;
     private final GridService<ItemResource> gridService;
     private final Inventory playerInventory;
+    private final PlayerMainInvWrapper playerInventoryStorage;
+    private final CursorStorage playerCursorStorage;
 
-    public ItemGridEventHandlerImpl(AbstractContainerMenu screenHandler, GridService<ItemResource> gridService, Inventory playerInventory) {
-        this.screenHandler = screenHandler;
+    public ItemGridEventHandlerImpl(AbstractContainerMenu containerMenu, GridService<ItemResource> gridService, Inventory playerInventory) {
+        this.containerMenu = containerMenu;
         this.gridService = gridService;
         this.playerInventory = playerInventory;
+        this.playerInventoryStorage = new PlayerMainInvWrapper(playerInventory);
+        this.playerCursorStorage = new CursorStorage(containerMenu);
     }
 
     @Override
     public void onInsert(GridInsertMode insertMode) {
-        if (screenHandler.getCarried().isEmpty()) {
+        if (containerMenu.getCarried().isEmpty()) {
             return;
         }
-        ItemResource itemResource = new ItemResource(screenHandler.getCarried());
+        ItemResource itemResource = new ItemResource(containerMenu.getCarried());
         gridService.insert(itemResource, insertMode, (resource, amount, action) -> {
-            ItemStack requested = toItemStack(resource, amount);
-            if (screenHandler.getCarried().isEmpty()) {
-                return 0;
-            }
-            boolean same = isSame(requested, screenHandler.getCarried());
-            if (!same) {
-                return 0;
-            }
-            long extracted = Math.min(screenHandler.getCarried().getCount(), requested.getCount());
-            if (action == Action.EXECUTE) {
-                screenHandler.getCarried().shrink((int) extracted);
-            }
-            return extracted;
+            ItemStack extracted = playerCursorStorage.extractItem(0, (int) amount, action == Action.SIMULATE);
+            return extracted.getCount();
         });
     }
 
@@ -61,68 +55,59 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
             return;
         }
         ItemResource itemResource = ofItemStack(itemStackInSlot);
-        gridService.insert(itemResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action) -> {
-            ItemStack requested = toItemStack(resource, amount);
-            ItemStack inSlot = storage.getStackInSlot(0);
-            if (!isSame(requested, inSlot)) {
-                return 0;
-            }
-            return storage.extractItem(0, requested.getCount(), action == Action.SIMULATE).getCount();
-        });
+        gridService.insert(itemResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action) -> extract(storage, resource, amount, action));
     }
 
     @Override
     public void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
         gridService.extract(itemResource, mode, (resource, amount, action) -> {
-            ItemStack itemStack = toItemStack(resource, amount);
-            return insert(itemStack, action, cursor);
+            ItemStack toInsert = toItemStack(resource, amount);
+            return insert(toInsert, action, cursor);
         });
-    }
-
-    private long insert(ItemStack itemStack, Action action, boolean cursor) {
-        if (cursor) {
-            return insertIntoCursor(itemStack, action);
-        }
-        return insertIntoMainInventory(itemStack, action);
-    }
-
-    private long insertIntoMainInventory(ItemStack itemStack, Action action) {
-        return ItemHandlerHelper.insertItem(new PlayerMainInvWrapper(playerInventory), itemStack, action == Action.SIMULATE).getCount();
-    }
-
-    private long insertIntoCursor(ItemStack itemStack, Action action) {
-        if (screenHandler.getCarried().isEmpty()) {
-            return insertIntoEmptyCursor(itemStack, action);
-        }
-        if (!isSame(screenHandler.getCarried(), itemStack)) {
-            return itemStack.getCount();
-        }
-        return insertIntoCursorWithExistingContent(itemStack, action);
-    }
-
-    private int insertIntoEmptyCursor(ItemStack itemStack, Action action) {
-        if (action == Action.EXECUTE) {
-            screenHandler.setCarried(itemStack);
-        }
-        return 0;
-    }
-
-    private int insertIntoCursorWithExistingContent(ItemStack itemStack, Action action) {
-        int spaceLeft = screenHandler.getCarried().getMaxStackSize() - screenHandler.getCarried().getCount();
-        if (spaceLeft <= 0) {
-            return itemStack.getCount();
-        }
-        int toInsert = Math.min(itemStack.getCount(), spaceLeft);
-        int remainder = itemStack.getCount() - toInsert;
-        if (action == Action.EXECUTE) {
-            screenHandler.getCarried().grow(toInsert);
-        }
-        return remainder;
     }
 
     @Override
     public void onScroll(ItemResource itemResource, GridScrollMode mode, int slot) {
-        throw new UnsupportedOperationException();
+        IItemHandler playerStorage = slot >= 0 ? new RangedWrapper(new InvWrapper(playerInventory), slot, slot + 1) : playerInventoryStorage;
+        switch (mode) {
+            case GRID_TO_INVENTORY -> handleGridToInventoryScroll(itemResource, playerStorage);
+            case INVENTORY_TO_GRID -> handleInventoryToGridScroll(itemResource, playerStorage);
+            case GRID_TO_CURSOR -> handleGridToInventoryScroll(itemResource, playerCursorStorage);
+        }
+    }
+
+    private void handleInventoryToGridScroll(ItemResource itemResource, IItemHandler sourceStorage) {
+        gridService.insert(itemResource, GridInsertMode.SINGLE_RESOURCE, (resource, amount, action) -> extract(sourceStorage, resource, amount, action));
+    }
+
+    private void handleGridToInventoryScroll(ItemResource itemResource, IItemHandler destinationStorage) {
+        gridService.extract(itemResource, GridExtractMode.SINGLE_RESOURCE, (resource, amount, action) -> {
+            ItemStack toInsert = toItemStack(resource, amount);
+            ItemStack remainder = ItemHandlerHelper.insertItem(destinationStorage, toInsert, action == Action.SIMULATE);
+            return remainder.getCount();
+        });
+    }
+
+    private long insert(ItemStack itemStack, Action action, boolean cursor) {
+        IItemHandler handler = cursor ? playerCursorStorage : playerInventoryStorage;
+        return ItemHandlerHelper.insertItem(handler, itemStack, action == Action.SIMULATE).getCount();
+    }
+
+    private long extract(IItemHandler source, ItemResource template, long amount, Action action) {
+        ItemStack toExtractStack = toItemStack(template, amount);
+        long extracted = 0;
+        for (int slot = 0; slot < source.getSlots(); ++slot) {
+            boolean relevant = isSame(source.getStackInSlot(slot), toExtractStack);
+            if (!relevant) {
+                continue;
+            }
+            long toExtract = amount - extracted;
+            extracted += source.extractItem(slot, (int) toExtract, action == Action.SIMULATE).getCount();
+            if (extracted >= amount) {
+                break;
+            }
+        }
+        return extracted;
     }
 
     private boolean isSame(ItemStack a, ItemStack b) {
