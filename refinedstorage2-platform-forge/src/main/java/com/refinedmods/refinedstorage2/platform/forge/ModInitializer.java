@@ -96,6 +96,7 @@ public class ModInitializer {
         registerNetworkComponents();
         registerResourceTypes();
         registerTickHandler();
+        registerLootFunctions();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onClientSetup);
@@ -305,6 +306,10 @@ public class ModInitializer {
         diskDriveMenuType.setRegistryName(createIdentifier("disk_drive"));
         e.getRegistry().register(diskDriveMenuType);
         Menus.INSTANCE.setDiskDrive(diskDriveMenuType);
+    }
+
+    private void registerLootFunctions() {
+        LootFunctions.INSTANCE.setController(Registry.register(Registry.LOOT_FUNCTION_TYPE, createIdentifier("controller"), new LootItemFunctionType(new ControllerLootItemFunction.Serializer())));
     }
 
     @SubscribeEvent
