@@ -20,7 +20,7 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
 
     @Override
     public void sendGridItemExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
-        throw new UnsupportedOperationException();
+        networkManager.send(new GridExtractPacket(mode, cursor, itemResource));
     }
 
     @Override
