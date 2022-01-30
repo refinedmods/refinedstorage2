@@ -16,13 +16,6 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandler {
-    public static void writeMode(FriendlyByteBuf buf, GridExtractMode mode) {
-        switch (mode) {
-            case ENTIRE_RESOURCE -> buf.writeByte(0);
-            case HALF_RESOURCE -> buf.writeByte(1);
-        }
-    }
-
     @Override
     public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
         GridExtractMode mode = getMode(buf.readByte());
@@ -43,5 +36,12 @@ public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandle
             return GridExtractMode.ENTIRE_RESOURCE;
         }
         return GridExtractMode.HALF_RESOURCE;
+    }
+
+    public static void writeMode(FriendlyByteBuf buf, GridExtractMode mode) {
+        switch (mode) {
+            case ENTIRE_RESOURCE -> buf.writeByte(0);
+            case HALF_RESOURCE -> buf.writeByte(1);
+        }
     }
 }

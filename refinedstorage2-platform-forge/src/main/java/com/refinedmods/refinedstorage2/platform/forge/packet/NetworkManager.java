@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet;
 
+import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.PropertyChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceTypeChangePacket;
@@ -35,6 +36,7 @@ public class NetworkManager {
         handler.registerMessage(id++, GridActivePacket.class, GridActivePacket::encode, GridActivePacket::decode, GridActivePacket::handle);
         handler.registerMessage(id++, GridItemUpdatePacket.class, GridItemUpdatePacket::encode, GridItemUpdatePacket::decode, GridItemUpdatePacket::handle);
         handler.registerMessage(id++, GridInsertPacket.class, GridInsertPacket::encode, GridInsertPacket::decode, GridInsertPacket::handle);
+        handler.registerMessage(id++, GridExtractPacket.class, GridExtractPacket::encode, GridExtractPacket::decode, GridExtractPacket::handle);
     }
 
     public void send(ServerPlayer player, Object message) {

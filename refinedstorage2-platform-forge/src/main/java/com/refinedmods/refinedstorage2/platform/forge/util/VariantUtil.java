@@ -19,7 +19,7 @@ public final class VariantUtil {
         return new ItemResource(itemStack.getItem(), itemStack.getTag());
     }
 
-    public static ItemStack toItemStack(ItemResource itemResource) {
-        return new ItemStack(itemResource.getItem(), 1, itemResource.getTag());
+    public static ItemStack toItemStack(ItemResource itemResource, long amount) {
+        return new ItemStack(itemResource.getItem(), (int) amount, itemResource.getTag());
     }
 }
