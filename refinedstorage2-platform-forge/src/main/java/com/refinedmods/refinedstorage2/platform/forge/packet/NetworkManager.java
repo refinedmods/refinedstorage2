@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.PropertyChangeP
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceTypeChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ControllerEnergyPacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ResourceFilterSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.StorageInfoResponsePacket;
 
@@ -29,6 +30,7 @@ public class NetworkManager {
         handler.registerMessage(id++, StorageInfoResponsePacket.class, StorageInfoResponsePacket::encode, StorageInfoResponsePacket::decode, StorageInfoResponsePacket::handle);
         handler.registerMessage(id++, ResourceTypeChangePacket.class, ResourceTypeChangePacket::encode, ResourceTypeChangePacket::decode, ResourceTypeChangePacket::handle);
         handler.registerMessage(id++, ResourceFilterSlotUpdatePacket.class, ResourceFilterSlotUpdatePacket::encode, ResourceFilterSlotUpdatePacket::decode, ResourceFilterSlotUpdatePacket::handle);
+        handler.registerMessage(id++, GridActivePacket.class, GridActivePacket::encode, GridActivePacket::decode, GridActivePacket::handle);
     }
 
     public void send(ServerPlayer player, Object message) {

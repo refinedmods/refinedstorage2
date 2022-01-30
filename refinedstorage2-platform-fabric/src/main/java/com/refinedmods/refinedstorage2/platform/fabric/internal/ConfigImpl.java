@@ -123,11 +123,10 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     }
 
     private static class ControllerImpl implements Controller {
-        private long capacity = 1000;
+        private long energyCapacity = 1000;
 
-        @Override
-        public long getCapacity() {
-            return capacity;
+        public long getEnergyCapacity() {
+            return energyCapacity;
         }
     }
 }

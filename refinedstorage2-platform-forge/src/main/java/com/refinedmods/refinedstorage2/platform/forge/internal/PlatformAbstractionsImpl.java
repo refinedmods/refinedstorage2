@@ -20,6 +20,9 @@ import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.forge.integration.energy.ControllerForgeEnergy;
+import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridEventHandlerImpl;
+import com.refinedmods.refinedstorage2.platform.forge.internal.grid.view.ForgeFluidGridResourceFactory;
+import com.refinedmods.refinedstorage2.platform.forge.internal.grid.view.ForgeItemGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.menu.MenuOpenerImpl;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ClientToServerCommunicationsImpl;
@@ -28,7 +31,9 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ServerToClientC
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -90,22 +95,22 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
 
     @Override
     public boolean canEditBoxLoseFocus(EditBox editBox) {
-        throw new UnsupportedOperationException();
+        return editBox.canLoseFocus;
     }
 
     @Override
     public boolean isKeyDown(KeyMapping keyMapping) {
-        throw new UnsupportedOperationException();
+        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), keyMapping.getKey().getValue());
     }
 
     @Override
     public int getInventoryIndexOfSlot(Slot slot) {
-        throw new UnsupportedOperationException();
+        return slot.getContainerSlot(); // TODO: Can it be removed?!
     }
 
     @Override
     public ItemGridEventHandler createItemGridEventHandler(AbstractContainerMenu containerMenu, GridService<ItemResource> gridService, Inventory playerInventory) {
-        throw new UnsupportedOperationException();
+        return new ItemGridEventHandlerImpl();
     }
 
     @Override
@@ -115,12 +120,12 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
 
     @Override
     public Function<ResourceAmount<ItemResource>, GridResource<ItemResource>> getItemGridResourceFactory() {
-        throw new UnsupportedOperationException();
+        return new ForgeItemGridResourceFactory();
     }
 
     @Override
     public Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> getFluidGridResourceFactory() {
-        throw new UnsupportedOperationException();
+        return new ForgeFluidGridResourceFactory();
     }
 
     @Override
@@ -130,10 +135,7 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
 
     @Override
     public Optional<FluidResource> convertToFluid(ItemStack stack) {
-        return stack
-                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
-                .map(handler -> handler.getFluidInTank(0))
-                .map(contents -> contents.isEmpty() ? null : new FluidResource(contents.getFluid(), contents.getTag()));
+        return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).map(handler -> handler.getFluidInTank(0)).map(contents -> contents.isEmpty() ? null : new FluidResource(contents.getFluid(), contents.getTag()));
     }
 
     @Override

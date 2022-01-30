@@ -10,7 +10,7 @@ public class ControllerForgeEnergy extends EnergyStorageImpl implements IEnergyS
     private final Runnable listener;
 
     public ControllerForgeEnergy(Runnable listener) {
-        super((int) PlatformAbstractions.INSTANCE.getConfig().getController().getCapacity());
+        super((int) PlatformAbstractions.INSTANCE.getConfig().getController().getEnergyCapacity());
         this.listener = listener;
     }
 

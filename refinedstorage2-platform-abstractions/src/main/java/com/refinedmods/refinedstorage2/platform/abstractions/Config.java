@@ -36,6 +36,6 @@ public interface Config {
     }
 
     interface Controller {
-        long getCapacity();
+        long getEnergyCapacity();
     }
 }

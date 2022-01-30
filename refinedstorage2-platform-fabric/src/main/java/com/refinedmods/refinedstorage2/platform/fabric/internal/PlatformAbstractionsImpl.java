@@ -22,8 +22,8 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridEventHandlerImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricFluidGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricItemGridResourceFactory;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FluidGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.menu.MenuOpenerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.EditBoxAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.KeyMappingAccessor;
@@ -126,7 +126,7 @@ public final class PlatformAbstractionsImpl implements PlatformAbstractions {
 
     @Override
     public Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> getFluidGridResourceFactory() {
-        return new FluidGridResourceFactory();
+        return new FabricFluidGridResourceFactory();
     }
 
     @Override
