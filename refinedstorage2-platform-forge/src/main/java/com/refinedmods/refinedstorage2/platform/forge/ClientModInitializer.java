@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
 import com.refinedmods.refinedstorage2.platform.forge.render.entity.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.forge.render.model.DiskDriveModelLoader;
@@ -58,6 +59,7 @@ public final class ClientModInitializer {
         MenuScreens.register(Menus.INSTANCE.getController(), ControllerScreen::new);
         MenuScreens.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
         MenuScreens.register(Menus.INSTANCE.getGrid(), ItemGridScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getFluidGrid(), FluidGridScreen::new);
     }
 
     @SubscribeEvent

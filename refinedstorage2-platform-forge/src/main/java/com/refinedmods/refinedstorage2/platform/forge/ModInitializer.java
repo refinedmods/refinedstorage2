@@ -22,9 +22,11 @@ import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
@@ -231,6 +233,11 @@ public class ModInitializer {
         gridBlockEntityType.setRegistryName(createIdentifier("grid"));
         e.getRegistry().register(gridBlockEntityType);
         BlockEntities.INSTANCE.setGrid(gridBlockEntityType);
+
+        BlockEntityType<FluidGridBlockEntity> fluidGridBlockEntityType = BlockEntityType.Builder.of(FluidGridBlockEntity::new, Blocks.INSTANCE.getFluidGrid().toArray()).build(null);
+        fluidGridBlockEntityType.setRegistryName(createIdentifier("fluid_grid"));
+        e.getRegistry().register(fluidGridBlockEntityType);
+        BlockEntities.INSTANCE.setFluidGrid(fluidGridBlockEntityType);
     }
 
     @SubscribeEvent
@@ -335,6 +342,11 @@ public class ModInitializer {
         itemGridMenuType.setRegistryName(createIdentifier("grid"));
         e.getRegistry().register(itemGridMenuType);
         Menus.INSTANCE.setGrid(itemGridMenuType);
+
+        MenuType<FluidGridContainerMenu> fluidGridMenuType = IForgeMenuType.create(FluidGridContainerMenu::new);
+        fluidGridMenuType.setRegistryName(createIdentifier("fluid_grid"));
+        e.getRegistry().register(fluidGridMenuType);
+        Menus.INSTANCE.setFluidGrid(fluidGridMenuType);
     }
 
     private void registerLootFunctions() {

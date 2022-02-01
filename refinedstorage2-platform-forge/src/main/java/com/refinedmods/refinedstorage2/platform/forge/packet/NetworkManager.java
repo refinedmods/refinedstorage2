@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceTypeCha
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ControllerEnergyPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridActivePacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridFluidUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridItemUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ResourceFilterSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.StorageInfoResponsePacket;
@@ -39,6 +40,7 @@ public class NetworkManager {
         handler.registerMessage(id++, GridInsertPacket.class, GridInsertPacket::encode, GridInsertPacket::decode, GridInsertPacket::handle);
         handler.registerMessage(id++, GridExtractPacket.class, GridExtractPacket::encode, GridExtractPacket::decode, GridExtractPacket::handle);
         handler.registerMessage(id++, GridScrollPacket.class, GridScrollPacket::encode, GridScrollPacket::decode, GridScrollPacket::handle);
+        handler.registerMessage(id++, GridFluidUpdatePacket.class, GridFluidUpdatePacket::encode, GridFluidUpdatePacket::decode, GridFluidUpdatePacket::handle);
     }
 
     public void send(ServerPlayer player, Object message) {

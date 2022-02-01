@@ -31,7 +31,7 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
 
     @Override
     public void sendGridFluidUpdate(ServerPlayer player, FluidResource fluidResource, long change, StorageTracker.Entry trackerEntry) {
-        throw new UnsupportedOperationException();
+        networkManager.send(player, new GridFluidUpdatePacket(fluidResource, change, trackerEntry));
     }
 
     @Override

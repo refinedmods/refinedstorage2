@@ -21,8 +21,8 @@ public class GridFluidUpdatePacket implements ClientPlayNetworking.PlayChannelHa
 
         client.execute(() -> {
             AbstractContainerMenu screenHandler = client.player.containerMenu;
-            if (screenHandler instanceof FluidGridContainerMenu fluidGridScreenHandler) {
-                fluidGridScreenHandler.onResourceUpdate(fluidResource, amount, trackerEntry);
+            if (screenHandler instanceof FluidGridContainerMenu fluidGridContainerMenu) {
+                fluidGridContainerMenu.onResourceUpdate(fluidResource, amount, trackerEntry);
             }
         });
     }
