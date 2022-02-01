@@ -116,7 +116,7 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
 
     @Override
     public FluidGridEventHandler createFluidGridEventHandler(AbstractContainerMenu containerMenu, GridService<FluidResource> gridService, Inventory playerInventory, ExtractableStorage<ItemResource> bucketStorage) {
-        return new FluidGridEventHandlerImpl(containerMenu, playerInventory, gridService);
+        return new FluidGridEventHandlerImpl(containerMenu, playerInventory, gridService, bucketStorage);
     }
 
     @Override
