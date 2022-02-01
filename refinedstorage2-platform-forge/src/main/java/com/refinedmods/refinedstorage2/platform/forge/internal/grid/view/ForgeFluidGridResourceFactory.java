@@ -9,6 +9,11 @@ import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.to
 
 public class ForgeFluidGridResourceFactory extends FluidGridResourceFactory {
     @Override
+    protected String getTooltip(FluidResource resource) {
+        return getName(resource);
+    }
+
+    @Override
     protected String getModName(String modId) {
         return ModList
                 .get()
