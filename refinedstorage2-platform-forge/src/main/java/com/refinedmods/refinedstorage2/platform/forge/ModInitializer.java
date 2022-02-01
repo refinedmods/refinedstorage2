@@ -57,6 +57,7 @@ import com.refinedmods.refinedstorage2.platform.common.loot.ControllerLootItemFu
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.forge.integration.jei.JeiIntegration;
 import com.refinedmods.refinedstorage2.platform.forge.internal.PlatformAbstractionsImpl;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
@@ -360,7 +361,9 @@ public class ModInitializer {
             GridSearchBoxModeRegistry.INSTANCE.add(new PlatformSearchBoxModeImpl(queryParser, createIdentifier("textures/icons.png"), autoSelected ? 16 : 0, 96, createTranslation("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : "")), autoSelected));
         }
 
-        // TODO: JEI support
+        if (JeiIntegration.isLoaded()) {
+            JeiIntegration.registerGridSearchBoxModes(queryParser);
+        }
     }
 
     @SubscribeEvent
