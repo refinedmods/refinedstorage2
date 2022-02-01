@@ -18,12 +18,14 @@ public class GridExtractPacket {
     private final GridExtractMode mode;
     private final boolean cursor;
     private final ItemResource itemResource;
+    private final FluidResource fluidResource;
     private final FriendlyByteBuf buf;
 
     public GridExtractPacket(GridExtractMode mode, boolean cursor, FriendlyByteBuf buf) {
         this.mode = mode;
         this.cursor = cursor;
         this.itemResource = null;
+        this.fluidResource = null;
         this.buf = buf;
     }
 
@@ -31,6 +33,15 @@ public class GridExtractPacket {
         this.mode = mode;
         this.cursor = cursor;
         this.itemResource = itemResource;
+        this.fluidResource = null;
+        this.buf = null;
+    }
+
+    public GridExtractPacket(GridExtractMode mode, boolean cursor, FluidResource fluidResource) {
+        this.mode = mode;
+        this.cursor = cursor;
+        this.itemResource = null;
+        this.fluidResource = fluidResource;
         this.buf = null;
     }
 
@@ -41,7 +52,11 @@ public class GridExtractPacket {
     public static void encode(GridExtractPacket packet, FriendlyByteBuf buf) {
         writeMode(buf, packet.mode);
         buf.writeBoolean(packet.cursor);
-        PacketUtil.writeItemResource(buf, packet.itemResource);
+        if (packet.itemResource != null) {
+            PacketUtil.writeItemResource(buf, packet.itemResource);
+        } else if (packet.fluidResource != null) {
+            PacketUtil.writeFluidResource(buf, packet.fluidResource);
+        }
     }
 
     public static void handle(GridExtractPacket packet, Supplier<NetworkEvent.Context> ctx) {

@@ -25,7 +25,7 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
 
     @Override
     public void sendGridFluidExtract(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
-        throw new UnsupportedOperationException();
+        networkManager.send(new GridExtractPacket(mode, cursor, fluidResource));
     }
 
     @Override
