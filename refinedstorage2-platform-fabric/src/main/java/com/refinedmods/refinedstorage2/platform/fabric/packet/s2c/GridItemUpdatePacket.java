@@ -21,8 +21,8 @@ public class GridItemUpdatePacket implements ClientPlayNetworking.PlayChannelHan
 
         client.execute(() -> {
             AbstractContainerMenu screenHandler = client.player.containerMenu;
-            if (screenHandler instanceof ItemGridContainerMenu itemGridScreenHandler) {
-                itemGridScreenHandler.onResourceUpdate(resource, amount, trackerEntry);
+            if (screenHandler instanceof ItemGridContainerMenu itemGridContainerMenu) {
+                itemGridContainerMenu.onResourceUpdate(resource, amount, trackerEntry);
             }
         });
     }
