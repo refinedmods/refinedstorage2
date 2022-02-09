@@ -51,7 +51,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             return;
         }
         FluidStack extractableResource = cursorStorage.getFluidInTank(0);
-        if (extractableResource == null) {
+        if (extractableResource.isEmpty()) {
             return;
         }
         FluidResource fluidResource = ofFluidStack(extractableResource);
@@ -86,7 +86,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             return;
         }
         FluidStack extractableResource = storage.getFluidInTank(0);
-        if (extractableResource == null) {
+        if (extractableResource.isEmpty()) {
             return;
         }
         FluidResource fluidResource = ofFluidStack(extractableResource);
