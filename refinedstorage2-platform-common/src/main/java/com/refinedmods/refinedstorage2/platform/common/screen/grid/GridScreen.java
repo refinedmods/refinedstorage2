@@ -467,7 +467,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
     private void mouseScrolledInInventory(boolean up) {
         getMenu().getView().setPreventSorting(true);
-        int slotIndex = PlatformAbstractions.INSTANCE.getInventoryIndexOfSlot(hoveredSlot);
+        int slotIndex = hoveredSlot.getContainerSlot();
         mouseScrolledInInventory(up, hoveredSlot.getItem(), slotIndex);
     }
 

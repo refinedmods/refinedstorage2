@@ -82,7 +82,7 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
         if (!playerEntity.level.isClientSide()) {
             Slot slot = getSlot(slotIndex);
             if (slot.hasItem()) {
-                itemGridEventHandler.onTransfer(PlatformAbstractions.INSTANCE.getInventoryIndexOfSlot(slot));
+                itemGridEventHandler.onTransfer(slot.getContainerSlot());
             }
         }
         return ItemStack.EMPTY;

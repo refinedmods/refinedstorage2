@@ -21,7 +21,6 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public interface PlatformAbstractions {
@@ -44,8 +43,6 @@ public interface PlatformAbstractions {
     boolean canEditBoxLoseFocus(EditBox editBox);
 
     boolean isKeyDown(KeyMapping keyMapping);
-
-    int getInventoryIndexOfSlot(Slot slot);
 
     ItemGridEventHandler createItemGridEventHandler(AbstractContainerMenu containerMenu, GridService<ItemResource> gridService, Inventory playerInventory);
 

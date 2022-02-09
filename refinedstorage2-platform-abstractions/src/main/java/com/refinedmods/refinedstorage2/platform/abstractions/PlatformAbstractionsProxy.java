@@ -21,7 +21,6 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public class PlatformAbstractionsProxy implements PlatformAbstractions {
@@ -77,11 +76,6 @@ public class PlatformAbstractionsProxy implements PlatformAbstractions {
     @Override
     public boolean isKeyDown(KeyMapping keyMapping) {
         return ensureLoaded().isKeyDown(keyMapping);
-    }
-
-    @Override
-    public int getInventoryIndexOfSlot(Slot slot) {
-        return ensureLoaded().getInventoryIndexOfSlot(slot);
     }
 
     @Override

@@ -27,7 +27,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.Fabric
 import com.refinedmods.refinedstorage2.platform.fabric.internal.menu.MenuOpenerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.EditBoxAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.KeyMappingAccessor;
-import com.refinedmods.refinedstorage2.platform.fabric.mixin.SlotAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ClientToServerCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ServerToClientCommunicationsImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
@@ -48,7 +47,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public final class PlatformAbstractionsImpl implements PlatformAbstractions {
@@ -102,11 +100,6 @@ public final class PlatformAbstractionsImpl implements PlatformAbstractions {
     @Override
     public boolean isKeyDown(KeyMapping keyMapping) {
         return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), ((KeyMappingAccessor) keyMapping).getKey().getValue());
-    }
-
-    @Override
-    public int getInventoryIndexOfSlot(Slot slot) {
-        return ((SlotAccessor) slot).getSlot();
     }
 
     @Override

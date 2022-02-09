@@ -83,7 +83,7 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
         if (!playerEntity.level.isClientSide()) {
             Slot slot = getSlot(slotIndex);
             if (slot.hasItem()) {
-                fluidGridEventHandler.onTransfer(PlatformAbstractions.INSTANCE.getInventoryIndexOfSlot(slot));
+                fluidGridEventHandler.onTransfer(slot.getContainerSlot());
             }
         }
         return ItemStack.EMPTY;

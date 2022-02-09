@@ -38,7 +38,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -102,11 +101,6 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
     @Override
     public boolean isKeyDown(KeyMapping keyMapping) {
         return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), keyMapping.getKey().getValue());
-    }
-
-    @Override
-    public int getInventoryIndexOfSlot(Slot slot) {
-        return slot.getContainerSlot(); // TODO: Can it be removed?!
     }
 
     @Override
