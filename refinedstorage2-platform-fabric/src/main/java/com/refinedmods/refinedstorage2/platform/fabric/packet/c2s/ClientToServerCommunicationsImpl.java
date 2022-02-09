@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridScrollModeUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 
@@ -46,7 +47,7 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     public void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slot) {
         sendToServer(PacketIds.GRID_SCROLL, buf -> {
             PacketUtil.writeItemResource(buf, itemResource);
-            GridScrollPacket.writeMode(buf, mode);
+            GridScrollModeUtil.writeMode(buf, mode);
             buf.writeInt(slot);
         });
     }

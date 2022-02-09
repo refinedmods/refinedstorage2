@@ -3,16 +3,8 @@ package com.refinedmods.refinedstorage2.platform.forge;
 import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
-import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractionsProxy;
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacadeProxy;
 import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
-import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
+import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
@@ -31,15 +23,9 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGr
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.internal.Rs2PlatformApiFacadeImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.search.PlatformSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.GridResourceAttributeKeys;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.CoreItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStoragePartItem;
@@ -53,7 +39,6 @@ import com.refinedmods.refinedstorage2.platform.common.item.StoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.loot.ControllerLootItemFunction;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
@@ -63,7 +48,6 @@ import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -72,7 +56,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -115,7 +98,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 @Mod(IdentifierUtil.MOD_ID)
-public class ModInitializer {
+public class ModInitializer extends AbstractModInitializer {
     private static final String BLOCK_TRANSLATION_CATEGORY = "block";
     private static final CreativeModeTab CREATIVE_MODE_TAB = new CreativeModeTab(IdentifierUtil.MOD_ID + ".general") {
         @Override
@@ -125,7 +108,7 @@ public class ModInitializer {
     };
 
     public ModInitializer() {
-        initializePlatformAbstractions();
+        initializePlatformAbstractions(new PlatformAbstractionsImpl());
         initializePlatformApiFacade();
         registerDiskTypes();
         registerStorageChannelTypes();
@@ -146,34 +129,6 @@ public class ModInitializer {
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(MenuType.class, this::registerMenus);
 
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerCapabilities);
-    }
-
-    private void initializePlatformAbstractions() {
-        ((PlatformAbstractionsProxy) PlatformAbstractions.INSTANCE).setAbstractions(new PlatformAbstractionsImpl());
-    }
-
-    private void initializePlatformApiFacade() {
-        ((Rs2PlatformApiFacadeProxy) Rs2PlatformApiFacade.INSTANCE).setFacade(new Rs2PlatformApiFacadeImpl());
-    }
-
-    private void registerDiskTypes() {
-        StorageTypeRegistry.INSTANCE.addType(createIdentifier("item_disk"), ItemStorageType.INSTANCE);
-        StorageTypeRegistry.INSTANCE.addType(createIdentifier("fluid_disk"), FluidStorageType.INSTANCE);
-    }
-
-    private void registerStorageChannelTypes() {
-        StorageChannelTypeRegistry.INSTANCE.addType(StorageChannelTypes.ITEM);
-        StorageChannelTypeRegistry.INSTANCE.addType(StorageChannelTypes.FLUID);
-    }
-
-    private void registerNetworkComponents() {
-        Rs2PlatformApiFacade.INSTANCE.getNetworkComponentRegistry().addComponent(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
-        Rs2PlatformApiFacade.INSTANCE.getNetworkComponentRegistry().addComponent(GraphNetworkComponent.class, GraphNetworkComponent::new);
-        Rs2PlatformApiFacade.INSTANCE.getNetworkComponentRegistry().addComponent(StorageNetworkComponent.class, network -> new StorageNetworkComponent(StorageChannelTypeRegistry.INSTANCE));
-    }
-
-    private void registerResourceTypes() {
-        Rs2PlatformApiFacade.INSTANCE.getResourceTypeRegistry().register(FluidResourceType.INSTANCE);
     }
 
     private void registerTickHandler() {
@@ -368,10 +323,6 @@ public class ModInitializer {
         fluidGridMenuType.setRegistryName(FLUID_GRID);
         e.getRegistry().register(fluidGridMenuType);
         Menus.INSTANCE.setFluidGrid(fluidGridMenuType);
-    }
-
-    private void registerLootFunctions() {
-        LootFunctions.INSTANCE.setController(Registry.register(Registry.LOOT_FUNCTION_TYPE, CONTROLLER, new LootItemFunctionType(new ControllerLootItemFunction.Serializer())));
     }
 
     private void registerGridSearchBoxModes() {
