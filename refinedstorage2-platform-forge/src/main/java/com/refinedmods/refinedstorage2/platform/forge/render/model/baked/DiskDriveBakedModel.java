@@ -42,12 +42,12 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
             return super.getQuads(state, side, rand);
         }
         BiDirection direction = state.getValue(BaseBlock.DIRECTION);
-        return QuadTransformer.transformSideAndRotate((resultingSide) -> getQuads(state, rand, extraData, resultingSide), direction, side);
+        return QuadTransformer.transformSideAndRotate(resultingSide -> getQuads(state, rand, extraData, resultingSide), direction, side);
     }
 
     @NotNull
     private List<BakedQuad> getQuads(@NotNull BlockState state, @NotNull Random rand, @NotNull IModelData extraData, Direction side) {
-        List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(state, side, rand));
+        List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(state, side, rand, extraData));
         DiskDriveState driveState = extraData.getData(ForgeDiskDriveBlockEntity.STATE_PROPERTY);
         if (driveState == null) {
             return quads;
@@ -55,14 +55,14 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         for (int i = 0; i < translators.length; ++i) {
             StorageDiskState diskState = driveState.getState(i);
             if (diskState != StorageDiskState.NONE) {
-                quads.addAll(getDiskModel(state, rand, side, translators[i]));
+                quads.addAll(getDiskModel(state, rand, extraData, side, translators[i]));
             }
         }
         return quads;
     }
 
-    private List<BakedQuad> getDiskModel(@NotNull BlockState state, @NotNull Random rand, Direction side, Vector3f translation) {
-        List<BakedQuad> diskQuads = diskModel.getQuads(state, side, rand);
+    private List<BakedQuad> getDiskModel(@NotNull BlockState state, @NotNull Random rand, @NotNull IModelData extraData, Direction side, Vector3f translation) {
+        List<BakedQuad> diskQuads = diskModel.getQuads(state, side, rand, extraData);
         return QuadTransformer.translate(diskQuads, translation);
     }
 }

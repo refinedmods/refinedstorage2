@@ -18,10 +18,10 @@ public class JeiIntegration {
     public static void registerGridSearchBoxModes(GridQueryParser queryParser) {
         JeiProxy jeiProxy = new JeiProxy();
 
-        GridSearchBoxModeRegistry.INSTANCE.add(JeiGridSearchBoxMode.create(queryParser, false, false, jeiProxy)); // REI
-        GridSearchBoxModeRegistry.INSTANCE.add(JeiGridSearchBoxMode.create(queryParser, true, false, jeiProxy)); // REI autoselected
+        GridSearchBoxModeRegistry.INSTANCE.add(JeiGridSearchBoxMode.create(queryParser, false, false, jeiProxy)); // JEI
+        GridSearchBoxModeRegistry.INSTANCE.add(JeiGridSearchBoxMode.create(queryParser, true, false, jeiProxy)); // JEI autoselected
 
-        GridSearchBoxModeRegistry.INSTANCE.add(JeiGridSearchBoxMode.create(queryParser, false, true, jeiProxy)); // REI two-way
-        GridSearchBoxModeRegistry.INSTANCE.add(JeiGridSearchBoxMode.create(queryParser, true, true, jeiProxy)); // REI two-way autoselected
+        GridSearchBoxModeRegistry.INSTANCE.add(JeiGridSearchBoxMode.create(queryParser, false, true, jeiProxy)); // JEI two-way
+        GridSearchBoxModeRegistry.INSTANCE.add(JeiGridSearchBoxMode.create(queryParser, true, true, jeiProxy)); // JEI two-way autoselected
     }
 }
