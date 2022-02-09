@@ -11,8 +11,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
-
 public class ColorMap<T> {
     private static final DyeColor NORMAL_COLOR = DyeColor.LIGHT_BLUE;
 
@@ -24,11 +22,11 @@ public class ColorMap<T> {
         }
     }
 
-    public ResourceLocation getId(DyeColor color, String name) {
+    public ResourceLocation getId(DyeColor color, ResourceLocation id) {
         if (color == NORMAL_COLOR) {
-            return createIdentifier(name);
+            return id;
         }
-        return createIdentifier(color.getSerializedName() + "_" + name);
+        return new ResourceLocation(id.getNamespace(), color.getSerializedName() + "_" + id.getPath());
     }
 
     public MutableComponent getName(DyeColor color, MutableComponent name) {

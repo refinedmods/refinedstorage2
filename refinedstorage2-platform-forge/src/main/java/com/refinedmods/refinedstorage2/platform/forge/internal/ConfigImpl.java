@@ -5,6 +5,8 @@ import com.refinedmods.refinedstorage2.platform.abstractions.Config;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ConfigImpl implements Config {
+    private static final String ENERGY_USAGE = "energyUsage";
+
     private final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
     private final ForgeConfigSpec spec;
 
@@ -50,7 +52,7 @@ public class ConfigImpl implements Config {
 
         private CableImpl() {
             builder.push("cable");
-            energyUsage = builder.comment("The energy used by the Cable").defineInRange("energyUsage", 0, 0L, Long.MAX_VALUE);
+            energyUsage = builder.comment("The energy used by the Cable").defineInRange(ENERGY_USAGE, 0, 0L, Long.MAX_VALUE);
             builder.pop();
         }
 
@@ -81,7 +83,7 @@ public class ConfigImpl implements Config {
 
         private DiskDriveImpl() {
             builder.push("diskDrive");
-            energyUsage = builder.comment("The energy used by the Disk Drive").defineInRange("energyUsage", 10, 0, Integer.MAX_VALUE);
+            energyUsage = builder.comment("The energy used by the Disk Drive").defineInRange(ENERGY_USAGE, 10, 0, Integer.MAX_VALUE);
             energyUsagePerDisk = builder.comment("The energy used per disk").defineInRange("energyUsagePerDisk", 5, 0, Integer.MAX_VALUE);
             builder.pop();
         }
@@ -113,7 +115,7 @@ public class ConfigImpl implements Config {
             preventSortingWhileShiftIsDown = builder.comment("Whether the Grid should avoid sorting when shift is held down").define("preventSortingWhileShiftIsDown", true);
             detailedTooltip = builder.comment("Whether the Grid should show a detailed tooltip").define("detailedTooltip", true);
             rememberSearchQuery = builder.comment("Whether the search query should persist when closing and re-opening the Grid").define("rememberSearchQuery", false);
-            energyUsage = builder.comment("The energy used by the Grid").defineInRange("energyUsage", 10, 0, Integer.MAX_VALUE);
+            energyUsage = builder.comment("The energy used by the Grid").defineInRange(ENERGY_USAGE, 10, 0, Integer.MAX_VALUE);
             smoothScrolling = builder.comment("Whether the Grid should use smooth scrolling").define("smoothScrolling", true);
             builder.pop();
         }
