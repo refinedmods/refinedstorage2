@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.fabric.render.model;
 
-import com.refinedmods.refinedstorage2.platform.fabric.Rs2Mod;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.baked.DiskDriveBakedModel;
 
 import java.util.Collection;
@@ -15,9 +14,11 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
+
 public class DiskDriveUnbakedModel implements BasicUnbakedModel {
-    private static final ResourceLocation BASE_MODEL = Rs2Mod.createIdentifier("block/disk_drive_base");
-    private static final ResourceLocation DISK_MODEL = Rs2Mod.createIdentifier("block/disk");
+    private static final ResourceLocation BASE_MODEL = createIdentifier("block/disk_drive_base");
+    private static final ResourceLocation DISK_MODEL = createIdentifier("block/disk");
 
     @Override
     public Collection<ResourceLocation> getDependencies() {

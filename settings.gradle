@@ -1,14 +1,18 @@
 pluginManagement {
     repositories {
+        gradlePluginPortal()
         maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
-        gradlePluginPortal()
+        maven {
+            name = 'Sponge / Mixin'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
     }
 
     plugins {
-        id 'fabric-loom' version '0.8-SNAPSHOT'
+        id 'fabric-loom' version '0.10-SNAPSHOT'
     }
 }
 
@@ -19,7 +23,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = 'refinedstorage2'
-include 'refinedstorage2-platform-fabric'
 include 'refinedstorage2-test'
 include 'refinedstorage2-core-api'
 include 'refinedstorage2-resource-api'
@@ -27,5 +30,8 @@ include 'refinedstorage2-storage-api'
 include 'refinedstorage2-query-parser'
 include 'refinedstorage2-grid-api'
 include 'refinedstorage2-network-api'
-include 'refinedstorage2-platform-fabric-api'
-
+include 'refinedstorage2-platform-api'
+include 'refinedstorage2-platform-abstractions'
+include 'refinedstorage2-platform-fabric'
+include 'refinedstorage2-platform-forge'
+include 'refinedstorage2-platform-common'

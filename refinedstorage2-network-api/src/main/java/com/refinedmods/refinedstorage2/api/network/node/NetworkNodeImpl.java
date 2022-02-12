@@ -1,9 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node;
 
-import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.energy.CompositeEnergyStorage;
 
 import java.util.function.BooleanSupplier;
 
@@ -31,8 +29,8 @@ public abstract class NetworkNodeImpl implements NetworkNode {
         if (activenessProvider != null && !activenessProvider.getAsBoolean()) {
             return false;
         }
-        CompositeEnergyStorage energy = network.getComponent(EnergyNetworkComponent.class).getEnergyStorage();
-        return energy.getStored() >= getEnergyUsage();
+        long stored = network.getComponent(EnergyNetworkComponent.class).getStored();
+        return stored >= getEnergyUsage();
     }
 
     @Override
@@ -53,7 +51,7 @@ public abstract class NetworkNodeImpl implements NetworkNode {
         if (!active) {
             return;
         }
-        network.getComponent(EnergyNetworkComponent.class).getEnergyStorage().extract(getEnergyUsage(), Action.EXECUTE);
+        network.getComponent(EnergyNetworkComponent.class).extract(getEnergyUsage());
     }
 
     protected void onActiveChanged(boolean active) {

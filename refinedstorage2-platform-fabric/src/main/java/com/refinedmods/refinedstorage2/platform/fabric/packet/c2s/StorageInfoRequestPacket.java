@@ -1,9 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.fabric.api.Rs2PlatformApiFacade;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.fabric.util.ServerPacketUtil;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
+import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 
 import java.util.UUID;
 
@@ -24,11 +23,7 @@ public class StorageInfoRequestPacket implements ServerPlayNetworking.PlayChanne
                     .getStorageRepository(player.getCommandSenderWorld())
                     .getInfo(id);
 
-            ServerPacketUtil.sendToPlayer(player, PacketIds.STORAGE_INFO_RESPONSE, bufToSend -> {
-                bufToSend.writeUUID(id);
-                bufToSend.writeLong(info.stored());
-                bufToSend.writeLong(info.capacity());
-            });
+            Platform.INSTANCE.getServerToClientCommunications().sendStorageInfoResponse(player, id, info);
         });
     }
 }

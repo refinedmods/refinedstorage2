@@ -1,0 +1,92 @@
+buildscript {
+    repositories {
+        maven {
+            url = 'https://maven.minecraftforge.net'
+        }
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+    }
+}
+
+repositories {
+    // JEI
+    maven {
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+
+archivesBaseName = 'refinedstorage2-platform-forge'
+
+minecraft {
+    mappings channel: 'official', version: project.minecraftVersion
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            ideaModule "${rootProject.name}.${project.name}.main"
+            taskName 'Client'
+            mods {
+                modClientRun {
+                    source sourceSets.main
+                    project.ext.apis.collect {
+                        source(project(it).sourceSets.main)
+                    }
+                    project.ext.compileApis.collect {
+                        source(project(it).sourceSets.main)
+                    }
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+            ideaModule "${rootProject.name}.${project.name}.main"
+            taskName 'Server'
+            mods {
+                modServerRun {
+                    source sourceSets.main
+                    project.ext.apis.collect {
+                        source(project(it).sourceSets.main)
+                    }
+                    project.ext.compileApis.collect {
+                        source(project(it).sourceSets.main)
+                    }
+                }
+            }
+        }
+    }
+}
+
+sourceSets.main.resources.srcDir 'src/generated/resources'
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${project.minecraftVersion}-${project.forgeVersion}"
+    project.ext.apis.collect {
+        implementation project(it)
+    }
+    project.ext.compileApis.collect {
+        implementation project(it)
+    }
+    compileOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jeiVersion}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jeiVersion}")
+}
+
+processResources {
+    from project(":refinedstorage2-platform-common").sourceSets.main.resources
+}
+
+tasks.withType(JavaCompile) {
+    project.ext.apis.collect {
+        source(project(it).sourceSets.main.allSource)
+    }
+    project.ext.compileApis.collect {
+        source(project(it).sourceSets.main.allSource)
+    }
+}
+
+jar.finalizedBy('reobfJar')
+

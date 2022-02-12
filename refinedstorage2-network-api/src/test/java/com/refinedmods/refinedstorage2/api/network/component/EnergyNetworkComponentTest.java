@@ -18,8 +18,8 @@ class EnergyNetworkComponentTest {
         EnergyNetworkComponent sut = new EnergyNetworkComponent();
 
         // Assert
-        assertThat(sut.getEnergyStorage().getStored()).isZero();
-        assertThat(sut.getEnergyStorage().getCapacity()).isZero();
+        assertThat(sut.getStored()).isZero();
+        assertThat(sut.getCapacity()).isZero();
     }
 
     @Test
@@ -32,14 +32,14 @@ class EnergyNetworkComponentTest {
         controller.receive(100, Action.EXECUTE);
         NetworkNodeContainer container = () -> controller;
 
-        long capacityBefore = sut.getEnergyStorage().getCapacity();
-        long storedBefore = sut.getEnergyStorage().getStored();
+        long capacityBefore = sut.getCapacity();
+        long storedBefore = sut.getStored();
 
         // Act
         sut.onContainerAdded(container);
 
-        long capacityAfter = sut.getEnergyStorage().getCapacity();
-        long storedAfter = sut.getEnergyStorage().getStored();
+        long capacityAfter = sut.getCapacity();
+        long storedAfter = sut.getStored();
 
         // Assert
         assertThat(capacityBefore).isZero();
@@ -61,14 +61,14 @@ class EnergyNetworkComponentTest {
 
         sut.onContainerAdded(container);
 
-        long capacityBefore = sut.getEnergyStorage().getCapacity();
-        long storedBefore = sut.getEnergyStorage().getStored();
+        long capacityBefore = sut.getCapacity();
+        long storedBefore = sut.getStored();
 
         // Act
         sut.onContainerRemoved(container);
 
-        long capacityAfter = sut.getEnergyStorage().getCapacity();
-        long storedAfter = sut.getEnergyStorage().getStored();
+        long capacityAfter = sut.getCapacity();
+        long storedAfter = sut.getStored();
 
         // Assert
         assertThat(capacityBefore).isEqualTo(1000);

@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
+}
+
+archivesBaseName = 'refinedstorage2-platform-abstractions'
+
+minecraft {
+    version(project.minecraftVersion)
+}
+
+dependencies {
+    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.4'
+}
+
+dependencies {
+    implementation project(':refinedstorage2-storage-api')
+    implementation project(':refinedstorage2-grid-api')
+    implementation project(':refinedstorage2-core-api')
+    implementation project(':refinedstorage2-platform-api')
+    implementation project(':refinedstorage2-resource-api')
+    implementation project(':refinedstorage2-network-api')
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
+    testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
+    testImplementation project(':refinedstorage2-test')
+}
+
+test {
+    useJUnitPlatform()
+}

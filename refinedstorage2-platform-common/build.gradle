@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
+}
+
+archivesBaseName = 'refinedstorage2-platform-common'
+
+minecraft {
+    version(project.minecraftVersion)
+}
+
+sourceSets {
+    main.resources.srcDirs += 'src/generated/resources'
+}
+
+processResources {
+    inputs.property 'version', project.version
+
+    filesMatching('data/refinedstorage2/patchouli_books/book/book.json') {
+        expand 'version': project.version
+    }
+}
+
+dependencies {
+    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.4'
+    implementation project(':refinedstorage2-platform-abstractions')
+    implementation project(':refinedstorage2-platform-api')
+    implementation project(':refinedstorage2-core-api')
+    implementation project(':refinedstorage2-resource-api')
+    implementation project(':refinedstorage2-storage-api')
+    implementation project(':refinedstorage2-network-api')
+    implementation project(':refinedstorage2-query-parser')
+    implementation project(':refinedstorage2-grid-api')
+}

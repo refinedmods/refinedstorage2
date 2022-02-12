@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ResourceFilterableContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceFilterableContainerMenu;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -12,7 +12,6 @@ public class ResourceFilterSlotUpdatePacket implements ClientPlayNetworking.Play
     @Override
     public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
         int slotIndex = buf.readInt();
-        // TODO: Can we move this off-thread?
         if (client.player.containerMenu instanceof ResourceFilterableContainerMenu containerMenu) {
             containerMenu.readResourceFilterSlotUpdate(slotIndex, buf);
         }

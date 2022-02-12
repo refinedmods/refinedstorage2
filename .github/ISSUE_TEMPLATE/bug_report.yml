@@ -32,12 +32,16 @@ body:
         id: minecraft
         attributes:
             label: What Minecraft version is this happening on?
+            description: |
+                If your Minecraft version isn't listed here, it means that it's no longer supported. In that case, don't create an issue.
             options:
-                - Minecraft 1.17.1
+                - Minecraft 1.18.1
+        validations:
+            required: true
     -   type: input
-        id: fabric
+        id: modloader-version
         attributes:
-            label: What Fabric version is this happening on?
+            label: What Forge or Fabric version is this happening on?
         validations:
             required: true
     -   type: input
@@ -45,7 +49,7 @@ body:
         attributes:
             label: What Refined Storage version is this happening on?
             description: |
-                Ensure that you are running on the latest Refined Storage 2 version.
+                Ensure that you are running on the latest Refined Storage version.
         validations:
             required: true
     -   type: textarea

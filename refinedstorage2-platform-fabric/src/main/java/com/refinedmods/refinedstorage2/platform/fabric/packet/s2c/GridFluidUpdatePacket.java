@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
-import com.refinedmods.refinedstorage2.platform.fabric.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.fabric.containermenu.grid.FluidGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.fabric.util.PacketUtil;
+import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -21,8 +21,8 @@ public class GridFluidUpdatePacket implements ClientPlayNetworking.PlayChannelHa
 
         client.execute(() -> {
             AbstractContainerMenu screenHandler = client.player.containerMenu;
-            if (screenHandler instanceof FluidGridContainerMenu fluidGridScreenHandler) {
-                fluidGridScreenHandler.onResourceUpdate(fluidResource, amount, trackerEntry);
+            if (screenHandler instanceof FluidGridContainerMenu fluidGridContainerMenu) {
+                fluidGridContainerMenu.onResourceUpdate(fluidResource, amount, trackerEntry);
             }
         });
     }

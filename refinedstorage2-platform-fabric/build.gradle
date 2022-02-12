@@ -2,30 +2,27 @@ plugins {
     id 'fabric-loom' version '0.10-SNAPSHOT'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
 archivesBaseName = 'refinedstorage2-platform-fabric'
 
 repositories {
-    // Patchouli
     maven {
+        name = 'Patchouli'
         url 'https://maven.blamejared.com'
     }
-    // REI
     maven {
+        name = 'REI'
         url 'https://maven.terraformersmc.com/'
     }
-    // Cloth Config
     maven {
+        name = 'Cloth Config'
         url 'https://maven.shedaniel.me/'
     }
-    // Parchment
     maven {
+        name = 'Parchment'
         url 'https://maven.parchmentmc.org'
     }
-    // wthit
     maven {
+        name = 'wthit'
         url "https://maven.bai.lol"
     }
 }
@@ -39,26 +36,13 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricApiVersion}"
 
-    implementation project(':refinedstorage2-core-api')
-    include project(':refinedstorage2-core-api')
-
-    implementation project(':refinedstorage2-resource-api')
-    include project(':refinedstorage2-resource-api')
-
-    implementation project(':refinedstorage2-storage-api')
-    include project(':refinedstorage2-storage-api')
-
-    implementation project(':refinedstorage2-network-api')
-    include project(':refinedstorage2-network-api')
-
-    implementation project(':refinedstorage2-query-parser')
-    include project(':refinedstorage2-query-parser')
-
-    implementation project(':refinedstorage2-grid-api')
-    include project(':refinedstorage2-grid-api')
-
-    implementation project(path: ':refinedstorage2-platform-fabric-api', configuration: 'namedElements')
-    include project(':refinedstorage2-platform-fabric-api')
+    project.ext.apis.collect {
+        implementation project(it)
+        include project(it)
+    }
+    project.ext.compileApis.collect {
+        implementation project(it)
+    }
 
     modApi("me.shedaniel.cloth:cloth-config-fabric:${project.clothConfigVersion}") {
         exclude(group: 'net.fabricmc.fabric-api')
@@ -82,26 +66,30 @@ dependencies {
 
 loom {
     accessWidenerPath = file("src/main/resources/refinedstorage2.accesswidener")
-}
-
-test {
-    useJUnitPlatform()
-}
-
-sourceSets {
-    main.resources.srcDirs += 'src/generated/resources'
-}
-
-processResources {
-    inputs.property 'version', project.version
-
-    filesMatching('data/refinedstorage2/patchouli_books/book/book.json') {
-        expand 'version': project.version
+    runs {
+        client {
+            client()
+            setConfigName("Fabric Client")
+            ideConfigGenerated(true)
+            runDir("run")
+        }
+        server {
+            server()
+            setConfigName("Fabric Server")
+            ideConfigGenerated(true)
+            runDir("run")
+        }
     }
 }
 
-java {
-    withSourcesJar()
+processResources {
+    from project(":refinedstorage2-platform-common").sourceSets.main.resources
+}
+
+tasks.withType(JavaCompile) {
+    project.ext.compileApis.collect {
+        source(project(it).sourceSets.main.allSource)
+    }
 }
 
 jar {

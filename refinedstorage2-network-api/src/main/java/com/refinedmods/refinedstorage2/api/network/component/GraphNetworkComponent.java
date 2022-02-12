@@ -3,11 +3,12 @@ package com.refinedmods.refinedstorage2.api.network.component;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class GraphNetworkComponent implements NetworkComponent {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -20,7 +21,7 @@ public class GraphNetworkComponent implements NetworkComponent {
     }
 
     public Set<NetworkNodeContainer> getContainers() {
-        return containers;
+        return Collections.unmodifiableSet(containers);
     }
 
     @Override
