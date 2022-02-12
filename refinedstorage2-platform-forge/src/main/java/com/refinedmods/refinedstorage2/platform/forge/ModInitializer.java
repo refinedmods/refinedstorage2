@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
+import com.refinedmods.refinedstorage2.platform.common.block.BaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
@@ -24,6 +25,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
+import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.search.PlatformSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.item.CoreItem;
@@ -48,7 +50,10 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -68,6 +73,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -128,7 +134,9 @@ public class ModInitializer extends AbstractModInitializer {
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(BlockEntityType.class, this::registerBlockEntityTypes);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, this::registerItems);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(MenuType.class, this::registerMenus);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(SoundEvent.class, this::registerSounds);
 
+        MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerCapabilities);
     }
 
@@ -279,6 +287,16 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     @SubscribeEvent
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock e) {
+        BlockPos pos = e.getHitVec().getBlockPos();
+        InteractionResult result = BaseBlock.useWrench(e.getWorld().getBlockState(pos), e.getWorld(), pos, e.getPlayer(), e.getHand());
+        if (result != InteractionResult.PASS) {
+            e.setCanceled(true);
+            e.setCancellationResult(result);
+        }
+    }
+
+    @SubscribeEvent
     public void registerCapabilities(AttachCapabilitiesEvent<BlockEntity> e) {
         if (e.getObject() instanceof ControllerBlockEntity controllerBlockEntity) {
             registerControllerEnergy(e, controllerBlockEntity);
@@ -324,6 +342,14 @@ public class ModInitializer extends AbstractModInitializer {
         fluidGridMenuType.setRegistryName(FLUID_GRID);
         e.getRegistry().register(fluidGridMenuType);
         Menus.INSTANCE.setFluidGrid(fluidGridMenuType);
+    }
+
+    @SubscribeEvent
+    public void registerSounds(RegistryEvent.Register<SoundEvent> e) {
+        SoundEvent wrenchSoundEvent = new SoundEvent(WRENCH);
+        wrenchSoundEvent.setRegistryName(WRENCH);
+        e.getRegistry().register(wrenchSoundEvent);
+        Sounds.INSTANCE.setWrench(wrenchSoundEvent);
     }
 
     private void registerGridSearchBoxModes() {

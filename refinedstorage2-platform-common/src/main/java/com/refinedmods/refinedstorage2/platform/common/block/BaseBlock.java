@@ -3,19 +3,25 @@ package com.refinedmods.refinedstorage2.platform.common.block;
 import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
+import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
 import java.util.Optional;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -84,22 +90,7 @@ public abstract class BaseBlock extends Block {
     @Override
     @SuppressWarnings("deprecation")
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        return tryRotate(state, level, pos, player, hand)
-                .or(() -> tryOpenScreen(state, level, pos, player))
-                .orElseGet(() -> super.use(state, level, pos, player, hand, hit));
-    }
-
-    private Optional<InteractionResult> tryRotate(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        boolean holdingWrench = Platform.INSTANCE.getWrenchHelper().isWrench(player.getItemInHand(hand).getItem());
-        boolean wrenchable = Platform.INSTANCE.getWrenchHelper().isWrenchable(state);
-        if (holdingWrench && wrenchable) {
-            if (!level.isClientSide()) {
-                level.setBlockAndUpdate(pos, state.rotate(Rotation.CLOCKWISE_90));
-                level.playSound(null, pos, Sounds.INSTANCE.getWrench(), SoundSource.BLOCKS, 1.0F, 1.0F);
-            }
-            return Optional.of(InteractionResult.CONSUME);
-        }
-        return Optional.empty();
+        return tryOpenScreen(state, level, pos, player).orElseGet(() -> super.use(state, level, pos, player, hand, hit));
     }
 
     private Optional<InteractionResult> tryOpenScreen(BlockState state, Level level, BlockPos pos, Player player) {
@@ -131,6 +122,33 @@ public abstract class BaseBlock extends Block {
             }
 
             super.onRemove(state, level, pos, newState, moved);
+        }
+    }
+
+    public static InteractionResult useWrench(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
+        if (player.isSpectator() || !level.mayInteract(player, pos)) {
+            return InteractionResult.PASS;
+        }
+        ItemStack itemInHand = player.getItemInHand(hand);
+        boolean holdingWrench = isWrench(itemInHand);
+        if (!holdingWrench) {
+            return InteractionResult.PASS;
+        }
+        if (!level.isClientSide()) {
+            rotateAndPlaySoundIfNecessary(state, level, pos, itemInHand);
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide());
+    }
+
+    private static boolean isWrench(ItemStack item) {
+        Tag<Item> wrench = ItemTags.getAllTags().getTagOrEmpty(new ResourceLocation("c", "wrenches"));
+        return item.is(wrench);
+    }
+
+    private static void rotateAndPlaySoundIfNecessary(BlockState state, Level level, BlockPos pos, ItemStack itemInHand) {
+        level.setBlockAndUpdate(pos, state.rotate(Rotation.CLOCKWISE_90));
+        if (itemInHand.getItem() instanceof WrenchItem) {
+            level.playSound(null, pos, Sounds.INSTANCE.getWrench(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }
     }
 }
