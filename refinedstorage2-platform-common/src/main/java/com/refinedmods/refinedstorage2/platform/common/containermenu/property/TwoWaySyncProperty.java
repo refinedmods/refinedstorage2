@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.property;
 
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -34,7 +34,7 @@ public class TwoWaySyncProperty<T> extends DataSlot {
     }
 
     public void syncToServer(T newValue) {
-        PlatformAbstractions.INSTANCE.getClientToServerCommunications().sendPropertyChange(index, serializer.apply(newValue));
+        Platform.INSTANCE.getClientToServerCommunications().sendPropertyChange(index, serializer.apply(newValue));
     }
 
     public T getDeserialized() {

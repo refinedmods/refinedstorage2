@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.LastModified;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.screen.BaseScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
@@ -91,7 +91,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         getMenu().addSlots(imageHeight - BOTTOM_HEIGHT + 17);
 
         this.scrollbar = new ScrollbarWidget(leftPos + 174, topPos + 20, 12, (visibleRows * 18) - 2);
-        this.scrollbar.setScrollAnimation(PlatformAbstractions.INSTANCE.getConfig().getGrid().isSmoothScrolling());
+        this.scrollbar.setScrollAnimation(Platform.INSTANCE.getConfig().getGrid().isSmoothScrolling());
         this.getMenu().getView().setListener(this::resourcesChanged);
         resourcesChanged();
 
@@ -133,7 +133,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
     private int getMaxRows() {
         return switch (getMenu().getSize()) {
-            case STRETCH -> PlatformAbstractions.INSTANCE.getConfig().getGrid().getMaxRowsStretch();
+            case STRETCH -> Platform.INSTANCE.getConfig().getGrid().getMaxRowsStretch();
             case SMALL -> 3;
             case MEDIUM -> 5;
             case LARGE -> 8;
@@ -271,7 +271,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
         List<FormattedCharSequence> lines = Lists.transform(getTooltip(resource), Component::getVisualOrderText);
 
-        if (!PlatformAbstractions.INSTANCE.getConfig().getGrid().isDetailedTooltip()) {
+        if (!Platform.INSTANCE.getConfig().getGrid().isDetailedTooltip()) {
             renderTooltip(poseStack, lines, mouseX, mouseY);
         } else {
             List<FormattedCharSequence> smallLines = new ArrayList<>();
@@ -302,7 +302,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     }
 
     protected void renderAmount(PoseStack poseStack, int x, int y, String amount, int color) {
-        boolean large = this.minecraft.isEnforceUnicode() || PlatformAbstractions.INSTANCE.getConfig().getGrid().isLargeFont();
+        boolean large = this.minecraft.isEnforceUnicode() || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
 
         poseStack.pushPose();
         poseStack.translate(x, y, 300);
@@ -492,7 +492,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
             return true;
         }
 
-        if (hasShiftDown() && PlatformAbstractions.INSTANCE.getConfig().getGrid().isPreventSortingWhileShiftIsDown()) {
+        if (hasShiftDown() && Platform.INSTANCE.getConfig().getGrid().isPreventSortingWhileShiftIsDown()) {
             getMenu().getView().setPreventSorting(true);
         }
 

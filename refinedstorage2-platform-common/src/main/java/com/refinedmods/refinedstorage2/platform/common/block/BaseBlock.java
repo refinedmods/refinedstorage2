@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
@@ -90,8 +90,8 @@ public abstract class BaseBlock extends Block {
     }
 
     private Optional<InteractionResult> tryRotate(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        boolean holdingWrench = PlatformAbstractions.INSTANCE.getWrenchHelper().isWrench(player.getItemInHand(hand).getItem());
-        boolean wrenchable = PlatformAbstractions.INSTANCE.getWrenchHelper().isWrenchable(state);
+        boolean holdingWrench = Platform.INSTANCE.getWrenchHelper().isWrench(player.getItemInHand(hand).getItem());
+        boolean wrenchable = Platform.INSTANCE.getWrenchHelper().isWrenchable(state);
         if (holdingWrench && wrenchable) {
             if (!level.isClientSide()) {
                 level.setBlockAndUpdate(pos, state.rotate(Rotation.CLOCKWISE_90));
@@ -106,7 +106,7 @@ public abstract class BaseBlock extends Block {
         MenuProvider menuProvider = state.getMenuProvider(level, pos);
         if (menuProvider != null) {
             if (player instanceof ServerPlayer serverPlayer) {
-                PlatformAbstractions.INSTANCE.getMenuOpener().openMenu(serverPlayer, menuProvider);
+                Platform.INSTANCE.getMenuOpener().openMenu(serverPlayer, menuProvider);
             }
             return Optional.of(InteractionResult.SUCCESS);
         }

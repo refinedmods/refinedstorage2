@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.abstractions.menu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
@@ -33,7 +33,7 @@ public abstract class GridBlockEntity<T> extends InternalNetworkNodeContainerBlo
     protected GridBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, StorageChannelType<T> storageChannelType) {
         super(type, pos, state, new GridNetworkNode<>(
                 GridSearchBoxModeRegistry.INSTANCE.getDefault(),
-                PlatformAbstractions.INSTANCE.getConfig().getGrid().getEnergyUsage(),
+                Platform.INSTANCE.getConfig().getGrid().getEnergyUsage(),
                 storageChannelType
         ));
     }

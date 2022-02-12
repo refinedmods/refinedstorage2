@@ -46,7 +46,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDr
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.ConfigImpl;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.PlatformAbstractionsImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.PlatformImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridInsertPacket;
@@ -109,7 +109,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     public void onInitialize() {
         AutoConfig.register(ConfigImpl.class, Toml4jConfigSerializer::new);
 
-        initializePlatformAbstractions(new PlatformAbstractionsImpl());
+        initializePlatform(new PlatformImpl());
         initializePlatformApiFacade();
         registerDiskTypes();
         registerStorageChannelTypes();

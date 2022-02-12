@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.internal.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 
 import java.util.HashMap;
@@ -50,7 +50,7 @@ public class ClientStorageRepository implements PlatformStorageRepository {
             return;
         }
         LOGGER.debug("Sending request info packet for {}", id);
-        PlatformAbstractions.INSTANCE.getClientToServerCommunications().sendStorageInfoRequest(id);
+        Platform.INSTANCE.getClientToServerCommunications().sendStorageInfoRequest(id);
     }
 
     @Override

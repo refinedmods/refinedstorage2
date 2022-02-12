@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
 import com.refinedmods.refinedstorage2.api.core.History;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 
 import net.minecraft.client.gui.Font;
@@ -40,7 +40,7 @@ public class SearchFieldWidget extends EditBox {
     public boolean keyPressed(int keyCode, int scanCode, int modifier) {
         boolean result = super.keyPressed(keyCode, scanCode, modifier);
 
-        boolean canLoseFocus = PlatformAbstractions.INSTANCE.canEditBoxLoseFocus(this);
+        boolean canLoseFocus = Platform.INSTANCE.canEditBoxLoseFocus(this);
 
         if (isFocused()) {
             if (keyCode == GLFW.GLFW_KEY_UP) {
@@ -70,7 +70,7 @@ public class SearchFieldWidget extends EditBox {
             }
         }
 
-        if (PlatformAbstractions.INSTANCE.isKeyDown(KeyMappings.INSTANCE.getFocusSearchBar()) && canLoseFocus) {
+        if (Platform.INSTANCE.isKeyDown(KeyMappings.INSTANCE.getFocusSearchBar()) && canLoseFocus) {
             setFocused(!isFocused());
             saveHistory();
             result = true;

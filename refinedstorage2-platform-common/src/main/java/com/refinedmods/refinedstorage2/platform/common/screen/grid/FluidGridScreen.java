@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 
@@ -36,7 +36,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
 
     @Override
     protected void renderResource(PoseStack poseStack, int slotX, int slotY, GridResource<FluidResource> resource) {
-        PlatformAbstractions.INSTANCE.getFluidRenderer().render(poseStack, slotX, slotY, getBlitOffset(), resource.getResourceAmount().getResource());
+        Platform.INSTANCE.getFluidRenderer().render(poseStack, slotX, slotY, getBlitOffset(), resource.getResourceAmount().getResource());
     }
 
     @Override
@@ -44,7 +44,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
         if (resource.isZeroed()) {
             return "0";
         }
-        return PlatformAbstractions.INSTANCE.getBucketQuantityFormatter().formatWithUnits(resource.getResourceAmount().getAmount());
+        return Platform.INSTANCE.getBucketQuantityFormatter().formatWithUnits(resource.getResourceAmount().getAmount());
     }
 
     @Override
@@ -52,12 +52,12 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
         if (resource.isZeroed()) {
             return "0";
         }
-        return PlatformAbstractions.INSTANCE.getBucketQuantityFormatter().format(resource.getResourceAmount().getAmount());
+        return Platform.INSTANCE.getBucketQuantityFormatter().format(resource.getResourceAmount().getAmount());
     }
 
     @Override
     protected List<Component> getTooltip(GridResource<FluidResource> resource) {
-        return PlatformAbstractions.INSTANCE.getFluidRenderer().getTooltip(resource.getResourceAmount().getResource());
+        return Platform.INSTANCE.getFluidRenderer().getTooltip(resource.getResourceAmount().getResource());
     }
 
     @Override

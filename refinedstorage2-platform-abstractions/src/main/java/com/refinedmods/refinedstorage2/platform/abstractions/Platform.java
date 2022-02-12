@@ -23,8 +23,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
-public interface PlatformAbstractions {
-    PlatformAbstractions INSTANCE = new PlatformAbstractionsProxy();
+public interface Platform {
+    Platform INSTANCE = new PlatformProxy();
 
     ServerToClientCommunications getServerToClientCommunications();
 

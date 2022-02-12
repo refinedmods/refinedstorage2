@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.abstractions.menu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
@@ -39,7 +39,7 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
     public ControllerBlockEntity(ControllerType type, BlockPos pos, BlockState state) {
         super(getBlockEntityType(type), pos, state, new ControllerNetworkNode());
         this.type = type;
-        this.energyStorage = PlatformAbstractions.INSTANCE.createEnergyStorage(type, this::setChanged);
+        this.energyStorage = Platform.INSTANCE.createEnergyStorage(type, this::setChanged);
         this.getNode().setEnergyStorage(energyStorage);
     }
 
@@ -81,7 +81,7 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
     public void load(CompoundTag tag) {
         super.load(tag);
         if (tag.contains(TAG_STORED)) {
-            PlatformAbstractions.INSTANCE.setEnergy(energyStorage, tag.getLong(TAG_STORED));
+            Platform.INSTANCE.setEnergy(energyStorage, tag.getLong(TAG_STORED));
         }
     }
 

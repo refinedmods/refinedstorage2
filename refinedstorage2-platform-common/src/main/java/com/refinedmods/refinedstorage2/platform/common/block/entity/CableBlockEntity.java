@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.node.CableNetworkNode;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 
 import net.minecraft.core.BlockPos;
@@ -13,7 +13,7 @@ public class CableBlockEntity extends InternalNetworkNodeContainerBlockEntity<Ca
                 BlockEntities.INSTANCE.getCable(),
                 pos,
                 state,
-                new CableNetworkNode(PlatformAbstractions.INSTANCE.getConfig().getCable().getEnergyUsage())
+                new CableNetworkNode(Platform.INSTANCE.getConfig().getCable().getEnergyUsage())
         );
     }
 }

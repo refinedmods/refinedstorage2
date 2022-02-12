@@ -2,7 +2,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 
 import java.util.UUID;
@@ -40,6 +40,6 @@ public class StorageInfoRequestPacket {
                 .getStorageRepository(player.getCommandSenderWorld())
                 .getInfo(packet.id);
 
-        PlatformAbstractions.INSTANCE.getServerToClientCommunications().sendStorageInfoResponse(player, packet.id, info);
+        Platform.INSTANCE.getServerToClientCommunications().sendStorageInfoResponse(player, packet.id, info);
     }
 }

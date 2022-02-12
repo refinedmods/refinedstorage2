@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.RedstoneModeSettings;
@@ -67,7 +67,7 @@ public class ControllerContainerMenu extends BaseContainerMenu implements Redsto
         if ((serverStored != controller.getActualStored() || serverCapacity != controller.getActualCapacity()) && energyUpdateRateLimiter.tryAcquire()) {
             serverStored = controller.getActualStored();
             serverCapacity = controller.getActualCapacity();
-            PlatformAbstractions.INSTANCE.getServerToClientCommunications().sendControllerEnergy((ServerPlayer) playerEntity, serverStored, serverCapacity);
+            Platform.INSTANCE.getServerToClientCommunications().sendControllerEnergy((ServerPlayer) playerEntity, serverStored, serverCapacity);
         }
     }
 
