@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -43,11 +43,11 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
         super(Menus.INSTANCE.getGrid(), syncId, playerInventory, grid, createView());
         this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), itemResource -> (long) itemResource.getItem().getMaxStackSize(), 1);
         this.grid.addWatcher(this);
-        this.itemGridEventHandler = PlatformAbstractions.INSTANCE.createItemGridEventHandler(this, gridService, playerInventory);
+        this.itemGridEventHandler = Platform.INSTANCE.createItemGridEventHandler(this, gridService, playerInventory);
     }
 
     private static GridViewImpl<ItemResource> createView() {
-        return new GridViewImpl<>(PlatformAbstractions.INSTANCE.getItemGridResourceFactory(), new ResourceListImpl<>());
+        return new GridViewImpl<>(Platform.INSTANCE.getItemGridResourceFactory(), new ResourceListImpl<>());
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
 
         LOGGER.info("Received a change of {} for {}", change.change(), resource);
 
-        PlatformAbstractions.INSTANCE.getServerToClientCommunications().sendGridItemUpdate(
+        Platform.INSTANCE.getServerToClientCommunications().sendGridItemUpdate(
                 (ServerPlayer) playerInventory.player,
                 resource,
                 change.change(),

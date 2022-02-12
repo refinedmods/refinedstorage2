@@ -4,8 +4,8 @@ import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkCompon
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractionsProxy;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
+import com.refinedmods.refinedstorage2.platform.abstractions.PlatformProxy;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacadeProxy;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
@@ -24,8 +24,8 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public abstract class AbstractModInitializer {
-    protected void initializePlatformAbstractions(PlatformAbstractions platformAbstractions) {
-        ((PlatformAbstractionsProxy) PlatformAbstractions.INSTANCE).setAbstractions(platformAbstractions);
+    protected void initializePlatform(Platform platform) {
+        ((PlatformProxy) Platform.INSTANCE).setPlatform(platform);
     }
 
     protected void initializePlatformApiFacade() {

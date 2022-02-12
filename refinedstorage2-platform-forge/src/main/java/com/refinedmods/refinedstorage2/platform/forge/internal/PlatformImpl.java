@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
-import com.refinedmods.refinedstorage2.platform.abstractions.AbstractPlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.abstractions.BucketQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.abstractions.Config;
 import com.refinedmods.refinedstorage2.platform.abstractions.WrenchHelper;
@@ -40,11 +40,11 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 
-public class PlatformAbstractionsImpl extends AbstractPlatformAbstractions {
+public class PlatformImpl extends AbstractPlatform {
     private final ConfigImpl config = new ConfigImpl();
     private final WrenchHelper wrenchHelper = new WrenchHelperImpl();
 
-    public PlatformAbstractionsImpl(NetworkManager networkManager) {
+    public PlatformImpl(NetworkManager networkManager) {
         super(new ServerToClientCommunicationsImpl(networkManager), new ClientToServerCommunicationsImpl(networkManager), new MenuOpenerImpl(), new BucketQuantityFormatter(FluidAttributes.BUCKET_VOLUME), new FluidStackFluidRenderer());
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getSpec());
     }

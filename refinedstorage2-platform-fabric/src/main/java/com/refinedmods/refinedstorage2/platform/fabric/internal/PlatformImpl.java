@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
-import com.refinedmods.refinedstorage2.platform.abstractions.AbstractPlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.abstractions.BucketQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.abstractions.Config;
 import com.refinedmods.refinedstorage2.platform.abstractions.WrenchHelper;
@@ -45,10 +45,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
-public final class PlatformAbstractionsImpl extends AbstractPlatformAbstractions {
+public final class PlatformImpl extends AbstractPlatform {
     private final WrenchHelper wrenchHelper = new WrenchHelperImpl();
 
-    public PlatformAbstractionsImpl() {
+    public PlatformImpl() {
         super(new ServerToClientCommunicationsImpl(), new ClientToServerCommunicationsImpl(), new MenuOpenerImpl(), new BucketQuantityFormatter(FluidConstants.BUCKET), new FluidVariantFluidRenderer());
     }
 

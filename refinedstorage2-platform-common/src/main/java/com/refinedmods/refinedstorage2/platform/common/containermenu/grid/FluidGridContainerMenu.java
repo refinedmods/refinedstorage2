@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -42,13 +42,13 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
 
     public FluidGridContainerMenu(int syncId, Inventory playerInventory, FluidGridBlockEntity grid, ExtractableStorage<ItemResource> bucketStorage) {
         super(Menus.INSTANCE.getFluidGrid(), syncId, playerInventory, grid, createView());
-        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), resource -> Long.MAX_VALUE, PlatformAbstractions.INSTANCE.getBucketAmount());
+        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), resource -> Long.MAX_VALUE, Platform.INSTANCE.getBucketAmount());
         this.grid.addWatcher(this);
-        this.fluidGridEventHandler = PlatformAbstractions.INSTANCE.createFluidGridEventHandler(this, gridService, playerInventory, bucketStorage);
+        this.fluidGridEventHandler = Platform.INSTANCE.createFluidGridEventHandler(this, gridService, playerInventory, bucketStorage);
     }
 
     private static GridViewImpl<FluidResource> createView() {
-        return new GridViewImpl<>(PlatformAbstractions.INSTANCE.getFluidGridResourceFactory(), new ResourceListImpl<>());
+        return new GridViewImpl<>(Platform.INSTANCE.getFluidGridResourceFactory(), new ResourceListImpl<>());
     }
 
     @Override
@@ -70,7 +70,7 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
 
         LOGGER.info("Received a change of {} for {}", change.change(), resource);
 
-        PlatformAbstractions.INSTANCE.getServerToClientCommunications().sendGridFluidUpdate(
+        Platform.INSTANCE.getServerToClientCommunications().sendGridFluidUpdate(
                 (ServerPlayer) playerInventory.player,
                 resource,
                 change.change(),

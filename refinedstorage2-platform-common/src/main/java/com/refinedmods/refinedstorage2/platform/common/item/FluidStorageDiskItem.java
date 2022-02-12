@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageDiskItemImpl;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformCappedStorage;
@@ -28,7 +28,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected String formatQuantity(long qty) {
-        return PlatformAbstractions.INSTANCE.getBucketQuantityFormatter().formatWithUnits(qty);
+        return Platform.INSTANCE.getBucketQuantityFormatter().formatWithUnits(qty);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
             );
         }
         return new PlatformCappedStorage<>(
-                new CappedStorage<>(type.getBuckets() * PlatformAbstractions.INSTANCE.getBucketAmount()),
+                new CappedStorage<>(type.getBuckets() * Platform.INSTANCE.getBucketAmount()),
                 com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType.INSTANCE,
                 Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
         );

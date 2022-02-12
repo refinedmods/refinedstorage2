@@ -4,14 +4,14 @@ import com.refinedmods.refinedstorage2.platform.abstractions.menu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.abstractions.packet.ClientToServerCommunications;
 import com.refinedmods.refinedstorage2.platform.abstractions.packet.ServerToClientCommunications;
 
-public abstract class AbstractPlatformAbstractions implements PlatformAbstractions {
+public abstract class AbstractPlatform implements Platform {
     private final ServerToClientCommunications serverToClientCommunications;
     private final ClientToServerCommunications clientToServerCommunications;
     private final MenuOpener menuOpener;
     private final BucketQuantityFormatter bucketQuantityFormatter;
     private final FluidRenderer fluidRenderer;
 
-    protected AbstractPlatformAbstractions(ServerToClientCommunications serverToClientCommunications, ClientToServerCommunications clientToServerCommunications, MenuOpener menuOpener, BucketQuantityFormatter bucketQuantityFormatter, FluidRenderer fluidRenderer) {
+    protected AbstractPlatform(ServerToClientCommunications serverToClientCommunications, ClientToServerCommunications clientToServerCommunications, MenuOpener menuOpener, BucketQuantityFormatter bucketQuantityFormatter, FluidRenderer fluidRenderer) {
         this.serverToClientCommunications = serverToClientCommunications;
         this.clientToServerCommunications = clientToServerCommunications;
         this.menuOpener = menuOpener;

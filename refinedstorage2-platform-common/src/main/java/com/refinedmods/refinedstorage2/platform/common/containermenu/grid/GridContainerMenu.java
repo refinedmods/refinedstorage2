@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
@@ -255,7 +255,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     public void setSearchBox(GridSearchBox searchBox) {
         this.searchBox = searchBox;
         this.updateSearchBox();
-        if (PlatformAbstractions.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
+        if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
             this.searchBox.setValue(lastSearchQuery);
         }
     }
@@ -263,7 +263,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     private void updateSearchBox() {
         this.searchBox.setAutoSelected(searchBoxMode.isAutoSelected());
         this.searchBox.setListener(text -> {
-            if (PlatformAbstractions.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
+            if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
                 updateLastSearchQuery(text);
             }
             searchBox.setInvalid(!searchBoxMode.onTextChanged(view, text));
@@ -302,7 +302,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     public void onActiveChanged(boolean active) {
         this.active = active;
         if (this.playerInventory.player instanceof ServerPlayer serverPlayerEntity) {
-            PlatformAbstractions.INSTANCE.getServerToClientCommunications().sendGridActiveness(serverPlayerEntity, active);
+            Platform.INSTANCE.getServerToClientCommunications().sendGridActiveness(serverPlayerEntity, active);
         }
     }
 

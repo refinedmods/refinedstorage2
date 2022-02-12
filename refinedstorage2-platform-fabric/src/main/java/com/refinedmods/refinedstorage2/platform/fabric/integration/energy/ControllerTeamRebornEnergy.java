@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.integration.energy;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import team.reborn.energy.api.base.LimitingEnergyStorage;
@@ -13,7 +13,7 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
     private final LimitingEnergyStorage exposedStorage;
 
     public ControllerTeamRebornEnergy(Runnable listener) {
-        super(PlatformAbstractions.INSTANCE.getConfig().getController().getEnergyCapacity(), PlatformAbstractions.INSTANCE.getConfig().getController().getEnergyCapacity(), PlatformAbstractions.INSTANCE.getConfig().getController().getEnergyCapacity());
+        super(Platform.INSTANCE.getConfig().getController().getEnergyCapacity(), Platform.INSTANCE.getConfig().getController().getEnergyCapacity(), Platform.INSTANCE.getConfig().getController().getEnergyCapacity());
         this.listener = listener;
         this.exposedStorage = new LimitingEnergyStorage(
                 this,

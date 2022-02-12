@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.resource;
 
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
@@ -36,12 +36,12 @@ public class FluidResourceType implements ResourceType<FluidResource> {
 
     @Override
     public Optional<FluidResource> translate(ItemStack stack) {
-        return PlatformAbstractions.INSTANCE.convertToFluid(stack);
+        return Platform.INSTANCE.convertToFluid(stack);
     }
 
     @Override
     public void render(PoseStack poseStack, FluidResource value, int x, int y, int z) {
-        PlatformAbstractions.INSTANCE.getFluidRenderer().render(poseStack, x, y, z, value);
+        Platform.INSTANCE.getFluidRenderer().render(poseStack, x, y, z, value);
     }
 
     @Override
@@ -71,6 +71,6 @@ public class FluidResourceType implements ResourceType<FluidResource> {
 
     @Override
     public List<Component> getTooltipLines(FluidResource value, Player player) {
-        return PlatformAbstractions.INSTANCE.getFluidRenderer().getTooltip(value);
+        return Platform.INSTANCE.getFluidRenderer().getTooltip(value);
     }
 }

@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.slot;
 
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 
@@ -49,7 +49,7 @@ public class ResourceFilterSlot extends Slot {
         if (!Objects.equals(current, cachedResource)) {
             LOGGER.info("Resource filter slot {} has changed", containerIndex);
             cachedResource = current;
-            PlatformAbstractions.INSTANCE.getServerToClientCommunications().sendResourceFilterSlotUpdate(
+            Platform.INSTANCE.getServerToClientCommunications().sendResourceFilterSlotUpdate(
                     (ServerPlayer) player,
                     resourceFilterContainer,
                     containerIndex

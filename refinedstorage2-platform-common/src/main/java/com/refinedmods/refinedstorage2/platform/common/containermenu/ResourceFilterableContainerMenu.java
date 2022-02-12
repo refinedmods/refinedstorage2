@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
@@ -96,7 +96,7 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
     @Override
     public void toggleResourceType() {
         this.currentResourceType = Rs2PlatformApiFacade.INSTANCE.getResourceTypeRegistry().toggle(currentResourceType);
-        PlatformAbstractions.INSTANCE.getClientToServerCommunications().sendResourceTypeChange(this.currentResourceType);
+        Platform.INSTANCE.getClientToServerCommunications().sendResourceTypeChange(this.currentResourceType);
     }
 
     @Override

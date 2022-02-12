@@ -23,14 +23,14 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
-public class PlatformAbstractionsProxy implements PlatformAbstractions {
-    private PlatformAbstractions abstractions;
+public class PlatformProxy implements Platform {
+    private Platform platform;
 
-    public void setAbstractions(PlatformAbstractions abstractions) {
-        if (this.abstractions != null) {
-            throw new IllegalStateException("Platform abstractions already injected");
+    public void setPlatform(Platform platform) {
+        if (this.platform != null) {
+            throw new IllegalStateException("Platform already set");
         }
-        this.abstractions = abstractions;
+        this.platform = platform;
     }
 
     @Override
@@ -118,10 +118,10 @@ public class PlatformAbstractionsProxy implements PlatformAbstractions {
         ensureLoaded().setEnergy(energyStorage, stored);
     }
 
-    private PlatformAbstractions ensureLoaded() {
-        if (abstractions == null) {
-            throw new IllegalStateException("Platform abstractions not loaded yet");
+    private Platform ensureLoaded() {
+        if (platform == null) {
+            throw new IllegalStateException("Platform not loaded yet");
         }
-        return abstractions;
+        return platform;
     }
 }

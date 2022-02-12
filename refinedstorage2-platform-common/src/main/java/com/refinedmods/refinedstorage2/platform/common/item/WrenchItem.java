@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
+import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
@@ -16,7 +16,7 @@ public class WrenchItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         BlockState state = context.getLevel().getBlockState(context.getClickedPos());
-        if (PlatformAbstractions.INSTANCE.getWrenchHelper().isWrenchable(state)) {
+        if (Platform.INSTANCE.getWrenchHelper().isWrenchable(state)) {
             return state.use(
                     context.getLevel(),
                     context.getPlayer(),
