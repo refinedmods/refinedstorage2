@@ -6,14 +6,10 @@ import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.platform.abstractions.AbstractPlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.abstractions.BucketQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.abstractions.Config;
-import com.refinedmods.refinedstorage2.platform.abstractions.FluidRenderer;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.abstractions.WrenchHelper;
-import com.refinedmods.refinedstorage2.platform.abstractions.menu.MenuOpener;
-import com.refinedmods.refinedstorage2.platform.abstractions.packet.ClientToServerCommunications;
-import com.refinedmods.refinedstorage2.platform.abstractions.packet.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
@@ -49,37 +45,16 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
-public final class PlatformAbstractionsImpl implements PlatformAbstractions {
-    private final ServerToClientCommunications serverToClientCommunications = new ServerToClientCommunicationsImpl();
-    private final ClientToServerCommunications clientToServerCommunications = new ClientToServerCommunicationsImpl();
-    private final MenuOpener menuOpener = new MenuOpenerImpl();
-    private final BucketQuantityFormatter bucketQuantityFormatter = new BucketQuantityFormatter(FluidConstants.BUCKET);
+public final class PlatformAbstractionsImpl extends AbstractPlatformAbstractions {
     private final WrenchHelper wrenchHelper = new WrenchHelperImpl();
-    private final FluidRenderer fluidRenderer = new FluidVariantFluidRenderer();
 
-    @Override
-    public ServerToClientCommunications getServerToClientCommunications() {
-        return serverToClientCommunications;
-    }
-
-    @Override
-    public ClientToServerCommunications getClientToServerCommunications() {
-        return clientToServerCommunications;
-    }
-
-    @Override
-    public MenuOpener getMenuOpener() {
-        return menuOpener;
+    public PlatformAbstractionsImpl() {
+        super(new ServerToClientCommunicationsImpl(), new ClientToServerCommunicationsImpl(), new MenuOpenerImpl(), new BucketQuantityFormatter(FluidConstants.BUCKET), new FluidVariantFluidRenderer());
     }
 
     @Override
     public long getBucketAmount() {
         return FluidConstants.BUCKET;
-    }
-
-    @Override
-    public BucketQuantityFormatter getBucketQuantityFormatter() {
-        return bucketQuantityFormatter;
     }
 
     @Override
@@ -120,11 +95,6 @@ public final class PlatformAbstractionsImpl implements PlatformAbstractions {
     @Override
     public Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> getFluidGridResourceFactory() {
         return new FabricFluidGridResourceFactory();
-    }
-
-    @Override
-    public FluidRenderer getFluidRenderer() {
-        return fluidRenderer;
     }
 
     @Override
