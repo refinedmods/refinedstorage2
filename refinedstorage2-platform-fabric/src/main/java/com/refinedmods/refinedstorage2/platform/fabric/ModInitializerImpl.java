@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
+import com.refinedmods.refinedstorage2.platform.common.block.BaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
@@ -62,6 +63,7 @@ import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
@@ -121,8 +123,13 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerSidedHandlers();
         registerResourceTypes();
         registerTickHandler();
+        registerWrench();
 
         LOGGER.info("Refined Storage 2 has loaded.");
+    }
+
+    private void registerWrench() {
+        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> BaseBlock.useWrench(level.getBlockState(hitResult.getBlockPos()), level, hitResult.getBlockPos(), player, hand));
     }
 
     private void registerContent() {
