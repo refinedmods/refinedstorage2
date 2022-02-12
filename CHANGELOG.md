@@ -7,6 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Forge support.
+
+### Fixed
+
+- Any block can be rotated now if the item tag matches `c:wrenches`.
+
 ## [2.0.0-milestone.1.2] - 2021-12-23
 
 Storage Disks from the previous version are no longer valid. Please move all your items into another storage medium
