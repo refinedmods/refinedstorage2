@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -105,33 +106,29 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         boolean bucketInInventory = hasBucketInInventory();
         boolean bucketInStorageChannel = hasBucketInStorage();
         if (bucketInInventory) {
-            extractBucket(fluidResource, mode, cursor, true);
+            extract(fluidResource, mode, cursor, true);
         } else if (bucketInStorageChannel) {
-            extractBucket(fluidResource, mode, cursor, false);
+            extract(fluidResource, mode, cursor, false);
         }
     }
 
-    private void extractBucket(FluidResource fluidResource, GridExtractMode mode, boolean cursor, boolean bucketFromInventory) {
+    private void extract(FluidResource fluidResource, GridExtractMode mode, boolean cursor, boolean bucketFromInventory) {
         IFluidHandlerItem destination = getFluidStorage(toItemStack(BUCKET_ITEM_RESOURCE, 1));
         if (destination == null) {
             return; // shouldn't happen
         }
         gridService.extract(fluidResource, mode, (resource, amount, action) -> {
             int inserted = destination.fill(toFluidStack(resource, amount), toFluidAction(action));
-            boolean couldInsertBucket = canInsertResultingBucketIntoInventory(destination, cursor);
-            if (!couldInsertBucket) {
-                return amount;
-            }
             long remainder = amount - inserted;
             if (action == Action.EXECUTE) {
-                extractSourceBucketFromInventory(bucketFromInventory);
-                insertResultingBucketIntoInventory(cursor, destination);
+                extractSourceBucket(bucketFromInventory);
+                insertResultingBucket(cursor, destination);
             }
             return remainder;
         });
     }
 
-    private void extractSourceBucketFromInventory(boolean bucketFromInventory) {
+    private void extractSourceBucket(boolean bucketFromInventory) {
         if (bucketFromInventory) {
             extractBucket(playerInventoryStorage, Action.EXECUTE);
         } else {
@@ -139,18 +136,15 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         }
     }
 
-    private boolean canInsertResultingBucketIntoInventory(IFluidHandlerItem storage, boolean cursor) {
-        if (cursor) {
-            return screenHandler.getCarried().isEmpty();
-        }
-        return ItemHandlerHelper.insertItem(playerInventoryStorage, storage.getContainer(), true).isEmpty();
-    }
-
-    private void insertResultingBucketIntoInventory(boolean cursor, IFluidHandlerItem destination) {
+    private void insertResultingBucket(boolean cursor, IFluidHandlerItem destination) {
         if (cursor) {
             screenHandler.setCarried(destination.getContainer());
         } else {
-            ItemHandlerHelper.insertItem(playerInventoryStorage, destination.getContainer(), false);
+            ItemStack remainder = ItemHandlerHelper.insertItem(playerInventoryStorage, destination.getContainer(), false);
+            if (!remainder.isEmpty()) {
+                // TODO: This isn't ideal, but dealing without transactions on the inventory doesn't make it exactly easy.
+                Containers.dropItemStack(playerInventory.player.getCommandSenderWorld(), playerInventory.player.getX(), playerInventory.player.getY(), playerInventory.player.getZ(), destination.getContainer());
+            }
         }
     }
 
