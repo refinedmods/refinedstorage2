@@ -6,14 +6,10 @@ import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.platform.abstractions.AbstractPlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.abstractions.BucketQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.abstractions.Config;
-import com.refinedmods.refinedstorage2.platform.abstractions.FluidRenderer;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformAbstractions;
 import com.refinedmods.refinedstorage2.platform.abstractions.WrenchHelper;
-import com.refinedmods.refinedstorage2.platform.abstractions.menu.MenuOpener;
-import com.refinedmods.refinedstorage2.platform.abstractions.packet.ClientToServerCommunications;
-import com.refinedmods.refinedstorage2.platform.abstractions.packet.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
@@ -44,43 +40,18 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 
-public class PlatformAbstractionsImpl implements PlatformAbstractions {
-    private final BucketQuantityFormatter bucketQuantityFormatter = new BucketQuantityFormatter(FluidAttributes.BUCKET_VOLUME);
+public class PlatformAbstractionsImpl extends AbstractPlatformAbstractions {
     private final ConfigImpl config = new ConfigImpl();
-    private final MenuOpener menuOpener = new MenuOpenerImpl();
     private final WrenchHelper wrenchHelper = new WrenchHelperImpl();
-    private final NetworkManager networkManager = new NetworkManager();
-    private final ServerToClientCommunications serverToClientCommunications = new ServerToClientCommunicationsImpl(networkManager);
-    private final ClientToServerCommunications clientToServerCommunications = new ClientToServerCommunicationsImpl(networkManager);
-    private final FluidRenderer fluidRenderer = new FluidStackFluidRenderer();
 
-    public PlatformAbstractionsImpl() {
+    public PlatformAbstractionsImpl(NetworkManager networkManager) {
+        super(new ServerToClientCommunicationsImpl(networkManager), new ClientToServerCommunicationsImpl(networkManager), new MenuOpenerImpl(), new BucketQuantityFormatter(FluidAttributes.BUCKET_VOLUME), new FluidStackFluidRenderer());
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getSpec());
-    }
-
-    @Override
-    public ServerToClientCommunications getServerToClientCommunications() {
-        return serverToClientCommunications;
-    }
-
-    @Override
-    public ClientToServerCommunications getClientToServerCommunications() {
-        return clientToServerCommunications;
-    }
-
-    @Override
-    public MenuOpener getMenuOpener() {
-        return menuOpener;
     }
 
     @Override
     public long getBucketAmount() {
         return FluidAttributes.BUCKET_VOLUME;
-    }
-
-    @Override
-    public BucketQuantityFormatter getBucketQuantityFormatter() {
-        return bucketQuantityFormatter;
     }
 
     @Override
@@ -121,11 +92,6 @@ public class PlatformAbstractionsImpl implements PlatformAbstractions {
     @Override
     public Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> getFluidGridResourceFactory() {
         return new ForgeFluidGridResourceFactory();
-    }
-
-    @Override
-    public FluidRenderer getFluidRenderer() {
-        return fluidRenderer;
     }
 
     @Override
