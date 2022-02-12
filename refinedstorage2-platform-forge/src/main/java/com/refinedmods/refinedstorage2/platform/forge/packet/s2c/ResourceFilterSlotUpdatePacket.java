@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
 public class ResourceFilterSlotUpdatePacket {
@@ -32,10 +31,13 @@ public class ResourceFilterSlotUpdatePacket {
     }
 
     public static void handle(ResourceFilterSlotUpdatePacket packet, Supplier<NetworkEvent.Context> ctx) {
-        Player player = Minecraft.getInstance().player;
-        if (player != null && player.containerMenu instanceof ResourceFilterableContainerMenu containerMenu) {
+        handle(packet);
+        ctx.get().setPacketHandled(true);
+    }
+
+    private static void handle(ResourceFilterSlotUpdatePacket packet) {
+        if (Minecraft.getInstance().player.containerMenu instanceof ResourceFilterableContainerMenu containerMenu) {
             containerMenu.readResourceFilterSlotUpdate(packet.slotIndex, packet.buf);
         }
-        ctx.get().setPacketHandled(true);
     }
 }

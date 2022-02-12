@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -29,15 +28,12 @@ public class ControllerEnergyPacket {
     }
 
     public static void handle(ControllerEnergyPacket packet, Supplier<NetworkEvent.Context> ctx) {
-        Player player = Minecraft.getInstance().player;
-        if (player != null) {
-            ctx.get().enqueueWork(() -> handle(packet, player));
-        }
+        ctx.get().enqueueWork(() -> handle(packet));
         ctx.get().setPacketHandled(true);
     }
 
-    private static void handle(ControllerEnergyPacket packet, Player player) {
-        AbstractContainerMenu screenHandler = player.containerMenu;
+    private static void handle(ControllerEnergyPacket packet) {
+        AbstractContainerMenu screenHandler = Minecraft.getInstance().player.containerMenu;
         if (screenHandler instanceof ControllerContainerMenu controllerScreenHandler) {
             controllerScreenHandler.setEnergy(packet.stored, packet.capacity);
         }

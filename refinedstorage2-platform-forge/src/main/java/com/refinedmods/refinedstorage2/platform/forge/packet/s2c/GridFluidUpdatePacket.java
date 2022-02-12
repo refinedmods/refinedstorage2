@@ -9,7 +9,6 @@ import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -39,15 +38,12 @@ public class GridFluidUpdatePacket {
     }
 
     public static void handle(GridFluidUpdatePacket packet, Supplier<NetworkEvent.Context> ctx) {
-        Player player = Minecraft.getInstance().player;
-        if (player != null) {
-            ctx.get().enqueueWork(() -> handle(packet, player));
-        }
+        ctx.get().enqueueWork(() -> handle(packet));
         ctx.get().setPacketHandled(true);
     }
 
-    private static void handle(GridFluidUpdatePacket packet, Player player) {
-        AbstractContainerMenu screenHandler = player.containerMenu;
+    private static void handle(GridFluidUpdatePacket packet) {
+        AbstractContainerMenu screenHandler = Minecraft.getInstance().player.containerMenu;
         if (screenHandler instanceof FluidGridContainerMenu fluidGridContainerMenu) {
             fluidGridContainerMenu.onResourceUpdate(packet.resource, packet.amount, packet.trackerEntry);
         }

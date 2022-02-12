@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -26,15 +25,12 @@ public class GridActivePacket {
     }
 
     public static void handle(GridActivePacket packet, Supplier<NetworkEvent.Context> ctx) {
-        Player player = Minecraft.getInstance().player;
-        if (player != null) {
-            ctx.get().enqueueWork(() -> handle(packet, player));
-        }
+        ctx.get().enqueueWork(() -> handle(packet));
         ctx.get().setPacketHandled(true);
     }
 
-    private static void handle(GridActivePacket packet, Player player) {
-        AbstractContainerMenu screenHandler = player.containerMenu;
+    private static void handle(GridActivePacket packet) {
+        AbstractContainerMenu screenHandler = Minecraft.getInstance().player.containerMenu;
         if (screenHandler instanceof GridWatcher gridWatcher) {
             gridWatcher.onActiveChanged(packet.active);
         }

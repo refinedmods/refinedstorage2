@@ -7,8 +7,8 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 
 public class StorageInfoResponsePacket {
@@ -33,8 +33,12 @@ public class StorageInfoResponsePacket {
     }
 
     public static void handle(StorageInfoResponsePacket packet, Supplier<NetworkEvent.Context> ctx) {
-        ClientLevel level = Minecraft.getInstance().level;
-        ((ClientStorageRepository) Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)).setInfo(packet.id, packet.stored, packet.capacity);
+        ctx.get().enqueueWork(() -> handle(packet));
         ctx.get().setPacketHandled(true);
+    }
+
+    private static void handle(StorageInfoResponsePacket packet) {
+        Level level = Minecraft.getInstance().player.level;
+        ((ClientStorageRepository) Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)).setInfo(packet.id, packet.stored, packet.capacity);
     }
 }
