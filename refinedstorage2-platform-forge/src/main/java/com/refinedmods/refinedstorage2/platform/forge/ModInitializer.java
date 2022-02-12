@@ -44,6 +44,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.forge.integration.jei.JeiIntegration;
 import com.refinedmods.refinedstorage2.platform.forge.internal.PlatformImpl;
+import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
@@ -108,7 +109,7 @@ public class ModInitializer extends AbstractModInitializer {
     };
 
     public ModInitializer() {
-        initializePlatform(new PlatformImpl());
+        initializePlatform(new PlatformImpl(new NetworkManager()));
         initializePlatformApiFacade();
         registerDiskTypes();
         registerStorageChannelTypes();
