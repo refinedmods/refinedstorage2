@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - The Wrench now dismantles devices when using SHIFT.
+  - The Disk Drive in item form now supports rendering of disks that were dismantled.
 
 ## [2.0.0-milestone.1.3] - 2022-02-12
 

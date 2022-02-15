@@ -72,9 +72,12 @@ public class ClientModInitializerImpl implements ClientModInitializer {
 
     private void registerCustomModels() {
         ResourceLocation diskDriveIdentifier = createIdentifier("block/disk_drive");
+        ResourceLocation diskDriveIdentifierItem = createIdentifier("item/disk_drive");
 
         ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (identifier, modelProviderContext) -> {
             if (identifier.equals(diskDriveIdentifier)) {
+                return new DiskDriveUnbakedModel();
+            } else if (identifier.equals(diskDriveIdentifierItem)) {
                 return new DiskDriveUnbakedModel();
             }
             return null;
