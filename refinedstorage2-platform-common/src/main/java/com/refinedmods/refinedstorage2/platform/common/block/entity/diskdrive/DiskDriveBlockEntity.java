@@ -90,7 +90,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     public static boolean hasDisk(CompoundTag tag, int slot) {
-        return false;
+        return tag.contains(TAG_DISK_INVENTORY) && ContainerUtil.hasItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), slot);
     }
 
     private void updateDiskStateIfNecessaryInLevel() {
