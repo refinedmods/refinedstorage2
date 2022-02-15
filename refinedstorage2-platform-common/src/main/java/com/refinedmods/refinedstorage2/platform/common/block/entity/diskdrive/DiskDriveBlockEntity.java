@@ -143,6 +143,22 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
         LevelUtil.updateBlock(level, worldPosition, this.getBlockState());
     }
 
+    /**
+     * When loading a disk drive in a normal flow it is: #load(CompoundTag) -> #setLevel(Level).
+     * Network initialization happens in #setLevel(Level).
+     * Loading data before network initialization ensures that all nbt is present (and thus disks are available).
+     * However, when we place a block entity with nbt, the flow is different: #setLevel(Level) -> #load(CompoundTag) -> #setChanged().
+     * #setLevel(Level) is called first (before #load(CompoundTag)) and initialization will happen BEFORE we load the tag!
+     * That's why we need to override #setChanged() here, to ensure that the network and disks are still initialized correctly in that case.
+     */
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        if (level != null && !level.isClientSide()) {
+            getNode().initialize(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level));
+        }
+    }
+
     @Override
     public void load(CompoundTag tag) {
         fromClientTag(tag);
