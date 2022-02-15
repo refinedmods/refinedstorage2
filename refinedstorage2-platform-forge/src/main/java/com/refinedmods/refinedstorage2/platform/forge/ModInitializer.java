@@ -50,7 +50,6 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionResult;
@@ -288,8 +287,7 @@ public class ModInitializer extends AbstractModInitializer {
 
     @SubscribeEvent
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock e) {
-        BlockPos pos = e.getHitVec().getBlockPos();
-        InteractionResult result = BaseBlock.useWrench(e.getWorld().getBlockState(pos), e.getWorld(), pos, e.getPlayer(), e.getHand());
+        InteractionResult result = BaseBlock.useWrench(e.getWorld().getBlockState(e.getHitVec().getBlockPos()), e.getWorld(), e.getHitVec(), e.getPlayer(), e.getHand());
         if (result != InteractionResult.PASS) {
             e.setCanceled(true);
             e.setCancellationResult(result);

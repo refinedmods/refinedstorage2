@@ -19,12 +19,14 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -125,8 +127,8 @@ public abstract class BaseBlock extends Block {
         }
     }
 
-    public static InteractionResult useWrench(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        if (player.isSpectator() || !level.mayInteract(player, pos)) {
+    public static InteractionResult useWrench(BlockState state, Level level, BlockHitResult hitResult, Player player, InteractionHand hand) {
+        if (player.isSpectator() || !level.mayInteract(player, hitResult.getBlockPos())) {
             return InteractionResult.PASS;
         }
         ItemStack itemInHand = player.getItemInHand(hand);
@@ -135,9 +137,18 @@ public abstract class BaseBlock extends Block {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide()) {
-            rotateAndPlaySoundIfNecessary(state, level, pos, itemInHand);
+            dismantleOrRotate(state, level, hitResult, player);
+            playSoundIfNecessary(level, hitResult.getBlockPos(), itemInHand);
         }
         return InteractionResult.sidedSuccess(level.isClientSide());
+    }
+
+    private static void dismantleOrRotate(BlockState state, Level level, BlockHitResult hitResult, Player player) {
+        if (canDismantle(state, player)) {
+            dismantle(state, level, hitResult);
+        } else {
+            rotate(state, level, hitResult.getBlockPos());
+        }
     }
 
     private static boolean isWrench(ItemStack item) {
@@ -145,8 +156,27 @@ public abstract class BaseBlock extends Block {
         return item.is(wrench);
     }
 
-    private static void rotateAndPlaySoundIfNecessary(BlockState state, Level level, BlockPos pos, ItemStack itemInHand) {
+    private static void rotate(BlockState state, Level level, BlockPos pos) {
         level.setBlockAndUpdate(pos, state.rotate(Rotation.CLOCKWISE_90));
+    }
+
+    private static boolean canDismantle(BlockState state, Player player) {
+        return player.isCrouching() && state.getBlock() instanceof BaseBlock;
+    }
+
+    private static void dismantle(BlockState state, Level level, BlockHitResult hitResult) {
+        ItemStack stack = state.getBlock().getCloneItemStack(level, hitResult.getBlockPos(), state);
+        BlockEntity blockEntity = level.getBlockEntity(hitResult.getBlockPos());
+        if (blockEntity != null) {
+            blockEntity.saveToItem(stack);
+            // Ensure that we don't drop items
+            level.removeBlockEntity(hitResult.getBlockPos());
+        }
+        level.setBlockAndUpdate(hitResult.getBlockPos(), Blocks.AIR.defaultBlockState());
+        level.addFreshEntity(new ItemEntity(level, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z, stack));
+    }
+
+    private static void playSoundIfNecessary(Level level, BlockPos pos, ItemStack itemInHand) {
         if (itemInHand.getItem() instanceof WrenchItem) {
             level.playSound(null, pos, Sounds.INSTANCE.getWrench(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }

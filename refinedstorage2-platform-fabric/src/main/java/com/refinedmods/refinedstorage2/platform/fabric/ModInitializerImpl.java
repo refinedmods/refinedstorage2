@@ -129,7 +129,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerWrench() {
-        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> BaseBlock.useWrench(level.getBlockState(hitResult.getBlockPos()), level, hitResult.getBlockPos(), player, hand));
+        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> BaseBlock.useWrench(level.getBlockState(hitResult.getBlockPos()), level, hitResult, player, hand));
     }
 
     private void registerContent() {
