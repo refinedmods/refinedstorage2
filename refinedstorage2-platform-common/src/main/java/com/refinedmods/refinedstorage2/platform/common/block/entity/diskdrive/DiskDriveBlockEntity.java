@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSe
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.LevelUtil;
 
 import java.util.Optional;
@@ -147,7 +148,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
         fromClientTag(tag);
 
         if (tag.contains(TAG_DISK_INVENTORY)) {
-            diskInventory.fromTag(tag.getList(TAG_DISK_INVENTORY, Tag.TAG_COMPOUND));
+            ContainerUtil.read(tag.getCompound(TAG_DISK_INVENTORY), diskInventory);
         }
 
         if (tag.contains(TAG_RESOURCE_FILTER)) {
@@ -178,7 +179,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.put(TAG_DISK_INVENTORY, diskInventory.createTag());
+        tag.put(TAG_DISK_INVENTORY, ContainerUtil.write(diskInventory));
         tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
         tag.putInt(TAG_PRIORITY, getNode().getPriority());
