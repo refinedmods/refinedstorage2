@@ -88,6 +88,10 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
         blockEntity.updateDiskStateIfNecessaryInLevel();
     }
 
+    public static boolean hasDisk(CompoundTag tag, int slot) {
+        return false;
+    }
+
     private void updateDiskStateIfNecessaryInLevel() {
         if (!syncRequested) {
             return;
