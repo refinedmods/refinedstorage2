@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- The Wrench now dismantles devices when using SHIFT.
+
 ## [2.0.0-milestone.1.3] - 2022-02-12
 
 ### Added
