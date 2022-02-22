@@ -137,7 +137,6 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerItems();
         registerBlockEntities();
         registerMenus();
-        registerLootFunctions();
     }
 
     private void registerBlocks() {
