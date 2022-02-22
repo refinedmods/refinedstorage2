@@ -14,6 +14,7 @@ disks, etc. to intermediate storage like a chest.
 
 - The Wrench now dismantles devices when using SHIFT.
     - The Disk Drive in item form now supports rendering of disks that were dismantled.
+    - In order to retain Controller energy, the Controller must now be dismantled.
 
 ### Fixed
 

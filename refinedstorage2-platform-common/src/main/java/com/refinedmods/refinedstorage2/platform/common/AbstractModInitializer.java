@@ -9,18 +9,12 @@ import com.refinedmods.refinedstorage2.platform.abstractions.PlatformProxy;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacadeProxy;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
-import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.internal.Rs2PlatformApiFacadeImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.loot.ControllerLootItemFunction;
 
-import net.minecraft.core.Registry;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
-
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public abstract class AbstractModInitializer {
@@ -50,9 +44,5 @@ public abstract class AbstractModInitializer {
 
     protected void registerResourceTypes() {
         Rs2PlatformApiFacade.INSTANCE.getResourceTypeRegistry().register(FluidResourceType.INSTANCE);
-    }
-
-    protected void registerLootFunctions() {
-        LootFunctions.INSTANCE.setController(Registry.register(Registry.LOOT_FUNCTION_TYPE, CONTROLLER, new LootItemFunctionType(new ControllerLootItemFunction.Serializer())));
     }
 }

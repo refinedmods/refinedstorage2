@@ -121,7 +121,6 @@ public class ModInitializer extends AbstractModInitializer {
         registerNetworkComponents();
         registerResourceTypes();
         registerTickHandler();
-        registerLootFunctions();
         registerGridSearchBoxModes();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
