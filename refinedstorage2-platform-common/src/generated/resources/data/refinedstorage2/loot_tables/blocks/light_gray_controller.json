@@ -6,11 +6,7 @@
             "entries": [
                 {
                     "type": "minecraft:item",
-                    "functions": [
-                        {
-                            "function": "refinedstorage2:controller"
-                        }
-                    ],
+                    "functions": [],
                     "name": "refinedstorage2:light_gray_controller"
                 }
             ],
