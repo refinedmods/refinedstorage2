@@ -31,14 +31,14 @@ import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.to
 public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     private static final ItemResource BUCKET_ITEM_RESOURCE = new ItemResource(Items.BUCKET, null);
 
-    private final AbstractContainerMenu screenHandler;
+    private final AbstractContainerMenu menu;
     private final Inventory playerInventory;
     private final GridService<FluidResource> gridService;
     private final PlayerMainInvWrapper playerInventoryStorage;
     private final ExtractableStorage<ItemResource> bucketStorage;
 
-    public FluidGridEventHandlerImpl(AbstractContainerMenu screenHandler, Inventory playerInventory, GridService<FluidResource> gridService, ExtractableStorage<ItemResource> bucketStorage) {
-        this.screenHandler = screenHandler;
+    public FluidGridEventHandlerImpl(AbstractContainerMenu menu, Inventory playerInventory, GridService<FluidResource> gridService, ExtractableStorage<ItemResource> bucketStorage) {
+        this.menu = menu;
         this.playerInventory = playerInventory;
         this.gridService = gridService;
         this.playerInventoryStorage = new PlayerMainInvWrapper(playerInventory);
@@ -60,7 +60,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             FluidStack toDrain = toFluidStack(resource, amount == Long.MAX_VALUE ? Integer.MAX_VALUE : amount);
             FluidStack drained = cursorStorage.drain(toDrain, toFluidAction(action));
             if (action == Action.EXECUTE) {
-                screenHandler.setCarried(cursorStorage.getContainer());
+                menu.setCarried(cursorStorage.getContainer());
             }
             return drained.getAmount();
         });
@@ -72,7 +72,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
 
     @Nullable
     private IFluidHandlerItem getFluidCursorStorage() {
-        return getFluidStorage(screenHandler.getCarried());
+        return getFluidStorage(menu.getCarried());
     }
 
     @Nullable
@@ -138,7 +138,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
 
     private void insertResultingBucket(boolean cursor, IFluidHandlerItem destination) {
         if (cursor) {
-            screenHandler.setCarried(destination.getContainer());
+            menu.setCarried(destination.getContainer());
         } else {
             ItemStack remainder = ItemHandlerHelper.insertItem(playerInventoryStorage, destination.getContainer(), false);
             if (!remainder.isEmpty()) {

@@ -20,19 +20,19 @@ import net.minecraft.network.chat.Component;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class SortingDirectionSideButtonWidget extends SideButtonWidget {
-    private final GridContainerMenu screenHandler;
+    private final GridContainerMenu<?> menu;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSortingDirection, List<Component>> tooltips = new EnumMap<>(GridSortingDirection.class);
 
-    public SortingDirectionSideButtonWidget(GridContainerMenu screenHandler, TooltipRenderer tooltipRenderer) {
-        super(createPressAction(screenHandler));
-        this.screenHandler = screenHandler;
+    public SortingDirectionSideButtonWidget(GridContainerMenu<?> menu, TooltipRenderer tooltipRenderer) {
+        super(createPressAction(menu));
+        this.menu = menu;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(GridSortingDirection.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private static OnPress createPressAction(GridContainerMenu screenHandler) {
-        return btn -> screenHandler.setSortingDirection(screenHandler.getSortingDirection().toggle());
+    private static OnPress createPressAction(GridContainerMenu<?> menu) {
+        return btn -> menu.setSortingDirection(menu.getSortingDirection().toggle());
     }
 
     private List<Component> calculateTooltip(GridSortingDirection type) {
@@ -44,7 +44,7 @@ public class SortingDirectionSideButtonWidget extends SideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        return screenHandler.getSortingDirection() == GridSortingDirection.ASCENDING ? 0 : 16;
+        return menu.getSortingDirection() == GridSortingDirection.ASCENDING ? 0 : 16;
     }
 
     @Override
@@ -54,6 +54,6 @@ public class SortingDirectionSideButtonWidget extends SideButtonWidget {
 
     @Override
     public void onTooltip(Button buttonWidget, PoseStack poseStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(poseStack, tooltips.get(screenHandler.getSortingDirection()), mouseX, mouseY);
+        tooltipRenderer.render(poseStack, tooltips.get(menu.getSortingDirection()), mouseX, mouseY);
     }
 }

@@ -10,7 +10,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class GridFluidUpdatePacket implements ClientPlayNetworking.PlayChannelHandler {
     @Override
@@ -20,9 +19,8 @@ public class GridFluidUpdatePacket implements ClientPlayNetworking.PlayChannelHa
         StorageTracker.Entry trackerEntry = PacketUtil.readTrackerEntry(buf);
 
         client.execute(() -> {
-            AbstractContainerMenu screenHandler = client.player.containerMenu;
-            if (screenHandler instanceof FluidGridContainerMenu fluidGridContainerMenu) {
-                fluidGridContainerMenu.onResourceUpdate(fluidResource, amount, trackerEntry);
+            if (client.player.containerMenu instanceof FluidGridContainerMenu fluidGrid) {
+                fluidGrid.onResourceUpdate(fluidResource, amount, trackerEntry);
             }
         });
     }

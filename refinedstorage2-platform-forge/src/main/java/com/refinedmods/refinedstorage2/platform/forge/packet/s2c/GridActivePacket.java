@@ -30,8 +30,8 @@ public class GridActivePacket {
     }
 
     private static void handle(GridActivePacket packet) {
-        AbstractContainerMenu screenHandler = Minecraft.getInstance().player.containerMenu;
-        if (screenHandler instanceof GridWatcher gridWatcher) {
+        AbstractContainerMenu menu = Minecraft.getInstance().player.containerMenu;
+        if (menu instanceof GridWatcher gridWatcher) {
             gridWatcher.onActiveChanged(packet.active);
         }
     }
