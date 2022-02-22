@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent;
 
 public class PropertyChangePacket {
@@ -35,7 +34,6 @@ public class PropertyChangePacket {
     }
 
     private static void handle(PropertyChangePacket packet, Player player) {
-        AbstractContainerMenu screenHandler = player.containerMenu;
-        screenHandler.setData(packet.id, packet.value);
+        player.containerMenu.setData(packet.id, packet.value);
     }
 }

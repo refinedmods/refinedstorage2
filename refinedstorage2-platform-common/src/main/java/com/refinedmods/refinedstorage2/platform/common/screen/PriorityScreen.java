@@ -50,7 +50,7 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
     private EditBox amountField;
 
     public PriorityScreen(PriorityAccessor priorityAccessor, Screen parent, Inventory playerInventory) {
-        super(new DummyScreenHandler(), playerInventory, PriorityScreen.PRIORITY_TEXT);
+        super(new DummyContainerMenu(), playerInventory, PriorityScreen.PRIORITY_TEXT);
 
         this.parent = parent;
         this.priorityAccessor = priorityAccessor;
@@ -172,8 +172,8 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
         Minecraft.getInstance().setScreen(parent);
     }
 
-    private static class DummyScreenHandler extends AbstractContainerMenu {
-        protected DummyScreenHandler() {
+    private static class DummyContainerMenu extends AbstractContainerMenu {
+        protected DummyContainerMenu() {
             super(null, 0);
         }
 

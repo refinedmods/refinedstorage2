@@ -11,7 +11,6 @@ import java.util.function.Supplier;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent;
 
 public class GridScrollPacket {
@@ -48,8 +47,7 @@ public class GridScrollPacket {
     }
 
     private static void handle(GridScrollPacket packet, Player player) {
-        AbstractContainerMenu screenHandler = player.containerMenu;
-        if (screenHandler instanceof ItemGridEventHandler gridEventHandler) {
+        if (player.containerMenu instanceof ItemGridEventHandler gridEventHandler) {
             gridEventHandler.onScroll(packet.itemResource, packet.mode, packet.slot);
         }
     }

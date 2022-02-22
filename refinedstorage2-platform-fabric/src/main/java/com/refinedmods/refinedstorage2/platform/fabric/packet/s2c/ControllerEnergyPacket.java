@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class ControllerEnergyPacket implements ClientPlayNetworking.PlayChannelHandler {
     @Override
@@ -16,9 +15,8 @@ public class ControllerEnergyPacket implements ClientPlayNetworking.PlayChannelH
         long capacity = buf.readLong();
 
         client.execute(() -> {
-            AbstractContainerMenu screenHandler = client.player.containerMenu;
-            if (screenHandler instanceof ControllerContainerMenu controllerScreenHandler) {
-                controllerScreenHandler.setEnergy(stored, capacity);
+            if (client.player.containerMenu instanceof ControllerContainerMenu controller) {
+                controller.setEnergy(stored, capacity);
             }
         });
     }

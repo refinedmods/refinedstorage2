@@ -33,9 +33,9 @@ public class ControllerEnergyPacket {
     }
 
     private static void handle(ControllerEnergyPacket packet) {
-        AbstractContainerMenu screenHandler = Minecraft.getInstance().player.containerMenu;
-        if (screenHandler instanceof ControllerContainerMenu controllerScreenHandler) {
-            controllerScreenHandler.setEnergy(packet.stored, packet.capacity);
+        AbstractContainerMenu menu = Minecraft.getInstance().player.containerMenu;
+        if (menu instanceof ControllerContainerMenu controller) {
+            controller.setEnergy(packet.stored, packet.capacity);
         }
     }
 }

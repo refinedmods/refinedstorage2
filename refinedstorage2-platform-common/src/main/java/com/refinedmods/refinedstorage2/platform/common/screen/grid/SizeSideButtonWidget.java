@@ -20,19 +20,19 @@ import net.minecraft.network.chat.Component;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class SizeSideButtonWidget extends SideButtonWidget {
-    private final GridContainerMenu screenHandler;
+    private final GridContainerMenu<?> menu;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSize, List<Component>> tooltips = new EnumMap<>(GridSize.class);
 
-    public SizeSideButtonWidget(GridContainerMenu screenHandler, TooltipRenderer tooltipRenderer) {
-        super(createPressAction(screenHandler));
-        this.screenHandler = screenHandler;
+    public SizeSideButtonWidget(GridContainerMenu<?> menu, TooltipRenderer tooltipRenderer) {
+        super(createPressAction(menu));
+        this.menu = menu;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(GridSize.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private static OnPress createPressAction(GridContainerMenu screenHandler) {
-        return btn -> screenHandler.setSize(screenHandler.getSize().toggle());
+    private static OnPress createPressAction(GridContainerMenu<?> menu) {
+        return btn -> menu.setSize(menu.getSize().toggle());
     }
 
     private List<Component> calculateTooltip(GridSize size) {
@@ -44,7 +44,7 @@ public class SizeSideButtonWidget extends SideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        return switch (screenHandler.getSize()) {
+        return switch (menu.getSize()) {
             case STRETCH -> 64 + 48;
             case SMALL -> 64;
             case MEDIUM -> 64 + 16;
@@ -59,6 +59,6 @@ public class SizeSideButtonWidget extends SideButtonWidget {
 
     @Override
     public void onTooltip(Button buttonWidget, PoseStack poseStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(poseStack, tooltips.get(screenHandler.getSize()), mouseX, mouseY);
+        tooltipRenderer.render(poseStack, tooltips.get(menu.getSize()), mouseX, mouseY);
     }
 }

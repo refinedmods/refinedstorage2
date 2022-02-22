@@ -120,8 +120,8 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         addSlots(0);
     }
 
-    protected GridContainerMenu(MenuType<?> screenHandlerType, int syncId, Inventory playerInventory, GridBlockEntity<T> grid, GridView<T> view) {
-        super(screenHandlerType, syncId);
+    protected GridContainerMenu(MenuType<?> type, int syncId, Inventory playerInventory, GridBlockEntity<T> grid, GridView<T> view) {
+        super(type, syncId);
 
         this.view = view;
 

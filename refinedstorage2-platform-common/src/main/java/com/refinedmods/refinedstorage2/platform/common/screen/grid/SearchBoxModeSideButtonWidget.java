@@ -20,18 +20,18 @@ import net.minecraft.resources.ResourceLocation;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class SearchBoxModeSideButtonWidget extends SideButtonWidget {
-    private final GridContainerMenu screenHandler;
+    private final GridContainerMenu<?> menu;
     private final TooltipRenderer tooltipRenderer;
     private final Map<PlatformSearchBoxModeImpl, List<Component>> tooltips = new HashMap<>();
 
-    public SearchBoxModeSideButtonWidget(GridContainerMenu screenHandler, TooltipRenderer tooltipRenderer) {
-        super(createPressAction(screenHandler));
-        this.screenHandler = screenHandler;
+    public SearchBoxModeSideButtonWidget(GridContainerMenu<?> menu, TooltipRenderer tooltipRenderer) {
+        super(createPressAction(menu));
+        this.menu = menu;
         this.tooltipRenderer = tooltipRenderer;
     }
 
-    private static OnPress createPressAction(GridContainerMenu screenHandler) {
-        return btn -> screenHandler.setSearchBoxMode((PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.next(screenHandler.getSearchBoxMode()));
+    private static OnPress createPressAction(GridContainerMenu<?> menu) {
+        return btn -> menu.setSearchBoxMode((PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.next(menu.getSearchBoxMode()));
     }
 
     private List<Component> calculateTooltip(PlatformSearchBoxModeImpl searchBoxMode) {
@@ -43,21 +43,21 @@ public class SearchBoxModeSideButtonWidget extends SideButtonWidget {
 
     @Override
     protected ResourceLocation getTextureIdentifier() {
-        return screenHandler.getSearchBoxMode().getTextureIdentifier();
+        return menu.getSearchBoxMode().getTextureIdentifier();
     }
 
     @Override
     protected int getXTexture() {
-        return screenHandler.getSearchBoxMode().getTextureX();
+        return menu.getSearchBoxMode().getTextureX();
     }
 
     @Override
     protected int getYTexture() {
-        return screenHandler.getSearchBoxMode().getTextureY();
+        return menu.getSearchBoxMode().getTextureY();
     }
 
     @Override
     public void onTooltip(Button buttonWidget, PoseStack poseStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(poseStack, tooltips.computeIfAbsent(screenHandler.getSearchBoxMode(), this::calculateTooltip), mouseX, mouseY);
+        tooltipRenderer.render(poseStack, tooltips.computeIfAbsent(menu.getSearchBoxMode(), this::calculateTooltip), mouseX, mouseY);
     }
 }

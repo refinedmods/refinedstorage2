@@ -43,9 +43,9 @@ public class GridFluidUpdatePacket {
     }
 
     private static void handle(GridFluidUpdatePacket packet) {
-        AbstractContainerMenu screenHandler = Minecraft.getInstance().player.containerMenu;
-        if (screenHandler instanceof FluidGridContainerMenu fluidGridContainerMenu) {
-            fluidGridContainerMenu.onResourceUpdate(packet.resource, packet.amount, packet.trackerEntry);
+        AbstractContainerMenu menu = Minecraft.getInstance().player.containerMenu;
+        if (menu instanceof FluidGridContainerMenu fluidGrid) {
+            fluidGrid.onResourceUpdate(packet.resource, packet.amount, packet.trackerEntry);
         }
     }
 }

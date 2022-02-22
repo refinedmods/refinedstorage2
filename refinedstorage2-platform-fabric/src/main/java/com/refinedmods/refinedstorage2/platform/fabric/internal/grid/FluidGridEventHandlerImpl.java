@@ -31,19 +31,19 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     private static final ItemVariant BUCKET_ITEM_VARIANT = ItemVariant.of(Items.BUCKET);
     private static final ItemResource BUCKET_ITEM_RESOURCE = new ItemResource(Items.BUCKET, null);
 
-    private final AbstractContainerMenu screenHandler;
+    private final AbstractContainerMenu menu;
     private final Player player;
     private final GridService<FluidResource> gridService;
     private final PlayerInventoryStorage playerInventoryStorage;
     private final Storage<ItemVariant> playerCursorStorage;
     private final ExtractableStorage<ItemResource> bucketStorage;
 
-    public FluidGridEventHandlerImpl(AbstractContainerMenu screenHandler, GridService<FluidResource> gridService, Inventory playerInventory, ExtractableStorage<ItemResource> bucketStorage) {
-        this.screenHandler = screenHandler;
+    public FluidGridEventHandlerImpl(AbstractContainerMenu menu, GridService<FluidResource> gridService, Inventory playerInventory, ExtractableStorage<ItemResource> bucketStorage) {
+        this.menu = menu;
         this.player = playerInventory.player;
         this.gridService = gridService;
         this.playerInventoryStorage = PlayerInventoryStorage.of(playerInventory);
-        this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(screenHandler);
+        this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(menu);
         this.bucketStorage = bucketStorage;
     }
 
@@ -100,8 +100,8 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     @Nullable
     private Storage<FluidVariant> getFluidCursorStorage() {
         return FluidStorage.ITEM.find(
-                screenHandler.getCarried(),
-                ContainerItemContext.ofPlayerCursor(player, screenHandler)
+                menu.getCarried(),
+                ContainerItemContext.ofPlayerCursor(player, menu)
         );
     }
 

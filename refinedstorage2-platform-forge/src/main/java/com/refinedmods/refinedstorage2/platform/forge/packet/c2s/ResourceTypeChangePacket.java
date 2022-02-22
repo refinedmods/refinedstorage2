@@ -8,7 +8,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent;
 
 public class ResourceTypeChangePacket {
@@ -35,9 +34,8 @@ public class ResourceTypeChangePacket {
     }
 
     private static void handle(ResourceTypeChangePacket packet, Player player) {
-        AbstractContainerMenu screenHandler = player.containerMenu;
-        if (screenHandler instanceof ResourceFilterableContainerMenu containerMenu) {
-            containerMenu.setCurrentResourceType(packet.id);
+        if (player.containerMenu instanceof ResourceFilterableContainerMenu resourceFilterable) {
+            resourceFilterable.setCurrentResourceType(packet.id);
         }
     }
 }

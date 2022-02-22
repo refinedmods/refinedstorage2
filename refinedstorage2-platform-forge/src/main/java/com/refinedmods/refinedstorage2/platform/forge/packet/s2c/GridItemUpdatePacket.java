@@ -43,9 +43,9 @@ public class GridItemUpdatePacket {
     }
 
     private static void handle(GridItemUpdatePacket packet) {
-        AbstractContainerMenu screenHandler = Minecraft.getInstance().player.containerMenu;
-        if (screenHandler instanceof ItemGridContainerMenu itemGridContainerMenu) {
-            itemGridContainerMenu.onResourceUpdate(packet.resource, packet.amount, packet.trackerEntry);
+        AbstractContainerMenu menu = Minecraft.getInstance().player.containerMenu;
+        if (menu instanceof ItemGridContainerMenu itemGrid) {
+            itemGrid.onResourceUpdate(packet.resource, packet.amount, packet.trackerEntry);
         }
     }
 }
