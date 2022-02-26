@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network.node.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
-import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSize;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
@@ -12,13 +11,13 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class GridNetworkNode<T> extends NetworkNodeImpl {
     private static final Logger LOGGER = LogManager.getLogger(GridNetworkNode.class);
@@ -27,12 +26,10 @@ public class GridNetworkNode<T> extends NetworkNodeImpl {
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
     private GridSortingType sortingType = GridSortingType.QUANTITY;
     private GridSize size = GridSize.STRETCH;
-    private GridSearchBoxMode searchBoxMode;
     private final long energyUsage;
     private final StorageChannelType<T> type;
 
-    public GridNetworkNode(GridSearchBoxMode defaultSearchBoxMode, long energyUsage, StorageChannelType<T> type) {
-        this.searchBoxMode = defaultSearchBoxMode;
+    public GridNetworkNode(long energyUsage, StorageChannelType<T> type) {
         this.energyUsage = energyUsage;
         this.type = type;
     }
@@ -59,14 +56,6 @@ public class GridNetworkNode<T> extends NetworkNodeImpl {
 
     public void setSize(GridSize size) {
         this.size = size;
-    }
-
-    public GridSearchBoxMode getSearchBoxMode() {
-        return searchBoxMode;
-    }
-
-    public void setSearchBoxMode(GridSearchBoxMode searchBoxMode) {
-        this.searchBoxMode = searchBoxMode;
     }
 
     public StorageChannel<T> getStorageChannel() {

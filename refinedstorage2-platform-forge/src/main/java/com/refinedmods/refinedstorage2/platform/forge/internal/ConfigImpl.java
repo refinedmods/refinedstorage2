@@ -107,6 +107,7 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.BooleanValue rememberSearchQuery;
         private final ForgeConfigSpec.IntValue energyUsage;
         private final ForgeConfigSpec.BooleanValue smoothScrolling;
+        private final ForgeConfigSpec.BooleanValue autoSelected;
 
         public GridImpl() {
             builder.push("grid");
@@ -117,6 +118,7 @@ public class ConfigImpl implements Config {
             rememberSearchQuery = builder.comment("Whether the search query should persist when closing and re-opening the Grid").define("rememberSearchQuery", false);
             energyUsage = builder.comment("The energy used by the Grid").defineInRange(ENERGY_USAGE, 10, 0, Integer.MAX_VALUE);
             smoothScrolling = builder.comment("Whether the Grid should use smooth scrolling").define("smoothScrolling", true);
+            autoSelected = builder.comment("Whether the Grid search box is auto selected").define("autoSelected", false);
             builder.pop();
         }
 
@@ -153,6 +155,11 @@ public class ConfigImpl implements Config {
         @Override
         public boolean isSmoothScrolling() {
             return smoothScrolling.get();
+        }
+
+        @Override
+        public boolean isAutoSelected() {
+            return autoSelected.get();
         }
     }
 }

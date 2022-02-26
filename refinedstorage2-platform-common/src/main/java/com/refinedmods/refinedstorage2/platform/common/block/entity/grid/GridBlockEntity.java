@@ -1,8 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
-import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxMode;
-import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSize;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
@@ -28,11 +26,9 @@ public abstract class GridBlockEntity<T> extends InternalNetworkNodeContainerBlo
     private static final String TAG_SORTING_DIRECTION = "sd";
     private static final String TAG_SORTING_TYPE = "st";
     private static final String TAG_SIZE = "s";
-    private static final String TAG_SEARCH_BOX_MODE = "sbm";
 
     protected GridBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, StorageChannelType<T> storageChannelType) {
         super(type, pos, state, new GridNetworkNode<>(
-                GridSearchBoxModeRegistry.INSTANCE.getDefault(),
                 Platform.INSTANCE.getConfig().getGrid().getEnergyUsage(),
                 storageChannelType
         ));
@@ -49,7 +45,6 @@ public abstract class GridBlockEntity<T> extends InternalNetworkNodeContainerBlo
         tag.putInt(TAG_SORTING_DIRECTION, GridSettings.getSortingDirection(getNode().getSortingDirection()));
         tag.putInt(TAG_SORTING_TYPE, GridSettings.getSortingType(getNode().getSortingType()));
         tag.putInt(TAG_SIZE, GridSettings.getSize(getNode().getSize()));
-        tag.putInt(TAG_SEARCH_BOX_MODE, GridSearchBoxModeRegistry.INSTANCE.getId(getNode().getSearchBoxMode()));
     }
 
     @Override
@@ -66,10 +61,6 @@ public abstract class GridBlockEntity<T> extends InternalNetworkNodeContainerBlo
         if (tag.contains(TAG_SIZE)) {
             getNode().setSize(GridSettings.getSize(tag.getInt(TAG_SIZE)));
         }
-
-        if (tag.contains(TAG_SEARCH_BOX_MODE)) {
-            getNode().setSearchBoxMode(GridSearchBoxModeRegistry.INSTANCE.get(tag.getInt(TAG_SEARCH_BOX_MODE)));
-        }
     }
 
     @Override
@@ -78,7 +69,6 @@ public abstract class GridBlockEntity<T> extends InternalNetworkNodeContainerBlo
         buf.writeInt(GridSettings.getSortingDirection(getSortingDirection()));
         buf.writeInt(GridSettings.getSortingType(getSortingType()));
         buf.writeInt(GridSettings.getSize(getSize()));
-        buf.writeInt(GridSearchBoxModeRegistry.INSTANCE.getId(getSearchBoxMode()));
 
         buf.writeInt(getNode().getResourceCount());
         getNode().forEachResource((stack, trackerEntry) -> {
@@ -104,15 +94,6 @@ public abstract class GridBlockEntity<T> extends InternalNetworkNodeContainerBlo
 
     public void setSortingDirection(GridSortingDirection sortingDirection) {
         getNode().setSortingDirection(sortingDirection);
-        setChanged();
-    }
-
-    public GridSearchBoxMode getSearchBoxMode() {
-        return getNode().getSearchBoxMode();
-    }
-
-    public void setSearchBoxMode(GridSearchBoxMode searchBoxMode) {
-        getNode().setSearchBoxMode(searchBoxMode);
         setChanged();
     }
 

@@ -1,8 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
-import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
-import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
-import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.block.BaseBlock;
@@ -26,8 +23,6 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.search.PlatformSearchBoxModeImpl;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.item.CoreItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStoragePartItem;
@@ -44,11 +39,8 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockI
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.forge.integration.jei.JeiIntegration;
 import com.refinedmods.refinedstorage2.platform.forge.internal.PlatformImpl;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
-import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
-import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
@@ -121,7 +113,6 @@ public class ModInitializer extends AbstractModInitializer {
         registerNetworkComponents();
         registerResourceTypes();
         registerTickHandler();
-        registerGridSearchBoxModes();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onClientSetup);
@@ -347,18 +338,6 @@ public class ModInitializer extends AbstractModInitializer {
         wrenchSoundEvent.setRegistryName(WRENCH);
         e.getRegistry().register(wrenchSoundEvent);
         Sounds.INSTANCE.setWrench(wrenchSoundEvent);
-    }
-
-    private void registerGridSearchBoxModes() {
-        GridQueryParser queryParser = new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS, GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING);
-
-        for (boolean autoSelected : new boolean[]{false, true}) {
-            GridSearchBoxModeRegistry.INSTANCE.add(new PlatformSearchBoxModeImpl(queryParser, createIdentifier("textures/icons.png"), autoSelected ? 16 : 0, 96, createTranslation("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : "")), autoSelected));
-        }
-
-        if (JeiIntegration.isLoaded()) {
-            JeiIntegration.registerGridSearchBoxModes(queryParser);
-        }
     }
 
     @SubscribeEvent
