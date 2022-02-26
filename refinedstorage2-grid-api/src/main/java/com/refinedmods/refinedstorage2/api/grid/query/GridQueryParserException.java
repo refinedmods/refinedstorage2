@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.grid.search.query;
+package com.refinedmods.refinedstorage2.api.grid.query;
 
 import com.refinedmods.refinedstorage2.query.lexer.TokenRange;
 
