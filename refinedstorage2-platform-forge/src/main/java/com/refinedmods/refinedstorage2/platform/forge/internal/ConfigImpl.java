@@ -161,5 +161,10 @@ public class ConfigImpl implements Config {
         public boolean isAutoSelected() {
             return autoSelected.get();
         }
+
+        @Override
+        public void setAutoSelected(boolean autoSelected) {
+            this.autoSelected.set(autoSelected);
+        }
     }
 }

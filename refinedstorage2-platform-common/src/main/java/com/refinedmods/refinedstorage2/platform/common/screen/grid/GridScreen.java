@@ -114,6 +114,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         addSideButton(new SortingDirectionSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new SortingTypeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new SizeSideButtonWidget(getMenu(), this::renderComponentTooltip));
+        addSideButton(new AutoSelectedSideButtonWidget(getMenu(), this::renderComponentTooltip));
     }
 
     @Override

@@ -25,6 +25,8 @@ public interface Config {
         boolean isSmoothScrolling();
 
         boolean isAutoSelected();
+
+        void setAutoSelected(boolean autoSelected);
     }
 
     interface DiskDrive {
