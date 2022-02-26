@@ -212,7 +212,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     }
 
     public void setSearchBox(GridSearchBox searchBox) {
-        searchBox.setAutoSelected(Platform.INSTANCE.getConfig().getGrid().isAutoSelected());
+        searchBox.setAutoSelected(isAutoSelected());
         if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
             searchBox.setValue(lastSearchQuery);
             searchBox.setListener(text -> lastSearchQuery = text);
@@ -257,5 +257,13 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
 
     public boolean isActive() {
         return active;
+    }
+
+    public void setAutoSelected(boolean autoSelected) {
+        Platform.INSTANCE.getConfig().getGrid().setAutoSelected(autoSelected);
+    }
+
+    public boolean isAutoSelected() {
+        return Platform.INSTANCE.getConfig().getGrid().isAutoSelected();
     }
 }

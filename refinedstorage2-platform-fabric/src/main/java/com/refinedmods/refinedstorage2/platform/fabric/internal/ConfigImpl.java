@@ -102,6 +102,12 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         public boolean isAutoSelected() {
             return autoSelected;
         }
+
+        @Override
+        public void setAutoSelected(boolean autoSelected) {
+            this.autoSelected = autoSelected;
+            AutoConfig.getConfigHolder(ConfigImpl.class).save();
+        }
     }
 
     private static class DiskDriveImpl implements DiskDrive {

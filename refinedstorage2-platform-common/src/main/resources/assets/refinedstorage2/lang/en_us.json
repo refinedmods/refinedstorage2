@@ -23,6 +23,7 @@
     "gui.refinedstorage2.grid.size.medium": "Medium",
     "gui.refinedstorage2.grid.size.large": "Large",
     "gui.refinedstorage2.grid.size.extra_large": "Extra large",
+    "gui.refinedstorage2.grid.auto_selected": "Auto-selected",
     "gui.refinedstorage2.redstone_mode": "Redstone mode",
     "gui.refinedstorage2.redstone_mode.ignore": "Ignore",
     "gui.refinedstorage2.redstone_mode.high": "High",
