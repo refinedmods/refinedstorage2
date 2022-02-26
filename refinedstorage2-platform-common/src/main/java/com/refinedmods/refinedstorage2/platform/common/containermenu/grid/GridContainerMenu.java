@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
-import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSize;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
@@ -18,7 +17,6 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridSet
 import com.refinedmods.refinedstorage2.platform.common.containermenu.BaseContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.TwoWaySyncProperty;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.search.PlatformSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
@@ -33,7 +31,7 @@ import org.apache.logging.log4j.Logger;
 public abstract class GridContainerMenu<T> extends BaseContainerMenu implements ResourceListListener<T>, RedstoneModeAccessor, GridWatcher {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static String lastSearchQuery = "";
+    private static String lastSearchQuery;
 
     protected final Inventory playerInventory;
     protected final GridView<T> view;
@@ -41,14 +39,11 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     private final TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty;
     private final TwoWaySyncProperty<GridSortingType> sortingTypeProperty;
     private final TwoWaySyncProperty<GridSize> sizeProperty;
-    private final TwoWaySyncProperty<PlatformSearchBoxModeImpl> searchBoxModeProperty;
     protected GridBlockEntity<T> grid;
     protected StorageChannel<T> storageChannel; // TODO - Support changing of the channel.
     private Runnable sizeChangedListener;
-    private GridSearchBox searchBox;
 
     private GridSize size;
-    private PlatformSearchBoxModeImpl searchBoxMode;
 
     private boolean active;
 
@@ -88,26 +83,17 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
                 GridSize.STRETCH,
                 this::onSizeChanged
         );
-        this.searchBoxModeProperty = TwoWaySyncProperty.forClient(
-                4,
-                GridSearchBoxModeRegistry.INSTANCE::getId,
-                id -> (PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.get(id),
-                (PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.getDefault(),
-                this::onSearchBoxModeChanged
-        );
 
         addDataSlot(redstoneModeProperty);
         addDataSlot(sortingDirectionProperty);
         addDataSlot(sortingTypeProperty);
         addDataSlot(sizeProperty);
-        addDataSlot(searchBoxModeProperty);
 
         active = buf.readBoolean();
 
         this.view.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
         this.view.setSortingType(GridSettings.getSortingType(buf.readInt()));
         size = GridSettings.getSize(buf.readInt());
-        searchBoxMode = (PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.get(buf.readInt());
 
         int amountOfResources = buf.readInt();
         for (int i = 0; i < amountOfResources; ++i) {
@@ -153,19 +139,11 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
                 grid::getSize,
                 grid::setSize
         );
-        this.searchBoxModeProperty = TwoWaySyncProperty.forServer(
-                4,
-                GridSearchBoxModeRegistry.INSTANCE::getId,
-                id -> (PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.get(id),
-                () -> (PlatformSearchBoxModeImpl) grid.getSearchBoxMode(),
-                grid::setSearchBoxMode
-        );
 
         addDataSlot(redstoneModeProperty);
         addDataSlot(sortingDirectionProperty);
         addDataSlot(sortingTypeProperty);
         addDataSlot(sizeProperty);
-        addDataSlot(searchBoxModeProperty);
 
         this.playerInventory = playerInventory;
         this.storageChannel = grid.getNode().getStorageChannel();
@@ -173,10 +151,6 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         this.grid = grid;
 
         addSlots(0);
-    }
-
-    private static void updateLastSearchQuery(String query) {
-        lastSearchQuery = query;
     }
 
     protected abstract ResourceAmount<T> readResourceAmount(FriendlyByteBuf buf);
@@ -214,14 +188,6 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         sizeProperty.syncToServer(size);
     }
 
-    public PlatformSearchBoxModeImpl getSearchBoxMode() {
-        return searchBoxModeProperty.getDeserialized();
-    }
-
-    public void setSearchBoxMode(PlatformSearchBoxModeImpl searchBoxMode) {
-        searchBoxModeProperty.syncToServer(searchBoxMode);
-    }
-
     private void onSortingTypeChanged(GridSortingType sortingType) {
         if (view.getSortingType() != sortingType) {
             view.setSortingType(sortingType);
@@ -245,29 +211,12 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         }
     }
 
-    private void onSearchBoxModeChanged(PlatformSearchBoxModeImpl searchBoxMode) {
-        if (this.searchBoxMode != searchBoxMode) {
-            this.searchBoxMode = searchBoxMode;
-            this.updateSearchBox();
-        }
-    }
-
     public void setSearchBox(GridSearchBox searchBox) {
-        this.searchBox = searchBox;
-        this.updateSearchBox();
+        searchBox.setAutoSelected(Platform.INSTANCE.getConfig().getGrid().isAutoSelected());
         if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
-            this.searchBox.setValue(lastSearchQuery);
+            searchBox.setValue(lastSearchQuery);
+            searchBox.setListener(text -> lastSearchQuery = text);
         }
-    }
-
-    private void updateSearchBox() {
-        this.searchBox.setAutoSelected(searchBoxMode.isAutoSelected());
-        this.searchBox.setListener(text -> {
-            if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
-                updateLastSearchQuery(text);
-            }
-            searchBox.setInvalid(!searchBoxMode.onTextChanged(view, text));
-        });
     }
 
     @Override

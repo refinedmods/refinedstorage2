@@ -61,6 +61,8 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         private boolean smoothScrolling = true;
 
+        private boolean autoSelected = false;
+
         @Override
         public boolean isLargeFont() {
             return largeFont;
@@ -94,6 +96,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public boolean isSmoothScrolling() {
             return smoothScrolling;
+        }
+
+        @Override
+        public boolean isAutoSelected() {
+            return autoSelected;
         }
     }
 

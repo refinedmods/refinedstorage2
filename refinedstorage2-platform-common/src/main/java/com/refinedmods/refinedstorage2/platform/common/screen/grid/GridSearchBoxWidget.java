@@ -1,6 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.core.History;
+import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParser;
+import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserException;
+import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.SearchFieldWidget;
 import com.refinedmods.refinedstorage2.query.lexer.Lexer;
 import com.refinedmods.refinedstorage2.query.lexer.LexerException;
@@ -12,6 +15,7 @@ import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
@@ -21,13 +25,16 @@ import net.minecraft.util.FormattedCharSequence;
 public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
 
-    private boolean invalid;
+    private final GridView<?> view;
+    private final GridQueryParser queryParser;
 
-    public GridSearchBoxWidget(Font textRenderer, int x, int y, int width, SyntaxHighlighter syntaxHighlighter) {
+    private boolean valid = true;
+
+    public GridSearchBoxWidget(Font textRenderer, int x, int y, int width, SyntaxHighlighter syntaxHighlighter, GridView<?> view, GridQueryParser queryParser) {
         super(textRenderer, x, y, width, new History(SEARCH_FIELD_HISTORY));
 
         setFormatter((text, firstCharacterIndex) -> {
-            if (invalid) {
+            if (!valid) {
                 return invalidText(text);
             }
 
@@ -41,6 +48,12 @@ public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearch
             List<SyntaxHighlightedCharacter> characters = syntaxHighlighter.highlight(text, lexer.getTokens());
             return convertCharactersToOrderedText(characters);
         });
+
+        setListener(text -> {
+        });
+
+        this.view = view;
+        this.queryParser = queryParser;
     }
 
     private FormattedCharSequence invalidText(String text) {
@@ -70,14 +83,28 @@ public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearch
         setCanLoseFocus(!autoSelected);
     }
 
-    @Override
-    public void setListener(Consumer<String> listener) {
-        setResponder(listener);
+    private boolean onTextChanged(String text) {
+        boolean success = true;
+        try {
+            view.setFilter((Predicate) queryParser.parse(text));
+        } catch (GridQueryParserException e) {
+            view.setFilter(resource -> false);
+            success = false;
+        }
+        view.sort();
+        return success;
     }
 
     @Override
-    public void setInvalid(boolean invalid) {
-        this.invalid = invalid;
-        setTextColor(invalid ? ChatFormatting.RED.getColor() : ChatFormatting.WHITE.getColor());
+    public void setListener(Consumer<String> listener) {
+        setResponder(text -> {
+            listener.accept(text);
+            setValid(onTextChanged(text));
+        });
+    }
+
+    private void setValid(boolean valid) {
+        this.valid = valid;
+        setTextColor(valid ? ChatFormatting.WHITE.getColor() : ChatFormatting.RED.getColor());
     }
 }

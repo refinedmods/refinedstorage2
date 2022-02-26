@@ -23,6 +23,8 @@ public interface Config {
         long getEnergyUsage();
 
         boolean isSmoothScrolling();
+
+        boolean isAutoSelected();
     }
 
     interface DiskDrive {

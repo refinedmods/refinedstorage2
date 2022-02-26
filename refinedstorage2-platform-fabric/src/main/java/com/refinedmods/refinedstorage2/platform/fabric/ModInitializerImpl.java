@@ -1,8 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
-import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
-import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
-import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.block.BaseBlock;
@@ -27,8 +24,6 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.search.PlatformSearchBoxModeImpl;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.item.CoreItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStoragePartItem;
@@ -45,7 +40,6 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockI
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.ConfigImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.PlatformImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
@@ -55,8 +49,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridScrollPack
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.PropertyChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceTypeChangePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.StorageInfoRequestPacket;
-import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
-import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
@@ -117,7 +109,6 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerStorageChannelTypes();
         registerNetworkComponents();
         registerContent();
-        registerGridSearchBoxModes();
         registerPackets();
         registerSounds();
         registerSidedHandlers();
@@ -213,18 +204,6 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Menus.INSTANCE.setGrid(ScreenHandlerRegistry.registerExtended(GRID, ItemGridContainerMenu::new));
         Menus.INSTANCE.setFluidGrid(ScreenHandlerRegistry.registerExtended(FLUID_GRID, FluidGridContainerMenu::new));
         Menus.INSTANCE.setController(ScreenHandlerRegistry.registerExtended(CONTROLLER, ControllerContainerMenu::new));
-    }
-
-    private void registerGridSearchBoxModes() {
-        GridQueryParser queryParser = new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS, GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING);
-
-        for (boolean autoSelected : new boolean[]{false, true}) {
-            GridSearchBoxModeRegistry.INSTANCE.add(new PlatformSearchBoxModeImpl(queryParser, createIdentifier("textures/icons.png"), autoSelected ? 16 : 0, 96, createTranslation("gui", String.format("grid.search_box_mode.normal%s", autoSelected ? "_autoselected" : "")), autoSelected));
-        }
-
-        if (ReiIntegration.isLoaded()) {
-            ReiIntegration.registerGridSearchBoxModes(queryParser);
-        }
     }
 
     private void registerPackets() {

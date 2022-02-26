@@ -1,16 +1,20 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.core.LastModified;
+import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.screen.BaseScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ScrollbarWidget;
+import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighterColors;
+import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +85,15 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         super.init();
 
         if (searchField == null) {
-            searchField = new GridSearchBoxWidget(font, leftPos + 80 + 1, topPos + 6 + 1, 88 - 6, new SyntaxHighlighter(SyntaxHighlighterColors.DEFAULT_COLORS));
+            searchField = new GridSearchBoxWidget(
+                    font,
+                    leftPos + 80 + 1,
+                    topPos + 6 + 1,
+                    88 - 6,
+                    new SyntaxHighlighter(SyntaxHighlighterColors.DEFAULT_COLORS),
+                    menu.getView(),
+                    new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS, GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING)
+            );
         } else {
             searchField.x = leftPos + 80 + 1;
             searchField.y = topPos + 6 + 1;
@@ -102,17 +114,16 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         addSideButton(new SortingDirectionSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new SortingTypeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new SizeSideButtonWidget(getMenu(), this::renderComponentTooltip));
-        addSideButton(new SearchBoxModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
     }
 
     @Override
     protected void containerTick() {
         super.containerTick();
 
-        String newValue = getMenu().getSearchBoxMode().getOverrideSearchBoxValue();
+        /* TODO String newValue = getMenu().getSearchBoxMode().getOverrideSearchBoxValue();
         if (searchField != null && newValue != null && !searchField.getValue().equals(newValue)) {
             searchField.setValue(newValue);
-        }
+        }*/
     }
 
     private void resourcesChanged() {
