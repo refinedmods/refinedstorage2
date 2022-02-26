@@ -1,8 +1,5 @@
 package com.refinedmods.refinedstorage2.api.grid.query;
 
-import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParser;
-import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserException;
-import com.refinedmods.refinedstorage2.api.grid.search.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.FakeGridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.FakeGridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
