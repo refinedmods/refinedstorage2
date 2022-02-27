@@ -12,8 +12,9 @@ import com.refinedmods.refinedstorage2.query.lexer.Source;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlightedCharacter;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -23,15 +24,14 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 
 public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
-    private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
-
     private final GridView<?> view;
     private final GridQueryParser queryParser;
+    private final Set<Consumer<String>> listeners = new HashSet<>();
 
     private boolean valid = true;
 
-    public GridSearchBoxWidget(Font textRenderer, int x, int y, int width, SyntaxHighlighter syntaxHighlighter, GridView<?> view, GridQueryParser queryParser) {
-        super(textRenderer, x, y, width, new History(SEARCH_FIELD_HISTORY));
+    public GridSearchBoxWidget(Font textRenderer, int x, int y, int width, SyntaxHighlighter syntaxHighlighter, GridView<?> view, GridQueryParser queryParser, List<String> history) {
+        super(textRenderer, x, y, width, new History(history));
 
         setFormatter((text, firstCharacterIndex) -> {
             if (!valid) {
@@ -49,7 +49,9 @@ public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearch
             return convertCharactersToOrderedText(characters);
         });
 
-        setListener(text -> {
+        setResponder(text -> {
+            listeners.forEach(l -> l.accept(text));
+            setValid(onTextChanged(text));
         });
 
         this.view = view;
@@ -96,11 +98,8 @@ public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearch
     }
 
     @Override
-    public void setListener(Consumer<String> listener) {
-        setResponder(text -> {
-            listener.accept(text);
-            setValid(onTextChanged(text));
-        });
+    public void addListener(Consumer<String> listener) {
+        this.listeners.add(listener);
     }
 
     private void setValid(boolean valid) {

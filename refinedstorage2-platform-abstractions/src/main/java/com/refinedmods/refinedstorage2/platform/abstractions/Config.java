@@ -27,6 +27,10 @@ public interface Config {
         boolean isAutoSelected();
 
         void setAutoSelected(boolean autoSelected);
+
+        GridConfigSynchronizationType getSynchronizationType();
+
+        void setSynchronizationType(GridConfigSynchronizationType type);
     }
 
     interface DiskDrive {

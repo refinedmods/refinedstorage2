@@ -17,6 +17,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridSet
 import com.refinedmods.refinedstorage2.platform.common.containermenu.BaseContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.TwoWaySyncProperty;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSynchronizationType;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
@@ -31,7 +32,7 @@ import org.apache.logging.log4j.Logger;
 public abstract class GridContainerMenu<T> extends BaseContainerMenu implements ResourceListListener<T>, RedstoneModeAccessor, GridWatcher {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static String lastSearchQuery;
+    private static String lastSearchQuery = "";
 
     protected final Inventory playerInventory;
     protected final GridView<T> view;
@@ -215,7 +216,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         searchBox.setAutoSelected(isAutoSelected());
         if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
             searchBox.setValue(lastSearchQuery);
-            searchBox.setListener(text -> lastSearchQuery = text);
+            searchBox.addListener(text -> lastSearchQuery = text);
         }
     }
 
@@ -259,11 +260,20 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         return active;
     }
 
+    // TODO cache these values.
     public void setAutoSelected(boolean autoSelected) {
         Platform.INSTANCE.getConfig().getGrid().setAutoSelected(autoSelected);
     }
 
     public boolean isAutoSelected() {
         return Platform.INSTANCE.getConfig().getGrid().isAutoSelected();
+    }
+
+    public void setSynchronizationType(GridSynchronizationType type) {
+        Platform.INSTANCE.getConfig().getGrid().setSynchronizationType(type.toConfig());
+    }
+
+    public GridSynchronizationType getSynchronizationType() {
+        return GridSynchronizationType.ofConfig(Platform.INSTANCE.getConfig().getGrid().getSynchronizationType());
     }
 }

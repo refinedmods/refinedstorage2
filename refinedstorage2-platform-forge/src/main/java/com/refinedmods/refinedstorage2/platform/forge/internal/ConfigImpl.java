@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.internal;
 
 import com.refinedmods.refinedstorage2.platform.abstractions.Config;
+import com.refinedmods.refinedstorage2.platform.abstractions.GridConfigSynchronizationType;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -108,6 +109,7 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.IntValue energyUsage;
         private final ForgeConfigSpec.BooleanValue smoothScrolling;
         private final ForgeConfigSpec.BooleanValue autoSelected;
+        private final ForgeConfigSpec.EnumValue<GridConfigSynchronizationType> synchronizationType;
 
         public GridImpl() {
             builder.push("grid");
@@ -119,6 +121,7 @@ public class ConfigImpl implements Config {
             energyUsage = builder.comment("The energy used by the Grid").defineInRange(ENERGY_USAGE, 10, 0, Integer.MAX_VALUE);
             smoothScrolling = builder.comment("Whether the Grid should use smooth scrolling").define("smoothScrolling", true);
             autoSelected = builder.comment("Whether the Grid search box is auto selected").define("autoSelected", false);
+            synchronizationType = builder.comment("The synchronization type of the Grid search box").defineEnum("synchronizationType", GridConfigSynchronizationType.OFF);
             builder.pop();
         }
 
@@ -165,6 +168,16 @@ public class ConfigImpl implements Config {
         @Override
         public void setAutoSelected(boolean autoSelected) {
             this.autoSelected.set(autoSelected);
+        }
+
+        @Override
+        public GridConfigSynchronizationType getSynchronizationType() {
+            return synchronizationType.get();
+        }
+
+        @Override
+        public void setSynchronizationType(GridConfigSynchronizationType type) {
+            this.synchronizationType.set(type);
         }
     }
 }

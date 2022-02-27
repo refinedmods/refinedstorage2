@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.integration.rei;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class ReiIntegration {
-    private static final String REI_MOD_ID = "roughlyenoughitems-api";
+    private static final String REI_MOD_ID = "roughlyenoughitems";
 
     private ReiIntegration() {
     }

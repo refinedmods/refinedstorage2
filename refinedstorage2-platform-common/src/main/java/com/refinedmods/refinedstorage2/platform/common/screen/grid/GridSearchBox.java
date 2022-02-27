@@ -7,5 +7,5 @@ public interface GridSearchBox {
 
     void setValue(String value);
 
-    void setListener(Consumer<String> listener);
+    void addListener(Consumer<String> listener);
 }
