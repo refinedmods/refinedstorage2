@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.integration.rei;
 
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;

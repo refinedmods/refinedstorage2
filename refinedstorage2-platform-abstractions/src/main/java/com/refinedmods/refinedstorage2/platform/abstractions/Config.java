@@ -1,5 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.abstractions;
 
+import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
+import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizationType;
+
 public interface Config {
     Grid getGrid();
 
@@ -28,9 +33,21 @@ public interface Config {
 
         void setAutoSelected(boolean autoSelected);
 
-        GridConfigSynchronizationType getSynchronizationType();
+        GridSynchronizationType getSynchronizationType();
 
-        void setSynchronizationType(GridConfigSynchronizationType type);
+        void setSynchronizationType(GridSynchronizationType synchronizationType);
+
+        GridSortingDirection getSortingDirection();
+
+        void setSortingDirection(GridSortingDirection sortingDirection);
+
+        GridSortingType getSortingType();
+
+        void setSortingType(GridSortingType sortingType);
+
+        GridSize getSize();
+
+        void setSize(GridSize size);
     }
 
     interface DiskDrive {
