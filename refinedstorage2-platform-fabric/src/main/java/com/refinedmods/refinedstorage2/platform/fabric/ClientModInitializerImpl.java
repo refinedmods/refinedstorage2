@@ -9,7 +9,11 @@ import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerMo
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiIntegration;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEnergyPacket;
@@ -47,6 +51,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         registerScreens();
         registerKeyBindings();
         registerModelPredicates();
+        registerGridSynchronizer();
     }
 
     private void setRenderLayers() {
@@ -106,5 +111,11 @@ public class ClientModInitializerImpl implements ClientModInitializer {
                 createIdentifier("stored_in_controller"),
                 new ControllerModelPredicateProvider()
         ));
+    }
+
+    private void registerGridSynchronizer() {
+        if (ReiIntegration.isLoaded()) {
+            GridScreen.setSynchronizer(new ReiGridSynchronizer(new ReiProxy()));
+        }
     }
 }

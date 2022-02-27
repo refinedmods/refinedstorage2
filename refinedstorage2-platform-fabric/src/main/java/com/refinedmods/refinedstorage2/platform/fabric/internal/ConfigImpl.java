@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal;
 
+import com.refinedmods.refinedstorage2.platform.abstractions.GridConfigSynchronizationType;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 
 import me.shedaniel.autoconfig.AutoConfig;
@@ -63,6 +64,8 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         private boolean autoSelected = false;
 
+        private GridConfigSynchronizationType synchronizationType = GridConfigSynchronizationType.OFF;
+
         @Override
         public boolean isLargeFont() {
             return largeFont;
@@ -106,6 +109,17 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public void setAutoSelected(boolean autoSelected) {
             this.autoSelected = autoSelected;
+            AutoConfig.getConfigHolder(ConfigImpl.class).save();
+        }
+
+        @Override
+        public GridConfigSynchronizationType getSynchronizationType() {
+            return synchronizationType;
+        }
+
+        @Override
+        public void setSynchronizationType(GridConfigSynchronizationType type) {
+            this.synchronizationType = type;
             AutoConfig.getConfigHolder(ConfigImpl.class).save();
         }
     }

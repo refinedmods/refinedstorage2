@@ -7,6 +7,8 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSynchronizationType;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.screen.BaseScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
@@ -55,6 +57,10 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     private static final int DISABLED_SLOT_COLOR = 0xFF5B5B5B;
     private static final int SELECTION_SLOT_COLOR = -2130706433;
 
+    private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
+
+    private static GridSynchronizer synchronizer;
+
     private ScrollbarWidget scrollbar;
     private GridSearchBoxWidget searchField;
     private int totalRows;
@@ -72,6 +78,13 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         this.inventoryLabelY = 75;
         this.imageWidth = 227;
         this.imageHeight = 176;
+    }
+
+    public static void setSynchronizer(GridSynchronizer synchronizer) {
+        if (GridScreen.synchronizer != null) {
+            throw new IllegalStateException("Synchronizer is already set!");
+        }
+        GridScreen.synchronizer = synchronizer;
     }
 
     @Override
@@ -92,7 +105,8 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
                     88 - 6,
                     new SyntaxHighlighter(SyntaxHighlighterColors.DEFAULT_COLORS),
                     menu.getView(),
-                    new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS, GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING)
+                    new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS, GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING),
+                    SEARCH_FIELD_HISTORY
             );
         } else {
             searchField.x = leftPos + 80 + 1;
@@ -115,16 +129,38 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         addSideButton(new SortingTypeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new SizeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new AutoSelectedSideButtonWidget(getMenu(), this::renderComponentTooltip));
+
+        if (synchronizer != null) {
+            addSideButton(new SynchronizationSideButtonWidget(getMenu(), this::renderComponentTooltip, synchronizer));
+            searchField.addListener(this::trySynchronizeFromGrid);
+        }
+    }
+
+    private void trySynchronizeFromGrid(String text) {
+        if (getMenu().getSynchronizationType() == GridSynchronizationType.OFF) {
+            return;
+        }
+        synchronizer.synchronizeFromGrid(text);
     }
 
     @Override
     protected void containerTick() {
         super.containerTick();
+        trySynchronizeToGrid();
+    }
 
-        /* TODO String newValue = getMenu().getSearchBoxMode().getOverrideSearchBoxValue();
-        if (searchField != null && newValue != null && !searchField.getValue().equals(newValue)) {
-            searchField.setValue(newValue);
-        }*/
+    private void trySynchronizeToGrid() {
+        if (getMenu().getSynchronizationType() != GridSynchronizationType.TWO_WAY) {
+            return;
+        }
+        if (synchronizer == null || searchField == null) {
+            return;
+        }
+        String text = synchronizer.getTextToSynchronizeToGrid();
+        if (text == null || searchField.getValue().equals(text)) {
+            return;
+        }
+        searchField.setValue(text);
     }
 
     private void resourcesChanged() {

@@ -9,7 +9,11 @@ import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerMo
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
+import com.refinedmods.refinedstorage2.platform.forge.integration.jei.JeiGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.forge.integration.jei.JeiIntegration;
+import com.refinedmods.refinedstorage2.platform.forge.integration.jei.JeiProxy;
 import com.refinedmods.refinedstorage2.platform.forge.render.entity.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.forge.render.model.DiskDriveModelLoader;
 
@@ -42,6 +46,7 @@ public final class ClientModInitializer {
         e.enqueueWork(ClientModInitializer::registerScreens);
         registerBlockEntityRenderer();
         registerKeyBindings();
+        registerGridSynchronizer();
     }
 
     private static void setRenderLayers() {
@@ -81,5 +86,11 @@ public final class ClientModInitializer {
         );
         ClientRegistry.registerKeyBinding(focusSearchBarKeyBinding);
         KeyMappings.INSTANCE.setFocusSearchBar(focusSearchBarKeyBinding);
+    }
+
+    private static void registerGridSynchronizer() {
+        if (JeiIntegration.isLoaded()) {
+            GridScreen.setSynchronizer(new JeiGridSynchronizer(new JeiProxy()));
+        }
     }
 }
