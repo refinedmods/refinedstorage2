@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.internal.grid;
+package com.refinedmods.refinedstorage2.platform.api.grid;
 
 import net.minecraft.network.chat.Component;
 

@@ -20,6 +20,11 @@ disks, etc. to intermediate storage like a chest.
 
 - Fixed inventory contents of devices not retaining their original order when reloading a world.
 
+### Changed
+
+- Grid auto-selection and JEI/REI synchronization are now two different options.
+- Grid display settings are now stored in the client configuration, no longer per-block.
+
 ## [2.0.0-milestone.1.3] - 2022-02-12
 
 ### Added

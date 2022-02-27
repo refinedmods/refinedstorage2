@@ -1,6 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal;
 
-import com.refinedmods.refinedstorage2.platform.abstractions.GridConfigSynchronizationType;
+import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
+import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizationType;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 
 import me.shedaniel.autoconfig.AutoConfig;
@@ -64,7 +67,13 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         private boolean autoSelected = false;
 
-        private GridConfigSynchronizationType synchronizationType = GridConfigSynchronizationType.OFF;
+        private GridSynchronizationType synchronizationType = GridSynchronizationType.OFF;
+
+        private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
+
+        private GridSortingType sortingType = GridSortingType.QUANTITY;
+
+        private GridSize size = GridSize.STRETCH;
 
         @Override
         public boolean isLargeFont() {
@@ -109,18 +118,51 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public void setAutoSelected(boolean autoSelected) {
             this.autoSelected = autoSelected;
-            AutoConfig.getConfigHolder(ConfigImpl.class).save();
+            save();
         }
 
         @Override
-        public GridConfigSynchronizationType getSynchronizationType() {
+        public GridSynchronizationType getSynchronizationType() {
             return synchronizationType;
         }
 
         @Override
-        public void setSynchronizationType(GridConfigSynchronizationType type) {
-            this.synchronizationType = type;
-            AutoConfig.getConfigHolder(ConfigImpl.class).save();
+        public void setSynchronizationType(GridSynchronizationType synchronizationType) {
+            this.synchronizationType = synchronizationType;
+            save();
+        }
+
+        @Override
+        public GridSortingDirection getSortingDirection() {
+            return sortingDirection;
+        }
+
+        @Override
+        public void setSortingDirection(GridSortingDirection sortingDirection) {
+            this.sortingDirection = sortingDirection;
+            save();
+        }
+
+        @Override
+        public GridSortingType getSortingType() {
+            return sortingType;
+        }
+
+        @Override
+        public void setSortingType(GridSortingType sortingType) {
+            this.sortingType = sortingType;
+            save();
+        }
+
+        @Override
+        public GridSize getSize() {
+            return size;
+        }
+
+        @Override
+        public void setSize(GridSize size) {
+            this.size = size;
+            save();
         }
     }
 
@@ -155,5 +197,9 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         public long getEnergyCapacity() {
             return energyCapacity;
         }
+    }
+
+    private static void save() {
+        AutoConfig.getConfigHolder(ConfigImpl.class).save();
     }
 }

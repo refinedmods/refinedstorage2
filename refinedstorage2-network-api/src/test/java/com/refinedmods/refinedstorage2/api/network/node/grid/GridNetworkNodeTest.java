@@ -27,7 +27,7 @@ public class GridNetworkNodeTest {
 
     @BeforeEach
     void setUp() {
-        sut = new GridNetworkNode<>(null, 10, StorageChannelTypes.FAKE);
+        sut = new GridNetworkNode<>(10, StorageChannelTypes.FAKE);
 
         Network network = NetworkUtil.create();
         sut.setNetwork(network);
