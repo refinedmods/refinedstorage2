@@ -63,10 +63,12 @@ import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.core.Registry;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import team.reborn.energy.api.EnergyStorage;
@@ -114,13 +116,18 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerSidedHandlers();
         registerResourceTypes();
         registerTickHandler();
-        registerWrench();
+        registerEvents();
 
         LOGGER.info("Refined Storage 2 has loaded.");
     }
 
-    private void registerWrench() {
-        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> BaseBlock.useWrench(level.getBlockState(hitResult.getBlockPos()), level, hitResult, player, hand));
+    private void registerEvents() {
+        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
+            BlockState state = level.getBlockState(hitResult.getBlockPos());
+            return BaseBlock.tryUseWrench(state, level, hitResult, player, hand)
+                    .or(() -> BaseBlock.tryUpdateColor(state, level, hitResult.getBlockPos(), player, hand))
+                    .orElse(InteractionResult.PASS);
+        });
     }
 
     private void registerContent() {

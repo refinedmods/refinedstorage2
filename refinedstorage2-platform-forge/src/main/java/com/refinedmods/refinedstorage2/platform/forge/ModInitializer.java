@@ -44,7 +44,6 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -53,6 +52,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -277,11 +277,14 @@ public class ModInitializer extends AbstractModInitializer {
 
     @SubscribeEvent
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock e) {
-        InteractionResult result = BaseBlock.useWrench(e.getWorld().getBlockState(e.getHitVec().getBlockPos()), e.getWorld(), e.getHitVec(), e.getPlayer(), e.getHand());
-        if (result != InteractionResult.PASS) {
-            e.setCanceled(true);
-            e.setCancellationResult(result);
-        }
+        BlockState state = e.getWorld().getBlockState(e.getHitVec().getBlockPos());
+
+        BaseBlock.tryUseWrench(state, e.getWorld(), e.getHitVec(), e.getPlayer(), e.getHand())
+                .or(() -> BaseBlock.tryUpdateColor(state, e.getWorld(), e.getHitVec().getBlockPos(), e.getPlayer(), e.getHand()))
+                .ifPresent(result -> {
+                    e.setCanceled(true);
+                    e.setCancellationResult(result);
+                });
     }
 
     @SubscribeEvent

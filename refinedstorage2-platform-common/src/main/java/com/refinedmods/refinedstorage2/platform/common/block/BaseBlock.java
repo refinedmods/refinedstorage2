@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.block;
 
 import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
@@ -127,20 +128,34 @@ public abstract class BaseBlock extends Block {
         }
     }
 
-    public static InteractionResult useWrench(BlockState state, Level level, BlockHitResult hitResult, Player player, InteractionHand hand) {
+    public static Optional<InteractionResult> tryUseWrench(BlockState state, Level level, BlockHitResult hitResult, Player player, InteractionHand hand) {
         if (player.isSpectator() || !level.mayInteract(player, hitResult.getBlockPos())) {
-            return InteractionResult.PASS;
+            return Optional.empty();
         }
         ItemStack itemInHand = player.getItemInHand(hand);
         boolean holdingWrench = isWrench(itemInHand);
         if (!holdingWrench) {
-            return InteractionResult.PASS;
+            return Optional.empty();
         }
         if (!level.isClientSide()) {
             dismantleOrRotate(state, level, hitResult, player);
             playSoundIfNecessary(level, hitResult.getBlockPos(), itemInHand);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide());
+        return Optional.of(InteractionResult.sidedSuccess(level.isClientSide()));
+    }
+
+    public static Optional<InteractionResult> tryUpdateColor(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
+        if (state.getBlock() instanceof ColorableBlock colorableBlock) {
+            return tryUpdateColor(colorableBlock.getBlockColorMap(), state, level, pos, player, hand);
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<InteractionResult> tryUpdateColor(BlockColorMap<?> blockColorMap, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
+        if (!player.isCrouching()) {
+            return Optional.empty();
+        }
+        return blockColorMap.updateColor(state, player.getItemInHand(hand), level, pos, player);
     }
 
     private static void dismantleOrRotate(BlockState state, Level level, BlockHitResult hitResult, Player player) {

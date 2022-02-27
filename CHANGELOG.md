@@ -12,7 +12,7 @@ disks, etc. to intermediate storage like a chest.
 
 ### Added
 
-- The Wrench now dismantles devices when using SHIFT.
+- The Wrench now dismantles devices when crouching.
     - The Disk Drive in item form now supports rendering of disks that were dismantled.
     - In order to retain Controller energy, the Controller must now be dismantled.
 
@@ -24,6 +24,7 @@ disks, etc. to intermediate storage like a chest.
 
 - Grid auto-selection and JEI/REI synchronization are now two different options.
 - Grid display settings are now stored in the client configuration, no longer per-block.
+- You now need to crouch with a dye in order to change the color of a device.
 
 ## [2.0.0-milestone.1.3] - 2022-02-12
 

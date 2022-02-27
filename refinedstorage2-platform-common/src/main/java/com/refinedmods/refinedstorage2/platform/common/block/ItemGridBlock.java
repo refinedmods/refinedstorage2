@@ -23,7 +23,7 @@ public class ItemGridBlock extends GridBlock {
     }
 
     @Override
-    protected BlockColorMap<?> getBlockColorMap() {
+    public BlockColorMap<?> getBlockColorMap() {
         return Blocks.INSTANCE.getGrid();
     }
 
