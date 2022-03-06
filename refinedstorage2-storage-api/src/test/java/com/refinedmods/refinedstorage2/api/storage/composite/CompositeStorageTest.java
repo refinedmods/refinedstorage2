@@ -7,9 +7,7 @@ import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -18,8 +16,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
 class CompositeStorageTest {
+    private CompositeStorage<String> sut;
+
+    @BeforeEach
+    void setUp() {
+        sut = new CompositeStorage<>(new ResourceListImpl<>());
+    }
+
     @Test
-    void Test_setting_sources_should_fill_list() {
+    void Test_initial_state() {
+        // Act & assert
+        assertThat(sut.getAll()).isEmpty();
+        assertThat(sut.getStored()).isZero();
+    }
+
+    @Test
+    void Test_adding_sources() {
         // Arrange
         Storage<String> storage1 = new CappedStorage<>(10);
         storage1.insert("A", 10, Action.EXECUTE);
@@ -32,7 +44,11 @@ class CompositeStorageTest {
         storage3.insert("A", 3, Action.EXECUTE);
 
         // Act
-        CompositeStorage<String> sut = new CompositeStorage<>(Arrays.asList(storage1, storage2, storage3), new ResourceListImpl<>());
+        sut.addSource(storage1);
+        sut.addSource(storage2);
+        sut.addSource(storage3);
+
+        long remainder = sut.insert("B", 6, Action.SIMULATE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -40,13 +56,41 @@ class CompositeStorageTest {
                 new ResourceAmount<>("B", 5),
                 new ResourceAmount<>("C", 7)
         );
+        assertThat(remainder).isEqualTo(1);
+    }
+
+    @Test
+    void Test_removing_sources() {
+        // Arrange
+        Storage<String> storage1 = new CappedStorage<>(10);
+        storage1.insert("A", 10, Action.EXECUTE);
+
+        Storage<String> storage2 = new CappedStorage<>(10);
+        storage2.insert("B", 5, Action.EXECUTE);
+
+        Storage<String> storage3 = new CappedStorage<>(10);
+        storage3.insert("C", 7, Action.EXECUTE);
+        storage3.insert("A", 3, Action.EXECUTE);
+
+        sut.addSource(storage1);
+        sut.addSource(storage2);
+        sut.addSource(storage3);
+
+        // Act
+        sut.removeSource(storage3);
+
+        long extracted = sut.extract("C", 1, Action.EXECUTE);
+
+        // Assert
+        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount<>("A", 10),
+                new ResourceAmount<>("B", 5)
+        );
+        assertThat(extracted).isZero();
     }
 
     @Test
     void Test_inserting_without_any_sources_present() {
-        // Arrange
-        CompositeStorage<String> sut = new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>());
-
         // Act
         long remainder = sut.insert("A", 10, Action.EXECUTE);
 
@@ -59,8 +103,7 @@ class CompositeStorageTest {
     void Test_single_source_insert_without_remainder(Action action) {
         // Arrange
         Storage<String> storage = new CappedStorage<>(20);
-
-        CompositeStorage<String> sut = new CompositeStorage<>(Collections.singletonList(storage), new ResourceListImpl<>());
+        sut.addSource(storage);
 
         // Act
         long remainder = sut.insert("A", 10, action);
@@ -88,8 +131,7 @@ class CompositeStorageTest {
     void Test_single_source_insert_with_remainder(Action action) {
         // Arrange
         Storage<String> storage = new CappedStorage<>(20);
-
-        CompositeStorage<String> sut = new CompositeStorage<>(Collections.singletonList(storage), new ResourceListImpl<>());
+        sut.addSource(storage);
 
         // Act
         long remainder = sut.insert("A", 30, action);
@@ -122,7 +164,9 @@ class CompositeStorageTest {
         Storage<String> storage2 = new CappedStorage<>(10);
         Storage<String> storage3 = new CappedStorage<>(20);
 
-        CompositeStorage<String> sut = new CompositeStorage<>(Arrays.asList(storage1, storage2, storage3), new ResourceListImpl<>());
+        sut.addSource(storage1);
+        sut.addSource(storage2);
+        sut.addSource(storage3);
 
         // Act
         long remainder = sut.insert("A", 17, action);
@@ -163,7 +207,9 @@ class CompositeStorageTest {
         Storage<String> storage2 = new CappedStorage<>(10);
         Storage<String> storage3 = new CappedStorage<>(20);
 
-        CompositeStorage<String> sut = new CompositeStorage<>(Arrays.asList(storage1, storage2, storage3), new ResourceListImpl<>());
+        sut.addSource(storage1);
+        sut.addSource(storage2);
+        sut.addSource(storage3);
 
         // Act
         long remainder = sut.insert("A", 39, action);
@@ -198,9 +244,6 @@ class CompositeStorageTest {
 
     @Test
     void Test_extracting_without_any_sources_present() {
-        // Arrange
-        CompositeStorage<String> sut = new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>());
-
         // Act
         long extracted = sut.extract("A", 10, Action.EXECUTE);
 
@@ -214,7 +257,7 @@ class CompositeStorageTest {
         Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 10, Action.EXECUTE);
 
-        CompositeStorage<String> sut = new CompositeStorage<>(Collections.singletonList(storage), new ResourceListImpl<>());
+        sut.addSource(storage);
 
         // Act
         long extracted = sut.extract("B", 10, Action.EXECUTE);
@@ -230,7 +273,7 @@ class CompositeStorageTest {
         Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 10, Action.EXECUTE);
 
-        CompositeStorage<String> sut = new CompositeStorage<>(Collections.singletonList(storage), new ResourceListImpl<>());
+        sut.addSource(storage);
 
         // Act
         long extracted = sut.extract("A", 3, action);
@@ -266,7 +309,7 @@ class CompositeStorageTest {
         Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 10, Action.EXECUTE);
 
-        CompositeStorage<String> sut = new CompositeStorage<>(Collections.singletonList(storage), new ResourceListImpl<>());
+        sut.addSource(storage);
 
         // Act
         long extracted = sut.extract("A", 10, action);
@@ -298,7 +341,7 @@ class CompositeStorageTest {
         Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 4, Action.EXECUTE);
 
-        CompositeStorage<String> sut = new CompositeStorage<>(Collections.singletonList(storage), new ResourceListImpl<>());
+        sut.addSource(storage);
 
         // Act
         long extracted = sut.extract("A", 7, action);
@@ -333,7 +376,8 @@ class CompositeStorageTest {
         Storage<String> storage2 = new CappedStorage<>(5);
         storage2.insert("A", 3, Action.EXECUTE);
 
-        CompositeStorage<String> sut = new CompositeStorage<>(Arrays.asList(storage1, storage2), new ResourceListImpl<>());
+        sut.addSource(storage1);
+        sut.addSource(storage2);
 
         // Act
         long extracted = sut.extract("A", 12, action);
@@ -376,7 +420,8 @@ class CompositeStorageTest {
         Storage<String> storage2 = new CappedStorage<>(5);
         storage2.insert("A", 3, Action.EXECUTE);
 
-        CompositeStorage<String> sut = new CompositeStorage<>(Arrays.asList(storage1, storage2), new ResourceListImpl<>());
+        sut.addSource(storage1);
+        sut.addSource(storage2);
 
         // Act
         long extracted = sut.extract("A", 13, action);
@@ -415,7 +460,8 @@ class CompositeStorageTest {
         Storage<String> storage2 = new CappedStorage<>(5);
         storage2.insert("A", 3, Action.EXECUTE);
 
-        CompositeStorage<String> sut = new CompositeStorage<>(Arrays.asList(storage1, storage2), new ResourceListImpl<>());
+        sut.addSource(storage1);
+        sut.addSource(storage2);
 
         // Act
         long extracted = sut.extract("A", 30, action);
@@ -447,12 +493,13 @@ class CompositeStorageTest {
     @Test
     void Test_prioritizing_when_inserting() {
         // Arrange
-        PrioritizedStorage<String> highestPriority = new PrioritizedStorage<>(10, new CappedStorage<>(10));
         PrioritizedStorage<String> lowestPriority = new PrioritizedStorage<>(5, new CappedStorage<>(10));
+        PrioritizedStorage<String> highestPriority = new PrioritizedStorage<>(10, new CappedStorage<>(10));
+
+        sut.addSource(lowestPriority);
+        sut.addSource(highestPriority);
 
         // Act
-        CompositeStorage<String> sut = new CompositeStorage<>(Arrays.asList(lowestPriority, highestPriority), new ResourceListImpl<>());
-
         sut.insert("A", 11, Action.EXECUTE);
 
         // Assert
@@ -467,15 +514,16 @@ class CompositeStorageTest {
     @Test
     void Test_prioritizing_when_extracting() {
         // Arrange
-        PrioritizedStorage<String> highestPriority = new PrioritizedStorage<>(10, new CappedStorage<>(10));
         PrioritizedStorage<String> lowestPriority = new PrioritizedStorage<>(5, new CappedStorage<>(10));
+        PrioritizedStorage<String> highestPriority = new PrioritizedStorage<>(10, new CappedStorage<>(10));
 
-        highestPriority.insert("A", 10, Action.EXECUTE);
         lowestPriority.insert("A", 5, Action.EXECUTE);
+        highestPriority.insert("A", 10, Action.EXECUTE);
+
+        sut.addSource(lowestPriority);
+        sut.addSource(highestPriority);
 
         // Act
-        CompositeStorage<String> sut = new CompositeStorage<>(Arrays.asList(lowestPriority, highestPriority), new ResourceListImpl<>());
-
         sut.extract("A", 11, Action.EXECUTE);
 
         // Assert

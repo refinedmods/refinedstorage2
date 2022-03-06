@@ -2,16 +2,12 @@ package com.refinedmods.refinedstorage2.api.grid.service;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
-import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
-
-import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -30,10 +26,7 @@ class GridServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        storageChannel = new StorageChannelImpl<>(
-                new CompositeStorage<>(Collections.emptyList(), new ResourceListImpl<>()), ResourceListImpl::new,
-                new StorageTracker<>(() -> 0L)
-        );
+        storageChannel = new StorageChannelImpl<>(new StorageTracker<>(() -> 0L));
         sut = new GridServiceImpl<>(storageChannel, () -> "Test source", r -> MAX_COUNT, 1);
     }
 
