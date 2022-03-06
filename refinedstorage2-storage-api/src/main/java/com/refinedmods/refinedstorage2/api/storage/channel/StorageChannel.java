@@ -73,8 +73,6 @@ public interface StorageChannel<T> extends Storage<T> {
 
     /**
      * Adds a source to the channel.
-     * This should invalidate the backing storage.
-     * This is an expensive operation and should be done with care.
      *
      * @param source the source
      */
@@ -82,16 +80,8 @@ public interface StorageChannel<T> extends Storage<T> {
 
     /**
      * Removes a source from the channel.
-     * This should invalidate the backing storage.
-     * This is an expensive operation and should be done with care.
      *
      * @param source the source
      */
     void removeSource(Storage<?> source);
-
-    /**
-     * Invalidates the backing storage.
-     * This is an expensive operation and should be done with care.
-     */
-    void invalidate();
 }

@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,19 +18,14 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class CompositeStorage<T> implements Storage<T> {
-    private final List<Storage<T>> sources;
+    private final List<Storage<T>> sources = new ArrayList<>();
     private final ResourceList<T> list;
 
     /**
-     * @param sources the sources for this composite storage
-     * @param list    the backing list of this composite storage, used to retrieve a view of the sources
+     * @param list the backing list of this composite storage, used to retrieve a view of the sources
      */
-    public CompositeStorage(List<Storage<T>> sources, ResourceList<T> list) {
-        this.sources = sources;
+    public CompositeStorage(ResourceList<T> list) {
         this.list = list;
-
-        fillListFromSources();
-        sortSources();
     }
 
     /**
@@ -40,8 +36,16 @@ public class CompositeStorage<T> implements Storage<T> {
         sources.sort(PrioritizedStorageComparator.INSTANCE);
     }
 
-    private void fillListFromSources() {
-        sources.forEach(source -> source.getAll().forEach(list::add));
+    public void addSource(Storage<T> source) {
+        sources.add(source);
+        sortSources();
+        source.getAll().forEach(list::add);
+    }
+
+    public void removeSource(Storage<T> source) {
+        sources.remove(source);
+        sortSources();
+        source.getAll().forEach(resourceAmount -> list.remove(resourceAmount.getResource(), resourceAmount.getAmount()));
     }
 
     @Override
