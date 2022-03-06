@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.resource.list.ProxyResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -19,11 +20,10 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public class ListenableResourceList<T> extends ProxyResourceList<T> {
-    private final Set<ResourceListListener<T>> listeners;
+    private final Set<ResourceListListener<T>> listeners = new HashSet<>();
 
-    public ListenableResourceList(ResourceList<T> parent, Set<ResourceListListener<T>> listeners) {
+    public ListenableResourceList(ResourceList<T> parent) {
         super(parent);
-        this.listeners = listeners;
     }
 
     @Override
@@ -40,5 +40,13 @@ public class ListenableResourceList<T> extends ProxyResourceList<T> {
                     listeners.forEach(listener -> listener.onChanged(result));
                     return result;
                 });
+    }
+
+    public void addListener(ResourceListListener<T> listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(ResourceListListener<T> listener) {
+        listeners.remove(listener);
     }
 }
