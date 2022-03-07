@@ -3,25 +3,25 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
+import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageListener;
 import com.refinedmods.refinedstorage2.api.storage.composite.Priority;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
-public class DiskDriveStorage<T> extends ProxyStorage<T> implements Priority {
-    protected final DiskDriveNetworkNode diskDrive;
-    private final StorageChannelType<T> storageChannelType;
+public class DiskDriveStorage<T> implements CompositeStorage<T>, Priority {
+    private final CompositeStorage<T> compositeOfDisks;
+    private final DiskDriveNetworkNode diskDrive;
     private final Filter filter;
 
-    protected DiskDriveStorage(DiskDriveNetworkNode diskDrive, StorageChannelType<T> type, Filter filter) {
-        super(type.createCompositeStorage(Collections.emptyList()));
+    protected DiskDriveStorage(DiskDriveNetworkNode diskDrive, Filter filter) {
+        this.compositeOfDisks = new CompositeStorageImpl<>(new ResourceListImpl<>());
         this.diskDrive = diskDrive;
-        this.storageChannelType = type;
         this.filter = filter;
     }
 
@@ -30,7 +30,7 @@ public class DiskDriveStorage<T> extends ProxyStorage<T> implements Priority {
         if (diskDrive.getAccessMode() == AccessMode.INSERT || !diskDrive.isActive()) {
             return 0;
         }
-        return super.extract(resource, amount, action);
+        return compositeOfDisks.extract(resource, amount, action);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class DiskDriveStorage<T> extends ProxyStorage<T> implements Priority {
         if (diskDrive.getAccessMode() == AccessMode.EXTRACT || !diskDrive.isActive() || !filter.isAllowed(resource)) {
             return amount;
         }
-        return super.insert(resource, amount, action);
+        return compositeOfDisks.insert(resource, amount, action);
     }
 
     @Override
@@ -46,7 +46,12 @@ public class DiskDriveStorage<T> extends ProxyStorage<T> implements Priority {
         if (!diskDrive.isActive()) {
             return Collections.emptyList();
         }
-        return super.getAll();
+        return compositeOfDisks.getAll();
+    }
+
+    @Override
+    public long getStored() {
+        return compositeOfDisks.getStored();
     }
 
     @Override
@@ -54,7 +59,28 @@ public class DiskDriveStorage<T> extends ProxyStorage<T> implements Priority {
         return diskDrive.getPriority();
     }
 
-    public void setSources(List<Storage<T>> sources) {
-        this.parent = storageChannelType.createCompositeStorage(sources);
+    @Override
+    public void sortSources() {
+        compositeOfDisks.sortSources();
+    }
+
+    @Override
+    public void addSource(Storage<T> source) {
+        compositeOfDisks.addSource(source);
+    }
+
+    @Override
+    public void removeSource(Storage<T> source) {
+        compositeOfDisks.removeSource(source);
+    }
+
+    @Override
+    public void addListener(CompositeStorageListener<T> listener) {
+        compositeOfDisks.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(CompositeStorageListener<T> listener) {
+        compositeOfDisks.removeListener(listener);
     }
 }

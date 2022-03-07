@@ -7,7 +7,9 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apiguardian.api.API;
 
@@ -17,9 +19,10 @@ import org.apiguardian.api.API;
  * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public class CompositeStorageImpl<T> implements CompositeStorage<T> {
+public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeStorageListener<T> {
     private final List<Storage<T>> sources = new ArrayList<>();
     private final ResourceList<T> list;
+    private final Set<CompositeStorageListener<T>> listeners = new HashSet<>();
 
     /**
      * @param list the backing list of this composite storage, used to retrieve a view of the sources
@@ -41,14 +44,32 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T> {
     public void addSource(Storage<T> source) {
         sources.add(source);
         sortSources();
-        source.getAll().forEach(list::add);
+        onSourceAdded(source);
+        listeners.forEach(listener -> listener.onSourceAdded(source));
+        if (source instanceof CompositeStorage<T> childComposite) {
+            childComposite.addListener(this);
+        }
     }
 
     @Override
     public void removeSource(Storage<T> source) {
         sources.remove(source);
         sortSources();
-        source.getAll().forEach(resourceAmount -> list.remove(resourceAmount.getResource(), resourceAmount.getAmount()));
+        onSourceRemoved(source);
+        listeners.forEach(listener -> listener.onSourceRemoved(source));
+        if (source instanceof CompositeStorage<T> childComposite) {
+            childComposite.removeListener(this);
+        }
+    }
+
+    @Override
+    public void addListener(CompositeStorageListener<T> listener) {
+        listeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(CompositeStorageListener<T> listener) {
+        listeners.remove(listener);
     }
 
     @Override
@@ -104,5 +125,15 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T> {
     @Override
     public long getStored() {
         return sources.stream().mapToLong(Storage::getStored).sum();
+    }
+
+    @Override
+    public void onSourceAdded(Storage<T> source) {
+        source.getAll().forEach(list::add);
+    }
+
+    @Override
+    public void onSourceRemoved(Storage<T> source) {
+        source.getAll().forEach(resourceAmount -> list.remove(resourceAmount.getResource(), resourceAmount.getAmount()));
     }
 }

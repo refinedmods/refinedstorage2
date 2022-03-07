@@ -11,4 +11,8 @@ public interface CompositeStorage<T> extends Storage<T> {
     void addSource(Storage<T> source);
 
     void removeSource(Storage<T> source);
+
+    void addListener(CompositeStorageListener<T> listener);
+
+    void removeListener(CompositeStorageListener<T> listener);
 }
