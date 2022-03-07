@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceList
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
+import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageImpl;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -27,7 +28,7 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
     public StorageChannelImpl(StorageTracker<T> tracker) {
         this.tracker = tracker;
         this.list = new ListenableResourceList<>(new ResourceListImpl<>());
-        this.storage = new CompositeStorage<>(list);
+        this.storage = new CompositeStorageImpl<>(list);
     }
 
     @Override
