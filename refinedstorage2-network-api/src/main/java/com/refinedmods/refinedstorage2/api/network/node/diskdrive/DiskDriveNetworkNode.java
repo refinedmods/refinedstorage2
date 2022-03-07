@@ -11,10 +11,8 @@ import com.refinedmods.refinedstorage2.api.storage.StorageSource;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -60,18 +58,24 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     }
 
     private DiskDriveStorage<?> createCompositeStorage(StorageChannelType<?> type) {
-        return new DiskDriveStorage(this, type, filter);
+        return new DiskDriveStorage<>(this, filter);
     }
 
     public void initialize(StorageRepository storageRepository) {
         this.storageRepository = storageRepository;
 
-        Set<StorageChannelType<?>> affectedStorageChannelTypes = new HashSet<>();
         for (int i = 0; i < DISK_COUNT; ++i) {
-            affectedStorageChannelTypes.addAll(initializeDiskInSlot(i));
+            initializeDiskInSlot(i).forEach(this::processDiskChange);
         }
-        affectedStorageChannelTypes.forEach(this::invalidateChannel);
         setDiskCount();
+    }
+
+    private void processDiskChange(DiskChange diskChange) {
+        if (diskChange.removed) {
+            diskChange.compositeStorage.removeSource((Storage) diskChange.storage);
+        } else {
+            diskChange.compositeStorage.addSource((Storage) diskChange.storage);
+        }
     }
 
     public void onDiskChanged(int slot) {
@@ -79,11 +83,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
             LOGGER.warn("Tried to change disk in invalid slot {}", slot);
             return;
         }
-        Set<StorageChannelType<?>> affectedStorageChannelTypes = initializeDiskInSlot(slot);
-        affectedStorageChannelTypes.forEach(type -> {
-            invalidateChannel(type);
-            network.getComponent(StorageNetworkComponent.class).getStorageChannel(type).invalidate();
-        });
+        initializeDiskInSlot(slot).forEach(this::processDiskChange);
         setDiskCount();
     }
 
@@ -94,25 +94,22 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
                 .count();
     }
 
-    private <T> void invalidateChannel(StorageChannelType<T> channelType) {
-        List<Storage<T>> sources = getSourcesForChannel(channelType);
-        ((DiskDriveStorage<T>) compositeStorages.get(channelType)).setSources(sources);
-    }
+    private static class DiskChange {
+        private final boolean removed;
+        private final DiskDriveStorage<?> compositeStorage;
+        private final DiskDriveDiskStorage<?> storage;
 
-    private <T> List<Storage<T>> getSourcesForChannel(StorageChannelType<T> channelType) {
-        List<Storage<T>> sources = new ArrayList<>();
-        for (DiskDriveDiskStorage<?> disk : disks) {
-            if (disk != null && disk.getStorageChannelType() == channelType) {
-                sources.add((Storage<T>) disk);
-            }
+        public DiskChange(boolean removed, DiskDriveStorage<?> compositeStorage, DiskDriveDiskStorage<?> storage) {
+            this.removed = removed;
+            this.compositeStorage = compositeStorage;
+            this.storage = storage;
         }
-        return sources;
     }
 
-    private Set<StorageChannelType<?>> initializeDiskInSlot(int slot) {
-        Set<StorageChannelType<?>> affectedStorageChannelTypes = new HashSet<>();
+    private Set<DiskChange> initializeDiskInSlot(int slot) {
+        Set<DiskChange> results = new HashSet<>();
         if (disks[slot] != null) {
-            affectedStorageChannelTypes.add(disks[slot].getStorageChannelType());
+            results.add(new DiskChange(true, compositeStorages.get(disks[slot].getStorageChannelType()), disks[slot]));
         }
 
         diskProvider.getStorageChannelType(slot).ifPresentOrElse(type -> {
@@ -122,10 +119,12 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
                     .map(storage -> new DiskDriveDiskStorage(storage, type, listener))
                     .orElse(null);
 
-            affectedStorageChannelTypes.add(type);
+            if (disks[slot] != null) {
+                results.add(new DiskChange(false, compositeStorages.get(disks[slot].getStorageChannelType()), disks[slot]));
+            }
         }, () -> disks[slot] = null);
 
-        return affectedStorageChannelTypes;
+        return results;
     }
 
     @Override
@@ -133,7 +132,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         super.onActiveChanged(active);
         LOGGER.info("Invalidating storage due to disk drive activeness change");
         if (network != null) {
-            compositeStorages.keySet().forEach(type -> network.getComponent(StorageNetworkComponent.class).getStorageChannel(type).invalidate());
+            // TODO    compositeStorages.keySet().forEach(type -> network.getComponent(StorageNetworkComponent.class).getStorageChannel(type).invalidate());
         }
     }
 

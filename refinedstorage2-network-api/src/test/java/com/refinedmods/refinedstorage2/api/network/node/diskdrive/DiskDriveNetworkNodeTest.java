@@ -107,7 +107,9 @@ class DiskDriveNetworkNodeTest {
         assertThat(storageOf(sut).getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 5)
         );
-        assertThat(fakeStorageChannelOf(network).getAll()).isEmpty();
+        assertThat(fakeStorageChannelOf(network).getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+                new ResourceAmount<>("A", 5)
+        );
         assertThat(storageOf(sut).getStored()).isEqualTo(5L);
     }
 
@@ -352,7 +354,7 @@ class DiskDriveNetworkNodeTest {
         storageProviderRepository.setInSlot(3, storage3);
 
         sut.initialize(storageProviderRepository);
-        fakeStorageChannelOf(network).invalidate();
+        //  fakeStorageChannelOf(network).invalidate();
 
         // Act
         long extracted = fakeStorageChannelOf(network).extract("A", 85, Action.EXECUTE);
