@@ -15,12 +15,12 @@ import org.junit.jupiter.params.provider.EnumSource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
-class CompositeStorageTest {
-    private CompositeStorage<String> sut;
+class CompositeStorageImplTest {
+    private CompositeStorageImpl<String> sut;
 
     @BeforeEach
     void setUp() {
-        sut = new CompositeStorage<>(new ResourceListImpl<>());
+        sut = new CompositeStorageImpl<>(new ResourceListImpl<>());
     }
 
     @Test

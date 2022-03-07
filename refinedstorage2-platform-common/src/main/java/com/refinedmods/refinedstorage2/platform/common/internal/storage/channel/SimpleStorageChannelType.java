@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
+import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageImpl;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +30,7 @@ public class SimpleStorageChannelType<T> implements StorageChannelType<T> {
 
     @Override
     public CompositeStorage<T> createCompositeStorage(List<Storage<T>> sources) {
-        return new CompositeStorage<>(sources, new ResourceListImpl<>());
+        return new CompositeStorageImpl<>(sources, new ResourceListImpl<>());
     }
 
     @Override
