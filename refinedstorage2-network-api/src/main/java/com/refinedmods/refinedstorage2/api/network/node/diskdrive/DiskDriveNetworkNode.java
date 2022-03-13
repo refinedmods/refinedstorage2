@@ -35,8 +35,8 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     private final long energyUsage;
     private final long energyUsagePerDisk;
 
-    private final DiskDriveDiskStorage[] disks = new DiskDriveDiskStorage[DISK_COUNT];
-    private final Map<StorageChannelType<?>, DiskDriveStorage<?>> compositeStorages;
+    private final DiskDriveDiskStorage<?>[] disks = new DiskDriveDiskStorage[DISK_COUNT];
+    private final Map<StorageChannelType<?>, DiskDriveCompositeStorage<?>> compositeStorages;
     private int diskCount;
 
     private final Filter filter = new Filter();
@@ -50,32 +50,23 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         this.compositeStorages = createCompositeStorages(storageChannelTypeRegistry);
     }
 
-    private Map<StorageChannelType<?>, DiskDriveStorage<?>> createCompositeStorages(StorageChannelTypeRegistry storageChannelTypeRegistry) {
+    private Map<StorageChannelType<?>, DiskDriveCompositeStorage<?>> createCompositeStorages(StorageChannelTypeRegistry storageChannelTypeRegistry) {
         return storageChannelTypeRegistry
                 .getTypes()
                 .stream()
                 .collect(ImmutableMap.toImmutableMap(type -> type, this::createCompositeStorage));
     }
 
-    private DiskDriveStorage<?> createCompositeStorage(StorageChannelType<?> type) {
-        return new DiskDriveStorage<>(this, filter);
+    private DiskDriveCompositeStorage<?> createCompositeStorage(StorageChannelType<?> type) {
+        return new DiskDriveCompositeStorage<>(this, filter);
     }
 
     public void initialize(StorageRepository storageRepository) {
         this.storageRepository = storageRepository;
-
         for (int i = 0; i < DISK_COUNT; ++i) {
-            initializeDiskInSlot(i).forEach(this::processDiskChange);
+            initializeDiskInSlot(i);
         }
         setDiskCount();
-    }
-
-    private void processDiskChange(DiskChange diskChange) {
-        if (diskChange.removed) {
-            diskChange.compositeStorage.removeSource((Storage) diskChange.storage);
-        } else {
-            diskChange.compositeStorage.addSource((Storage) diskChange.storage);
-        }
     }
 
     public void onDiskChanged(int slot) {
@@ -87,6 +78,17 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
         setDiskCount();
     }
 
+    private void processDiskChange(DiskChange change) {
+        if (!isActive()) {
+            return;
+        }
+        if (change.removed) {
+            change.compositeStorage.removeSource((Storage) change.storage);
+        } else {
+            change.compositeStorage.addSource((Storage) change.storage);
+        }
+    }
+
     private void setDiskCount() {
         this.diskCount = (int) Arrays
                 .stream(disks)
@@ -94,16 +96,9 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
                 .count();
     }
 
-    private static class DiskChange {
-        private final boolean removed;
-        private final DiskDriveStorage<?> compositeStorage;
-        private final DiskDriveDiskStorage<?> storage;
-
-        public DiskChange(boolean removed, DiskDriveStorage<?> compositeStorage, DiskDriveDiskStorage<?> storage) {
-            this.removed = removed;
-            this.compositeStorage = compositeStorage;
-            this.storage = storage;
-        }
+    private record DiskChange(boolean removed,
+                              DiskDriveCompositeStorage<?> compositeStorage,
+                              DiskDriveDiskStorage<?> storage) {
     }
 
     private Set<DiskChange> initializeDiskInSlot(int slot) {
@@ -130,9 +125,31 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
     @Override
     public void onActiveChanged(boolean active) {
         super.onActiveChanged(active);
-        LOGGER.info("Invalidating storage due to disk drive activeness change");
-        if (network != null) {
-            // TODO    compositeStorages.keySet().forEach(type -> network.getComponent(StorageNetworkComponent.class).getStorageChannel(type).invalidate());
+        if (network == null) {
+            return;
+        }
+        LOGGER.info("Updating disk storage due to activeness change to {}", active);
+        if (active) {
+            enableAllDisks();
+        } else {
+            disableAllDisks();
+        }
+    }
+
+    private void disableAllDisks() {
+        compositeStorages.values().forEach(DiskDriveCompositeStorage::clearSources);
+    }
+
+    private void enableAllDisks() {
+        compositeStorages.forEach(this::enableAllDisksForChannel);
+    }
+
+    private void enableAllDisksForChannel(StorageChannelType<?> type, DiskDriveCompositeStorage<?> composite) {
+        for (int i = 0; i < DISK_COUNT; ++i) {
+            DiskDriveDiskStorage<?> disk = disks[i];
+            if (disk != null && disk.getStorageChannelType() == type) {
+                composite.addSource((DiskDriveDiskStorage) disk);
+            }
         }
     }
 
@@ -203,9 +220,9 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSour
 
     @Override
     public <T> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
-        DiskDriveStorage<?> storage = compositeStorages.get(channelType);
-        if (storage != null) {
-            return Optional.of((Storage<T>) storage);
+        DiskDriveCompositeStorage<?> composite = compositeStorages.get(channelType);
+        if (composite != null) {
+            return Optional.of((Storage<T>) composite);
         }
         return Optional.empty();
     }

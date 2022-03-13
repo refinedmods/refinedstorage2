@@ -21,32 +21,34 @@ import static org.mockito.Mockito.mock;
 
 @Rs2Test
 class NetworkImplTest {
+    private final Network sut = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
+
     @Test
     void Test_should_build_network_correctly() {
         // Arrange
-        Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
-
         FakeStorageProviderRepository storageProviderRepository = new FakeStorageProviderRepository();
         Storage<String> storage = new CappedStorage<>(10);
         storage.insert("A", 10, Action.EXECUTE);
         storageProviderRepository.setInSlot(1, storage);
         DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(0, 0, STORAGE_CHANNEL_TYPE_REGISTRY);
-        diskDrive.setNetwork(network);
+        diskDrive.setNetwork(sut);
         diskDrive.setDiskProvider(storageProviderRepository);
         diskDrive.initialize(storageProviderRepository);
         diskDrive.setListener(mock(DiskDriveListener.class));
         NetworkNodeContainer diskDriveContainer = () -> diskDrive;
 
         ControllerNetworkNode controllerNetworkNode = new ControllerNetworkNode();
-        controllerNetworkNode.setNetwork(network);
+        controllerNetworkNode.setNetwork(sut);
         controllerNetworkNode.setEnergyStorage(new EnergyStorageImpl(1000));
         NetworkNodeContainer controllerContainer = () -> controllerNetworkNode;
 
         // Act
-        network.addContainer(controllerContainer);
-        network.addContainer(diskDriveContainer);
+        sut.addContainer(controllerContainer);
+        sut.addContainer(diskDriveContainer);
+
+        diskDrive.update();
 
         // Assert
-        assertThat(fakeStorageChannelOf(network).getAll()).isNotEmpty();
+        assertThat(fakeStorageChannelOf(sut).getAll()).isNotEmpty();
     }
 }

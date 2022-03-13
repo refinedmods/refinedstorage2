@@ -13,11 +13,6 @@ import java.util.Set;
 
 import org.apiguardian.api.API;
 
-/**
- * This represents a single storage that can be backed by multiple storages.
- *
- * @param <T> the type of resource
- */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeStorageListener<T> {
     private final List<Storage<T>> sources = new ArrayList<>();
@@ -31,10 +26,6 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeSt
         this.list = list;
     }
 
-    /**
-     * Sort the sources of this composite.
-     * If a storage implements {@link Priority}, the composite will account for this.
-     */
     @Override
     public void sortSources() {
         sources.sort(PrioritizedStorageComparator.INSTANCE);
@@ -60,6 +51,12 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeSt
         if (source instanceof CompositeStorage<T> childComposite) {
             childComposite.removeListener(this);
         }
+    }
+
+    @Override
+    public void clearSources() {
+        Set<Storage<T>> oldSources = new HashSet<>(sources);
+        oldSources.forEach(this::removeSource);
     }
 
     @Override
