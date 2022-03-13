@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
+import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
@@ -86,6 +87,33 @@ class CompositeStorageImplTest {
                 new ResourceAmount<>("A", 10),
                 new ResourceAmount<>("B", 5)
         );
+        assertThat(extracted).isZero();
+    }
+
+    @Test
+    void Test_clearing_sources() {
+        // Arrange
+        Storage<String> storage1 = new CappedStorage<>(10);
+        storage1.insert("A", 10, Action.EXECUTE);
+
+        Storage<String> storage2 = new CappedStorage<>(10);
+        storage2.insert("B", 5, Action.EXECUTE);
+
+        Storage<String> storage3 = new CappedStorage<>(10);
+        storage3.insert("C", 7, Action.EXECUTE);
+        storage3.insert("A", 3, Action.EXECUTE);
+
+        sut.addSource(storage1);
+        sut.addSource(storage2);
+        sut.addSource(storage3);
+
+        // Act
+        sut.clearSources();
+
+        long extracted = sut.extract("C", 1, Action.EXECUTE);
+
+        // Assert
+        assertThat(sut.getAll()).isEmpty();
         assertThat(extracted).isZero();
     }
 
@@ -531,5 +559,94 @@ class CompositeStorageImplTest {
         assertThat(lowestPriority.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 4)
         );
+    }
+
+    @Test
+    void Test_adding_composite_source() {
+        // Arrange
+        CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
+        subComposite.addSource(new InMemoryStorageImpl<>());
+        subComposite.insert("A", 10, Action.EXECUTE);
+
+        // Act
+        sut.addSource(subComposite);
+
+        // Assert
+        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount<>("A", 10)
+        );
+    }
+
+    @Test
+    void Test_removing_composite_source() {
+        // Arrange
+        CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
+        subComposite.addSource(new InMemoryStorageImpl<>());
+        subComposite.insert("A", 10, Action.EXECUTE);
+
+        sut.addSource(subComposite);
+
+        Storage<String> subCompositeStorage = new InMemoryStorageImpl<>();
+        subCompositeStorage.insert("B", 10, Action.EXECUTE);
+
+        // Act
+        sut.removeSource(subComposite);
+
+        subComposite.addSource(subCompositeStorage);
+
+        // Assert
+        assertThat(sut.getAll()).isEmpty();
+    }
+
+    @Test
+    void Test_adding_source_to_sub_composite_should_notify_parent() {
+        // Arrange
+        CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
+        Storage<String> subStorage = new InMemoryStorageImpl<>();
+        subStorage.insert("B", 10, Action.EXECUTE);
+
+        sut.addSource(subComposite);
+        sut.addSource(subStorage);
+
+        Storage<String> subCompositeStorage = new InMemoryStorageImpl<>();
+        subCompositeStorage.insert("A", 10, Action.EXECUTE);
+
+        // Act
+        subComposite.addSource(subCompositeStorage);
+
+        // Assert
+        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount<>("A", 10),
+                new ResourceAmount<>("B", 10)
+        );
+
+        assertThat(subComposite.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount<>("A", 10)
+        );
+    }
+
+    @Test
+    void Test_removing_source_from_sub_composite_should_notify_parent() {
+        // Arrange
+        CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
+        Storage<String> subStorage = new InMemoryStorageImpl<>();
+        subStorage.insert("B", 10, Action.EXECUTE);
+
+        sut.addSource(subComposite);
+        sut.addSource(subStorage);
+
+        Storage<String> subCompositeStorage = new InMemoryStorageImpl<>();
+        subCompositeStorage.insert("A", 10, Action.EXECUTE);
+
+        subComposite.addSource(subCompositeStorage);
+
+        // Act
+        subComposite.removeSource(subCompositeStorage);
+
+        // Assert
+        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount<>("B", 10)
+        );
+        assertThat(subComposite.getAll()).isEmpty();
     }
 }
