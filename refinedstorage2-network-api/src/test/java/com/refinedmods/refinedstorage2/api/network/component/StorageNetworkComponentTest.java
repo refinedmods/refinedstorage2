@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,7 @@ class StorageNetworkComponentTest {
         diskDrive.setListener(mock(DiskDriveListener.class));
         diskDrive.setDiskProvider(storageProviderRepository);
         diskDrive.initialize(storageProviderRepository);
+        diskDrive.onActiveChanged(true);
 
         diskDriveContainer = () -> diskDrive;
     }
@@ -76,7 +78,7 @@ class StorageNetworkComponentTest {
 
         sut.onContainerAdded(diskDriveContainer);
 
-        Collection<ResourceAmount<String>> resourcesBeforeRemoval = storageChannel.getAll();
+        Collection<ResourceAmount<String>> resourcesBeforeRemoval = new HashSet<>(storageChannel.getAll());
 
         // Act
         sut.onContainerRemoved(diskDriveContainer);

@@ -12,14 +12,13 @@ import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageLis
 import com.refinedmods.refinedstorage2.api.storage.composite.Priority;
 
 import java.util.Collection;
-import java.util.Collections;
 
-public class DiskDriveStorage<T> implements CompositeStorage<T>, Priority {
+public class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, Priority {
     private final CompositeStorage<T> compositeOfDisks;
     private final DiskDriveNetworkNode diskDrive;
     private final Filter filter;
 
-    protected DiskDriveStorage(DiskDriveNetworkNode diskDrive, Filter filter) {
+    protected DiskDriveCompositeStorage(DiskDriveNetworkNode diskDrive, Filter filter) {
         this.compositeOfDisks = new CompositeStorageImpl<>(new ResourceListImpl<>());
         this.diskDrive = diskDrive;
         this.filter = filter;
@@ -43,9 +42,6 @@ public class DiskDriveStorage<T> implements CompositeStorage<T>, Priority {
 
     @Override
     public Collection<ResourceAmount<T>> getAll() {
-        if (!diskDrive.isActive()) {
-            return Collections.emptyList();
-        }
         return compositeOfDisks.getAll();
     }
 
@@ -82,5 +78,10 @@ public class DiskDriveStorage<T> implements CompositeStorage<T>, Priority {
     @Override
     public void removeListener(CompositeStorageListener<T> listener) {
         compositeOfDisks.removeListener(listener);
+    }
+
+    @Override
+    public void clearSources() {
+        compositeOfDisks.clearSources();
     }
 }
