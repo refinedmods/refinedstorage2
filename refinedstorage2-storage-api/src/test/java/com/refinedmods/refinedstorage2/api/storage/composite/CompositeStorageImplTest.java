@@ -61,6 +61,56 @@ class CompositeStorageImplTest {
     }
 
     @Test
+    void Test_priority_sorting_when_adding_source() {
+        // Arrange
+        Storage<String> storage1 = new CappedStorage<>(10);
+        Storage<String> storage2 = new CappedStorage<>(10);
+        Storage<String> storage3 = new CappedStorage<>(10);
+
+        sut.addSource(new PrioritizedStorage<>(20, storage1));
+        sut.addSource(new PrioritizedStorage<>(10, storage2));
+        sut.addSource(new PrioritizedStorage<>(30, storage3));
+
+        // Act
+        long remainder = sut.insert("A", 12, Action.EXECUTE);
+
+        // Assert
+        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount<>("A", 12)
+        );
+        assertThat(remainder).isZero();
+        assertThat(storage3.getStored()).isEqualTo(10);
+        assertThat(storage1.getStored()).isEqualTo(2);
+        assertThat(storage2.getStored()).isZero();
+    }
+
+
+    @Test
+    void Test_priority_sorting_when_removing_source() {
+        // Arrange
+        Storage<String> storage1 = new PrioritizedStorage<>(20, new CappedStorage<>(10));
+        Storage<String> storage2 = new PrioritizedStorage<>(10, new CappedStorage<>(10));
+        Storage<String> storage3 = new PrioritizedStorage<>(30, new CappedStorage<>(10));
+
+        sut.addSource(storage1);
+        sut.addSource(storage2);
+        sut.addSource(storage3);
+        sut.removeSource(storage3);
+
+        // Act
+        long remainder = sut.insert("A", 12, Action.EXECUTE);
+
+        // Assert
+        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                new ResourceAmount<>("A", 12)
+        );
+        assertThat(remainder).isZero();
+        assertThat(storage1.getStored()).isEqualTo(10);
+        assertThat(storage2.getStored()).isEqualTo(2);
+        assertThat(storage3.getStored()).isZero();
+    }
+
+    @Test
     void Test_removing_sources() {
         // Arrange
         Storage<String> storage1 = new CappedStorage<>(10);
