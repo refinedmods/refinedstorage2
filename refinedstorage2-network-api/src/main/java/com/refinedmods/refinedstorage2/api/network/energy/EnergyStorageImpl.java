@@ -3,11 +3,16 @@ package com.refinedmods.refinedstorage2.api.network.energy;
 import com.refinedmods.refinedstorage2.api.core.Action;
 
 import com.google.common.base.Preconditions;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class EnergyStorageImpl implements EnergyStorage {
     private final long capacity;
     private long stored;
 
+    /**
+     * @param capacity the capacity, must be larger than 0
+     */
     public EnergyStorageImpl(long capacity) {
         Preconditions.checkArgument(capacity >= 0, "Capacity must be 0 or larger than 0");
         this.capacity = capacity;
@@ -26,7 +31,7 @@ public class EnergyStorageImpl implements EnergyStorage {
     @Override
     public long receive(long amount, Action action) {
         if (stored + amount > capacity) {
-            return receivePartly(amount, action);
+            return receivePartly(action);
         } else {
             return receiveCompletely(amount, action);
         }
@@ -36,15 +41,18 @@ public class EnergyStorageImpl implements EnergyStorage {
         if (action == Action.EXECUTE) {
             stored += amount;
         }
-        return 0;
+        return amount;
     }
 
-    private long receivePartly(long amount, Action action) {
-        long remainder = (stored + amount) - capacity;
-        if (action == Action.EXECUTE) {
-            stored = capacity;
+    private long receivePartly(Action action) {
+        long spaceRemainingInStorage = capacity - stored;
+        if (spaceRemainingInStorage == 0) {
+            return 0;
         }
-        return remainder;
+        if (action == Action.EXECUTE) {
+            stored += spaceRemainingInStorage;
+        }
+        return spaceRemainingInStorage;
     }
 
     @Override

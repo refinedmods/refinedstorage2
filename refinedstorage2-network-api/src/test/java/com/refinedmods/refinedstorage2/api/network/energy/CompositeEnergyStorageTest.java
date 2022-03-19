@@ -18,10 +18,10 @@ class CompositeEnergyStorageTest {
         CompositeEnergyStorage sut = new CompositeEnergyStorage();
 
         // Act
-        long remainder = sut.receive(3, action);
+        long inserted = sut.receive(3, action);
 
         // Assert
-        assertThat(remainder).isEqualTo(3);
+        assertThat(inserted).isZero();
         assertThat(sut.getStored()).isZero();
         assertThat(sut.getCapacity()).isZero();
     }
@@ -38,10 +38,10 @@ class CompositeEnergyStorageTest {
         sut.addSource(b);
 
         // Act
-        long remainder = sut.receive(3, action);
+        long inserted = sut.receive(3, action);
 
         // Assert
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(3);
 
         if (action == Action.EXECUTE) {
             assertThat(a.getStored()).isEqualTo(3);
@@ -67,7 +67,7 @@ class CompositeEnergyStorageTest {
         sut.addSource(b);
 
         // Act
-        long remainder = sut.receive(10, action);
+        long inserted = sut.receive(10, action);
 
         // Assert
         if (action == Action.EXECUTE) {
@@ -78,7 +78,7 @@ class CompositeEnergyStorageTest {
             assertThat(sut.getStored()).isZero();
         }
 
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(10);
         assertThat(b.getStored()).isZero();
         assertThat(sut.getCapacity()).isEqualTo(15);
     }
@@ -95,10 +95,10 @@ class CompositeEnergyStorageTest {
         sut.addSource(b);
 
         // Act
-        long remainder = sut.receive(13, action);
+        long inserted = sut.receive(13, action);
 
         // Assert
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(13);
 
         if (action == Action.EXECUTE) {
             assertThat(a.getStored()).isEqualTo(10);
@@ -125,10 +125,10 @@ class CompositeEnergyStorageTest {
         sut.addSource(b);
 
         // Act
-        long remainder = sut.receive(15, action);
+        long inserted = sut.receive(15, action);
 
         // Assert
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(15);
 
         if (action == Action.EXECUTE) {
             assertThat(a.getStored()).isEqualTo(10);
@@ -155,10 +155,10 @@ class CompositeEnergyStorageTest {
         sut.addSource(b);
 
         // Act
-        long remainder = sut.receive(16, action);
+        long inserted = sut.receive(16, action);
 
         // Assert
-        assertThat(remainder).isEqualTo(1);
+        assertThat(inserted).isEqualTo(15);
 
         if (action == Action.EXECUTE) {
             assertThat(a.getStored()).isEqualTo(10);
