@@ -6,10 +6,6 @@ archivesBaseName = 'refinedstorage2-platform-fabric'
 
 repositories {
     maven {
-        name = 'Patchouli'
-        url 'https://maven.blamejared.com'
-    }
-    maven {
         name = 'REI'
         url 'https://maven.terraformersmc.com/'
     }
@@ -59,7 +55,6 @@ dependencies {
     }
     modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}")
     modImplementation "com.terraformersmc:modmenu:${project.modMenuVersion}"
-    modImplementation "vazkii.patchouli:Patchouli:${project.patchouliVersion}"
 
     modRuntimeOnly("mcp.mobius.waila:wthit:fabric-${project.wthitVersion}")
 }

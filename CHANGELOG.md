@@ -19,12 +19,17 @@ disks, etc. to intermediate storage like a chest.
 ### Fixed
 
 - Fixed inventory contents of devices not retaining their original order when reloading a world.
+- Fixed bug where (already opened) Grid doesn't update if a storage is removed.
 
 ### Changed
 
 - Grid auto-selection and JEI/REI synchronization are now two different options.
 - Grid display settings are now stored in the client configuration, no longer per-block.
 - You now need to crouch with a dye in order to change the color of a device.
+
+### Removed
+
+- Removed the Patchouli integration.
 
 ## [2.0.0-milestone.1.3] - 2022-02-12
 

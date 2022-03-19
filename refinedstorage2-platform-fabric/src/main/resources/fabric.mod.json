@@ -45,7 +45,6 @@
         "team_reborn_energy": "*"
     },
     "suggests": {
-        "patchouli": "*",
         "roughlyenoughitems": "*",
         "modmenu": "*"
     }

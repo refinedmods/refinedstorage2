@@ -22,7 +22,7 @@ This project uses [Gitflow](https://www.atlassian.com/git/tutorials/comparing-wo
 
 ## Way of working when adding functionality
 
-If you are adding functionality or are changing behavior, please update the wiki and Patchouli in-game documentation.
+If you are adding functionality or are changing behavior, please update the documentation.
 
 If there are differences with the Refined Storage 1 implementation, document this in the changelog as well.
 
