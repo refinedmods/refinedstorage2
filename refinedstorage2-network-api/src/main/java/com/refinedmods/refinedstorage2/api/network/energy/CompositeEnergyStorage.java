@@ -42,14 +42,14 @@ public class CompositeEnergyStorage implements EnergyStorage {
 
     @Override
     public long receive(long amount, Action action) {
-        long remainder = amount;
+        long inserted = 0;
         for (EnergyStorage source : sources) {
-            remainder = source.receive(remainder, action);
-            if (remainder == 0) {
+            inserted += source.receive(amount - inserted, action);
+            if (inserted == amount) {
                 break;
             }
         }
-        return remainder;
+        return inserted;
     }
 
     @Override

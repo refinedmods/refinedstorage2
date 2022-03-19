@@ -4,13 +4,13 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -115,10 +115,10 @@ class ControllerNetworkNodeTest {
         sut.setEnergyStorage(new EnergyStorageImpl(100));
 
         // Act
-        long remainder = sut.receive(10, Action.EXECUTE);
+        long inserted = sut.receive(10, Action.EXECUTE);
 
         // Assert
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(10);
         assertThat(sut.getCapacity()).isEqualTo(100);
         assertThat(sut.getActualCapacity()).isEqualTo(100);
         assertThat(sut.getStored()).isEqualTo(10);

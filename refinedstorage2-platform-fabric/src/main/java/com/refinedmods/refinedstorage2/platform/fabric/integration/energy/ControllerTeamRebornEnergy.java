@@ -48,7 +48,7 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
             if (received > 0 && action == Action.EXECUTE) {
                 tx.commit();
             }
-            return amount - received;
+            return received;
         }
     }
 
