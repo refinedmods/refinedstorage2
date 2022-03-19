@@ -84,16 +84,14 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         gridService.extract(itemResource, GridExtractMode.SINGLE_RESOURCE, (resource, amount, action) -> {
             ItemStack toInsert = toItemStack(resource, amount);
             ItemStack remainder = ItemHandlerHelper.insertItem(destinationStorage, toInsert, action == Action.SIMULATE);
-            long inserted = amount - remainder.getCount();
-            return inserted;
+            return amount - remainder.getCount();
         });
     }
 
     private long insert(ItemStack itemStack, Action action, boolean cursor) {
         IItemHandler handler = cursor ? playerCursorStorage : playerInventoryStorage;
         ItemStack remainder = ItemHandlerHelper.insertItem(handler, itemStack, action == Action.SIMULATE);
-        long inserted = itemStack.getCount() - remainder.getCount();
-        return inserted;
+        return (long) itemStack.getCount() - remainder.getCount();
     }
 
     private long extract(IItemHandler source, ItemResource template, long amount, Action action) {
