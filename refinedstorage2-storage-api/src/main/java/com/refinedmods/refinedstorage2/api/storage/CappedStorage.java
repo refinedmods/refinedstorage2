@@ -38,20 +38,18 @@ public class CappedStorage<T> extends ProxyStorage<T> implements CapacityAccesso
     public long insert(T resource, long amount, Action action) {
         Preconditions.checkArgument(amount > 0, "Amount must be larger than 0");
         if (parent.getStored() + amount > capacity) {
-            return insertPartly(resource, amount, action);
+            return insertPartly(resource, action);
         } else {
             return super.insert(resource, amount, action);
         }
     }
 
-    private long insertPartly(T resource, long amount, Action action) {
+    private long insertPartly(T resource, Action action) {
         long spaceRemainingInStorage = capacity - parent.getStored();
         if (spaceRemainingInStorage == 0) {
-            return amount;
+            return 0;
         }
-        long amountNotInserted = amount - spaceRemainingInStorage;
-        long remainder = super.insert(resource, spaceRemainingInStorage, action);
-        return amountNotInserted + remainder;
+        return super.insert(resource, spaceRemainingInStorage, action);
     }
 
     @Override

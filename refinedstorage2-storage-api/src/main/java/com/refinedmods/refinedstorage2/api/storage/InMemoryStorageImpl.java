@@ -54,7 +54,7 @@ public class InMemoryStorageImpl<T> implements Storage<T> {
     public long insert(T resource, long amount, Action action) {
         ResourceAmount.validate(resource, amount);
         insertCompletely(resource, amount, action);
-        return 0;
+        return amount;
     }
 
     @Override

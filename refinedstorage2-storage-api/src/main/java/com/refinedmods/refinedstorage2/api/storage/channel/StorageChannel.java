@@ -51,7 +51,7 @@ public interface StorageChannel<T> extends Storage<T> {
      * @param resource the resource, may not be null
      * @param amount   the amount, must be larger than 0
      * @param source   the source, may not be null
-     * @return the remainder (the amount not inserted)
+     * @return the amount inserted
      */
     long insert(T resource, long amount, Source source);
 

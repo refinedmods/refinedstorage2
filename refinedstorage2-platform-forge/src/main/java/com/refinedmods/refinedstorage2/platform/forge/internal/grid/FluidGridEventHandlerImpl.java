@@ -119,12 +119,11 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         }
         gridService.extract(fluidResource, mode, (resource, amount, action) -> {
             int inserted = destination.fill(toFluidStack(resource, amount), toFluidAction(action));
-            long remainder = amount - inserted;
             if (action == Action.EXECUTE) {
                 extractSourceBucket(bucketFromInventory);
                 insertResultingBucket(cursor, destination);
             }
-            return remainder;
+            return inserted;
         });
     }
 

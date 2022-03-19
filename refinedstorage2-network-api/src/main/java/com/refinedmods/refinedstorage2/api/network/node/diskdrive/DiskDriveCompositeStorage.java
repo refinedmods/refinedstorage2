@@ -35,7 +35,7 @@ public class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, Priori
     @Override
     public long insert(T resource, long amount, Action action) {
         if (diskDrive.getAccessMode() == AccessMode.EXTRACT || !diskDrive.isActive() || !filter.isAllowed(resource)) {
-            return amount;
+            return 0;
         }
         return compositeOfDisks.insert(resource, amount, action);
     }

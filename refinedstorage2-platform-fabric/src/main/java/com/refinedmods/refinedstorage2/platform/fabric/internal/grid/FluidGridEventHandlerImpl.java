@@ -132,12 +132,11 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
                 if (!couldInsertBucket) {
                     return amount;
                 }
-                long remainder = amount - inserted;
                 if (action == Action.EXECUTE) {
                     bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE);
                     tx.commit();
                 }
-                return remainder;
+                return inserted;
             }
         });
     }
@@ -160,12 +159,11 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
                     if (!couldInsertBucket) {
                         return amount;
                     }
-                    long remainder = amount - inserted;
                     if (action == Action.EXECUTE) {
                         innerTx.commit();
                         tx.commit();
                     }
-                    return remainder;
+                    return inserted;
                 }
             });
         }

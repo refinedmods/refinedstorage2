@@ -26,12 +26,11 @@ public class PlatformStorage<T> extends ProxyStorage<T> implements StorageTypeAc
 
     @Override
     public long insert(T resource, long amount, Action action) {
-        long remainder = super.insert(resource, amount, action);
-        boolean insertedSomething = remainder != amount;
-        if (insertedSomething && action == Action.EXECUTE) {
+        long inserted = super.insert(resource, amount, action);
+        if (inserted > 0 && action == Action.EXECUTE) {
             listener.run();
         }
-        return remainder;
+        return inserted;
     }
 
     @Override

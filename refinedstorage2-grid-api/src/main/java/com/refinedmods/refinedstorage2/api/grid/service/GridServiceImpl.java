@@ -7,9 +7,9 @@ import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
-import java.util.function.Function;
-
 import org.apiguardian.api.API;
+
+import java.util.function.Function;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public class GridServiceImpl<T> implements GridService<T> {
@@ -41,8 +41,7 @@ public class GridServiceImpl<T> implements GridService<T> {
         if (extractedFromSource == 0) {
             return;
         }
-        long remainderFromDestination = destination.insert(resource, extractedFromSource, Action.SIMULATE);
-        long amountInsertedIntoDestination = extractedFromSource - remainderFromDestination;
+        long amountInsertedIntoDestination = destination.insert(resource, extractedFromSource, Action.SIMULATE);
         if (amountInsertedIntoDestination > 0) {
             extractedFromSource = storageChannel.extract(resource, amountInsertedIntoDestination, source);
             destination.insert(resource, extractedFromSource, Action.EXECUTE);
@@ -74,8 +73,7 @@ public class GridServiceImpl<T> implements GridService<T> {
         if (extractedFromSource == 0) {
             return;
         }
-        long remainderFromDestination = storageChannel.insert(resource, extractedFromSource, Action.SIMULATE);
-        long amountInsertedIntoDestination = extractedFromSource - remainderFromDestination;
+        long amountInsertedIntoDestination = storageChannel.insert(resource, extractedFromSource, Action.SIMULATE);
         if (amountInsertedIntoDestination > 0) {
             extractedFromSource = source.extract(resource, amountInsertedIntoDestination, Action.EXECUTE);
             if (extractedFromSource > 0) {

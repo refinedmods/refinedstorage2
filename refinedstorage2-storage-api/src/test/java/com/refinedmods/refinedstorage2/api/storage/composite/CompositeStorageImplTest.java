@@ -49,7 +49,7 @@ class CompositeStorageImplTest {
         sut.addSource(storage2);
         sut.addSource(storage3);
 
-        long remainder = sut.insert("B", 6, Action.SIMULATE);
+        long inserted = sut.insert("B", 6, Action.SIMULATE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -57,7 +57,7 @@ class CompositeStorageImplTest {
                 new ResourceAmount<>("B", 5),
                 new ResourceAmount<>("C", 7)
         );
-        assertThat(remainder).isEqualTo(1);
+        assertThat(inserted).isEqualTo(5);
     }
 
     @Test
@@ -72,13 +72,13 @@ class CompositeStorageImplTest {
         sut.addSource(new PrioritizedStorage<>(30, storage3));
 
         // Act
-        long remainder = sut.insert("A", 12, Action.EXECUTE);
+        long inserted = sut.insert("A", 12, Action.EXECUTE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
                 new ResourceAmount<>("A", 12)
         );
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(12);
         assertThat(storage3.getStored()).isEqualTo(10);
         assertThat(storage1.getStored()).isEqualTo(2);
         assertThat(storage2.getStored()).isZero();
@@ -98,13 +98,13 @@ class CompositeStorageImplTest {
         sut.removeSource(storage3);
 
         // Act
-        long remainder = sut.insert("A", 12, Action.EXECUTE);
+        long inserted = sut.insert("A", 12, Action.EXECUTE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
                 new ResourceAmount<>("A", 12)
         );
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(12);
         assertThat(storage1.getStored()).isEqualTo(10);
         assertThat(storage2.getStored()).isEqualTo(2);
         assertThat(storage3.getStored()).isZero();
@@ -170,10 +170,10 @@ class CompositeStorageImplTest {
     @Test
     void Test_inserting_without_any_sources_present() {
         // Act
-        long remainder = sut.insert("A", 10, Action.EXECUTE);
+        long inserted = sut.insert("A", 10, Action.EXECUTE);
 
         // Assert
-        assertThat(remainder).isEqualTo(10);
+        assertThat(inserted).isZero();
     }
 
     @ParameterizedTest
@@ -184,10 +184,10 @@ class CompositeStorageImplTest {
         sut.addSource(storage);
 
         // Act
-        long remainder = sut.insert("A", 10, action);
+        long inserted = sut.insert("A", 10, action);
 
         // Assert
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(10);
 
         if (action == Action.EXECUTE) {
             assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -212,10 +212,10 @@ class CompositeStorageImplTest {
         sut.addSource(storage);
 
         // Act
-        long remainder = sut.insert("A", 30, action);
+        long inserted = sut.insert("A", 30, action);
 
         // Assert
-        assertThat(remainder).isEqualTo(10);
+        assertThat(inserted).isEqualTo(20);
 
         if (action == Action.EXECUTE) {
             assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -247,10 +247,10 @@ class CompositeStorageImplTest {
         sut.addSource(storage3);
 
         // Act
-        long remainder = sut.insert("A", 17, action);
+        long inserted = sut.insert("A", 17, action);
 
         // Assert
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(17);
 
         if (action == Action.EXECUTE) {
             assertThat(storage1.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -290,10 +290,10 @@ class CompositeStorageImplTest {
         sut.addSource(storage3);
 
         // Act
-        long remainder = sut.insert("A", 39, action);
+        long inserted = sut.insert("A", 39, action);
 
         // Assert
-        assertThat(remainder).isEqualTo(4);
+        assertThat(inserted).isEqualTo(35);
 
         if (action == Action.EXECUTE) {
             assertThat(storage1.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
