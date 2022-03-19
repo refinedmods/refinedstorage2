@@ -62,10 +62,10 @@ class StorageNetworkComponentTest {
         // Act
         sut.onContainerAdded(diskDriveContainer);
 
-        long remainder = storageChannel.insert("A", 10, Action.EXECUTE);
+        long inserted = storageChannel.insert("A", 10, Action.EXECUTE);
 
         // Assert
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(10);
         assertThat(storageChannel.getAll()).isNotEmpty();
     }
 

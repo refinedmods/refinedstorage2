@@ -17,7 +17,7 @@ public interface InsertableStorage<T> {
      * @param resource the resource, may not be null
      * @param amount   the amount, must be larger than 0
      * @param action   the mode of insertion
-     * @return the remainder (the amount not inserted)
+     * @return the amount inserted
      */
     long insert(T resource, long amount, Action action);
 }

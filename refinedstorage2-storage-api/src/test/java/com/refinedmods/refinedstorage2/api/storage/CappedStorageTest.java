@@ -32,20 +32,20 @@ class CappedStorageTest {
         Storage<String> sut = new CappedStorage<>(backed, 0);
 
         // Act
-        long remainder = sut.insert("A", 1, Action.EXECUTE);
+        long inserted = sut.insert("A", 1, Action.EXECUTE);
 
         // Assert
-        assertThat(remainder).isEqualTo(1);
+        assertThat(inserted).isZero();
     }
 
     @ParameterizedTest
     @EnumSource(Action.class)
     void Test_adding_a_resource(Action action) {
         // Act
-        long remainder = sut.insert("A", 100, action);
+        long inserted = sut.insert("A", 100, action);
 
         // Assert
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(100);
 
         if (action == Action.EXECUTE) {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -62,12 +62,12 @@ class CappedStorageTest {
     @EnumSource(Action.class)
     void Test_adding_a_resource_and_exceeding_capacity(Action action) {
         // Act
-        long remainder1 = sut.insert("A", 60, Action.EXECUTE);
-        long remainder2 = sut.insert("B", 45, action);
+        long inserted1 = sut.insert("A", 60, Action.EXECUTE);
+        long inserted2 = sut.insert("B", 45, action);
 
         // Assert
-        assertThat(remainder1).isZero();
-        assertThat(remainder2).isEqualTo(5);
+        assertThat(inserted1).isEqualTo(60);
+        assertThat(inserted2).isEqualTo(40);
 
         if (action == Action.EXECUTE) {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -87,12 +87,12 @@ class CappedStorageTest {
     @EnumSource(Action.class)
     void Test_adding_resource_to_an_already_full_storage_and_exceeding_capacity(Action action) {
         // Act
-        long remainder1 = sut.insert("A", 100, Action.EXECUTE);
-        long remainder2 = sut.insert("A", 101, action);
+        long inserted1 = sut.insert("A", 100, Action.EXECUTE);
+        long inserted2 = sut.insert("A", 101, action);
 
         // Assert
-        assertThat(remainder1).isZero();
-        assertThat(remainder2).isEqualTo(101);
+        assertThat(inserted1).isEqualTo(100);
+        assertThat(inserted2).isZero();
 
         assertThat(sut.getStored()).isEqualTo(100);
     }

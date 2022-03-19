@@ -93,25 +93,22 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeSt
 
     @Override
     public long insert(T resource, long amount, Action action) {
-        long remainder = insertIntoStorages(resource, amount, action);
-        if (action == Action.EXECUTE) {
-            long inserted = amount - remainder;
-            if (inserted > 0) {
-                list.add(resource, inserted);
-            }
+        long inserted = insertIntoStorages(resource, amount, action);
+        if (action == Action.EXECUTE && inserted > 0) {
+            list.add(resource, inserted);
         }
-        return remainder;
+        return inserted;
     }
 
     private long insertIntoStorages(T template, long amount, Action action) {
-        long remainder = amount;
+        long inserted = 0;
         for (Storage<T> source : sources) {
-            remainder = source.insert(template, remainder, action);
-            if (remainder == 0) {
+            inserted += source.insert(template, amount - inserted, action);
+            if (inserted == amount) {
                 break;
             }
         }
-        return remainder;
+        return inserted;
     }
 
     @Override

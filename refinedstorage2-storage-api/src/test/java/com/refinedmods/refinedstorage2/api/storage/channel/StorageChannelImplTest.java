@@ -45,13 +45,13 @@ class StorageChannelImplTest {
         // Act
         sut.addSource(storage);
 
-        long remainder = sut.insert("A", 3, Action.EXECUTE);
+        long inserted = sut.insert("A", 3, Action.EXECUTE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
                 new ResourceAmount<>("A", 10)
         );
-        assertThat(remainder).isEqualTo(1);
+        assertThat(inserted).isEqualTo(2);
     }
 
     @Test
@@ -160,16 +160,16 @@ class StorageChannelImplTest {
         sut.addSource(new CappedStorage<>(10));
 
         // Act
-        long remainder1 = sut.insert("A", 5, Action.EXECUTE);
-        long remainder2 = sut.insert("B", 4, Action.EXECUTE);
+        long inserted1 = sut.insert("A", 5, Action.EXECUTE);
+        long inserted2 = sut.insert("B", 4, Action.EXECUTE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 5),
                 new ResourceAmount<>("B", 4)
         );
-        assertThat(remainder1).isZero();
-        assertThat(remainder2).isZero();
+        assertThat(inserted1).isEqualTo(5);
+        assertThat(inserted2).isEqualTo(4);
         assertThat(sut.getTracker().getEntry("A")).isEmpty();
         assertThat(sut.getTracker().getEntry("B")).isEmpty();
         assertThat(sut.getStored()).isEqualTo(9);
@@ -280,13 +280,13 @@ class StorageChannelImplTest {
         sut.addSource(storage);
 
         // Act
-        long remainder = sut.insert("A", 10, () -> "Test source");
+        long inserted = sut.insert("A", 10, () -> "Test source");
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 10)
         );
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(10);
         assertThat(sut.getTracker().getEntry("A")).isNotEmpty();
         assertThat(sut.getTracker().getEntry("A").get()).usingRecursiveComparison().isEqualTo(new StorageTracker.Entry(trackerClock.get(), "Test source"));
     }

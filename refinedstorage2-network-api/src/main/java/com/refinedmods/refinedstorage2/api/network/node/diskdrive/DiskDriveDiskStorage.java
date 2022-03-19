@@ -65,11 +65,11 @@ public class DiskDriveDiskStorage<T> implements Storage<T> {
 
     @Override
     public long insert(T resource, long amount, Action action) {
-        long remainder = parent.insert(resource, amount, action);
-        if (action == Action.EXECUTE && remainder != amount) {
+        long inserted = parent.insert(resource, amount, action);
+        if (inserted > 0 && action == Action.EXECUTE) {
             checkStateChanged();
         }
-        return remainder;
+        return inserted;
     }
 
     @Override

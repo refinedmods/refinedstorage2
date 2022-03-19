@@ -20,10 +20,10 @@ class InMemoryStorageImplTest {
     @EnumSource(Action.class)
     void Test_adding_a_resource(Action action) {
         // Act
-        long remainder = sut.insert("A", 64, action);
+        long inserted = sut.insert("A", 64, action);
 
         // Assert
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(64);
 
         if (action == Action.EXECUTE) {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(

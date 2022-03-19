@@ -302,14 +302,14 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        long remainder1 = fakeStorageChannelOf(network).insert("A", 150, Action.EXECUTE);
-        long remainder2 = fakeStorageChannelOf(network).insert("A", 10, Action.EXECUTE);
-        long remainder3 = fakeStorageChannelOf(network).insert("B", 300, Action.EXECUTE);
+        long inserted1 = fakeStorageChannelOf(network).insert("A", 150, Action.EXECUTE);
+        long inserted2 = fakeStorageChannelOf(network).insert("A", 10, Action.EXECUTE);
+        long inserted3 = fakeStorageChannelOf(network).insert("B", 300, Action.EXECUTE);
 
         // Assert
-        assertThat(remainder1).isZero();
-        assertThat(remainder2).isZero();
-        assertThat(remainder3).isEqualTo(160);
+        assertThat(inserted1).isEqualTo(150);
+        assertThat(inserted2).isEqualTo(10);
+        assertThat(inserted3).isEqualTo(140);
 
         assertThat(storage1.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 100)
@@ -326,7 +326,7 @@ class DiskDriveNetworkNodeTest {
                 new ResourceAmount<>("A", 160)
         );
 
-        assertThat(storageOf(sut).getStored()).isEqualTo(150 + 10 + 140);
+        assertThat(storageOf(sut).getStored()).isEqualTo(inserted1 + inserted2 + inserted3);
     }
 
     @Test
@@ -385,14 +385,14 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        long remainder1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
-        long remainder2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
-        long remainder3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
+        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
+        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
+        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
 
         // Assert
-        assertThat(remainder1).isZero();
-        assertThat(remainder2).isZero();
-        assertThat(remainder3).isEqualTo(10);
+        assertThat(inserted1).isEqualTo(12);
+        assertThat(inserted2).isEqualTo(12);
+        assertThat(inserted3).isZero();
     }
 
     @Test
@@ -407,14 +407,14 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        long remainder1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
-        long remainder2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
-        long remainder3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
+        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
+        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
+        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
 
         // Assert
-        assertThat(remainder1).isEqualTo(12);
-        assertThat(remainder2).isEqualTo(12);
-        assertThat(remainder3).isEqualTo(10);
+        assertThat(inserted1).isZero();
+        assertThat(inserted2).isZero();
+        assertThat(inserted3).isZero();
     }
 
     @Test
@@ -429,14 +429,14 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        long remainder1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
-        long remainder2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
-        long remainder3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
+        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
+        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
+        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
 
         // Assert
-        assertThat(remainder1).isEqualTo(12);
-        assertThat(remainder2).isEqualTo(12);
-        assertThat(remainder3).isZero();
+        assertThat(inserted1).isZero();
+        assertThat(inserted2).isZero();
+        assertThat(inserted3).isEqualTo(10);
     }
 
     @Test
@@ -451,14 +451,14 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        long remainder1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
-        long remainder2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
-        long remainder3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
+        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
+        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
+        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
 
         // Assert
-        assertThat(remainder1).isZero();
-        assertThat(remainder2).isZero();
-        assertThat(remainder3).isZero();
+        assertThat(inserted1).isEqualTo(12);
+        assertThat(inserted2).isEqualTo(12);
+        assertThat(inserted3).isEqualTo(10);
     }
 
     @ParameterizedTest
@@ -473,12 +473,12 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        long remainder = storageOf(sut).insert("A", 5, Action.EXECUTE);
+        long inserted = storageOf(sut).insert("A", 5, Action.EXECUTE);
 
         // Assert
         switch (accessMode) {
-            case INSERT_EXTRACT, INSERT -> assertThat(remainder).isZero();
-            case EXTRACT -> assertThat(remainder).isEqualTo(5);
+            case INSERT_EXTRACT, INSERT -> assertThat(inserted).isEqualTo(5);
+            case EXTRACT -> assertThat(inserted).isZero();
         }
     }
 
@@ -517,10 +517,10 @@ class DiskDriveNetworkNodeTest {
         sut.setActivenessProvider(() -> false);
 
         // Act
-        long remainder = storageOf(sut).insert("A", 5, Action.EXECUTE);
+        long inserted = storageOf(sut).insert("A", 5, Action.EXECUTE);
 
         // Assert
-        assertThat(remainder).isEqualTo(5);
+        assertThat(inserted).isZero();
     }
 
     @Test

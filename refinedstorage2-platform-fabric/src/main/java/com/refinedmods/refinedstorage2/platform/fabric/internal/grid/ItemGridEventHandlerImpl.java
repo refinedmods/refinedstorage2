@@ -77,11 +77,10 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
             ItemVariant itemVariant = toItemVariant(resource);
             try (Transaction tx = Transaction.openOuter()) {
                 long inserted = insert(itemVariant, amount, tx, cursor);
-                long remainder = amount - inserted;
                 if (action == Action.EXECUTE) {
                     tx.commit();
                 }
-                return remainder;
+                return inserted;
             }
         });
     }
@@ -114,11 +113,10 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
             ItemVariant itemVariant = toItemVariant(resource);
             try (Transaction tx = Transaction.openOuter()) {
                 long inserted = destinationStorage.insert(itemVariant, amount, tx);
-                long remainder = amount - inserted;
                 if (action == Action.EXECUTE) {
                     tx.commit();
                 }
-                return remainder;
+                return inserted;
             }
         });
     }
