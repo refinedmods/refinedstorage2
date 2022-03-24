@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
+import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
@@ -73,7 +74,7 @@ class DiskDriveNetworkNodeTest {
     void Test_initialization() {
         // Arrange
         Storage<String> storage = new CappedStorage<>(10);
-        storage.insert("A", 5, Action.EXECUTE);
+        storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
 
         // Act
@@ -90,7 +91,7 @@ class DiskDriveNetworkNodeTest {
     void Test_initial_state() {
         // Arrange
         Storage<String> storage = new CappedStorage<>(10);
-        storage.insert("A", 5, Action.EXECUTE);
+        storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
 
         // Act
@@ -112,13 +113,13 @@ class DiskDriveNetworkNodeTest {
     void Test_disk_state(boolean active) {
         // Arrange
         Storage<String> normalStorage = new CappedStorage<>(100);
-        normalStorage.insert("A", 74, Action.EXECUTE);
+        normalStorage.insert("A", 74, Action.EXECUTE, EmptySource.INSTANCE);
 
         Storage<String> nearCapacityStorage = new CappedStorage<>(100);
-        nearCapacityStorage.insert("A", 75, Action.EXECUTE);
+        nearCapacityStorage.insert("A", 75, Action.EXECUTE, EmptySource.INSTANCE);
 
         Storage<String> fullStorage = new CappedStorage<>(100);
-        fullStorage.insert("A", 100, Action.EXECUTE);
+        fullStorage.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
         Storage<String> nonCappedStorage = new InMemoryStorageImpl<>();
 
@@ -155,7 +156,7 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         Storage<String> storage = new CappedStorage<>(10);
-        storage.insert("A", 5, Action.EXECUTE);
+        storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(7, storage);
 
         // Act
@@ -176,14 +177,14 @@ class DiskDriveNetworkNodeTest {
     void Test_changing_disk_in_slot() {
         // Arrange
         Storage<String> storage1 = new CappedStorage<>(10);
-        storage1.insert("A", 5, Action.EXECUTE);
+        storage1.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(7, storage1);
 
         initializeAndActivate();
 
         // Act
         Storage<String> storage2 = new CappedStorage<>(10);
-        storage2.insert("B", 2, Action.EXECUTE);
+        storage2.insert("B", 2, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(7, storage2);
         sut.onDiskChanged(7);
 
@@ -202,7 +203,7 @@ class DiskDriveNetworkNodeTest {
     void Test_removing_disk_in_slot() {
         // Arrange
         Storage<String> storage = new CappedStorage<>(10);
-        storage.insert("A", 5, Action.EXECUTE);
+        storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(7, storage);
 
         initializeAndActivate();
@@ -238,8 +239,8 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         Storage<String> storage = new CappedStorage<>(100);
-        storage.insert("A", 50, Action.EXECUTE);
-        storage.insert("B", 50, Action.EXECUTE);
+        storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
 
         sut.setActivenessProvider(() -> false);
@@ -264,8 +265,8 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         Storage<String> storage = new CappedStorage<>(100);
-        storage.insert("A", 50, Action.EXECUTE);
-        storage.insert("B", 50, Action.EXECUTE);
+        storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
         sut.onDiskChanged(1);
 
@@ -302,9 +303,9 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        long inserted1 = fakeStorageChannelOf(network).insert("A", 150, Action.EXECUTE);
-        long inserted2 = fakeStorageChannelOf(network).insert("A", 10, Action.EXECUTE);
-        long inserted3 = fakeStorageChannelOf(network).insert("B", 300, Action.EXECUTE);
+        long inserted1 = fakeStorageChannelOf(network).insert("A", 150, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted2 = fakeStorageChannelOf(network).insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted3 = fakeStorageChannelOf(network).insert("B", 300, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted1).isEqualTo(150);
@@ -333,23 +334,23 @@ class DiskDriveNetworkNodeTest {
     void Test_extracting() {
         // Arrange
         Storage<String> storage1 = new CappedStorage<>(100);
-        storage1.insert("A", 50, Action.EXECUTE);
-        storage1.insert("B", 50, Action.EXECUTE);
+        storage1.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage1.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage1);
 
         Storage<String> storage2 = new CappedStorage<>(100);
-        storage2.insert("A", 50, Action.EXECUTE);
-        storage2.insert("B", 50, Action.EXECUTE);
+        storage2.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage2.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(2, storage2);
 
         Storage<String> storage3 = new CappedStorage<>(100);
-        storage3.insert("C", 10, Action.EXECUTE);
+        storage3.insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(3, storage3);
 
         initializeAndActivate();
 
         // Act
-        long extracted = fakeStorageChannelOf(network).extract("A", 85, Action.EXECUTE);
+        long extracted = fakeStorageChannelOf(network).extract("A", 85, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(85);
@@ -385,9 +386,9 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
-        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
-        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
+        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted1).isEqualTo(12);
@@ -407,9 +408,9 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
-        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
-        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
+        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted1).isZero();
@@ -429,9 +430,9 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
-        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
-        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
+        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted1).isZero();
@@ -451,9 +452,9 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE);
-        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE);
-        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE);
+        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted1).isEqualTo(12);
@@ -473,7 +474,7 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        long inserted = storageOf(sut).insert("A", 5, Action.EXECUTE);
+        long inserted = storageOf(sut).insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         switch (accessMode) {
@@ -493,10 +494,10 @@ class DiskDriveNetworkNodeTest {
 
         initializeAndActivate();
 
-        storage.insert("A", 20, Action.EXECUTE);
+        storage.insert("A", 20, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
-        long extracted = storageOf(sut).extract("A", 5, Action.EXECUTE);
+        long extracted = storageOf(sut).extract("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         switch (accessMode) {
@@ -517,7 +518,7 @@ class DiskDriveNetworkNodeTest {
         sut.setActivenessProvider(() -> false);
 
         // Act
-        long inserted = storageOf(sut).insert("A", 5, Action.EXECUTE);
+        long inserted = storageOf(sut).insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted).isZero();
@@ -529,14 +530,14 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         Storage<String> storage = new CappedStorage<>(100);
-        storage.insert("A", 20, Action.EXECUTE);
+        storage.insert("A", 20, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
         sut.onDiskChanged(1);
 
         sut.setActivenessProvider(() -> false);
 
         // Act
-        long extracted = storageOf(sut).extract("A", 5, Action.EXECUTE);
+        long extracted = storageOf(sut).extract("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isZero();
@@ -548,8 +549,8 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         Storage<String> storage = new CappedStorage<>(100);
-        storage.insert("A", 50, Action.EXECUTE);
-        storage.insert("B", 50, Action.EXECUTE);
+        storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
         sut.onDiskChanged(1);
 
@@ -565,8 +566,8 @@ class DiskDriveNetworkNodeTest {
     void Test_activeness() {
         // Arrange
         Storage<String> storage = new CappedStorage<>(100);
-        storage.insert("A", 50, Action.EXECUTE);
-        storage.insert("B", 50, Action.EXECUTE);
+        storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
 
         sut.initialize(storageProviderRepository);
@@ -589,13 +590,13 @@ class DiskDriveNetworkNodeTest {
     void Test_disk_state_change_listener_should_not_be_called_when_not_necessary_on_extracting() {
         // Arrange
         Storage<String> storage = new CappedStorage<>(100);
-        storage.insert("A", 76, Action.EXECUTE);
+        storage.insert("A", 76, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
 
         initializeAndActivate();
 
         // Act
-        fakeStorageChannelOf(network).extract("A", 1, Action.EXECUTE);
+        fakeStorageChannelOf(network).extract("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         verify(diskDriveListener, never()).onDiskChanged();
@@ -610,7 +611,7 @@ class DiskDriveNetworkNodeTest {
         initializeAndActivate();
 
         // Act
-        fakeStorageChannelOf(network).insert("A", 74, Action.EXECUTE);
+        fakeStorageChannelOf(network).insert("A", 74, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         verify(diskDriveListener, never()).onDiskChanged();
@@ -621,14 +622,14 @@ class DiskDriveNetworkNodeTest {
     void Test_disk_state_change_listener_should_be_called_when_necessary_on_extracting(Action action) {
         // Arrange
         Storage<String> storage = new CappedStorage<>(100);
-        storage.insert("A", 75, Action.EXECUTE);
+        storage.insert("A", 75, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
 
         initializeAndActivate();
 
         // Act
-        fakeStorageChannelOf(network).extract("A", 1, action);
-        fakeStorageChannelOf(network).extract("A", 1, action);
+        fakeStorageChannelOf(network).extract("A", 1, action, EmptySource.INSTANCE);
+        fakeStorageChannelOf(network).extract("A", 1, action, EmptySource.INSTANCE);
 
         // Assert
         VerificationMode expectedTimes = action == Action.EXECUTE ? times(1) : never();
@@ -645,11 +646,11 @@ class DiskDriveNetworkNodeTest {
 
         initializeAndActivate();
 
-        storageOf(sut).insert("A", 74, Action.EXECUTE);
+        storageOf(sut).insert("A", 74, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
-        fakeStorageChannelOf(network).insert("A", 1, action);
-        fakeStorageChannelOf(network).insert("A", 1, action);
+        fakeStorageChannelOf(network).insert("A", 1, action, EmptySource.INSTANCE);
+        fakeStorageChannelOf(network).insert("A", 1, action, EmptySource.INSTANCE);
 
         // Assert
         VerificationMode expectedTimes = action == Action.EXECUTE ? times(1) : never();
@@ -681,7 +682,7 @@ class DiskDriveNetworkNodeTest {
         }
 
         // Act
-        fakeStorageChannelOf(network).insert("A", 1, Action.EXECUTE);
+        fakeStorageChannelOf(network).insert("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         if (oneHasPriority) {
