@@ -10,7 +10,7 @@ import org.apiguardian.api.API;
  * Implement this on classes that can provide a storage for a given storage channel.
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public interface StorageSource {
+public interface StorageProvider {
     /**
      * @param channelType the storage channel type
      * @param <T>         the type of resource
