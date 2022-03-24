@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.StorageProvider;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
-import com.refinedmods.refinedstorage2.api.storage.StorageSource;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 
@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageSource {
+public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProvider {
     public static final int DISK_COUNT = 8;
 
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
