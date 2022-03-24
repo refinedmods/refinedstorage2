@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListe
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageProviderRepository;
 import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
+import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
@@ -28,7 +29,7 @@ class NetworkImplTest {
         // Arrange
         FakeStorageProviderRepository storageProviderRepository = new FakeStorageProviderRepository();
         Storage<String> storage = new CappedStorage<>(10);
-        storage.insert("A", 10, Action.EXECUTE);
+        storage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
         DiskDriveNetworkNode diskDrive = new DiskDriveNetworkNode(0, 0, STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(sut);

@@ -46,7 +46,7 @@ class StorageRepositoryImplTest {
         // Arrange
         UUID id = UUID.randomUUID();
         Storage<String> storage = new CappedStorage<>(10);
-        storage.insert("A", 5, Action.EXECUTE);
+        storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
         sut.set(id, storage);
@@ -63,7 +63,7 @@ class StorageRepositoryImplTest {
         // Arrange
         UUID id = UUID.randomUUID();
         Storage<String> storage = new InMemoryStorageImpl<>();
-        storage.insert("A", 5, Action.EXECUTE);
+        storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
         sut.set(id, storage);
@@ -99,7 +99,7 @@ class StorageRepositoryImplTest {
         // Arrange
         UUID id = UUID.randomUUID();
         Storage<String> storage = new CappedStorage<>(10);
-        storage.insert("A", 5, Action.EXECUTE);
+        storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
         sut.set(id, storage);
 
         // Act

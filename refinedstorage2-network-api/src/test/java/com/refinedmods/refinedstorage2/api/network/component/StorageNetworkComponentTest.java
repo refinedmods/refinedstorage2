@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStoragePro
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
+import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
@@ -62,7 +63,7 @@ class StorageNetworkComponentTest {
         // Act
         sut.onContainerAdded(diskDriveContainer);
 
-        long inserted = storageChannel.insert("A", 10, Action.EXECUTE);
+        long inserted = storageChannel.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted).isEqualTo(10);
@@ -72,7 +73,7 @@ class StorageNetworkComponentTest {
     @Test
     void Test_removing_storage_source_container() {
         // Arrange
-        diskDrive.getStorageForChannel(StorageChannelTypes.FAKE).get().insert("A", 10, Action.EXECUTE);
+        diskDrive.getStorageForChannel(StorageChannelTypes.FAKE).get().insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         StorageChannel<String> storageChannel = sut.getStorageChannel(StorageChannelTypes.FAKE);
 
