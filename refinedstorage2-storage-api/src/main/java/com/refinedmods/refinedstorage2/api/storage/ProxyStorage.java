@@ -26,13 +26,13 @@ public class ProxyStorage<T> implements Storage<T> {
     }
 
     @Override
-    public long extract(T resource, long amount, Action action) {
-        return parent.extract(resource, amount, action);
+    public long extract(T resource, long amount, Action action, Source source) {
+        return parent.extract(resource, amount, action, source);
     }
 
     @Override
-    public long insert(T resource, long amount, Action action) {
-        return parent.insert(resource, amount, action);
+    public long insert(T resource, long amount, Action action, Source source) {
+        return parent.insert(resource, amount, action, source);
     }
 
     @Override
