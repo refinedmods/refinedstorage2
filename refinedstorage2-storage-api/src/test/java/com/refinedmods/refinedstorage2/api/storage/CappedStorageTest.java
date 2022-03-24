@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,7 +15,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
 class CappedStorageTest {
-    private final Storage<String> sut = new CappedStorage<>(100);
+    private SourceCapturingStorage<String> backed;
+    private CappedStorage<String> sut;
+    private final Source customSource = () -> "Custom";
+
+    @BeforeEach
+    void setUp() {
+        backed = new SourceCapturingStorage<>(new InMemoryStorageImpl<>());
+        sut = new CappedStorage<>(backed, 100);
+    }
 
     @Test
     void Test_negative_capacity() {
@@ -28,21 +37,22 @@ class CappedStorageTest {
     @Test
     void Test_zero_capacity() {
         // Arrange
-        Storage<String> backed = new InMemoryStorageImpl<>();
+        SourceCapturingStorage<String> backed = new SourceCapturingStorage<>(new InMemoryStorageImpl<>());
         Storage<String> sut = new CappedStorage<>(backed, 0);
 
         // Act
-        long inserted = sut.insert("A", 1, Action.EXECUTE);
+        long inserted = sut.insert("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted).isZero();
+        assertThat(backed.getSourcesUsed()).isEmpty();
     }
 
     @ParameterizedTest
     @EnumSource(Action.class)
     void Test_adding_a_resource(Action action) {
         // Act
-        long inserted = sut.insert("A", 100, action);
+        long inserted = sut.insert("A", 100, action, customSource);
 
         // Assert
         assertThat(inserted).isEqualTo(100);
@@ -56,14 +66,16 @@ class CappedStorageTest {
             assertThat(sut.getAll()).isEmpty();
             assertThat(sut.getStored()).isZero();
         }
+
+        assertThat(backed.getSourcesUsed()).containsExactly(customSource);
     }
 
     @ParameterizedTest
     @EnumSource(Action.class)
     void Test_adding_a_resource_and_exceeding_capacity(Action action) {
         // Act
-        long inserted1 = sut.insert("A", 60, Action.EXECUTE);
-        long inserted2 = sut.insert("B", 45, action);
+        long inserted1 = sut.insert("A", 60, Action.EXECUTE, customSource);
+        long inserted2 = sut.insert("B", 45, action, customSource);
 
         // Assert
         assertThat(inserted1).isEqualTo(60);
@@ -81,32 +93,49 @@ class CappedStorageTest {
             );
             assertThat(sut.getStored()).isEqualTo(60);
         }
+
+        assertThat(backed.getSourcesUsed()).containsExactly(customSource, customSource);
     }
 
     @ParameterizedTest
     @EnumSource(Action.class)
     void Test_adding_resource_to_an_already_full_storage_and_exceeding_capacity(Action action) {
         // Act
-        long inserted1 = sut.insert("A", 100, Action.EXECUTE);
-        long inserted2 = sut.insert("A", 101, action);
+        long inserted1 = sut.insert("A", 100, Action.EXECUTE, customSource);
+        long inserted2 = sut.insert("A", 101, action, customSource);
 
         // Assert
         assertThat(inserted1).isEqualTo(100);
         assertThat(inserted2).isZero();
 
         assertThat(sut.getStored()).isEqualTo(100);
+
+        assertThat(backed.getSourcesUsed()).containsExactly(customSource);
     }
 
     @Test
     void Test_adding_invalid_resource() {
         // Act
-        Executable action1 = () -> sut.insert("A", 0, Action.EXECUTE);
-        Executable action2 = () -> sut.insert("A", -1, Action.EXECUTE);
-        Executable action3 = () -> sut.insert(null, 1, Action.EXECUTE);
+        Executable action1 = () -> sut.insert("A", 0, Action.EXECUTE, EmptySource.INSTANCE);
+        Executable action2 = () -> sut.insert("A", -1, Action.EXECUTE, EmptySource.INSTANCE);
+        Executable action3 = () -> sut.insert(null, 1, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThrows(IllegalArgumentException.class, action1);
         assertThrows(IllegalArgumentException.class, action2);
         assertThrows(NullPointerException.class, action3);
+    }
+
+    @Test
+    void Test_extracting_resource() {
+        // Arrange
+        sut.insert("A", 100, Action.EXECUTE, customSource);
+
+        // Act
+        long extracted = sut.extract("A", 101, Action.EXECUTE, customSource);
+
+        // Assert
+        assertThat(extracted).isEqualTo(100);
+        assertThat(backed.getSourcesUsed()).containsExactly(customSource, customSource);
     }
 }
