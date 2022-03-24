@@ -7,7 +7,7 @@ import org.apiguardian.api.API;
 
 /**
  * This class can decorate any other {@link Storage} to add a capacity to it.
- * {@link Storage#insert(Object, long, Action)} operations will respect this capacity.
+ * {@link InsertableStorage#insert(Object, long, Action, Source)} operations will respect this capacity.
  *
  * @param <T> the type of resource
  */
@@ -35,21 +35,21 @@ public class CappedStorage<T> extends ProxyStorage<T> implements CapacityAccesso
     }
 
     @Override
-    public long insert(T resource, long amount, Action action) {
+    public long insert(T resource, long amount, Action action, Source source) {
         Preconditions.checkArgument(amount > 0, "Amount must be larger than 0");
         if (parent.getStored() + amount > capacity) {
-            return insertPartly(resource, action);
+            return insertPartly(resource, action, source);
         } else {
-            return super.insert(resource, amount, action);
+            return super.insert(resource, amount, action, source);
         }
     }
 
-    private long insertPartly(T resource, Action action) {
+    private long insertPartly(T resource, Action action, Source source) {
         long spaceRemainingInStorage = capacity - parent.getStored();
         if (spaceRemainingInStorage == 0) {
             return 0;
         }
-        return super.insert(resource, spaceRemainingInStorage, action);
+        return super.insert(resource, spaceRemainingInStorage, action, source);
     }
 
     @Override
