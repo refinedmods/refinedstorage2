@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.CapacityAccessor;
 import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
+import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
@@ -30,7 +31,7 @@ public class FluidStorageType implements StorageType<FluidResource> {
         Storage<FluidResource> storage = createStorage(tag, storageRepository);
         ListTag stacks = tag.getList(TAG_STACKS, Tag.TAG_COMPOUND);
         for (Tag stackTag : stacks) {
-            FluidResource.fromTagWithAmount((CompoundTag) stackTag).ifPresent(resourceAmount -> storage.insert(resourceAmount.getResource(), resourceAmount.getAmount(), Action.EXECUTE));
+            FluidResource.fromTagWithAmount((CompoundTag) stackTag).ifPresent(resourceAmount -> storage.insert(resourceAmount.getResource(), resourceAmount.getAmount(), Action.EXECUTE, EmptySource.INSTANCE));
         }
         return storage;
     }
