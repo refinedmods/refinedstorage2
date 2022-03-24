@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 
 import java.util.Collection;
 
+import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
 
 /**
@@ -20,7 +21,8 @@ public class InMemoryStorageImpl<T> implements Storage<T> {
     private long stored;
 
     @Override
-    public long extract(T resource, long amount, Action action) {
+    public long extract(T resource, long amount, Action action, Source source) {
+        Preconditions.checkNotNull(source);
         ResourceAmount.validate(resource, amount);
 
         return list.get(resource).map(resourceAmount -> {
@@ -51,7 +53,8 @@ public class InMemoryStorageImpl<T> implements Storage<T> {
     }
 
     @Override
-    public long insert(T resource, long amount, Action action) {
+    public long insert(T resource, long amount, Action action, Source source) {
+        Preconditions.checkNotNull(source);
         ResourceAmount.validate(resource, amount);
         insertCompletely(resource, amount, action);
         return amount;

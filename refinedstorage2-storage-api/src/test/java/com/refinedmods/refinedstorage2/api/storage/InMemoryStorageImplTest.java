@@ -18,9 +18,9 @@ class InMemoryStorageImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_adding_a_resource(Action action) {
+    void Test_inserting_a_resource(Action action) {
         // Act
-        long inserted = sut.insert("A", 64, action);
+        long inserted = sut.insert("A", 64, action, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted).isEqualTo(64);
@@ -37,22 +37,24 @@ class InMemoryStorageImplTest {
     }
 
     @Test
-    void Test_adding_invalid_resource() {
+    void Test_inserting_invalid_resource() {
         // Act
-        Executable action1 = () -> sut.insert("A", 0, Action.EXECUTE);
-        Executable action2 = () -> sut.insert("A", -1, Action.EXECUTE);
-        Executable action3 = () -> sut.insert(null, 1, Action.EXECUTE);
+        Executable action1 = () -> sut.insert("A", 0, Action.EXECUTE, EmptySource.INSTANCE);
+        Executable action2 = () -> sut.insert("A", -1, Action.EXECUTE, EmptySource.INSTANCE);
+        Executable action3 = () -> sut.insert(null, 1, Action.EXECUTE, EmptySource.INSTANCE);
+        Executable action4 = () -> sut.insert("A", 1, Action.EXECUTE, null);
 
         // Assert
         assertThrows(IllegalArgumentException.class, action1);
         assertThrows(IllegalArgumentException.class, action2);
         assertThrows(NullPointerException.class, action3);
+        assertThrows(NullPointerException.class, action4);
     }
 
     @Test
     void Test_extracting_non_existent_resource() {
         // Act
-        long extracted = sut.extract("A", 1, Action.EXECUTE);
+        long extracted = sut.extract("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isZero();
@@ -63,10 +65,10 @@ class InMemoryStorageImplTest {
     @EnumSource(Action.class)
     void Test_extracting_resource_partly(Action action) {
         // Arrange
-        sut.insert("A", 32, Action.EXECUTE);
+        sut.insert("A", 32, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
-        long extracted = sut.extract("A", 2, action);
+        long extracted = sut.extract("A", 2, action, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(2);
@@ -88,10 +90,10 @@ class InMemoryStorageImplTest {
     @EnumSource(Action.class)
     void Test_extracting_resource_completely(Action action) {
         // Arrange
-        sut.insert("A", 32, Action.EXECUTE);
+        sut.insert("A", 32, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
-        long extracted = sut.extract("A", 32, action);
+        long extracted = sut.extract("A", 32, action, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(32);
@@ -111,10 +113,10 @@ class InMemoryStorageImplTest {
     @EnumSource(Action.class)
     void Test_extracting_resource_more_than_is_available(Action action) {
         // Arrange
-        sut.insert("A", 32, Action.EXECUTE);
+        sut.insert("A", 32, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
-        long extracted = sut.extract("A", 33, action);
+        long extracted = sut.extract("A", 33, action, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(32);
@@ -131,15 +133,17 @@ class InMemoryStorageImplTest {
     }
 
     @Test
-    void Test_extracting_invalid_resource_count() {
+    void Test_extracting_invalid_resource() {
         // Act
-        Executable action1 = () -> sut.extract("A", 0, Action.EXECUTE);
-        Executable action2 = () -> sut.extract("A", -1, Action.EXECUTE);
-        Executable action3 = () -> sut.extract(null, 1, Action.EXECUTE);
+        Executable action1 = () -> sut.extract("A", 0, Action.EXECUTE, EmptySource.INSTANCE);
+        Executable action2 = () -> sut.extract("A", -1, Action.EXECUTE, EmptySource.INSTANCE);
+        Executable action3 = () -> sut.extract(null, 1, Action.EXECUTE, EmptySource.INSTANCE);
+        Executable action4 = () -> sut.extract("A", 1, Action.EXECUTE, null);
 
         // Assert
         assertThrows(IllegalArgumentException.class, action1);
         assertThrows(IllegalArgumentException.class, action2);
         assertThrows(NullPointerException.class, action3);
+        assertThrows(NullPointerException.class, action4);
     }
 }
