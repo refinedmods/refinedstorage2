@@ -7,9 +7,9 @@ import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
-import org.apiguardian.api.API;
-
 import java.util.function.Function;
+
+import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public class GridServiceImpl<T> implements GridService<T> {
@@ -37,14 +37,14 @@ public class GridServiceImpl<T> implements GridService<T> {
         if (amount == 0) {
             return;
         }
-        long extractedFromSource = storageChannel.extract(resource, amount, Action.SIMULATE);
+        long extractedFromSource = storageChannel.extract(resource, amount, Action.SIMULATE, this.source);
         if (extractedFromSource == 0) {
             return;
         }
-        long amountInsertedIntoDestination = destination.insert(resource, extractedFromSource, Action.SIMULATE);
+        long amountInsertedIntoDestination = destination.insert(resource, extractedFromSource, Action.SIMULATE, this.source);
         if (amountInsertedIntoDestination > 0) {
             extractedFromSource = storageChannel.extract(resource, amountInsertedIntoDestination, source);
-            destination.insert(resource, extractedFromSource, Action.EXECUTE);
+            destination.insert(resource, extractedFromSource, Action.EXECUTE, this.source);
         }
     }
 
@@ -69,13 +69,13 @@ public class GridServiceImpl<T> implements GridService<T> {
             case ENTIRE_RESOURCE -> maxCountProvider.apply(resource);
             case SINGLE_RESOURCE -> singleAmount;
         };
-        long extractedFromSource = source.extract(resource, amount, Action.SIMULATE);
+        long extractedFromSource = source.extract(resource, amount, Action.SIMULATE, this.source);
         if (extractedFromSource == 0) {
             return;
         }
-        long amountInsertedIntoDestination = storageChannel.insert(resource, extractedFromSource, Action.SIMULATE);
+        long amountInsertedIntoDestination = storageChannel.insert(resource, extractedFromSource, Action.SIMULATE, this.source);
         if (amountInsertedIntoDestination > 0) {
-            extractedFromSource = source.extract(resource, amountInsertedIntoDestination, Action.EXECUTE);
+            extractedFromSource = source.extract(resource, amountInsertedIntoDestination, Action.EXECUTE, this.source);
             if (extractedFromSource > 0) {
                 storageChannel.insert(resource, extractedFromSource, this.source);
             }
