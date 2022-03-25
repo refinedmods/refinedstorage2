@@ -3,6 +3,8 @@ package com.refinedmods.refinedstorage2.api.grid.service;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
+import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelImpl;
@@ -19,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
 class GridServiceImplTest {
+    private static final String SOURCE_NAME = "Test source";
     private static final long MAX_COUNT = 15;
 
     private StorageChannel<String> storageChannel;
@@ -27,7 +30,7 @@ class GridServiceImplTest {
     @BeforeEach
     void setUp() {
         storageChannel = new StorageChannelImpl<>(new StorageTracker<>(() -> 0L));
-        sut = new GridServiceImpl<>(storageChannel, () -> "Test source", r -> MAX_COUNT, 1);
+        sut = new GridServiceImpl<>(storageChannel, () -> SOURCE_NAME, r -> MAX_COUNT, 1);
     }
 
     @Nested
@@ -37,7 +40,7 @@ class GridServiceImplTest {
         void Test_inserting(GridInsertMode insertMode) {
             // Arrange
             Storage<String> source = new CappedStorage<>(100);
-            source.insert("A", MAX_COUNT * 3, Action.EXECUTE);
+            source.insert("A", MAX_COUNT * 3, Action.EXECUTE, EmptySource.INSTANCE);
 
             storageChannel.addSource(new CappedStorage<>(100));
 
@@ -57,6 +60,7 @@ class GridServiceImplTest {
                     new ResourceAmount<>("A", (MAX_COUNT * 3) - expectedAmount)
             );
             assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
+            assertThat(storageChannel.getTracker().getEntry("A").get().name()).isEqualTo(SOURCE_NAME);
         }
 
         @ParameterizedTest
@@ -81,10 +85,10 @@ class GridServiceImplTest {
         void Test_inserting_with_no_space_in_storage(GridInsertMode insertMode) {
             // Arrange
             Storage<String> source = new CappedStorage<>(100);
-            source.insert("A", 100, Action.EXECUTE);
+            source.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
             storageChannel.addSource(new CappedStorage<>(100));
-            storageChannel.insert("A", 100, Action.EXECUTE);
+            storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
             sut.insert("A", insertMode, source);
@@ -106,10 +110,10 @@ class GridServiceImplTest {
         void Test_inserting_with_remainder() {
             // Arrange
             Storage<String> source = new CappedStorage<>(100);
-            source.insert("A", MAX_COUNT, Action.EXECUTE);
+            source.insert("A", MAX_COUNT, Action.EXECUTE, EmptySource.INSTANCE);
 
             storageChannel.addSource(new CappedStorage<>(100));
-            storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE);
+            storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
             sut.insert("A", GridInsertMode.ENTIRE_RESOURCE, source);
@@ -122,6 +126,7 @@ class GridServiceImplTest {
                     new ResourceAmount<>("A", 1)
             );
             assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
+            assertThat(storageChannel.getTracker().getEntry("A").get().name()).isEqualTo(SOURCE_NAME);
         }
 
         @Test
@@ -134,17 +139,17 @@ class GridServiceImplTest {
             // Arrange
             Storage<String> source = new CappedStorage<>(100) {
                 @Override
-                public long extract(String resource, long amount, Action action) {
+                public long extract(String resource, long amount, Action action, Source source) {
                     if (amount != MAX_COUNT) {
                         return 0;
                     }
-                    return super.extract(resource, amount, action);
+                    return super.extract(resource, amount, action, source);
                 }
             };
-            source.insert("A", MAX_COUNT, Action.EXECUTE);
+            source.insert("A", MAX_COUNT, Action.EXECUTE, EmptySource.INSTANCE);
 
             storageChannel.addSource(new CappedStorage<>(100));
-            storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE);
+            storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
             sut.insert("A", GridInsertMode.ENTIRE_RESOURCE, source);
@@ -169,7 +174,7 @@ class GridServiceImplTest {
             Storage<String> destination = new CappedStorage<>(100);
 
             storageChannel.addSource(new CappedStorage<>(100));
-            storageChannel.insert("A", 100, Action.EXECUTE);
+            storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
             sut.extract("A", extractMode, destination);
@@ -188,6 +193,7 @@ class GridServiceImplTest {
                     new ResourceAmount<>("A", expectedExtracted)
             );
             assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
+            assertThat(storageChannel.getTracker().getEntry("A").get().name()).isEqualTo(SOURCE_NAME);
         }
 
         @ParameterizedTest
@@ -212,10 +218,10 @@ class GridServiceImplTest {
         void Test_extracting_resource_with_no_space_in_destination(GridExtractMode extractMode) {
             // Arrange
             Storage<String> destination = new CappedStorage<>(100);
-            destination.insert("B", 100, Action.EXECUTE);
+            destination.insert("B", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
             storageChannel.addSource(new CappedStorage<>(100));
-            storageChannel.insert("A", 100, Action.EXECUTE);
+            storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
             sut.extract("A", extractMode, destination);
@@ -239,7 +245,7 @@ class GridServiceImplTest {
             Storage<String> destination = new CappedStorage<>(100);
 
             storageChannel.addSource(new CappedStorage<>(100));
-            storageChannel.insert("A", MAX_COUNT - 1, Action.EXECUTE);
+            storageChannel.insert("A", MAX_COUNT - 1, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
             sut.extract("A", GridExtractMode.ENTIRE_RESOURCE, destination);
@@ -250,6 +256,7 @@ class GridServiceImplTest {
                     new ResourceAmount<>("A", MAX_COUNT - 1)
             );
             assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
+            assertThat(storageChannel.getTracker().getEntry("A").get().name()).isEqualTo(SOURCE_NAME);
         }
 
         @Test
@@ -258,7 +265,7 @@ class GridServiceImplTest {
             Storage<String> destination = new CappedStorage<>(MAX_COUNT - 1);
 
             storageChannel.addSource(new CappedStorage<>(100));
-            storageChannel.insert("A", 100, Action.EXECUTE);
+            storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
             sut.extract("A", GridExtractMode.ENTIRE_RESOURCE, destination);
@@ -271,6 +278,7 @@ class GridServiceImplTest {
                     new ResourceAmount<>("A", MAX_COUNT - 1)
             );
             assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
+            assertThat(storageChannel.getTracker().getEntry("A").get().name()).isEqualTo(SOURCE_NAME);
         }
     }
 
@@ -282,7 +290,7 @@ class GridServiceImplTest {
             Storage<String> destination = new CappedStorage<>(MAX_COUNT);
 
             storageChannel.addSource(new CappedStorage<>(100));
-            storageChannel.insert("A", 1, Action.EXECUTE);
+            storageChannel.insert("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
             sut.extract("A", GridExtractMode.HALF_RESOURCE, destination);
@@ -293,6 +301,7 @@ class GridServiceImplTest {
                     new ResourceAmount<>("A", 1)
             );
             assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
+            assertThat(storageChannel.getTracker().getEntry("A").get().name()).isEqualTo(SOURCE_NAME);
         }
     }
 }
