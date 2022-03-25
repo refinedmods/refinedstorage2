@@ -4,7 +4,10 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
+import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.Source;
+import com.refinedmods.refinedstorage2.api.storage.SourceCapturingStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
@@ -35,21 +38,21 @@ class CompositeStorageImplTest {
     void Test_adding_sources() {
         // Arrange
         Storage<String> storage1 = new CappedStorage<>(10);
-        storage1.insert("A", 10, Action.EXECUTE);
+        storage1.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         Storage<String> storage2 = new CappedStorage<>(10);
-        storage2.insert("B", 5, Action.EXECUTE);
+        storage2.insert("B", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
         Storage<String> storage3 = new CappedStorage<>(10);
-        storage3.insert("C", 7, Action.EXECUTE);
-        storage3.insert("A", 3, Action.EXECUTE);
+        storage3.insert("C", 7, Action.EXECUTE, EmptySource.INSTANCE);
+        storage3.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
         sut.addSource(storage1);
         sut.addSource(storage2);
         sut.addSource(storage3);
 
-        long inserted = sut.insert("B", 6, Action.SIMULATE);
+        long inserted = sut.insert("B", 6, Action.SIMULATE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -72,7 +75,7 @@ class CompositeStorageImplTest {
         sut.addSource(new PrioritizedStorage<>(30, storage3));
 
         // Act
-        long inserted = sut.insert("A", 12, Action.EXECUTE);
+        long inserted = sut.insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -98,7 +101,7 @@ class CompositeStorageImplTest {
         sut.removeSource(storage3);
 
         // Act
-        long inserted = sut.insert("A", 12, Action.EXECUTE);
+        long inserted = sut.insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -114,14 +117,14 @@ class CompositeStorageImplTest {
     void Test_removing_sources() {
         // Arrange
         Storage<String> storage1 = new CappedStorage<>(10);
-        storage1.insert("A", 10, Action.EXECUTE);
+        storage1.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         Storage<String> storage2 = new CappedStorage<>(10);
-        storage2.insert("B", 5, Action.EXECUTE);
+        storage2.insert("B", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
         Storage<String> storage3 = new CappedStorage<>(10);
-        storage3.insert("C", 7, Action.EXECUTE);
-        storage3.insert("A", 3, Action.EXECUTE);
+        storage3.insert("C", 7, Action.EXECUTE, EmptySource.INSTANCE);
+        storage3.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage1);
         sut.addSource(storage2);
@@ -130,7 +133,7 @@ class CompositeStorageImplTest {
         // Act
         sut.removeSource(storage3);
 
-        long extracted = sut.extract("C", 1, Action.EXECUTE);
+        long extracted = sut.extract("C", 1, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -144,14 +147,14 @@ class CompositeStorageImplTest {
     void Test_clearing_sources() {
         // Arrange
         Storage<String> storage1 = new CappedStorage<>(10);
-        storage1.insert("A", 10, Action.EXECUTE);
+        storage1.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         Storage<String> storage2 = new CappedStorage<>(10);
-        storage2.insert("B", 5, Action.EXECUTE);
+        storage2.insert("B", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
         Storage<String> storage3 = new CappedStorage<>(10);
-        storage3.insert("C", 7, Action.EXECUTE);
-        storage3.insert("A", 3, Action.EXECUTE);
+        storage3.insert("C", 7, Action.EXECUTE, EmptySource.INSTANCE);
+        storage3.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage1);
         sut.addSource(storage2);
@@ -160,7 +163,7 @@ class CompositeStorageImplTest {
         // Act
         sut.clearSources();
 
-        long extracted = sut.extract("C", 1, Action.EXECUTE);
+        long extracted = sut.extract("C", 1, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(sut.getAll()).isEmpty();
@@ -170,7 +173,7 @@ class CompositeStorageImplTest {
     @Test
     void Test_inserting_without_any_sources_present() {
         // Act
-        long inserted = sut.insert("A", 10, Action.EXECUTE);
+        long inserted = sut.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted).isZero();
@@ -180,11 +183,13 @@ class CompositeStorageImplTest {
     @EnumSource(Action.class)
     void Test_single_source_insert_without_remainder(Action action) {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(20);
+        SourceCapturingStorage<String> storage = new SourceCapturingStorage<>(new CappedStorage<>(20));
         sut.addSource(storage);
 
+        Source customSource = () -> "Custom";
+
         // Act
-        long inserted = sut.insert("A", 10, action);
+        long inserted = sut.insert("A", 10, action, customSource);
 
         // Assert
         assertThat(inserted).isEqualTo(10);
@@ -202,6 +207,8 @@ class CompositeStorageImplTest {
             assertThat(sut.getAll()).isEmpty();
             assertThat(sut.getStored()).isZero();
         }
+
+        assertThat(storage.getSourcesUsed()).containsExactly(customSource);
     }
 
     @ParameterizedTest
@@ -212,7 +219,7 @@ class CompositeStorageImplTest {
         sut.addSource(storage);
 
         // Act
-        long inserted = sut.insert("A", 30, action);
+        long inserted = sut.insert("A", 30, action, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted).isEqualTo(20);
@@ -247,7 +254,7 @@ class CompositeStorageImplTest {
         sut.addSource(storage3);
 
         // Act
-        long inserted = sut.insert("A", 17, action);
+        long inserted = sut.insert("A", 17, action, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted).isEqualTo(17);
@@ -290,7 +297,7 @@ class CompositeStorageImplTest {
         sut.addSource(storage3);
 
         // Act
-        long inserted = sut.insert("A", 39, action);
+        long inserted = sut.insert("A", 39, action, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted).isEqualTo(35);
@@ -323,7 +330,7 @@ class CompositeStorageImplTest {
     @Test
     void Test_extracting_without_any_sources_present() {
         // Act
-        long extracted = sut.extract("A", 10, Action.EXECUTE);
+        long extracted = sut.extract("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isZero();
@@ -333,12 +340,12 @@ class CompositeStorageImplTest {
     void Test_extracting_without_resource_present() {
         // Arrange
         Storage<String> storage = new CappedStorage<>(10);
-        storage.insert("A", 10, Action.EXECUTE);
+        storage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
 
         // Act
-        long extracted = sut.extract("B", 10, Action.EXECUTE);
+        long extracted = sut.extract("B", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isZero();
@@ -348,13 +355,15 @@ class CompositeStorageImplTest {
     @EnumSource(Action.class)
     void Test_single_source_partial_extract(Action action) {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(10);
-        storage.insert("A", 10, Action.EXECUTE);
+        SourceCapturingStorage<String> storage = new SourceCapturingStorage<>(new CappedStorage<>(10));
+        storage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
 
+        Source customSource = () -> "Custom";
+
         // Act
-        long extracted = sut.extract("A", 3, action);
+        long extracted = sut.extract("A", 3, action, customSource);
 
         // Assert
         assertThat(extracted).isEqualTo(3);
@@ -378,6 +387,8 @@ class CompositeStorageImplTest {
             );
             assertThat(sut.getStored()).isEqualTo(10);
         }
+
+        assertThat(storage.getSourcesUsed()).containsExactly(EmptySource.INSTANCE, customSource);
     }
 
     @ParameterizedTest
@@ -385,12 +396,12 @@ class CompositeStorageImplTest {
     void Test_single_source_full_extract(Action action) {
         // Arrange
         Storage<String> storage = new CappedStorage<>(10);
-        storage.insert("A", 10, Action.EXECUTE);
+        storage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
 
         // Act
-        long extracted = sut.extract("A", 10, action);
+        long extracted = sut.extract("A", 10, action, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(10);
@@ -417,12 +428,12 @@ class CompositeStorageImplTest {
     void Test_single_source_more_than_is_available_extract(Action action) {
         // Arrange
         Storage<String> storage = new CappedStorage<>(10);
-        storage.insert("A", 4, Action.EXECUTE);
+        storage.insert("A", 4, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
 
         // Act
-        long extracted = sut.extract("A", 7, action);
+        long extracted = sut.extract("A", 7, action, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(4);
@@ -449,16 +460,16 @@ class CompositeStorageImplTest {
     void Test_multiple_source_partial_extract(Action action) {
         // Arrange
         Storage<String> storage1 = new CappedStorage<>(10);
-        storage1.insert("A", 10, Action.EXECUTE);
+        storage1.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         Storage<String> storage2 = new CappedStorage<>(5);
-        storage2.insert("A", 3, Action.EXECUTE);
+        storage2.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage1);
         sut.addSource(storage2);
 
         // Act
-        long extracted = sut.extract("A", 12, action);
+        long extracted = sut.extract("A", 12, action, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(12);
@@ -493,16 +504,16 @@ class CompositeStorageImplTest {
     void Test_multiple_source_full_extract(Action action) {
         // Arrange
         Storage<String> storage1 = new CappedStorage<>(10);
-        storage1.insert("A", 10, Action.EXECUTE);
+        storage1.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         Storage<String> storage2 = new CappedStorage<>(5);
-        storage2.insert("A", 3, Action.EXECUTE);
+        storage2.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage1);
         sut.addSource(storage2);
 
         // Act
-        long extracted = sut.extract("A", 13, action);
+        long extracted = sut.extract("A", 13, action, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(13);
@@ -533,16 +544,16 @@ class CompositeStorageImplTest {
     void Test_multiple_source_more_than_is_available_extract(Action action) {
         // Arrange
         Storage<String> storage1 = new CappedStorage<>(10);
-        storage1.insert("A", 10, Action.EXECUTE);
+        storage1.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         Storage<String> storage2 = new CappedStorage<>(5);
-        storage2.insert("A", 3, Action.EXECUTE);
+        storage2.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage1);
         sut.addSource(storage2);
 
         // Act
-        long extracted = sut.extract("A", 30, action);
+        long extracted = sut.extract("A", 30, action, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(13);
@@ -578,7 +589,7 @@ class CompositeStorageImplTest {
         sut.addSource(highestPriority);
 
         // Act
-        sut.insert("A", 11, Action.EXECUTE);
+        sut.insert("A", 11, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(highestPriority.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -595,14 +606,14 @@ class CompositeStorageImplTest {
         PrioritizedStorage<String> lowestPriority = new PrioritizedStorage<>(5, new CappedStorage<>(10));
         PrioritizedStorage<String> highestPriority = new PrioritizedStorage<>(10, new CappedStorage<>(10));
 
-        lowestPriority.insert("A", 5, Action.EXECUTE);
-        highestPriority.insert("A", 10, Action.EXECUTE);
+        lowestPriority.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        highestPriority.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(lowestPriority);
         sut.addSource(highestPriority);
 
         // Act
-        sut.extract("A", 11, Action.EXECUTE);
+        sut.extract("A", 11, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(highestPriority.getAll()).isEmpty();
@@ -616,7 +627,7 @@ class CompositeStorageImplTest {
         // Arrange
         CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
         subComposite.addSource(new InMemoryStorageImpl<>());
-        subComposite.insert("A", 10, Action.EXECUTE);
+        subComposite.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
         sut.addSource(subComposite);
@@ -632,12 +643,12 @@ class CompositeStorageImplTest {
         // Arrange
         CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
         subComposite.addSource(new InMemoryStorageImpl<>());
-        subComposite.insert("A", 10, Action.EXECUTE);
+        subComposite.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(subComposite);
 
         Storage<String> subCompositeStorage = new InMemoryStorageImpl<>();
-        subCompositeStorage.insert("B", 10, Action.EXECUTE);
+        subCompositeStorage.insert("B", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
         sut.removeSource(subComposite);
@@ -653,13 +664,13 @@ class CompositeStorageImplTest {
         // Arrange
         CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
         Storage<String> subStorage = new InMemoryStorageImpl<>();
-        subStorage.insert("B", 10, Action.EXECUTE);
+        subStorage.insert("B", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(subComposite);
         sut.addSource(subStorage);
 
         Storage<String> subCompositeStorage = new InMemoryStorageImpl<>();
-        subCompositeStorage.insert("A", 10, Action.EXECUTE);
+        subCompositeStorage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
         subComposite.addSource(subCompositeStorage);
@@ -680,13 +691,13 @@ class CompositeStorageImplTest {
         // Arrange
         CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
         Storage<String> subStorage = new InMemoryStorageImpl<>();
-        subStorage.insert("B", 10, Action.EXECUTE);
+        subStorage.insert("B", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(subComposite);
         sut.addSource(subStorage);
 
         Storage<String> subCompositeStorage = new InMemoryStorageImpl<>();
-        subCompositeStorage.insert("A", 10, Action.EXECUTE);
+        subCompositeStorage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         subComposite.addSource(subCompositeStorage);
 
