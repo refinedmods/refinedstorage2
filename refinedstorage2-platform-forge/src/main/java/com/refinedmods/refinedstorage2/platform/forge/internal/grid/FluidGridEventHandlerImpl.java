@@ -4,7 +4,9 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
+import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -56,7 +58,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             return;
         }
         FluidResource fluidResource = ofFluidStack(extractableResource);
-        gridService.insert(fluidResource, insertMode, (resource, amount, action) -> {
+        gridService.insert(fluidResource, insertMode, (resource, amount, action, source) -> {
             FluidStack toDrain = toFluidStack(resource, amount == Long.MAX_VALUE ? Integer.MAX_VALUE : amount);
             FluidStack drained = cursorStorage.drain(toDrain, toFluidAction(action));
             if (action == Action.EXECUTE) {
@@ -91,7 +93,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             return;
         }
         FluidResource fluidResource = ofFluidStack(extractableResource);
-        gridService.insert(fluidResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action) -> {
+        gridService.insert(fluidResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
             FluidStack toDrain = toFluidStack(resource, amount == Long.MAX_VALUE ? Integer.MAX_VALUE : amount);
             FluidStack drained = storage.drain(toDrain, toFluidAction(action));
             if (action == Action.EXECUTE) {
@@ -117,21 +119,21 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         if (destination == null) {
             return; // shouldn't happen
         }
-        gridService.extract(fluidResource, mode, (resource, amount, action) -> {
+        gridService.extract(fluidResource, mode, (resource, amount, action, source) -> {
             int inserted = destination.fill(toFluidStack(resource, amount), toFluidAction(action));
             if (action == Action.EXECUTE) {
-                extractSourceBucket(bucketFromInventory);
+                extractSourceBucket(bucketFromInventory, source);
                 insertResultingBucket(cursor, destination);
             }
             return inserted;
         });
     }
 
-    private void extractSourceBucket(boolean bucketFromInventory) {
+    private void extractSourceBucket(boolean bucketFromInventory, Source source) {
         if (bucketFromInventory) {
             extractBucket(playerInventoryStorage, Action.EXECUTE);
         } else {
-            bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE);
+            bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, source);
         }
     }
 
@@ -148,7 +150,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     }
 
     private boolean hasBucketInStorage() {
-        return bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE) == 1;
+        return bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE, EmptySource.INSTANCE) == 1;
     }
 
     private boolean hasBucketInInventory() {

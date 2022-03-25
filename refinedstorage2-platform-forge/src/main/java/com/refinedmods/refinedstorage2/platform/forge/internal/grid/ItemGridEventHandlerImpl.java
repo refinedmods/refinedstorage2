@@ -41,7 +41,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
             return;
         }
         ItemResource itemResource = new ItemResource(containerMenu.getCarried());
-        gridService.insert(itemResource, insertMode, (resource, amount, action) -> {
+        gridService.insert(itemResource, insertMode, (resource, amount, action, source) -> {
             ItemStack extracted = playerCursorStorage.extractItem(0, (int) amount, action == Action.SIMULATE);
             return extracted.getCount();
         });
@@ -55,12 +55,12 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
             return;
         }
         ItemResource itemResource = ofItemStack(itemStackInSlot);
-        gridService.insert(itemResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action) -> extract(storage, resource, amount, action));
+        gridService.insert(itemResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> extract(storage, resource, amount, action));
     }
 
     @Override
     public void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
-        gridService.extract(itemResource, mode, (resource, amount, action) -> {
+        gridService.extract(itemResource, mode, (resource, amount, action, source) -> {
             ItemStack toInsert = toItemStack(resource, amount);
             return insert(toInsert, action, cursor);
         });
@@ -77,11 +77,11 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     }
 
     private void handleInventoryToGridScroll(ItemResource itemResource, IItemHandler sourceStorage) {
-        gridService.insert(itemResource, GridInsertMode.SINGLE_RESOURCE, (resource, amount, action) -> extract(sourceStorage, resource, amount, action));
+        gridService.insert(itemResource, GridInsertMode.SINGLE_RESOURCE, (resource, amount, action, source) -> extract(sourceStorage, resource, amount, action));
     }
 
     private void handleGridToInventoryScroll(ItemResource itemResource, IItemHandler destinationStorage) {
-        gridService.extract(itemResource, GridExtractMode.SINGLE_RESOURCE, (resource, amount, action) -> {
+        gridService.extract(itemResource, GridExtractMode.SINGLE_RESOURCE, (resource, amount, action, source) -> {
             ItemStack toInsert = toItemStack(resource, amount);
             ItemStack remainder = ItemHandlerHelper.insertItem(destinationStorage, toInsert, action == Action.SIMULATE);
             return amount - remainder.getCount();
