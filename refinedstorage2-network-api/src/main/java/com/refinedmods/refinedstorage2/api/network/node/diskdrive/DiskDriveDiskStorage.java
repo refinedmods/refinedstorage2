@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.CapacityAccessor;
+import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
@@ -55,8 +56,8 @@ public class DiskDriveDiskStorage<T> implements Storage<T> {
     }
 
     @Override
-    public long extract(T resource, long amount, Action action) {
-        long extracted = parent.extract(resource, amount, action);
+    public long extract(T resource, long amount, Action action, Source source) {
+        long extracted = parent.extract(resource, amount, action, source);
         if (action == Action.EXECUTE && extracted > 0) {
             checkStateChanged();
         }
@@ -64,8 +65,8 @@ public class DiskDriveDiskStorage<T> implements Storage<T> {
     }
 
     @Override
-    public long insert(T resource, long amount, Action action) {
-        long inserted = parent.insert(resource, amount, action);
+    public long insert(T resource, long amount, Action action, Source source) {
+        long inserted = parent.insert(resource, amount, action, source);
         if (inserted > 0 && action == Action.EXECUTE) {
             checkStateChanged();
         }
