@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.api.storage.composite;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
+import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 
 import java.util.ArrayList;
@@ -70,18 +71,18 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeSt
     }
 
     @Override
-    public long extract(T resource, long amount, Action action) {
-        long extracted = extractFromStorages(resource, amount, action);
+    public long extract(T resource, long amount, Action action, Source source) {
+        long extracted = extractFromStorages(resource, amount, action, source);
         if (action == Action.EXECUTE && extracted > 0) {
             list.remove(resource, extracted);
         }
         return extracted;
     }
 
-    private long extractFromStorages(T template, long amount, Action action) {
+    private long extractFromStorages(T template, long amount, Action action, Source actionSource) {
         long remaining = amount;
         for (Storage<T> source : sources) {
-            long extracted = source.extract(template, remaining, action);
+            long extracted = source.extract(template, remaining, action, actionSource);
             remaining -= extracted;
             if (remaining == 0) {
                 break;
@@ -92,18 +93,18 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeSt
     }
 
     @Override
-    public long insert(T resource, long amount, Action action) {
-        long inserted = insertIntoStorages(resource, amount, action);
+    public long insert(T resource, long amount, Action action, Source source) {
+        long inserted = insertIntoStorages(resource, amount, action, source);
         if (action == Action.EXECUTE && inserted > 0) {
             list.add(resource, inserted);
         }
         return inserted;
     }
 
-    private long insertIntoStorages(T template, long amount, Action action) {
+    private long insertIntoStorages(T template, long amount, Action action, Source actionSource) {
         long inserted = 0;
         for (Storage<T> source : sources) {
-            inserted += source.insert(template, amount - inserted, action);
+            inserted += source.insert(template, amount - inserted, action, actionSource);
             if (inserted == amount) {
                 break;
             }
