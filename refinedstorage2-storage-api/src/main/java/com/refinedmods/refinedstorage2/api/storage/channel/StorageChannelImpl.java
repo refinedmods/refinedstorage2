@@ -61,7 +61,7 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
         Preconditions.checkNotNull(resource);
         Preconditions.checkNotNull(source);
         tracker.onChanged(resource, source.getName());
-        return extract(resource, amount, Action.EXECUTE);
+        return extract(resource, amount, Action.EXECUTE, source);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
         Preconditions.checkNotNull(resource);
         Preconditions.checkNotNull(source);
         tracker.onChanged(resource, source.getName());
-        return insert(resource, amount, Action.EXECUTE);
+        return insert(resource, amount, Action.EXECUTE, source);
     }
 
     @Override
@@ -83,13 +83,13 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
     }
 
     @Override
-    public long extract(T resource, long amount, Action action) {
-        return storage.extract(resource, amount, action);
+    public long extract(T resource, long amount, Action action, Source source) {
+        return storage.extract(resource, amount, action, source);
     }
 
     @Override
-    public long insert(T resource, long amount, Action action) {
-        return storage.insert(resource, amount, action);
+    public long insert(T resource, long amount, Action action, Source source) {
+        return storage.insert(resource, amount, action, source);
     }
 
     @Override
