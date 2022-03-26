@@ -10,8 +10,6 @@ import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyTyp
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -65,7 +63,7 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
         return tag.contains(TAG_CAPACITY) ? tag.getLong(TAG_CAPACITY) : 0;
     }
 
-    public static boolean hasEnergy(@Nullable CompoundTag tag) {
+    public static boolean hasEnergy(CompoundTag tag) {
         return tag != null && tag.contains(TAG_STORED) && tag.contains(TAG_CAPACITY);
     }
 
