@@ -11,8 +11,10 @@ import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageListener;
 import com.refinedmods.refinedstorage2.api.storage.composite.Priority;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, Priority {
     private final CompositeStorage<T> compositeOfDisks;
@@ -84,5 +86,10 @@ public class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, Priori
     @Override
     public void clearSources() {
         compositeOfDisks.clearSources();
+    }
+
+    @Override
+    public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
+        return compositeOfDisks.findTrackedResourceBySourceType(resource, sourceType);
     }
 }

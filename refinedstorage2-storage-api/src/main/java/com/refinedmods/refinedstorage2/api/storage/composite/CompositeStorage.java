@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.storage.composite;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
 import org.apiguardian.api.API;
 
@@ -10,7 +11,7 @@ import org.apiguardian.api.API;
  * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public interface CompositeStorage<T> extends Storage<T> {
+public interface CompositeStorage<T> extends Storage<T>, TrackedStorage<T> {
     /**
      * Sort the sources of this composite.
      * If a storage implements {@link Priority}, the composite will account for this.

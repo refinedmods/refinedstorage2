@@ -5,11 +5,15 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apiguardian.api.API;
@@ -130,5 +134,15 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeSt
     @Override
     public void onSourceRemoved(Storage<T> source) {
         source.getAll().forEach(resourceAmount -> list.remove(resourceAmount.getResource(), resourceAmount.getAmount()));
+    }
+
+    @Override
+    public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
+        return sources
+                .stream()
+                .filter(TrackedStorage.class::isInstance)
+                .map(storage -> (TrackedStorage<T>) storage)
+                .flatMap(trackedStorage -> trackedStorage.findTrackedResourceBySourceType(resource, sourceType).stream())
+                .max(Comparator.comparingLong(TrackedResource::getTime));
     }
 }

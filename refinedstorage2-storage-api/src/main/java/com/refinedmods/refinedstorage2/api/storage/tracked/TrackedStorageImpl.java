@@ -20,8 +20,9 @@ public class TrackedStorageImpl<T> extends ProxyStorage<T> implements TrackedSto
 
     /**
      * @param parent the parent storage, may not be null
+     * @param clock  a supplier for unix timestamps
      */
-    protected TrackedStorageImpl(Storage<T> parent, LongSupplier clock) {
+    public TrackedStorageImpl(Storage<T> parent, LongSupplier clock) {
         super(parent);
         Preconditions.checkNotNull(clock);
         this.clock = clock;
