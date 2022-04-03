@@ -1,6 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.api;
 
-import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
+import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
+import com.refinedmods.refinedstorage2.api.network.Network;
+import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -24,7 +26,7 @@ public interface Rs2PlatformApiFacade {
 
     ResourceTypeRegistry getResourceTypeRegistry();
 
-    NetworkComponentRegistry getNetworkComponentRegistry();
+    ComponentMapFactory<NetworkComponent, Network> getNetworkComponentMapFactory();
 
     void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level, Runnable callback);
 

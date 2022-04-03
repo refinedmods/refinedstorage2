@@ -1,6 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.api;
 
-import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
+import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
+import com.refinedmods.refinedstorage2.api.network.Network;
+import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -47,8 +49,8 @@ public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public NetworkComponentRegistry getNetworkComponentRegistry() {
-        return ensureLoaded().getNetworkComponentRegistry();
+    public ComponentMapFactory<NetworkComponent, Network> getNetworkComponentMapFactory() {
+        return ensureLoaded().getNetworkComponentMapFactory();
     }
 
     @Override

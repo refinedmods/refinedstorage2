@@ -1,15 +1,16 @@
 package com.refinedmods.refinedstorage2.api.network;
 
-import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
+import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
+import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 
 public class NetworkFactory {
-    private final NetworkComponentRegistry componentRegistry;
+    private final ComponentMapFactory<NetworkComponent, Network> componentMapFactory;
 
-    public NetworkFactory(NetworkComponentRegistry componentRegistry) {
-        this.componentRegistry = componentRegistry;
+    public NetworkFactory(ComponentMapFactory<NetworkComponent, Network> componentMapFactory) {
+        this.componentMapFactory = componentMapFactory;
     }
 
     public Network create() {
-        return new NetworkImpl(componentRegistry);
+        return new NetworkImpl(componentMapFactory);
     }
 }
