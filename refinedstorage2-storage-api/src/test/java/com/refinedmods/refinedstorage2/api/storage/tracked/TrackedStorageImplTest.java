@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -50,9 +51,21 @@ class TrackedStorageImplTest {
     }
 
     @Test
-    void Test_invalid_clock() {
-        // Act & assert
-        assertThrows(NullPointerException.class, () -> new TrackedStorageImpl<>(backed, null));
+    void Test_inserting_with_invalid_source() {
+        // Act
+        Executable action = () -> sut.insert("A", 1, Action.EXECUTE, null);
+
+        // Assert
+        assertThrows(NullPointerException.class, action);
+    }
+
+    @Test
+    void Test_extracting_with_invalid_source() {
+        // Act
+        Executable action = () -> sut.extract("A", 1, Action.EXECUTE, null);
+
+        // Assert
+        assertThrows(NullPointerException.class, action);
     }
 
     @Nested

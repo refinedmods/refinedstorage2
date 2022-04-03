@@ -5,8 +5,6 @@ import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.LongSupplier;
 
@@ -15,53 +13,52 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
 public class TrackedStorageImpl<T> extends ProxyStorage<T> implements TrackedStorage<T> {
+    private final TrackedStorageRepository<T> repository;
     private final LongSupplier clock;
-    private final Map<Class<? extends Source>, Map<T, TrackedResource>> map = new HashMap<>();
 
     /**
-     * @param parent the parent storage, may not be null
+     * A new tracked storage with an in-memory repository.
+     *
+     * @param parent the parent storage
      * @param clock  a supplier for unix timestamps
      */
     public TrackedStorageImpl(Storage<T> parent, LongSupplier clock) {
+        this(parent, new InMemoryTrackedStorageRepository<>(), clock);
+    }
+
+    /**
+     * @param parent     the parent storage
+     * @param repository a repository for persisting and retrieving tracked resources
+     * @param clock      a supplier for unix timestamps
+     */
+    public TrackedStorageImpl(Storage<T> parent, TrackedStorageRepository<T> repository, LongSupplier clock) {
         super(parent);
-        Preconditions.checkNotNull(clock);
+        this.repository = repository;
         this.clock = clock;
     }
 
     @Override
     public long insert(T resource, long amount, Action action, Source source) {
+        Preconditions.checkNotNull(source);
         long inserted = super.insert(resource, amount, action, source);
         if (inserted > 0 && action == Action.EXECUTE) {
-            update(resource, source);
+            repository.update(resource, source, clock.getAsLong());
         }
         return inserted;
     }
 
     @Override
     public long extract(T resource, long amount, Action action, Source source) {
+        Preconditions.checkNotNull(source);
         long extracted = super.extract(resource, amount, action, source);
         if (extracted > 0 && action == Action.EXECUTE) {
-            update(resource, source);
+            repository.update(resource, source, clock.getAsLong());
         }
         return extracted;
     }
 
-    private void update(T resource, Source source) {
-        Map<T, TrackedResource> resourceMap = map.computeIfAbsent(source.getClass(), k -> new HashMap<>());
-        TrackedResource existing = resourceMap.get(resource);
-        if (existing == null) {
-            resourceMap.put(resource, new TrackedResource(source.getName(), clock.getAsLong()));
-        } else {
-            existing.update(source.getName(), clock.getAsLong());
-        }
-    }
-
     @Override
     public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
-        Map<T, TrackedResource> resourceMap = map.get(sourceType);
-        if (resourceMap != null) {
-            return Optional.ofNullable(resourceMap.get(resource));
-        }
-        return Optional.empty();
+        return repository.findTrackedResourceBySourceType(resource, sourceType);
     }
 }
