@@ -42,13 +42,11 @@ class InMemoryStorageImplTest {
         Executable action1 = () -> sut.insert("A", 0, Action.EXECUTE, EmptySource.INSTANCE);
         Executable action2 = () -> sut.insert("A", -1, Action.EXECUTE, EmptySource.INSTANCE);
         Executable action3 = () -> sut.insert(null, 1, Action.EXECUTE, EmptySource.INSTANCE);
-        Executable action4 = () -> sut.insert("A", 1, Action.EXECUTE, null);
 
         // Assert
         assertThrows(IllegalArgumentException.class, action1);
         assertThrows(IllegalArgumentException.class, action2);
         assertThrows(NullPointerException.class, action3);
-        assertThrows(NullPointerException.class, action4);
     }
 
     @Test
@@ -138,12 +136,10 @@ class InMemoryStorageImplTest {
         Executable action1 = () -> sut.extract("A", 0, Action.EXECUTE, EmptySource.INSTANCE);
         Executable action2 = () -> sut.extract("A", -1, Action.EXECUTE, EmptySource.INSTANCE);
         Executable action3 = () -> sut.extract(null, 1, Action.EXECUTE, EmptySource.INSTANCE);
-        Executable action4 = () -> sut.extract("A", 1, Action.EXECUTE, null);
 
         // Assert
         assertThrows(IllegalArgumentException.class, action1);
         assertThrows(IllegalArgumentException.class, action2);
         assertThrows(NullPointerException.class, action3);
-        assertThrows(NullPointerException.class, action4);
     }
 }
