@@ -10,7 +10,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.NETWORK_COMPONENT_REGISTRY;
+import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.NETWORK_COMPONENT_MAP_FACTORY;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createContainer;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createContainerWithNetwork;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getAddedContainers;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
 class NetworkBuilderTest {
-    private final NetworkBuilder sut = new NetworkBuilder(new NetworkFactory(NETWORK_COMPONENT_REGISTRY));
+    private final NetworkBuilder sut = new NetworkBuilder(new NetworkFactory(NETWORK_COMPONENT_MAP_FACTORY));
 
     @Test
     void Test_forming_new_network() {

@@ -47,7 +47,7 @@ public class GraphNetworkComponent implements NetworkComponent {
     }
 
     @Override
-    public void onNetworkMerge(Network network) {
+    public void onNetworkMergedWith(Network network) {
         LOGGER.info("Network {} has merged with network {}", network.hashCode(), this.network.hashCode());
     }
 }

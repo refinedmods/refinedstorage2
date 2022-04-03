@@ -22,7 +22,7 @@ public interface NetworkComponent {
 
     }
 
-    default void onNetworkMerge(Network network) {
+    default void onNetworkMergedWith(Network network) {
 
     }
 }

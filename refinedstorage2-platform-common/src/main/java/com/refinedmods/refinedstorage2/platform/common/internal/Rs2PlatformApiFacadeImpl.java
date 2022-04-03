@@ -1,9 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common.internal;
 
+import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
+import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.NetworkBuilder;
 import com.refinedmods.refinedstorage2.api.network.NetworkFactory;
-import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
-import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistryImpl;
+import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
@@ -28,8 +29,8 @@ import net.minecraft.world.level.Level;
 public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     private final PlatformStorageRepository clientStorageRepository = new ClientStorageRepository();
     private final ResourceTypeRegistry resourceTypeRegistry = new ResourceTypeRegistry(ItemResourceType.INSTANCE);
-    private final NetworkComponentRegistry networkComponentRegistry = new NetworkComponentRegistryImpl();
-    private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentRegistry));
+    private final ComponentMapFactory<NetworkComponent, Network> networkComponentMapFactory = new ComponentMapFactory<>();
+    private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentMapFactory));
 
     @Override
     public PlatformStorageRepository getStorageRepository(Level level) {
@@ -64,8 +65,8 @@ public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
     }
 
     @Override
-    public NetworkComponentRegistry getNetworkComponentRegistry() {
-        return networkComponentRegistry;
+    public ComponentMapFactory<NetworkComponent, Network> getNetworkComponentMapFactory() {
+        return networkComponentMapFactory;
     }
 
     @Override

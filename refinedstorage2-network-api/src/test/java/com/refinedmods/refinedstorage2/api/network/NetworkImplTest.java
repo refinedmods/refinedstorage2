@@ -14,7 +14,7 @@ import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
 
-import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.NETWORK_COMPONENT_REGISTRY;
+import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.NETWORK_COMPONENT_MAP_FACTORY;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.STORAGE_CHANNEL_TYPE_REGISTRY;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.fakeStorageChannelOf;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 
 @Rs2Test
 class NetworkImplTest {
-    private final Network sut = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
+    private final Network sut = new NetworkImpl(NETWORK_COMPONENT_MAP_FACTORY);
 
     @Test
     void Test_should_build_network_correctly() {

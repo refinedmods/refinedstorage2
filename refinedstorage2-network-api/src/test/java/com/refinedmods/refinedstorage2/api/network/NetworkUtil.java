@@ -1,11 +1,10 @@
 package com.refinedmods.refinedstorage2.api.network;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistry;
-import com.refinedmods.refinedstorage2.api.network.component.NetworkComponentRegistryImpl;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
@@ -23,23 +22,23 @@ import java.util.Set;
 import java.util.function.Function;
 
 public final class NetworkUtil {
-    public static final NetworkComponentRegistry NETWORK_COMPONENT_REGISTRY = new NetworkComponentRegistryImpl();
+    public static final ComponentMapFactory<NetworkComponent, Network> NETWORK_COMPONENT_MAP_FACTORY = new ComponentMapFactory<>();
     public static final StorageChannelTypeRegistry STORAGE_CHANNEL_TYPE_REGISTRY = new StorageChannelTypeRegistryImpl();
 
     static {
         STORAGE_CHANNEL_TYPE_REGISTRY.addType(StorageChannelTypes.FAKE);
 
-        NETWORK_COMPONENT_REGISTRY.addComponent(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
-        NETWORK_COMPONENT_REGISTRY.addComponent(GraphNetworkComponent.class, GraphNetworkComponent::new);
-        NETWORK_COMPONENT_REGISTRY.addComponent(StorageNetworkComponent.class, network -> new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY));
-        NETWORK_COMPONENT_REGISTRY.addComponent(NodeCallbackListenerComponent.class, network -> new NodeCallbackListenerComponent());
+        NETWORK_COMPONENT_MAP_FACTORY.addFactory(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
+        NETWORK_COMPONENT_MAP_FACTORY.addFactory(GraphNetworkComponent.class, GraphNetworkComponent::new);
+        NETWORK_COMPONENT_MAP_FACTORY.addFactory(StorageNetworkComponent.class, network -> new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY));
+        NETWORK_COMPONENT_MAP_FACTORY.addFactory(NodeCallbackListenerComponent.class, network -> new NodeCallbackListenerComponent());
     }
 
     private NetworkUtil() {
     }
 
     public static Network create(long energyStored, long energyCapacity) {
-        Network network = new NetworkImpl(NETWORK_COMPONENT_REGISTRY);
+        Network network = new NetworkImpl(NETWORK_COMPONENT_MAP_FACTORY);
         EnergyNetworkComponent component = network.getComponent(EnergyNetworkComponent.class);
         EnergyStorage storage = new EnergyStorageImpl(energyCapacity);
         storage.receive(energyStored, Action.EXECUTE);
@@ -67,7 +66,7 @@ public final class NetworkUtil {
     }
 
     public static NetworkNodeContainer createContainerWithNetwork() {
-        return createContainerWithNetwork(container -> new NetworkImpl(NETWORK_COMPONENT_REGISTRY));
+        return createContainerWithNetwork(container -> new NetworkImpl(NETWORK_COMPONENT_MAP_FACTORY));
     }
 
     public static List<NetworkNodeContainer> getAddedContainers(Network network) {
@@ -126,7 +125,7 @@ public final class NetworkUtil {
         }
 
         @Override
-        public void onNetworkMerge(Network network) {
+        public void onNetworkMergedWith(Network network) {
             merges.add(network);
         }
     }
