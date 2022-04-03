@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
-import com.refinedmods.refinedstorage2.api.core.LastModified;
+import com.refinedmods.refinedstorage2.api.core.util.LastModified;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
@@ -49,6 +49,8 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     private static final Logger LOGGER = LogManager.getLogger(GridScreen.class);
 
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/grid.png");
+
+    private static final int MODIFIED_JUST_NOW_MAX_SECONDS = 10;
 
     private static final int TOP_HEIGHT = 19;
     private static final int BOTTOM_HEIGHT = 99;
@@ -338,7 +340,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     private MutableComponent getLastModifiedText(TrackedResource trackedResource) {
         LastModified lastModified = LastModified.calculate(trackedResource.getTime(), System.currentTimeMillis());
 
-        if (lastModified.type() == LastModified.Type.JUST_NOW) {
+        if (isModifiedJustNow(lastModified)) {
             return createTranslation("misc", "last_modified.just_now", trackedResource.getSourceName());
         }
 
@@ -349,6 +351,10 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         }
 
         return createTranslation("misc", "last_modified." + translationKey, lastModified.amount(), trackedResource.getSourceName());
+    }
+
+    private boolean isModifiedJustNow(LastModified lastModified) {
+        return lastModified.type() == LastModified.Type.SECOND && lastModified.amount() <= MODIFIED_JUST_NOW_MAX_SECONDS;
     }
 
     protected void renderAmount(PoseStack poseStack, int x, int y, String amount, int color) {
@@ -394,10 +400,10 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         int tooltipHeight = 8;
 
         if (lines.size() > 1) {
-            tooltipHeight += 2 + (lines.size() - 1) * 10;
+            tooltipHeight += 2 + (lines.size() - 1) * MODIFIED_JUST_NOW_MAX_SECONDS;
         }
 
-        tooltipHeight += smallLines.size() * 10;
+        tooltipHeight += smallLines.size() * MODIFIED_JUST_NOW_MAX_SECONDS;
 
         if (tooltipX + tooltipWidth > width) {
             tooltipX -= 28 + tooltipWidth;
