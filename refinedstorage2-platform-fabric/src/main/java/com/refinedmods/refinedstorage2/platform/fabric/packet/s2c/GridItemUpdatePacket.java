@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
@@ -16,11 +16,11 @@ public class GridItemUpdatePacket implements ClientPlayNetworking.PlayChannelHan
     public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
         ItemResource resource = PacketUtil.readItemResource(buf);
         long amount = buf.readLong();
-        StorageTracker.Entry trackerEntry = PacketUtil.readTrackerEntry(buf);
+        TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
 
         client.execute(() -> {
             if (client.player.containerMenu instanceof ItemGridContainerMenu itemGrid) {
-                itemGrid.onResourceUpdate(resource, amount, trackerEntry);
+                itemGrid.onResourceUpdate(resource, amount, trackedResource);
             }
         });
     }

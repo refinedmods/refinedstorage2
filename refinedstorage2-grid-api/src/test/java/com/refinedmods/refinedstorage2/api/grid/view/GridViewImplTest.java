@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;
@@ -112,8 +112,8 @@ class GridViewImplTest {
         view.setSortingDirection(GridSortingDirection.ASCENDING);
 
         view.loadResource("A", 10, null);
-        view.loadResource("A", 5, new StorageTracker.Entry(3, "Raoul"));
-        view.loadResource("B", 1, new StorageTracker.Entry(2, "VdB"));
+        view.loadResource("A", 5, new TrackedResource("Raoul", 3));
+        view.loadResource("B", 1, new TrackedResource("VdB", 2));
         view.loadResource("C", 2, null);
 
         // Act
@@ -153,8 +153,8 @@ class GridViewImplTest {
         view.setSortingDirection(GridSortingDirection.DESCENDING);
 
         view.loadResource("A", 10, null);
-        view.loadResource("A", 5, new StorageTracker.Entry(3, "Raoul"));
-        view.loadResource("B", 1, new StorageTracker.Entry(2, "VDB"));
+        view.loadResource("A", 5, new TrackedResource("Raoul", 3));
+        view.loadResource("B", 1, new TrackedResource("VDB", 2));
         view.loadResource("C", 2, null);
 
         // Act
@@ -189,25 +189,22 @@ class GridViewImplTest {
     @Test
     void Test_loading_resource_with_storage_tracker_entry() {
         // Act
-        view.loadResource("A", 1, new StorageTracker.Entry(1, "Raoul"));
-        view.loadResource("A", 1, new StorageTracker.Entry(2, "RaoulA"));
+        view.loadResource("A", 1, new TrackedResource("Raoul", 1));
+        view.loadResource("A", 1, new TrackedResource("RaoulA", 2));
 
-        view.loadResource("B", 1, new StorageTracker.Entry(3, "VDB"));
+        view.loadResource("B", 1, new TrackedResource("VDB", 3));
         view.loadResource("B", 1, null);
 
         view.loadResource("D", 1, null);
 
         // Assert
-        Optional<StorageTracker.Entry> dirt = view.getTrackerEntry("A");
-        Optional<StorageTracker.Entry> glass = view.getTrackerEntry("B");
-        Optional<StorageTracker.Entry> sponge = view.getTrackerEntry("D");
+        Optional<TrackedResource> a = view.getTrackedResource("A");
+        Optional<TrackedResource> b = view.getTrackedResource("B");
+        Optional<TrackedResource> d = view.getTrackedResource("D");
 
-        assertThat(dirt).isPresent();
-        assertThat(dirt.get().name()).isEqualTo("RaoulA");
-        assertThat(dirt.get().time()).isEqualTo(2);
-
-        assertThat(glass).isEmpty();
-        assertThat(sponge).isEmpty();
+        assertThat(a).get().usingRecursiveComparison().isEqualTo(new TrackedResource("RaoulA", 2));
+        assertThat(b).isEmpty();
+        assertThat(d).isEmpty();
     }
 
     @Test
@@ -388,25 +385,22 @@ class GridViewImplTest {
     @Test
     void Test_sending_change_should_set_storage_tracker_entry() {
         // Act
-        view.onChange("A", 1, new StorageTracker.Entry(1, "Raoul"));
-        view.onChange("A", 1, new StorageTracker.Entry(2, "RaoulA"));
+        view.onChange("A", 1, new TrackedResource("Raoul", 1));
+        view.onChange("A", 1, new TrackedResource("RaoulA", 2));
 
-        view.onChange("B", 1, new StorageTracker.Entry(3, "VDB"));
+        view.onChange("B", 1, new TrackedResource("VDB", 3));
         view.onChange("B", 1, null);
 
         view.onChange("D", 1, null);
 
         // Assert
-        Optional<StorageTracker.Entry> dirt = view.getTrackerEntry("A");
-        Optional<StorageTracker.Entry> glass = view.getTrackerEntry("B");
-        Optional<StorageTracker.Entry> sponge = view.getTrackerEntry("D");
+        Optional<TrackedResource> a = view.getTrackedResource("A");
+        Optional<TrackedResource> b = view.getTrackedResource("B");
+        Optional<TrackedResource> c = view.getTrackedResource("D");
 
-        assertThat(dirt).isPresent();
-        assertThat(dirt.get().name()).isEqualTo("RaoulA");
-        assertThat(dirt.get().time()).isEqualTo(2);
-
-        assertThat(glass).isEmpty();
-        assertThat(sponge).isEmpty();
+        assertThat(a).get().usingRecursiveComparison().isEqualTo(new TrackedResource("RaoulA", 2));
+        assertThat(b).isEmpty();
+        assertThat(c).isEmpty();
     }
 
     @Test

@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizationType;
@@ -68,8 +68,8 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         int amountOfResources = buf.readInt();
         for (int i = 0; i < amountOfResources; ++i) {
             ResourceAmount<T> resourceAmount = readResourceAmount(buf);
-            StorageTracker.Entry trackerEntry = PacketUtil.readTrackerEntry(buf);
-            view.loadResource(resourceAmount.getResource(), resourceAmount.getAmount(), trackerEntry);
+            TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
+            view.loadResource(resourceAmount.getResource(), resourceAmount.getAmount(), trackedResource);
         }
         view.sort();
 
@@ -101,9 +101,9 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
 
     protected abstract ResourceAmount<T> readResourceAmount(FriendlyByteBuf buf);
 
-    public void onResourceUpdate(T template, long amount, StorageTracker.Entry trackerEntry) {
+    public void onResourceUpdate(T template, long amount, TrackedResource trackedResource) {
         LOGGER.info("{} got updated with {}", template, amount);
-        view.onChange(template, amount, trackerEntry);
+        view.onChange(template, amount, trackedResource);
     }
 
     public void setSizeChangedListener(Runnable sizeChangedListener) {

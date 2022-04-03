@@ -4,9 +4,10 @@ import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -36,9 +37,12 @@ public class GridNetworkNode<T> extends NetworkNodeImpl {
         return getStorageChannel().getAll().size();
     }
 
-    public void forEachResource(BiConsumer<ResourceAmount<T>, Optional<StorageTracker.Entry>> consumer) {
+    public void forEachResource(BiConsumer<ResourceAmount<T>, Optional<TrackedResource>> consumer, Class<? extends Source> sourceType) {
         StorageChannel<T> storageChannel = getStorageChannel();
-        storageChannel.getAll().forEach(resourceAmount -> consumer.accept(resourceAmount, storageChannel.getTracker().getEntry(resourceAmount.getResource())));
+        storageChannel.getAll().forEach(resourceAmount -> consumer.accept(
+                resourceAmount,
+                storageChannel.findTrackedResourceBySourceType(resourceAmount.getResource(), sourceType)
+        ));
     }
 
     @Override

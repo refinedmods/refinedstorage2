@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.abstractions.packet;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
@@ -15,9 +15,9 @@ public interface ServerToClientCommunications {
 
     void sendGridActiveness(ServerPlayer player, boolean active);
 
-    void sendGridFluidUpdate(ServerPlayer player, FluidResource fluidResource, long change, StorageTracker.Entry trackerEntry);
+    void sendGridFluidUpdate(ServerPlayer player, FluidResource fluidResource, long change, TrackedResource trackedResource);
 
-    void sendGridItemUpdate(ServerPlayer player, ItemResource itemResource, long change, StorageTracker.Entry trackerEntry);
+    void sendGridItemUpdate(ServerPlayer player, ItemResource itemResource, long change, TrackedResource trackedResource);
 
     void sendResourceFilterSlotUpdate(ServerPlayer player, ResourceFilterContainer resourceFilterContainer, int slotIndex);
 

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.abstractions.packet.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -30,13 +30,13 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public void sendGridFluidUpdate(ServerPlayer player, FluidResource fluidResource, long change, StorageTracker.Entry trackerEntry) {
-        networkManager.send(player, new GridFluidUpdatePacket(fluidResource, change, trackerEntry));
+    public void sendGridFluidUpdate(ServerPlayer player, FluidResource fluidResource, long change, TrackedResource trackedResource) {
+        networkManager.send(player, new GridFluidUpdatePacket(fluidResource, change, trackedResource));
     }
 
     @Override
-    public void sendGridItemUpdate(ServerPlayer player, ItemResource itemResource, long change, StorageTracker.Entry trackerEntry) {
-        networkManager.send(player, new GridItemUpdatePacket(itemResource, change, trackerEntry));
+    public void sendGridItemUpdate(ServerPlayer player, ItemResource itemResource, long change, TrackedResource trackedResource) {
+        networkManager.send(player, new GridItemUpdatePacket(itemResource, change, trackedResource));
     }
 
     @Override

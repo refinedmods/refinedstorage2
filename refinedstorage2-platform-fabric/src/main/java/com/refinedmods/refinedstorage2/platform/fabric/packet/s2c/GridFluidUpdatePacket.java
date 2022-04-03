@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
@@ -16,11 +16,11 @@ public class GridFluidUpdatePacket implements ClientPlayNetworking.PlayChannelHa
     public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
         FluidResource fluidResource = PacketUtil.readFluidResource(buf);
         long amount = buf.readLong();
-        StorageTracker.Entry trackerEntry = PacketUtil.readTrackerEntry(buf);
+        TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
 
         client.execute(() -> {
             if (client.player.containerMenu instanceof FluidGridContainerMenu fluidGrid) {
-                fluidGrid.onResourceUpdate(fluidResource, amount, trackerEntry);
+                fluidGrid.onResourceUpdate(fluidResource, amount, trackedResource);
             }
         });
     }

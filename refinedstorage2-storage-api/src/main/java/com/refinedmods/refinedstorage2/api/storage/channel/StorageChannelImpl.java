@@ -9,27 +9,17 @@ import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.Collection;
 import java.util.Optional;
 
-import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class StorageChannelImpl<T> implements StorageChannel<T> {
-    private final StorageTracker<T> tracker;
-    private final ListenableResourceList<T> list;
-    private final CompositeStorage<T> storage;
-
-    /**
-     * @param tracker the storage tracker
-     */
-    public StorageChannelImpl(StorageTracker<T> tracker) {
-        this.tracker = tracker;
-        this.list = new ListenableResourceList<>(new ResourceListImpl<>());
-        this.storage = new CompositeStorageImpl<>(list);
-    }
+    private final ListenableResourceList<T> list = new ListenableResourceList<>(new ResourceListImpl<>());
+    private final CompositeStorage<T> storage = new CompositeStorageImpl<>(list);
 
     @Override
     public void sortSources() {
@@ -57,27 +47,6 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
     }
 
     @Override
-    public long extract(T resource, long amount, Source source) {
-        Preconditions.checkNotNull(resource);
-        Preconditions.checkNotNull(source);
-        tracker.onChanged(resource, source.getName());
-        return extract(resource, amount, Action.EXECUTE, source);
-    }
-
-    @Override
-    public long insert(T resource, long amount, Source source) {
-        Preconditions.checkNotNull(resource);
-        Preconditions.checkNotNull(source);
-        tracker.onChanged(resource, source.getName());
-        return insert(resource, amount, Action.EXECUTE, source);
-    }
-
-    @Override
-    public StorageTracker<T> getTracker() {
-        return tracker;
-    }
-
-    @Override
     public Optional<ResourceAmount<T>> get(T resource) {
         return list.get(resource);
     }
@@ -100,5 +69,10 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
     @Override
     public long getStored() {
         return storage.getStored();
+    }
+
+    @Override
+    public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
+        return storage.findTrackedResourceBySourceType(resource, sourceType);
     }
 }

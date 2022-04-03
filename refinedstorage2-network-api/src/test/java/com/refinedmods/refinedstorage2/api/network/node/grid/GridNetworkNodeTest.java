@@ -10,7 +10,8 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.ArrayList;
@@ -37,8 +38,8 @@ public class GridNetworkNodeTest {
         StorageChannel<String> fakeStorageChannel = network.getComponent(StorageNetworkComponent.class)
                 .getStorageChannel(StorageChannelTypes.FAKE);
 
-        fakeStorageChannel.addSource(new CappedStorage<>(1000));
-        fakeStorageChannel.insert("A", 100, () -> "Test");
+        fakeStorageChannel.addSource(new TrackedStorageImpl<>(new CappedStorage<>(1000), () -> 0L));
+        fakeStorageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
         fakeStorageChannel.insert("B", 200, Action.EXECUTE, EmptySource.INSTANCE);
     }
 
@@ -55,23 +56,23 @@ public class GridNetworkNodeTest {
     void Test_iterating_through_resources() {
         // Arrange
         List<ResourceAmount<String>> resourceAmounts = new ArrayList<>();
-        List<Optional<StorageTracker.Entry>> trackerEntries = new ArrayList<>();
+        List<Optional<TrackedResource>> trackedResources = new ArrayList<>();
 
         // Act
-        sut.forEachResource((resourceAmount, entry) -> {
+        sut.forEachResource((resourceAmount, trackedResource) -> {
             resourceAmounts.add(resourceAmount);
-            trackerEntries.add(entry);
-        });
+            trackedResources.add(trackedResource);
+        }, EmptySource.class);
 
         // Assert
         assertThat(resourceAmounts).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
                 new ResourceAmount<>("A", 100),
                 new ResourceAmount<>("B", 200)
         );
-        assertThat(trackerEntries)
-                .filteredOn(Optional::isPresent)
-                .map(o -> o.get().name())
-                .containsExactly("Test");
+        assertThat(trackedResources).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                Optional.of(new TrackedResource(EmptySource.INSTANCE.getName(), 0L)),
+                Optional.of(new TrackedResource(EmptySource.INSTANCE.getName(), 0L))
+        );
     }
 
     @Test
