@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelImpl;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
 class GridServiceImplTest {
-    private static final String SOURCE_NAME = "Test source";
     private static final long MAX_COUNT = 15;
 
     private StorageChannel<String> storageChannel;
@@ -29,8 +28,8 @@ class GridServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        storageChannel = new StorageChannelImpl<>(new StorageTracker<>(() -> 0L));
-        sut = new GridServiceImpl<>(storageChannel, () -> SOURCE_NAME, r -> MAX_COUNT, 1);
+        storageChannel = new StorageChannelImpl<>();
+        sut = new GridServiceImpl<>(storageChannel, GridSource.INSTANCE, r -> MAX_COUNT, 1);
     }
 
     @Nested
@@ -42,7 +41,8 @@ class GridServiceImplTest {
             Storage<String> source = new CappedStorage<>(100);
             source.insert("A", MAX_COUNT * 3, Action.EXECUTE, EmptySource.INSTANCE);
 
-            storageChannel.addSource(new CappedStorage<>(100));
+            Storage<String> destination = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            storageChannel.addSource(destination);
 
             // Act
             sut.insert("A", insertMode, source);
@@ -59,8 +59,8 @@ class GridServiceImplTest {
             assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new ResourceAmount<>("A", (MAX_COUNT * 3) - expectedAmount)
             );
-            assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
-            assertThat(storageChannel.getTracker().getEntry("A").get().name()).isEqualTo(SOURCE_NAME);
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isPresent();
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class).get().getSourceName()).isEqualTo(GridSource.NAME);
         }
 
         @ParameterizedTest
@@ -69,7 +69,8 @@ class GridServiceImplTest {
             // Arrange
             Storage<String> source = new CappedStorage<>(100);
 
-            storageChannel.addSource(new CappedStorage<>(100));
+            Storage<String> destination = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            storageChannel.addSource(destination);
 
             // Act
             sut.insert("A", insertMode, source);
@@ -77,7 +78,7 @@ class GridServiceImplTest {
             // Assert
             assertThat(storageChannel.getAll()).isEmpty();
             assertThat(source.getAll()).isEmpty();
-            assertThat(storageChannel.getTracker().getEntry("A")).isEmpty();
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isEmpty();
         }
 
         @ParameterizedTest
@@ -87,7 +88,8 @@ class GridServiceImplTest {
             Storage<String> source = new CappedStorage<>(100);
             source.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
-            storageChannel.addSource(new CappedStorage<>(100));
+            Storage<String> destination = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            storageChannel.addSource(destination);
             storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
@@ -100,7 +102,7 @@ class GridServiceImplTest {
             assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new ResourceAmount<>("A", 100)
             );
-            assertThat(storageChannel.getTracker().getEntry("A")).isEmpty();
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isEmpty();
         }
     }
 
@@ -112,7 +114,8 @@ class GridServiceImplTest {
             Storage<String> source = new CappedStorage<>(100);
             source.insert("A", MAX_COUNT, Action.EXECUTE, EmptySource.INSTANCE);
 
-            storageChannel.addSource(new CappedStorage<>(100));
+            Storage<String> destination = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            storageChannel.addSource(destination);
             storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
@@ -125,8 +128,8 @@ class GridServiceImplTest {
             assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new ResourceAmount<>("A", 1)
             );
-            assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
-            assertThat(storageChannel.getTracker().getEntry("A").get().name()).isEqualTo(SOURCE_NAME);
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isPresent();
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class).get().getSourceName()).isEqualTo(GridSource.NAME);
         }
 
         @Test
@@ -148,7 +151,8 @@ class GridServiceImplTest {
             };
             source.insert("A", MAX_COUNT, Action.EXECUTE, EmptySource.INSTANCE);
 
-            storageChannel.addSource(new CappedStorage<>(100));
+            Storage<String> destination = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            storageChannel.addSource(destination);
             storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
@@ -161,7 +165,7 @@ class GridServiceImplTest {
             assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new ResourceAmount<>("A", MAX_COUNT)
             );
-            assertThat(storageChannel.getTracker().getEntry("A")).isEmpty();
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isEmpty();
         }
     }
 
@@ -173,7 +177,8 @@ class GridServiceImplTest {
             // Arrange
             Storage<String> destination = new CappedStorage<>(100);
 
-            storageChannel.addSource(new CappedStorage<>(100));
+            Storage<String> source = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            storageChannel.addSource(source);
             storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
@@ -192,8 +197,8 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new ResourceAmount<>("A", expectedExtracted)
             );
-            assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
-            assertThat(storageChannel.getTracker().getEntry("A").get().name()).isEqualTo(SOURCE_NAME);
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isPresent();
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class).get().getSourceName()).isEqualTo(GridSource.NAME);
         }
 
         @ParameterizedTest
@@ -202,7 +207,8 @@ class GridServiceImplTest {
             // Arrange
             Storage<String> destination = new CappedStorage<>(100);
 
-            storageChannel.addSource(new CappedStorage<>(100));
+            Storage<String> source = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            storageChannel.addSource(source);
 
             // Act
             sut.extract("A", extractMode, destination);
@@ -210,7 +216,7 @@ class GridServiceImplTest {
             // Assert
             assertThat(storageChannel.getAll()).isEmpty();
             assertThat(destination.getAll()).isEmpty();
-            assertThat(storageChannel.getTracker().getEntry("A")).isNotPresent();
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isNotPresent();
         }
 
         @ParameterizedTest
@@ -220,7 +226,8 @@ class GridServiceImplTest {
             Storage<String> destination = new CappedStorage<>(100);
             destination.insert("B", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
-            storageChannel.addSource(new CappedStorage<>(100));
+            Storage<String> source = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            storageChannel.addSource(source);
             storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
@@ -233,7 +240,7 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new ResourceAmount<>("B", 100)
             );
-            assertThat(storageChannel.getTracker().getEntry("A")).isEmpty();
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isEmpty();
         }
     }
 
@@ -244,7 +251,8 @@ class GridServiceImplTest {
             // Arrange
             Storage<String> destination = new CappedStorage<>(100);
 
-            storageChannel.addSource(new CappedStorage<>(100));
+            Storage<String> source = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            storageChannel.addSource(source);
             storageChannel.insert("A", MAX_COUNT - 1, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
@@ -255,8 +263,8 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new ResourceAmount<>("A", MAX_COUNT - 1)
             );
-            assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
-            assertThat(storageChannel.getTracker().getEntry("A").get().name()).isEqualTo(SOURCE_NAME);
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isPresent();
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class).get().getSourceName()).isEqualTo(GridSource.NAME);
         }
 
         @Test
@@ -264,7 +272,8 @@ class GridServiceImplTest {
             // Arrange
             Storage<String> destination = new CappedStorage<>(MAX_COUNT - 1);
 
-            storageChannel.addSource(new CappedStorage<>(100));
+            Storage<String> source = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            storageChannel.addSource(source);
             storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
@@ -277,8 +286,8 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new ResourceAmount<>("A", MAX_COUNT - 1)
             );
-            assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
-            assertThat(storageChannel.getTracker().getEntry("A").get().name()).isEqualTo(SOURCE_NAME);
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isPresent();
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class).get().getSourceName()).isEqualTo(GridSource.NAME);
         }
     }
 
@@ -289,7 +298,8 @@ class GridServiceImplTest {
             // Arrange
             Storage<String> destination = new CappedStorage<>(MAX_COUNT);
 
-            storageChannel.addSource(new CappedStorage<>(100));
+            Storage<String> source = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            storageChannel.addSource(source);
             storageChannel.insert("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
 
             // Act
@@ -300,8 +310,18 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new ResourceAmount<>("A", 1)
             );
-            assertThat(storageChannel.getTracker().getEntry("A")).isPresent();
-            assertThat(storageChannel.getTracker().getEntry("A").get().name()).isEqualTo(SOURCE_NAME);
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isPresent();
+            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class).get().getSourceName()).isEqualTo(GridSource.NAME);
+        }
+    }
+
+    private static class GridSource implements Source {
+        private static final String NAME = "GridSource";
+        private static final GridSource INSTANCE = new GridSource();
+
+        @Override
+        public String getName() {
+            return NAME;
         }
     }
 }

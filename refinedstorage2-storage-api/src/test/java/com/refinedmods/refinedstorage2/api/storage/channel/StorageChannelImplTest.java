@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage2.api.storage.composite.PrioritizedStorage;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
@@ -30,11 +29,10 @@ import static org.mockito.Mockito.verify;
 @Rs2Test
 class StorageChannelImplTest {
     private StorageChannel<String> sut;
-    private final Supplier<Long> trackerClock = () -> 10L;
 
     @BeforeEach
     void setUp() {
-        sut = new StorageChannelImpl<>(new StorageTracker<>(trackerClock));
+        sut = new StorageChannelImpl<>();
     }
 
     @Test
@@ -171,8 +169,6 @@ class StorageChannelImplTest {
         );
         assertThat(inserted1).isEqualTo(5);
         assertThat(inserted2).isEqualTo(4);
-        assertThat(sut.getTracker().getEntry("A")).isEmpty();
-        assertThat(sut.getTracker().getEntry("B")).isEmpty();
         assertThat(sut.getStored()).isEqualTo(9);
     }
 
@@ -192,7 +188,6 @@ class StorageChannelImplTest {
                 new ResourceAmount<>("A", 1)
         );
         assertThat(extracted).isEqualTo(49);
-        assertThat(sut.getTracker().getEntry("A")).isEmpty();
         assertThat(sut.getStored()).isEqualTo(1);
     }
 
@@ -252,43 +247,5 @@ class StorageChannelImplTest {
                 new ResourceAmount<>("A", 5)
         );
         assertThat(storage3.getAll()).isEmpty();
-    }
-
-    @Test
-    void Test_updating_tracker_on_extraction() {
-        // Arrange
-        Storage<String> storage = new CappedStorage<>(100);
-        storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
-
-        sut.addSource(storage);
-
-        // Act
-        long extracted = sut.extract("A", 10, () -> "Test source");
-
-        // Assert
-        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 40)
-        );
-        assertThat(extracted).isEqualTo(10);
-        assertThat(sut.getTracker().getEntry("A")).isNotEmpty();
-        assertThat(sut.getTracker().getEntry("A").get()).usingRecursiveComparison().isEqualTo(new StorageTracker.Entry(trackerClock.get(), "Test source"));
-    }
-
-    @Test
-    void Test_updating_tracker_on_insertion() {
-        // Arrange
-        Storage<String> storage = new CappedStorage<>(100);
-        sut.addSource(storage);
-
-        // Act
-        long inserted = sut.insert("A", 10, () -> "Test source");
-
-        // Assert
-        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 10)
-        );
-        assertThat(inserted).isEqualTo(10);
-        assertThat(sut.getTracker().getEntry("A")).isNotEmpty();
-        assertThat(sut.getTracker().getEntry("A").get()).usingRecursiveComparison().isEqualTo(new StorageTracker.Entry(trackerClock.get(), "Test source"));
     }
 }

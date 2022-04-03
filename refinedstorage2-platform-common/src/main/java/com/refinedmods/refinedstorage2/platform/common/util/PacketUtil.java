@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.util;
 
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 
@@ -67,22 +67,22 @@ public final class PacketUtil {
         );
     }
 
-    public static void writeTrackerEntry(FriendlyByteBuf buf, StorageTracker.Entry entry) {
-        if (entry == null) {
+    public static void writeTrackedResource(FriendlyByteBuf buf, TrackedResource trackedResource) {
+        if (trackedResource == null) {
             buf.writeBoolean(false);
         } else {
             buf.writeBoolean(true);
-            buf.writeLong(entry.time());
-            buf.writeUtf(entry.name());
+            buf.writeLong(trackedResource.getTime());
+            buf.writeUtf(trackedResource.getSourceName());
         }
     }
 
-    public static StorageTracker.Entry readTrackerEntry(FriendlyByteBuf buf) {
+    public static TrackedResource readTrackedResource(FriendlyByteBuf buf) {
         if (!buf.readBoolean()) {
             return null;
         }
         long time = buf.readLong();
-        String name = buf.readUtf(32767);
-        return new StorageTracker.Entry(time, name);
+        String sourceName = buf.readUtf(32767);
+        return new TrackedResource(sourceName, time);
     }
 }

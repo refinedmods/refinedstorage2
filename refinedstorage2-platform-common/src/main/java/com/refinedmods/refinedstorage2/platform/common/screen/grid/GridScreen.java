@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.LastModified;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizationType;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
@@ -325,7 +325,9 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
             List<FormattedCharSequence> smallLines = new ArrayList<>();
             smallLines.add(createTranslation("misc", "total", getAmountInTooltip(resource)).withStyle(ChatFormatting.GRAY).getVisualOrderText());
 
-            view.getTrackerEntry(resource.getResourceAmount().getResource()).ifPresent(entry -> smallLines.add(getLastModifiedText(entry).withStyle(ChatFormatting.GRAY).getVisualOrderText()));
+            view.getTrackedResource(resource.getResourceAmount().getResource()).ifPresent(entry -> smallLines.add(
+                    getLastModifiedText(entry).withStyle(ChatFormatting.GRAY).getVisualOrderText()
+            ));
 
             renderTooltipWithSmallText(poseStack, lines, smallLines, mouseX, mouseY);
         }
@@ -333,11 +335,11 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
     protected abstract List<Component> getTooltip(GridResource<R> resource);
 
-    private MutableComponent getLastModifiedText(StorageTracker.Entry entry) {
-        LastModified lastModified = LastModified.calculate(entry.time(), System.currentTimeMillis());
+    private MutableComponent getLastModifiedText(TrackedResource trackedResource) {
+        LastModified lastModified = LastModified.calculate(trackedResource.getTime(), System.currentTimeMillis());
 
         if (lastModified.type() == LastModified.Type.JUST_NOW) {
-            return createTranslation("misc", "last_modified.just_now", entry.name());
+            return createTranslation("misc", "last_modified.just_now", trackedResource.getSourceName());
         }
 
         String translationKey = lastModified.type().toString().toLowerCase();
@@ -346,7 +348,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
             translationKey += "s";
         }
 
-        return createTranslation("misc", "last_modified." + translationKey, lastModified.amount(), entry.name());
+        return createTranslation("misc", "last_modified." + translationKey, lastModified.amount(), trackedResource.getSourceName());
     }
 
     protected void renderAmount(PoseStack poseStack, int x, int y, String amount, int color) {

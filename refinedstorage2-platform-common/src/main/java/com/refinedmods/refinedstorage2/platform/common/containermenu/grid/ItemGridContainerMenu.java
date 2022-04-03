@@ -73,7 +73,7 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
                 (ServerPlayer) playerInventory.player,
                 resource,
                 change.change(),
-                storageChannel.getTracker().getEntry(resource).orElse(null)
+                storageChannel.findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
         );
     }
 

@@ -74,7 +74,7 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
                 (ServerPlayer) playerInventory.player,
                 resource,
                 change.change(),
-                storageChannel.getTracker().getEntry(resource).orElse(null)
+                storageChannel.findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
         );
     }
 

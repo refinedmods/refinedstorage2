@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.api.grid.view;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +27,7 @@ public class GridViewImpl<T> implements GridView<T> {
     private final ResourceList<T> backingList;
     private final Comparator<GridResource<?>> identitySort;
     private final Function<ResourceAmount<T>, GridResource<T>> gridResourceFactory;
-    private final Map<T, StorageTracker.Entry> trackerEntries = new HashMap<>();
+    private final Map<T, TrackedResource> trackedResources = new HashMap<>();
     private final Map<T, GridResource<T>> resourceIndex = new HashMap<>();
 
     private List<GridResource<T>> viewList = new ArrayList<>();
@@ -102,14 +102,14 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     @Override
-    public void loadResource(T resource, long amount, StorageTracker.Entry trackerEntry) {
+    public void loadResource(T resource, long amount, TrackedResource trackedResource) {
         backingList.add(resource, amount);
-        trackerEntries.put(resource, trackerEntry);
+        trackedResources.put(resource, trackedResource);
     }
 
     @Override
-    public Optional<StorageTracker.Entry> getTrackerEntry(Object resource) {
-        return Optional.ofNullable(trackerEntries.get((T) resource));
+    public Optional<TrackedResource> getTrackedResource(Object resource) {
+        return Optional.ofNullable(trackedResources.get((T) resource));
     }
 
     @Override
@@ -131,10 +131,10 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     @Override
-    public void onChange(T resource, long amount, StorageTracker.Entry trackerEntry) {
+    public void onChange(T resource, long amount, TrackedResource trackedResource) {
         ResourceListOperationResult<T> operationResult = updateBackingList(resource, amount);
 
-        updateTracker(resource, trackerEntry);
+        updateTrackedResource(resource, trackedResource);
 
         GridResource<T> gridResource = resourceIndex.get(resource);
         if (gridResource != null) {
@@ -148,11 +148,11 @@ public class GridViewImpl<T> implements GridView<T> {
         }
     }
 
-    private void updateTracker(T resource, StorageTracker.Entry trackerEntry) {
-        if (trackerEntry == null) {
-            trackerEntries.remove(resource);
+    private void updateTrackedResource(T resource, TrackedResource trackedResource) {
+        if (trackedResource == null) {
+            trackedResources.remove(resource);
         } else {
-            trackerEntries.put(resource, trackerEntry);
+            trackedResources.put(resource, trackedResource);
         }
     }
 
