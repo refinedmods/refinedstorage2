@@ -36,8 +36,6 @@ public interface Platform {
 
     BucketQuantityFormatter getBucketQuantityFormatter();
 
-    WrenchHelper getWrenchHelper();
-
     Config getConfig();
 
     boolean canEditBoxLoseFocus(EditBox editBox);
