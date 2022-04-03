@@ -6,10 +6,13 @@ import com.refinedmods.refinedstorage2.api.storage.CapacityAccessor;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
 import java.util.Collection;
+import java.util.Optional;
 
-public class DiskDriveDiskStorage<T> implements Storage<T> {
+public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     private static final double DISK_NEAR_CAPACITY_THRESHOLD = .75;
 
     private final Storage<T> parent;
@@ -58,7 +61,7 @@ public class DiskDriveDiskStorage<T> implements Storage<T> {
     @Override
     public long extract(T resource, long amount, Action action, Source source) {
         long extracted = parent.extract(resource, amount, action, source);
-        if (action == Action.EXECUTE && extracted > 0) {
+        if (extracted > 0 && action == Action.EXECUTE) {
             checkStateChanged();
         }
         return extracted;
@@ -81,5 +84,10 @@ public class DiskDriveDiskStorage<T> implements Storage<T> {
     @Override
     public long getStored() {
         return parent.getStored();
+    }
+
+    @Override
+    public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
+        return parent instanceof TrackedStorage<T> trackedStorage ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType) : Optional.empty();
     }
 }

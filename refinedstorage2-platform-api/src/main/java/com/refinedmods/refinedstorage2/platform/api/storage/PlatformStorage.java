@@ -1,19 +1,34 @@
 package com.refinedmods.refinedstorage2.platform.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 
-public class PlatformStorage<T> extends ProxyStorage<T> implements StorageTypeAccessor<T> {
-    private final Runnable listener;
-    private final StorageType<T> type;
+import java.util.Optional;
 
-    public PlatformStorage(Storage<T> parent, StorageType<T> type, Runnable listener) {
+public class PlatformStorage<T> extends ProxyStorage<T> implements StorageTypeAccessor<T>, TrackedStorage<T> {
+    private final StorageType<T> type;
+    private final TrackedStorageRepository<T> trackingRepository;
+    private final Runnable listener;
+
+    public PlatformStorage(Storage<T> parent, StorageType<T> type, TrackedStorageRepository<T> trackingRepository, Runnable listener) {
         super(parent);
-        this.listener = listener;
         this.type = type;
+        this.trackingRepository = trackingRepository;
+        this.listener = listener;
+    }
+
+    public void load(T resource, long amount, String changedBy, long changedAt) {
+        insert(resource, amount, Action.EXECUTE, EmptySource.INSTANCE);
+        if (changedBy != null && !changedBy.isBlank()) {
+            trackingRepository.update(resource, new PlayerSource(changedBy), changedAt);
+        }
     }
 
     @Override
@@ -37,5 +52,10 @@ public class PlatformStorage<T> extends ProxyStorage<T> implements StorageTypeAc
     @Override
     public StorageType<T> getType() {
         return type;
+    }
+
+    @Override
+    public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
+        return trackingRepository.findTrackedResourceBySourceType(resource, sourceType);
     }
 }

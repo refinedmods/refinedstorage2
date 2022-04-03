@@ -1,16 +1,19 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.storage.type;
 
-import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.CapacityAccessor;
 import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
-import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformCappedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 
 import net.minecraft.nbt.CompoundTag;
@@ -22,31 +25,46 @@ public class ItemStorageType implements StorageType<ItemResource> {
 
     private static final String TAG_CAPACITY = "cap";
     private static final String TAG_STACKS = "stacks";
+    private static final String TAG_CHANGED_BY = "cb";
+    private static final String TAG_CHANGED_AT = "ca";
 
     private ItemStorageType() {
     }
 
     @Override
     public Storage<ItemResource> fromTag(CompoundTag tag, PlatformStorageRepository storageRepository) {
-        Storage<ItemResource> storage = createStorage(tag, storageRepository);
+        PlatformStorage<ItemResource> storage = createStorage(tag, storageRepository);
         ListTag stacks = tag.getList(TAG_STACKS, Tag.TAG_COMPOUND);
         for (Tag stackTag : stacks) {
-            ItemResource.fromTagWithAmount((CompoundTag) stackTag).ifPresent(resourceAmount -> storage.insert(resourceAmount.getResource(), resourceAmount.getAmount(), Action.EXECUTE, EmptySource.INSTANCE));
+            ItemResource
+                    .fromTagWithAmount((CompoundTag) stackTag)
+                    .ifPresent(resourceAmount -> storage.load(
+                            resourceAmount.getResource(),
+                            resourceAmount.getAmount(),
+                            ((CompoundTag) stackTag).getString(TAG_CHANGED_BY),
+                            ((CompoundTag) stackTag).getLong(TAG_CHANGED_AT)
+                    ));
         }
         return storage;
     }
 
-    private Storage<ItemResource> createStorage(CompoundTag tag, PlatformStorageRepository storageRepository) {
+    private PlatformStorage<ItemResource> createStorage(CompoundTag tag, PlatformStorageRepository storageRepository) {
+        TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (tag.contains(TAG_CAPACITY)) {
             return new PlatformCappedStorage<>(
-                    new CappedStorage<>(tag.getLong(TAG_CAPACITY)),
+                    new CappedStorage<>(
+                            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+                            tag.getLong(TAG_CAPACITY)
+                    ),
                     ItemStorageType.INSTANCE,
+                    trackingRepository,
                     storageRepository::markAsChanged
             );
         }
         return new PlatformStorage<>(
-                new InMemoryStorageImpl<>(),
+                new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                 ItemStorageType.INSTANCE,
+                trackingRepository,
                 storageRepository::markAsChanged
         );
     }
@@ -59,9 +77,22 @@ public class ItemStorageType implements StorageType<ItemResource> {
         }
         ListTag stacks = new ListTag();
         for (ResourceAmount<ItemResource> resourceAmount : storage.getAll()) {
-            stacks.add(ItemResource.toTagWithAmount(resourceAmount));
+            stacks.add(toTag(storage, resourceAmount));
         }
         tag.put(TAG_STACKS, stacks);
+        return tag;
+    }
+
+    private CompoundTag toTag(Storage<ItemResource> storage, ResourceAmount<ItemResource> resourceAmount) {
+        CompoundTag tag = ItemResource.toTagWithAmount(resourceAmount);
+        if (storage instanceof TrackedStorage<ItemResource> trackedStorage) {
+            trackedStorage
+                    .findTrackedResourceBySourceType(resourceAmount.getResource(), PlayerSource.class)
+                    .ifPresent(trackedResource -> {
+                        tag.putString(TAG_CHANGED_BY, trackedResource.getSourceName());
+                        tag.putLong(TAG_CHANGED_AT, trackedResource.getTime());
+                    });
+        }
         return tag;
     }
 }
