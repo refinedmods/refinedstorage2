@@ -4,8 +4,12 @@ import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageDiskItemImpl;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformCappedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -40,16 +44,22 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected Storage<?> createStorage(Level level) {
+        TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!type.hasCapacity()) {
             return new PlatformStorage<>(
-                    new InMemoryStorageImpl<>(),
+                    new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                     com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType.INSTANCE,
+                    trackingRepository,
                     Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
             );
         }
         return new PlatformCappedStorage<>(
-                new CappedStorage<>(type.getCapacity()),
+                new CappedStorage<>(
+                        new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+                        type.getCapacity()
+                ),
                 com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType.INSTANCE,
+                trackingRepository,
                 Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
         );
     }

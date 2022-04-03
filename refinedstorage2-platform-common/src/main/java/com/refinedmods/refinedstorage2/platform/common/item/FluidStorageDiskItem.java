@@ -4,9 +4,13 @@ import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageDiskItemImpl;
+import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformCappedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -46,16 +50,22 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected Storage<?> createStorage(Level level) {
+        TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!type.hasCapacity()) {
             return new PlatformStorage<>(
-                    new InMemoryStorageImpl<>(),
+                    new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                     com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType.INSTANCE,
+                    trackingRepository,
                     Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
             );
         }
         return new PlatformCappedStorage<>(
-                new CappedStorage<>(type.getBuckets() * Platform.INSTANCE.getBucketAmount()),
+                new CappedStorage<>(
+                        new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+                        type.getBuckets() * Platform.INSTANCE.getBucketAmount()
+                ),
                 com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType.INSTANCE,
+                trackingRepository,
                 Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
         );
     }
