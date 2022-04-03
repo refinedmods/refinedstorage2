@@ -1,6 +1,5 @@
-package com.refinedmods.refinedstorage2.api.core;
+package com.refinedmods.refinedstorage2.api.core.util;
 
-// TODO: Add test
 public record LastModified(Type type, long amount) {
     private static final long SECOND = 1000;
     private static final long MINUTE = SECOND * 60;
@@ -10,7 +9,6 @@ public record LastModified(Type type, long amount) {
     private static final long YEAR = DAY * 365;
 
     public enum Type {
-        JUST_NOW,
         SECOND,
         MINUTE,
         HOUR,
@@ -22,9 +20,7 @@ public record LastModified(Type type, long amount) {
     public static LastModified calculate(long time, long now) {
         long diff = now - time;
 
-        if (diff < SECOND * 10) {
-            return new LastModified(Type.JUST_NOW, diff / SECOND);
-        } else if (diff < MINUTE) {
+        if (diff < MINUTE) {
             return new LastModified(Type.SECOND, diff / SECOND);
         } else if (diff < HOUR) {
             return new LastModified(Type.MINUTE, diff / MINUTE);
