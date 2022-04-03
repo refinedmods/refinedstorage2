@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.abstractions.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.abstractions.BucketQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.abstractions.Config;
-import com.refinedmods.refinedstorage2.platform.abstractions.WrenchHelper;
 import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
@@ -40,9 +39,8 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 
-public class PlatformImpl extends AbstractPlatform {
+public final class PlatformImpl extends AbstractPlatform {
     private final ConfigImpl config = new ConfigImpl();
-    private final WrenchHelper wrenchHelper = new WrenchHelperImpl();
 
     public PlatformImpl(NetworkManager networkManager) {
         super(new ServerToClientCommunicationsImpl(networkManager), new ClientToServerCommunicationsImpl(networkManager), new MenuOpenerImpl(), new BucketQuantityFormatter(FluidAttributes.BUCKET_VOLUME), new FluidStackFluidRenderer());
@@ -52,11 +50,6 @@ public class PlatformImpl extends AbstractPlatform {
     @Override
     public long getBucketAmount() {
         return FluidAttributes.BUCKET_VOLUME;
-    }
-
-    @Override
-    public WrenchHelper getWrenchHelper() {
-        return wrenchHelper;
     }
 
     @Override

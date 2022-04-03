@@ -59,11 +59,6 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public WrenchHelper getWrenchHelper() {
-        return ensureLoaded().getWrenchHelper();
-    }
-
-    @Override
     public Config getConfig() {
         return ensureLoaded().getConfig();
     }

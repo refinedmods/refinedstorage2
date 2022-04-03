@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.abstractions.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.abstractions.BucketQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.abstractions.Config;
-import com.refinedmods.refinedstorage2.platform.abstractions.WrenchHelper;
 import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
@@ -46,8 +45,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
 public final class PlatformImpl extends AbstractPlatform {
-    private final WrenchHelper wrenchHelper = new WrenchHelperImpl();
-
     public PlatformImpl() {
         super(new ServerToClientCommunicationsImpl(), new ClientToServerCommunicationsImpl(), new MenuOpenerImpl(), new BucketQuantityFormatter(FluidConstants.BUCKET), new FluidVariantFluidRenderer());
     }
@@ -55,11 +52,6 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public long getBucketAmount() {
         return FluidConstants.BUCKET;
-    }
-
-    @Override
-    public WrenchHelper getWrenchHelper() {
-        return wrenchHelper;
     }
 
     @Override
