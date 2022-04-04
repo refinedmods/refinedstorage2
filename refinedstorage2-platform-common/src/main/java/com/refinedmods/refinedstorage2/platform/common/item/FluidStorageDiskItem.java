@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
-import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
@@ -11,7 +11,7 @@ import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageDiskItemImpl;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformCappedStorage;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -59,8 +59,8 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
                     Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
             );
         }
-        return new PlatformCappedStorage<>(
-                new CappedStorage<>(
+        return new PlatformLimitedStorage<>(
+                new LimitedStorageImpl<>(
                         new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                         type.getBuckets() * Platform.INSTANCE.getBucketAmount()
                 ),

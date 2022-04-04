@@ -8,8 +8,8 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetwo
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageProviderRepository;
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
@@ -34,7 +34,7 @@ class StorageNetworkComponentTest {
         sut = new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY);
 
         FakeStorageProviderRepository storageProviderRepository = new FakeStorageProviderRepository();
-        storageProviderRepository.setInSlot(0, new CappedStorage<>(100));
+        storageProviderRepository.setInSlot(0, new LimitedStorageImpl<>(100));
 
         diskDrive = new DiskDriveNetworkNode(0, 0, STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(NetworkUtil.create());

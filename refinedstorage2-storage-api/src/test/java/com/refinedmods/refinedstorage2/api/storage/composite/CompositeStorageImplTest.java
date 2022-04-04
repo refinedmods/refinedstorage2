@@ -3,9 +3,9 @@ package com.refinedmods.refinedstorage2.api.storage.composite;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
-import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.SourceCapturingStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
@@ -42,13 +42,13 @@ class CompositeStorageImplTest {
     @Test
     void Test_adding_sources() {
         // Arrange
-        Storage<String> storage1 = new CappedStorage<>(10);
+        Storage<String> storage1 = new LimitedStorageImpl<>(10);
         storage1.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> storage2 = new CappedStorage<>(10);
+        Storage<String> storage2 = new LimitedStorageImpl<>(10);
         storage2.insert("B", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> storage3 = new CappedStorage<>(10);
+        Storage<String> storage3 = new LimitedStorageImpl<>(10);
         storage3.insert("C", 7, Action.EXECUTE, EmptySource.INSTANCE);
         storage3.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
 
@@ -71,9 +71,9 @@ class CompositeStorageImplTest {
     @Test
     void Test_priority_sorting_when_adding_source() {
         // Arrange
-        Storage<String> storage1 = new CappedStorage<>(10);
-        Storage<String> storage2 = new CappedStorage<>(10);
-        Storage<String> storage3 = new CappedStorage<>(10);
+        Storage<String> storage1 = new LimitedStorageImpl<>(10);
+        Storage<String> storage2 = new LimitedStorageImpl<>(10);
+        Storage<String> storage3 = new LimitedStorageImpl<>(10);
 
         sut.addSource(new PrioritizedStorage<>(20, storage1));
         sut.addSource(new PrioritizedStorage<>(10, storage2));
@@ -95,9 +95,9 @@ class CompositeStorageImplTest {
     @Test
     void Test_priority_sorting_when_removing_source() {
         // Arrange
-        Storage<String> storage1 = new PrioritizedStorage<>(20, new CappedStorage<>(10));
-        Storage<String> storage2 = new PrioritizedStorage<>(10, new CappedStorage<>(10));
-        Storage<String> storage3 = new PrioritizedStorage<>(30, new CappedStorage<>(10));
+        Storage<String> storage1 = new PrioritizedStorage<>(20, new LimitedStorageImpl<>(10));
+        Storage<String> storage2 = new PrioritizedStorage<>(10, new LimitedStorageImpl<>(10));
+        Storage<String> storage3 = new PrioritizedStorage<>(30, new LimitedStorageImpl<>(10));
 
         sut.addSource(storage1);
         sut.addSource(storage2);
@@ -120,13 +120,13 @@ class CompositeStorageImplTest {
     @Test
     void Test_removing_sources() {
         // Arrange
-        Storage<String> storage1 = new CappedStorage<>(10);
+        Storage<String> storage1 = new LimitedStorageImpl<>(10);
         storage1.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> storage2 = new CappedStorage<>(10);
+        Storage<String> storage2 = new LimitedStorageImpl<>(10);
         storage2.insert("B", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> storage3 = new CappedStorage<>(10);
+        Storage<String> storage3 = new LimitedStorageImpl<>(10);
         storage3.insert("C", 7, Action.EXECUTE, EmptySource.INSTANCE);
         storage3.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
 
@@ -150,13 +150,13 @@ class CompositeStorageImplTest {
     @Test
     void Test_clearing_sources() {
         // Arrange
-        Storage<String> storage1 = new CappedStorage<>(10);
+        Storage<String> storage1 = new LimitedStorageImpl<>(10);
         storage1.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> storage2 = new CappedStorage<>(10);
+        Storage<String> storage2 = new LimitedStorageImpl<>(10);
         storage2.insert("B", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> storage3 = new CappedStorage<>(10);
+        Storage<String> storage3 = new LimitedStorageImpl<>(10);
         storage3.insert("C", 7, Action.EXECUTE, EmptySource.INSTANCE);
         storage3.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
 
@@ -187,7 +187,7 @@ class CompositeStorageImplTest {
     @EnumSource(Action.class)
     void Test_single_source_insert_without_remainder(Action action) {
         // Arrange
-        SourceCapturingStorage<String> storage = new SourceCapturingStorage<>(new CappedStorage<>(20));
+        SourceCapturingStorage<String> storage = new SourceCapturingStorage<>(new LimitedStorageImpl<>(20));
         sut.addSource(storage);
 
         Source customSource = () -> "Custom";
@@ -219,7 +219,7 @@ class CompositeStorageImplTest {
     @EnumSource(Action.class)
     void Test_single_source_insert_with_remainder(Action action) {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(20);
+        Storage<String> storage = new LimitedStorageImpl<>(20);
         sut.addSource(storage);
 
         // Act
@@ -249,9 +249,9 @@ class CompositeStorageImplTest {
     @EnumSource(Action.class)
     void Test_multiple_source_insert_without_remainder(Action action) {
         // Arrange
-        Storage<String> storage1 = new CappedStorage<>(5);
-        Storage<String> storage2 = new CappedStorage<>(10);
-        Storage<String> storage3 = new CappedStorage<>(20);
+        Storage<String> storage1 = new LimitedStorageImpl<>(5);
+        Storage<String> storage2 = new LimitedStorageImpl<>(10);
+        Storage<String> storage3 = new LimitedStorageImpl<>(20);
 
         sut.addSource(storage1);
         sut.addSource(storage2);
@@ -292,9 +292,9 @@ class CompositeStorageImplTest {
     @EnumSource(Action.class)
     void Test_multiple_source_insert_with_remainder(Action action) {
         // Arrange
-        Storage<String> storage1 = new CappedStorage<>(5);
-        Storage<String> storage2 = new CappedStorage<>(10);
-        Storage<String> storage3 = new CappedStorage<>(20);
+        Storage<String> storage1 = new LimitedStorageImpl<>(5);
+        Storage<String> storage2 = new LimitedStorageImpl<>(10);
+        Storage<String> storage3 = new LimitedStorageImpl<>(20);
 
         sut.addSource(storage1);
         sut.addSource(storage2);
@@ -343,7 +343,7 @@ class CompositeStorageImplTest {
     @Test
     void Test_extracting_without_resource_present() {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(10);
+        Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
@@ -359,7 +359,7 @@ class CompositeStorageImplTest {
     @EnumSource(Action.class)
     void Test_single_source_partial_extract(Action action) {
         // Arrange
-        SourceCapturingStorage<String> storage = new SourceCapturingStorage<>(new CappedStorage<>(10));
+        SourceCapturingStorage<String> storage = new SourceCapturingStorage<>(new LimitedStorageImpl<>(10));
         storage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
@@ -399,7 +399,7 @@ class CompositeStorageImplTest {
     @EnumSource(Action.class)
     void Test_single_source_full_extract(Action action) {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(10);
+        Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
@@ -431,7 +431,7 @@ class CompositeStorageImplTest {
     @EnumSource(Action.class)
     void Test_single_source_more_than_is_available_extract(Action action) {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(10);
+        Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 4, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
@@ -463,10 +463,10 @@ class CompositeStorageImplTest {
     @EnumSource(Action.class)
     void Test_multiple_source_partial_extract(Action action) {
         // Arrange
-        Storage<String> storage1 = new CappedStorage<>(10);
+        Storage<String> storage1 = new LimitedStorageImpl<>(10);
         storage1.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> storage2 = new CappedStorage<>(5);
+        Storage<String> storage2 = new LimitedStorageImpl<>(5);
         storage2.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage1);
@@ -507,10 +507,10 @@ class CompositeStorageImplTest {
     @EnumSource(Action.class)
     void Test_multiple_source_full_extract(Action action) {
         // Arrange
-        Storage<String> storage1 = new CappedStorage<>(10);
+        Storage<String> storage1 = new LimitedStorageImpl<>(10);
         storage1.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> storage2 = new CappedStorage<>(5);
+        Storage<String> storage2 = new LimitedStorageImpl<>(5);
         storage2.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage1);
@@ -547,10 +547,10 @@ class CompositeStorageImplTest {
     @EnumSource(Action.class)
     void Test_multiple_source_more_than_is_available_extract(Action action) {
         // Arrange
-        Storage<String> storage1 = new CappedStorage<>(10);
+        Storage<String> storage1 = new LimitedStorageImpl<>(10);
         storage1.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> storage2 = new CappedStorage<>(5);
+        Storage<String> storage2 = new LimitedStorageImpl<>(5);
         storage2.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage1);
@@ -586,8 +586,8 @@ class CompositeStorageImplTest {
     @Test
     void Test_prioritizing_when_inserting() {
         // Arrange
-        PrioritizedStorage<String> lowestPriority = new PrioritizedStorage<>(5, new CappedStorage<>(10));
-        PrioritizedStorage<String> highestPriority = new PrioritizedStorage<>(10, new CappedStorage<>(10));
+        PrioritizedStorage<String> lowestPriority = new PrioritizedStorage<>(5, new LimitedStorageImpl<>(10));
+        PrioritizedStorage<String> highestPriority = new PrioritizedStorage<>(10, new LimitedStorageImpl<>(10));
 
         sut.addSource(lowestPriority);
         sut.addSource(highestPriority);
@@ -607,8 +607,8 @@ class CompositeStorageImplTest {
     @Test
     void Test_prioritizing_when_extracting() {
         // Arrange
-        PrioritizedStorage<String> lowestPriority = new PrioritizedStorage<>(5, new CappedStorage<>(10));
-        PrioritizedStorage<String> highestPriority = new PrioritizedStorage<>(10, new CappedStorage<>(10));
+        PrioritizedStorage<String> lowestPriority = new PrioritizedStorage<>(5, new LimitedStorageImpl<>(10));
+        PrioritizedStorage<String> highestPriority = new PrioritizedStorage<>(10, new LimitedStorageImpl<>(10));
 
         lowestPriority.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
         highestPriority.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);

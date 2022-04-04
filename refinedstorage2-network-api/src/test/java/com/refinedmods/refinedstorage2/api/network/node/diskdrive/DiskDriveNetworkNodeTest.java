@@ -6,9 +6,9 @@ import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
@@ -73,7 +73,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_initialization() {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(10);
+        Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
 
@@ -90,7 +90,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_initial_state() {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(10);
+        Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
 
@@ -112,19 +112,19 @@ class DiskDriveNetworkNodeTest {
     @ValueSource(booleans = {true, false})
     void Test_disk_state(boolean active) {
         // Arrange
-        Storage<String> normalStorage = new CappedStorage<>(100);
+        Storage<String> normalStorage = new LimitedStorageImpl<>(100);
         normalStorage.insert("A", 74, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> nearCapacityStorage = new CappedStorage<>(100);
+        Storage<String> nearCapacityStorage = new LimitedStorageImpl<>(100);
         nearCapacityStorage.insert("A", 75, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> fullStorage = new CappedStorage<>(100);
+        Storage<String> fullStorage = new LimitedStorageImpl<>(100);
         fullStorage.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> nonCappedStorage = new InMemoryStorageImpl<>();
+        Storage<String> unlimitedStorage = new InMemoryStorageImpl<>();
 
         storageProviderRepository.setInSlot(1, UUID.randomUUID());
-        storageProviderRepository.setInSlot(2, nonCappedStorage);
+        storageProviderRepository.setInSlot(2, unlimitedStorage);
         storageProviderRepository.setInSlot(3, normalStorage);
         storageProviderRepository.setInSlot(5, nearCapacityStorage);
         storageProviderRepository.setInSlot(7, fullStorage);
@@ -155,7 +155,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         initializeAndActivate();
 
-        Storage<String> storage = new CappedStorage<>(10);
+        Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(7, storage);
 
@@ -176,14 +176,14 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_changing_disk_in_slot() {
         // Arrange
-        Storage<String> storage1 = new CappedStorage<>(10);
+        Storage<String> storage1 = new LimitedStorageImpl<>(10);
         storage1.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(7, storage1);
 
         initializeAndActivate();
 
         // Act
-        Storage<String> storage2 = new CappedStorage<>(10);
+        Storage<String> storage2 = new LimitedStorageImpl<>(10);
         storage2.insert("B", 2, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(7, storage2);
         sut.onDiskChanged(7);
@@ -202,7 +202,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_removing_disk_in_slot() {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(10);
+        Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(7, storage);
 
@@ -238,7 +238,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         initializeAndActivate();
 
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
@@ -264,7 +264,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         initializeAndActivate();
 
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
@@ -291,13 +291,13 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_inserting() {
         // Arrange
-        Storage<String> storage1 = new CappedStorage<>(100);
+        Storage<String> storage1 = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(1, storage1);
 
-        Storage<String> storage2 = new CappedStorage<>(100);
+        Storage<String> storage2 = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(2, storage2);
 
-        Storage<String> storage3 = new CappedStorage<>(100);
+        Storage<String> storage3 = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(3, storage3);
 
         initializeAndActivate();
@@ -333,17 +333,17 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_extracting() {
         // Arrange
-        Storage<String> storage1 = new CappedStorage<>(100);
+        Storage<String> storage1 = new LimitedStorageImpl<>(100);
         storage1.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storage1.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage1);
 
-        Storage<String> storage2 = new CappedStorage<>(100);
+        Storage<String> storage2 = new LimitedStorageImpl<>(100);
         storage2.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storage2.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(2, storage2);
 
-        Storage<String> storage3 = new CappedStorage<>(100);
+        Storage<String> storage3 = new LimitedStorageImpl<>(100);
         storage3.insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(3, storage3);
 
@@ -380,7 +380,7 @@ class DiskDriveNetworkNodeTest {
         sut.setFilterMode(FilterMode.ALLOW);
         sut.setFilterTemplates(Set.of("A", "B"));
 
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(1, storage);
 
         initializeAndActivate();
@@ -402,7 +402,7 @@ class DiskDriveNetworkNodeTest {
         sut.setFilterMode(FilterMode.ALLOW);
         sut.setFilterTemplates(Set.of());
 
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(1, storage);
 
         initializeAndActivate();
@@ -424,7 +424,7 @@ class DiskDriveNetworkNodeTest {
         sut.setFilterMode(FilterMode.BLOCK);
         sut.setFilterTemplates(Set.of("A", "B"));
 
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(1, storage);
 
         initializeAndActivate();
@@ -446,7 +446,7 @@ class DiskDriveNetworkNodeTest {
         sut.setFilterMode(FilterMode.BLOCK);
         sut.setFilterTemplates(Set.of());
 
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(1, storage);
 
         initializeAndActivate();
@@ -468,7 +468,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         sut.setAccessMode(accessMode);
 
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(1, storage);
 
         initializeAndActivate();
@@ -489,7 +489,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         sut.setAccessMode(accessMode);
 
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(1, storage);
 
         initializeAndActivate();
@@ -511,7 +511,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         initializeAndActivate();
 
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(1, storage);
         sut.onDiskChanged(1);
 
@@ -529,7 +529,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         initializeAndActivate();
 
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 20, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
         sut.onDiskChanged(1);
@@ -548,7 +548,7 @@ class DiskDriveNetworkNodeTest {
         // Arrange
         initializeAndActivate();
 
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
@@ -565,7 +565,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_activeness() {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
@@ -589,7 +589,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_disk_state_change_listener_should_not_be_called_when_not_necessary_on_extracting() {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 76, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
 
@@ -605,7 +605,7 @@ class DiskDriveNetworkNodeTest {
     @Test
     void Test_disk_state_change_listener_should_not_be_called_when_not_necessary_on_inserting() {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(1, storage);
 
         initializeAndActivate();
@@ -621,7 +621,7 @@ class DiskDriveNetworkNodeTest {
     @EnumSource(Action.class)
     void Test_disk_state_change_listener_should_be_called_when_necessary_on_extracting(Action action) {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 75, Action.EXECUTE, EmptySource.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
 
@@ -641,7 +641,7 @@ class DiskDriveNetworkNodeTest {
     @EnumSource(Action.class)
     void Test_disk_state_change_listener_should_be_called_when_necessary_on_inserting(Action action) {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(1, storage);
 
         initializeAndActivate();
@@ -662,11 +662,11 @@ class DiskDriveNetworkNodeTest {
     @ValueSource(booleans = {true, false})
     void Test_setting_priority(boolean oneHasPriority) {
         // Arrange
-        Storage<String> storage1 = new CappedStorage<>(100);
+        Storage<String> storage1 = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(1, storage1);
         initializeAndActivate();
 
-        Storage<String> storage2 = new CappedStorage<>(100);
+        Storage<String> storage2 = new LimitedStorageImpl<>(100);
         FakeStorageProviderRepository storageProviderManager2 = new FakeStorageProviderRepository();
         storageProviderManager2.setInSlot(1, storage2);
         DiskDriveNetworkNode diskDrive2 = createDiskDrive(network, storageProviderManager2, mock(DiskDriveListener.class));
