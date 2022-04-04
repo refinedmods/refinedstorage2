@@ -17,12 +17,12 @@ import java.util.Collection;
 import java.util.Optional;
 
 public class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, Priority {
-    private final CompositeStorage<T> compositeOfDisks;
+    private final CompositeStorage<T> disks;
     private final DiskDriveNetworkNode diskDrive;
     private final Filter filter;
 
     protected DiskDriveCompositeStorage(DiskDriveNetworkNode diskDrive, Filter filter) {
-        this.compositeOfDisks = new CompositeStorageImpl<>(new ResourceListImpl<>());
+        this.disks = new CompositeStorageImpl<>(new ResourceListImpl<>());
         this.diskDrive = diskDrive;
         this.filter = filter;
     }
@@ -32,7 +32,7 @@ public class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, Priori
         if (diskDrive.getAccessMode() == AccessMode.INSERT || !diskDrive.isActive()) {
             return 0;
         }
-        return compositeOfDisks.extract(resource, amount, action, source);
+        return disks.extract(resource, amount, action, source);
     }
 
     @Override
@@ -40,17 +40,17 @@ public class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, Priori
         if (diskDrive.getAccessMode() == AccessMode.EXTRACT || !diskDrive.isActive() || !filter.isAllowed(resource)) {
             return 0;
         }
-        return compositeOfDisks.insert(resource, amount, action, source);
+        return disks.insert(resource, amount, action, source);
     }
 
     @Override
     public Collection<ResourceAmount<T>> getAll() {
-        return compositeOfDisks.getAll();
+        return disks.getAll();
     }
 
     @Override
     public long getStored() {
-        return compositeOfDisks.getStored();
+        return disks.getStored();
     }
 
     @Override
@@ -60,36 +60,36 @@ public class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, Priori
 
     @Override
     public void sortSources() {
-        compositeOfDisks.sortSources();
+        disks.sortSources();
     }
 
     @Override
     public void addSource(Storage<T> source) {
-        compositeOfDisks.addSource(source);
+        disks.addSource(source);
     }
 
     @Override
     public void removeSource(Storage<T> source) {
-        compositeOfDisks.removeSource(source);
+        disks.removeSource(source);
     }
 
     @Override
     public void addListener(CompositeStorageListener<T> listener) {
-        compositeOfDisks.addListener(listener);
+        disks.addListener(listener);
     }
 
     @Override
     public void removeListener(CompositeStorageListener<T> listener) {
-        compositeOfDisks.removeListener(listener);
+        disks.removeListener(listener);
     }
 
     @Override
     public void clearSources() {
-        compositeOfDisks.clearSources();
+        disks.clearSources();
     }
 
     @Override
     public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
-        return compositeOfDisks.findTrackedResourceBySourceType(resource, sourceType);
+        return disks.findTrackedResourceBySourceType(resource, sourceType);
     }
 }
