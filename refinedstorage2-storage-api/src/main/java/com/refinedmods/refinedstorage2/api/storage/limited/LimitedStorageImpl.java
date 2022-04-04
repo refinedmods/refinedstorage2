@@ -1,6 +1,11 @@
-package com.refinedmods.refinedstorage2.api.storage;
+package com.refinedmods.refinedstorage2.api.storage.limited;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
+import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
+import com.refinedmods.refinedstorage2.api.storage.Source;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 
 import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
@@ -12,7 +17,7 @@ import org.apiguardian.api.API;
  * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public class LimitedStorageImpl<T> extends ProxyStorage<T> implements CapacityAccessor {
+public class LimitedStorageImpl<T> extends ProxyStorage<T> implements LimitedStorage<T> {
     private final long capacity;
 
     /**

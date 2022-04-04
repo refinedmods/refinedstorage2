@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.storage.type;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.CapacityAccessor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
-import com.refinedmods.refinedstorage2.api.storage.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
+import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
@@ -72,8 +72,8 @@ public class ItemStorageType implements StorageType<ItemResource> {
     @Override
     public CompoundTag toTag(Storage<ItemResource> storage) {
         CompoundTag tag = new CompoundTag();
-        if (storage instanceof CapacityAccessor capacityAccessor) {
-            tag.putLong(TAG_CAPACITY, capacityAccessor.getCapacity());
+        if (storage instanceof LimitedStorage limitedStorage) {
+            tag.putLong(TAG_CAPACITY, limitedStorage.getCapacity());
         }
         ListTag stacks = new ListTag();
         for (ResourceAmount<ItemResource> resourceAmount : storage.getAll()) {

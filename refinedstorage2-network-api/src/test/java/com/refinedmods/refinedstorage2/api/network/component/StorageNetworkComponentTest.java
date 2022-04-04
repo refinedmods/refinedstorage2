@@ -9,8 +9,8 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStoragePro
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
-import com.refinedmods.refinedstorage2.api.storage.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Collection;

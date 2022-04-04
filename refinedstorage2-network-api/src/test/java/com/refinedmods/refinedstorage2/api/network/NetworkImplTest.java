@@ -8,8 +8,8 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListe
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStorageProviderRepository;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
-import com.refinedmods.refinedstorage2.api.storage.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
