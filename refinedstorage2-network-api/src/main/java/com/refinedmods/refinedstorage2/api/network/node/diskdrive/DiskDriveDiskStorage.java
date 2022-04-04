@@ -2,10 +2,10 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.CapacityAccessor;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
@@ -32,8 +32,8 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     }
 
     public StorageDiskState getState() {
-        if (parent instanceof CapacityAccessor capacityAccessor) {
-            return getStateWithCapacity(capacityAccessor.getCapacity());
+        if (parent instanceof LimitedStorage limitedStorage) {
+            return getStateWithCapacity(limitedStorage.getCapacity());
         }
         return StorageDiskState.NORMAL;
     }

@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
+import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
+
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
@@ -9,7 +11,7 @@ public record StorageInfo(long stored, long capacity) {
     public static StorageInfo of(Storage<?> storage) {
         return new StorageInfo(
                 storage.getStored(),
-                storage instanceof CapacityAccessor capacityAccessor ? capacityAccessor.getCapacity() : 0L
+                storage instanceof LimitedStorage limitedStorage ? limitedStorage.getCapacity() : 0L
         );
     }
 }
