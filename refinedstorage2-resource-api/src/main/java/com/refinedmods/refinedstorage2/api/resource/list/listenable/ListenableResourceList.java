@@ -12,9 +12,9 @@ import org.apiguardian.api.API;
 
 /**
  * A resource list that can have listeners to track changes.
- * Can easily be used with an existing list by passing it as a parent in the constructor.
+ * Can easily be used with an existing list by passing it in the constructor.
  * The {@link ResourceListListener#onChanged(ResourceListOperationResult)} method is only called when the change
- * is being performed through this list, not the parent list.
+ * is being performed through this list, not the delegate list.
  *
  * @param <T> the resource
  */
@@ -22,8 +22,8 @@ import org.apiguardian.api.API;
 public class ListenableResourceList<T> extends ProxyResourceList<T> {
     private final Set<ResourceListListener<T>> listeners = new HashSet<>();
 
-    public ListenableResourceList(ResourceList<T> parent) {
-        super(parent);
+    public ListenableResourceList(ResourceList<T> delegate) {
+        super(delegate);
     }
 
     @Override

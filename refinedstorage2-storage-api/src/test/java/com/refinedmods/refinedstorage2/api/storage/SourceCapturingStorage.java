@@ -8,8 +8,8 @@ import java.util.List;
 public class SourceCapturingStorage<T> extends ProxyStorage<T> {
     private final List<Source> sourcesUsed = new ArrayList<>();
 
-    public SourceCapturingStorage(Storage<T> parent) {
-        super(parent);
+    public SourceCapturingStorage(Storage<T> delegate) {
+        super(delegate);
     }
 
     @Override

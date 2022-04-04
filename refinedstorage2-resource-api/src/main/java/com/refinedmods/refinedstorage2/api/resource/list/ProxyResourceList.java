@@ -15,39 +15,39 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public abstract class ProxyResourceList<T> implements ResourceList<T> {
-    private final ResourceList<T> parent;
+    private final ResourceList<T> delegate;
 
-    public ProxyResourceList(ResourceList<T> parent) {
-        this.parent = parent;
+    public ProxyResourceList(ResourceList<T> delegate) {
+        this.delegate = delegate;
     }
 
     @Override
     public ResourceListOperationResult<T> add(T resource, long amount) {
-        return parent.add(resource, amount);
+        return delegate.add(resource, amount);
     }
 
     @Override
     public Optional<ResourceListOperationResult<T>> remove(T resource, long amount) {
-        return parent.remove(resource, amount);
+        return delegate.remove(resource, amount);
     }
 
     @Override
     public Optional<ResourceAmount<T>> get(T resource) {
-        return parent.get(resource);
+        return delegate.get(resource);
     }
 
     @Override
     public Optional<ResourceAmount<T>> get(UUID id) {
-        return parent.get(id);
+        return delegate.get(id);
     }
 
     @Override
     public Collection<ResourceAmount<T>> getAll() {
-        return parent.getAll();
+        return delegate.getAll();
     }
 
     @Override
     public void clear() {
-        parent.clear();
+        delegate.clear();
     }
 }

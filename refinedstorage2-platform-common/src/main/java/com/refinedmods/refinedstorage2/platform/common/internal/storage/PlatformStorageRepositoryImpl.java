@@ -29,27 +29,27 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     private static final String TAG_STORAGE_TYPE = "type";
     private static final String TAG_STORAGE_DATA = "data";
 
-    private final StorageRepositoryImpl parent;
+    private final StorageRepositoryImpl delegate;
 
-    public PlatformStorageRepositoryImpl(StorageRepositoryImpl parent) {
-        this.parent = parent;
+    public PlatformStorageRepositoryImpl(StorageRepositoryImpl delegate) {
+        this.delegate = delegate;
     }
 
     @Override
     public <T> Optional<Storage<T>> get(UUID id) {
-        return parent.get(id);
+        return delegate.get(id);
     }
 
     @Override
     public <T> void set(UUID id, Storage<T> storage) {
-        parent.set(id, storage);
+        delegate.set(id, storage);
         setDirty();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> Optional<Storage<T>> disassemble(UUID id) {
-        return parent.disassemble(id).map(storage -> {
+        return delegate.disassemble(id).map(storage -> {
             setDirty();
             return (Storage<T>) storage;
         });
@@ -57,7 +57,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
 
     @Override
     public StorageInfo getInfo(UUID id) {
-        return parent.getInfo(id);
+        return delegate.getInfo(id);
     }
 
     public void read(CompoundTag tag) {
@@ -68,7 +68,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
             CompoundTag data = ((CompoundTag) storageTag).getCompound(TAG_STORAGE_DATA);
 
             StorageTypeRegistry.INSTANCE.getType(typeIdentifier).ifPresentOrElse(type -> {
-                parent.set(id, type.fromTag(data, this));
+                delegate.set(id, type.fromTag(data, this));
             }, () -> {
                 LOGGER.warn("Cannot find storage type {}", typeIdentifier);
             });
@@ -78,7 +78,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     @Override
     public CompoundTag save(CompoundTag tag) {
         ListTag storageList = new ListTag();
-        for (Map.Entry<UUID, Storage<?>> entry : parent.getAll()) {
+        for (Map.Entry<UUID, Storage<?>> entry : delegate.getAll()) {
             if (entry.getValue() instanceof StorageTypeAccessor storageTypeAccessor) {
                 storageList.add(convertStorageToTag(entry.getKey(), entry.getValue(), storageTypeAccessor));
             } else {

@@ -19,20 +19,20 @@ public class TrackedStorageImpl<T> extends ProxyStorage<T> implements TrackedSto
     /**
      * A new tracked storage with an in-memory repository.
      *
-     * @param parent the parent storage
-     * @param clock  a supplier for unix timestamps
+     * @param delegate the storage that is being decorated
+     * @param clock    a supplier for unix timestamps
      */
-    public TrackedStorageImpl(Storage<T> parent, LongSupplier clock) {
-        this(parent, new InMemoryTrackedStorageRepository<>(), clock);
+    public TrackedStorageImpl(Storage<T> delegate, LongSupplier clock) {
+        this(delegate, new InMemoryTrackedStorageRepository<>(), clock);
     }
 
     /**
-     * @param parent     the parent storage
+     * @param delegate   the storage that is being decorated
      * @param repository a repository for persisting and retrieving tracked resources
      * @param clock      a supplier for unix timestamps
      */
-    public TrackedStorageImpl(Storage<T> parent, TrackedStorageRepository<T> repository, LongSupplier clock) {
-        super(parent);
+    public TrackedStorageImpl(Storage<T> delegate, TrackedStorageRepository<T> repository, LongSupplier clock) {
+        super(delegate);
         this.repository = repository;
         this.clock = clock;
     }

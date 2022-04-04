@@ -15,33 +15,33 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public class ProxyStorage<T> implements Storage<T> {
-    protected Storage<T> parent;
+    protected Storage<T> delegate;
 
     /**
-     * @param parent the parent storage, may not be null
+     * @param delegate the storage to delegate operations to, may not be null
      */
-    protected ProxyStorage(Storage<T> parent) {
-        Preconditions.checkNotNull(parent);
-        this.parent = parent;
+    protected ProxyStorage(Storage<T> delegate) {
+        Preconditions.checkNotNull(delegate);
+        this.delegate = delegate;
     }
 
     @Override
     public long extract(T resource, long amount, Action action, Source source) {
-        return parent.extract(resource, amount, action, source);
+        return delegate.extract(resource, amount, action, source);
     }
 
     @Override
     public long insert(T resource, long amount, Action action, Source source) {
-        return parent.insert(resource, amount, action, source);
+        return delegate.insert(resource, amount, action, source);
     }
 
     @Override
     public Collection<ResourceAmount<T>> getAll() {
-        return parent.getAll();
+        return delegate.getAll();
     }
 
     @Override
     public long getStored() {
-        return parent.getStored();
+        return delegate.getStored();
     }
 }
