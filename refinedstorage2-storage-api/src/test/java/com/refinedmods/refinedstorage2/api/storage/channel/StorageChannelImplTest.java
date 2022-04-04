@@ -4,8 +4,8 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
-import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.composite.PrioritizedStorage;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
@@ -38,7 +38,7 @@ class StorageChannelImplTest {
     @Test
     void Test_adding_source() {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(10);
+        Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 8, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
@@ -56,10 +56,10 @@ class StorageChannelImplTest {
     @Test
     void Test_removing_source() {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(10);
+        Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> removedStorage = new CappedStorage<>(10);
+        Storage<String> removedStorage = new LimitedStorageImpl<>(10);
         removedStorage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
@@ -81,7 +81,7 @@ class StorageChannelImplTest {
     @EnumSource(Action.class)
     void Test_listener_on_insertion(Action action) {
         // Arrange
-        sut.addSource(new CappedStorage<>(10));
+        sut.addSource(new LimitedStorageImpl<>(10));
         sut.insert("A", 2, Action.EXECUTE, EmptySource.INSTANCE);
 
         ResourceListListener<String> listener = mock(ResourceListListener.class);
@@ -109,7 +109,7 @@ class StorageChannelImplTest {
     @EnumSource(Action.class)
     void Test_listener_on_extraction(Action action) {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(10);
+        Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
@@ -139,7 +139,7 @@ class StorageChannelImplTest {
     @Test
     void Test_removing_listener() {
         // Arrange
-        sut.addSource(new CappedStorage<>(10));
+        sut.addSource(new LimitedStorageImpl<>(10));
         sut.insert("A", 2, Action.EXECUTE, EmptySource.INSTANCE);
 
         ResourceListListener<String> listener = mock(ResourceListListener.class);
@@ -156,7 +156,7 @@ class StorageChannelImplTest {
     @Test
     void Test_inserting() {
         // Arrange
-        sut.addSource(new CappedStorage<>(10));
+        sut.addSource(new LimitedStorageImpl<>(10));
 
         // Act
         long inserted1 = sut.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
@@ -175,7 +175,7 @@ class StorageChannelImplTest {
     @Test
     void Test_extracting() {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
@@ -194,7 +194,7 @@ class StorageChannelImplTest {
     @Test
     void Test_getting_resource() {
         // Arrange
-        Storage<String> storage = new CappedStorage<>(100);
+        Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
@@ -210,7 +210,7 @@ class StorageChannelImplTest {
     @Test
     void Test_getting_non_existent_resource() {
         // Arrange
-        sut.addSource(new CappedStorage<>(100));
+        sut.addSource(new LimitedStorageImpl<>(100));
 
         // Act
         Optional<ResourceAmount<String>> resource = sut.get("A");
@@ -222,9 +222,9 @@ class StorageChannelImplTest {
     @RepeatedTest(100)
     void Test_sorting_sources() {
         // Arrange
-        PrioritizedStorage<String> storage1 = new PrioritizedStorage<>(0, new CappedStorage<>(10));
-        PrioritizedStorage<String> storage2 = new PrioritizedStorage<>(0, new CappedStorage<>(10));
-        PrioritizedStorage<String> storage3 = new PrioritizedStorage<>(0, new CappedStorage<>(10));
+        PrioritizedStorage<String> storage1 = new PrioritizedStorage<>(0, new LimitedStorageImpl<>(10));
+        PrioritizedStorage<String> storage2 = new PrioritizedStorage<>(0, new LimitedStorageImpl<>(10));
+        PrioritizedStorage<String> storage3 = new PrioritizedStorage<>(0, new LimitedStorageImpl<>(10));
 
         sut.addSource(storage1);
         sut.addSource(storage2);

@@ -12,25 +12,25 @@ import org.apiguardian.api.API;
  * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public class CappedStorage<T> extends ProxyStorage<T> implements CapacityAccessor {
+public class LimitedStorageImpl<T> extends ProxyStorage<T> implements CapacityAccessor {
     private final long capacity;
 
     /**
      * @param parent   the parent storage
      * @param capacity the capacity, must be 0 or larger than 0
      */
-    public CappedStorage(Storage<T> parent, long capacity) {
+    public LimitedStorageImpl(Storage<T> parent, long capacity) {
         super(parent);
         Preconditions.checkArgument(capacity >= 0, "Capacity must be 0 or larger than 0");
         this.capacity = capacity;
     }
 
     /**
-     * Constructs the capped storage with a {@link InMemoryStorageImpl} storage.
+     * Constructs the limited storage with a {@link InMemoryStorageImpl} storage.
      *
      * @param capacity the capacity, must be 0 or larger than 0
      */
-    public CappedStorage(long capacity) {
+    public LimitedStorageImpl(long capacity) {
         this(new InMemoryStorageImpl<>(), capacity);
     }
 

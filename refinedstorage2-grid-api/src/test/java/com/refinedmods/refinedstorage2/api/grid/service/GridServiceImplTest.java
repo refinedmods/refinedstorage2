@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.api.grid.service;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
@@ -38,10 +38,10 @@ class GridServiceImplTest {
         @EnumSource(GridInsertMode.class)
         void Test_inserting(GridInsertMode insertMode) {
             // Arrange
-            Storage<String> source = new CappedStorage<>(100);
+            Storage<String> source = new LimitedStorageImpl<>(100);
             source.insert("A", MAX_COUNT * 3, Action.EXECUTE, EmptySource.INSTANCE);
 
-            Storage<String> destination = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            Storage<String> destination = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(destination);
 
             // Act
@@ -67,9 +67,9 @@ class GridServiceImplTest {
         @EnumSource(GridInsertMode.class)
         void Test_inserting_with_non_existent_resource(GridInsertMode insertMode) {
             // Arrange
-            Storage<String> source = new CappedStorage<>(100);
+            Storage<String> source = new LimitedStorageImpl<>(100);
 
-            Storage<String> destination = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            Storage<String> destination = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(destination);
 
             // Act
@@ -85,10 +85,10 @@ class GridServiceImplTest {
         @EnumSource(GridInsertMode.class)
         void Test_inserting_with_no_space_in_storage(GridInsertMode insertMode) {
             // Arrange
-            Storage<String> source = new CappedStorage<>(100);
+            Storage<String> source = new LimitedStorageImpl<>(100);
             source.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
-            Storage<String> destination = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            Storage<String> destination = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(destination);
             storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
@@ -111,10 +111,10 @@ class GridServiceImplTest {
         @Test
         void Test_inserting_with_remainder() {
             // Arrange
-            Storage<String> source = new CappedStorage<>(100);
+            Storage<String> source = new LimitedStorageImpl<>(100);
             source.insert("A", MAX_COUNT, Action.EXECUTE, EmptySource.INSTANCE);
 
-            Storage<String> destination = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            Storage<String> destination = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(destination);
             storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE, EmptySource.INSTANCE);
 
@@ -140,7 +140,7 @@ class GridServiceImplTest {
             // This is why we override extract to block extraction of non-entire buckets.
 
             // Arrange
-            Storage<String> source = new CappedStorage<>(100) {
+            Storage<String> source = new LimitedStorageImpl<>(100) {
                 @Override
                 public long extract(String resource, long amount, Action action, Source source) {
                     if (amount != MAX_COUNT) {
@@ -151,7 +151,7 @@ class GridServiceImplTest {
             };
             source.insert("A", MAX_COUNT, Action.EXECUTE, EmptySource.INSTANCE);
 
-            Storage<String> destination = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            Storage<String> destination = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(destination);
             storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE, EmptySource.INSTANCE);
 
@@ -175,9 +175,9 @@ class GridServiceImplTest {
         @EnumSource(GridExtractMode.class)
         void Test_extracting(GridExtractMode extractMode) {
             // Arrange
-            Storage<String> destination = new CappedStorage<>(100);
+            Storage<String> destination = new LimitedStorageImpl<>(100);
 
-            Storage<String> source = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            Storage<String> source = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(source);
             storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
@@ -205,9 +205,9 @@ class GridServiceImplTest {
         @EnumSource(GridExtractMode.class)
         void Test_extracting_resource_that_does_not_exist(GridExtractMode extractMode) {
             // Arrange
-            Storage<String> destination = new CappedStorage<>(100);
+            Storage<String> destination = new LimitedStorageImpl<>(100);
 
-            Storage<String> source = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            Storage<String> source = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(source);
 
             // Act
@@ -223,10 +223,10 @@ class GridServiceImplTest {
         @EnumSource(GridExtractMode.class)
         void Test_extracting_resource_with_no_space_in_destination(GridExtractMode extractMode) {
             // Arrange
-            Storage<String> destination = new CappedStorage<>(100);
+            Storage<String> destination = new LimitedStorageImpl<>(100);
             destination.insert("B", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
-            Storage<String> source = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            Storage<String> source = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(source);
             storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
@@ -249,9 +249,9 @@ class GridServiceImplTest {
         @Test
         void Test_extracting_entire_resource_that_has_less_than_max_count() {
             // Arrange
-            Storage<String> destination = new CappedStorage<>(100);
+            Storage<String> destination = new LimitedStorageImpl<>(100);
 
-            Storage<String> source = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            Storage<String> source = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(source);
             storageChannel.insert("A", MAX_COUNT - 1, Action.EXECUTE, EmptySource.INSTANCE);
 
@@ -270,9 +270,9 @@ class GridServiceImplTest {
         @Test
         void Test_extracting_entire_resource_with_remainder_in_destination() {
             // Arrange
-            Storage<String> destination = new CappedStorage<>(MAX_COUNT - 1);
+            Storage<String> destination = new LimitedStorageImpl<>(MAX_COUNT - 1);
 
-            Storage<String> source = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            Storage<String> source = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(source);
             storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
 
@@ -296,9 +296,9 @@ class GridServiceImplTest {
         @Test
         void Test_extracting_half_resource_with_single_resource_amount() {
             // Arrange
-            Storage<String> destination = new CappedStorage<>(MAX_COUNT);
+            Storage<String> destination = new LimitedStorageImpl<>(MAX_COUNT);
 
-            Storage<String> source = new TrackedStorageImpl<>(new CappedStorage<>(100), () -> 0L);
+            Storage<String> source = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(source);
             storageChannel.insert("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
 

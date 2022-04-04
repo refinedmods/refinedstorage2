@@ -7,8 +7,8 @@ import com.refinedmods.refinedstorage2.api.network.NetworkUtil;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
@@ -38,7 +38,7 @@ public class GridNetworkNodeTest {
         StorageChannel<String> fakeStorageChannel = network.getComponent(StorageNetworkComponent.class)
                 .getStorageChannel(StorageChannelTypes.FAKE);
 
-        fakeStorageChannel.addSource(new TrackedStorageImpl<>(new CappedStorage<>(1000), () -> 0L));
+        fakeStorageChannel.addSource(new TrackedStorageImpl<>(new LimitedStorageImpl<>(1000), () -> 0L));
         fakeStorageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
         fakeStorageChannel.insert("B", 200, Action.EXECUTE, EmptySource.INSTANCE);
     }

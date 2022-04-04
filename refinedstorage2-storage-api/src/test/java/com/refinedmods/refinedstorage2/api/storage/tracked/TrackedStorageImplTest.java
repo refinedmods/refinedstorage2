@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.api.storage.tracked;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
@@ -26,12 +26,12 @@ class TrackedStorageImplTest {
 
     private final AtomicLong clock = new AtomicLong(0);
 
-    private CappedStorage<String> backed;
+    private LimitedStorageImpl<String> backed;
     private TrackedStorage<String> sut;
 
     @BeforeEach
     void setUp() {
-        backed = new CappedStorage<>(100);
+        backed = new LimitedStorageImpl<>(100);
         sut = new TrackedStorageImpl<>(backed, clock::get);
     }
 

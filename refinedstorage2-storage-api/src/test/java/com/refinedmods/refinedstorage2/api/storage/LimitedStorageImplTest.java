@@ -14,15 +14,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
-class CappedStorageTest {
+class LimitedStorageImplTest {
     private SourceCapturingStorage<String> backed;
-    private CappedStorage<String> sut;
+    private LimitedStorageImpl<String> sut;
     private final Source customSource = () -> "Custom";
 
     @BeforeEach
     void setUp() {
         backed = new SourceCapturingStorage<>(new InMemoryStorageImpl<>());
-        sut = new CappedStorage<>(backed, 100);
+        sut = new LimitedStorageImpl<>(backed, 100);
     }
 
     @Test
@@ -31,14 +31,14 @@ class CappedStorageTest {
         Storage<String> backed = new InMemoryStorageImpl<>();
 
         // Act & assert
-        assertThrows(IllegalArgumentException.class, () -> new CappedStorage<>(backed, -1));
+        assertThrows(IllegalArgumentException.class, () -> new LimitedStorageImpl<>(backed, -1));
     }
 
     @Test
     void Test_zero_capacity() {
         // Arrange
         SourceCapturingStorage<String> backed = new SourceCapturingStorage<>(new InMemoryStorageImpl<>());
-        Storage<String> sut = new CappedStorage<>(backed, 0);
+        Storage<String> sut = new LimitedStorageImpl<>(backed, 0);
 
         // Act
         long inserted = sut.insert("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
