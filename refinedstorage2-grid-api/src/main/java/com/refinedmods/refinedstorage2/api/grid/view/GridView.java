@@ -78,13 +78,13 @@ public interface GridView<T> {
      *
      * @param resource        the resource
      * @param amount          the amount
-     * @param trackedResource the tracker entry, can be null
+     * @param trackedResource the tracked resource, can be null
      */
     void loadResource(T resource, long amount, TrackedResource trackedResource);
 
     /**
      * @param resource the resource
-     * @return the tracker entry, if present
+     * @return the tracked resource, if present
      */
     Optional<TrackedResource> getTrackedResource(T resource);
 
@@ -100,7 +100,7 @@ public interface GridView<T> {
      *
      * @param resource        the resource
      * @param amount          the amount, can be negative or positive
-     * @param trackedResource the tracker entry, can be null
+     * @param trackedResource the tracked resource, can be null
      */
     void onChange(T resource, long amount, TrackedResource trackedResource);
 
