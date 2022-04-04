@@ -17,8 +17,8 @@ public class PlatformStorage<T> extends ProxyStorage<T> implements StorageTypeAc
     private final TrackedStorageRepository<T> trackingRepository;
     private final Runnable listener;
 
-    public PlatformStorage(Storage<T> parent, StorageType<T> type, TrackedStorageRepository<T> trackingRepository, Runnable listener) {
-        super(parent);
+    public PlatformStorage(Storage<T> delegate, StorageType<T> type, TrackedStorageRepository<T> trackingRepository, Runnable listener) {
+        super(delegate);
         this.type = type;
         this.trackingRepository = trackingRepository;
         this.listener = listener;

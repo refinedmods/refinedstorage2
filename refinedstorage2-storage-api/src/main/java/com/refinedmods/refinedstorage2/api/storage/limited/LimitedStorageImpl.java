@@ -21,11 +21,11 @@ public class LimitedStorageImpl<T> extends ProxyStorage<T> implements LimitedSto
     private final long capacity;
 
     /**
-     * @param parent   the parent storage
+     * @param delegate the storage that is being decorated
      * @param capacity the capacity, must be 0 or larger than 0
      */
-    public LimitedStorageImpl(Storage<T> parent, long capacity) {
-        super(parent);
+    public LimitedStorageImpl(Storage<T> delegate, long capacity) {
+        super(delegate);
         Preconditions.checkArgument(capacity >= 0, "Capacity must be 0 or larger than 0");
         this.capacity = capacity;
     }
@@ -42,7 +42,7 @@ public class LimitedStorageImpl<T> extends ProxyStorage<T> implements LimitedSto
     @Override
     public long insert(T resource, long amount, Action action, Source source) {
         Preconditions.checkArgument(amount > 0, "Amount must be larger than 0");
-        if (parent.getStored() + amount > capacity) {
+        if (delegate.getStored() + amount > capacity) {
             return insertPartly(resource, action, source);
         } else {
             return super.insert(resource, amount, action, source);
@@ -50,7 +50,7 @@ public class LimitedStorageImpl<T> extends ProxyStorage<T> implements LimitedSto
     }
 
     private long insertPartly(T resource, Action action, Source source) {
-        long spaceRemainingInStorage = capacity - parent.getStored();
+        long spaceRemainingInStorage = capacity - delegate.getStored();
         if (spaceRemainingInStorage == 0) {
             return 0;
         }

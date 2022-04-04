@@ -15,13 +15,13 @@ import java.util.Optional;
 public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     private static final double DISK_NEAR_CAPACITY_THRESHOLD = .75;
 
-    private final Storage<T> parent;
+    private final Storage<T> delegate;
     private final StorageChannelType<T> storageChannelType;
     private final DiskDriveListener listener;
     private StorageDiskState state;
 
-    public DiskDriveDiskStorage(Storage<T> parent, StorageChannelType<T> storageChannelType, DiskDriveListener listener) {
-        this.parent = parent;
+    public DiskDriveDiskStorage(Storage<T> delegate, StorageChannelType<T> storageChannelType, DiskDriveListener listener) {
+        this.delegate = delegate;
         this.storageChannelType = storageChannelType;
         this.listener = listener;
         this.state = getState();
@@ -32,14 +32,14 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     }
 
     public StorageDiskState getState() {
-        if (parent instanceof LimitedStorage limitedStorage) {
+        if (delegate instanceof LimitedStorage limitedStorage) {
             return getStateWithCapacity(limitedStorage.getCapacity());
         }
         return StorageDiskState.NORMAL;
     }
 
     private StorageDiskState getStateWithCapacity(long capacity) {
-        double fullness = (double) parent.getStored() / capacity;
+        double fullness = (double) delegate.getStored() / capacity;
 
         if (fullness >= 1D) {
             return StorageDiskState.FULL;
@@ -60,7 +60,7 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
 
     @Override
     public long extract(T resource, long amount, Action action, Source source) {
-        long extracted = parent.extract(resource, amount, action, source);
+        long extracted = delegate.extract(resource, amount, action, source);
         if (extracted > 0 && action == Action.EXECUTE) {
             checkStateChanged();
         }
@@ -69,7 +69,7 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
 
     @Override
     public long insert(T resource, long amount, Action action, Source source) {
-        long inserted = parent.insert(resource, amount, action, source);
+        long inserted = delegate.insert(resource, amount, action, source);
         if (inserted > 0 && action == Action.EXECUTE) {
             checkStateChanged();
         }
@@ -78,16 +78,16 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
 
     @Override
     public Collection<ResourceAmount<T>> getAll() {
-        return parent.getAll();
+        return delegate.getAll();
     }
 
     @Override
     public long getStored() {
-        return parent.getStored();
+        return delegate.getStored();
     }
 
     @Override
     public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
-        return parent instanceof TrackedStorage<T> trackedStorage ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType) : Optional.empty();
+        return delegate instanceof TrackedStorage<T> trackedStorage ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType) : Optional.empty();
     }
 }
