@@ -187,7 +187,7 @@ class GridViewImplTest {
     }
 
     @Test
-    void Test_loading_resource_with_storage_tracker_entry() {
+    void Test_loading_resource_with_storage_tracked_resource() {
         // Act
         view.loadResource("A", 1, new TrackedResource("Raoul", 1));
         view.loadResource("A", 1, new TrackedResource("RaoulA", 2));
@@ -383,7 +383,7 @@ class GridViewImplTest {
     }
 
     @Test
-    void Test_sending_change_should_set_storage_tracker_entry() {
+    void Test_sending_change_should_set_storage_tracked_resource() {
         // Act
         view.onChange("A", 1, new TrackedResource("Raoul", 1));
         view.onChange("A", 1, new TrackedResource("RaoulA", 2));
