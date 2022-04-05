@@ -20,7 +20,7 @@ public class ComponentMap<C> implements ComponentAccessor<C> {
     }
 
     @Override
-    public <C2 extends C> C2 getComponent(Class<C2> componentType) {
-        return (C2) map.get(componentType);
+    public <I extends C> I getComponent(Class<I> componentType) {
+        return (I) map.get(componentType);
     }
 }
