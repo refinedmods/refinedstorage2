@@ -40,7 +40,7 @@ public class NetworkImpl implements Network {
     }
 
     @Override
-    public <C2 extends NetworkComponent> C2 getComponent(Class<C2> componentType) {
+    public <I extends NetworkComponent> I getComponent(Class<I> componentType) {
         return componentMap.getComponent(componentType);
     }
 }
