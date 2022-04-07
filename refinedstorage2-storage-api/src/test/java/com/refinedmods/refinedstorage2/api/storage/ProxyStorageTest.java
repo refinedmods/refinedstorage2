@@ -21,13 +21,15 @@ class ProxyStorageTest {
     @BeforeEach
     void setUp() {
         backed = new SourceCapturingStorage<>(new InMemoryStorageImpl<>());
-        sut = new ProxyStorage<>(backed);
+        sut = new ProxyStorage<>(backed) {
+        };
     }
 
     @Test
     void Test_invalid_parent() {
         // Act & assert
-        assertThrows(NullPointerException.class, () -> new ProxyStorage<String>(null));
+        assertThrows(NullPointerException.class, () -> new ProxyStorage<String>(null) {
+        });
     }
 
     @Test
