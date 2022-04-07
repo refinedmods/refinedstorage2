@@ -400,10 +400,10 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         int tooltipHeight = 8;
 
         if (lines.size() > 1) {
-            tooltipHeight += 2 + (lines.size() - 1) * MODIFIED_JUST_NOW_MAX_SECONDS;
+            tooltipHeight += 2 + (lines.size() - 1) * 10;
         }
 
-        tooltipHeight += smallLines.size() * MODIFIED_JUST_NOW_MAX_SECONDS;
+        tooltipHeight += smallLines.size() * 10;
 
         if (tooltipX + tooltipWidth > width) {
             tooltipX -= 28 + tooltipWidth;
