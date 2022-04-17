@@ -18,12 +18,14 @@ public class ConfigImpl implements Config {
     private final ControllerImpl controller;
     private final DiskDriveImpl diskDrive;
     private final Grid grid;
+    private final StorageBlock storageBlock;
 
     public ConfigImpl() {
         cable = new CableImpl();
         controller = new ControllerImpl();
         diskDrive = new DiskDriveImpl();
         grid = new GridImpl();
+        storageBlock = new StorageBlockImpl();
         spec = builder.build();
     }
 
@@ -49,6 +51,11 @@ public class ConfigImpl implements Config {
     @Override
     public Cable getCable() {
         return cable;
+    }
+
+    @Override
+    public StorageBlock getStorageBlock() {
+        return storageBlock;
     }
 
     private class CableImpl implements Cable {
@@ -217,6 +224,49 @@ public class ConfigImpl implements Config {
         @Override
         public void setSize(GridSize size) {
             this.size.set(size);
+        }
+    }
+
+    private class StorageBlockImpl implements StorageBlock {
+        private final ForgeConfigSpec.LongValue _1kEnergyUsage;
+        private final ForgeConfigSpec.LongValue _4kEnergyUsage;
+        private final ForgeConfigSpec.LongValue _16kEnergyUsage;
+        private final ForgeConfigSpec.LongValue _64kEnergyUsage;
+        private final ForgeConfigSpec.LongValue creativeUsage;
+
+        public StorageBlockImpl() {
+            builder.push("storageBlock");
+            _1kEnergyUsage = builder.comment("The energy used by the 1K Storage Block").defineInRange("1kEnergyUsage", 2, 0, Long.MAX_VALUE);
+            _4kEnergyUsage = builder.comment("The energy used by the 4K Storage Block").defineInRange("4kEnergyUsage", 4, 0, Long.MAX_VALUE);
+            _16kEnergyUsage = builder.comment("The energy used by the 16K Storage Block").defineInRange("16kEnergyUsage", 6, 0, Long.MAX_VALUE);
+            _64kEnergyUsage = builder.comment("The energy used by the 64K Storage Block").defineInRange("64kEnergyUsage", 8, 0, Long.MAX_VALUE);
+            creativeUsage = builder.comment("The energy used by the Creative Storage Block").defineInRange("creativeEnergyUsage", 16, 0, Long.MAX_VALUE);
+            builder.pop();
+        }
+
+        @Override
+        public long get1kEnergyUsage() {
+            return _1kEnergyUsage.get();
+        }
+
+        @Override
+        public long get4kEnergyUsage() {
+            return _4kEnergyUsage.get();
+        }
+
+        @Override
+        public long get16kEnergyUsage() {
+            return _16kEnergyUsage.get();
+        }
+
+        @Override
+        public long get64kEnergyUsage() {
+            return _64kEnergyUsage.get();
+        }
+
+        @Override
+        public long getCreativeEnergyUsage() {
+            return creativeUsage.get();
         }
     }
 }

@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": {
+            "model": "refinedstorage2:block/4k_storage_block"
+        }
+    }
+}

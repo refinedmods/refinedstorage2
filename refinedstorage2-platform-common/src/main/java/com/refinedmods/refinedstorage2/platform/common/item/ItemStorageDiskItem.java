@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStora
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
 import java.util.Optional;
 
@@ -22,11 +23,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class ItemStorageDiskItem extends StorageDiskItemImpl {
-    private final ItemStorageType type;
+    private final ItemStorageType.Variant variant;
 
-    public ItemStorageDiskItem(Item.Properties properties, ItemStorageType type) {
+    public ItemStorageDiskItem(Item.Properties properties, ItemStorageType.Variant variant) {
         super(properties);
-        this.type = type;
+        this.variant = variant;
     }
 
     @Override
@@ -36,16 +37,16 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected Optional<ItemStack> createStoragePart(int count) {
-        if (type == ItemStorageType.CREATIVE) {
+        if (variant == ItemStorageType.Variant.CREATIVE) {
             return Optional.empty();
         }
-        return Optional.of(new ItemStack(Items.INSTANCE.getStoragePart(type), count));
+        return Optional.of(new ItemStack(Items.INSTANCE.getStoragePart(variant), count));
     }
 
     @Override
     protected Storage<?> createStorage(Level level) {
         TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
-        if (!type.hasCapacity()) {
+        if (!variant.hasCapacity()) {
             return new PlatformStorage<>(
                     new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                     com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType.INSTANCE,
@@ -56,7 +57,7 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
         return new PlatformLimitedStorage<>(
                 new LimitedStorageImpl<>(
                         new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                        type.getCapacity()
+                        variant.getCapacity()
                 ),
                 com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType.INSTANCE,
                 trackingRepository,
@@ -67,33 +68,5 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     @Override
     protected ItemStack createDisassemblyByproduct() {
         return new ItemStack(Items.INSTANCE.getStorageHousing());
-    }
-
-    public enum ItemStorageType {
-        ONE_K("1k", 1000),
-        FOUR_K("4k", 4000),
-        SIXTEEN_K("16k", 16_000),
-        SIXTY_FOUR_K("64k", 64_000),
-        CREATIVE("creative", 0);
-
-        private final String name;
-        private final int capacity;
-
-        ItemStorageType(String name, int capacity) {
-            this.name = name;
-            this.capacity = capacity;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getCapacity() {
-            return capacity;
-        }
-
-        public boolean hasCapacity() {
-            return capacity > 0;
-        }
     }
 }

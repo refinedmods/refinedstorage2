@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
@@ -15,6 +16,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBl
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
@@ -24,6 +26,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.CoreItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStoragePartItem;
@@ -68,6 +71,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -90,6 +94,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageDisk;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStoragePart;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forItemStorageBlock;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forItemStoragePart;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forProcessor;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forStorageDisk;
@@ -147,6 +152,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.getFluidGrid().putAll(color -> Registry.register(Registry.BLOCK, Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID), new FluidGridBlock(Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")))));
         Blocks.INSTANCE.getController().putAll(color -> Registry.register(Registry.BLOCK, Blocks.INSTANCE.getController().getId(color, CONTROLLER), new ControllerBlock(ControllerType.NORMAL, Blocks.INSTANCE.getController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")))));
         Blocks.INSTANCE.getCreativeController().putAll(color -> Registry.register(Registry.BLOCK, Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER), new ControllerBlock(ControllerType.CREATIVE, Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")))));
+
+        for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
+            Blocks.INSTANCE.getItemStorageBlocks().put(variant, Registry.register(Registry.BLOCK, forItemStorageBlock(variant), new ItemStorageBlock(variant)));
+        }
     }
 
     private void registerItems() {
@@ -169,9 +178,9 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             Registry.register(Registry.ITEM, forProcessor(type), new ProcessorItem(createProperties()));
         }
 
-        for (ItemStorageDiskItem.ItemStorageType type : ItemStorageDiskItem.ItemStorageType.values()) {
-            if (type != ItemStorageDiskItem.ItemStorageType.CREATIVE) {
-                Items.INSTANCE.getStorageParts().put(type, Registry.register(Registry.ITEM, forItemStoragePart(type), new StoragePartItem(createProperties())));
+        for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
+            if (variant != ItemStorageType.Variant.CREATIVE) {
+                Items.INSTANCE.getStorageParts().put(variant, Registry.register(Registry.ITEM, forItemStoragePart(variant), new StoragePartItem(createProperties())));
             }
         }
 
@@ -181,8 +190,12 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             }
         }
 
-        for (ItemStorageDiskItem.ItemStorageType type : ItemStorageDiskItem.ItemStorageType.values()) {
-            Registry.register(Registry.ITEM, forStorageDisk(type), new ItemStorageDiskItem(createProperties().stacksTo(1).fireResistant(), type));
+        for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
+            Registry.register(Registry.ITEM, forStorageDisk(variant), new ItemStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant));
+        }
+
+        for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
+            Registry.register(Registry.ITEM, forItemStorageBlock(variant), new BlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties()));
         }
 
         for (FluidStorageDiskItem.FluidStorageType type : FluidStorageDiskItem.FluidStorageType.values()) {
@@ -204,6 +217,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         BlockEntities.INSTANCE.setFluidGrid(Registry.register(Registry.BLOCK_ENTITY_TYPE, FLUID_GRID, FabricBlockEntityTypeBuilder.create(FluidGridBlockEntity::new, Blocks.INSTANCE.getFluidGrid().toArray()).build(null)));
         BlockEntities.INSTANCE.setController(Registry.register(Registry.BLOCK_ENTITY_TYPE, CONTROLLER, FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.NORMAL, pos, state), Blocks.INSTANCE.getController().toArray()).build(null)));
         BlockEntities.INSTANCE.setCreativeController(Registry.register(Registry.BLOCK_ENTITY_TYPE, CREATIVE_CONTROLLER, FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.CREATIVE, pos, state), Blocks.INSTANCE.getCreativeController().toArray()).build(null)));
+
+        for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
+            BlockEntityType<ItemStorageBlockEntity> blockEntityType = FabricBlockEntityTypeBuilder.create((pos, state) -> new ItemStorageBlockEntity(pos, state, variant), Blocks.INSTANCE.getItemStorageBlocks().get(variant)).build(null);
+            BlockEntities.INSTANCE.getItemStorageBlocks().put(variant, Registry.register(Registry.BLOCK_ENTITY_TYPE, forItemStorageBlock(variant), blockEntityType));
+        }
     }
 
     private void registerMenus() {
