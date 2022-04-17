@@ -5,8 +5,13 @@ import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public final class Blocks {
     public static final Blocks INSTANCE = new Blocks();
@@ -19,6 +24,7 @@ public final class Blocks {
     private QuartzEnrichedIronBlock quartzEnrichedIron;
     private DiskDriveBlock diskDrive;
     private MachineCasingBlock machineCasing;
+    private final Map<ItemStorageType.Variant, ItemStorageBlock> itemStorageBlocks = new HashMap<>();
 
     private Blocks() {
     }
@@ -69,5 +75,9 @@ public final class Blocks {
 
     public void setMachineCasing(MachineCasingBlock machineCasing) {
         this.machineCasing = machineCasing;
+    }
+
+    public Map<ItemStorageType.Variant, ItemStorageBlock> getItemStorageBlocks() {
+        return itemStorageBlocks;
     }
 }

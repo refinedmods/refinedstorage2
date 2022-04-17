@@ -12,7 +12,6 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageReposit
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 
@@ -32,8 +31,8 @@ public class ItemStorageType implements StorageType<ItemResource> {
     }
 
     @Override
-    public Storage<ItemResource> fromTag(CompoundTag tag, PlatformStorageRepository storageRepository) {
-        PlatformStorage<ItemResource> storage = createStorage(tag, storageRepository);
+    public Storage<ItemResource> fromTag(CompoundTag tag, Runnable listener) {
+        PlatformStorage<ItemResource> storage = createStorage(tag, listener);
         ListTag stacks = tag.getList(TAG_STACKS, Tag.TAG_COMPOUND);
         for (Tag stackTag : stacks) {
             ItemResource
@@ -48,7 +47,7 @@ public class ItemStorageType implements StorageType<ItemResource> {
         return storage;
     }
 
-    private PlatformStorage<ItemResource> createStorage(CompoundTag tag, PlatformStorageRepository storageRepository) {
+    private PlatformStorage<ItemResource> createStorage(CompoundTag tag, Runnable listener) {
         TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (tag.contains(TAG_CAPACITY)) {
             return new PlatformLimitedStorage<>(
@@ -58,14 +57,14 @@ public class ItemStorageType implements StorageType<ItemResource> {
                     ),
                     ItemStorageType.INSTANCE,
                     trackingRepository,
-                    storageRepository::markAsChanged
+                    listener
             );
         }
         return new PlatformStorage<>(
                 new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                 ItemStorageType.INSTANCE,
                 trackingRepository,
-                storageRepository::markAsChanged
+                listener
         );
     }
 
@@ -94,5 +93,33 @@ public class ItemStorageType implements StorageType<ItemResource> {
                     });
         }
         return tag;
+    }
+
+    public enum Variant {
+        ONE_K("1k", 1000),
+        FOUR_K("4k", 4000),
+        SIXTEEN_K("16k", 16_000),
+        SIXTY_FOUR_K("64k", 64_000),
+        CREATIVE("creative", 0);
+
+        private final String name;
+        private final int capacity;
+
+        Variant(String name, int capacity) {
+            this.name = name;
+            this.capacity = capacity;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getCapacity() {
+            return capacity;
+        }
+
+        public boolean hasCapacity() {
+            return capacity > 0;
+        }
     }
 }

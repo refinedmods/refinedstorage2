@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStoragePartItem;
-import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.StorageHousingItem;
 import com.refinedmods.refinedstorage2.platform.common.item.StoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
@@ -15,7 +15,7 @@ import java.util.Map;
 public final class Items {
     public static final Items INSTANCE = new Items();
 
-    private final Map<ItemStorageDiskItem.ItemStorageType, StoragePartItem> storageParts = new EnumMap<>(ItemStorageDiskItem.ItemStorageType.class);
+    private final Map<ItemStorageType.Variant, StoragePartItem> storageParts = new EnumMap<>(ItemStorageType.Variant.class);
     private final Map<FluidStorageDiskItem.FluidStorageType, FluidStoragePartItem> fluidStorageParts = new EnumMap<>(FluidStorageDiskItem.FluidStorageType.class);
     private final List<ControllerBlockItem> controllers = new ArrayList<>();
     private StorageHousingItem storageHousing;
@@ -23,15 +23,15 @@ public final class Items {
     private Items() {
     }
 
-    public StoragePartItem getStoragePart(ItemStorageDiskItem.ItemStorageType type) {
-        return storageParts.get(type);
+    public StoragePartItem getStoragePart(ItemStorageType.Variant variant) {
+        return storageParts.get(variant);
     }
 
     public FluidStoragePartItem getFluidStoragePart(FluidStorageDiskItem.FluidStorageType type) {
         return fluidStorageParts.get(type);
     }
 
-    public Map<ItemStorageDiskItem.ItemStorageType, StoragePartItem> getStorageParts() {
+    public Map<ItemStorageType.Variant, StoragePartItem> getStorageParts() {
         return storageParts;
     }
 

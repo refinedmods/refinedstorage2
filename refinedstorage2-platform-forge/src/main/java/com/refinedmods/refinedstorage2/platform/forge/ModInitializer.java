@@ -8,12 +8,14 @@ import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
@@ -23,6 +25,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.CoreItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStoragePartItem;
@@ -89,6 +92,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageDisk;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStoragePart;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forItemStorageBlock;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forItemStoragePart;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forProcessor;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forStorageDisk;
@@ -179,6 +183,13 @@ public class ModInitializer extends AbstractModInitializer {
             e.getRegistry().register(block);
             return block;
         });
+
+        for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
+            ItemStorageBlock block = new ItemStorageBlock(variant);
+            block.setRegistryName(forItemStorageBlock(variant));
+            Blocks.INSTANCE.getItemStorageBlocks().put(variant, block);
+            e.getRegistry().register(block);
+        }
     }
 
     @SubscribeEvent
@@ -212,6 +223,13 @@ public class ModInitializer extends AbstractModInitializer {
         fluidGridBlockEntityType.setRegistryName(FLUID_GRID);
         e.getRegistry().register(fluidGridBlockEntityType);
         BlockEntities.INSTANCE.setFluidGrid(fluidGridBlockEntityType);
+
+        for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
+            BlockEntityType<ItemStorageBlockEntity> blockEntityType = BlockEntityType.Builder.of((pos, state) -> new ItemStorageBlockEntity(pos, state, variant), Blocks.INSTANCE.getItemStorageBlocks().get(variant)).build(null);
+            blockEntityType.setRegistryName(forItemStorageBlock(variant));
+            e.getRegistry().register(blockEntityType);
+            BlockEntities.INSTANCE.getItemStorageBlocks().put(variant, blockEntityType);
+        }
     }
 
     @SubscribeEvent
@@ -245,12 +263,12 @@ public class ModInitializer extends AbstractModInitializer {
             e.getRegistry().register(new ProcessorItem(createProperties()).setRegistryName(forProcessor(type)));
         }
 
-        for (ItemStorageDiskItem.ItemStorageType type : ItemStorageDiskItem.ItemStorageType.values()) {
-            if (type != ItemStorageDiskItem.ItemStorageType.CREATIVE) {
+        for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
+            if (variant != ItemStorageType.Variant.CREATIVE) {
                 StoragePartItem storagePartItem = new StoragePartItem(createProperties());
-                storagePartItem.setRegistryName(forItemStoragePart(type));
+                storagePartItem.setRegistryName(forItemStoragePart(variant));
                 e.getRegistry().register(storagePartItem);
-                Items.INSTANCE.getStorageParts().put(type, storagePartItem);
+                Items.INSTANCE.getStorageParts().put(variant, storagePartItem);
             }
         }
 
@@ -263,8 +281,14 @@ public class ModInitializer extends AbstractModInitializer {
             }
         }
 
-        for (ItemStorageDiskItem.ItemStorageType type : ItemStorageDiskItem.ItemStorageType.values()) {
-            e.getRegistry().register(new ItemStorageDiskItem(createProperties().stacksTo(1).fireResistant(), type).setRegistryName(forStorageDisk(type)));
+        for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
+            e.getRegistry().register(new ItemStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant).setRegistryName(forStorageDisk(variant)));
+        }
+
+        for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
+            BlockItem storageBlockItem = new BlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties());
+            storageBlockItem.setRegistryName(forItemStorageBlock(variant));
+            e.getRegistry().register(storageBlockItem);
         }
 
         for (FluidStorageDiskItem.FluidStorageType type : FluidStorageDiskItem.FluidStorageType.values()) {

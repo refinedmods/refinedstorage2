@@ -12,7 +12,6 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageReposit
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 
@@ -32,8 +31,8 @@ public class FluidStorageType implements StorageType<FluidResource> {
     }
 
     @Override
-    public PlatformStorage<FluidResource> fromTag(CompoundTag tag, PlatformStorageRepository storageRepository) {
-        PlatformStorage<FluidResource> storage = createStorage(tag, storageRepository);
+    public PlatformStorage<FluidResource> fromTag(CompoundTag tag, Runnable listener) {
+        PlatformStorage<FluidResource> storage = createStorage(tag, listener);
         ListTag stacks = tag.getList(TAG_STACKS, Tag.TAG_COMPOUND);
         for (Tag stackTag : stacks) {
             FluidResource
@@ -48,7 +47,7 @@ public class FluidStorageType implements StorageType<FluidResource> {
         return storage;
     }
 
-    private PlatformStorage<FluidResource> createStorage(CompoundTag tag, PlatformStorageRepository storageRepository) {
+    private PlatformStorage<FluidResource> createStorage(CompoundTag tag, Runnable listener) {
         TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (tag.contains(TAG_CAPACITY)) {
             return new PlatformLimitedStorage<>(
@@ -58,14 +57,14 @@ public class FluidStorageType implements StorageType<FluidResource> {
                     ),
                     FluidStorageType.INSTANCE,
                     trackingRepository,
-                    storageRepository::markAsChanged
+                    listener
             );
         }
         return new PlatformStorage<>(
                 new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                 FluidStorageType.INSTANCE,
                 trackingRepository,
-                storageRepository::markAsChanged
+                listener
         );
     }
 

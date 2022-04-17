@@ -14,6 +14,8 @@ public interface Config {
 
     Cable getCable();
 
+    StorageBlock getStorageBlock();
+
     interface Grid {
         boolean isLargeFont();
 
@@ -62,5 +64,17 @@ public interface Config {
 
     interface Controller {
         long getEnergyCapacity();
+    }
+
+    interface StorageBlock {
+        long get1kEnergyUsage();
+
+        long get4kEnergyUsage();
+
+        long get16kEnergyUsage();
+
+        long get64kEnergyUsage();
+
+        long getCreativeEnergyUsage();
     }
 }

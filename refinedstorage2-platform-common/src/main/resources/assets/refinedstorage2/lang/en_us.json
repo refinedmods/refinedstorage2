@@ -8,6 +8,11 @@
     "block.refinedstorage2.fluid_grid": "Fluid Grid",
     "block.refinedstorage2.controller": "Controller",
     "block.refinedstorage2.creative_controller": "Creative Controller",
+    "block.refinedstorage2.1k_storage_block": "1K Storage Block",
+    "block.refinedstorage2.4k_storage_block": "4K Storage Block",
+    "block.refinedstorage2.16k_storage_block": "16K Storage Block",
+    "block.refinedstorage2.64k_storage_block": "64K Storage Block",
+    "block.refinedstorage2.creative_storage_block": "Creative Storage Block",
     "gui.refinedstorage2.disk_drive.disks": "Disks",
     "gui.refinedstorage2.grid.sorting.direction": "Sorting direction",
     "gui.refinedstorage2.grid.sorting.direction.ascending": "Ascending",
@@ -115,5 +120,11 @@
     "text.autoconfig.refinedstorage2.option.cable.energyUsage": "Energy usage",
     "text.autoconfig.refinedstorage2.option.diskDrive": "Disk Drive",
     "text.autoconfig.refinedstorage2.option.diskDrive.energyUsage": "Energy usage",
-    "text.autoconfig.refinedstorage2.option.diskDrive.energyUsagePerDisk": "Energy usage per disk"
+    "text.autoconfig.refinedstorage2.option.diskDrive.energyUsagePerDisk": "Energy usage per disk",
+    "text.autoconfig.refinedstorage2.option.storageBlock": "Storage Block",
+    "text.autoconfig.refinedstorage2.option.storageBlock._1kEnergyUsage": "1K energy usage",
+    "text.autoconfig.refinedstorage2.option.storageBlock._4kEnergyUsage": "4K energy usage",
+    "text.autoconfig.refinedstorage2.option.storageBlock._16kEnergyUsage": "16K energy usage",
+    "text.autoconfig.refinedstorage2.option.storageBlock._64kEnergyUsage": "64K energy usage",
+    "text.autoconfig.refinedstorage2.option.storageBlock.creativeEnergyUsage": "Creative energy usage"
 }

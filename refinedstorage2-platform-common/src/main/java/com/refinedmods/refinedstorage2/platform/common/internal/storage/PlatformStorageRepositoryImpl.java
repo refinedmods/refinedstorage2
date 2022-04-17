@@ -68,7 +68,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
             CompoundTag data = ((CompoundTag) storageTag).getCompound(TAG_STORAGE_DATA);
 
             StorageTypeRegistry.INSTANCE.getType(typeIdentifier).ifPresentOrElse(type -> {
-                delegate.set(id, type.fromTag(data, this));
+                delegate.set(id, type.fromTag(data, this::markAsChanged));
             }, () -> {
                 LOGGER.warn("Cannot find storage type {}", typeIdentifier);
             });

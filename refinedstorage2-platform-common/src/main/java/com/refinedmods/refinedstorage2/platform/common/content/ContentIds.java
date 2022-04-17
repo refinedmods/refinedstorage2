@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
-import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 
 import net.minecraft.resources.ResourceLocation;
@@ -25,8 +25,12 @@ public final class ContentIds {
     public static final ResourceLocation CONSTRUCTION_CORE = createIdentifier("construction_core");
     public static final ResourceLocation DESTRUCTION_CORE = createIdentifier("destruction_core");
 
-    public static ResourceLocation forItemStoragePart(ItemStorageDiskItem.ItemStorageType type) {
-        return createIdentifier(type.getName() + "_storage_part");
+    public static ResourceLocation forItemStoragePart(ItemStorageType.Variant variant) {
+        return createIdentifier(variant.getName() + "_storage_part");
+    }
+
+    public static ResourceLocation forItemStorageBlock(ItemStorageType.Variant variant) {
+        return createIdentifier(variant.getName() + "_storage_block");
     }
 
     public static ResourceLocation forFluidStoragePart(FluidStorageDiskItem.FluidStorageType type) {
@@ -37,8 +41,8 @@ public final class ContentIds {
         return createIdentifier(type.getName() + "_processor");
     }
 
-    public static ResourceLocation forStorageDisk(ItemStorageDiskItem.ItemStorageType type) {
-        return createIdentifier(type.getName() + "_storage_disk");
+    public static ResourceLocation forStorageDisk(ItemStorageType.Variant variant) {
+        return createIdentifier(variant.getName() + "_storage_disk");
     }
 
     public static ResourceLocation forFluidStorageDisk(FluidStorageDiskItem.FluidStorageType type) {

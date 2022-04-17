@@ -25,6 +25,9 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @ConfigEntry.Gui.CollapsibleObject
     private CableImpl cable = new CableImpl();
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private StorageBlockImpl storageBlock = new StorageBlockImpl();
+
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
@@ -47,6 +50,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public Cable getCable() {
         return cable;
+    }
+
+    @Override
+    public StorageBlock getStorageBlock() {
+        return storageBlock;
     }
 
     private static class GridImpl implements Grid {
@@ -196,6 +204,39 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         public long getEnergyCapacity() {
             return energyCapacity;
+        }
+    }
+
+    private static class StorageBlockImpl implements StorageBlock {
+        private long _1kEnergyUsage = 2;
+        private long _4kEnergyUsage = 4;
+        private long _16kEnergyUsage = 6;
+        private long _64kEnergyUsage = 8;
+        private long creativeEnergyUsage = 16;
+
+        @Override
+        public long get1kEnergyUsage() {
+            return _1kEnergyUsage;
+        }
+
+        @Override
+        public long get4kEnergyUsage() {
+            return _4kEnergyUsage;
+        }
+
+        @Override
+        public long get16kEnergyUsage() {
+            return _16kEnergyUsage;
+        }
+
+        @Override
+        public long get64kEnergyUsage() {
+            return _64kEnergyUsage;
+        }
+
+        @Override
+        public long getCreativeEnergyUsage() {
+            return creativeEnergyUsage;
         }
     }
 
