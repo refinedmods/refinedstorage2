@@ -6,11 +6,11 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class StorageNetworkComponent implements NetworkComponent {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -34,7 +34,7 @@ public class StorageNetworkComponent implements NetworkComponent {
 
     private void tryAddStorageFromProviderToChannel(StorageProvider provider, StorageChannelType<?> type, StorageChannel<?> channel) {
         provider.getStorageForChannel(type).ifPresent(storage -> {
-            LOGGER.info("Adding source to channel {}", type);
+            LOGGER.info("Adding source {} to channel {} from provider {}", storage, type, provider);
             channel.addSource(storage);
         });
     }
@@ -50,7 +50,7 @@ public class StorageNetworkComponent implements NetworkComponent {
 
     private void tryRemoveStorageFromProviderFromChannel(StorageProvider provider, StorageChannelType<?> type, StorageChannel<?> channel) {
         provider.getStorageForChannel(type).ifPresent(storage -> {
-            LOGGER.info("Removing source from channel {}", type);
+            LOGGER.info("Removing source {} from channel {} of provider {}", storage, type, provider);
             channel.removeSource(storage);
         });
     }

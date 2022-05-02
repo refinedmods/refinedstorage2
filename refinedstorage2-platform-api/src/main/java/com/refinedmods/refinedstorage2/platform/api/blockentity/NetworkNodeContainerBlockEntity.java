@@ -42,4 +42,12 @@ public abstract class NetworkNodeContainerBlockEntity<T extends NetworkNode> ext
     public T getNode() {
         return node;
     }
+
+    @Override
+    public String toString() {
+        return "NetworkNodeContainerBlockEntity{" +
+                "node=" + node +
+                ", worldPosition=" + worldPosition +
+                "} " + super.toString();
+    }
 }
