@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageProvider;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 
 import java.util.Optional;
 import java.util.Set;
@@ -26,9 +25,7 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl implements StoragePro
     private final long energyUsage;
     private final Filter filter = new Filter();
     private final StorageChannelType<?> type;
-
-    private long capacity;
-    private NetworkNodeStorage<T> storage;
+    private final NetworkNodeStorageHolder<T> storageHolder = new NetworkNodeStorageHolder<>(this);
 
     private int priority;
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
@@ -42,7 +39,7 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl implements StoragePro
         storageRepository.get(storageId).ifPresentOrElse(
                 storage -> {
                     LOGGER.info("Loaded existing storage {}", storageId);
-                    setStorage((Storage<T>) storage);
+                    storageHolder.setStorage((Storage<T>) storage);
                 },
                 () -> LOGGER.warn("Storage {} was not found, ignoring", storageId)
         );
@@ -51,12 +48,7 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl implements StoragePro
     public void initializeNewStorage(StorageRepository storageRepository, Storage<T> storage, UUID storageId) {
         LOGGER.info("Loaded new storage {}", storageId);
         storageRepository.set(storageId, storage);
-        setStorage(storage);
-    }
-
-    private void setStorage(Storage<T> storage) {
-        this.storage = new NetworkNodeStorage<>(this, storage);
-        this.capacity = storage instanceof LimitedStorage<T> limitedStorage ? limitedStorage.getCapacity() : 0;
+        storageHolder.setStorage(storage);
     }
 
     @Override
@@ -82,7 +74,7 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl implements StoragePro
 
     @Override
     public <T> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
-        return channelType == this.type ? Optional.ofNullable((Storage<T>) storage) : Optional.empty();
+        return channelType == this.type ? Optional.ofNullable((Storage<T>) storageHolder.getStorage()) : Optional.empty();
     }
 
     public FilterMode getFilterMode() {
@@ -109,10 +101,10 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl implements StoragePro
     }
 
     public long getStored() {
-        return storage != null ? storage.getStored() : 0;
+        return storageHolder.getStored();
     }
 
     public long getCapacity() {
-        return capacity;
+        return storageHolder.getCapacity();
     }
 }
