@@ -26,13 +26,13 @@ public class GraphNetworkComponent implements NetworkComponent {
 
     @Override
     public void onContainerAdded(NetworkNodeContainer container) {
-        LOGGER.info("Container added to network {}", network.hashCode());
+        LOGGER.info("Container {} added to network {}", container, network.hashCode());
         containers.add(container);
     }
 
     @Override
     public void onContainerRemoved(NetworkNodeContainer container) {
-        LOGGER.info("Container removed from network {}", network.hashCode());
+        LOGGER.info("Container {} removed from network {}", container, network.hashCode());
         containers.remove(container);
     }
 
