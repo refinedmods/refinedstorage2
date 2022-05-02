@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
+// TODO: Dismantling
 public class ItemStorageBlock extends StorageBlock {
     private final ItemStorageType.Variant variant;
 

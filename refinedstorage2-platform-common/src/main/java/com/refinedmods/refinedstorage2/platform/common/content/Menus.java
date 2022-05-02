@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerC
 import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ItemStorageContainerMenu;
 
 import net.minecraft.world.inventory.MenuType;
 
@@ -14,6 +15,7 @@ public final class Menus {
     private MenuType<ItemGridContainerMenu> grid;
     private MenuType<FluidGridContainerMenu> fluidGrid;
     private MenuType<ControllerContainerMenu> controller;
+    private MenuType<ItemStorageContainerMenu> itemStorage;
 
     private Menus() {
     }
@@ -48,5 +50,13 @@ public final class Menus {
 
     public void setController(MenuType<ControllerContainerMenu> controller) {
         this.controller = controller;
+    }
+
+    public MenuType<ItemStorageContainerMenu> getItemStorage() {
+        return itemStorage;
+    }
+
+    public void setItemStorage(MenuType<ItemStorageContainerMenu> itemStorage) {
+        this.itemStorage = itemStorage;
     }
 }

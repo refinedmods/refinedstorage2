@@ -10,26 +10,37 @@ import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ItemStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
+// TODO: Pass ID in item form.
 public class ItemStorageBlockEntity extends StorageBlockEntity<ItemResource> {
     private final ItemStorageType.Variant variant;
+    private final Component displayName;
 
     public ItemStorageBlockEntity(BlockPos pos, BlockState state, ItemStorageType.Variant variant) {
-        // TODO: Screen and all settings.
-        // TODO: NN test.
         super(
                 BlockEntities.INSTANCE.getItemStorageBlocks().get(variant),
                 pos,
                 state,
-                new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.ITEM)
+                new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.ITEM),
+                ItemResourceType.INSTANCE
         );
         this.variant = variant;
+        this.displayName = createTranslation("block", String.format("%s_storage_block", variant.getName()));
     }
 
     private static long getEnergyUsage(ItemStorageType.Variant variant) {
@@ -61,6 +72,22 @@ public class ItemStorageBlockEntity extends StorageBlockEntity<ItemResource> {
                 ItemStorageType.INSTANCE,
                 trackingRepository,
                 listener
+        );
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return displayName;
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int syncId, Inventory inventory, Player player) {
+        return new ItemStorageContainerMenu(
+                syncId,
+                player,
+                resourceFilterContainer,
+                this
         );
     }
 }
