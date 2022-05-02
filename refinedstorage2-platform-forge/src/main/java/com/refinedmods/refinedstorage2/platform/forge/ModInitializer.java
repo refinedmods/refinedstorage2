@@ -20,6 +20,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerC
 import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ItemStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -357,6 +358,11 @@ public class ModInitializer extends AbstractModInitializer {
         fluidGridMenuType.setRegistryName(FLUID_GRID);
         e.getRegistry().register(fluidGridMenuType);
         Menus.INSTANCE.setFluidGrid(fluidGridMenuType);
+
+        MenuType<ItemStorageContainerMenu> storageMenuType = IForgeMenuType.create(ItemStorageContainerMenu::new);
+        storageMenuType.setRegistryName(createIdentifier("storage"));
+        e.getRegistry().register(storageMenuType);
+        Menus.INSTANCE.setItemStorage(storageMenuType);
     }
 
     @SubscribeEvent
