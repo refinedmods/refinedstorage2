@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.StorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
@@ -25,6 +26,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.Ite
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
+import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
@@ -41,6 +43,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.StoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.StorageBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
@@ -74,6 +77,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import team.reborn.energy.api.EnergyStorage;
@@ -141,6 +145,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerItems();
         registerBlockEntities();
         registerMenus();
+        registerLootFunctions();
     }
 
     private void registerBlocks() {
@@ -196,7 +201,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            Registry.register(Registry.ITEM, forItemStorageBlock(variant), new BlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties()));
+            Registry.register(Registry.ITEM, forItemStorageBlock(variant), new StorageBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties()));
         }
 
         for (FluidStorageDiskItem.FluidStorageType type : FluidStorageDiskItem.FluidStorageType.values()) {
@@ -231,6 +236,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Menus.INSTANCE.setFluidGrid(ScreenHandlerRegistry.registerExtended(FLUID_GRID, FluidGridContainerMenu::new));
         Menus.INSTANCE.setController(ScreenHandlerRegistry.registerExtended(CONTROLLER, ControllerContainerMenu::new));
         Menus.INSTANCE.setItemStorage(ScreenHandlerRegistry.registerExtended(createIdentifier("item_storage"), ItemStorageContainerMenu::new));
+    }
+
+    private void registerLootFunctions() {
+        LootFunctions.INSTANCE.setStorageBlock(Registry.register(Registry.LOOT_FUNCTION_TYPE, createIdentifier("storage_block"), new LootItemFunctionType(new StorageBlock.StorageBlockLootItemFunctionSerializer())));
     }
 
     private void registerPackets() {

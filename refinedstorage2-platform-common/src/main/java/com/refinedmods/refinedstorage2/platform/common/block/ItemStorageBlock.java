@@ -6,9 +6,9 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.Ite
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 
 // TODO: Dismantling
+// TODO: Tooltips
 public class ItemStorageBlock extends StorageBlock {
     private final ItemStorageType.Variant variant;
 
@@ -17,7 +17,6 @@ public class ItemStorageBlock extends StorageBlock {
         this.variant = variant;
     }
 
-    @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ItemStorageBlockEntity(pos, state, variant);
