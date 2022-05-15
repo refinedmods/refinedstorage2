@@ -77,15 +77,22 @@ public abstract class StorageBlockEntity<T> extends InternalNetworkNodeContainer
         }
         PlatformStorageRepository storageRepository = Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level);
         if (storageId == null) {
-            // We are a new block entity, or,
-            // we are placed through NBT (#setLevel(Level) -> #load(CompoundTag).
-            // When placed through nbt, we need to clean up the storage we create here.
+            // We are a new block entity, or:
+            // - We are placed through NBT (#setLevel(Level) -> #load(CompoundTag)),
+            // - We are placed with an existing storage ID (#setLevel(Level) -> #modifyStorageAfterAlreadyInitialized(UUID)).
+            // In both cases listed above we need to clean up the storage we create here.
             storageId = UUID.randomUUID();
             getNode().initializeNewStorage(storageRepository, createStorage(storageRepository::markAsChanged), storageId);
         } else {
             // The existing block entity got loaded in the level (#load(CompoundTag) -> #setLevel(Level)).
             getNode().initializeExistingStorage(storageRepository, storageId);
         }
+    }
+
+    public void modifyStorageAfterAlreadyInitialized(UUID actualStorageId) {
+        LOGGER.info("Storage {} got placed through nbt, replacing with actual storage {}", storageId, actualStorageId);
+        cleanupUnneededInitialStorageAndReinitialize(actualStorageId);
+        this.storageId = actualStorageId;
     }
 
     @Override
@@ -125,8 +132,9 @@ public abstract class StorageBlockEntity<T> extends InternalNetworkNodeContainer
     }
 
     private void cleanupUnneededInitialStorageAndReinitialize(UUID actualStorageId) {
-        // We got placed through NBT (#setLevel(Level) -> #load(CompoundTag)).
-        // Clean up the new storage created in #setLevel(Level).
+        // We got placed through NBT (#setLevel(Level) -> #load(CompoundTag)), or,
+        // we got placed with an existing storage ID (#setLevel(Level) -> modifyStorageAfterAlreadyInitialized(UUID)).
+        // Clean up the storage created earlier in #setLevel(Level).
         PlatformStorageRepository storageRepository = Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level);
         storageRepository.disassemble(storageId).ifPresentOrElse(
                 storage -> LOGGER.debug("Unneeded storage {} successfully removed", storageId),
@@ -151,6 +159,10 @@ public abstract class StorageBlockEntity<T> extends InternalNetworkNodeContainer
         tag.putInt(TAG_PRIORITY, getNode().getPriority());
         tag.putBoolean(TAG_EXACT_MODE, exactMode);
         tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getNode().getAccessMode()));
+    }
+
+    public UUID getStorageId() {
+        return storageId;
     }
 
     public AccessMode getAccessMode() {

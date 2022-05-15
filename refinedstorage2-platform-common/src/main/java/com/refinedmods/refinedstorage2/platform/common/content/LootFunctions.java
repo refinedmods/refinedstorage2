@@ -5,16 +5,16 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 public final class LootFunctions {
     public static final LootFunctions INSTANCE = new LootFunctions();
 
-    private LootItemFunctionType controller;
+    private LootItemFunctionType storageBlock;
 
     private LootFunctions() {
     }
 
-    public LootItemFunctionType getController() {
-        return controller;
+    public LootItemFunctionType getStorageBlock() {
+        return storageBlock;
     }
 
-    public void setController(LootItemFunctionType controller) {
-        this.controller = controller;
+    public void setStorageBlock(LootItemFunctionType storageBlock) {
+        this.storageBlock = storageBlock;
     }
 }

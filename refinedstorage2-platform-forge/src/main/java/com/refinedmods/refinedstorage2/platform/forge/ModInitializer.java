@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.StorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
@@ -24,6 +25,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.Ite
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
+import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
@@ -40,6 +42,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.StoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.StorageBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
@@ -47,6 +50,7 @@ import com.refinedmods.refinedstorage2.platform.forge.internal.PlatformImpl;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
@@ -57,6 +61,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -118,6 +123,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerNetworkComponents();
         registerResourceTypes();
         registerTickHandler();
+        registerLootFunctions();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onClientSetup);
@@ -136,6 +142,10 @@ public class ModInitializer extends AbstractModInitializer {
 
     private void registerTickHandler() {
         MinecraftForge.EVENT_BUS.addListener(this::onServerTick);
+    }
+
+    private void registerLootFunctions() {
+        LootFunctions.INSTANCE.setStorageBlock(Registry.register(Registry.LOOT_FUNCTION_TYPE, createIdentifier("storage_block"), new LootItemFunctionType(new StorageBlock.StorageBlockLootItemFunctionSerializer())));
     }
 
     @SubscribeEvent
@@ -287,7 +297,7 @@ public class ModInitializer extends AbstractModInitializer {
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            BlockItem storageBlockItem = new BlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties());
+            StorageBlockItem storageBlockItem = new StorageBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties());
             storageBlockItem.setRegistryName(forItemStorageBlock(variant));
             e.getRegistry().register(storageBlockItem);
         }

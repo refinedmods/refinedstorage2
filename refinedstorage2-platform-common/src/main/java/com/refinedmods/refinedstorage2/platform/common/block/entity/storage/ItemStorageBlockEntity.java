@@ -22,11 +22,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-// TODO: Pass ID in item form.
 public class ItemStorageBlockEntity extends StorageBlockEntity<ItemResource> {
     private final ItemStorageType.Variant variant;
     private final Component displayName;
@@ -80,7 +78,6 @@ public class ItemStorageBlockEntity extends StorageBlockEntity<ItemResource> {
         return displayName;
     }
 
-    @Nullable
     @Override
     public AbstractContainerMenu createMenu(int syncId, Inventory inventory, Player player) {
         return new ItemStorageContainerMenu(
