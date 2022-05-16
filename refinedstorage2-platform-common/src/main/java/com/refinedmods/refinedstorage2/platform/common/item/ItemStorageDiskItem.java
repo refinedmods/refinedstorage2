@@ -36,14 +36,6 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    protected Optional<ItemStack> createStoragePart(int count) {
-        if (variant == ItemStorageType.Variant.CREATIVE) {
-            return Optional.empty();
-        }
-        return Optional.of(new ItemStack(Items.INSTANCE.getStoragePart(variant), count));
-    }
-
-    @Override
     protected Storage<?> createStorage(Level level) {
         TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
@@ -66,7 +58,15 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    protected ItemStack createDisassemblyByproduct() {
+    protected ItemStack createPrimaryDisassemblyByproduct() {
         return new ItemStack(Items.INSTANCE.getStorageHousing());
+    }
+
+    @Override
+    protected ItemStack createSecondaryDisassemblyByproduct(int count) {
+        if (variant == ItemStorageType.Variant.CREATIVE) {
+            return null;
+        }
+        return new ItemStack(Items.INSTANCE.getStoragePart(variant), count);
     }
 }

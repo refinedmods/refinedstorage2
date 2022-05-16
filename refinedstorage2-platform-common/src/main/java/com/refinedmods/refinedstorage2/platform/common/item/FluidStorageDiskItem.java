@@ -41,14 +41,6 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    protected Optional<ItemStack> createStoragePart(int count) {
-        if (type == FluidStorageType.CREATIVE) {
-            return Optional.empty();
-        }
-        return Optional.of(new ItemStack(Items.INSTANCE.getFluidStoragePart(type), count));
-    }
-
-    @Override
     protected Storage<?> createStorage(Level level) {
         TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!type.hasCapacity()) {
@@ -71,8 +63,16 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    protected ItemStack createDisassemblyByproduct() {
+    protected ItemStack createPrimaryDisassemblyByproduct() {
         return new ItemStack(Items.INSTANCE.getStorageHousing());
+    }
+
+    @Override
+    protected ItemStack createSecondaryDisassemblyByproduct(int count) {
+        if (type == FluidStorageType.CREATIVE) {
+            return null;
+        }
+        return new ItemStack(Items.INSTANCE.getFluidStoragePart(type), count);
     }
 
     public enum FluidStorageType {
