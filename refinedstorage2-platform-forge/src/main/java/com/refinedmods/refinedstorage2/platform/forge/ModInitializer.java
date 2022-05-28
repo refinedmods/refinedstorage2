@@ -41,8 +41,8 @@ import com.refinedmods.refinedstorage2.platform.common.item.StorageHousingItem;
 import com.refinedmods.refinedstorage2.platform.common.item.StoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.StorageBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
@@ -297,7 +297,7 @@ public class ModInitializer extends AbstractModInitializer {
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            StorageBlockItem storageBlockItem = new StorageBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties());
+            ItemStorageBlockItem storageBlockItem = new ItemStorageBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties().stacksTo(1).fireResistant(), variant);
             storageBlockItem.setRegistryName(forItemStorageBlock(variant));
             e.getRegistry().register(storageBlockItem);
         }
@@ -343,6 +343,7 @@ public class ModInitializer extends AbstractModInitializer {
         });
     }
 
+    // TODO: Delegate this responsibility to the items themselves..
     private Item.Properties createProperties() {
         return new Item.Properties().tab(CREATIVE_MODE_TAB);
     }

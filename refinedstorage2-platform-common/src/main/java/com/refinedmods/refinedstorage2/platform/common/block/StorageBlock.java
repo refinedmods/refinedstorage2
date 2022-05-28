@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
+import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 
@@ -8,7 +9,6 @@ import java.util.UUID;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -20,8 +20,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public abstract class StorageBlock extends NetworkNodeContainerBlock {
-    public static final String TAG_ID = "id";
-
     private static final Logger LOGGER = LogManager.getLogger();
 
     protected StorageBlock(Properties properties) {
@@ -35,21 +33,19 @@ public abstract class StorageBlock extends NetworkNodeContainerBlock {
         }
 
         @Override
-        public ItemStack apply(ItemStack itemStack, LootContext lootContext) {
+        public ItemStack apply(ItemStack stack, LootContext lootContext) {
             BlockEntity blockEntity = lootContext.getParam(LootContextParams.BLOCK_ENTITY);
             if (blockEntity instanceof StorageBlockEntity<?> storageBlockEntity) {
-                CompoundTag tag = itemStack.hasTag() ? itemStack.getTag() : new CompoundTag();
-                apply(tag, storageBlockEntity);
-                itemStack.setTag(tag);
+                apply(stack, storageBlockEntity);
             }
-            return itemStack;
+            return stack;
         }
 
-        private void apply(CompoundTag tag, StorageBlockEntity<?> storageBlockEntity) {
+        private void apply(ItemStack stack, StorageBlockEntity<?> storageBlockEntity) {
             UUID storageId = storageBlockEntity.getStorageId();
             if (storageId != null) {
                 LOGGER.info("Transferred storage {} at {} to stack", storageId, storageBlockEntity.getBlockPos());
-                tag.putUUID(TAG_ID, storageId);
+                StorageItemHelper.setStorageId(stack, storageId);
             } else {
                 LOGGER.warn("Storage block {} has no associated storage ID!", storageBlockEntity.getBlockPos());
             }

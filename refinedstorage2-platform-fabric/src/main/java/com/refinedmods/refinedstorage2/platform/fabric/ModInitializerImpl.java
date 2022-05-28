@@ -42,8 +42,8 @@ import com.refinedmods.refinedstorage2.platform.common.item.StorageHousingItem;
 import com.refinedmods.refinedstorage2.platform.common.item.StoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.StorageBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
@@ -201,7 +201,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            Registry.register(Registry.ITEM, forItemStorageBlock(variant), new StorageBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties()));
+            Registry.register(Registry.ITEM, forItemStorageBlock(variant), new ItemStorageBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties().stacksTo(1).fireResistant(), variant));
         }
 
         for (FluidStorageDiskItem.FluidStorageType type : FluidStorageDiskItem.FluidStorageType.values()) {
