@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
@@ -41,21 +40,14 @@ class StorageNetworkNodeTest {
         network = create();
         sut = new StorageNetworkNode<>(ENERGY_USAGE, StorageChannelTypes.FAKE);
         storageRepository = new StorageRepositoryImpl();
+        addStorageToNetwork(sut);
     }
 
-    private <T> Storage<T> storageOf(StorageNetworkNode<T> storage, StorageChannelType<T> type) {
-        return storage.getStorageForChannel(type).get();
+    private void initializeAndActivate() {
+        sut.onActiveChanged(true);
     }
 
-    private Storage<String> storageOf(StorageNetworkNode<String> storage) {
-        return storageOf(storage, StorageChannelTypes.FAKE);
-    }
-
-    private void initializeStorageIntoNetwork() {
-        initializeStorageIntoNetwork(sut);
-    }
-
-    private void initializeStorageIntoNetwork(StorageNetworkNode<String> storage) {
+    private void addStorageToNetwork(StorageNetworkNode<String> storage) {
         storage.setNetwork(network);
         network.addContainer(() -> storage);
     }
@@ -69,7 +61,6 @@ class StorageNetworkNodeTest {
         assertThat(sut.getStored()).isZero();
         assertThat(sut.getCapacity()).isZero();
         assertThat(fakeStorageChannelOf(network).getAll()).isEmpty();
-        assertThat(sut.getStorageForChannel(StorageChannelTypes.FAKE)).isEmpty();
     }
 
     @Test
@@ -81,20 +72,15 @@ class StorageNetworkNodeTest {
 
         // Act
         sut.initializeNewStorage(storageRepository, limitedStorage, storageId);
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         // Assert
         assertThat(sut.getStored()).isEqualTo(50L);
         assertThat(sut.getCapacity()).isEqualTo(100L);
         assertThat(storageRepository.get(storageId)).isNotEmpty();
-        assertThat(storageOf(sut).getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 50L)
-        );
         assertThat(fakeStorageChannelOf(network).getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 50L)
         );
-        assertThat(storageOf(sut).getStored()).isEqualTo(50L);
-        assertThat(sut.getStorageForChannel(StorageChannelTypes.FAKE)).isPresent();
     }
 
     @Test
@@ -107,26 +93,21 @@ class StorageNetworkNodeTest {
 
         // Act
         sut.initializeExistingStorage(storageRepository, storageId);
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         // Assert
         assertThat(sut.getStored()).isEqualTo(50L);
         assertThat(sut.getCapacity()).isEqualTo(100L);
-        assertThat(storageOf(sut).getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 50L)
-        );
         assertThat(fakeStorageChannelOf(network).getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 50L)
         );
-        assertThat(storageOf(sut).getStored()).isEqualTo(50L);
-        assertThat(sut.getStorageForChannel(StorageChannelTypes.FAKE)).isPresent();
     }
 
     @Test
     void Test_initializing_non_existent_storage() {
         // Act
         sut.initializeExistingStorage(storageRepository, UUID.randomUUID());
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         // Assert
         assertThat(sut.getStored()).isZero();
@@ -140,7 +121,7 @@ class StorageNetworkNodeTest {
         Storage<String> storage = new LimitedStorageImpl<>(100);
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         // Act
         long inserted = fakeStorageChannelOf(network).insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
@@ -153,7 +134,6 @@ class StorageNetworkNodeTest {
         assertThat(fakeStorageChannelOf(network).getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
                 new ResourceAmount<>("A", 100)
         );
-        assertThat(storageOf(sut).getStored()).isEqualTo(100L);
     }
 
     @Test
@@ -164,7 +144,7 @@ class StorageNetworkNodeTest {
         storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         // Act
         long extracted = fakeStorageChannelOf(network).extract("A", 30, Action.EXECUTE, EmptySource.INSTANCE);
@@ -180,7 +160,6 @@ class StorageNetworkNodeTest {
                 new ResourceAmount<>("A", 70),
                 new ResourceAmount<>("B", 50)
         );
-        assertThat(storageOf(sut).getStored()).isEqualTo(70 + 50);
     }
 
     @Test
@@ -192,12 +171,12 @@ class StorageNetworkNodeTest {
         Storage<String> storage = new LimitedStorageImpl<>(100);
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         // Act
-        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted1 = fakeStorageChannelOf(network).insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted2 = fakeStorageChannelOf(network).insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted3 = fakeStorageChannelOf(network).insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted1).isEqualTo(12);
@@ -214,12 +193,12 @@ class StorageNetworkNodeTest {
         Storage<String> storage = new LimitedStorageImpl<>(100);
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         // Act
-        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted1 = fakeStorageChannelOf(network).insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted2 = fakeStorageChannelOf(network).insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted3 = fakeStorageChannelOf(network).insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted1).isZero();
@@ -236,12 +215,12 @@ class StorageNetworkNodeTest {
         Storage<String> storage = new LimitedStorageImpl<>(100);
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         // Act
-        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted1 = fakeStorageChannelOf(network).insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted2 = fakeStorageChannelOf(network).insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted3 = fakeStorageChannelOf(network).insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted1).isZero();
@@ -258,12 +237,12 @@ class StorageNetworkNodeTest {
         Storage<String> storage = new LimitedStorageImpl<>(100);
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         // Act
-        long inserted1 = storageOf(sut).insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        long inserted2 = storageOf(sut).insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        long inserted3 = storageOf(sut).insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted1 = fakeStorageChannelOf(network).insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted2 = fakeStorageChannelOf(network).insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted3 = fakeStorageChannelOf(network).insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted1).isEqualTo(12);
@@ -280,10 +259,10 @@ class StorageNetworkNodeTest {
         Storage<String> storage = new LimitedStorageImpl<>(100);
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         // Act
-        long inserted = storageOf(sut).insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted = fakeStorageChannelOf(network).insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         switch (accessMode) {
@@ -301,12 +280,12 @@ class StorageNetworkNodeTest {
         Storage<String> storage = new LimitedStorageImpl<>(100);
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         storage.insert("A", 20, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
-        long extracted = storageOf(sut).extract("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        long extracted = fakeStorageChannelOf(network).extract("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         switch (accessMode) {
@@ -321,12 +300,12 @@ class StorageNetworkNodeTest {
         Storage<String> storage = new LimitedStorageImpl<>(100);
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         sut.setActivenessProvider(() -> false);
 
         // Act
-        long inserted = storageOf(sut).insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        long inserted = fakeStorageChannelOf(network).insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted).isZero();
@@ -338,12 +317,12 @@ class StorageNetworkNodeTest {
         Storage<String> storage = new LimitedStorageImpl<>(100);
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         sut.setActivenessProvider(() -> false);
 
         // Act
-        long extracted = storageOf(sut).extract("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        long extracted = fakeStorageChannelOf(network).extract("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(extracted).isZero();
@@ -357,13 +336,12 @@ class StorageNetworkNodeTest {
         storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
-        initializeStorageIntoNetwork();
+        initializeAndActivate();
 
         // Act
         sut.onActiveChanged(false);
 
         // Assert
-        assertThat(storageOf(sut).getAll()).isNotEmpty();
         assertThat(fakeStorageChannelOf(network).getAll()).isEmpty();
     }
 
@@ -375,16 +353,10 @@ class StorageNetworkNodeTest {
         storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
-        initializeStorageIntoNetwork();
-
         // Act
         sut.onActiveChanged(true);
 
         // Assert
-        assertThat(storageOf(sut).getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-                new ResourceAmount<>("A", 50),
-                new ResourceAmount<>("B", 50)
-        );
         assertThat(fakeStorageChannelOf(network).getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
                 new ResourceAmount<>("A", 50),
                 new ResourceAmount<>("B", 50)
@@ -395,13 +367,15 @@ class StorageNetworkNodeTest {
     @ValueSource(booleans = {true, false})
     void Test_setting_priority(boolean oneHasPriority) {
         // Arrange
-        sut.initializeNewStorage(storageRepository, new LimitedStorageImpl<>(100), UUID.randomUUID());
+        LimitedStorageImpl<String> storage1 = new LimitedStorageImpl<>(100);
+        sut.initializeNewStorage(storageRepository, storage1, UUID.randomUUID());
+        sut.onActiveChanged(true);
 
         StorageNetworkNode<String> sut2 = new StorageNetworkNode<>(ENERGY_USAGE, StorageChannelTypes.FAKE);
-        sut2.initializeNewStorage(storageRepository, new LimitedStorageImpl<>(100), UUID.randomUUID());
-
-        initializeStorageIntoNetwork();
-        initializeStorageIntoNetwork(sut2);
+        LimitedStorageImpl<String> storage2 = new LimitedStorageImpl<>(100);
+        sut2.initializeNewStorage(storageRepository, storage2, UUID.randomUUID());
+        addStorageToNetwork(sut2);
+        sut2.onActiveChanged(true);
 
         if (oneHasPriority) {
             sut.setPriority(5);
@@ -416,11 +390,11 @@ class StorageNetworkNodeTest {
 
         // Assert
         if (oneHasPriority) {
-            assertThat(storageOf(sut).getAll()).isNotEmpty();
-            assertThat(storageOf(sut2).getAll()).isEmpty();
+            assertThat(storage1.getAll()).isNotEmpty();
+            assertThat(storage2.getAll()).isEmpty();
         } else {
-            assertThat(storageOf(sut).getAll()).isEmpty();
-            assertThat(storageOf(sut2).getAll()).isNotEmpty();
+            assertThat(storage1.getAll()).isEmpty();
+            assertThat(storage2.getAll()).isNotEmpty();
         }
     }
 }

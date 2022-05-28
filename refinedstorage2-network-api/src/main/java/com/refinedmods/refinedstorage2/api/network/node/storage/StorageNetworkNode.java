@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageProvider;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
@@ -26,7 +25,7 @@ import java.util.function.UnaryOperator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class StorageNetworkNode<T> extends NetworkNodeImpl implements StorageProvider {
+public class StorageNetworkNode<T> extends NetworkNodeImpl {
     public static final Logger LOGGER = LogManager.getLogger();
 
     private final long energyUsage;
@@ -61,7 +60,7 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl implements StoragePro
     @Override
     public void onActiveChanged(boolean active) {
         super.onActiveChanged(active);
-        if (network == null) {
+        if (network == null || storage == null) {
             return;
         }
         LOGGER.info("Updating storage due to activeness change to {}", active);
@@ -88,11 +87,6 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl implements StoragePro
 
     public void setAccessMode(AccessMode accessMode) {
         this.accessMode = accessMode;
-    }
-
-    @Override
-    public <T> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
-        return channelType == this.type ? Optional.ofNullable((Storage<T>) storage) : Optional.empty();
     }
 
     public FilterMode getFilterMode() {
