@@ -89,7 +89,7 @@ public abstract class StorageBlockEntity<T> extends InternalNetworkNodeContainer
         }
     }
 
-    public void modifyStorageAfterAlreadyInitialized(UUID actualStorageId) {
+    public void modifyStorageIdAfterAlreadyInitialized(UUID actualStorageId) {
         LOGGER.info("Storage {} got placed through nbt, replacing with actual storage {}", storageId, actualStorageId);
         cleanupUnneededInitialStorageAndReinitialize(actualStorageId);
         this.storageId = actualStorageId;

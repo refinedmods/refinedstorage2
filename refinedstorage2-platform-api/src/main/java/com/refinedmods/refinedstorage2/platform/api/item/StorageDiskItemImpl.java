@@ -20,8 +20,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-// TODO immunity for despawning
-// TODO tags in recipes
+// TODO: Immunity for despawning
+// TODO: Tags/ore dict in recipes
 public abstract class StorageDiskItemImpl extends Item implements StorageDiskItem {
     protected StorageDiskItemImpl(Properties properties) {
         super(properties);
@@ -50,7 +50,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        return StorageItemHelper.tryDisassembly(level, player, stack, createPrimaryDisassemblyByproduct(), createSecondaryDisassemblyByproduct(stack.getCount()));
+        return StorageItemHelper.tryDisassembly(level, player, stack, createPrimaryDisassemblyByproduct(stack.getCount()), createSecondaryDisassemblyByproduct(stack.getCount()));
     }
 
     @Override
@@ -66,7 +66,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
 
     protected abstract Storage<?> createStorage(Level level);
 
-    protected abstract ItemStack createPrimaryDisassemblyByproduct();
+    protected abstract ItemStack createPrimaryDisassemblyByproduct(int count);
 
     protected abstract ItemStack createSecondaryDisassemblyByproduct(int count);
 }

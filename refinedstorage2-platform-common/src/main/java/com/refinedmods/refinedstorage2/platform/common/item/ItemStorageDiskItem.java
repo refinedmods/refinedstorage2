@@ -58,8 +58,8 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    protected ItemStack createPrimaryDisassemblyByproduct() {
-        return new ItemStack(Items.INSTANCE.getStorageHousing());
+    protected ItemStack createPrimaryDisassemblyByproduct(int count) {
+        return new ItemStack(Items.INSTANCE.getStorageHousing(), count);
     }
 
     @Override

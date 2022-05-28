@@ -20,19 +20,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-class StorageItemHelper {
+public final class StorageItemHelper {
     private static final String TAG_ID = "id";
 
-    static Optional<UUID> getStorageId(ItemStack stack) {
+    public static Optional<UUID> getStorageId(ItemStack stack) {
         if (stack.hasTag() && stack.getTag().hasUUID(TAG_ID)) {
             return Optional.of(stack.getTag().getUUID(TAG_ID));
         }
         return Optional.empty();
     }
 
-    static void setStorageId(ItemStack stack, UUID id) {
-        stack.setTag(new CompoundTag());
-        stack.getTag().putUUID(TAG_ID, id);
+    public static void setStorageId(ItemStack stack, UUID id) {
+        CompoundTag tag = stack.hasTag() ? stack.getTag() : new CompoundTag();
+        tag.putUUID(TAG_ID, id);
+        stack.setTag(tag);
     }
 
     static Optional<StorageInfo> getInfo(Level level, ItemStack stack) {
@@ -42,7 +43,7 @@ class StorageItemHelper {
         return getStorageId(stack).map(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::getInfo);
     }
 
-    static void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context, Function<Long, String> quantityFormatter) {
+    public static void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context, Function<Long, String> quantityFormatter) {
         getInfo(level, stack).ifPresent(info -> appendStorageInfoToHoverText(tooltip, info, quantityFormatter));
         if (context.isAdvanced()) {
             getStorageId(stack).ifPresent(id -> tooltip.add(new TextComponent(id.toString()).withStyle(ChatFormatting.GRAY)));
@@ -66,18 +67,29 @@ class StorageItemHelper {
         }
     }
 
-    static InteractionResultHolder<ItemStack> tryDisassembly(Level level, Player player, ItemStack stack, ItemStack primaryDisassemblyByproduct, ItemStack secondaryDisassemblyByproduct) {
+    public static InteractionResultHolder<ItemStack> tryDisassembly(Level level,
+                                                                    Player player,
+                                                                    ItemStack stack,
+                                                                    ItemStack primaryDisassemblyByproduct,
+                                                                    ItemStack secondaryDisassemblyByproduct) {
         if (!(level instanceof ServerLevel) || !player.isShiftKeyDown()) {
             return InteractionResultHolder.fail(stack);
         }
 
-        return getStorageId(stack)
+        Optional<UUID> storageId = getStorageId(stack);
+        if (storageId.isEmpty()) {
+            return returnByproducts(level, player, primaryDisassemblyByproduct, secondaryDisassemblyByproduct);
+        }
+
+        return storageId
                 .flatMap(id -> Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level).disassemble(id))
-                .map(disk -> {
-                    tryReturnByproductToInventory(level, player, secondaryDisassemblyByproduct);
-                    return InteractionResultHolder.success(primaryDisassemblyByproduct);
-                })
-                .orElse(InteractionResultHolder.fail(stack));
+                .map(disk -> returnByproducts(level, player, primaryDisassemblyByproduct, secondaryDisassemblyByproduct))
+                .orElseGet(() -> InteractionResultHolder.fail(stack));
+    }
+
+    private static InteractionResultHolder<ItemStack> returnByproducts(Level level, Player player, ItemStack primaryDisassemblyByproduct, ItemStack secondaryDisassemblyByproduct) {
+        tryReturnByproductToInventory(level, player, secondaryDisassemblyByproduct);
+        return InteractionResultHolder.success(primaryDisassemblyByproduct);
     }
 
     private static void tryReturnByproductToInventory(Level level, Player player, ItemStack byproduct) {

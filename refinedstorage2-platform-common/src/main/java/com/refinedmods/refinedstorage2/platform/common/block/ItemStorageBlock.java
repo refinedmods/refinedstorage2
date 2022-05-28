@@ -7,8 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-// TODO: Dismantling
-// TODO: Tooltips
 public class ItemStorageBlock extends StorageBlock {
     private final ItemStorageType.Variant variant;
 
