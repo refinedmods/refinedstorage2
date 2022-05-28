@@ -42,6 +42,7 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeSt
         sortSources();
         onSourceAdded(source);
         listeners.forEach(listener -> listener.onSourceAdded(source));
+        // TODO: Use CompositeAwareChild
         if (source instanceof CompositeStorage<T> childComposite) {
             childComposite.addListener(this);
         }
