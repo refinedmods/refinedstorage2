@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGri
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -22,7 +22,7 @@ public final class BlockEntities {
     private BlockEntityType<FluidGridBlockEntity> fluidGrid;
     private BlockEntityType<ControllerBlockEntity> controller;
     private BlockEntityType<ControllerBlockEntity> creativeController;
-    private final Map<ItemStorageType.Variant, BlockEntityType<ItemStorageBlockEntity>> itemStorageBlocks = new HashMap<>();
+    private final Map<ItemStorageType.Variant, BlockEntityType<ItemStorageBlockEntity>> itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
 
     private BlockEntities() {
     }

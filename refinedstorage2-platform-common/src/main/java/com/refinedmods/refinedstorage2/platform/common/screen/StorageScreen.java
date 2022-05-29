@@ -24,13 +24,13 @@ import net.minecraft.world.entity.player.Inventory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class StorageScreen extends BaseScreen<StorageContainerMenu> {
+public class StorageScreen extends BaseScreen<StorageContainerMenu<?>> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/storage.png");
 
     private final ProgressWidget progressWidget;
     private final Inventory playerInventory;
 
-    public StorageScreen(StorageContainerMenu menu, Inventory inventory, Component title) {
+    public StorageScreen(StorageContainerMenu<?> menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
 
         this.titleLabelX = 7;

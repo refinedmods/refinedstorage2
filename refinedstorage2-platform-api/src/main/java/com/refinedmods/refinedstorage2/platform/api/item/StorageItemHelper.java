@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
+import java.util.function.LongFunction;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -22,6 +22,9 @@ import net.minecraft.world.level.Level;
 
 public final class StorageItemHelper {
     private static final String TAG_ID = "id";
+
+    private StorageItemHelper() {
+    }
 
     public static Optional<UUID> getStorageId(ItemStack stack) {
         if (stack.hasTag() && stack.getTag().hasUUID(TAG_ID)) {
@@ -43,14 +46,14 @@ public final class StorageItemHelper {
         return getStorageId(stack).map(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::getInfo);
     }
 
-    public static void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context, Function<Long, String> quantityFormatter) {
+    public static void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context, LongFunction<String> quantityFormatter) {
         getInfo(level, stack).ifPresent(info -> appendStorageInfoToHoverText(tooltip, info, quantityFormatter));
         if (context.isAdvanced()) {
             getStorageId(stack).ifPresent(id -> tooltip.add(new TextComponent(id.toString()).withStyle(ChatFormatting.GRAY)));
         }
     }
 
-    private static void appendStorageInfoToHoverText(List<Component> tooltip, StorageInfo info, Function<Long, String> quantityFormatter) {
+    private static void appendStorageInfoToHoverText(List<Component> tooltip, StorageInfo info, LongFunction<String> quantityFormatter) {
         if (info.capacity() == 0) {
             tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
                     "misc",
