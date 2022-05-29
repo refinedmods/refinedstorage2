@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive;
+package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 

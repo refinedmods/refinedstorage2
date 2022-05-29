@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ItemStorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 
 import net.minecraft.world.inventory.MenuType;
 
@@ -15,7 +15,7 @@ public final class Menus {
     private MenuType<ItemGridContainerMenu> grid;
     private MenuType<FluidGridContainerMenu> fluidGrid;
     private MenuType<ControllerContainerMenu> controller;
-    private MenuType<ItemStorageContainerMenu> itemStorage;
+    private MenuType<ItemStorageBlockContainerMenu> itemStorage;
 
     private Menus() {
     }
@@ -52,11 +52,11 @@ public final class Menus {
         this.controller = controller;
     }
 
-    public MenuType<ItemStorageContainerMenu> getItemStorage() {
+    public MenuType<ItemStorageBlockContainerMenu> getItemStorage() {
         return itemStorage;
     }
 
-    public void setItemStorage(MenuType<ItemStorageContainerMenu> itemStorage) {
+    public void setItemStorage(MenuType<ItemStorageBlockContainerMenu> itemStorage) {
         this.itemStorage = itemStorage;
     }
 }

@@ -16,7 +16,8 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSe
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InternalNetworkNodeContainerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageSettingsProvider;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.LevelUtil;
@@ -35,7 +36,6 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -50,7 +50,7 @@ import org.apache.logging.log4j.Logger;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements MenuProvider, BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider {
+public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider, StorageSettingsProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_PRIORITY = "pri";
@@ -207,31 +207,48 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
         return diskInventory;
     }
 
+    @Override
     public FilterMode getFilterMode() {
         return getNode().getFilterMode();
     }
 
+    @Override
     public void setFilterMode(FilterMode mode) {
         getNode().setFilterMode(mode);
         setChanged();
     }
 
+    @Override
     public boolean isExactMode() {
         return exactMode;
     }
 
+    @Override
     public void setExactMode(boolean exactMode) {
         this.exactMode = exactMode;
         initializeResourceFilter();
         setChanged();
     }
 
+    @Override
     public AccessMode getAccessMode() {
         return getNode().getAccessMode();
     }
 
+    @Override
     public void setAccessMode(AccessMode accessMode) {
         getNode().setAccessMode(accessMode);
+        setChanged();
+    }
+
+    @Override
+    public int getPriority() {
+        return getNode().getPriority();
+    }
+
+    @Override
+    public void setPriority(int priority) {
+        getNode().setPriority(priority);
         setChanged();
     }
 
@@ -316,15 +333,6 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
             drops.add(diskInventory.getItem(i));
         }
         return drops;
-    }
-
-    public int getPriority() {
-        return getNode().getPriority();
-    }
-
-    public void setPriority(int priority) {
-        getNode().setPriority(priority);
-        setChanged();
     }
 
     @Override

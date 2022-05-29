@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepos
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InternalNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageSettingsProvider;
 
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class StorageBlockEntity<T> extends InternalNetworkNodeContainerBlockEntity<StorageNetworkNode<T>> implements ExtendedMenuProvider {
+public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeContainerBlockEntity<StorageNetworkNode<T>> implements ExtendedMenuProvider, StorageSettingsProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORAGE_ID = "sid";
@@ -42,7 +43,7 @@ public abstract class StorageBlockEntity<T> extends InternalNetworkNodeContainer
     private UUID storageId;
     private boolean exactMode;
 
-    protected StorageBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, StorageNetworkNode<T> node, ResourceType<T> resourceType) {
+    protected StorageBlockBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, StorageNetworkNode<T> node, ResourceType<T> resourceType) {
         super(type, pos, state, node);
         node.setNormalizer(this::normalize);
         this.resourceFilterContainer = new FilteredResourceFilterContainer(9, this::resourceFilterContainerChanged, resourceType);
@@ -165,38 +166,46 @@ public abstract class StorageBlockEntity<T> extends InternalNetworkNodeContainer
         return storageId;
     }
 
+    @Override
     public AccessMode getAccessMode() {
         return getNode().getAccessMode();
     }
 
+    @Override
     public void setAccessMode(AccessMode accessMode) {
         getNode().setAccessMode(accessMode);
         setChanged();
     }
 
+    @Override
     public boolean isExactMode() {
         return exactMode;
     }
 
+    @Override
     public void setExactMode(boolean exactMode) {
         this.exactMode = exactMode;
         initializeResourceFilter();
         setChanged();
     }
 
+    @Override
     public int getPriority() {
         return getNode().getPriority();
     }
 
+    @Override
     public void setPriority(int priority) {
         getNode().setPriority(priority);
         setChanged();
     }
 
+    @Override
     public FilterMode getFilterMode() {
         return getNode().getFilterMode();
     }
 
+    @Override
     public void setFilterMode(FilterMode mode) {
         getNode().setFilterMode(mode);
         setChanged();

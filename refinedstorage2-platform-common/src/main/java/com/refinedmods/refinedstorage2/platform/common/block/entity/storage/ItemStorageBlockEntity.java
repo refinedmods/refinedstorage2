@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ItemStorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ItemStorageBlockEntity extends StorageBlockEntity<ItemResource> {
+public class ItemStorageBlockEntity extends StorageBlockBlockEntity<ItemResource> {
     private final ItemStorageType.Variant variant;
     private final Component displayName;
 
@@ -80,7 +80,7 @@ public class ItemStorageBlockEntity extends StorageBlockEntity<ItemResource> {
 
     @Override
     public AbstractContainerMenu createMenu(int syncId, Inventory inventory, Player player) {
-        return new ItemStorageContainerMenu(
+        return new ItemStorageBlockContainerMenu(
                 syncId,
                 player,
                 resourceFilterContainer,
