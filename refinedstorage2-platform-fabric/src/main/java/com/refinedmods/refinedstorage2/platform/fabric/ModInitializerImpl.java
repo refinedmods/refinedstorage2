@@ -19,10 +19,10 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGr
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ItemStorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -235,7 +235,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Menus.INSTANCE.setGrid(ScreenHandlerRegistry.registerExtended(GRID, ItemGridContainerMenu::new));
         Menus.INSTANCE.setFluidGrid(ScreenHandlerRegistry.registerExtended(FLUID_GRID, FluidGridContainerMenu::new));
         Menus.INSTANCE.setController(ScreenHandlerRegistry.registerExtended(CONTROLLER, ControllerContainerMenu::new));
-        Menus.INSTANCE.setItemStorage(ScreenHandlerRegistry.registerExtended(createIdentifier("item_storage"), ItemStorageContainerMenu::new));
+        Menus.INSTANCE.setItemStorage(ScreenHandlerRegistry.registerExtended(createIdentifier("item_storage"), ItemStorageBlockContainerMenu::new));
     }
 
     private void registerLootFunctions() {

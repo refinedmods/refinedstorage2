@@ -19,8 +19,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public abstract class StorageBlockItem extends BlockItem {
-    protected StorageBlockItem(Block block, Properties properties) {
+public abstract class StorageBlockBlockItem extends BlockItem {
+    protected StorageBlockBlockItem(Block block, Properties properties) {
         super(block, properties);
     }
 

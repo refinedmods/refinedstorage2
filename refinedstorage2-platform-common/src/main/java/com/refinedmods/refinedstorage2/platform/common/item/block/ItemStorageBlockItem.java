@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.item.block;
 
-import com.refinedmods.refinedstorage2.platform.api.item.block.StorageBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.api.item.block.StorageBlockBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ItemStorageBlockItem extends StorageBlockItem {
+public class ItemStorageBlockItem extends StorageBlockBlockItem {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final ItemStorageType.Variant variant;
@@ -40,7 +40,7 @@ public class ItemStorageBlockItem extends StorageBlockItem {
 
     @Override
     protected void updateBlockEntityWithStorageId(BlockPos pos, BlockEntity blockEntity, UUID id) {
-        if (blockEntity instanceof StorageBlockEntity<?> storageBlockEntity) {
+        if (blockEntity instanceof StorageBlockBlockEntity<?> storageBlockEntity) {
             LOGGER.info("Transferred storage {} to block at {}", id, pos);
             storageBlockEntity.modifyStorageIdAfterAlreadyInitialized(id);
         } else {

@@ -18,10 +18,10 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGr
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ItemStorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -370,7 +370,7 @@ public class ModInitializer extends AbstractModInitializer {
         e.getRegistry().register(fluidGridMenuType);
         Menus.INSTANCE.setFluidGrid(fluidGridMenuType);
 
-        MenuType<ItemStorageContainerMenu> storageMenuType = IForgeMenuType.create(ItemStorageContainerMenu::new);
+        MenuType<ItemStorageBlockContainerMenu> storageMenuType = IForgeMenuType.create(ItemStorageBlockContainerMenu::new);
         storageMenuType.setRegistryName(createIdentifier("storage"));
         e.getRegistry().register(storageMenuType);
         Menus.INSTANCE.setItemStorage(storageMenuType);

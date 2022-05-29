@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.StorageAccessor;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AccessModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ExactModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.FilterModeSideButtonWidget;

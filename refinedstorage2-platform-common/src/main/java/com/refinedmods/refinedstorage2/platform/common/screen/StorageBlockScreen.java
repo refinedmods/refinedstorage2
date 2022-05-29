@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.StorageBlockContainerMenu;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -10,10 +10,10 @@ import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
-public class StorageBlockScreen extends StorageScreen<StorageContainerMenu<?>> {
+public class StorageBlockScreen extends StorageScreen<StorageBlockContainerMenu<?>> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/storage.png");
 
-    public StorageBlockScreen(StorageContainerMenu<?> menu, Inventory inventory, Component title) {
+    public StorageBlockScreen(StorageBlockContainerMenu<?> menu, Inventory inventory, Component title) {
         super(menu, inventory, title, 80);
     }
 

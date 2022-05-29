@@ -218,6 +218,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
         return priority;
     }
 
+    // TODO: do we need this? And the composite listener stuff?
     @Override
     public <T> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
         DiskDriveCompositeStorage<?> composite = compositeStorages.get(channelType);

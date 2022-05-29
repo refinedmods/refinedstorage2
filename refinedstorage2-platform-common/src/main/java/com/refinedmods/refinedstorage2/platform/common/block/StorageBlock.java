@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
 import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 
 import java.util.UUID;
@@ -35,13 +35,13 @@ public abstract class StorageBlock extends NetworkNodeContainerBlock {
         @Override
         public ItemStack apply(ItemStack stack, LootContext lootContext) {
             BlockEntity blockEntity = lootContext.getParam(LootContextParams.BLOCK_ENTITY);
-            if (blockEntity instanceof StorageBlockEntity<?> storageBlockEntity) {
+            if (blockEntity instanceof StorageBlockBlockEntity<?> storageBlockEntity) {
                 apply(stack, storageBlockEntity);
             }
             return stack;
         }
 
-        private void apply(ItemStack stack, StorageBlockEntity<?> storageBlockEntity) {
+        private void apply(ItemStack stack, StorageBlockBlockEntity<?> storageBlockEntity) {
             UUID storageId = storageBlockEntity.getStorageId();
             if (storageId != null) {
                 LOGGER.info("Transferred storage {} at {} to stack", storageId, storageBlockEntity.getBlockPos());
