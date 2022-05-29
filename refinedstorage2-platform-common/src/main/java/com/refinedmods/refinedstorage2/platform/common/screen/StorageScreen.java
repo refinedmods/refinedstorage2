@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AccessModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ExactModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.FilterModeSideButtonWidget;
@@ -18,19 +18,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class StorageScreen extends BaseScreen<StorageContainerMenu<?>> {
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/storage.png");
-
+public abstract class StorageScreen<T extends AbstractContainerMenu & StorageAccessor> extends BaseScreen<T> {
     private final ProgressWidget progressWidget;
     private final Inventory playerInventory;
 
-    public StorageScreen(StorageContainerMenu<?> menu, Inventory inventory, Component title) {
+    protected StorageScreen(T menu, Inventory inventory, Component title, int progressWidgetX) {
         super(menu, inventory, title);
 
         this.titleLabelX = 7;
@@ -41,9 +38,11 @@ public class StorageScreen extends BaseScreen<StorageContainerMenu<?>> {
         this.imageHeight = 223;
         this.playerInventory = inventory;
 
-        this.progressWidget = new ProgressWidget(80, 54, 16, 70, menu::getProgress, this::renderComponentTooltip, this::createTooltip);
+        this.progressWidget = new ProgressWidget(progressWidgetX, 54, 16, 70, menu::getProgress, this::renderComponentTooltip, this::createTooltip);
         addRenderableWidget(progressWidget);
     }
+
+    protected abstract boolean isResourceFilterButtonActive();
 
     @Override
     protected void init() {
@@ -54,7 +53,7 @@ public class StorageScreen extends BaseScreen<StorageContainerMenu<?>> {
         addSideButton(new AccessModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new PrioritySideButtonWidget(getMenu(), playerInventory, this, this::renderComponentTooltip));
         ResourceFilterButtonWidget resourceFilterButton = new ResourceFilterButtonWidget(leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7, topPos + 4, menu);
-        resourceFilterButton.active = false;
+        resourceFilterButton.active = isResourceFilterButtonActive();
         addRenderableWidget(resourceFilterButton);
     }
 
@@ -62,7 +61,7 @@ public class StorageScreen extends BaseScreen<StorageContainerMenu<?>> {
         List<Component> tooltip = new ArrayList<>();
         long stored = getMenu().getStored();
 
-        if (menu.isInfiniteStorage()) {
+        if (!menu.hasCapacity()) {
             tooltip.add(createTranslation("misc", "stored", QuantityFormatter.format(stored)));
         } else {
             long capacity = getMenu().getCapacity();
@@ -79,7 +78,6 @@ public class StorageScreen extends BaseScreen<StorageContainerMenu<?>> {
     protected void renderBg(PoseStack poseStack, float delta, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
 
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;

@@ -29,6 +29,28 @@ public class TwoWaySyncProperty<T> extends DataSlot {
         return new TwoWaySyncProperty<>(index, serializer, deserializer, null, changed, defaultValue);
     }
 
+    public static TwoWaySyncProperty<Integer> integerForClient(int index) {
+        return TwoWaySyncProperty.forClient(
+                index,
+                value -> value,
+                value -> value,
+                0,
+                value -> {
+                }
+        );
+    }
+
+    public static TwoWaySyncProperty<Boolean> booleanForClient(int index) {
+        return TwoWaySyncProperty.forClient(
+                index,
+                value -> Boolean.TRUE.equals(value) ? 0 : 1,
+                value -> value == 0,
+                true,
+                value -> {
+                }
+        );
+    }
+
     public static <T> TwoWaySyncProperty<T> forServer(int index, Function<T, Integer> serializer, Function<Integer, T> deserializer, Supplier<T> supplier, Consumer<T> changed) {
         return new TwoWaySyncProperty<>(index, serializer, deserializer, supplier, changed, null);
     }

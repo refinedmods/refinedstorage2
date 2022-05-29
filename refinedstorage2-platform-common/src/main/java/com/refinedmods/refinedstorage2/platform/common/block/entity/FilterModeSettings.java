@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.TwoWaySyncProperty;
 
 public class FilterModeSettings {
     private static final int BLOCK = 0;
@@ -22,5 +23,16 @@ public class FilterModeSettings {
             case BLOCK -> BLOCK;
             case ALLOW -> ALLOW;
         };
+    }
+
+    public static TwoWaySyncProperty<FilterMode> createClientSyncProperty(int index) {
+        return TwoWaySyncProperty.forClient(
+                index,
+                FilterModeSettings::getFilterMode,
+                FilterModeSettings::getFilterMode,
+                FilterMode.BLOCK,
+                filterMode -> {
+                }
+        );
     }
 }

@@ -10,12 +10,8 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSe
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.AccessModeAccessor;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ExactModeAccessor;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.FilterModeAccessor;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.PriorityAccessor;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceFilterableContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 
@@ -26,7 +22,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class StorageContainerMenu<T> extends ResourceFilterableContainerMenu implements PriorityAccessor, FilterModeAccessor, ExactModeAccessor, AccessModeAccessor, RedstoneModeAccessor {
+public abstract class StorageContainerMenu<T> extends ResourceFilterableContainerMenu implements StorageAccessor {
     private static final int FILTER_SLOT_X = 8;
     private static final int FILTER_SLOT_Y = 20;
 
@@ -42,46 +38,11 @@ public abstract class StorageContainerMenu<T> extends ResourceFilterableContaine
     protected StorageContainerMenu(MenuType<?> type, int syncId, Inventory playerInventory, FriendlyByteBuf buf, ResourceType<T> resourceType) {
         super(type, syncId);
 
-        this.priorityProperty = TwoWaySyncProperty.forClient(
-                0,
-                priority -> priority,
-                priority -> priority,
-                0,
-                priority -> {
-                }
-        );
-        this.filterModeProperty = TwoWaySyncProperty.forClient(
-                1,
-                FilterModeSettings::getFilterMode,
-                FilterModeSettings::getFilterMode,
-                FilterMode.BLOCK,
-                filterMode -> {
-                }
-        );
-        this.exactModeProperty = TwoWaySyncProperty.forClient(
-                2,
-                value -> Boolean.TRUE.equals(value) ? 0 : 1,
-                value -> value == 0,
-                true,
-                exactMode -> {
-                }
-        );
-        this.accessModeProperty = TwoWaySyncProperty.forClient(
-                3,
-                AccessModeSettings::getAccessMode,
-                AccessModeSettings::getAccessMode,
-                AccessMode.INSERT_EXTRACT,
-                accessMode -> {
-                }
-        );
-        this.redstoneModeProperty = TwoWaySyncProperty.forClient(
-                4,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneMode.IGNORE,
-                redstoneMode -> {
-                }
-        );
+        this.priorityProperty = TwoWaySyncProperty.integerForClient(0);
+        this.filterModeProperty = FilterModeSettings.createClientSyncProperty(1);
+        this.exactModeProperty = TwoWaySyncProperty.booleanForClient(2);
+        this.accessModeProperty = AccessModeSettings.createClientSyncProperty(3);
+        this.redstoneModeProperty = RedstoneModeSettings.createClientSyncProperty(4);
 
         addDataSlot(priorityProperty);
         addDataSlot(filterModeProperty);
@@ -162,21 +123,25 @@ public abstract class StorageContainerMenu<T> extends ResourceFilterableContaine
         return new ResourceFilterSlot(resourceFilterContainer, i, x, FILTER_SLOT_Y);
     }
 
-    public boolean isInfiniteStorage() {
-        return capacity == 0;
+    @Override
+    public boolean hasCapacity() {
+        return capacity > 0;
     }
 
+    @Override
     public double getProgress() {
-        if (isInfiniteStorage()) {
+        if (!hasCapacity()) {
             return 0;
         }
         return (double) getStored() / (double) getCapacity();
     }
 
+    @Override
     public long getCapacity() {
         return capacity;
     }
 
+    @Override
     public long getStored() {
         return stored;
     }

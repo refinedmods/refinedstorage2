@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.platform.api.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.TwoWaySyncProperty;
 
 public class RedstoneModeSettings {
     private static final int IGNORE = 0;
@@ -25,5 +26,16 @@ public class RedstoneModeSettings {
             case HIGH -> HIGH;
             case LOW -> LOW;
         };
+    }
+
+    public static TwoWaySyncProperty<RedstoneMode> createClientSyncProperty(int index) {
+        return TwoWaySyncProperty.forClient(
+                index,
+                RedstoneModeSettings::getRedstoneMode,
+                RedstoneModeSettings::getRedstoneMode,
+                RedstoneMode.IGNORE,
+                redstoneMode -> {
+                }
+        );
     }
 }

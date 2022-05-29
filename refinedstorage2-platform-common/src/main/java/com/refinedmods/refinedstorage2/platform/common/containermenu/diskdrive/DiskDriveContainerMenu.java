@@ -11,12 +11,8 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSe
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.AccessModeAccessor;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ExactModeAccessor;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.FilterModeAccessor;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.PriorityAccessor;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceFilterableContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ValidatedSlot;
@@ -34,7 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public class DiskDriveContainerMenu extends ResourceFilterableContainerMenu implements PriorityAccessor, FilterModeAccessor, ExactModeAccessor, AccessModeAccessor, RedstoneModeAccessor {
+public class DiskDriveContainerMenu extends ResourceFilterableContainerMenu implements StorageAccessor {
     private static final int DISK_SLOT_X = 61;
     private static final int DISK_SLOT_Y = 54;
 
@@ -52,46 +48,11 @@ public class DiskDriveContainerMenu extends ResourceFilterableContainerMenu impl
     public DiskDriveContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getDiskDrive(), syncId);
 
-        this.priorityProperty = TwoWaySyncProperty.forClient(
-                0,
-                priority -> priority,
-                priority -> priority,
-                0,
-                priority -> {
-                }
-        );
-        this.filterModeProperty = TwoWaySyncProperty.forClient(
-                1,
-                FilterModeSettings::getFilterMode,
-                FilterModeSettings::getFilterMode,
-                FilterMode.BLOCK,
-                filterMode -> {
-                }
-        );
-        this.exactModeProperty = TwoWaySyncProperty.forClient(
-                2,
-                value -> Boolean.TRUE.equals(value) ? 0 : 1,
-                value -> value == 0,
-                true,
-                exactMode -> {
-                }
-        );
-        this.accessModeProperty = TwoWaySyncProperty.forClient(
-                3,
-                AccessModeSettings::getAccessMode,
-                AccessModeSettings::getAccessMode,
-                AccessMode.INSERT_EXTRACT,
-                accessMode -> {
-                }
-        );
-        this.redstoneModeProperty = TwoWaySyncProperty.forClient(
-                4,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneMode.IGNORE,
-                redstoneMode -> {
-                }
-        );
+        this.priorityProperty = TwoWaySyncProperty.integerForClient(0);
+        this.filterModeProperty = FilterModeSettings.createClientSyncProperty(1);
+        this.exactModeProperty = TwoWaySyncProperty.booleanForClient(2);
+        this.accessModeProperty = AccessModeSettings.createClientSyncProperty(3);
+        this.redstoneModeProperty = RedstoneModeSettings.createClientSyncProperty(4);
 
         addDataSlot(priorityProperty);
         addDataSlot(filterModeProperty);
@@ -187,21 +148,25 @@ public class DiskDriveContainerMenu extends ResourceFilterableContainerMenu impl
         return new ValidatedSlot(diskInventory, i, x, y, stack -> stack.getItem() instanceof StorageDiskItem);
     }
 
-    public boolean hasInfiniteDisk() {
-        return getStorageDiskInfo().anyMatch(info -> info.capacity() == 0);
+    @Override
+    public boolean hasCapacity() {
+        return getStorageDiskInfo().allMatch(info -> info.capacity() > 0);
     }
 
+    @Override
     public double getProgress() {
-        if (hasInfiniteDisk()) {
+        if (!hasCapacity()) {
             return 0;
         }
         return (double) getStored() / (double) getCapacity();
     }
 
+    @Override
     public long getCapacity() {
         return getStorageDiskInfo().mapToLong(StorageInfo::capacity).sum();
     }
 
+    @Override
     public long getStored() {
         return getStorageDiskInfo().mapToLong(StorageInfo::stored).sum();
     }
