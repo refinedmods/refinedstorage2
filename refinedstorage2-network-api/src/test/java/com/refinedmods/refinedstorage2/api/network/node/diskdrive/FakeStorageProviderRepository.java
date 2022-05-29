@@ -50,7 +50,7 @@ public class FakeStorageProviderRepository implements StorageDiskProvider, Stora
 
     @Override
     public <T> void set(UUID id, Storage<T> storage) {
-        throw new RuntimeException();
+        storages.put(id, storage);
     }
 
     @Override
