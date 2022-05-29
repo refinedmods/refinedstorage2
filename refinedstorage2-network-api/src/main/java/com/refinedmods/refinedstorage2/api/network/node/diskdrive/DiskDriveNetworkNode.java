@@ -66,7 +66,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
         for (int i = 0; i < DISK_COUNT; ++i) {
             initializeDiskInSlot(i);
         }
-        setDiskCount();
+        updateDiskCount();
     }
 
     public void onDiskChanged(int slot) {
@@ -75,7 +75,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
             return;
         }
         initializeDiskInSlot(slot).forEach(this::processDiskChange);
-        setDiskCount();
+        updateDiskCount();
     }
 
     private void processDiskChange(DiskChange change) {
@@ -89,7 +89,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
         }
     }
 
-    private void setDiskCount() {
+    private void updateDiskCount() {
         this.diskCount = (int) Arrays
                 .stream(disks)
                 .filter(Objects::nonNull)
@@ -128,7 +128,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
         if (network == null) {
             return;
         }
-        LOGGER.info("Updating disk storage due to activeness change to {}", active);
+        LOGGER.info("Disk drive activeness got changed to '{}', updating underlying storage", active);
         if (active) {
             enableAllDisks();
         } else {
