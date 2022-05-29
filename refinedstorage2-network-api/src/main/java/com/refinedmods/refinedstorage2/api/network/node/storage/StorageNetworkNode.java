@@ -5,11 +5,7 @@ import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
-import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
-import com.refinedmods.refinedstorage2.api.storage.Source;
-import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
+import com.refinedmods.refinedstorage2.api.storage.*;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.composite.Priority;
@@ -17,13 +13,13 @@ import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class StorageNetworkNode<T> extends NetworkNodeImpl {
     public static final Logger LOGGER = LogManager.getLogger();
@@ -43,9 +39,9 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl {
 
     public void initializeExistingStorage(StorageRepository storageRepository, UUID storageId) {
         storageRepository.get(storageId).ifPresentOrElse(
-                storage -> {
+                existingStorage -> {
                     LOGGER.info("Loaded existing storage {}", storageId);
-                    this.storage = new NetworkNodeStorage((Storage<T>) storage);
+                    this.storage = new NetworkNodeStorage((Storage<T>) existingStorage);
                 },
                 () -> LOGGER.warn("Storage {} was not found, ignoring", storageId)
         );
@@ -121,11 +117,8 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl {
     }
 
     private class NetworkNodeStorage extends ProxyStorage<T> implements TrackedStorage<T>, Priority {
-        private final Storage<T> delegate;
-
         public NetworkNodeStorage(Storage<T> delegate) {
             super(delegate);
-            this.delegate = delegate;
         }
 
         private long getCapacity() {

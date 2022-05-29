@@ -208,30 +208,30 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     }
 
     private static class StorageBlockImpl implements StorageBlock {
-        private long _1kEnergyUsage = 2;
-        private long _4kEnergyUsage = 4;
-        private long _16kEnergyUsage = 6;
-        private long _64kEnergyUsage = 8;
+        private long oneKEnergyUsage = 2;
+        private long fourKEnergyUsage = 4;
+        private long sixteenKEnergyUsage = 6;
+        private long sixtyFourKEnergyUsage = 8;
         private long creativeEnergyUsage = 16;
 
         @Override
         public long get1kEnergyUsage() {
-            return _1kEnergyUsage;
+            return oneKEnergyUsage;
         }
 
         @Override
         public long get4kEnergyUsage() {
-            return _4kEnergyUsage;
+            return fourKEnergyUsage;
         }
 
         @Override
         public long get16kEnergyUsage() {
-            return _16kEnergyUsage;
+            return sixteenKEnergyUsage;
         }
 
         @Override
         public long get64kEnergyUsage() {
-            return _64kEnergyUsage;
+            return sixtyFourKEnergyUsage;
         }
 
         @Override

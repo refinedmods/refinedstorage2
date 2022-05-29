@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public final class Blocks {
@@ -24,7 +24,7 @@ public final class Blocks {
     private QuartzEnrichedIronBlock quartzEnrichedIron;
     private DiskDriveBlock diskDrive;
     private MachineCasingBlock machineCasing;
-    private final Map<ItemStorageType.Variant, ItemStorageBlock> itemStorageBlocks = new HashMap<>();
+    private final Map<ItemStorageType.Variant, ItemStorageBlock> itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
 
     private Blocks() {
     }
