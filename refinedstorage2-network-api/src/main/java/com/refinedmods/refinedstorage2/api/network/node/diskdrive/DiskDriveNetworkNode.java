@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
+import com.google.common.collect.ImmutableMap;
+
 import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
@@ -11,17 +13,11 @@ import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.UnaryOperator;
-
-import com.google.common.collect.ImmutableMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.*;
+import java.util.function.UnaryOperator;
 
 public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProvider {
     public static final int DISK_COUNT = 8;
@@ -78,29 +74,6 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
         updateDiskCount();
     }
 
-    private void processDiskChange(DiskChange change) {
-        if (!isActive()) {
-            return;
-        }
-        if (change.removed) {
-            change.compositeStorage.removeSource((Storage) change.storage);
-        } else {
-            change.compositeStorage.addSource((Storage) change.storage);
-        }
-    }
-
-    private void updateDiskCount() {
-        this.diskCount = (int) Arrays
-                .stream(disks)
-                .filter(Objects::nonNull)
-                .count();
-    }
-
-    private record DiskChange(boolean removed,
-                              DiskDriveCompositeStorage<?> compositeStorage,
-                              DiskDriveDiskStorage<?> storage) {
-    }
-
     private Set<DiskChange> initializeDiskInSlot(int slot) {
         Set<DiskChange> results = new HashSet<>();
         if (disks[slot] != null) {
@@ -120,6 +93,26 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
         }, () -> disks[slot] = null);
 
         return results;
+    }
+
+    private void processDiskChange(DiskChange change) {
+        if (!isActive()) {
+            return;
+        }
+        if (change.removed) {
+            change.compositeStorage.removeSource((Storage) change.storage);
+        } else {
+            change.compositeStorage.addSource((Storage) change.storage);
+        }
+    }
+
+    private void updateDiskCount() {
+        this.diskCount = (int) Arrays.stream(disks).filter(Objects::nonNull).count();
+    }
+
+    private record DiskChange(boolean removed,
+                              DiskDriveCompositeStorage<?> compositeStorage,
+                              DiskDriveDiskStorage<?> storage) {
     }
 
     @Override
@@ -218,12 +211,11 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
         return priority;
     }
 
-    // TODO: do we need this? And the composite listener stuff?
     @Override
     public <T> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
-        DiskDriveCompositeStorage<?> composite = compositeStorages.get(channelType);
-        if (composite != null) {
-            return Optional.of((Storage<T>) composite);
+        DiskDriveCompositeStorage<?> storage = compositeStorages.get(channelType);
+        if (storage != null) {
+            return Optional.of((Storage<T>) storage);
         }
         return Optional.empty();
     }

@@ -5,18 +5,24 @@ import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.StorageProvider;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
+import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageListener;
 import com.refinedmods.refinedstorage2.api.storage.composite.Priority;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -25,7 +31,7 @@ import java.util.function.UnaryOperator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class StorageNetworkNode<T> extends NetworkNodeImpl {
+public class StorageNetworkNode<T> extends NetworkNodeImpl implements StorageProvider {
     public static final Logger LOGGER = LogManager.getLogger();
 
     private final long energyUsage;
@@ -35,6 +41,11 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl {
     private int priority;
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
     private NetworkNodeStorage storage;
+    // In order to be able to "hide" the underlying storage when the activeness changes, we have to
+    // expose a composite storage because such a storage can propagate updates to the parent composite.
+    // We can't let this network node itself control the storage channel,
+    // since that wouldn't work on network node removals or network merges/updates.
+    private final ExposedNetworkNodeStorage exposedStorage = new ExposedNetworkNodeStorage();
 
     public StorageNetworkNode(long energyUsage, StorageChannelType<?> type) {
         this.energyUsage = energyUsage;
@@ -64,11 +75,10 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl {
             return;
         }
         LOGGER.info("Storage activeness got changed to '{}', updating underlying storage", active);
-        StorageChannel<?> storageChannel = network.getComponent(StorageNetworkComponent.class).getStorageChannel(type);
         if (active) {
-            storageChannel.addSource(storage);
+            exposedStorage.addSource(storage);
         } else {
-            storageChannel.removeSource(storage);
+            exposedStorage.removeSource(storage);
         }
     }
 
@@ -120,7 +130,79 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl {
         return storage != null ? storage.getCapacity() : 0L;
     }
 
-    private class NetworkNodeStorage extends ProxyStorage<T> implements TrackedStorage<T>, Priority {
+    @Override
+    public <T> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
+        if (channelType == this.type) {
+            return Optional.of((Storage<T>) exposedStorage);
+        }
+        return Optional.empty();
+    }
+
+    private class ExposedNetworkNodeStorage implements CompositeStorage<T>, TrackedStorage<T>, Priority {
+        private final CompositeStorage<T> compositeStorage = new CompositeStorageImpl<>(new ResourceListImpl<>());
+
+        @Override
+        public long extract(T resource, long amount, Action action, Source source) {
+            return compositeStorage.extract(resource, amount, action, source);
+        }
+
+        @Override
+        public long insert(T resource, long amount, Action action, Source source) {
+            return compositeStorage.insert(resource, amount, action, source);
+        }
+
+        @Override
+        public Collection<ResourceAmount<T>> getAll() {
+            return compositeStorage.getAll();
+        }
+
+        @Override
+        public long getStored() {
+            return compositeStorage.getStored();
+        }
+
+        @Override
+        public void sortSources() {
+            compositeStorage.sortSources();
+        }
+
+        @Override
+        public void addSource(Storage<T> source) {
+            compositeStorage.addSource(source);
+        }
+
+        @Override
+        public void removeSource(Storage<T> source) {
+            compositeStorage.removeSource(source);
+        }
+
+        @Override
+        public void clearSources() {
+            compositeStorage.clearSources();
+        }
+
+        @Override
+        public void addListener(CompositeStorageListener<T> listener) {
+            compositeStorage.addListener(listener);
+        }
+
+        @Override
+        public void removeListener(CompositeStorageListener<T> listener) {
+            compositeStorage.removeListener(listener);
+        }
+
+        @Override
+        public int getPriority() {
+            return priority;
+        }
+
+        @Override
+        public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
+            return storage.findTrackedResourceBySourceType(resource, sourceType);
+        }
+    }
+
+    private class NetworkNodeStorage extends ProxyStorage<T> implements TrackedStorage<T> {
         public NetworkNodeStorage(Storage<T> delegate) {
             super(delegate);
         }
@@ -151,11 +233,6 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl {
             return delegate instanceof TrackedStorage<T> trackedStorage
                     ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType)
                     : Optional.empty();
-        }
-
-        @Override
-        public int getPriority() {
-            return priority;
         }
     }
 }
