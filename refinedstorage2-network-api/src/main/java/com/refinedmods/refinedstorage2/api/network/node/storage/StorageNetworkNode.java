@@ -5,7 +5,11 @@ import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
-import com.refinedmods.refinedstorage2.api.storage.*;
+import com.refinedmods.refinedstorage2.api.storage.AccessMode;
+import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
+import com.refinedmods.refinedstorage2.api.storage.Source;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.composite.Priority;
@@ -13,13 +17,13 @@ import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class StorageNetworkNode<T> extends NetworkNodeImpl {
     public static final Logger LOGGER = LogManager.getLogger();
@@ -59,7 +63,7 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl {
         if (network == null || storage == null) {
             return;
         }
-        LOGGER.info("Updating storage due to activeness change to {}", active);
+        LOGGER.info("Storage activeness got changed to '{}', updating underlying storage", active);
         StorageChannel<?> storageChannel = network.getComponent(StorageNetworkComponent.class).getStorageChannel(type);
         if (active) {
             storageChannel.addSource(storage);
@@ -141,6 +145,7 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl {
             return super.insert(resource, amount, action, source);
         }
 
+        // TODO: Test this.
         @Override
         public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
             return delegate instanceof TrackedStorage<T> trackedStorage
