@@ -79,6 +79,15 @@ class NetworkTestExtensionTest {
         assertThat(storageChannelB).isSameAs(b.getComponent(StorageNetworkComponent.class).getStorageChannel(StorageChannelTypes.FAKE));
     }
 
+    @Test
+    void Test_should_inject_network_energy_component(@InjectNetworkEnergyComponent(networkId = "a") EnergyNetworkComponent networkEnergyA,
+                                                     @InjectNetworkEnergyComponent(networkId = "b") EnergyNetworkComponent networkEnergyB) {
+        // Assert
+        assertThat(networkEnergyA).isSameAs(a.getComponent(EnergyNetworkComponent.class));
+        assertThat(networkEnergyB).isSameAs(b.getComponent(EnergyNetworkComponent.class));
+
+    }
+
     @Nested
     @SetupNetwork(id = "c")
     class NestedTest {

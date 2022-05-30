@@ -10,20 +10,17 @@ import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.test.FakeNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistryImpl;
+
+import org.junit.jupiter.api.extension.*;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
-import org.junit.jupiter.api.extension.ParameterResolver;
 
 public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
     private final FakeNetworkFactory fakeNetworkFactory = new FakeNetworkFactory();
@@ -82,7 +79,7 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
     private void addNetworkNodes(Object testInstance) {
         Field[] fields = testInstance.getClass().getDeclaredFields();
         for (Field field : fields) {
-            tryAddNetworkNode(testInstance, field);
+            tryAddSimpleNetworkNode(testInstance, field);
             tryAddDiskDrive(testInstance, field);
         }
     }
@@ -96,26 +93,28 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
         }
     }
 
-    private void tryAddNetworkNode(Object testInstance, Field field) {
+    private void tryAddSimpleNetworkNode(Object testInstance, Field field) {
         AddNetworkNode annotation = field.getAnnotation(AddNetworkNode.class);
         if (annotation != null) {
-            NetworkNode resolvedNode = resolveNetworkNode(field.getType(), annotation.energyUsage());
+            NetworkNode resolvedNode = resolveSimpleNetworkNode(field.getType(), annotation.energyUsage());
             Network network = networkMap.get(annotation.networkId());
             registerNetworkNode(testInstance, field, resolvedNode, network);
         }
+    }
+
+    private NetworkNode resolveSimpleNetworkNode(Class<?> type, long energyUsage) {
+        if (type == StorageNetworkNode.class) {
+            return new StorageNetworkNode<String>(energyUsage, StorageChannelTypes.FAKE);
+        } else if (type == FakeNetworkNode.class) {
+            return new FakeNetworkNode(energyUsage);
+        }
+        throw new RuntimeException(type.getName());
     }
 
     private void registerNetworkNode(Object testInstance, Field field, NetworkNode networkNode, Network network) {
         networkNode.setNetwork(network);
         network.addContainer(() -> networkNode);
         setField(testInstance, field, networkNode);
-    }
-
-    private NetworkNode resolveNetworkNode(Class<?> type, long energyUsage) {
-        if (type == StorageNetworkNode.class) {
-            return new StorageNetworkNode<String>(energyUsage, StorageChannelTypes.FAKE);
-        }
-        throw new RuntimeException(type.getName());
     }
 
     private void setField(Object instance, Field field, Object value) {
@@ -129,19 +128,29 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return parameterContext.isAnnotated(InjectNetworkStorageChannel.class);
+        return parameterContext.isAnnotated(InjectNetworkStorageChannel.class) ||
+                parameterContext.isAnnotated(InjectNetworkEnergyComponent.class);
     }
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        String networkId = parameterContext
+        return parameterContext
                 .findAnnotation(InjectNetworkStorageChannel.class)
-                .orElseThrow(() -> new ParameterResolutionException("Annotation not found"))
-                .networkId();
+                .map(annotation -> (Object) getNetworkStorageChannel(annotation.networkId()))
+                .or(() -> parameterContext.findAnnotation(InjectNetworkEnergyComponent.class).map(annotation -> (Object) getNetworkEnergy(annotation.networkId())))
+                .orElseThrow();
+    }
 
+    private StorageChannel<String> getNetworkStorageChannel(String networkId) {
         return networkMap
                 .get(networkId)
                 .getComponent(StorageNetworkComponent.class)
                 .getStorageChannel(StorageChannelTypes.FAKE);
+    }
+
+    private EnergyNetworkComponent getNetworkEnergy(String networkId) {
+        return networkMap
+                .get(networkId)
+                .getComponent(EnergyNetworkComponent.class);
     }
 }
