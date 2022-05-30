@@ -46,7 +46,6 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockI
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
-import com.refinedmods.refinedstorage2.platform.forge.internal.PlatformImpl;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
 import net.minecraft.core.Direction;

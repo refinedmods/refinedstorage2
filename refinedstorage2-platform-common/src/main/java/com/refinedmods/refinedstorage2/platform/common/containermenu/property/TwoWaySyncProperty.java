@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.property;
 
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

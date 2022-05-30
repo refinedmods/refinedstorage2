@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.slot;
 
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import java.util.Collections;
 import java.util.List;

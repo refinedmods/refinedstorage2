@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.render.model;
 
-import com.refinedmods.refinedstorage2.platform.abstractions.FluidRenderer;
+import com.refinedmods.refinedstorage2.platform.common.render.FluidRenderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;

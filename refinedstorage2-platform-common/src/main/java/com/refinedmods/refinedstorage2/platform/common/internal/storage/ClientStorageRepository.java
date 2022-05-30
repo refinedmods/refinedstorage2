@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.common.internal.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import java.util.HashMap;
 import java.util.Map;

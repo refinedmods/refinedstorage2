@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.resource;
 
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import java.util.List;

@@ -4,12 +4,9 @@ import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkCompon
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
-import com.refinedmods.refinedstorage2.platform.abstractions.PlatformProxy;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacadeProxy;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
-import com.refinedmods.refinedstorage2.platform.common.internal.Rs2PlatformApiFacadeImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
