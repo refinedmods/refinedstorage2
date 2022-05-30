@@ -1,23 +1,27 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
-import com.google.common.collect.ImmutableMap;
-
 import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageProvider;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.UnaryOperator;
+
+import com.google.common.collect.ImmutableMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.*;
-import java.util.function.UnaryOperator;
 
 public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProvider {
     public static final int DISK_COUNT = 8;

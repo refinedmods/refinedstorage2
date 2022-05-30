@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
@@ -11,7 +12,6 @@ import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageProvider;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
@@ -44,7 +44,7 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl implements StoragePro
     // In order to be able to "hide" the underlying storage when the activeness changes, we have to
     // expose a composite storage because such a storage can propagate updates to the parent composite.
     // We can't let this network node itself control the storage channel,
-    // since that wouldn't work on network node removals or network merges/updates.
+    // since that wouldn't work with network node removals or network merges/updates.
     private final ExposedNetworkNodeStorage exposedStorage = new ExposedNetworkNodeStorage();
 
     public StorageNetworkNode(long energyUsage, StorageChannelType<?> type) {
@@ -131,9 +131,9 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl implements StoragePro
     }
 
     @Override
-    public <T> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
+    public <S> Optional<Storage<S>> getStorageForChannel(StorageChannelType<S> channelType) {
         if (channelType == this.type) {
-            return Optional.of((Storage<T>) exposedStorage);
+            return Optional.of((Storage<S>) exposedStorage);
         }
         return Optional.empty();
     }
