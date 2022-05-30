@@ -98,7 +98,7 @@ class NetworkTestExtensionTest {
         StorageNetworkNode<String> nodeInA;
 
         @Test
-        void test() {
+        void Test_nested_network_and_node() {
             assertThat(nestedNetwork).isNotNull();
             assertThat(nodeInA).isNotNull();
             assertThat(a.getComponent(GraphNetworkComponent.class).getContainers())
