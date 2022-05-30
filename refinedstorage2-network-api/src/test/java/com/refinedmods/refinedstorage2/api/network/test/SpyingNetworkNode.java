@@ -2,11 +2,11 @@ package com.refinedmods.refinedstorage2.api.network.test;
 
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 
-public final class FakeNetworkNode extends NetworkNodeImpl {
+public final class SpyingNetworkNode extends NetworkNodeImpl {
     private final long energyUsage;
     private int activenessChanges;
 
-    public FakeNetworkNode(long energyUsage) {
+    public SpyingNetworkNode(long energyUsage) {
         this.energyUsage = energyUsage;
     }
 

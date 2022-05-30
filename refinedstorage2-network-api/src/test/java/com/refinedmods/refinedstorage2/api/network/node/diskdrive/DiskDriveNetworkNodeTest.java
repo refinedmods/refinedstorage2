@@ -2,10 +2,10 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
-import com.refinedmods.refinedstorage2.api.network.extension.AddDiskDrive;
-import com.refinedmods.refinedstorage2.api.network.extension.InjectNetworkStorageChannel;
-import com.refinedmods.refinedstorage2.api.network.extension.NetworkTestExtension;
-import com.refinedmods.refinedstorage2.api.network.extension.SetupNetwork;
+import com.refinedmods.refinedstorage2.api.network.test.extension.AddDiskDrive;
+import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkStorageChannel;
+import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
+import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;

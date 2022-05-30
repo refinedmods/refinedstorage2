@@ -1,7 +1,8 @@
-package com.refinedmods.refinedstorage2.api.network.extension;
+package com.refinedmods.refinedstorage2.api.network.test.extension;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.Network;
+import com.refinedmods.refinedstorage2.api.network.NetworkImpl;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
@@ -11,25 +12,25 @@ import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNet
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.test.FakeNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
+import com.refinedmods.refinedstorage2.api.network.test.SpyingNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistryImpl;
-
-import org.junit.jupiter.api.extension.*;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
+import org.junit.jupiter.api.extension.ParameterResolver;
+
 public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
-    private final FakeNetworkFactory fakeNetworkFactory = new FakeNetworkFactory();
-    private final StorageChannelTypeRegistry storageChannelTypeRegistry = new StorageChannelTypeRegistryImpl();
     private final Map<String, Network> networkMap = new HashMap<>();
 
     public NetworkTestExtension() {
-        storageChannelTypeRegistry.addType(StorageChannelTypes.FAKE);
     }
 
     @Override
@@ -51,7 +52,7 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
     private void setupNetworks(Object testInstance) {
         SetupNetwork[] annotations = testInstance.getClass().getAnnotationsByType(SetupNetwork.class);
         for (SetupNetwork annotation : annotations) {
-            Network network = fakeNetworkFactory.create();
+            Network network = new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY);
             setupNetworkEnergy(annotation.energyCapacity(), annotation.energyStored(), network);
             networkMap.put(annotation.id(), network);
         }
@@ -88,7 +89,7 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
     private void tryAddDiskDrive(Object testInstance, Field field) {
         AddDiskDrive annotation = field.getAnnotation(AddDiskDrive.class);
         if (annotation != null) {
-            NetworkNode resolvedNode = new DiskDriveNetworkNode(annotation.baseEnergyUsage(), annotation.energyUsagePerDisk(), storageChannelTypeRegistry);
+            NetworkNode resolvedNode = new DiskDriveNetworkNode(annotation.baseEnergyUsage(), annotation.energyUsagePerDisk(), NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY);
             Network network = networkMap.get(annotation.networkId());
             registerNetworkNode(testInstance, field, resolvedNode, network);
         }
@@ -105,11 +106,11 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
 
     private NetworkNode resolveSimpleNetworkNode(Class<?> type, long energyUsage) {
         if (type == StorageNetworkNode.class) {
-            return new StorageNetworkNode<>(energyUsage, StorageChannelTypes.FAKE);
-        } else if (type == FakeNetworkNode.class) {
-            return new FakeNetworkNode(energyUsage);
+            return new StorageNetworkNode<>(energyUsage, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        } else if (type == SpyingNetworkNode.class) {
+            return new SpyingNetworkNode(energyUsage);
         } else if (type == GridNetworkNode.class) {
-            return new GridNetworkNode<>(energyUsage, StorageChannelTypes.FAKE);
+            return new GridNetworkNode<>(energyUsage, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
         }
         throw new RuntimeException(type.getName());
     }
@@ -148,7 +149,7 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
         return networkMap
                 .get(networkId)
                 .getComponent(StorageNetworkComponent.class)
-                .getStorageChannel(StorageChannelTypes.FAKE);
+                .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
     }
 
     private EnergyNetworkComponent getNetworkEnergy(String networkId) {

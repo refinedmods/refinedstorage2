@@ -2,10 +2,10 @@ package com.refinedmods.refinedstorage2.api.network.node.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
-import com.refinedmods.refinedstorage2.api.network.extension.AddNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.extension.InjectNetworkStorageChannel;
-import com.refinedmods.refinedstorage2.api.network.extension.NetworkTestExtension;
-import com.refinedmods.refinedstorage2.api.network.extension.SetupNetwork;
+import com.refinedmods.refinedstorage2.api.network.test.extension.AddNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkStorageChannel;
+import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
+import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
