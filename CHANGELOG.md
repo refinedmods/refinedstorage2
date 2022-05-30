@@ -15,11 +15,13 @@ disks, etc. to intermediate storage like a chest.
 - The Wrench now dismantles devices when crouching.
     - The Disk Drive in item form now supports rendering of disks that were dismantled.
     - In order to retain Controller energy, the Controller must now be dismantled.
+- Added item storage blocks.
 
 ### Fixed
 
 - Fixed inventory contents of devices not retaining their original order when reloading a world.
 - Fixed bug where (already opened) Grid doesn't update if a storage is removed.
+- Fixed last modified info in the Grid not being persisted.
 
 ### Changed
 
