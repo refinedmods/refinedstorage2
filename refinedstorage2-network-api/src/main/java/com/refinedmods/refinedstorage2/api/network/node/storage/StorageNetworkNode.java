@@ -227,7 +227,6 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl implements StoragePro
             return super.insert(resource, amount, action, source);
         }
 
-        // TODO: Test this.
         @Override
         public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
             return delegate instanceof TrackedStorage<T> trackedStorage
