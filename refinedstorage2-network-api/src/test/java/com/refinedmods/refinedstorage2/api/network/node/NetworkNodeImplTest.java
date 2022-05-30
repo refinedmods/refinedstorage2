@@ -1,25 +1,30 @@
 package com.refinedmods.refinedstorage2.api.network.node;
 
-import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.NetworkUtil;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.extension.AddNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.extension.InjectNetworkEnergyComponent;
+import com.refinedmods.refinedstorage2.api.network.extension.NetworkTestExtension;
+import com.refinedmods.refinedstorage2.api.network.extension.SetupNetwork;
+import com.refinedmods.refinedstorage2.api.network.test.FakeNetworkNode;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
+@ExtendWith(NetworkTestExtension.class)
+@SetupNetwork(energyStored = 10, energyCapacity = 100)
 public class NetworkNodeImplTest {
+    @AddNetworkNode(energyUsage = 10)
+    FakeNetworkNode sut;
+
+    @AddNetworkNode(energyUsage = 11)
+    FakeNetworkNode insufficientEnergyNetworkNode;
+
     @Test
     void Test_activeness_with_sufficient_energy() {
-        // Arrange
-        FakeNetworkNode sut = new FakeNetworkNode(10);
-
-        Network network = NetworkUtil.create(10, 100);
-        sut.setNetwork(network);
-        network.addContainer(() -> sut);
-
         // Act
         boolean active = sut.isActive();
 
@@ -29,43 +34,24 @@ public class NetworkNodeImplTest {
 
     @Test
     void Test_activeness_when_insufficient_energy() {
-        // Arrange
-        FakeNetworkNode sut = new FakeNetworkNode(10);
-
-        Network network = NetworkUtil.create(9, 10);
-        sut.setNetwork(network);
-        network.addContainer(() -> sut);
-
         // Act
-        boolean active = sut.isActive();
+        boolean active = insufficientEnergyNetworkNode.isActive();
 
         // Assert
         assertThat(active).isFalse();
     }
 
     @Test
-    void Test_updating_should_extract_energy() {
-        // Arrange
-        FakeNetworkNode sut = new FakeNetworkNode(10);
-        Network network = NetworkUtil.create(100, 100);
-        sut.setNetwork(network);
-
+    void Test_updating_should_extract_energy(@InjectNetworkEnergyComponent EnergyNetworkComponent energy) {
         // Act
         sut.update();
 
         // Assert
-        assertThat(network.getComponent(EnergyNetworkComponent.class).getStored()).isEqualTo(90L);
+        assertThat(energy.getStored()).isZero();
     }
 
     @Test
     void Test_should_notify_properly_of_activeness_change() {
-        // Arrange
-        FakeNetworkNode sut = new FakeNetworkNode(10);
-
-        Network network = NetworkUtil.create(30, 100);
-        sut.setNetwork(network);
-        network.addContainer(() -> sut);
-
         // Act
         // Energy stored now: 20 - Call 1 - false -> true
         sut.update();
