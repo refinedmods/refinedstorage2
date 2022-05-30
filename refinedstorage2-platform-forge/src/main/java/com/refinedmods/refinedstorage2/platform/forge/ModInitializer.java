@@ -122,7 +122,6 @@ public class ModInitializer extends AbstractModInitializer {
         registerNetworkComponents();
         registerResourceTypes();
         registerTickHandler();
-        registerLootFunctions();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onClientSetup);
@@ -204,6 +203,9 @@ public class ModInitializer extends AbstractModInitializer {
 
     @SubscribeEvent
     public void registerBlockEntityTypes(RegistryEvent.Register<BlockEntityType<?>> e) {
+        // Register here, there seems to be no specific register event for loot function types.
+        registerLootFunctions();
+
         BlockEntityType<CableBlockEntity> cableBlockEntityType = BlockEntityType.Builder.of(CableBlockEntity::new, Blocks.INSTANCE.getCable()).build(null);
         cableBlockEntityType.setRegistryName(CABLE);
         e.getRegistry().register(cableBlockEntityType);

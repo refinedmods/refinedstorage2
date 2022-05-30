@@ -10,9 +10,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -42,11 +42,11 @@ public abstract class ItemGridResourceFactory implements Function<ResourceAmount
     }
 
     private Set<String> getTags(Item item) {
-        return ItemTags
-                .getAllTags()
-                .getMatchingTags(item)
+        return Registry.ITEM.getResourceKey(item)
+                .flatMap(Registry.ITEM::getHolder)
                 .stream()
-                .map(ResourceLocation::getPath)
+                .flatMap(Holder::tags)
+                .map(tagKey -> tagKey.location().getPath())
                 .collect(Collectors.toSet());
     }
 

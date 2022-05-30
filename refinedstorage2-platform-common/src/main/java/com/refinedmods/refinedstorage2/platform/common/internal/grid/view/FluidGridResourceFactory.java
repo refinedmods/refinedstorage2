@@ -8,9 +8,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.material.Fluid;
 
 public abstract class FluidGridResourceFactory implements Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> {
@@ -27,11 +26,11 @@ public abstract class FluidGridResourceFactory implements Function<ResourceAmoun
     }
 
     private Set<String> getTags(Fluid fluid) {
-        return FluidTags
-                .getAllTags()
-                .getMatchingTags(fluid)
+        return Registry.FLUID.getResourceKey(fluid)
+                .flatMap(Registry.FLUID::getHolder)
                 .stream()
-                .map(ResourceLocation::getPath)
+                .flatMap(Holder::tags)
+                .map(tagKey -> tagKey.location().getPath())
                 .collect(Collectors.toSet());
     }
 

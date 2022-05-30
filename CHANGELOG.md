@@ -25,6 +25,7 @@ disks, etc. to intermediate storage like a chest.
 
 ### Changed
 
+- Ported to Minecraft 1.18.2.
 - Grid auto-selection and JEI/REI synchronization are now two different options.
 - Grid display settings are now stored in the client configuration, no longer per-block.
 - You now need to crouch with a dye in order to change the color of a device.

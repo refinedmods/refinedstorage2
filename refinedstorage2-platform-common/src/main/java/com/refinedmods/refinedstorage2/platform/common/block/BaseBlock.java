@@ -11,11 +11,11 @@ import java.util.Optional;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -167,7 +167,7 @@ public abstract class BaseBlock extends Block {
     }
 
     private static boolean isWrench(ItemStack item) {
-        Tag<Item> wrench = ItemTags.getAllTags().getTagOrEmpty(new ResourceLocation("c", "wrenches"));
+        TagKey<Item> wrench = TagKey.create(Registry.ITEM.key(), new ResourceLocation("c", "wrenches"));
         return item.is(wrench);
     }
 
