@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.test.FakeNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
@@ -104,9 +105,11 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
 
     private NetworkNode resolveSimpleNetworkNode(Class<?> type, long energyUsage) {
         if (type == StorageNetworkNode.class) {
-            return new StorageNetworkNode<String>(energyUsage, StorageChannelTypes.FAKE);
+            return new StorageNetworkNode<>(energyUsage, StorageChannelTypes.FAKE);
         } else if (type == FakeNetworkNode.class) {
             return new FakeNetworkNode(energyUsage);
+        } else if (type == GridNetworkNode.class) {
+            return new GridNetworkNode<>(energyUsage, StorageChannelTypes.FAKE);
         }
         throw new RuntimeException(type.getName());
     }

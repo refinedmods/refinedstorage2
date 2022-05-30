@@ -2,10 +2,10 @@ package com.refinedmods.refinedstorage2.api.network.node.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
-import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.NetworkUtil;
-import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.api.network.extension.AddNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.extension.InjectNetworkStorageChannel;
+import com.refinedmods.refinedstorage2.api.network.extension.NetworkTestExtension;
+import com.refinedmods.refinedstorage2.api.network.extension.SetupNetwork;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
@@ -20,27 +20,22 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
+@ExtendWith(NetworkTestExtension.class)
+@SetupNetwork
 public class GridNetworkNodeTest {
-    private GridNetworkNode<String> sut;
+    @AddNetworkNode
+    GridNetworkNode<String> sut;
 
     @BeforeEach
-    void setUp() {
-        sut = new GridNetworkNode<>(10, StorageChannelTypes.FAKE);
-
-        Network network = NetworkUtil.create();
-        sut.setNetwork(network);
-        network.addContainer(() -> sut);
-
-        StorageChannel<String> fakeStorageChannel = network.getComponent(StorageNetworkComponent.class)
-                .getStorageChannel(StorageChannelTypes.FAKE);
-
-        fakeStorageChannel.addSource(new TrackedStorageImpl<>(new LimitedStorageImpl<>(1000), () -> 0L));
-        fakeStorageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
-        fakeStorageChannel.insert("B", 200, Action.EXECUTE, EmptySource.INSTANCE);
+    void setUp(@InjectNetworkStorageChannel StorageChannel<String> networkStorage) {
+        networkStorage.addSource(new TrackedStorageImpl<>(new LimitedStorageImpl<>(1000), () -> 0L));
+        networkStorage.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
+        networkStorage.insert("B", 200, Action.EXECUTE, EmptySource.INSTANCE);
     }
 
     @Test
