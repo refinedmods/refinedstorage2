@@ -1,29 +1,37 @@
 package com.refinedmods.refinedstorage2.api.network;
 
+import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.node.EmptyNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.NETWORK_COMPONENT_MAP_FACTORY;
-import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createContainer;
-import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.createContainerWithNetwork;
-import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getAddedContainers;
-import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getNetworkMerges;
-import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getNetworkRemovedCount;
-import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getNetworkSplits;
-import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.getRemovedContainers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
 class NetworkBuilderTest {
-    private final NetworkBuilder sut = new NetworkBuilder(new NetworkFactory(NETWORK_COMPONENT_MAP_FACTORY));
+    ComponentMapFactory<NetworkComponent, Network> componentMapFactory;
+
+    NetworkBuilder sut;
+
+    @BeforeEach
+    void setUp() {
+        componentMapFactory = NETWORK_COMPONENT_MAP_FACTORY.copy();
+        componentMapFactory.addFactory(InterceptingNetworkComponent.class, network -> new InterceptingNetworkComponent());
+        sut = new NetworkBuilder(new NetworkFactory(componentMapFactory));
+    }
 
     @Test
     void Test_forming_new_network() {
@@ -44,7 +52,7 @@ class NetworkBuilderTest {
 
         assertThat(getAddedContainers(container.getNode().getNetwork())).containsExactly(container);
         assertThat(getRemovedContainers(container.getNode().getNetwork())).isEmpty();
-        assertThat(getNetworkRemovedCount(container.getNode().getNetwork())).isZero();
+        assertThat(getAmountRemoved(container.getNode().getNetwork())).isZero();
         assertThat(getNetworkMerges(container.getNode().getNetwork())).isEmpty();
 
         assertThat(unrelatedContainer.getNode().getNetwork()).isNotNull().isNotEqualTo(container.getNode().getNetwork());
@@ -86,7 +94,7 @@ class NetworkBuilderTest {
 
         assertThat(getAddedContainers(expectedNetwork)).containsExactly(existingContainer1, existingContainer2, newContainer);
         assertThat(getRemovedContainers(expectedNetwork)).isEmpty();
-        assertThat(getNetworkRemovedCount(expectedNetwork)).isZero();
+        assertThat(getAmountRemoved(expectedNetwork)).isZero();
         assertThat(getNetworkMerges(expectedNetwork)).isEmpty();
 
         assertThat(unrelatedContainer.getNode().getNetwork()).isNotNull().isNotEqualTo(expectedNetwork);
@@ -132,7 +140,7 @@ class NetworkBuilderTest {
 
         assertThat(getAddedContainers(expectedNetwork)).containsExactlyInAnyOrder(existingContainer2, newContainer, existingContainer1, existingContainer0);
         assertThat(getRemovedContainers(expectedNetwork)).isEmpty();
-        assertThat(getNetworkRemovedCount(expectedNetwork)).isZero();
+        assertThat(getAmountRemoved(expectedNetwork)).isZero();
         assertThat(getNetworkMerges(expectedNetwork)).isEmpty();
 
         assertThat(unrelatedContainer.getNode().getNetwork()).isNotNull().isNotEqualTo(expectedNetwork);
@@ -174,7 +182,7 @@ class NetworkBuilderTest {
         assertThat(getNetworkMerges(expectedNetwork)).isEmpty();
         assertThat(getAddedContainers(expectedNetwork)).containsExactlyInAnyOrder(container1, container2, container3);
         assertThat(getRemovedContainers(expectedNetwork)).isEmpty();
-        assertThat(getNetworkRemovedCount(expectedNetwork)).isZero();
+        assertThat(getAmountRemoved(expectedNetwork)).isZero();
 
         assertThat(unrelatedContainer.getNode().getNetwork()).isNotNull().isNotEqualTo(expectedNetwork);
         assertThat(unrelatedContainer.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers()).containsExactly(unrelatedContainer);
@@ -225,7 +233,7 @@ class NetworkBuilderTest {
         assertThat(getNetworkSplits(container2.getNode().getNetwork())).isEmpty();
         assertThat(getAddedContainers(container2.getNode().getNetwork())).containsExactly(container1, container2, container3);
         assertThat(getRemovedContainers(container2.getNode().getNetwork())).containsExactly(container1);
-        assertThat(getNetworkRemovedCount(container2.getNode().getNetwork())).isZero();
+        assertThat(getAmountRemoved(container2.getNode().getNetwork())).isZero();
     }
 
     @Test
@@ -263,7 +271,7 @@ class NetworkBuilderTest {
         assertThat(getNetworkSplits(container1.getNode().getNetwork())).isEmpty();
         assertThat(getAddedContainers(container1.getNode().getNetwork())).containsExactlyInAnyOrder(container1, container2);
         assertThat(getRemovedContainers(container1.getNode().getNetwork())).isEmpty();
-        assertThat(getNetworkRemovedCount(container1.getNode().getNetwork())).isZero();
+        assertThat(getAmountRemoved(container1.getNode().getNetwork())).isZero();
 
         assertThat(container1.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers()).containsExactlyInAnyOrder(
                 container1,
@@ -282,7 +290,7 @@ class NetworkBuilderTest {
 
         assertThat(getAddedContainers(container4.getNode().getNetwork())).containsExactlyInAnyOrder(container1, container2, container3, container4, container5);
         assertThat(getRemovedContainers(container4.getNode().getNetwork())).containsExactlyInAnyOrder(container1, container2, container3);
-        assertThat(getNetworkRemovedCount(container4.getNode().getNetwork())).isZero();
+        assertThat(getAmountRemoved(container4.getNode().getNetwork())).isZero();
 
         assertThat(container4.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers()).containsExactlyInAnyOrder(
                 container4,
@@ -325,7 +333,7 @@ class NetworkBuilderTest {
         assertThat(getNetworkSplits(container2.getNode().getNetwork())).isEmpty();
         assertThat(getAddedContainers(container2.getNode().getNetwork())).containsExactlyInAnyOrder(container2);
         assertThat(getRemovedContainers(container2.getNode().getNetwork())).isEmpty();
-        assertThat(getNetworkRemovedCount(container2.getNode().getNetwork())).isZero();
+        assertThat(getAmountRemoved(container2.getNode().getNetwork())).isZero();
 
         assertThat(container3.getNode().getNetwork())
                 .isNotSameAs(container2.getNode().getNetwork())
@@ -336,7 +344,7 @@ class NetworkBuilderTest {
         assertThat(getNetworkSplits(container3.getNode().getNetwork())).isEmpty();
         assertThat(getAddedContainers(container3.getNode().getNetwork())).containsExactlyInAnyOrder(container3);
         assertThat(getRemovedContainers(container3.getNode().getNetwork())).isEmpty();
-        assertThat(getNetworkRemovedCount(container3.getNode().getNetwork())).isZero();
+        assertThat(getAmountRemoved(container3.getNode().getNetwork())).isZero();
 
         assertThat(container4.getNode().getNetwork())
                 .isNotSameAs(container2.getNode().getNetwork())
@@ -350,7 +358,7 @@ class NetworkBuilderTest {
 
         assertThat(getAddedContainers(container4.getNode().getNetwork())).containsExactlyInAnyOrder(container1, container2, container3, container4, container5);
         assertThat(getRemovedContainers(container4.getNode().getNetwork())).containsExactlyInAnyOrder(container1, container2, container3);
-        assertThat(getNetworkRemovedCount(container4.getNode().getNetwork())).isZero();
+        assertThat(getAmountRemoved(container4.getNode().getNetwork())).isZero();
 
         assertThat(container2.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers()).containsExactlyInAnyOrder(
                 container2
@@ -391,6 +399,76 @@ class NetworkBuilderTest {
         assertThat(getNetworkSplits(network)).isEmpty();
         assertThat(getAddedContainers(network)).containsExactly(container);
         assertThat(getRemovedContainers(network)).isEmpty();
-        assertThat(getNetworkRemovedCount(network)).isEqualTo(1);
+        assertThat(getAmountRemoved(network)).isEqualTo(1);
+    }
+
+    private NetworkNodeContainer createContainerWithNetwork() {
+        return createContainerWithNetwork(container -> new NetworkImpl(componentMapFactory));
+    }
+
+    private static NetworkNodeContainer createContainerWithNetwork(Function<NetworkNodeContainer, Network> networkFactory) {
+        NetworkNodeContainer container = createContainer();
+        Network network = networkFactory.apply(container);
+        container.getNode().setNetwork(network);
+        network.addContainer(container);
+        return container;
+    }
+
+    private static NetworkNodeContainer createContainer() {
+        EmptyNetworkNode node = new EmptyNetworkNode();
+        return () -> node;
+    }
+
+    private static List<NetworkNodeContainer> getAddedContainers(Network network) {
+        return network.getComponent(InterceptingNetworkComponent.class).added;
+    }
+
+    private static List<NetworkNodeContainer> getRemovedContainers(Network network) {
+        return network.getComponent(InterceptingNetworkComponent.class).removed;
+    }
+
+    private static List<Set<Network>> getNetworkSplits(Network network) {
+        return network.getComponent(InterceptingNetworkComponent.class).splits;
+    }
+
+    private static List<Network> getNetworkMerges(Network network) {
+        return network.getComponent(InterceptingNetworkComponent.class).merges;
+    }
+
+    private static int getAmountRemoved(Network network) {
+        return network.getComponent(InterceptingNetworkComponent.class).amountRemoved;
+    }
+
+    private static class InterceptingNetworkComponent implements NetworkComponent {
+        private final List<NetworkNodeContainer> added = new ArrayList<>();
+        private final List<NetworkNodeContainer> removed = new ArrayList<>();
+        private final List<Set<Network>> splits = new ArrayList<>();
+        private final List<Network> merges = new ArrayList<>();
+        private int amountRemoved = 0;
+
+        @Override
+        public void onContainerAdded(NetworkNodeContainer container) {
+            added.add(container);
+        }
+
+        @Override
+        public void onContainerRemoved(NetworkNodeContainer container) {
+            removed.add(container);
+        }
+
+        @Override
+        public void onNetworkRemoved() {
+            amountRemoved++;
+        }
+
+        @Override
+        public void onNetworkSplit(Set<Network> networks) {
+            splits.add(networks);
+        }
+
+        @Override
+        public void onNetworkMergedWith(Network network) {
+            merges.add(network);
+        }
     }
 }

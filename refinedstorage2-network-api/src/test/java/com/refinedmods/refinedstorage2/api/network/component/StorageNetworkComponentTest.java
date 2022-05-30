@@ -1,8 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.component;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.NetworkUtil;
+import com.refinedmods.refinedstorage2.api.network.NetworkImpl;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
@@ -22,6 +21,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.NETWORK_COMPONENT_MAP_FACTORY;
 import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.STORAGE_CHANNEL_TYPE_REGISTRY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -38,14 +38,12 @@ class StorageNetworkComponentTest {
 
     @BeforeEach
     void setUp() {
-        Network network = NetworkUtil.create();
-        sut = network.getComponent(StorageNetworkComponent.class);
+        sut = new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY);
 
         FakeStorageProviderRepository storageProviderRepository = new FakeStorageProviderRepository();
         storageProviderRepository.setInSlot(0, new LimitedStorageImpl<>(100));
-
         diskDrive = new DiskDriveNetworkNode(0, 0, STORAGE_CHANNEL_TYPE_REGISTRY);
-        diskDrive.setNetwork(network);
+        diskDrive.setNetwork(new NetworkImpl(NETWORK_COMPONENT_MAP_FACTORY));
         diskDrive.setListener(mock(DiskDriveListener.class));
         diskDrive.setDiskProvider(storageProviderRepository);
         diskDrive.initialize(storageProviderRepository);
@@ -53,7 +51,7 @@ class StorageNetworkComponentTest {
         diskDriveContainer = () -> diskDrive;
 
         storage = new StorageNetworkNode<>(0, StorageChannelTypes.FAKE);
-        storage.setNetwork(network);
+        storage.setNetwork(new NetworkImpl(NETWORK_COMPONENT_MAP_FACTORY));
         storage.initializeNewStorage(storageProviderRepository, new LimitedStorageImpl<>(100), UUID.randomUUID());
         storage.onActiveChanged(true);
         storageContainer = () -> storage;
