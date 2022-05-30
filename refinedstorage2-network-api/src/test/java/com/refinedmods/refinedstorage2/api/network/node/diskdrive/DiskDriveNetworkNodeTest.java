@@ -8,9 +8,11 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Collection;
@@ -656,6 +658,32 @@ class DiskDriveNetworkNodeTest {
         VerificationMode expectedTimes = action == Action.EXECUTE ? times(1) : never();
 
         verify(diskDriveListener, expectedTimes).onDiskChanged();
+    }
+
+    @Test
+    void Test_tracking_changes() {
+        // Arrange
+        Storage<String> storage = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
+        storageProviderRepository.setInSlot(1, storage);
+
+        initializeAndActivate();
+
+        // Act
+        long inserted = fakeStorageChannelOf(network).insert("A", 10, Action.EXECUTE, CustomSource1.INSTANCE);
+
+        // Assert
+        assertThat(inserted).isEqualTo(10);
+        assertThat(fakeStorageChannelOf(network).findTrackedResourceBySourceType("A", CustomSource1.class)).isNotEmpty();
+    }
+
+    // TODO: remove all these custom sources.
+    private static class CustomSource1 implements Source {
+        private static final Source INSTANCE = new CustomSource1();
+
+        @Override
+        public String getName() {
+            return "Custom1";
+        }
     }
 
     @ParameterizedTest
