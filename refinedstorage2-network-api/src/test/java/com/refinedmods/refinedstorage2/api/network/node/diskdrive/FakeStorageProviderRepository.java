@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
@@ -23,7 +23,7 @@ public class FakeStorageProviderRepository implements StorageDiskProvider, Stora
     @Override
     public Optional<StorageChannelType<?>> getStorageChannelType(int slot) {
         if (slots.containsKey(slot)) {
-            return Optional.of(StorageChannelTypes.FAKE);
+            return Optional.of(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
         }
         return Optional.empty();
     }

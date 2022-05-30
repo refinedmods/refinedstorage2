@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.extension;
+package com.refinedmods.refinedstorage2.api.network.test.extension;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
@@ -75,8 +75,8 @@ class NetworkTestExtensionTest {
     void Test_should_inject_storage_channel(@InjectNetworkStorageChannel(networkId = "a") StorageChannel<String> storageChannelA,
                                             @InjectNetworkStorageChannel(networkId = "b") StorageChannel<String> storageChannelB) {
         // Assert
-        assertThat(storageChannelA).isSameAs(a.getComponent(StorageNetworkComponent.class).getStorageChannel(StorageChannelTypes.FAKE));
-        assertThat(storageChannelB).isSameAs(b.getComponent(StorageNetworkComponent.class).getStorageChannel(StorageChannelTypes.FAKE));
+        assertThat(storageChannelA).isSameAs(a.getComponent(StorageNetworkComponent.class).getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        assertThat(storageChannelB).isSameAs(b.getComponent(StorageNetworkComponent.class).getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
     }
 
     @Test

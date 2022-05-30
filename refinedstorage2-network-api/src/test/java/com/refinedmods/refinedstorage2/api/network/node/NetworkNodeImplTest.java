@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.api.network.node;
 
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.extension.AddNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.extension.InjectNetworkEnergyComponent;
-import com.refinedmods.refinedstorage2.api.network.extension.NetworkTestExtension;
-import com.refinedmods.refinedstorage2.api.network.extension.SetupNetwork;
-import com.refinedmods.refinedstorage2.api.network.test.FakeNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.test.SpyingNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.test.extension.AddNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkEnergyComponent;
+import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
+import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SetupNetwork(energyStored = 10, energyCapacity = 100)
 public class NetworkNodeImplTest {
     @AddNetworkNode(energyUsage = 10)
-    FakeNetworkNode sut;
+    SpyingNetworkNode sut;
 
     @AddNetworkNode(energyUsage = 11)
-    FakeNetworkNode insufficientEnergyNetworkNode;
+    SpyingNetworkNode insufficientEnergyNetworkNode;
 
     @Test
     void Test_activeness_with_sufficient_energy() {

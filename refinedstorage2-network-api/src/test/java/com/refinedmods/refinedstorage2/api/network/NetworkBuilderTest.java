@@ -3,8 +3,9 @@ package com.refinedmods.refinedstorage2.api.network;
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.node.EmptyNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
+import com.refinedmods.refinedstorage2.api.network.test.SpyingNetworkNode;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.ArrayList;
@@ -16,19 +17,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-import static com.refinedmods.refinedstorage2.api.network.NetworkUtil.NETWORK_COMPONENT_MAP_FACTORY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
 class NetworkBuilderTest {
     ComponentMapFactory<NetworkComponent, Network> componentMapFactory;
-
     NetworkBuilder sut;
 
     @BeforeEach
     void setUp() {
-        componentMapFactory = NETWORK_COMPONENT_MAP_FACTORY.copy();
+        componentMapFactory = NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY.copy();
         componentMapFactory.addFactory(InterceptingNetworkComponent.class, network -> new InterceptingNetworkComponent());
         sut = new NetworkBuilder(new NetworkFactory(componentMapFactory));
     }
@@ -415,7 +414,7 @@ class NetworkBuilderTest {
     }
 
     private static NetworkNodeContainer createContainer() {
-        EmptyNetworkNode node = new EmptyNetworkNode();
+        SpyingNetworkNode node = new SpyingNetworkNode(0);
         return () -> node;
     }
 
