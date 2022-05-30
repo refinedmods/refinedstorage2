@@ -29,6 +29,22 @@ class ComponentMapFactoryTest {
         );
     }
 
+    @Test
+    void Test_should_copy_correctly() {
+        // Arrange
+        ComponentMapFactory<TestComponent, String> original = new ComponentMapFactory<>();
+        original.addFactory(TestComponent1.class, TestComponent1::new);
+        original.addFactory(TestComponent2.class, TestComponent2::new);
+
+        // Act
+        ComponentMapFactory<TestComponent, String> copied = original.copy();
+        copied.addFactory(TestComponent3.class, TestComponent3::new);
+
+        // Assert
+        assertThat(original.buildComponentMap("original").getComponents()).hasSize(2);
+        assertThat(copied.buildComponentMap("copied").getComponents()).hasSize(3);
+    }
+
     private interface TestComponent {
         String getGivenContext();
     }
