@@ -32,8 +32,12 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -41,6 +45,8 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 
 public final class PlatformImpl extends AbstractPlatform {
+    private static final TagKey<Item> WRENCH_TAG = TagKey.create(Registry.ITEM.key(), new ResourceLocation("forge", "tools/wrench"));
+
     private final ConfigImpl config = new ConfigImpl();
 
     public PlatformImpl(NetworkManager networkManager) {
@@ -51,6 +57,11 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public long getBucketAmount() {
         return FluidAttributes.BUCKET_VOLUME;
+    }
+
+    @Override
+    public TagKey<Item> getWrenchTag() {
+        return WRENCH_TAG;
     }
 
     @Override

@@ -4,25 +4,20 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
-import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
 import java.util.Optional;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -137,9 +132,15 @@ public abstract class BaseBlock extends Block {
         if (!holdingWrench) {
             return Optional.empty();
         }
+        boolean isWrenchingOwnBlock = state.getBlock() instanceof BaseBlock;
+        if (!isWrenchingOwnBlock) {
+            return Optional.empty();
+        }
         if (!level.isClientSide()) {
-            dismantleOrRotate(state, level, hitResult, player);
-            playSoundIfNecessary(level, hitResult.getBlockPos(), itemInHand);
+            boolean success = dismantleOrRotate(state, level, hitResult, player);
+            if (success) {
+                level.playSound(null, hitResult.getBlockPos(), Sounds.INSTANCE.getWrench(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
         }
         return Optional.of(InteractionResult.sidedSuccess(level.isClientSide()));
     }
@@ -158,25 +159,17 @@ public abstract class BaseBlock extends Block {
         return blockColorMap.updateColor(state, player.getItemInHand(hand), level, pos, player);
     }
 
-    private static void dismantleOrRotate(BlockState state, Level level, BlockHitResult hitResult, Player player) {
-        if (canDismantle(state, player)) {
+    private static boolean dismantleOrRotate(BlockState state, Level level, BlockHitResult hitResult, Player player) {
+        if (player.isCrouching()) {
             dismantle(state, level, hitResult);
+            return true;
         } else {
-            rotate(state, level, hitResult.getBlockPos());
+            return rotate(state, level, hitResult.getBlockPos());
         }
     }
 
     private static boolean isWrench(ItemStack item) {
-        TagKey<Item> wrench = TagKey.create(Registry.ITEM.key(), new ResourceLocation("c", "wrenches"));
-        return item.is(wrench);
-    }
-
-    private static void rotate(BlockState state, Level level, BlockPos pos) {
-        level.setBlockAndUpdate(pos, state.rotate(Rotation.CLOCKWISE_90));
-    }
-
-    private static boolean canDismantle(BlockState state, Player player) {
-        return player.isCrouching() && state.getBlock() instanceof BaseBlock;
+        return item.is(Platform.INSTANCE.getWrenchTag());
     }
 
     private static void dismantle(BlockState state, Level level, BlockHitResult hitResult) {
@@ -191,9 +184,9 @@ public abstract class BaseBlock extends Block {
         level.addFreshEntity(new ItemEntity(level, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z, stack));
     }
 
-    private static void playSoundIfNecessary(Level level, BlockPos pos, ItemStack itemInHand) {
-        if (itemInHand.getItem() instanceof WrenchItem) {
-            level.playSound(null, pos, Sounds.INSTANCE.getWrench(), SoundSource.BLOCKS, 1.0F, 1.0F);
-        }
+    private static boolean rotate(BlockState state, Level level, BlockPos pos) {
+        BlockState rotated = state.rotate(Rotation.CLOCKWISE_90);
+        level.setBlockAndUpdate(pos, rotated);
+        return !state.equals(rotated);
     }
 }

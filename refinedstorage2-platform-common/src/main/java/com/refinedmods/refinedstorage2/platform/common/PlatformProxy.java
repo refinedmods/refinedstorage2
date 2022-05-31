@@ -21,8 +21,10 @@ import java.util.function.Function;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class PlatformProxy implements Platform {
@@ -53,6 +55,11 @@ public class PlatformProxy implements Platform {
     @Override
     public long getBucketAmount() {
         return ensureLoaded().getBucketAmount();
+    }
+
+    @Override
+    public TagKey<Item> getWrenchTag() {
+        return ensureLoaded().getWrenchTag();
     }
 
     @Override

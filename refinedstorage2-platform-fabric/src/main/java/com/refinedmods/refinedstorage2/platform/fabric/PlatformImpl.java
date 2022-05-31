@@ -41,11 +41,17 @@ import net.fabricmc.fabric.impl.transfer.context.InitialContentsContainerItemCon
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public final class PlatformImpl extends AbstractPlatform {
+    private static final TagKey<Item> WRENCH_TAG = TagKey.create(Registry.ITEM.key(), new ResourceLocation("c", "wrenches"));
+
     public PlatformImpl() {
         super(new ServerToClientCommunicationsImpl(), new ClientToServerCommunicationsImpl(), new MenuOpenerImpl(), new BucketQuantityFormatter(FluidConstants.BUCKET), new FluidVariantFluidRenderer());
     }
@@ -53,6 +59,11 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public long getBucketAmount() {
         return FluidConstants.BUCKET;
+    }
+
+    @Override
+    public TagKey<Item> getWrenchTag() {
+        return WRENCH_TAG;
     }
 
     @Override

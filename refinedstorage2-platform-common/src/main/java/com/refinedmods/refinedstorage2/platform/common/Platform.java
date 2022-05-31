@@ -21,8 +21,10 @@ import java.util.function.Function;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public interface Platform {
@@ -35,6 +37,8 @@ public interface Platform {
     MenuOpener getMenuOpener();
 
     long getBucketAmount();
+
+    TagKey<Item> getWrenchTag();
 
     BucketQuantityFormatter getBucketQuantityFormatter();
 
