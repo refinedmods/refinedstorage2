@@ -29,6 +29,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.CoreItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
@@ -188,9 +189,9 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             }
         }
 
-        for (FluidStorageDiskItem.FluidStorageType type : FluidStorageDiskItem.FluidStorageType.values()) {
-            if (type != FluidStorageDiskItem.FluidStorageType.CREATIVE) {
-                Items.INSTANCE.getFluidStorageParts().put(type, Registry.register(Registry.ITEM, forFluidStoragePart(type), new FluidStoragePartItem(createProperties())));
+        for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
+            if (variant != FluidStorageType.Variant.CREATIVE) {
+                Items.INSTANCE.getFluidStorageParts().put(variant, Registry.register(Registry.ITEM, forFluidStoragePart(variant), new FluidStoragePartItem(createProperties())));
             }
         }
 
@@ -202,8 +203,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             Registry.register(Registry.ITEM, forItemStorageBlock(variant), new ItemStorageBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties().stacksTo(1).fireResistant(), variant));
         }
 
-        for (FluidStorageDiskItem.FluidStorageType type : FluidStorageDiskItem.FluidStorageType.values()) {
-            Registry.register(Registry.ITEM, forFluidStorageDisk(type), new FluidStorageDiskItem(createProperties().stacksTo(1).fireResistant(), type));
+        for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
+            Registry.register(Registry.ITEM, forFluidStorageDisk(variant), new FluidStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant));
         }
 
         Registry.register(Registry.ITEM, CONSTRUCTION_CORE, new CoreItem(createProperties()));

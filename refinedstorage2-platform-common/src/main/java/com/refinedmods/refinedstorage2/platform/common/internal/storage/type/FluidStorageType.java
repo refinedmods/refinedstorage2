@@ -94,4 +94,32 @@ public class FluidStorageType implements StorageType<FluidResource> {
         }
         return tag;
     }
+
+    public enum Variant {
+        SIXTY_FOUR_B("64b", 64),
+        TWO_HUNDRED_FIFTY_SIX_B("256b", 256),
+        THOUSAND_TWENTY_FOUR_B("1024b", 1024),
+        FOUR_THOUSAND_NINETY_SIX_B("4096b", 4096),
+        CREATIVE("creative", 0);
+
+        private final String name;
+        private final long buckets;
+
+        Variant(String name, long buckets) {
+            this.name = name;
+            this.buckets = buckets;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public long getBuckets() {
+            return buckets;
+        }
+
+        public boolean hasCapacity() {
+            return buckets > 0;
+        }
+    }
 }

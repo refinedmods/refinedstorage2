@@ -15,6 +15,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 
 import java.util.Optional;
 
@@ -23,11 +24,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class FluidStorageDiskItem extends StorageDiskItemImpl {
-    private final FluidStorageType type;
+    private final FluidStorageType.Variant variant;
 
-    public FluidStorageDiskItem(Item.Properties properties, FluidStorageType type) {
+    public FluidStorageDiskItem(Item.Properties properties, FluidStorageType.Variant variant) {
         super(properties);
-        this.type = type;
+        this.variant = variant;
     }
 
     @Override
@@ -43,7 +44,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     @Override
     protected Storage<?> createStorage(Level level) {
         TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
-        if (!type.hasCapacity()) {
+        if (!variant.hasCapacity()) {
             return new PlatformStorage<>(
                     new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                     com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType.INSTANCE,
@@ -54,7 +55,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
         return new PlatformLimitedStorage<>(
                 new LimitedStorageImpl<>(
                         new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                        type.getBuckets() * Platform.INSTANCE.getBucketAmount()
+                        variant.getBuckets() * Platform.INSTANCE.getBucketAmount()
                 ),
                 com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType.INSTANCE,
                 trackingRepository,
@@ -69,37 +70,9 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
 
     @Override
     protected ItemStack createSecondaryDisassemblyByproduct(int count) {
-        if (type == FluidStorageType.CREATIVE) {
+        if (variant == FluidStorageType.Variant.CREATIVE) {
             return null;
         }
-        return new ItemStack(Items.INSTANCE.getFluidStoragePart(type), count);
-    }
-
-    public enum FluidStorageType {
-        SIXTY_FOUR_B("64b", 64),
-        TWO_HUNDRED_FIFTY_SIX_B("256b", 256),
-        THOUSAND_TWENTY_FOUR_B("1024b", 1024),
-        FOUR_THOUSAND_NINETY_SIX_B("4096b", 4096),
-        CREATIVE("creative", 0);
-
-        private final String name;
-        private final long buckets;
-
-        FluidStorageType(String name, long buckets) {
-            this.name = name;
-            this.buckets = buckets;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public long getBuckets() {
-            return buckets;
-        }
-
-        public boolean hasCapacity() {
-            return buckets > 0;
-        }
+        return new ItemStack(Items.INSTANCE.getFluidStoragePart(variant), count);
     }
 }
