@@ -96,10 +96,10 @@ public class ItemStorageType implements StorageType<ItemResource> {
     }
 
     public enum Variant {
-        ONE_K("1k", 1000),
-        FOUR_K("4k", 4000),
-        SIXTEEN_K("16k", 16_000),
-        SIXTY_FOUR_K("64k", 64_000),
+        ONE_K("1k", 1024),
+        FOUR_K("4k", 1024 * 4),
+        SIXTEEN_K("16k", 1024 * 4 * 4),
+        SIXTY_FOUR_K("64k", 1024 * 4 * 4 * 4),
         CREATIVE("creative", 0);
 
         private final String name;
