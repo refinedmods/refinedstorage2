@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.FluidG
 import java.util.stream.Collectors;
 
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
@@ -35,6 +36,6 @@ public class FabricFluidGridResourceFactory extends FluidGridResourceFactory {
 
     @Override
     protected String getName(FluidResource fluidResource) {
-        return FluidVariantRendering.getName(toFluidVariant(fluidResource)).getString();
+        return FluidVariantAttributes.getName(toFluidVariant(fluidResource)).getString();
     }
 }

@@ -68,7 +68,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.core.Registry;
@@ -248,12 +248,12 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerMenus() {
-        Menus.INSTANCE.setDiskDrive(ScreenHandlerRegistry.registerExtended(DISK_DRIVE, DiskDriveContainerMenu::new));
-        Menus.INSTANCE.setGrid(ScreenHandlerRegistry.registerExtended(GRID, ItemGridContainerMenu::new));
-        Menus.INSTANCE.setFluidGrid(ScreenHandlerRegistry.registerExtended(FLUID_GRID, FluidGridContainerMenu::new));
-        Menus.INSTANCE.setController(ScreenHandlerRegistry.registerExtended(CONTROLLER, ControllerContainerMenu::new));
-        Menus.INSTANCE.setItemStorage(ScreenHandlerRegistry.registerExtended(createIdentifier("item_storage"), ItemStorageBlockContainerMenu::new));
-        Menus.INSTANCE.setFluidStorage(ScreenHandlerRegistry.registerExtended(createIdentifier("fluid_storage"), FluidStorageBlockContainerMenu::new));
+        Menus.INSTANCE.setDiskDrive(Registry.register(Registry.MENU, DISK_DRIVE, new ExtendedScreenHandlerType<>(DiskDriveContainerMenu::new)));
+        Menus.INSTANCE.setGrid(Registry.register(Registry.MENU, GRID, new ExtendedScreenHandlerType<>(ItemGridContainerMenu::new)));
+        Menus.INSTANCE.setFluidGrid(Registry.register(Registry.MENU, FLUID_GRID, new ExtendedScreenHandlerType<>(FluidGridContainerMenu::new)));
+        Menus.INSTANCE.setController(Registry.register(Registry.MENU, CONTROLLER, new ExtendedScreenHandlerType<>(ControllerContainerMenu::new)));
+        Menus.INSTANCE.setItemStorage(Registry.register(Registry.MENU, createIdentifier("item_storage"), new ExtendedScreenHandlerType<>(ItemStorageBlockContainerMenu::new)));
+        Menus.INSTANCE.setFluidStorage(Registry.register(Registry.MENU, createIdentifier("fluid_storage"), new ExtendedScreenHandlerType<>(FluidStorageBlockContainerMenu::new)));
     }
 
     private void registerLootFunctions() {

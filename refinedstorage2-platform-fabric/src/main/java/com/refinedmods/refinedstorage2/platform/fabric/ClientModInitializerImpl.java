@@ -34,8 +34,8 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
@@ -92,12 +92,12 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void registerScreens() {
-        ScreenRegistry.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
-        ScreenRegistry.register(Menus.INSTANCE.getGrid(), ItemGridScreen::new);
-        ScreenRegistry.register(Menus.INSTANCE.getFluidGrid(), FluidGridScreen::new);
-        ScreenRegistry.register(Menus.INSTANCE.getController(), ControllerScreen::new);
-        ScreenRegistry.register(Menus.INSTANCE.getItemStorage(), ItemStorageBlockScreen::new);
-        ScreenRegistry.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getGrid(), ItemGridScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getFluidGrid(), FluidGridScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getController(), ControllerScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getItemStorage(), ItemStorageBlockScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);
     }
 
     private void registerKeyBindings() {

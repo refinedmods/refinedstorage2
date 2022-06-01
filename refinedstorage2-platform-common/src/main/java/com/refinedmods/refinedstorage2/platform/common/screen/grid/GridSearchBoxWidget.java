@@ -85,6 +85,7 @@ public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearch
         setCanLoseFocus(!autoSelected);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private boolean onTextChanged(String text) {
         boolean success = true;
         try {
