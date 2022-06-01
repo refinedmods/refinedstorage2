@@ -45,8 +45,8 @@ import com.refinedmods.refinedstorage2.platform.common.item.StorageHousingItem;
 import com.refinedmods.refinedstorage2.platform.common.item.StoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
@@ -318,7 +318,7 @@ public class ModInitializer extends AbstractModInitializer {
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            ItemStorageBlockItem storageBlockItem = new ItemStorageBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties().stacksTo(1).fireResistant(), variant);
+            ItemStorageBlockBlockItem storageBlockItem = new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties().stacksTo(1).fireResistant(), variant);
             storageBlockItem.setRegistryName(forItemStorageBlock(variant));
             e.getRegistry().register(storageBlockItem);
         }
@@ -328,7 +328,7 @@ public class ModInitializer extends AbstractModInitializer {
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            FluidStorageBlockItem fluidStorageBlockItem = new FluidStorageBlockItem(Blocks.INSTANCE.getFluidStorageBlocks().get(variant), createProperties().stacksTo(1).fireResistant(), variant);
+            FluidStorageBlockBlockItem fluidStorageBlockItem = new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlocks().get(variant), createProperties().stacksTo(1).fireResistant(), variant);
             fluidStorageBlockItem.setRegistryName(forFluidStorageBlock(variant));
             e.getRegistry().register(fluidStorageBlockItem);
         }

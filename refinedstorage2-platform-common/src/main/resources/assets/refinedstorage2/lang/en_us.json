@@ -89,6 +89,8 @@
     "item.refinedstorage2.wrench": "Wrench",
     "misc.refinedstorage2.stored": "Stored: %s",
     "misc.refinedstorage2.stored_with_capacity": "Stored: %s / %s",
+    "misc.refinedstorage2.stacks": "Stacks: %s",
+    "misc.refinedstorage2.stacks_with_capacity": "Stacks: %s / %s",
     "misc.refinedstorage2.full": "%d%% full",
     "misc.refinedstorage2.total": "%d total",
     "misc.refinedstorage2.last_modified.just_now": "Last modified just now by %s",

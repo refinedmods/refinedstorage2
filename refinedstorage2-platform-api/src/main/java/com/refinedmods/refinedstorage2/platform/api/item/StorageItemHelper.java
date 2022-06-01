@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.LongFunction;
 
 import net.minecraft.ChatFormatting;
@@ -46,8 +47,11 @@ public final class StorageItemHelper {
         return getStorageId(stack).map(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::getInfo);
     }
 
-    public static void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context, LongFunction<String> quantityFormatter) {
-        getInfo(level, stack).ifPresent(info -> appendStorageInfoToHoverText(tooltip, info, quantityFormatter));
+    public static void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context, LongFunction<String> quantityFormatter, Consumer<StorageInfo> additionalTooltipAdder) {
+        getInfo(level, stack).ifPresent(info -> {
+            appendStorageInfoToHoverText(tooltip, info, quantityFormatter);
+            additionalTooltipAdder.accept(info);
+        });
         if (context.isAdvanced()) {
             getStorageId(stack).ifPresent(id -> tooltip.add(new TextComponent(id.toString()).withStyle(ChatFormatting.GRAY)));
         }
@@ -58,14 +62,33 @@ public final class StorageItemHelper {
             tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
                     "misc",
                     "stored",
-                    quantityFormatter.apply(info.stored())
+                    new TextComponent(quantityFormatter.apply(info.stored())).withStyle(ChatFormatting.GREEN)
             ).withStyle(ChatFormatting.GRAY));
         } else {
             tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
                     "misc",
                     "stored_with_capacity",
-                    quantityFormatter.apply(info.stored()),
-                    quantityFormatter.apply(info.capacity())
+                    new TextComponent(quantityFormatter.apply(info.stored())).withStyle(ChatFormatting.GREEN),
+                    new TextComponent(quantityFormatter.apply(info.capacity())).withStyle(ChatFormatting.BLUE)
+            ).withStyle(ChatFormatting.GRAY));
+        }
+    }
+
+    public static void appendStacksHoverText(List<Component> tooltip, StorageInfo info, LongFunction<String> quantityFormatter) {
+        long stacksAmount = info.stored() / 64L;
+        if (info.capacity() == 0) {
+            tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
+                    "misc",
+                    "stacks",
+                    new TextComponent(quantityFormatter.apply(stacksAmount)).withStyle(ChatFormatting.GREEN)
+            ).withStyle(ChatFormatting.GRAY));
+        } else {
+            long maxStacksAmount = info.capacity() / 64L;
+            tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
+                    "misc",
+                    "stacks_with_capacity",
+                    new TextComponent(quantityFormatter.apply(stacksAmount)).withStyle(ChatFormatting.GREEN),
+                    new TextComponent(quantityFormatter.apply(maxStacksAmount)).withStyle(ChatFormatting.BLUE)
             ).withStyle(ChatFormatting.GRAY));
         }
     }
