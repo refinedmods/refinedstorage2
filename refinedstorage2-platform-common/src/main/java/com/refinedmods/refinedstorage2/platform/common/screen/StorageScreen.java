@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AccessModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ExactModeSideButtonWidget;
@@ -15,13 +16,10 @@ import java.util.List;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public abstract class StorageScreen<T extends AbstractContainerMenu & StorageAccessor> extends BaseScreen<T> {
     private final ProgressWidget progressWidget;
@@ -59,22 +57,18 @@ public abstract class StorageScreen<T extends AbstractContainerMenu & StorageAcc
 
     private List<Component> createTooltip() {
         List<Component> tooltip = new ArrayList<>();
-        long stored = getMenu().getStored();
-
-        if (!menu.hasCapacity()) {
-            tooltip.add(createTranslation("misc", "stored", format(stored)));
-        } else {
-            long capacity = getMenu().getCapacity();
-            double progress = getMenu().getProgress();
-
-            tooltip.add(createTranslation("misc", "stored_with_capacity", format(stored), format(capacity)));
-            tooltip.add(createTranslation("misc", "full", (int) (progress * 100D)).withStyle(ChatFormatting.GRAY));
-        }
-
+        StorageTooltipHelper.appendToTooltip(
+                tooltip,
+                menu.getStored(),
+                menu.getCapacity(),
+                this::formatQuantity,
+                QuantityFormatter::format,
+                menu.getTooltipOptions()
+        );
         return tooltip;
     }
 
-    protected String format(long qty) {
+    protected String formatQuantity(long qty) {
         return QuantityFormatter.format(qty);
     }
 

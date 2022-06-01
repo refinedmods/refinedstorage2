@@ -49,13 +49,8 @@ public abstract class StorageBlockContainerMenu<T> extends StorageContainerMenu 
     }
 
     @Override
-    public boolean hasCapacity() {
-        return capacity > 0;
-    }
-
-    @Override
     public double getProgress() {
-        if (!hasCapacity()) {
+        if (capacity == 0) {
             return 0;
         }
         return (double) getStored() / (double) getCapacity();

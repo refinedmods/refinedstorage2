@@ -2,13 +2,16 @@ package com.refinedmods.refinedstorage2.platform.common.item.block;
 
 import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.block.StorageBlockBlockItem;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
@@ -25,17 +28,28 @@ public class FluidStorageBlockBlockItem extends StorageBlockBlockItem {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final FluidStorageType.Variant variant;
+    private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
     public FluidStorageBlockBlockItem(Block block, Properties properties, FluidStorageType.Variant variant) {
         super(block, properties);
         this.variant = variant;
+        if (variant != FluidStorageType.Variant.CREATIVE) {
+            this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
+        }
     }
 
     @Override
     public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
-        StorageItemHelper.appendHoverText(stack, level, tooltip, context, Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits, info -> {
-        });
+        StorageItemHelper.appendToTooltip(
+                stack,
+                level,
+                tooltip,
+                context,
+                Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits,
+                Platform.INSTANCE.getBucketQuantityFormatter()::format,
+                tooltipOptions
+        );
     }
 
     @Override
