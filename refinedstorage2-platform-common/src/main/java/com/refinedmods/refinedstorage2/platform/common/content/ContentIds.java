@@ -37,6 +37,10 @@ public final class ContentIds {
         return createIdentifier(variant.getName() + "_fluid_storage_part");
     }
 
+    public static ResourceLocation forFluidStorageBlock(FluidStorageType.Variant variant) {
+        return createIdentifier(variant.getName() + "_fluid_storage_block");
+    }
+
     public static ResourceLocation forProcessor(ProcessorItem.Type type) {
         return createIdentifier(type.getName() + "_processor");
     }

@@ -62,16 +62,20 @@ public abstract class StorageScreen<T extends AbstractContainerMenu & StorageAcc
         long stored = getMenu().getStored();
 
         if (!menu.hasCapacity()) {
-            tooltip.add(createTranslation("misc", "stored", QuantityFormatter.format(stored)));
+            tooltip.add(createTranslation("misc", "stored", format(stored)));
         } else {
             long capacity = getMenu().getCapacity();
             double progress = getMenu().getProgress();
 
-            tooltip.add(createTranslation("misc", "stored_with_capacity", QuantityFormatter.format(stored), QuantityFormatter.format(capacity)));
+            tooltip.add(createTranslation("misc", "stored_with_capacity", format(stored), format(capacity)));
             tooltip.add(createTranslation("misc", "full", (int) (progress * 100D)).withStyle(ChatFormatting.GRAY));
         }
 
         return tooltip;
+    }
+
+    protected String format(long qty) {
+        return QuantityFormatter.format(qty);
     }
 
     @Override

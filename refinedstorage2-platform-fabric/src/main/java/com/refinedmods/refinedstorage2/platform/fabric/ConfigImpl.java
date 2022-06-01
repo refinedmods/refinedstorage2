@@ -28,6 +28,9 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @ConfigEntry.Gui.CollapsibleObject
     private StorageBlockImpl storageBlock = new StorageBlockImpl();
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private FluidStorageBlockImpl fluidStorageBlock = new FluidStorageBlockImpl();
+
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
@@ -55,6 +58,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public StorageBlock getStorageBlock() {
         return storageBlock;
+    }
+
+    @Override
+    public FluidStorageBlock getFluidStorageBlock() {
+        return fluidStorageBlock;
     }
 
     private static class GridImpl implements Grid {
@@ -232,6 +240,39 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public long get64kEnergyUsage() {
             return sixtyFourKEnergyUsage;
+        }
+
+        @Override
+        public long getCreativeEnergyUsage() {
+            return creativeEnergyUsage;
+        }
+    }
+
+    private static class FluidStorageBlockImpl implements FluidStorageBlock {
+        private long sixtyFourBEnergyUsage = 2;
+        private long twoHundredFiftySixBEnergyUsage = 4;
+        private long thousandTwentyFourBEnergyUsage = 6;
+        private long fourThousandNinetySixBEnergyUsage = 8;
+        private long creativeEnergyUsage = 16;
+
+        @Override
+        public long get64bEnergyUsage() {
+            return sixtyFourBEnergyUsage;
+        }
+
+        @Override
+        public long get256bEnergyUsage() {
+            return twoHundredFiftySixBEnergyUsage;
+        }
+
+        @Override
+        public long get1024bEnergyUsage() {
+            return thousandTwentyFourBEnergyUsage;
+        }
+
+        @Override
+        public long get4096bEnergyUsage() {
+            return fourThousandNinetySixBEnergyUsage;
         }
 
         @Override

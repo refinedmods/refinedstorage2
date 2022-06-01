@@ -103,23 +103,23 @@ public class FluidStorageType implements StorageType<FluidResource> {
         CREATIVE("creative", 0);
 
         private final String name;
-        private final long buckets;
+        private final long capacityInBuckets;
 
-        Variant(String name, long buckets) {
+        Variant(String name, long capacityInBuckets) {
             this.name = name;
-            this.buckets = buckets;
+            this.capacityInBuckets = capacityInBuckets;
         }
 
         public String getName() {
             return name;
         }
 
-        public long getBuckets() {
-            return buckets;
+        public long getCapacityInBuckets() {
+            return capacityInBuckets;
         }
 
         public boolean hasCapacity() {
-            return buckets > 0;
+            return capacityInBuckets > 0;
         }
     }
 }

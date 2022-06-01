@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 
@@ -16,6 +17,7 @@ public final class Menus {
     private MenuType<FluidGridContainerMenu> fluidGrid;
     private MenuType<ControllerContainerMenu> controller;
     private MenuType<ItemStorageBlockContainerMenu> itemStorage;
+    private MenuType<FluidStorageBlockContainerMenu> fluidStorage;
 
     private Menus() {
     }
@@ -58,5 +60,13 @@ public final class Menus {
 
     public void setItemStorage(MenuType<ItemStorageBlockContainerMenu> itemStorage) {
         this.itemStorage = itemStorage;
+    }
+
+    public MenuType<FluidStorageBlockContainerMenu> getFluidStorage() {
+        return fluidStorage;
+    }
+
+    public void setFluidStorage(MenuType<FluidStorageBlockContainerMenu> fluidStorage) {
+        this.fluidStorage = fluidStorage;
     }
 }

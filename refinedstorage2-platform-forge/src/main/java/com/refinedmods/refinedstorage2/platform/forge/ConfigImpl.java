@@ -19,6 +19,7 @@ public class ConfigImpl implements Config {
     private final DiskDriveImpl diskDrive;
     private final Grid grid;
     private final StorageBlock storageBlock;
+    private final FluidStorageBlock fluidStorageBlock;
 
     public ConfigImpl() {
         cable = new CableImpl();
@@ -26,6 +27,7 @@ public class ConfigImpl implements Config {
         diskDrive = new DiskDriveImpl();
         grid = new GridImpl();
         storageBlock = new StorageBlockImpl();
+        fluidStorageBlock = new FluidStorageBlockImpl();
         spec = builder.build();
     }
 
@@ -56,6 +58,11 @@ public class ConfigImpl implements Config {
     @Override
     public StorageBlock getStorageBlock() {
         return storageBlock;
+    }
+
+    @Override
+    public FluidStorageBlock getFluidStorageBlock() {
+        return fluidStorageBlock;
     }
 
     private class CableImpl implements Cable {
@@ -262,6 +269,49 @@ public class ConfigImpl implements Config {
         @Override
         public long get64kEnergyUsage() {
             return sixtyFourKEnergyUsage.get();
+        }
+
+        @Override
+        public long getCreativeEnergyUsage() {
+            return creativeUsage.get();
+        }
+    }
+
+    private class FluidStorageBlockImpl implements FluidStorageBlock {
+        private final ForgeConfigSpec.LongValue sixtyFourBEnergyUsage;
+        private final ForgeConfigSpec.LongValue twoHundredFiftySixBEnergyUsage;
+        private final ForgeConfigSpec.LongValue thousandTwentyFourBEnergyUsage;
+        private final ForgeConfigSpec.LongValue fourThousandNinetySixBEnergyUsage;
+        private final ForgeConfigSpec.LongValue creativeUsage;
+
+        public FluidStorageBlockImpl() {
+            builder.push("fluidStorageBlock");
+            sixtyFourBEnergyUsage = builder.comment("The energy used by the 64B Fluid Storage Block").defineInRange("64bEnergyUsage", 2, 0, Long.MAX_VALUE);
+            twoHundredFiftySixBEnergyUsage = builder.comment("The energy used by the 256B Fluid Storage Block").defineInRange("256bEnergyUsage", 4, 0, Long.MAX_VALUE);
+            thousandTwentyFourBEnergyUsage = builder.comment("The energy used by the 1024B Fluid Storage Block").defineInRange("1024bEnergyUsage", 6, 0, Long.MAX_VALUE);
+            fourThousandNinetySixBEnergyUsage = builder.comment("The energy used by the 4096B Fluid Storage Block").defineInRange("4096bEnergyUsage", 8, 0, Long.MAX_VALUE);
+            creativeUsage = builder.comment("The energy used by the Creative Fluid Storage Block").defineInRange("creativeEnergyUsage", 16, 0, Long.MAX_VALUE);
+            builder.pop();
+        }
+
+        @Override
+        public long get64bEnergyUsage() {
+            return sixtyFourBEnergyUsage.get();
+        }
+
+        @Override
+        public long get256bEnergyUsage() {
+            return twoHundredFiftySixBEnergyUsage.get();
+        }
+
+        @Override
+        public long get1024bEnergyUsage() {
+            return thousandTwentyFourBEnergyUsage.get();
+        }
+
+        @Override
+        public long get4096bEnergyUsage() {
+            return fourThousandNinetySixBEnergyUsage.get();
         }
 
         @Override

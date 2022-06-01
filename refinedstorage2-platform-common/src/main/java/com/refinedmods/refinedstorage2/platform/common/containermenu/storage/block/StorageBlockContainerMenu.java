@@ -32,7 +32,7 @@ public abstract class StorageBlockContainerMenu<T> extends StorageContainerMenu 
     }
 
     protected StorageBlockContainerMenu(MenuType<?> type, int syncId, Player player, ResourceFilterContainer resourceFilterContainer, StorageBlockBlockEntity<?> storageBlock) {
-        super(type, syncId, storageBlock);
+        super(type, syncId, player, storageBlock, resourceFilterContainer);
         addSlots(player, resourceFilterContainer);
     }
 

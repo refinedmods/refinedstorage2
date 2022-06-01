@@ -16,6 +16,8 @@ public interface Config {
 
     StorageBlock getStorageBlock();
 
+    FluidStorageBlock getFluidStorageBlock();
+
     interface Grid {
         boolean isLargeFont();
 
@@ -74,6 +76,18 @@ public interface Config {
         long get16kEnergyUsage();
 
         long get64kEnergyUsage();
+
+        long getCreativeEnergyUsage();
+    }
+
+    interface FluidStorageBlock {
+        long get64bEnergyUsage();
+
+        long get256bEnergyUsage();
+
+        long get1024bEnergyUsage();
+
+        long get4096bEnergyUsage();
 
         long getCreativeEnergyUsage();
     }

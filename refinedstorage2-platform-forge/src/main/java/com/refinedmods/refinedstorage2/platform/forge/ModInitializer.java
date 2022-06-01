@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
@@ -16,10 +17,12 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEn
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -42,6 +45,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.StorageHousingItem;
 import com.refinedmods.refinedstorage2.platform.common.item.StoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
@@ -96,6 +100,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SILICON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_HOUSING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageBlock;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageDisk;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStoragePart;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forItemStorageBlock;
@@ -200,6 +205,13 @@ public class ModInitializer extends AbstractModInitializer {
             Blocks.INSTANCE.getItemStorageBlocks().put(variant, block);
             e.getRegistry().register(block);
         }
+
+        for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
+            FluidStorageBlock block = new FluidStorageBlock(variant);
+            block.setRegistryName(forFluidStorageBlock(variant));
+            Blocks.INSTANCE.getFluidStorageBlocks().put(variant, block);
+            e.getRegistry().register(block);
+        }
     }
 
     @SubscribeEvent
@@ -238,10 +250,17 @@ public class ModInitializer extends AbstractModInitializer {
         BlockEntities.INSTANCE.setFluidGrid(fluidGridBlockEntityType);
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            BlockEntityType<ItemStorageBlockEntity> blockEntityType = BlockEntityType.Builder.of((pos, state) -> new ItemStorageBlockEntity(pos, state, variant), Blocks.INSTANCE.getItemStorageBlocks().get(variant)).build(null);
+            BlockEntityType<ItemStorageBlockBlockEntity> blockEntityType = BlockEntityType.Builder.of((pos, state) -> new ItemStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getItemStorageBlocks().get(variant)).build(null);
             blockEntityType.setRegistryName(forItemStorageBlock(variant));
             e.getRegistry().register(blockEntityType);
             BlockEntities.INSTANCE.getItemStorageBlocks().put(variant, blockEntityType);
+        }
+
+        for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
+            BlockEntityType<FluidStorageBlockBlockEntity> blockEntityType = BlockEntityType.Builder.of((pos, state) -> new FluidStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getFluidStorageBlocks().get(variant)).build(null);
+            blockEntityType.setRegistryName(forFluidStorageBlock(variant));
+            e.getRegistry().register(blockEntityType);
+            BlockEntities.INSTANCE.getFluidStorageBlocks().put(variant, blockEntityType);
         }
     }
 
@@ -308,6 +327,12 @@ public class ModInitializer extends AbstractModInitializer {
             e.getRegistry().register(new FluidStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant).setRegistryName(forFluidStorageDisk(variant)));
         }
 
+        for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
+            FluidStorageBlockItem fluidStorageBlockItem = new FluidStorageBlockItem(Blocks.INSTANCE.getFluidStorageBlocks().get(variant), createProperties().stacksTo(1).fireResistant(), variant);
+            fluidStorageBlockItem.setRegistryName(forFluidStorageBlock(variant));
+            e.getRegistry().register(fluidStorageBlockItem);
+        }
+
         e.getRegistry().register(new CoreItem(createProperties()).setRegistryName(CONSTRUCTION_CORE));
         e.getRegistry().register(new CoreItem(createProperties()).setRegistryName(DESTRUCTION_CORE));
     }
@@ -372,10 +397,15 @@ public class ModInitializer extends AbstractModInitializer {
         e.getRegistry().register(fluidGridMenuType);
         Menus.INSTANCE.setFluidGrid(fluidGridMenuType);
 
-        MenuType<ItemStorageBlockContainerMenu> storageMenuType = IForgeMenuType.create(ItemStorageBlockContainerMenu::new);
-        storageMenuType.setRegistryName(createIdentifier("storage"));
-        e.getRegistry().register(storageMenuType);
-        Menus.INSTANCE.setItemStorage(storageMenuType);
+        MenuType<ItemStorageBlockContainerMenu> itemStorageMenuType = IForgeMenuType.create(ItemStorageBlockContainerMenu::new);
+        itemStorageMenuType.setRegistryName(createIdentifier("item_storage"));
+        e.getRegistry().register(itemStorageMenuType);
+        Menus.INSTANCE.setItemStorage(itemStorageMenuType);
+
+        MenuType<FluidStorageBlockContainerMenu> fluidStorageMenuType = IForgeMenuType.create(FluidStorageBlockContainerMenu::new);
+        fluidStorageMenuType.setRegistryName(createIdentifier("fluid_storage"));
+        e.getRegistry().register(fluidStorageMenuType);
+        Menus.INSTANCE.setFluidStorage(fluidStorageMenuType);
     }
 
     @SubscribeEvent
