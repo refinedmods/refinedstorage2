@@ -3,12 +3,15 @@ package com.refinedmods.refinedstorage2.platform.common.item.block;
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.block.StorageBlockBlockItem;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
@@ -25,16 +28,29 @@ public class ItemStorageBlockBlockItem extends StorageBlockBlockItem {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final ItemStorageType.Variant variant;
+    private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
     public ItemStorageBlockBlockItem(Block block, Properties properties, ItemStorageType.Variant variant) {
         super(block, properties);
         this.variant = variant;
+        this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.STACK_INFO);
+        if (variant != ItemStorageType.Variant.CREATIVE) {
+            this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
+        }
     }
 
     @Override
     public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
-        StorageItemHelper.appendHoverText(stack, level, tooltip, context, QuantityFormatter::formatWithUnits, info -> StorageItemHelper.appendStacksHoverText(tooltip, info, QuantityFormatter::formatWithUnits));
+        StorageItemHelper.appendToTooltip(
+                stack,
+                level,
+                tooltip,
+                context,
+                QuantityFormatter::formatWithUnits,
+                QuantityFormatter::format,
+                tooltipOptions
+        );
     }
 
     @Override

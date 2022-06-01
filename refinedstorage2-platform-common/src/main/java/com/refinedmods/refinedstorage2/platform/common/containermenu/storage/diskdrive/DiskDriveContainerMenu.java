@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.di
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
@@ -11,8 +12,10 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.Sto
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -75,8 +78,7 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
         return new ValidatedSlot(diskInventory, i, x, y, stack -> stack.getItem() instanceof StorageDiskItem);
     }
 
-    @Override
-    public boolean hasCapacity() {
+    private boolean hasCapacity() {
         return getStorageDiskInfo().allMatch(info -> info.capacity() > 0);
     }
 
@@ -86,6 +88,19 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
             return 0;
         }
         return (double) getStored() / (double) getCapacity();
+    }
+
+    @Override
+    public Set<StorageTooltipHelper.TooltipOption> getTooltipOptions() {
+        Set<StorageTooltipHelper.TooltipOption> options = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
+        if (hasCapacity()) {
+            options.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
+        }
+        if (diskSlots.stream().map(Slot::getItem).filter(stack -> !stack.isEmpty()).filter(StorageDiskItem.class::isInstance)
+                .map(StorageDiskItem.class::cast).allMatch(di -> di.hasStacking())) {
+            options.add(StorageTooltipHelper.TooltipOption.STACK_INFO);
+        }
+        return options;
     }
 
     @Override

@@ -12,7 +12,7 @@ public class FluidStorageBlockScreen extends StorageBlockScreen {
     }
 
     @Override
-    protected String format(long qty) {
+    protected String formatQuantity(long qty) {
         return Platform.INSTANCE.getBucketQuantityFormatter().format(qty);
     }
 }

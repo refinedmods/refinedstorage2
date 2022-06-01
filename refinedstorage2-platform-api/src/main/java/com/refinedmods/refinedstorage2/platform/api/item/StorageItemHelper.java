@@ -2,12 +2,7 @@ package com.refinedmods.refinedstorage2.platform.api.item;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.function.LongFunction;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -20,6 +15,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.LongFunction;
 
 public final class StorageItemHelper {
     private static final String TAG_ID = "id";
@@ -47,49 +48,10 @@ public final class StorageItemHelper {
         return getStorageId(stack).map(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::getInfo);
     }
 
-    public static void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context, LongFunction<String> quantityFormatter, Consumer<StorageInfo> additionalTooltipAdder) {
-        getInfo(level, stack).ifPresent(info -> {
-            appendStorageInfoToHoverText(tooltip, info, quantityFormatter);
-            additionalTooltipAdder.accept(info);
-        });
+    public static void appendToTooltip(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context, LongFunction<String> quantityFormatter, LongFunction<String> stackInfoQuantityFormatter, Set<StorageTooltipHelper.TooltipOption> options) {
+        getInfo(level, stack).ifPresent(info -> StorageTooltipHelper.appendToTooltip(tooltip, info.stored(), info.capacity(), quantityFormatter, stackInfoQuantityFormatter, options));
         if (context.isAdvanced()) {
             getStorageId(stack).ifPresent(id -> tooltip.add(new TextComponent(id.toString()).withStyle(ChatFormatting.GRAY)));
-        }
-    }
-
-    private static void appendStorageInfoToHoverText(List<Component> tooltip, StorageInfo info, LongFunction<String> quantityFormatter) {
-        if (info.capacity() == 0) {
-            tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
-                    "misc",
-                    "stored",
-                    new TextComponent(quantityFormatter.apply(info.stored())).withStyle(ChatFormatting.GREEN)
-            ).withStyle(ChatFormatting.GRAY));
-        } else {
-            tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
-                    "misc",
-                    "stored_with_capacity",
-                    new TextComponent(quantityFormatter.apply(info.stored())).withStyle(ChatFormatting.GREEN),
-                    new TextComponent(quantityFormatter.apply(info.capacity())).withStyle(ChatFormatting.BLUE)
-            ).withStyle(ChatFormatting.GRAY));
-        }
-    }
-
-    public static void appendStacksHoverText(List<Component> tooltip, StorageInfo info, LongFunction<String> quantityFormatter) {
-        long stacksAmount = info.stored() / 64L;
-        if (info.capacity() == 0) {
-            tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
-                    "misc",
-                    "stacks",
-                    new TextComponent(quantityFormatter.apply(stacksAmount)).withStyle(ChatFormatting.GREEN)
-            ).withStyle(ChatFormatting.GRAY));
-        } else {
-            long maxStacksAmount = info.capacity() / 64L;
-            tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
-                    "misc",
-                    "stacks_with_capacity",
-                    new TextComponent(quantityFormatter.apply(stacksAmount)).withStyle(ChatFormatting.GREEN),
-                    new TextComponent(quantityFormatter.apply(maxStacksAmount)).withStyle(ChatFormatting.BLUE)
-            ).withStyle(ChatFormatting.GRAY));
         }
     }
 

@@ -14,12 +14,15 @@ import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -29,21 +32,39 @@ import net.minecraft.world.level.Level;
 
 public class ItemStorageDiskItem extends StorageDiskItemImpl {
     private final ItemStorageType.Variant variant;
+    private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
     public ItemStorageDiskItem(Item.Properties properties, ItemStorageType.Variant variant) {
         super(properties);
         this.variant = variant;
+        this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.STACK_INFO);
+        if (variant != ItemStorageType.Variant.CREATIVE) {
+            this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
+        }
     }
 
     @Override
     public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
-        StorageItemHelper.appendHoverText(stack, level, tooltip, context, QuantityFormatter::formatWithUnits, info -> StorageItemHelper.appendStacksHoverText(tooltip, info, QuantityFormatter::formatWithUnits));
+        StorageItemHelper.appendToTooltip(
+                stack,
+                level,
+                tooltip,
+                context,
+                QuantityFormatter::formatWithUnits,
+                QuantityFormatter::format,
+                tooltipOptions
+        );
     }
 
     @Override
     public Optional<StorageChannelType<?>> getType(ItemStack stack) {
         return Optional.of(StorageChannelTypes.ITEM);
+    }
+
+    @Override
+    public boolean hasStacking() {
+        return true;
     }
 
     @Override
