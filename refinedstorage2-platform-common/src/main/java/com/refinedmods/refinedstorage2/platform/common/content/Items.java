@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.StorageHousingItem;
 import com.refinedmods.refinedstorage2.platform.common.item.StoragePartItem;
@@ -16,7 +16,7 @@ public final class Items {
     public static final Items INSTANCE = new Items();
 
     private final Map<ItemStorageType.Variant, StoragePartItem> storageParts = new EnumMap<>(ItemStorageType.Variant.class);
-    private final Map<FluidStorageDiskItem.FluidStorageType, FluidStoragePartItem> fluidStorageParts = new EnumMap<>(FluidStorageDiskItem.FluidStorageType.class);
+    private final Map<FluidStorageType.Variant, FluidStoragePartItem> fluidStorageParts = new EnumMap<>(FluidStorageType.Variant.class);
     private final List<ControllerBlockItem> controllers = new ArrayList<>();
     private StorageHousingItem storageHousing;
 
@@ -27,7 +27,7 @@ public final class Items {
         return storageParts.get(variant);
     }
 
-    public FluidStoragePartItem getFluidStoragePart(FluidStorageDiskItem.FluidStorageType type) {
+    public FluidStoragePartItem getFluidStoragePart(FluidStorageType.Variant type) {
         return fluidStorageParts.get(type);
     }
 
@@ -35,7 +35,7 @@ public final class Items {
         return storageParts;
     }
 
-    public Map<FluidStorageDiskItem.FluidStorageType, FluidStoragePartItem> getFluidStorageParts() {
+    public Map<FluidStorageType.Variant, FluidStoragePartItem> getFluidStorageParts() {
         return fluidStorageParts;
     }
 
