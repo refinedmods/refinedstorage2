@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
 import net.minecraft.core.BlockPos;
@@ -17,6 +17,6 @@ public class ItemStorageBlock extends StorageBlock {
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new ItemStorageBlockEntity(pos, state, variant);
+        return new ItemStorageBlockBlockEntity(pos, state, variant);
     }
 }

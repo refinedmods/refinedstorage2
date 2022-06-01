@@ -5,7 +5,9 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBl
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
 import java.util.EnumMap;
@@ -22,7 +24,8 @@ public final class BlockEntities {
     private BlockEntityType<FluidGridBlockEntity> fluidGrid;
     private BlockEntityType<ControllerBlockEntity> controller;
     private BlockEntityType<ControllerBlockEntity> creativeController;
-    private final Map<ItemStorageType.Variant, BlockEntityType<ItemStorageBlockEntity>> itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
+    private final Map<ItemStorageType.Variant, BlockEntityType<ItemStorageBlockBlockEntity>> itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
+    private final Map<FluidStorageType.Variant, BlockEntityType<FluidStorageBlockBlockEntity>> fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
 
     private BlockEntities() {
     }
@@ -75,7 +78,11 @@ public final class BlockEntities {
         this.creativeController = creativeController;
     }
 
-    public Map<ItemStorageType.Variant, BlockEntityType<ItemStorageBlockEntity>> getItemStorageBlocks() {
+    public Map<ItemStorageType.Variant, BlockEntityType<ItemStorageBlockBlockEntity>> getItemStorageBlocks() {
         return itemStorageBlocks;
+    }
+
+    public Map<FluidStorageType.Variant, BlockEntityType<FluidStorageBlockBlockEntity>> getFluidStorageBlocks() {
+        return fluidStorageBlocks;
     }
 }

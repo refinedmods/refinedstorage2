@@ -49,7 +49,7 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
     }
 
     public DiskDriveContainerMenu(int syncId, Player player, SimpleContainer diskInventory, ResourceFilterContainer resourceFilterContainer, DiskDriveBlockEntity diskDrive, StorageDiskInfoAccessor storageInfoAccessor) {
-        super(Menus.INSTANCE.getDiskDrive(), syncId, diskDrive);
+        super(Menus.INSTANCE.getDiskDrive(), syncId, player, diskDrive, resourceFilterContainer);
         this.storageInfoAccessor = storageInfoAccessor;
         addSlots(player, diskInventory, resourceFilterContainer);
     }

@@ -4,10 +4,12 @@ import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
 import java.util.EnumMap;
@@ -25,6 +27,7 @@ public final class Blocks {
     private DiskDriveBlock diskDrive;
     private MachineCasingBlock machineCasing;
     private final Map<ItemStorageType.Variant, ItemStorageBlock> itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
+    private final Map<FluidStorageType.Variant, FluidStorageBlock> fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
 
     private Blocks() {
     }
@@ -79,5 +82,9 @@ public final class Blocks {
 
     public Map<ItemStorageType.Variant, ItemStorageBlock> getItemStorageBlocks() {
         return itemStorageBlocks;
+    }
+
+    public Map<FluidStorageType.Variant, FluidStorageBlock> getFluidStorageBlocks() {
+        return fluidStorageBlocks;
     }
 }

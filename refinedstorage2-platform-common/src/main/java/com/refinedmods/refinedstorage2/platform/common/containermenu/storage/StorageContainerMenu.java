@@ -3,12 +3,14 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.api.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceFilterableContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.TwoWaySyncProperty;
 
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 
 public abstract class StorageContainerMenu extends ResourceFilterableContainerMenu implements StorageAccessor {
@@ -34,8 +36,8 @@ public abstract class StorageContainerMenu extends ResourceFilterableContainerMe
         addDataSlot(redstoneModeProperty);
     }
 
-    protected StorageContainerMenu(MenuType<?> type, int syncId, StorageSettingsProvider storageSettingsProvider) {
-        super(type, syncId);
+    protected StorageContainerMenu(MenuType<?> type, int syncId, Player player, StorageSettingsProvider storageSettingsProvider, ResourceFilterContainer container) {
+        super(type, syncId, player, container);
 
         this.priorityProperty = TwoWaySyncProperty.forServer(
                 0,

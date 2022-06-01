@@ -55,7 +55,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
         return new PlatformLimitedStorage<>(
                 new LimitedStorageImpl<>(
                         new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                        variant.getBuckets() * Platform.INSTANCE.getBucketAmount()
+                        variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()
                 ),
                 com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType.INSTANCE,
                 trackingRepository,
