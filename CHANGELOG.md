@@ -30,6 +30,9 @@ disks, etc. to intermediate storage like a chest.
 - Grid auto-selection and JEI/REI synchronization are now two different options.
 - Grid display settings are now stored in the client configuration, no longer per-block.
 - You now need to crouch with a dye in order to change the color of a device.
+- Item storage capacities are now multiples of 1024 to make it more stack-size friendly.
+- Storage tooltips now have colors.
+- Item storage tooltips now show amount of stacks and max stacks stored.
 
 ### Removed
 

@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.item.block;
 
+import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.block.StorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockBlockEntity;
@@ -7,23 +8,34 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 
+import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FluidStorageBlockItem extends StorageBlockBlockItem {
+public class FluidStorageBlockBlockItem extends StorageBlockBlockItem {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final FluidStorageType.Variant variant;
 
-    public FluidStorageBlockItem(Block block, Properties properties, FluidStorageType.Variant variant) {
+    public FluidStorageBlockBlockItem(Block block, Properties properties, FluidStorageType.Variant variant) {
         super(block, properties);
         this.variant = variant;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context) {
+        super.appendHoverText(stack, level, tooltip, context);
+        StorageItemHelper.appendHoverText(stack, level, tooltip, context, Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits, info -> {
+        });
     }
 
     @Override
@@ -37,11 +49,6 @@ public class FluidStorageBlockItem extends StorageBlockBlockItem {
             return null;
         }
         return new ItemStack(Items.INSTANCE.getFluidStoragePart(variant), count);
-    }
-
-    @Override
-    protected String formatQuantity(long qty) {
-        return Platform.INSTANCE.getBucketQuantityFormatter().formatWithUnits(qty);
     }
 
     @Override
