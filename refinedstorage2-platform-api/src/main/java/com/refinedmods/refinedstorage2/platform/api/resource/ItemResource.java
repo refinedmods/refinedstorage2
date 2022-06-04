@@ -16,6 +16,7 @@ public final class ItemResource implements FuzzyModeNormalizer<ItemResource> {
     private static final String TAG_TAG = "tag";
     private static final String TAG_ID = "id";
     private static final String TAG_AMOUNT = "amount";
+
     private final Item item;
     private final CompoundTag tag;
 
