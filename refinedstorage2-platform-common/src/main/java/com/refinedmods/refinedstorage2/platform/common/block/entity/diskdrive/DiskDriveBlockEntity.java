@@ -17,12 +17,11 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSe
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageSettingsProvider;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.EmptyStorageDiskInfoAccessor;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.LevelUtil;
-
-import java.util.Optional;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -322,7 +321,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
                 diskInventory,
                 resourceFilterContainer,
                 this,
-                stack -> Optional.empty()
+                new EmptyStorageDiskInfoAccessor()
         );
     }
 

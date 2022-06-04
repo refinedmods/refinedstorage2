@@ -33,7 +33,7 @@ public final class StorageTooltipHelper {
             }
         }
         if (options.contains(TooltipOption.CAPACITY_AND_PROGRESS)) {
-            addProgress(tooltip, (double) stored, (double) capacity);
+            addProgress(tooltip, stored, capacity);
         }
     }
 
