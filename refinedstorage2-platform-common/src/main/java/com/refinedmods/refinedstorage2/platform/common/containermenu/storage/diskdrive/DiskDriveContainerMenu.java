@@ -96,8 +96,7 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
         if (hasCapacity()) {
             options.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
         }
-        if (diskSlots.stream().map(Slot::getItem).filter(stack -> !stack.isEmpty()).filter(StorageDiskItem.class::isInstance)
-                .map(StorageDiskItem.class::cast).allMatch(di -> di.hasStacking())) {
+        if (getDiskStacks().allMatch(storageInfoAccessor::hasStacking)) {
             options.add(StorageTooltipHelper.TooltipOption.STACK_INFO);
         }
         return options;
@@ -113,11 +112,15 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
         return getStorageDiskInfo().mapToLong(StorageInfo::stored).sum();
     }
 
-    private Stream<StorageInfo> getStorageDiskInfo() {
+    private Stream<ItemStack> getDiskStacks() {
         return diskSlots
                 .stream()
                 .map(Slot::getItem)
-                .filter(stack -> !stack.isEmpty())
+                .filter(stack -> !stack.isEmpty());
+    }
+
+    private Stream<StorageInfo> getStorageDiskInfo() {
+        return getDiskStacks()
                 .map(storageInfoAccessor::getInfo)
                 .flatMap(Optional::stream);
     }

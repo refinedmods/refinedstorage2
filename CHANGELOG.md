@@ -32,6 +32,7 @@ disks, etc. to intermediate storage like a chest.
 - You now need to crouch with a dye in order to change the color of a device.
 - Item storage capacities are now multiples of 1024 to make it more stack-size friendly.
 - Storage tooltips now have colors.
+- Storage tooltips now show percentage full.
 - Item storage tooltips now show amount of stacks and max stacks stored.
 
 ### Removed
