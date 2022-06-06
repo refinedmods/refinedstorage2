@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -21,7 +22,7 @@ public final class ItemResource implements FuzzyModeNormalizer<ItemResource> {
     private final CompoundTag tag;
 
     public ItemResource(Item item, CompoundTag tag) {
-        this.item = item;
+        this.item = Preconditions.checkNotNull(item);
         this.tag = tag;
     }
 

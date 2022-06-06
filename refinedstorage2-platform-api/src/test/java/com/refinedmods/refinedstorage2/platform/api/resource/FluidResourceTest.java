@@ -15,10 +15,17 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
 @SetupMinecraft
 class FluidResourceTest {
+    @Test
+    void Test_invalid_fluid() {
+        // Assert
+        assertThrows(NullPointerException.class, () -> new FluidResource(null, null));
+    }
+
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void Test_to_and_from_tag(boolean hasTag) {
