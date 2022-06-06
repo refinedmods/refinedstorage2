@@ -15,6 +15,7 @@ public final class FluidResource implements FuzzyModeNormalizer<FluidResource> {
     private static final String TAG_TAG = "tag";
     private static final String TAG_ID = "id";
     private static final String TAG_AMOUNT = "amount";
+
     private final Fluid fluid;
     private final CompoundTag tag;
 
@@ -70,7 +71,7 @@ public final class FluidResource implements FuzzyModeNormalizer<FluidResource> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FluidResource that = (FluidResource) o;
-        return fluid.equals(that.fluid) && Objects.equals(tag, that.tag);
+        return Objects.equals(fluid, that.fluid) && Objects.equals(tag, that.tag);
     }
 
     @Override
