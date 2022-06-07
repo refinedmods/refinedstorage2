@@ -5,8 +5,6 @@ import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNo
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
@@ -14,6 +12,8 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSe
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageSettingsProvider;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.UUID;
@@ -46,7 +46,7 @@ public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeCont
     protected StorageBlockBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, StorageNetworkNode<T> node, ResourceType<T> resourceType) {
         super(type, pos, state, node);
         node.setNormalizer(this::normalize);
-        this.resourceFilterContainer = new FilteredResourceFilterContainer(9, this::resourceFilterContainerChanged, resourceType);
+        this.resourceFilterContainer = new FilteredResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, this::resourceFilterContainerChanged, resourceType);
     }
 
     private Object normalize(Object value) {

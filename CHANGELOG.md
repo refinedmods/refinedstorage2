@@ -23,6 +23,7 @@ disks, etc. to intermediate storage like a chest.
 - Fixed inventory contents of devices not retaining their original order when reloading a world.
 - Fixed bug where (already opened) Grid doesn't update if a storage is removed.
 - Fixed last modified info in the Grid not being persisted.
+- Fixed removals in filter inventory not being saved properly.
 
 ### Changed
 

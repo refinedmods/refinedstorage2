@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block;
 
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemResourceType;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
 import java.util.Set;
 

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.di
 
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.Resour
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ValidatedSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -44,7 +45,7 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
         addSlots(
                 playerInventory.player,
                 new SimpleContainer(DiskDriveNetworkNode.DISK_COUNT),
-                new ResourceFilterContainer(9, () -> {
+                new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, () -> {
                 })
         );
 
