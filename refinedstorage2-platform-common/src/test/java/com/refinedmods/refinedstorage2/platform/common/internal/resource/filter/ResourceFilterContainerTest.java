@@ -4,9 +4,9 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.PlatformTestFixtures;
-import com.refinedmods.refinedstorage2.platform.common.SetupMinecraft;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemResourceType;
+import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import io.netty.buffer.Unpooled;

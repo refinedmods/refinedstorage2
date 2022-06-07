@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common;
+package com.refinedmods.refinedstorage2.platform.test;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
