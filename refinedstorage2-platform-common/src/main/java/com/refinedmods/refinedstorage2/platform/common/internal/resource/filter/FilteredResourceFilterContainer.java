@@ -1,10 +1,13 @@
-package com.refinedmods.refinedstorage2.platform.api.resource.filter;
+package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter;
+
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceTypeRegistry;
 
 public class FilteredResourceFilterContainer extends ResourceFilterContainer {
     private final ResourceType<?> allowedType;
 
-    public FilteredResourceFilterContainer(int size, Runnable listener, ResourceType<?> allowedType) {
-        super(size, listener);
+    public FilteredResourceFilterContainer(ResourceTypeRegistry resourceTypeRegistry, int size, Runnable listener, ResourceType<?> allowedType) {
+        super(resourceTypeRegistry, size, listener);
         this.allowedType = allowedType;
     }
 

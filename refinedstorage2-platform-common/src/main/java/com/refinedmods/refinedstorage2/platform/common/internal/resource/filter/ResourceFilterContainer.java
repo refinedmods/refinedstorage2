@@ -1,6 +1,7 @@
-package com.refinedmods.refinedstorage2.platform.api.resource.filter;
+package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter;
 
-import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceTypeRegistry;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,11 +14,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
 public class ResourceFilterContainer {
+    private final ResourceTypeRegistry resourceTypeRegistry;
     private final Object[] filters;
     private final ResourceType<?>[] types;
     private final Runnable listener;
 
-    public ResourceFilterContainer(int size, Runnable listener) {
+    public ResourceFilterContainer(ResourceTypeRegistry resourceTypeRegistry, int size, Runnable listener) {
+        this.resourceTypeRegistry = resourceTypeRegistry;
         this.filters = new Object[size];
         this.types = new ResourceType[size];
         this.listener = listener;
@@ -34,6 +37,11 @@ public class ResourceFilterContainer {
     }
 
     public void remove(int slot) {
+        removeSilently(slot);
+        listener.run();
+    }
+
+    private void removeSilently(int slot) {
         filters[slot] = null;
         types[slot] = null;
     }
@@ -61,6 +69,14 @@ public class ResourceFilterContainer {
         return set;
     }
 
+    public ResourceType<?> determineDefaultType() {
+        List<ResourceType<?>> distinctTypes = Arrays.stream(types).filter(Objects::nonNull).distinct().toList();
+        if (distinctTypes.size() == 1) {
+            return distinctTypes.get(0);
+        }
+        return resourceTypeRegistry.getDefault();
+    }
+
     public void writeToUpdatePacket(FriendlyByteBuf buf) {
         buf.writeResourceLocation(determineDefaultType().getId());
         for (int i = 0; i < filters.length; ++i) {
@@ -84,13 +100,16 @@ public class ResourceFilterContainer {
     public void readFromUpdatePacket(int slot, FriendlyByteBuf buf) {
         boolean present = buf.readBoolean();
         if (!present) {
-            remove(slot);
+            removeSilently(slot);
             return;
         }
         ResourceLocation id = buf.readResourceLocation();
-        ResourceType<Object> type = (ResourceType<Object>) PlatformApi.INSTANCE.getResourceTypeRegistry().get(id);
+        ResourceType<Object> type = (ResourceType<Object>) resourceTypeRegistry.get(id);
+        if (type == null) {
+            return;
+        }
         Object value = type.readFromPacket(buf);
-        set(slot, type, value);
+        setSilently(slot, type, value);
     }
 
     @SuppressWarnings("unchecked")
@@ -118,18 +137,16 @@ public class ResourceFilterContainer {
                 continue;
             }
             CompoundTag item = tag.getCompound(key);
-            ResourceLocation typeId = new ResourceLocation(item.getString("t"));
-            ResourceType<Object> type = (ResourceType<Object>) PlatformApi.INSTANCE.getResourceTypeRegistry().get(typeId);
-            final int index = i;
-            type.fromTag(item.getCompound("v")).ifPresent(value -> setSilently(index, type, value));
+            load(i, item);
         }
     }
 
-    public ResourceType<?> determineDefaultType() {
-        List<ResourceType<?>> distinctTypes = Arrays.stream(types).filter(Objects::nonNull).distinct().toList();
-        if (distinctTypes.size() == 1) {
-            return distinctTypes.get(0);
+    private void load(int index, CompoundTag item) {
+        ResourceLocation typeId = new ResourceLocation(item.getString("t"));
+        ResourceType<Object> type = (ResourceType<Object>) resourceTypeRegistry.get(typeId);
+        if (type == null) {
+            return;
         }
-        return PlatformApi.INSTANCE.getResourceTypeRegistry().getDefault();
+        type.fromTag(item.getCompound("v")).ifPresent(value -> setSilently(index, type, value));
     }
 }
