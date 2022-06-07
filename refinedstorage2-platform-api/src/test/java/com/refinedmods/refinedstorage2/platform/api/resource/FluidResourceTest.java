@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.api.resource;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.platform.api.SetupMinecraft;
+import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;

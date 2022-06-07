@@ -13,10 +13,6 @@ sourceSets {
     main.resources.srcDirs += 'src/generated/resources'
 }
 
-processResources {
-    inputs.property 'version', project.version
-}
-
 dependencies {
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.4'
     implementation project(':refinedstorage2-platform-api')
@@ -29,6 +25,7 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
     testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
     testImplementation project(':refinedstorage2-test')
+    testImplementation project(':refinedstorage2-platform-test')
 }
 
 test {

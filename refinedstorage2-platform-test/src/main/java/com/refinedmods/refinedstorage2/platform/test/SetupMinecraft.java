@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.api;
+package com.refinedmods.refinedstorage2.platform.test;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
