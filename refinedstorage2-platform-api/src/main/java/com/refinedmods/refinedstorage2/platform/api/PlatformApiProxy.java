@@ -13,14 +13,14 @@ import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
 
-public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
-    private Rs2PlatformApiFacade facade;
+public class PlatformApiProxy implements PlatformApi {
+    private PlatformApi delegate;
 
-    public void setFacade(Rs2PlatformApiFacade facade) {
-        if (this.facade != null) {
+    public void setDelegate(PlatformApi delegate) {
+        if (this.delegate != null) {
             throw new IllegalStateException("Platform API already injected");
         }
-        this.facade = facade;
+        this.delegate = delegate;
     }
 
     @Override
@@ -63,10 +63,10 @@ public class Rs2PlatformApiFacadeProxy implements Rs2PlatformApiFacade {
         ensureLoaded().requestNetworkNodeRemoval(container, level);
     }
 
-    private Rs2PlatformApiFacade ensureLoaded() {
-        if (facade == null) {
+    private PlatformApi ensureLoaded() {
+        if (delegate == null) {
             throw new IllegalStateException("Platform API not loaded yet");
         }
-        return facade;
+        return delegate;
     }
 }

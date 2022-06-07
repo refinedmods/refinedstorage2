@@ -13,8 +13,8 @@ import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
 
-public interface Rs2PlatformApiFacade {
-    Rs2PlatformApiFacade INSTANCE = new Rs2PlatformApiFacadeProxy();
+public interface PlatformApi {
+    PlatformApi INSTANCE = new PlatformApiProxy();
 
     PlatformStorageRepository getStorageRepository(Level level);
 

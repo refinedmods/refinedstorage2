@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
@@ -132,7 +132,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     public void setLevel(Level level) {
         super.setLevel(level);
         if (!level.isClientSide()) {
-            getNode().initialize(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level));
+            getNode().initialize(PlatformApi.INSTANCE.getStorageRepository(level));
         }
     }
 
@@ -154,7 +154,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     public void setChanged() {
         super.setChanged();
         if (level != null && !level.isClientSide()) {
-            getNode().initialize(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level));
+            getNode().initialize(PlatformApi.INSTANCE.getStorageRepository(level));
         }
     }
 

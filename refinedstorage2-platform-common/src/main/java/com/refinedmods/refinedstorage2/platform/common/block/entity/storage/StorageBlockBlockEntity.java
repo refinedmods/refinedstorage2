@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity.storage;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
@@ -76,7 +76,7 @@ public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeCont
         if (level.isClientSide()) {
             return;
         }
-        PlatformStorageRepository storageRepository = Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level);
+        PlatformStorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
         if (storageId == null) {
             // We are a new block entity, or:
             // - We are placed through NBT (#setLevel(Level) -> #load(CompoundTag)),
@@ -136,7 +136,7 @@ public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeCont
         // We got placed through NBT (#setLevel(Level) -> #load(CompoundTag)), or,
         // we got placed with an existing storage ID (#setLevel(Level) -> modifyStorageAfterAlreadyInitialized(UUID)).
         // Clean up the storage created earlier in #setLevel(Level).
-        PlatformStorageRepository storageRepository = Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level);
+        PlatformStorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
         storageRepository.disassemble(storageId).ifPresentOrElse(
                 storage -> LOGGER.debug("Unneeded storage {} successfully removed", storageId),
                 () -> LOGGER.warn("Unneeded storage {} could not be removed", storageId)

@@ -1,8 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.api.item;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.LongFunction;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -15,12 +21,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.LongFunction;
 
 public final class StorageItemHelper {
     private static final String TAG_ID = "id";
@@ -45,7 +45,7 @@ public final class StorageItemHelper {
         if (level == null) {
             return Optional.empty();
         }
-        return getStorageId(stack).map(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::getInfo);
+        return getStorageId(stack).map(PlatformApi.INSTANCE.getStorageRepository(level)::getInfo);
     }
 
     public static void appendToTooltip(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context, LongFunction<String> quantityFormatter, LongFunction<String> stackInfoQuantityFormatter, Set<StorageTooltipHelper.TooltipOption> options) {
@@ -70,7 +70,7 @@ public final class StorageItemHelper {
         }
 
         return storageId
-                .flatMap(id -> Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level).disassemble(id))
+                .flatMap(id -> PlatformApi.INSTANCE.getStorageRepository(level).disassemble(id))
                 .map(disk -> returnByproducts(level, player, primaryDisassemblyByproduct, secondaryDisassemblyByproduct))
                 .orElseGet(() -> InteractionResultHolder.fail(stack));
     }

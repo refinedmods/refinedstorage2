@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.storage;
 
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 
 import java.util.List;
 import java.util.Set;
@@ -38,7 +38,7 @@ public final class StorageTooltipHelper {
     }
 
     private static void addAmountStoredWithoutCapacity(List<Component> tooltip, long stored, LongFunction<String> quantityFormatter) {
-        tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
+        tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "stored",
                 new TextComponent(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN)
@@ -46,7 +46,7 @@ public final class StorageTooltipHelper {
     }
 
     private static void addAmountStoredWithCapacity(List<Component> tooltip, long stored, long capacity, LongFunction<String> quantityFormatter) {
-        tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
+        tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "stored_with_capacity",
                 new TextComponent(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN),
@@ -56,7 +56,7 @@ public final class StorageTooltipHelper {
 
     private static void addAmountOfStacksWithoutCapacity(List<Component> tooltip, LongFunction<String> quantityFormatter, long stored) {
         long stacks = stored / 64L;
-        tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
+        tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "stacks",
                 new TextComponent(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN)
@@ -66,7 +66,7 @@ public final class StorageTooltipHelper {
     private static void addAmountOfStacksWithCapacity(List<Component> tooltip, LongFunction<String> quantityFormatter, long stored, long capacity) {
         long stacks = stored / 64L;
         long maxStacks = capacity / 64L;
-        tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
+        tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "stacks_with_capacity",
                 new TextComponent(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN),
@@ -76,7 +76,7 @@ public final class StorageTooltipHelper {
 
     private static void addProgress(List<Component> tooltip, double stored, double capacity) {
         double progress = stored / capacity;
-        tooltip.add(Rs2PlatformApiFacade.INSTANCE.createTranslation(
+        tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "full",
                 new TextComponent("" + (int) (progress * 100D)).withStyle(ChatFormatting.AQUA)

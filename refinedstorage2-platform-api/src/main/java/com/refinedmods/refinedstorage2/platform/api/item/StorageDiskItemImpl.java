@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.api.item;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
 
 import java.util.Optional;
@@ -45,7 +45,7 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
 
         if (!level.isClientSide() && !stack.hasTag() && entity instanceof Player) {
             UUID id = UUID.randomUUID();
-            Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level).set(id, createStorage(level));
+            PlatformApi.INSTANCE.getStorageRepository(level).set(id, createStorage(level));
             StorageItemHelper.setStorageId(stack, id);
         }
     }

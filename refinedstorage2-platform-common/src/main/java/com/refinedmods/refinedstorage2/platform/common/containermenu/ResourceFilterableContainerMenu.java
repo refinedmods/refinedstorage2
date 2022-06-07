@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
@@ -36,7 +36,7 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
 
     protected void initializeResourceFilterSlots(FriendlyByteBuf buf) {
         ResourceLocation type = buf.readResourceLocation();
-        this.currentResourceType = Rs2PlatformApiFacade.INSTANCE.getResourceTypeRegistry().get(type);
+        this.currentResourceType = PlatformApi.INSTANCE.getResourceTypeRegistry().get(type);
         for (ResourceFilterSlot resourceFilterSlot : resourceFilterSlots) {
             resourceFilterSlot.readFromUpdatePacket(buf);
         }
@@ -90,12 +90,12 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
     }
 
     public void setCurrentResourceType(ResourceLocation id) {
-        this.currentResourceType = Rs2PlatformApiFacade.INSTANCE.getResourceTypeRegistry().get(id);
+        this.currentResourceType = PlatformApi.INSTANCE.getResourceTypeRegistry().get(id);
     }
 
     @Override
     public void toggleResourceType() {
-        this.currentResourceType = Rs2PlatformApiFacade.INSTANCE.getResourceTypeRegistry().toggle(currentResourceType);
+        this.currentResourceType = PlatformApi.INSTANCE.getResourceTypeRegistry().toggle(currentResourceType);
         Platform.INSTANCE.getClientToServerCommunications().sendResourceTypeChange(this.currentResourceType);
     }
 
