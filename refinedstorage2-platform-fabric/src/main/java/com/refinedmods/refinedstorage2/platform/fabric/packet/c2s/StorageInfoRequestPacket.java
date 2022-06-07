@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import java.util.UUID;
@@ -19,7 +19,7 @@ public class StorageInfoRequestPacket implements ServerPlayNetworking.PlayChanne
         UUID id = buf.readUUID();
 
         server.execute(() -> {
-            StorageInfo info = Rs2PlatformApiFacade.INSTANCE
+            StorageInfo info = PlatformApi.INSTANCE
                     .getStorageRepository(player.getCommandSenderWorld())
                     .getInfo(id);
 

@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageDiskItemImpl;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
@@ -74,7 +74,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
                     new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                     com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType.INSTANCE,
                     trackingRepository,
-                    Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
+                    PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
             );
         }
         return new PlatformLimitedStorage<>(
@@ -84,7 +84,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
                 ),
                 com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType.INSTANCE,
                 trackingRepository,
-                Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
+                PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
         );
     }
 

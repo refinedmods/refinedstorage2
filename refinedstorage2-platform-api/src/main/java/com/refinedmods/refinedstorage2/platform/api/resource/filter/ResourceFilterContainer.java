@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.resource.filter;
 
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -88,7 +88,7 @@ public class ResourceFilterContainer {
             return;
         }
         ResourceLocation id = buf.readResourceLocation();
-        ResourceType<Object> type = (ResourceType<Object>) Rs2PlatformApiFacade.INSTANCE.getResourceTypeRegistry().get(id);
+        ResourceType<Object> type = (ResourceType<Object>) PlatformApi.INSTANCE.getResourceTypeRegistry().get(id);
         Object value = type.readFromPacket(buf);
         set(slot, type, value);
     }
@@ -119,7 +119,7 @@ public class ResourceFilterContainer {
             }
             CompoundTag item = tag.getCompound(key);
             ResourceLocation typeId = new ResourceLocation(item.getString("t"));
-            ResourceType<Object> type = (ResourceType<Object>) Rs2PlatformApiFacade.INSTANCE.getResourceTypeRegistry().get(typeId);
+            ResourceType<Object> type = (ResourceType<Object>) PlatformApi.INSTANCE.getResourceTypeRegistry().get(typeId);
             final int index = i;
             type.fromTag(item.getCompound("v")).ifPresent(value -> setSilently(index, type, value));
         }
@@ -130,6 +130,6 @@ public class ResourceFilterContainer {
         if (distinctTypes.size() == 1) {
             return distinctTypes.get(0);
         }
-        return Rs2PlatformApiFacade.INSTANCE.getResourceTypeRegistry().getDefault();
+        return PlatformApi.INSTANCE.getResourceTypeRegistry().getDefault();
     }
 }

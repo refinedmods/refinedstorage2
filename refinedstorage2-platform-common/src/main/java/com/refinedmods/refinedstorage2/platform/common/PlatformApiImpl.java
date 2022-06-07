@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceTypeRegistry;
@@ -26,7 +26,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
 
-public class Rs2PlatformApiFacadeImpl implements Rs2PlatformApiFacade {
+public class PlatformApiImpl implements PlatformApi {
     private final PlatformStorageRepository clientStorageRepository = new ClientStorageRepository();
     private final ResourceTypeRegistry resourceTypeRegistry = new ResourceTypeRegistry(ItemResourceType.INSTANCE);
     private final ComponentMapFactory<NetworkComponent, Network> networkComponentMapFactory = new ComponentMapFactory<>();
