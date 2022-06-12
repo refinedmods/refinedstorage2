@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.api.grid;
+package com.refinedmods.refinedstorage2.platform.apiimpl.grid;
 
 public enum GridSynchronizationType {
     OFF,

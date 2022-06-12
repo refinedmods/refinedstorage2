@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
-import com.refinedmods.refinedstorage2.platform.api.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.SideButtonWidget;
