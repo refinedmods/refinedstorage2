@@ -15,9 +15,9 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
 import java.util.EnumSet;
 import java.util.List;

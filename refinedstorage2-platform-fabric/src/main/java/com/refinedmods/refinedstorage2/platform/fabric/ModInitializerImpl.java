@@ -120,7 +120,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         AutoConfig.register(ConfigImpl.class, Toml4jConfigSerializer::new);
 
         initializePlatform(new PlatformImpl());
-        initializePlatformApiFacade();
+        initializePlatformApi();
         registerDiskTypes();
         registerStorageChannelTypes();
         registerNetworkComponents();
@@ -128,7 +128,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerPackets();
         registerSounds();
         registerSidedHandlers();
-        registerResourceTypes();
+        registerAdditionalResourceTypes();
         registerTickHandler();
         registerEvents();
 

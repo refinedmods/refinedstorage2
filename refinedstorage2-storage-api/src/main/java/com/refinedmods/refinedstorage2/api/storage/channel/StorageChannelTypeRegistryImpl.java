@@ -11,6 +11,9 @@ public class StorageChannelTypeRegistryImpl implements StorageChannelTypeRegistr
 
     @Override
     public void addType(StorageChannelType<?> type) {
+        if (types.contains(type)) {
+            throw new IllegalArgumentException(type + " already exists!");
+        }
         types.add(type);
     }
 

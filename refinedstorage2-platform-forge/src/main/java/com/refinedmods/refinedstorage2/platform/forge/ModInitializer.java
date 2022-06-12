@@ -122,11 +122,11 @@ public class ModInitializer extends AbstractModInitializer {
 
     public ModInitializer() {
         initializePlatform(new PlatformImpl(new NetworkManager()));
-        initializePlatformApiFacade();
+        initializePlatformApi();
         registerDiskTypes();
         registerStorageChannelTypes();
         registerNetworkComponents();
-        registerResourceTypes();
+        registerAdditionalResourceTypes();
         registerTickHandler();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {

@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceTypeRegistry;
@@ -32,6 +33,11 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public PlatformStorageRepository getStorageRepository(Level level) {
         return ensureLoaded().getStorageRepository(level);
+    }
+
+    @Override
+    public StorageChannelTypeRegistry getStorageChannelTypeRegistry() {
+        return ensureLoaded().getStorageChannelTypeRegistry();
     }
 
     @Override
