@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
@@ -18,7 +19,6 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.Sto
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.EmptyStorageDiskInfoAccessor;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.LevelUtil;

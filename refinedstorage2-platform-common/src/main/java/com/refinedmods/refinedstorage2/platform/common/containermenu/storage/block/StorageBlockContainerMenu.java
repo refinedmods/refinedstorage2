@@ -2,11 +2,11 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.bl
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.FilteredResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;

@@ -14,11 +14,12 @@ import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.ItemResourceType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceTypeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.StorageTypeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientStorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
@@ -30,7 +31,7 @@ import net.minecraft.world.level.Level;
 
 public class PlatformApiImpl implements PlatformApi {
     private final PlatformStorageRepository clientStorageRepository = new ClientStorageRepository();
-    private final ResourceTypeRegistry resourceTypeRegistry = new ResourceTypeRegistry(ItemResourceType.INSTANCE);
+    private final ResourceTypeRegistry resourceTypeRegistry = new ResourceTypeRegistryImpl(ItemResourceType.INSTANCE);
     private final ComponentMapFactory<NetworkComponent, Network> networkComponentMapFactory = new ComponentMapFactory<>();
     private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentMapFactory));
     private final StorageTypeRegistry storageTypeRegistry = new StorageTypeRegistryImpl();

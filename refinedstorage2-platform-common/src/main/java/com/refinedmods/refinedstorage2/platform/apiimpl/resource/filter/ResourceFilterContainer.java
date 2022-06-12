@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter;
+package com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter;
 
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceTypeRegistry;
