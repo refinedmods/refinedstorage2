@@ -1,15 +1,16 @@
-package com.refinedmods.refinedstorage2.platform.common.internal.storage;
+package com.refinedmods.refinedstorage2.platform.apiimpl.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
-import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
+import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.RateLimiter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +20,12 @@ public class ClientStorageRepository implements PlatformStorageRepository {
 
     private final Map<UUID, StorageInfo> info = new HashMap<>();
     private final RateLimiter rateLimiter = RateLimiter.create(2);
+    private final Consumer<UUID> storageInfoRequestAcceptor;
+
+    public ClientStorageRepository(Consumer<UUID> storageInfoRequestAcceptor) {
+        Preconditions.checkNotNull(storageInfoRequestAcceptor);
+        this.storageInfoRequestAcceptor = storageInfoRequestAcceptor;
+    }
 
     @Override
     public <T> Optional<Storage<T>> get(UUID id) {
@@ -50,7 +57,7 @@ public class ClientStorageRepository implements PlatformStorageRepository {
             return;
         }
         LOGGER.debug("Sending request info packet for {}", id);
-        Platform.INSTANCE.getClientToServerCommunications().sendStorageInfoRequest(id);
+        storageInfoRequestAcceptor.accept(id);
     }
 
     @Override

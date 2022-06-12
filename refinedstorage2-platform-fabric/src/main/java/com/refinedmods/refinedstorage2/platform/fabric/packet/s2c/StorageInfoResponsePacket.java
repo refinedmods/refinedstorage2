@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientStorageRepository;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.ClientStorageRepository;
 
 import java.util.UUID;
 

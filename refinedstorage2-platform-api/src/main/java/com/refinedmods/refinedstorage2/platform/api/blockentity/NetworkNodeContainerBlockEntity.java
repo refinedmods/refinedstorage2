@@ -48,6 +48,6 @@ public abstract class NetworkNodeContainerBlockEntity<T extends NetworkNode> ext
         return "NetworkNodeContainerBlockEntity{" +
                 "node=" + node +
                 ", worldPosition=" + worldPosition +
-                "} " + super.toString();
+                "}";
     }
 }
