@@ -3,9 +3,9 @@ package com.refinedmods.refinedstorage2.platform.common.internal.storage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTypeAccessor;
-import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
 
 import java.util.Map;
 import java.util.Optional;
@@ -67,7 +67,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
             ResourceLocation typeIdentifier = new ResourceLocation(((CompoundTag) storageTag).getString(TAG_STORAGE_TYPE));
             CompoundTag data = ((CompoundTag) storageTag).getCompound(TAG_STORAGE_DATA);
 
-            StorageTypeRegistry.INSTANCE.getType(typeIdentifier).ifPresentOrElse(type -> {
+            PlatformApi.INSTANCE.getStorageTypeRegistry().getType(typeIdentifier).ifPresentOrElse(type -> {
                 delegate.set(id, type.fromTag(data, this::markAsChanged));
             }, () -> {
                 LOGGER.warn("Cannot find storage type {}", typeIdentifier);
@@ -91,8 +91,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
 
     @SuppressWarnings("unchecked")
     private Tag convertStorageToTag(UUID id, Storage<?> storage, StorageTypeAccessor typeAccessor) {
-        ResourceLocation typeIdentifier = StorageTypeRegistry
-                .INSTANCE
+        ResourceLocation typeIdentifier = PlatformApi.INSTANCE.getStorageTypeRegistry()
                 .getIdentifier(typeAccessor.getType())
                 .orElseThrow(() -> new RuntimeException("Storage type is not registered"));
 
