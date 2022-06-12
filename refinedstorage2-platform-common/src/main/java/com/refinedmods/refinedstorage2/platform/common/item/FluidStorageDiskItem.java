@@ -14,10 +14,10 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -72,7 +72,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
         if (!variant.hasCapacity()) {
             return new PlatformStorage<>(
                     new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                    com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType.INSTANCE,
+                    FluidStorageType.INSTANCE,
                     trackingRepository,
                     PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
             );
@@ -82,7 +82,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
                         new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                         variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()
                 ),
-                com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType.INSTANCE,
+                FluidStorageType.INSTANCE,
                 trackingRepository,
                 PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
         );

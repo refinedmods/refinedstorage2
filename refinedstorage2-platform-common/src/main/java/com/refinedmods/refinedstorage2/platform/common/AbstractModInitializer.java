@@ -7,10 +7,10 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeReg
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 

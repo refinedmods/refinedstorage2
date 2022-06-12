@@ -9,12 +9,12 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageReposit
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

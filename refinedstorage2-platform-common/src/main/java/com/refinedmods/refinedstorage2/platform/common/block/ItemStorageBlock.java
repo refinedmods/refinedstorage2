@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;

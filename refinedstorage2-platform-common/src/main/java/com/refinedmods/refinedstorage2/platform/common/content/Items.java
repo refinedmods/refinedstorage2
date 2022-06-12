@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.StorageHousingItem;
 import com.refinedmods.refinedstorage2.platform.common.item.StoragePartItem;

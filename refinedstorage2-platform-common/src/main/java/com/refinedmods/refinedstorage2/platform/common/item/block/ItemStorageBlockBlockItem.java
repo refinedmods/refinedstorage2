@@ -4,10 +4,10 @@ import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.item.block.StorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
 import java.util.EnumSet;
 import java.util.List;
