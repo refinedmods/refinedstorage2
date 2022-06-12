@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
-import com.refinedmods.refinedstorage2.platform.api.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
+import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;

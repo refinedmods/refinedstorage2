@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage;
 
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.platform.api.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 public interface StorageSettingsProvider {
     int getPriority();
