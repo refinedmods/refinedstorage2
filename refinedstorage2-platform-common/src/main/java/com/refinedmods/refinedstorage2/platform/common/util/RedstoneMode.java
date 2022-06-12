@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.api.network.node;
+package com.refinedmods.refinedstorage2.platform.common.util;
 
 public enum RedstoneMode {
     IGNORE,

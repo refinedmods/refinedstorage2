@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
-import com.refinedmods.refinedstorage2.platform.api.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 public interface RedstoneModeAccessor {
     RedstoneMode getRedstoneMode();
