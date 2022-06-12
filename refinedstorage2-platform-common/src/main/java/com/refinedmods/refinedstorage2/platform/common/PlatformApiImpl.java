@@ -13,8 +13,10 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
+import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.StorageTypeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientStorageRepository;
@@ -31,6 +33,12 @@ public class PlatformApiImpl implements PlatformApi {
     private final ResourceTypeRegistry resourceTypeRegistry = new ResourceTypeRegistry(ItemResourceType.INSTANCE);
     private final ComponentMapFactory<NetworkComponent, Network> networkComponentMapFactory = new ComponentMapFactory<>();
     private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentMapFactory));
+    private final StorageTypeRegistry storageTypeRegistry = new StorageTypeRegistryImpl();
+
+    @Override
+    public StorageTypeRegistry getStorageTypeRegistry() {
+        return storageTypeRegistry;
+    }
 
     @Override
     public PlatformStorageRepository getStorageRepository(Level level) {

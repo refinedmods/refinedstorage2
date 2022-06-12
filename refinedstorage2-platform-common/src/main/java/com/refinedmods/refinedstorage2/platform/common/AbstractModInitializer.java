@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
-import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.FluidResourceType;
@@ -24,8 +23,8 @@ public abstract class AbstractModInitializer {
     }
 
     protected void registerDiskTypes() {
-        StorageTypeRegistry.INSTANCE.addType(createIdentifier("item_disk"), ItemStorageType.INSTANCE);
-        StorageTypeRegistry.INSTANCE.addType(createIdentifier("fluid_disk"), FluidStorageType.INSTANCE);
+        PlatformApi.INSTANCE.getStorageTypeRegistry().addType(createIdentifier("item_disk"), ItemStorageType.INSTANCE);
+        PlatformApi.INSTANCE.getStorageTypeRegistry().addType(createIdentifier("fluid_disk"), FluidStorageType.INSTANCE);
     }
 
     protected void registerStorageChannelTypes() {
