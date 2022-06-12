@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.internal.storage.type;
+package com.refinedmods.refinedstorage2.platform.apiimpl.storage.type;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;

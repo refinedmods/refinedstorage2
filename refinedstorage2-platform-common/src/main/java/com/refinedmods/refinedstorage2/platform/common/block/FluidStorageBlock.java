@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;

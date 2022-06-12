@@ -15,9 +15,9 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -73,7 +73,7 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
         if (!variant.hasCapacity()) {
             return new PlatformStorage<>(
                     new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                    com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType.INSTANCE,
+                    ItemStorageType.INSTANCE,
                     trackingRepository,
                     PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
             );
@@ -83,7 +83,7 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
                         new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                         variant.getCapacity()
                 ),
-                com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType.INSTANCE,
+                ItemStorageType.INSTANCE,
                 trackingRepository,
                 PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
         );
