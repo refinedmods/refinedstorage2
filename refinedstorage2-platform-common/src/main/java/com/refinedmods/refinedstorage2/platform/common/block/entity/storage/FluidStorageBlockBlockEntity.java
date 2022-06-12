@@ -7,8 +7,8 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorag
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStorage;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.LimitedPlatformStorage;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
@@ -63,7 +63,7 @@ public class FluidStorageBlockBlockEntity extends StorageBlockBlockEntity<FluidR
                     listener
             );
         }
-        return new PlatformLimitedStorage<>(
+        return new LimitedPlatformStorage<>(
                 new LimitedStorageImpl<>(
                         new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                         variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()

@@ -11,9 +11,9 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageDiskItemImpl;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStorage;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.LimitedPlatformStorage;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -77,7 +77,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
                     PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
             );
         }
-        return new PlatformLimitedStorage<>(
+        return new LimitedPlatformStorage<>(
                 new LimitedStorageImpl<>(
                         new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                         variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()

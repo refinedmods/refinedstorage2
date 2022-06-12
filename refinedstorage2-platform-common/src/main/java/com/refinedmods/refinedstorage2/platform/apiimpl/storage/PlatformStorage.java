@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.api.storage;
+package com.refinedmods.refinedstorage2.platform.apiimpl.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
@@ -8,6 +8,8 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageTypeAccessor;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 
 import java.util.Optional;
@@ -25,7 +27,7 @@ public class PlatformStorage<T> extends ProxyStorage<T> implements StorageTypeAc
     }
 
     public void load(T resource, long amount, String changedBy, long changedAt) {
-        insert(resource, amount, Action.EXECUTE, EmptySource.INSTANCE);
+        super.insert(resource, amount, Action.EXECUTE, EmptySource.INSTANCE);
         if (changedBy != null && !changedBy.isBlank()) {
             trackingRepository.update(resource, new PlayerSource(changedBy), changedAt);
         }
