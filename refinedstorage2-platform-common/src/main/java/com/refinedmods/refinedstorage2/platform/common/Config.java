@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridSize;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizationType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSynchronizationType;
 
 public interface Config {
     Grid getGrid();

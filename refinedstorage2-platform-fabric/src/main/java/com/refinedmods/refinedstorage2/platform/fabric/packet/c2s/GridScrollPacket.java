@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridScrollModeUtil;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridScrollModeUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.internal.network;
+package com.refinedmods.refinedstorage2.platform.apiimpl.network;
 
 import com.refinedmods.refinedstorage2.api.network.ConnectionProvider;
 import com.refinedmods.refinedstorage2.api.network.Connections;

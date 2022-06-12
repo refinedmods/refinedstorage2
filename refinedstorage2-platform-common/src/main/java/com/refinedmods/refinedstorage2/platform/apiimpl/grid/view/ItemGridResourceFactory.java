@@ -1,5 +1,5 @@
 
-package com.refinedmods.refinedstorage2.platform.common.internal.grid.view;
+package com.refinedmods.refinedstorage2.platform.apiimpl.grid.view;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
