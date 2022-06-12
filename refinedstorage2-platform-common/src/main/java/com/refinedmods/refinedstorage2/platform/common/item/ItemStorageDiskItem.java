@@ -12,9 +12,9 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageDiskItemImpl;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStorage;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.LimitedPlatformStorage;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -78,7 +78,7 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
                     PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
             );
         }
-        return new PlatformLimitedStorage<>(
+        return new LimitedPlatformStorage<>(
                 new LimitedStorageImpl<>(
                         new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                         variant.getCapacity()

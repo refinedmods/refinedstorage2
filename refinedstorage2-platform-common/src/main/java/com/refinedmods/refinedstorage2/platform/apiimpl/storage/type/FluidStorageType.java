@@ -10,10 +10,10 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformLimitedStorage;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.LimitedPlatformStorage;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -50,7 +50,7 @@ public class FluidStorageType implements StorageType<FluidResource> {
     private PlatformStorage<FluidResource> createStorage(CompoundTag tag, Runnable listener) {
         TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (tag.contains(TAG_CAPACITY)) {
-            return new PlatformLimitedStorage<>(
+            return new LimitedPlatformStorage<>(
                     new LimitedStorageImpl<>(
                             new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
                             tag.getLong(TAG_CAPACITY)
