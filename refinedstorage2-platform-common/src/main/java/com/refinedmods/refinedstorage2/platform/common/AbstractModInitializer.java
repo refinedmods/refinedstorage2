@@ -3,13 +3,12 @@ package com.refinedmods.refinedstorage2.platform.common;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.FluidResourceType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
@@ -18,7 +17,7 @@ public abstract class AbstractModInitializer {
         ((PlatformProxy) Platform.INSTANCE).setPlatform(platform);
     }
 
-    protected void initializePlatformApiFacade() {
+    protected void initializePlatformApi() {
         ((PlatformApiProxy) PlatformApi.INSTANCE).setDelegate(new PlatformApiImpl());
     }
 
@@ -28,17 +27,17 @@ public abstract class AbstractModInitializer {
     }
 
     protected void registerStorageChannelTypes() {
-        StorageChannelTypeRegistry.INSTANCE.addType(StorageChannelTypes.ITEM);
-        StorageChannelTypeRegistry.INSTANCE.addType(StorageChannelTypes.FLUID);
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().addType(StorageChannelTypes.ITEM);
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().addType(StorageChannelTypes.FLUID);
     }
 
     protected void registerNetworkComponents() {
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(GraphNetworkComponent.class, GraphNetworkComponent::new);
-        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(StorageNetworkComponent.class, network -> new StorageNetworkComponent(StorageChannelTypeRegistry.INSTANCE));
+        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(StorageNetworkComponent.class, network -> new StorageNetworkComponent(PlatformApi.INSTANCE.getStorageChannelTypeRegistry()));
     }
 
-    protected void registerResourceTypes() {
+    protected void registerAdditionalResourceTypes() {
         PlatformApi.INSTANCE.getResourceTypeRegistry().register(FluidResourceType.INSTANCE);
     }
 }

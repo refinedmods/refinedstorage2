@@ -7,6 +7,8 @@ import com.refinedmods.refinedstorage2.api.network.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -35,6 +37,7 @@ public class PlatformApiImpl implements PlatformApi {
     private final ComponentMapFactory<NetworkComponent, Network> networkComponentMapFactory = new ComponentMapFactory<>();
     private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentMapFactory));
     private final StorageTypeRegistry storageTypeRegistry = new StorageTypeRegistryImpl();
+    private final StorageChannelTypeRegistry storageChannelTypeRegistry = new StorageChannelTypeRegistryImpl();
 
     @Override
     public StorageTypeRegistry getStorageTypeRegistry() {
@@ -51,6 +54,11 @@ public class PlatformApiImpl implements PlatformApi {
                 .getLevel(Level.OVERWORLD)
                 .getDataStorage()
                 .computeIfAbsent(this::createStorageRepository, this::createStorageRepository, PlatformStorageRepositoryImpl.NAME);
+    }
+
+    @Override
+    public StorageChannelTypeRegistry getStorageChannelTypeRegistry() {
+        return storageChannelTypeRegistry;
     }
 
     @Override

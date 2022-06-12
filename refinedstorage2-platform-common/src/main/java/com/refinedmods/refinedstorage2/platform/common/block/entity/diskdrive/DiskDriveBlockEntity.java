@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetwo
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
@@ -76,7 +75,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new DiskDriveNetworkNode(
                 Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
                 Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
-                StorageChannelTypeRegistry.INSTANCE
+                PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
         ));
         getNode().setDiskProvider(diskInventory);
         getNode().setListener(this);
