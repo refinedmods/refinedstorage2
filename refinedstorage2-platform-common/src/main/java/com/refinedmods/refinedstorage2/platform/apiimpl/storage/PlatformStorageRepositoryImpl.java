@@ -1,11 +1,11 @@
-package com.refinedmods.refinedstorage2.platform.common.internal.storage;
+package com.refinedmods.refinedstorage2.platform.apiimpl.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
-import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
-import com.refinedmods.refinedstorage2.platform.api.storage.StorageTypeAccessor;
+import com.refinedmods.refinedstorage2.platform.api.storage.SerializableStorage;
+import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
 
 import java.util.Map;
 import java.util.Optional;
@@ -30,9 +30,11 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     private static final String TAG_STORAGE_DATA = "data";
 
     private final StorageRepositoryImpl delegate;
+    private final StorageTypeRegistry storageTypeRegistry;
 
-    public PlatformStorageRepositoryImpl(StorageRepositoryImpl delegate) {
+    public PlatformStorageRepositoryImpl(StorageRepositoryImpl delegate, StorageTypeRegistry storageTypeRegistry) {
         this.delegate = delegate;
+        this.storageTypeRegistry = storageTypeRegistry;
     }
 
     @Override
@@ -67,10 +69,10 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
             ResourceLocation typeIdentifier = new ResourceLocation(((CompoundTag) storageTag).getString(TAG_STORAGE_TYPE));
             CompoundTag data = ((CompoundTag) storageTag).getCompound(TAG_STORAGE_DATA);
 
-            PlatformApi.INSTANCE.getStorageTypeRegistry().getType(typeIdentifier).ifPresentOrElse(type -> {
+            storageTypeRegistry.getType(typeIdentifier).ifPresentOrElse(type -> {
                 delegate.set(id, type.fromTag(data, this::markAsChanged));
             }, () -> {
-                LOGGER.warn("Cannot find storage type {}", typeIdentifier);
+                LOGGER.warn("Cannot find storage type {} for storage {}", typeIdentifier, id);
             });
         }
     }
@@ -79,10 +81,10 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     public CompoundTag save(CompoundTag tag) {
         ListTag storageList = new ListTag();
         for (Map.Entry<UUID, Storage<?>> entry : delegate.getAll()) {
-            if (entry.getValue() instanceof StorageTypeAccessor storageTypeAccessor) {
-                storageList.add(convertStorageToTag(entry.getKey(), entry.getValue(), storageTypeAccessor));
+            if (entry.getValue() instanceof SerializableStorage serializableStorage) {
+                storageList.add(convertStorageToTag(entry.getKey(), entry.getValue(), serializableStorage));
             } else {
-                LOGGER.warn("Tried to persist non-platform storage {}", entry.getKey());
+                LOGGER.warn("Tried to persist non-serializable storage {}", entry.getKey());
             }
         }
         tag.put(TAG_STORAGES, storageList);
@@ -90,14 +92,14 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     }
 
     @SuppressWarnings("unchecked")
-    private Tag convertStorageToTag(UUID id, Storage<?> storage, StorageTypeAccessor typeAccessor) {
-        ResourceLocation typeIdentifier = PlatformApi.INSTANCE.getStorageTypeRegistry()
-                .getIdentifier(typeAccessor.getType())
+    private Tag convertStorageToTag(UUID id, Storage<?> storage, SerializableStorage serializerStorage) {
+        ResourceLocation typeIdentifier = storageTypeRegistry
+                .getIdentifier(serializerStorage.getType())
                 .orElseThrow(() -> new RuntimeException("Storage type is not registered"));
 
         CompoundTag tag = new CompoundTag();
         tag.putUUID(TAG_STORAGE_ID, id);
-        tag.put(TAG_STORAGE_DATA, typeAccessor.getType().toTag(storage));
+        tag.put(TAG_STORAGE_DATA, serializerStorage.getType().toTag(storage));
         tag.putString(TAG_STORAGE_TYPE, typeIdentifier.toString());
         return tag;
     }

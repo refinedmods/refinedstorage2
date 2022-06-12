@@ -9,12 +9,12 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
-import com.refinedmods.refinedstorage2.platform.api.storage.StorageTypeAccessor;
+import com.refinedmods.refinedstorage2.platform.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 
 import java.util.Optional;
 
-public class PlatformStorage<T> extends ProxyStorage<T> implements StorageTypeAccessor<T>, TrackedStorage<T> {
+public class PlatformStorage<T> extends ProxyStorage<T> implements SerializableStorage<T>, TrackedStorage<T> {
     private final StorageType<T> type;
     private final TrackedStorageRepository<T> trackingRepository;
     private final Runnable listener;

@@ -19,11 +19,11 @@ import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegi
 import com.refinedmods.refinedstorage2.platform.apiimpl.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceTypeRegistryImpl;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.ClientStorageRepository;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.StorageTypeRegistryImpl;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientStorageRepository;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
@@ -32,7 +32,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
 
 public class PlatformApiImpl implements PlatformApi {
-    private final PlatformStorageRepository clientStorageRepository = new ClientStorageRepository();
+    private final PlatformStorageRepository clientStorageRepository = new ClientStorageRepository(Platform.INSTANCE.getClientToServerCommunications()::sendStorageInfoRequest);
     private final ResourceTypeRegistry resourceTypeRegistry = new ResourceTypeRegistryImpl(ItemResourceType.INSTANCE);
     private final ComponentMapFactory<NetworkComponent, Network> networkComponentMapFactory = new ComponentMapFactory<>();
     private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentMapFactory));
@@ -108,6 +108,6 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     private PlatformStorageRepositoryImpl createStorageRepository() {
-        return new PlatformStorageRepositoryImpl(new StorageRepositoryImpl());
+        return new PlatformStorageRepositoryImpl(new StorageRepositoryImpl(), storageTypeRegistry);
     }
 }
