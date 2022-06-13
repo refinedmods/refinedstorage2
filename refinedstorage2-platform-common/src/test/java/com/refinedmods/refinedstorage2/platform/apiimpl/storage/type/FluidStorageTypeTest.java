@@ -69,6 +69,32 @@ class FluidStorageTypeTest {
     }
 
     @Test
+    void Test_passing_listener_to_deserialized_storage() {
+        // Arrange
+        InMemoryTrackedStorageRepository<FluidResource> tracker = new InMemoryTrackedStorageRepository<>();
+        Storage<FluidResource> storage = new PlatformStorage<>(
+                new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), tracker, () -> 123L),
+                FluidStorageType.INSTANCE,
+                tracker,
+                () -> {
+                }
+        );
+        storage.insert(new FluidResource(Fluids.WATER, null), 15, Action.EXECUTE, EmptySource.INSTANCE);
+
+        CompoundTag serialized = sut.toTag(storage);
+        Storage<FluidResource> deserialized = sut.fromTag(serialized, listener);
+
+        // Act
+        boolean preInsert = listener.isChanged();
+        deserialized.insert(new FluidResource(Fluids.WATER, null), 15, Action.EXECUTE, EmptySource.INSTANCE);
+        boolean postInsert = listener.isChanged();
+
+        // Assert
+        assertThat(preInsert).isFalse();
+        assertThat(postInsert).isTrue();
+    }
+
+    @Test
     void Test_serialization_of_limited_storage() {
         // Arrange
         InMemoryTrackedStorageRepository<FluidResource> tracker = new InMemoryTrackedStorageRepository<>();
