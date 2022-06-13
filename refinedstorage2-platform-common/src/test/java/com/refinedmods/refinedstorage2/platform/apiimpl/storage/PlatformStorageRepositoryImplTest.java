@@ -27,16 +27,19 @@ import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.refinedmods.refinedstorage2.platform.test.TagHelper.createDummyTag;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Rs2Test
 @SetupMinecraft
 class PlatformStorageRepositoryImplTest {
+    StorageRepositoryImpl delegate;
     PlatformStorageRepositoryImpl sut;
 
     @BeforeEach
     void setUp() {
-        StorageRepositoryImpl delegate = new StorageRepositoryImpl();
+        delegate = new StorageRepositoryImpl();
         sut = new PlatformStorageRepositoryImpl(delegate, PlatformTestFixtures.STORAGE_TYPE_REGISTRY);
     }
 
@@ -50,8 +53,9 @@ class PlatformStorageRepositoryImplTest {
     void Test_setting_storage() {
         // Arrange
         UUID id = UUID.randomUUID();
-        Storage<String> storage = new InMemoryStorageImpl<>();
-        storage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        Storage<ItemResource> storage = new PlatformStorage<>(new InMemoryStorageImpl<>(), ItemStorageType.INSTANCE, new InMemoryTrackedStorageRepository<>(), () -> {
+        });
+        storage.insert(new ItemResource(Items.DIRT, null), 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
         sut.set(id, storage);
@@ -66,12 +70,13 @@ class PlatformStorageRepositoryImplTest {
     void Test_disassembling() {
         // Arrange
         UUID id = UUID.randomUUID();
-        Storage<String> storage = new InMemoryStorageImpl<>();
+        Storage<ItemResource> storage = new PlatformStorage<>(new InMemoryStorageImpl<>(), ItemStorageType.INSTANCE, new InMemoryTrackedStorageRepository<>(), () -> {
+        });
         sut.set(id, storage);
         sut.setDirty(false);
 
         // Act
-        Optional<Storage<String>> result = sut.disassemble(id);
+        Optional<Storage<ItemResource>> result = sut.disassemble(id);
 
         // Assert
         assertThat(result).isNotEmpty();
@@ -82,8 +87,9 @@ class PlatformStorageRepositoryImplTest {
     void Test_disassembling_when_not_possible() {
         // Arrange
         UUID id = UUID.randomUUID();
-        Storage<String> storage = new InMemoryStorageImpl<>();
-        storage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        Storage<ItemResource> storage = new PlatformStorage<>(new InMemoryStorageImpl<>(), ItemStorageType.INSTANCE, new InMemoryTrackedStorageRepository<>(), () -> {
+        });
+        storage.insert(new ItemResource(Items.DIRT, null), 10, Action.EXECUTE, EmptySource.INSTANCE);
         sut.set(id, storage);
         sut.setDirty(false);
 
@@ -105,6 +111,16 @@ class PlatformStorageRepositoryImplTest {
     }
 
     @Test
+    void Test_serializing_non_serializable_storage() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        InMemoryStorageImpl<String> storage = new InMemoryStorageImpl<>();
+
+        // Act & assert
+        assertThrows(IllegalArgumentException.class, () -> sut.set(id, storage));
+    }
+
+    @Test
     void Test_serializing_and_deserializing() {
         // Arrange
         InMemoryTrackedStorageRepository<ItemResource> repository = new InMemoryTrackedStorageRepository<>();
@@ -118,12 +134,9 @@ class PlatformStorageRepositoryImplTest {
 
         sut.set(aId, a);
         sut.set(bId, b);
-        sut.set(cId, c);
+        delegate.set(cId, c); // Set through delegate to bypass serializable checks
 
-        CompoundTag tag = new CompoundTag();
-        tag.putString("dummy", "tag");
-        a.insert(new ItemResource(Items.DIRT, tag), 10, Action.EXECUTE, new PlayerSource("A"));
-
+        a.insert(new ItemResource(Items.DIRT, createDummyTag()), 10, Action.EXECUTE, new PlayerSource("A"));
         b.insert(new ItemResource(Items.GLASS, null), 20, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
@@ -132,13 +145,14 @@ class PlatformStorageRepositoryImplTest {
         sut.read(serialized);
 
         // Assert
+        assertThat(sut.isDirty()).isFalse();
         assertThat(sut.get(aId)).isPresent();
         assertThat(sut.get(bId)).isPresent();
         assertThat(sut.get(aId).get()).isInstanceOf(PlatformStorage.class);
         assertThat(sut.get(aId).get().getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>(new ItemResource(Items.DIRT, tag), 10)
+                new ResourceAmount<>(new ItemResource(Items.DIRT, createDummyTag()), 10)
         );
-        assertThat(((TrackedStorage) sut.get(aId).get()).findTrackedResourceBySourceType(new ItemResource(Items.DIRT, tag), PlayerSource.class))
+        assertThat(((TrackedStorage) sut.get(aId).get()).findTrackedResourceBySourceType(new ItemResource(Items.DIRT, createDummyTag()), PlayerSource.class))
                 .get()
                 .usingRecursiveComparison()
                 .isEqualTo(new TrackedResource("A", 123L));
