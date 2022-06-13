@@ -7,6 +7,10 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepos
 import com.refinedmods.refinedstorage2.platform.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -14,10 +18,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 public class PlatformStorageRepositoryImpl extends SavedData implements PlatformStorageRepository {
     public static final String NAME = "refinedstorage2_storages";
@@ -99,14 +99,14 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     }
 
     @SuppressWarnings("unchecked")
-    private Tag convertStorageToTag(UUID id, Storage<?> storage, SerializableStorage serializerStorage) {
+    private Tag convertStorageToTag(UUID id, Storage<?> storage, SerializableStorage serializableStorage) {
         ResourceLocation typeIdentifier = storageTypeRegistry
-                .getIdentifier(serializerStorage.getType())
+                .getIdentifier(serializableStorage.getType())
                 .orElseThrow(() -> new RuntimeException("Storage type is not registered"));
 
         CompoundTag tag = new CompoundTag();
         tag.putUUID(TAG_STORAGE_ID, id);
-        tag.put(TAG_STORAGE_DATA, serializerStorage.getType().toTag(storage));
+        tag.put(TAG_STORAGE_DATA, serializableStorage.getType().toTag(storage));
         tag.putString(TAG_STORAGE_TYPE, typeIdentifier.toString());
         return tag;
     }
