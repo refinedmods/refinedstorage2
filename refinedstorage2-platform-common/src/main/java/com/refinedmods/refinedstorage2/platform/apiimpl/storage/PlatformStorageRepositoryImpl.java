@@ -7,10 +7,6 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepos
 import com.refinedmods.refinedstorage2.platform.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -18,6 +14,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 public class PlatformStorageRepositoryImpl extends SavedData implements PlatformStorageRepository {
     public static final String NAME = "refinedstorage2_storages";
@@ -44,8 +44,15 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
 
     @Override
     public <T> void set(UUID id, Storage<T> storage) {
-        delegate.set(id, storage);
+        setSilently(id, storage);
         setDirty();
+    }
+
+    private <T> void setSilently(UUID id, Storage<T> storage) {
+        if (!(storage instanceof SerializableStorage<?>)) {
+            throw new IllegalArgumentException("Storage is not serializable");
+        }
+        delegate.set(id, storage);
     }
 
     @Override
@@ -70,7 +77,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
             CompoundTag data = ((CompoundTag) storageTag).getCompound(TAG_STORAGE_DATA);
 
             storageTypeRegistry.getType(typeIdentifier).ifPresentOrElse(type -> {
-                delegate.set(id, type.fromTag(data, this::markAsChanged));
+                setSilently(id, type.fromTag(data, this::markAsChanged));
             }, () -> {
                 LOGGER.warn("Cannot find storage type {} for storage {}", typeIdentifier, id);
             });
