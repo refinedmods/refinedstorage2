@@ -56,9 +56,12 @@ class ResourceTypeRegistryImplTest {
         // Arrange
         sut.register(FluidResourceType.INSTANCE);
 
+        DummyResourceType duplicate1 = new DummyResourceType(ItemResourceType.INSTANCE.getId());
+        DummyResourceType duplicate2 = new DummyResourceType(FluidResourceType.INSTANCE.getId());
+
         // Act & assert
-        assertThrows(IllegalArgumentException.class, () -> sut.register(new DummyResourceType(ItemResourceType.INSTANCE.getId())));
-        assertThrows(IllegalArgumentException.class, () -> sut.register(new DummyResourceType(FluidResourceType.INSTANCE.getId())));
+        assertThrows(IllegalArgumentException.class, () -> sut.register(duplicate1));
+        assertThrows(IllegalArgumentException.class, () -> sut.register(duplicate2));
     }
 
     @Test
