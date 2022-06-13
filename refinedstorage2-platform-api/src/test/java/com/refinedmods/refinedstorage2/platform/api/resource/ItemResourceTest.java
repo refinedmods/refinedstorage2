@@ -4,8 +4,6 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
-import java.util.Optional;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -15,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Optional;
+
+import static com.refinedmods.refinedstorage2.platform.test.TagHelper.createDummyTag;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -110,11 +111,5 @@ class ItemResourceTest {
         EqualsVerifier.forClass(ItemResource.class)
                 .withPrefabValues(Item.class, Items.DIRT, Items.GLASS)
                 .verify();
-    }
-
-    private CompoundTag createDummyTag() {
-        CompoundTag itemTag = new CompoundTag();
-        itemTag.putString("dummy", "test");
-        return itemTag;
     }
 }

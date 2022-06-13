@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
+import com.refinedmods.refinedstorage2.test.SimpleListener;
 
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,13 +28,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SetupMinecraft
 class PlatformStorageTest {
     PlatformStorage<ItemResource> sut;
-    Listener listener;
+    SimpleListener listener;
 
     @BeforeEach
     void setUp() {
         TrackedStorageRepository<ItemResource> trackedStorageRepository = new InMemoryTrackedStorageRepository<>();
         TrackedStorageImpl<ItemResource> delegate = new TrackedStorageImpl<>(new LimitedStorageImpl<>(new InMemoryStorageImpl<>(), 100), trackedStorageRepository, () -> 0L);
-        listener = new Listener();
+        listener = new SimpleListener();
         sut = new PlatformStorage<>(delegate, ItemStorageType.INSTANCE, trackedStorageRepository, listener);
     }
 
@@ -63,7 +64,7 @@ class PlatformStorageTest {
                 .isEqualTo(new TrackedResource("A", 100));
         assertThat(sut.findTrackedResourceBySourceType(new ItemResource(Items.GLASS, null), PlayerSource.class)).isEmpty();
         assertThat(sut.findTrackedResourceBySourceType(new ItemResource(Items.STONE, null), PlayerSource.class)).isEmpty();
-        assertThat(listener.changes).isZero();
+        assertThat(listener.getChanges()).isZero();
     }
 
     @ParameterizedTest
@@ -76,7 +77,7 @@ class PlatformStorageTest {
 
         // Assert
         if (action == Action.EXECUTE) {
-            assertThat(listener.changes).isEqualTo(2);
+            assertThat(listener.getChanges()).isEqualTo(2);
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new ResourceAmount<>(new ItemResource(Items.DIRT, null), 100)
             );
@@ -85,18 +86,9 @@ class PlatformStorageTest {
                     .usingRecursiveComparison()
                     .isEqualTo(new TrackedResource("A", 0));
         } else {
-            assertThat(listener.changes).isZero();
+            assertThat(listener.getChanges()).isZero();
             assertThat(sut.getAll()).isEmpty();
             assertThat(sut.findTrackedResourceBySourceType(new ItemResource(Items.DIRT, null), PlayerSource.class)).isEmpty();
-        }
-    }
-
-    private static class Listener implements Runnable {
-        private int changes;
-
-        @Override
-        public void run() {
-            changes++;
         }
     }
 }

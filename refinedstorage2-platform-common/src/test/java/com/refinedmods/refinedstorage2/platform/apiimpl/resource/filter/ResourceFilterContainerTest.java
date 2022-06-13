@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.apiimpl.resource.FluidResourceTy
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
+import com.refinedmods.refinedstorage2.test.SimpleListener;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.nbt.CompoundTag;
@@ -22,19 +23,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Rs2Test
 @SetupMinecraft
 class ResourceFilterContainerTest {
-    Listener listener;
+    SimpleListener listener;
     ResourceFilterContainer sut;
 
     @BeforeEach
     void setUp() {
-        listener = new Listener();
+        listener = new SimpleListener();
         sut = new ResourceFilterContainer(PlatformTestFixtures.RESOURCE_TYPE_REGISTRY, 3, listener);
     }
 
     @Test
     void Test_initial_state() {
         // Assert
-        assertThat(listener.changed).isFalse();
+        assertThat(listener.isChanged()).isFalse();
         assertThat(sut.getType(0)).isNull();
         assertThat(sut.getType(1)).isNull();
         assertThat(sut.getType(2)).isNull();
@@ -55,7 +56,7 @@ class ResourceFilterContainerTest {
         sut.set(1, ItemResourceType.INSTANCE, value);
 
         // Assert
-        assertThat(listener.changed).isTrue();
+        assertThat(listener.isChanged()).isTrue();
         assertThat(sut.getType(0)).isNull();
         assertThat(sut.getType(1)).isEqualTo(ItemResourceType.INSTANCE);
         assertThat(sut.getType(2)).isNull();
@@ -77,7 +78,7 @@ class ResourceFilterContainerTest {
         sut.remove(1);
 
         // Assert
-        assertThat(listener.changed).isTrue();
+        assertThat(listener.isChanged()).isTrue();
         assertThat(sut.getType(0)).isNull();
         assertThat(sut.getType(1)).isNull();
         assertThat(sut.getType(2)).isNull();
@@ -104,7 +105,7 @@ class ResourceFilterContainerTest {
         deserialized.load(serialized);
 
         // Assert
-        assertThat(listener.changed).isFalse();
+        assertThat(listener.isChanged()).isFalse();
         assertThat(deserialized.getType(0)).isEqualTo(ItemResourceType.INSTANCE);
         assertThat(deserialized.getType(1)).isNull();
         assertThat(deserialized.getType(2)).isEqualTo(FluidResourceType.INSTANCE);
@@ -132,7 +133,7 @@ class ResourceFilterContainerTest {
         deserialized.load(serialized);
 
         // Assert
-        assertThat(listener.changed).isFalse();
+        assertThat(listener.isChanged()).isFalse();
         assertThat(deserialized.getType(0)).isNull();
         assertThat(deserialized.getType(1)).isNull();
         assertThat(deserialized.getType(2)).isEqualTo(FluidResourceType.INSTANCE);
@@ -203,7 +204,7 @@ class ResourceFilterContainerTest {
         deserialized.readFromUpdatePacket(2, buf);
 
         // Assert
-        assertThat(listener.changed).isFalse();
+        assertThat(listener.isChanged()).isFalse();
         assertThat(deserialized.getType(0)).isEqualTo(ItemResourceType.INSTANCE);
         assertThat(deserialized.getType(1)).isNull();
         assertThat(deserialized.getType(2)).isEqualTo(FluidResourceType.INSTANCE);
@@ -240,7 +241,7 @@ class ResourceFilterContainerTest {
         deserialized.readFromUpdatePacket(2, buf);
 
         // Assert
-        assertThat(listener.changed).isFalse();
+        assertThat(listener.isChanged()).isFalse();
         assertThat(deserialized.getType(0)).isEqualTo(ItemResourceType.INSTANCE);
         assertThat(deserialized.getType(1)).isNull();
         assertThat(deserialized.getType(2)).isNull();
@@ -250,18 +251,5 @@ class ResourceFilterContainerTest {
         assertThat(deserialized.size()).isEqualTo(3);
         assertThat(deserialized.getTemplates()).containsExactlyInAnyOrder(itemValue);
         assertThat(deserialized.determineDefaultType()).isEqualTo(ItemResourceType.INSTANCE);
-    }
-
-    private static class Listener implements Runnable {
-        private boolean changed;
-
-        @Override
-        public void run() {
-            this.changed = true;
-        }
-
-        public void reset() {
-            this.changed = false;
-        }
     }
 }
