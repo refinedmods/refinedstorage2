@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronB
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public final class Blocks {
     public static final Blocks INSTANCE = new Blocks();
@@ -22,30 +23,30 @@ public final class Blocks {
     private final BlockColorMap<FluidGridBlock> fluidGrid = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
-    private CableBlock cable;
-    private QuartzEnrichedIronBlock quartzEnrichedIron;
-    private DiskDriveBlock diskDrive;
-    private MachineCasingBlock machineCasing;
-    private final Map<ItemStorageType.Variant, ItemStorageBlock> itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
-    private final Map<FluidStorageType.Variant, FluidStorageBlock> fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
+    private Supplier<CableBlock> cable;
+    private Supplier<QuartzEnrichedIronBlock> quartzEnrichedIronBlock;
+    private Supplier<DiskDriveBlock> diskDrive;
+    private Supplier<MachineCasingBlock> machineCasing;
+    private final Map<ItemStorageType.Variant, Supplier<ItemStorageBlock>> itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
+    private final Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
 
     private Blocks() {
     }
 
     public CableBlock getCable() {
-        return cable;
+        return cable.get();
     }
 
-    public QuartzEnrichedIronBlock getQuartzEnrichedIron() {
-        return quartzEnrichedIron;
+    public QuartzEnrichedIronBlock getQuartzEnrichedIronBlock() {
+        return quartzEnrichedIronBlock.get();
     }
 
     public DiskDriveBlock getDiskDrive() {
-        return diskDrive;
+        return diskDrive.get();
     }
 
     public MachineCasingBlock getMachineCasing() {
-        return machineCasing;
+        return machineCasing.get();
     }
 
     public BlockColorMap<ItemGridBlock> getGrid() {
@@ -64,27 +65,27 @@ public final class Blocks {
         return creativeController;
     }
 
-    public void setCable(CableBlock cable) {
-        this.cable = cable;
+    public void setCable(Supplier<CableBlock> cableSupplier) {
+        this.cable = cableSupplier;
     }
 
-    public void setQuartzEnrichedIron(QuartzEnrichedIronBlock quartzEnrichedIron) {
-        this.quartzEnrichedIron = quartzEnrichedIron;
+    public void setQuartzEnrichedIronBlock(Supplier<QuartzEnrichedIronBlock> quartzEnrichedIronBlockSupplier) {
+        this.quartzEnrichedIronBlock = quartzEnrichedIronBlockSupplier;
     }
 
-    public void setDiskDrive(DiskDriveBlock diskDrive) {
-        this.diskDrive = diskDrive;
+    public void setDiskDrive(Supplier<DiskDriveBlock> diskDriveSupplier) {
+        this.diskDrive = diskDriveSupplier;
     }
 
-    public void setMachineCasing(MachineCasingBlock machineCasing) {
-        this.machineCasing = machineCasing;
+    public void setMachineCasing(Supplier<MachineCasingBlock> machineCasingSupplier) {
+        this.machineCasing = machineCasingSupplier;
     }
 
-    public Map<ItemStorageType.Variant, ItemStorageBlock> getItemStorageBlocks() {
+    public Map<ItemStorageType.Variant, Supplier<ItemStorageBlock>> getItemStorageBlocks() {
         return itemStorageBlocks;
     }
 
-    public Map<FluidStorageType.Variant, FluidStorageBlock> getFluidStorageBlocks() {
+    public Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> getFluidStorageBlocks() {
         return fluidStorageBlocks;
     }
 }

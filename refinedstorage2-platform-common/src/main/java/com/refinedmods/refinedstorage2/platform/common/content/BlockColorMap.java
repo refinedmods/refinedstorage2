@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class BlockColorMap<T extends Block> extends ColorMap<T> {
     public Optional<InteractionResult> updateColor(BlockState state, ItemStack heldItem, Level level, BlockPos pos, Player player) {
         DyeColor color = heldItem.getItem() instanceof DyeItem dye ? dye.getDyeColor() : null;
-        if (color == null || state.getBlock().equals(map.get(color))) {
+        if (color == null || state.getBlock().equals(get(color))) {
             return Optional.empty();
         }
         if (!level.isClientSide()) {
@@ -31,7 +31,7 @@ public class BlockColorMap<T extends Block> extends ColorMap<T> {
     }
 
     private void updateColorOnServer(BlockState state, ItemStack heldItem, Level level, BlockPos pos, ServerPlayer player, DyeColor color) {
-        T newBlock = map.get(color);
+        T newBlock = get(color);
         level.setBlockAndUpdate(pos, getNewState(newBlock, state));
         if (player.gameMode.getGameModeForPlayer() != GameType.CREATIVE) {
             heldItem.shrink(1);
@@ -39,7 +39,7 @@ public class BlockColorMap<T extends Block> extends ColorMap<T> {
     }
 
     public Block[] toArray() {
-        return map.values().toArray(new Block[0]);
+        return values().toArray(new Block[0]);
     }
 
     private BlockState getNewState(Block newBlock, BlockState oldState) {

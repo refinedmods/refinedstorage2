@@ -82,6 +82,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,6 +122,8 @@ public class ModInitializer extends AbstractModInitializer {
         }
     };
 
+    private final DeferredRegister<Block> blockRegistry = DeferredRegister.create(ForgeRegistries.BLOCKS, IdentifierUtil.MOD_ID);
+
     public ModInitializer() {
         initializePlatform(new PlatformImpl(new NetworkManager()));
         initializePlatformApi();
@@ -128,13 +132,13 @@ public class ModInitializer extends AbstractModInitializer {
         registerNetworkComponents();
         registerAdditionalResourceTypes();
         registerTickHandler();
+        registerBlocks();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onClientSetup);
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterModels);
         });
 
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Block.class, this::registerBlocks);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(BlockEntityType.class, this::registerBlockEntityTypes);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, this::registerItems);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(MenuType.class, this::registerMenus);
@@ -152,66 +156,25 @@ public class ModInitializer extends AbstractModInitializer {
         LootFunctions.INSTANCE.setStorageBlock(Registry.register(Registry.LOOT_FUNCTION_TYPE, createIdentifier("storage_block"), new LootItemFunctionType(new StorageBlock.StorageBlockLootItemFunctionSerializer())));
     }
 
-    @SubscribeEvent
-    public void registerBlocks(RegistryEvent.Register<Block> e) {
-        CableBlock cableBlock = new CableBlock();
-        cableBlock.setRegistryName(CABLE);
-        Blocks.INSTANCE.setCable(cableBlock);
-        e.getRegistry().register(cableBlock);
-
-        QuartzEnrichedIronBlock quartzEnrichedIronBlock = new QuartzEnrichedIronBlock();
-        quartzEnrichedIronBlock.setRegistryName(QUARTZ_ENRICHED_IRON_BLOCK);
-        Blocks.INSTANCE.setQuartzEnrichedIron(quartzEnrichedIronBlock);
-        e.getRegistry().register(quartzEnrichedIronBlock);
-
-        DiskDriveBlock diskDriveBlock = new DiskDriveBlock(ForgeDiskDriveBlockEntity::new);
-        diskDriveBlock.setRegistryName(DISK_DRIVE);
-        Blocks.INSTANCE.setDiskDrive(diskDriveBlock);
-        e.getRegistry().register(diskDriveBlock);
-
-        MachineCasingBlock machineCasingBlock = new MachineCasingBlock();
-        machineCasingBlock.setRegistryName(MACHINE_CASING);
-        Blocks.INSTANCE.setMachineCasing(machineCasingBlock);
-        e.getRegistry().register(machineCasingBlock);
-
-        Blocks.INSTANCE.getGrid().putAll(color -> {
-            ItemGridBlock block = new ItemGridBlock(Blocks.INSTANCE.getGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")));
-            block.setRegistryName(Blocks.INSTANCE.getGrid().getId(color, GRID));
-            e.getRegistry().register(block);
-            return block;
-        });
-        Blocks.INSTANCE.getFluidGrid().putAll(color -> {
-            FluidGridBlock block = new FluidGridBlock(Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")));
-            block.setRegistryName(Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID));
-            e.getRegistry().register(block);
-            return block;
-        });
-        Blocks.INSTANCE.getController().putAll(color -> {
-            ControllerBlock block = new ControllerBlock(ControllerType.NORMAL, Blocks.INSTANCE.getController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")));
-            block.setRegistryName(Blocks.INSTANCE.getController().getId(color, CONTROLLER));
-            e.getRegistry().register(block);
-            return block;
-        });
-        Blocks.INSTANCE.getCreativeController().putAll(color -> {
-            ControllerBlock block = new ControllerBlock(ControllerType.CREATIVE, Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")));
-            block.setRegistryName(Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER));
-            e.getRegistry().register(block);
-            return block;
-        });
+    private void registerBlocks() {
+        Blocks.INSTANCE.setCable(blockRegistry.register(CABLE.getPath(), CableBlock::new));
+        Blocks.INSTANCE.setQuartzEnrichedIronBlock(blockRegistry.register(QUARTZ_ENRICHED_IRON_BLOCK.getPath(), QuartzEnrichedIronBlock::new));
+        Blocks.INSTANCE.setDiskDrive(blockRegistry.register(DISK_DRIVE.getPath(), () -> new DiskDriveBlock(ForgeDiskDriveBlockEntity::new)));
+        Blocks.INSTANCE.setMachineCasing(blockRegistry.register(MACHINE_CASING.getPath(), MachineCasingBlock::new));
+        Blocks.INSTANCE.getGrid().putAll(color -> blockRegistry.register(Blocks.INSTANCE.getGrid().getId(color, GRID).getPath(), () -> new ItemGridBlock(Blocks.INSTANCE.getGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")))));
+        Blocks.INSTANCE.getFluidGrid().putAll(color -> blockRegistry.register(Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID).getPath(), () -> new FluidGridBlock(Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")))));
+        Blocks.INSTANCE.getController().putAll(color -> blockRegistry.register(Blocks.INSTANCE.getController().getId(color, CONTROLLER).getPath(), () -> new ControllerBlock(ControllerType.NORMAL, Blocks.INSTANCE.getController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")))));
+        Blocks.INSTANCE.getCreativeController().putAll(color -> blockRegistry.register(Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER).getPath(), () -> new ControllerBlock(ControllerType.CREATIVE, Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")))));
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            ItemStorageBlock block = new ItemStorageBlock(variant);
-            block.setRegistryName(forItemStorageBlock(variant));
-            Blocks.INSTANCE.getItemStorageBlocks().put(variant, block);
-            e.getRegistry().register(block);
+            Blocks.INSTANCE.getItemStorageBlocks().put(variant, blockRegistry.register(forItemStorageBlock(variant).getPath(), () -> new ItemStorageBlock(variant)));
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            FluidStorageBlock block = new FluidStorageBlock(variant);
-            block.setRegistryName(forFluidStorageBlock(variant));
-            Blocks.INSTANCE.getFluidStorageBlocks().put(variant, block);
-            e.getRegistry().register(block);
+            Blocks.INSTANCE.getFluidStorageBlocks().put(variant, blockRegistry.register(forFluidStorageBlock(variant).getPath(), () -> new FluidStorageBlock(variant)));
         }
+
+        blockRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     @SubscribeEvent
@@ -250,14 +213,14 @@ public class ModInitializer extends AbstractModInitializer {
         BlockEntities.INSTANCE.setFluidGrid(fluidGridBlockEntityType);
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            BlockEntityType<ItemStorageBlockBlockEntity> blockEntityType = BlockEntityType.Builder.of((pos, state) -> new ItemStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getItemStorageBlocks().get(variant)).build(null);
+            BlockEntityType<ItemStorageBlockBlockEntity> blockEntityType = BlockEntityType.Builder.of((pos, state) -> new ItemStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getItemStorageBlocks().get(variant).get()).build(null);
             blockEntityType.setRegistryName(forItemStorageBlock(variant));
             e.getRegistry().register(blockEntityType);
             BlockEntities.INSTANCE.getItemStorageBlocks().put(variant, blockEntityType);
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            BlockEntityType<FluidStorageBlockBlockEntity> blockEntityType = BlockEntityType.Builder.of((pos, state) -> new FluidStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getFluidStorageBlocks().get(variant)).build(null);
+            BlockEntityType<FluidStorageBlockBlockEntity> blockEntityType = BlockEntityType.Builder.of((pos, state) -> new FluidStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getFluidStorageBlocks().get(variant).get()).build(null);
             blockEntityType.setRegistryName(forFluidStorageBlock(variant));
             e.getRegistry().register(blockEntityType);
             BlockEntities.INSTANCE.getFluidStorageBlocks().put(variant, blockEntityType);
@@ -268,7 +231,7 @@ public class ModInitializer extends AbstractModInitializer {
     public void registerItems(RegistryEvent.Register<Item> e) {
         e.getRegistry().register(new BlockItem(Blocks.INSTANCE.getCable(), createProperties()).setRegistryName(CABLE));
         e.getRegistry().register(new QuartzEnrichedIronItem(createProperties()).setRegistryName(QUARTZ_ENRICHED_IRON));
-        e.getRegistry().register(new BlockItem(Blocks.INSTANCE.getQuartzEnrichedIron(), createProperties()).setRegistryName(QUARTZ_ENRICHED_IRON_BLOCK));
+        e.getRegistry().register(new BlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock(), createProperties()).setRegistryName(QUARTZ_ENRICHED_IRON_BLOCK));
         e.getRegistry().register(new SiliconItem(createProperties()).setRegistryName(SILICON));
         e.getRegistry().register(new ProcessorBindingItem(createProperties()).setRegistryName(PROCESSOR_BINDING));
         e.getRegistry().register(new BlockItem(Blocks.INSTANCE.getDiskDrive(), createProperties()).setRegistryName(DISK_DRIVE));
@@ -318,7 +281,7 @@ public class ModInitializer extends AbstractModInitializer {
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            ItemStorageBlockBlockItem storageBlockItem = new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant), createProperties().stacksTo(1).fireResistant(), variant);
+            ItemStorageBlockBlockItem storageBlockItem = new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant).get(), createProperties().stacksTo(1).fireResistant(), variant);
             storageBlockItem.setRegistryName(forItemStorageBlock(variant));
             e.getRegistry().register(storageBlockItem);
         }
@@ -328,7 +291,7 @@ public class ModInitializer extends AbstractModInitializer {
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            FluidStorageBlockBlockItem fluidStorageBlockItem = new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlocks().get(variant), createProperties().stacksTo(1).fireResistant(), variant);
+            FluidStorageBlockBlockItem fluidStorageBlockItem = new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlocks().get(variant).get(), createProperties().stacksTo(1).fireResistant(), variant);
             fluidStorageBlockItem.setRegistryName(forFluidStorageBlock(variant));
             e.getRegistry().register(fluidStorageBlockItem);
         }
