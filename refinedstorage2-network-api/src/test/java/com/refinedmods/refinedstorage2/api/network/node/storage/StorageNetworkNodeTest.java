@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
-import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
@@ -353,20 +352,11 @@ class StorageNetworkNodeTest {
         activateStorage();
 
         // Act
-        long inserted = networkStorage.insert("A", 10, Action.EXECUTE, CustomSource1.INSTANCE);
+        long inserted = networkStorage.insert("A", 10, Action.EXECUTE, FakeSource.INSTANCE);
 
         // Assert
         assertThat(inserted).isEqualTo(10);
-        assertThat(networkStorage.findTrackedResourceBySourceType("A", CustomSource1.class)).isNotEmpty();
-    }
-
-    private static class CustomSource1 implements Source {
-        private static final Source INSTANCE = new CustomSource1();
-
-        @Override
-        public String getName() {
-            return "Custom1";
-        }
+        assertThat(networkStorage.findTrackedResourceBySourceType("A", FakeSource.class)).isNotEmpty();
     }
 
     @Nested

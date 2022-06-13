@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.FakeSources;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.SourceCapturingStorage;
@@ -724,48 +725,30 @@ class CompositeStorageImplTest {
         TrackedStorage<String> b = new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), clock::get);
 
         // Test if it uses the latest across 2 different storages
-        a.insert("1", 1, Action.EXECUTE, CustomSource1.INSTANCE);
+        a.insert("1", 1, Action.EXECUTE, FakeSources.FakeSource1.INSTANCE);
         clock.set(1L);
-        b.insert("1", 1, Action.EXECUTE, CustomSource1.INSTANCE);
+        b.insert("1", 1, Action.EXECUTE, FakeSources.FakeSource1.INSTANCE);
 
         // Test if it differentiates between source types properly
         clock.set(2L);
-        b.insert("2", 1, Action.EXECUTE, CustomSource1.INSTANCE);
+        b.insert("2", 1, Action.EXECUTE, FakeSources.FakeSource1.INSTANCE);
         clock.set(3L);
-        b.insert("2", 1, Action.EXECUTE, CustomSource2.INSTANCE);
+        b.insert("2", 1, Action.EXECUTE, FakeSources.FakeSource2.INSTANCE);
 
         sut.addSource(a);
         sut.addSource(b);
 
         // Act
-        var oneOne = sut.findTrackedResourceBySourceType("1", CustomSource1.class);
-        var oneTwo = sut.findTrackedResourceBySourceType("1", CustomSource2.class);
+        var oneOne = sut.findTrackedResourceBySourceType("1", FakeSources.FakeSource1.class);
+        var oneTwo = sut.findTrackedResourceBySourceType("1", FakeSources.FakeSource2.class);
 
-        var twoOne = sut.findTrackedResourceBySourceType("2", CustomSource1.class);
-        var twoTwo = sut.findTrackedResourceBySourceType("2", CustomSource2.class);
+        var twoOne = sut.findTrackedResourceBySourceType("2", FakeSources.FakeSource1.class);
+        var twoTwo = sut.findTrackedResourceBySourceType("2", FakeSources.FakeSource2.class);
 
         // Assert
-        assertThat(oneOne).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Custom1", 1L));
+        assertThat(oneOne).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Source1", 1L));
         assertThat(oneTwo).isEmpty();
-        assertThat(twoOne).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Custom1", 2L));
-        assertThat(twoTwo).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Custom2", 3L));
-    }
-
-    private static class CustomSource1 implements Source {
-        private static final Source INSTANCE = new CustomSource1();
-
-        @Override
-        public String getName() {
-            return "Custom1";
-        }
-    }
-
-    private static class CustomSource2 implements Source {
-        private static final Source INSTANCE = new CustomSource2();
-
-        @Override
-        public String getName() {
-            return "Custom2";
-        }
+        assertThat(twoOne).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Source1", 2L));
+        assertThat(twoTwo).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Source2", 3L));
     }
 }
