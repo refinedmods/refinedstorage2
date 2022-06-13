@@ -105,6 +105,6 @@ sonarqube {
         property "sonar.organization", "refinedmods"
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
-        property "sonar.coverage.exclusions", "refinedstorage2-platform-forge/**/*,refinedstorage2-platform-fabric/**/*,refinedstorage2-platform-common/**/*"
+        property "sonar.coverage.exclusions", "refinedstorage2-platform-forge/**/*,refinedstorage2-platform-fabric/**/*,refinedstorage2-platform-common/**/*,refinedstorage2-platform-api/**/*"
     }
 }
