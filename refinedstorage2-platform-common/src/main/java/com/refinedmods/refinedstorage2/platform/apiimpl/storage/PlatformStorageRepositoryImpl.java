@@ -76,11 +76,10 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
             ResourceLocation typeIdentifier = new ResourceLocation(((CompoundTag) storageTag).getString(TAG_STORAGE_TYPE));
             CompoundTag data = ((CompoundTag) storageTag).getCompound(TAG_STORAGE_DATA);
 
-            storageTypeRegistry.getType(typeIdentifier).ifPresentOrElse(type -> {
-                setSilently(id, type.fromTag(data, this::markAsChanged));
-            }, () -> {
-                LOGGER.warn("Cannot find storage type {} for storage {}", typeIdentifier, id);
-            });
+            storageTypeRegistry.getType(typeIdentifier).ifPresentOrElse(
+                    type -> setSilently(id, type.fromTag(data, this::markAsChanged)),
+                    () -> LOGGER.warn("Cannot find storage type {} for storage {}", typeIdentifier, id)
+            );
         }
     }
 
