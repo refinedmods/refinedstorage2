@@ -31,7 +31,7 @@ public class FluidStorageType implements StorageType<FluidResource> {
     }
 
     @Override
-    public PlatformStorage<FluidResource> fromTag(CompoundTag tag, Runnable listener) {
+    public Storage<FluidResource> fromTag(CompoundTag tag, Runnable listener) {
         PlatformStorage<FluidResource> storage = createStorage(tag, listener);
         ListTag stacks = tag.getList(TAG_STACKS, Tag.TAG_COMPOUND);
         for (Tag stackTag : stacks) {
