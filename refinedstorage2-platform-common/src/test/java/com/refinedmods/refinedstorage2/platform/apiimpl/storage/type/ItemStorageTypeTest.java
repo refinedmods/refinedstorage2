@@ -69,6 +69,32 @@ class ItemStorageTypeTest {
     }
 
     @Test
+    void Test_passing_listener_to_deserialized_storage() {
+        // Arrange
+        InMemoryTrackedStorageRepository<ItemResource> tracker = new InMemoryTrackedStorageRepository<>();
+        Storage<ItemResource> storage = new PlatformStorage<>(
+                new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), tracker, () -> 123L),
+                ItemStorageType.INSTANCE,
+                tracker,
+                () -> {
+                }
+        );
+        storage.insert(new ItemResource(Items.GLASS, null), 15, Action.EXECUTE, EmptySource.INSTANCE);
+
+        CompoundTag serialized = sut.toTag(storage);
+        Storage<ItemResource> deserialized = sut.fromTag(serialized, listener);
+
+        // Act
+        boolean preInsert = listener.isChanged();
+        deserialized.insert(new ItemResource(Items.GLASS, null), 15, Action.EXECUTE, EmptySource.INSTANCE);
+        boolean postInsert = listener.isChanged();
+
+        // Assert
+        assertThat(preInsert).isFalse();
+        assertThat(postInsert).isTrue();
+    }
+
+    @Test
     void Test_serialization_of_limited_storage() {
         // Arrange
         InMemoryTrackedStorageRepository<ItemResource> tracker = new InMemoryTrackedStorageRepository<>();
