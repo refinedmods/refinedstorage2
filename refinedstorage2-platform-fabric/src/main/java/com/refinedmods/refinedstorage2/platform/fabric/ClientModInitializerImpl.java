@@ -111,7 +111,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
 
     private void registerModelPredicates() {
         Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemPropertiesAccessor.register(
-                controllerBlockItem,
+                controllerBlockItem.get(),
                 createIdentifier("stored_in_controller"),
                 new ControllerModelPredicateProvider()
         ));

@@ -181,55 +181,55 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerItems() {
-        Registry.register(Registry.ITEM, CABLE, new BlockItem(Blocks.INSTANCE.getCable(), createProperties()));
-        Registry.register(Registry.ITEM, QUARTZ_ENRICHED_IRON, new QuartzEnrichedIronItem(createProperties()));
-        Registry.register(Registry.ITEM, QUARTZ_ENRICHED_IRON_BLOCK, new BlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock(), createProperties()));
-        Registry.register(Registry.ITEM, SILICON, new SiliconItem(createProperties()));
-        Registry.register(Registry.ITEM, PROCESSOR_BINDING, new ProcessorBindingItem(createProperties()));
-        Registry.register(Registry.ITEM, DISK_DRIVE, new BlockItem(Blocks.INSTANCE.getDiskDrive(), createProperties()));
-        Registry.register(Registry.ITEM, WRENCH, new WrenchItem(createProperties().stacksTo(1)));
+        register(Registry.ITEM, CABLE, new BlockItem(Blocks.INSTANCE.getCable(), createProperties()));
+        register(Registry.ITEM, QUARTZ_ENRICHED_IRON, new QuartzEnrichedIronItem(createProperties()));
+        register(Registry.ITEM, QUARTZ_ENRICHED_IRON_BLOCK, new BlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock(), createProperties()));
+        register(Registry.ITEM, SILICON, new SiliconItem(createProperties()));
+        register(Registry.ITEM, PROCESSOR_BINDING, new ProcessorBindingItem(createProperties()));
+        register(Registry.ITEM, DISK_DRIVE, new BlockItem(Blocks.INSTANCE.getDiskDrive(), createProperties()));
+        register(Registry.ITEM, WRENCH, new WrenchItem(createProperties().stacksTo(1)));
 
-        Items.INSTANCE.setStorageHousing(Registry.register(Registry.ITEM, STORAGE_HOUSING, new StorageHousingItem(createProperties())));
-        Registry.register(Registry.ITEM, MACHINE_CASING, new BlockItem(Blocks.INSTANCE.getMachineCasing(), createProperties()));
-        Blocks.INSTANCE.getGrid().forEach((color, block) -> Registry.register(Registry.ITEM, Blocks.INSTANCE.getGrid().getId(color, GRID), new NameableBlockItem(block, createProperties(), color, Blocks.INSTANCE.getGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")))));
-        Blocks.INSTANCE.getFluidGrid().forEach((color, block) -> Registry.register(Registry.ITEM, Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID), new NameableBlockItem(block, createProperties(), color, Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")))));
-        Blocks.INSTANCE.getController().forEach((color, block) -> Items.INSTANCE.getControllers().add(Registry.register(Registry.ITEM, Blocks.INSTANCE.getController().getId(color, CONTROLLER), new ControllerBlockItem(block, createProperties().stacksTo(1), color, Blocks.INSTANCE.getController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller"))))));
-        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> Registry.register(Registry.ITEM, Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER), new NameableBlockItem(block, createProperties().stacksTo(1), color, Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")))));
+        Items.INSTANCE.setStorageHousing(register(Registry.ITEM, STORAGE_HOUSING, new StorageHousingItem(createProperties())));
+        register(Registry.ITEM, MACHINE_CASING, new BlockItem(Blocks.INSTANCE.getMachineCasing(), createProperties()));
+        Blocks.INSTANCE.getGrid().forEach((color, block) -> register(Registry.ITEM, Blocks.INSTANCE.getGrid().getId(color, GRID), new NameableBlockItem(block.get(), createProperties(), color, Blocks.INSTANCE.getGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")))));
+        Blocks.INSTANCE.getFluidGrid().forEach((color, block) -> register(Registry.ITEM, Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID), new NameableBlockItem(block.get(), createProperties(), color, Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")))));
+        Blocks.INSTANCE.getController().forEach((color, block) -> Items.INSTANCE.getControllers().add(register(Registry.ITEM, Blocks.INSTANCE.getController().getId(color, CONTROLLER), new ControllerBlockItem(block.get(), createProperties().stacksTo(1), color, Blocks.INSTANCE.getController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller"))))));
+        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> register(Registry.ITEM, Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER), new NameableBlockItem(block.get(), createProperties().stacksTo(1), color, Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")))));
 
         for (ProcessorItem.Type type : ProcessorItem.Type.values()) {
-            Registry.register(Registry.ITEM, forProcessor(type), new ProcessorItem(createProperties()));
+            register(Registry.ITEM, forProcessor(type), new ProcessorItem(createProperties()));
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
             if (variant != ItemStorageType.Variant.CREATIVE) {
-                Items.INSTANCE.getStorageParts().put(variant, Registry.register(Registry.ITEM, forItemStoragePart(variant), new StoragePartItem(createProperties())));
+                Items.INSTANCE.getStorageParts().put(variant, register(Registry.ITEM, forItemStoragePart(variant), new StoragePartItem(createProperties())));
             }
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
             if (variant != FluidStorageType.Variant.CREATIVE) {
-                Items.INSTANCE.getFluidStorageParts().put(variant, Registry.register(Registry.ITEM, forFluidStoragePart(variant), new FluidStoragePartItem(createProperties())));
+                Items.INSTANCE.getFluidStorageParts().put(variant, register(Registry.ITEM, forFluidStoragePart(variant), new FluidStoragePartItem(createProperties())));
             }
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            Registry.register(Registry.ITEM, forStorageDisk(variant), new ItemStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant));
+            register(Registry.ITEM, forStorageDisk(variant), new ItemStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant));
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            Registry.register(Registry.ITEM, forItemStorageBlock(variant), new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant).get(), createProperties().stacksTo(1).fireResistant(), variant));
+            register(Registry.ITEM, forItemStorageBlock(variant), new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant).get(), createProperties().stacksTo(1).fireResistant(), variant));
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            Registry.register(Registry.ITEM, forFluidStorageDisk(variant), new FluidStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant));
+            register(Registry.ITEM, forFluidStorageDisk(variant), new FluidStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant));
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            Registry.register(Registry.ITEM, forFluidStorageBlock(variant), new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlocks().get(variant).get(), createProperties().stacksTo(1).fireResistant(), variant));
+            register(Registry.ITEM, forFluidStorageBlock(variant), new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlocks().get(variant).get(), createProperties().stacksTo(1).fireResistant(), variant));
         }
 
-        Registry.register(Registry.ITEM, CONSTRUCTION_CORE, new CoreItem(createProperties()));
-        Registry.register(Registry.ITEM, DESTRUCTION_CORE, new CoreItem(createProperties()));
+        register(Registry.ITEM, CONSTRUCTION_CORE, new CoreItem(createProperties()));
+        register(Registry.ITEM, DESTRUCTION_CORE, new CoreItem(createProperties()));
     }
 
     private Item.Properties createProperties() {

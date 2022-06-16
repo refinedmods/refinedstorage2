@@ -2,15 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.*;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -81,6 +73,7 @@ public final class Blocks {
         this.machineCasing = machineCasingSupplier;
     }
 
+    // TODO: Cleanup these getters, always return supplied value.
     public Map<ItemStorageType.Variant, Supplier<ItemStorageBlock>> getItemStorageBlocks() {
         return itemStorageBlocks;
     }
