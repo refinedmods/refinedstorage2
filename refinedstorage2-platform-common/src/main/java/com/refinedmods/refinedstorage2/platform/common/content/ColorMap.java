@@ -39,8 +39,8 @@ public class ColorMap<T> {
         }
     }
 
-    public void forEach(BiConsumer<DyeColor, T> consumer) {
-        map.forEach((k, v) -> consumer.accept(k, v.get()));
+    public void forEach(BiConsumer<DyeColor, Supplier<T>> consumer) {
+        map.forEach(consumer::accept);
     }
 
     public T get(DyeColor color) {

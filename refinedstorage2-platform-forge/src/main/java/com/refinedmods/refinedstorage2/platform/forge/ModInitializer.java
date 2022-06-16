@@ -123,6 +123,7 @@ public class ModInitializer extends AbstractModInitializer {
     };
 
     private final DeferredRegister<Block> blockRegistry = DeferredRegister.create(ForgeRegistries.BLOCKS, IdentifierUtil.MOD_ID);
+    private final DeferredRegister<Item> itemRegistry = DeferredRegister.create(ForgeRegistries.ITEMS, IdentifierUtil.MOD_ID);
 
     public ModInitializer() {
         initializePlatform(new PlatformImpl(new NetworkManager()));
@@ -130,9 +131,9 @@ public class ModInitializer extends AbstractModInitializer {
         registerDiskTypes();
         registerStorageChannelTypes();
         registerNetworkComponents();
+        registerContent();
         registerAdditionalResourceTypes();
         registerTickHandler();
-        registerBlocks();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onClientSetup);
@@ -140,7 +141,6 @@ public class ModInitializer extends AbstractModInitializer {
         });
 
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(BlockEntityType.class, this::registerBlockEntityTypes);
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, this::registerItems);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(MenuType.class, this::registerMenus);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(SoundEvent.class, this::registerSounds);
 
@@ -148,8 +148,9 @@ public class ModInitializer extends AbstractModInitializer {
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerCapabilities);
     }
 
-    private void registerTickHandler() {
-        MinecraftForge.EVENT_BUS.addListener(this::onServerTick);
+    private void registerContent() {
+        registerBlocks();
+        registerItems();
     }
 
     private void registerLootFunctions() {
@@ -227,77 +228,77 @@ public class ModInitializer extends AbstractModInitializer {
         }
     }
 
-    @SubscribeEvent
-    public void registerItems(RegistryEvent.Register<Item> e) {
-        e.getRegistry().register(new BlockItem(Blocks.INSTANCE.getCable(), createProperties()).setRegistryName(CABLE));
-        e.getRegistry().register(new QuartzEnrichedIronItem(createProperties()).setRegistryName(QUARTZ_ENRICHED_IRON));
-        e.getRegistry().register(new BlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock(), createProperties()).setRegistryName(QUARTZ_ENRICHED_IRON_BLOCK));
-        e.getRegistry().register(new SiliconItem(createProperties()).setRegistryName(SILICON));
-        e.getRegistry().register(new ProcessorBindingItem(createProperties()).setRegistryName(PROCESSOR_BINDING));
-        e.getRegistry().register(new BlockItem(Blocks.INSTANCE.getDiskDrive(), createProperties()).setRegistryName(DISK_DRIVE));
-        e.getRegistry().register(new WrenchItem(createProperties().stacksTo(1)).setRegistryName(WRENCH));
-
-        StorageHousingItem storageHousingItem = new StorageHousingItem(createProperties());
-        storageHousingItem.setRegistryName(STORAGE_HOUSING);
-        e.getRegistry().register(storageHousingItem);
-        Items.INSTANCE.setStorageHousing(storageHousingItem);
-
-        e.getRegistry().register(new BlockItem(Blocks.INSTANCE.getMachineCasing(), createProperties()).setRegistryName(MACHINE_CASING));
-
-        Blocks.INSTANCE.getGrid().forEach((color, block) -> e.getRegistry().register(new NameableBlockItem(block, createProperties(), color, Blocks.INSTANCE.getGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid"))).setRegistryName(Blocks.INSTANCE.getGrid().getId(color, GRID))));
-        Blocks.INSTANCE.getFluidGrid().forEach((color, block) -> e.getRegistry().register(new NameableBlockItem(block, createProperties(), color, Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid"))).setRegistryName(Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID))));
-        Blocks.INSTANCE.getController().forEach((color, block) -> {
-            ControllerBlockItem controllerBlockItem = new ControllerBlockItem(block, createProperties().stacksTo(1), color, Blocks.INSTANCE.getController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")));
-            controllerBlockItem.setRegistryName(Blocks.INSTANCE.getController().getId(color, CONTROLLER));
-            Items.INSTANCE.getControllers().add(controllerBlockItem);
-            e.getRegistry().register(controllerBlockItem);
-        });
-        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> e.getRegistry().register(new NameableBlockItem(block, createProperties().stacksTo(1), color, Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller"))).setRegistryName(Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER))));
+    private void registerItems() {
+        itemRegistry.register(CABLE.getPath(), () -> new BlockItem(Blocks.INSTANCE.getCable(), createProperties()));
+        itemRegistry.register(QUARTZ_ENRICHED_IRON.getPath(), () -> new QuartzEnrichedIronItem(createProperties()));
+        itemRegistry.register(QUARTZ_ENRICHED_IRON_BLOCK.getPath(), () -> new BlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock(), createProperties()));
+        itemRegistry.register(SILICON.getPath(), () -> new SiliconItem(createProperties()));
+        itemRegistry.register(PROCESSOR_BINDING.getPath(), () -> new ProcessorBindingItem(createProperties()));
+        itemRegistry.register(DISK_DRIVE.getPath(), () -> new BlockItem(Blocks.INSTANCE.getDiskDrive(), createProperties()));
+        itemRegistry.register(WRENCH.getPath(), () -> new WrenchItem(createProperties().stacksTo(1)));
+        Items.INSTANCE.setStorageHousing(itemRegistry.register(STORAGE_HOUSING.getPath(), () -> new StorageHousingItem(createProperties())));
+        itemRegistry.register(MACHINE_CASING.getPath(), () -> new BlockItem(Blocks.INSTANCE.getMachineCasing(), createProperties()));
+        Blocks.INSTANCE.getGrid().forEach((color, block) -> itemRegistry.register(Blocks.INSTANCE.getGrid().getId(color, GRID).getPath(), () -> new NameableBlockItem(block.get(), createProperties(), color, Blocks.INSTANCE.getGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")))));
+        Blocks.INSTANCE.getFluidGrid().forEach((color, block) -> itemRegistry.register(Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID).getPath(), () -> new NameableBlockItem(block.get(), createProperties(), color, Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")))));
+        Blocks.INSTANCE.getController().forEach((color, block) -> Items.INSTANCE.getControllers().add(itemRegistry.register(
+                Blocks.INSTANCE.getController().getId(color, CONTROLLER).getPath(),
+                () -> new ControllerBlockItem(
+                        block.get(),
+                        createProperties().stacksTo(1),
+                        color,
+                        Blocks.INSTANCE.getController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller"))
+                )
+        )));
+        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> itemRegistry.register(
+                Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER).getPath(),
+                () -> new NameableBlockItem(
+                        block.get(),
+                        createProperties().stacksTo(1),
+                        color,
+                        Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller"))
+                )
+        ));
 
         for (ProcessorItem.Type type : ProcessorItem.Type.values()) {
-            e.getRegistry().register(new ProcessorItem(createProperties()).setRegistryName(forProcessor(type)));
+            itemRegistry.register(forProcessor(type).getPath(), () -> new ProcessorItem(createProperties()));
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
             if (variant != ItemStorageType.Variant.CREATIVE) {
-                StoragePartItem storagePartItem = new StoragePartItem(createProperties());
-                storagePartItem.setRegistryName(forItemStoragePart(variant));
-                e.getRegistry().register(storagePartItem);
-                Items.INSTANCE.getStorageParts().put(variant, storagePartItem);
+                Items.INSTANCE.getStorageParts().put(variant, itemRegistry.register(forItemStoragePart(variant).getPath(), () -> new StoragePartItem(createProperties())));
             }
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
             if (variant != FluidStorageType.Variant.CREATIVE) {
-                FluidStoragePartItem fluidStoragePartItem = new FluidStoragePartItem(createProperties());
-                fluidStoragePartItem.setRegistryName(forFluidStoragePart(variant));
-                e.getRegistry().register(fluidStoragePartItem);
-                Items.INSTANCE.getFluidStorageParts().put(variant, fluidStoragePartItem);
+                Items.INSTANCE.getFluidStorageParts().put(variant, itemRegistry.register(forFluidStoragePart(variant).getPath(), () -> new FluidStoragePartItem(createProperties())));
             }
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            e.getRegistry().register(new ItemStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant).setRegistryName(forStorageDisk(variant)));
+            itemRegistry.register(forStorageDisk(variant).getPath(), () -> new ItemStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant));
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            ItemStorageBlockBlockItem storageBlockItem = new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant).get(), createProperties().stacksTo(1).fireResistant(), variant);
-            storageBlockItem.setRegistryName(forItemStorageBlock(variant));
-            e.getRegistry().register(storageBlockItem);
+            itemRegistry.register(forItemStorageBlock(variant).getPath(), () -> new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant).get(), createProperties().stacksTo(1).fireResistant(), variant));
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            e.getRegistry().register(new FluidStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant).setRegistryName(forFluidStorageDisk(variant)));
+            itemRegistry.register(forFluidStorageDisk(variant).getPath(), () -> new FluidStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant));
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            FluidStorageBlockBlockItem fluidStorageBlockItem = new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlocks().get(variant).get(), createProperties().stacksTo(1).fireResistant(), variant);
-            fluidStorageBlockItem.setRegistryName(forFluidStorageBlock(variant));
-            e.getRegistry().register(fluidStorageBlockItem);
+            itemRegistry.register(forFluidStorageBlock(variant).getPath(), () -> new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlocks().get(variant).get(), createProperties().stacksTo(1).fireResistant(), variant));
         }
 
-        e.getRegistry().register(new CoreItem(createProperties()).setRegistryName(CONSTRUCTION_CORE));
-        e.getRegistry().register(new CoreItem(createProperties()).setRegistryName(DESTRUCTION_CORE));
+        itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new CoreItem(createProperties()));
+        itemRegistry.register(DESTRUCTION_CORE.getPath(), () -> new CoreItem(createProperties()));
+
+        itemRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
+    }
+
+    private void registerTickHandler() {
+        MinecraftForge.EVENT_BUS.addListener(this::onServerTick);
     }
 
     @SubscribeEvent

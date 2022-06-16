@@ -11,43 +11,44 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public final class Items {
     public static final Items INSTANCE = new Items();
 
-    private final Map<ItemStorageType.Variant, StoragePartItem> storageParts = new EnumMap<>(ItemStorageType.Variant.class);
-    private final Map<FluidStorageType.Variant, FluidStoragePartItem> fluidStorageParts = new EnumMap<>(FluidStorageType.Variant.class);
-    private final List<ControllerBlockItem> controllers = new ArrayList<>();
-    private StorageHousingItem storageHousing;
+    private final Map<ItemStorageType.Variant, Supplier<StoragePartItem>> storageParts = new EnumMap<>(ItemStorageType.Variant.class);
+    private final Map<FluidStorageType.Variant, Supplier<FluidStoragePartItem>> fluidStorageParts = new EnumMap<>(FluidStorageType.Variant.class);
+    private final List<Supplier<ControllerBlockItem>> controllers = new ArrayList<>();
+    private Supplier<StorageHousingItem> storageHousing;
 
     private Items() {
     }
 
     public StoragePartItem getStoragePart(ItemStorageType.Variant variant) {
-        return storageParts.get(variant);
+        return storageParts.get(variant).get();
     }
 
     public FluidStoragePartItem getFluidStoragePart(FluidStorageType.Variant type) {
-        return fluidStorageParts.get(type);
+        return fluidStorageParts.get(type).get();
     }
 
-    public Map<ItemStorageType.Variant, StoragePartItem> getStorageParts() {
+    public Map<ItemStorageType.Variant, Supplier<StoragePartItem>> getStorageParts() {
         return storageParts;
     }
 
-    public Map<FluidStorageType.Variant, FluidStoragePartItem> getFluidStorageParts() {
+    public Map<FluidStorageType.Variant, Supplier<FluidStoragePartItem>> getFluidStorageParts() {
         return fluidStorageParts;
     }
 
-    public List<ControllerBlockItem> getControllers() {
+    public List<Supplier<ControllerBlockItem>> getControllers() {
         return controllers;
     }
 
     public StorageHousingItem getStorageHousing() {
-        return storageHousing;
+        return storageHousing.get();
     }
 
-    public void setStorageHousing(StorageHousingItem storageHousing) {
-        this.storageHousing = storageHousing;
+    public void setStorageHousing(Supplier<StorageHousingItem> storageHousingSupplier) {
+        this.storageHousing = storageHousingSupplier;
     }
 }

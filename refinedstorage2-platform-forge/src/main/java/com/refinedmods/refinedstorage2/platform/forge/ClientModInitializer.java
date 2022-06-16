@@ -60,7 +60,7 @@ public final class ClientModInitializer {
     }
 
     private static void registerModelPredicates() {
-        Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemProperties.register(controllerBlockItem, createIdentifier("stored_in_controller"), new ControllerModelPredicateProvider()));
+        Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemProperties.register(controllerBlockItem.get(), createIdentifier("stored_in_controller"), new ControllerModelPredicateProvider()));
     }
 
     private static void registerScreens() {
