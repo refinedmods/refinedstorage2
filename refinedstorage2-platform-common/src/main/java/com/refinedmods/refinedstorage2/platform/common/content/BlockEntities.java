@@ -79,11 +79,19 @@ public final class BlockEntities {
         this.creativeController = creativeControllerSupplier;
     }
 
-    public Map<ItemStorageType.Variant, Supplier<BlockEntityType<ItemStorageBlockBlockEntity>>> getItemStorageBlocks() {
-        return itemStorageBlocks;
+    public void setItemStorageBlock(ItemStorageType.Variant variant, Supplier<BlockEntityType<ItemStorageBlockBlockEntity>> storageBlockBlockEntitySupplier) {
+        itemStorageBlocks.put(variant, storageBlockBlockEntitySupplier);
     }
 
-    public Map<FluidStorageType.Variant, Supplier<BlockEntityType<FluidStorageBlockBlockEntity>>> getFluidStorageBlocks() {
-        return fluidStorageBlocks;
+    public BlockEntityType<ItemStorageBlockBlockEntity> getItemStorageBlock(ItemStorageType.Variant variant) {
+        return itemStorageBlocks.get(variant).get();
+    }
+
+    public void setFluidStorageBlock(FluidStorageType.Variant variant, Supplier<BlockEntityType<FluidStorageBlockBlockEntity>> storageBlockBlockEntitySupplier) {
+        fluidStorageBlocks.put(variant, storageBlockBlockEntitySupplier);
+    }
+
+    public BlockEntityType<FluidStorageBlockBlockEntity> getFluidStorageBlock(FluidStorageType.Variant variant) {
+        return fluidStorageBlocks.get(variant).get();
     }
 }

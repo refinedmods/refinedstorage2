@@ -2,7 +2,15 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.block.*;
+import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -73,12 +81,19 @@ public final class Blocks {
         this.machineCasing = machineCasingSupplier;
     }
 
-    // TODO: Cleanup these getters, always return supplied value.
-    public Map<ItemStorageType.Variant, Supplier<ItemStorageBlock>> getItemStorageBlocks() {
-        return itemStorageBlocks;
+    public void setItemStorageBlock(ItemStorageType.Variant variant, Supplier<ItemStorageBlock> itemStorageBlockSupplier) {
+        itemStorageBlocks.put(variant, itemStorageBlockSupplier);
     }
 
-    public Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> getFluidStorageBlocks() {
-        return fluidStorageBlocks;
+    public ItemStorageBlock getItemStorageBlock(ItemStorageType.Variant variant) {
+        return itemStorageBlocks.get(variant).get();
+    }
+
+    public void setFluidStorageBlock(FluidStorageType.Variant variant, Supplier<FluidStorageBlock> fluidStorageBlockSupplier) {
+        fluidStorageBlocks.put(variant, fluidStorageBlockSupplier);
+    }
+
+    public FluidStorageBlock getFluidStorageBlock(FluidStorageType.Variant variant) {
+        return fluidStorageBlocks.get(variant).get();
     }
 }

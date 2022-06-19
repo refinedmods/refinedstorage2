@@ -40,7 +40,7 @@ public class ColorMap<T> {
     }
 
     public void forEach(BiConsumer<DyeColor, Supplier<T>> consumer) {
-        map.forEach(consumer::accept);
+        map.forEach(consumer);
     }
 
     public T get(DyeColor color) {

@@ -63,7 +63,7 @@ public class ItemStorageBlockBlockItem extends StorageBlockBlockItem {
         if (variant == ItemStorageType.Variant.CREATIVE) {
             return null;
         }
-        return new ItemStack(Items.INSTANCE.getStoragePart(variant), count);
+        return new ItemStack(Items.INSTANCE.getItemStoragePart(variant), count);
     }
 
     @Override
