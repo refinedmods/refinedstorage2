@@ -16,6 +16,8 @@ import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -30,8 +32,8 @@ public class ItemStorageBlockBlockItem extends StorageBlockBlockItem {
     private final ItemStorageType.Variant variant;
     private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
-    public ItemStorageBlockBlockItem(Block block, Properties properties, ItemStorageType.Variant variant) {
-        super(block, properties);
+    public ItemStorageBlockBlockItem(Block block, CreativeModeTab tab, ItemStorageType.Variant variant) {
+        super(block, new Item.Properties().tab(tab).stacksTo(1).fireResistant());
         this.variant = variant;
         this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.STACK_INFO);
         if (variant != ItemStorageType.Variant.CREATIVE) {

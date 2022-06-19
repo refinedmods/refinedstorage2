@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -34,8 +35,8 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     private final FluidStorageType.Variant variant;
     private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
-    public FluidStorageDiskItem(Item.Properties properties, FluidStorageType.Variant variant) {
-        super(properties);
+    public FluidStorageDiskItem(CreativeModeTab tab, FluidStorageType.Variant variant) {
+        super(new Item.Properties().tab(tab).stacksTo(1).fireResistant());
         this.variant = variant;
         if (variant != FluidStorageType.Variant.CREATIVE) {
             this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
