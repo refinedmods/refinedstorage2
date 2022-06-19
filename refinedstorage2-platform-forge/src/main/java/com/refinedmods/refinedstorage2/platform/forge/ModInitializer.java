@@ -124,6 +124,8 @@ public class ModInitializer extends AbstractModInitializer {
 
     private final DeferredRegister<Block> blockRegistry = DeferredRegister.create(ForgeRegistries.BLOCKS, IdentifierUtil.MOD_ID);
     private final DeferredRegister<Item> itemRegistry = DeferredRegister.create(ForgeRegistries.ITEMS, IdentifierUtil.MOD_ID);
+    private final DeferredRegister<BlockEntityType<?>> blockEntityTypeRegistry = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, IdentifierUtil.MOD_ID);
+    private final DeferredRegister<LootItemFunctionType> lootFunctionTypeRegistry = DeferredRegister.create(Registry.LOOT_FUNCTION_REGISTRY, IdentifierUtil.MOD_ID);
 
     public ModInitializer() {
         initializePlatform(new PlatformImpl(new NetworkManager()));
@@ -140,7 +142,6 @@ public class ModInitializer extends AbstractModInitializer {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterModels);
         });
 
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(BlockEntityType.class, this::registerBlockEntityTypes);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(MenuType.class, this::registerMenus);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(SoundEvent.class, this::registerSounds);
 
@@ -151,10 +152,8 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerContent() {
         registerBlocks();
         registerItems();
-    }
-
-    private void registerLootFunctions() {
-        LootFunctions.INSTANCE.setStorageBlock(Registry.register(Registry.LOOT_FUNCTION_TYPE, createIdentifier("storage_block"), new LootItemFunctionType(new StorageBlock.StorageBlockLootItemFunctionSerializer())));
+        registerBlockEntities();
+        registerLootFunctions();
     }
 
     private void registerBlocks() {
@@ -178,56 +177,6 @@ public class ModInitializer extends AbstractModInitializer {
         blockRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    @SubscribeEvent
-    public void registerBlockEntityTypes(RegistryEvent.Register<BlockEntityType<?>> e) {
-        // Register here, there seems to be no specific register event for loot function types.
-        registerLootFunctions();
-
-        BlockEntityType<CableBlockEntity> cableBlockEntityType = BlockEntityType.Builder.of(CableBlockEntity::new, Blocks.INSTANCE.getCable()).build(null);
-        cableBlockEntityType.setRegistryName(CABLE);
-        e.getRegistry().register(cableBlockEntityType);
-        BlockEntities.INSTANCE.setCable(cableBlockEntityType);
-
-        BlockEntityType<ControllerBlockEntity> controllerBlockEntityType = BlockEntityType.Builder.of((pos, state) -> new ControllerBlockEntity(ControllerType.NORMAL, pos, state), Blocks.INSTANCE.getController().toArray()).build(null);
-        controllerBlockEntityType.setRegistryName(CONTROLLER);
-        e.getRegistry().register(controllerBlockEntityType);
-        BlockEntities.INSTANCE.setController(controllerBlockEntityType);
-
-        BlockEntityType<ControllerBlockEntity> creativeControllerBlockEntityType = BlockEntityType.Builder.of((pos, state) -> new ControllerBlockEntity(ControllerType.CREATIVE, pos, state), Blocks.INSTANCE.getCreativeController().toArray()).build(null);
-        creativeControllerBlockEntityType.setRegistryName(CREATIVE_CONTROLLER);
-        e.getRegistry().register(creativeControllerBlockEntityType);
-        BlockEntities.INSTANCE.setCreativeController(creativeControllerBlockEntityType);
-
-        BlockEntityType<ForgeDiskDriveBlockEntity> diskDriveBlockEntityType = BlockEntityType.Builder.of(ForgeDiskDriveBlockEntity::new, Blocks.INSTANCE.getDiskDrive()).build(null);
-        diskDriveBlockEntityType.setRegistryName(DISK_DRIVE);
-        e.getRegistry().register(diskDriveBlockEntityType);
-        BlockEntities.INSTANCE.setDiskDrive(diskDriveBlockEntityType);
-
-        BlockEntityType<ItemGridBlockEntity> gridBlockEntityType = BlockEntityType.Builder.of(ItemGridBlockEntity::new, Blocks.INSTANCE.getGrid().toArray()).build(null);
-        gridBlockEntityType.setRegistryName(GRID);
-        e.getRegistry().register(gridBlockEntityType);
-        BlockEntities.INSTANCE.setGrid(gridBlockEntityType);
-
-        BlockEntityType<FluidGridBlockEntity> fluidGridBlockEntityType = BlockEntityType.Builder.of(FluidGridBlockEntity::new, Blocks.INSTANCE.getFluidGrid().toArray()).build(null);
-        fluidGridBlockEntityType.setRegistryName(FLUID_GRID);
-        e.getRegistry().register(fluidGridBlockEntityType);
-        BlockEntities.INSTANCE.setFluidGrid(fluidGridBlockEntityType);
-
-        for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            BlockEntityType<ItemStorageBlockBlockEntity> blockEntityType = BlockEntityType.Builder.of((pos, state) -> new ItemStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getItemStorageBlocks().get(variant).get()).build(null);
-            blockEntityType.setRegistryName(forItemStorageBlock(variant));
-            e.getRegistry().register(blockEntityType);
-            BlockEntities.INSTANCE.getItemStorageBlocks().put(variant, blockEntityType);
-        }
-
-        for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            BlockEntityType<FluidStorageBlockBlockEntity> blockEntityType = BlockEntityType.Builder.of((pos, state) -> new FluidStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getFluidStorageBlocks().get(variant).get()).build(null);
-            blockEntityType.setRegistryName(forFluidStorageBlock(variant));
-            e.getRegistry().register(blockEntityType);
-            BlockEntities.INSTANCE.getFluidStorageBlocks().put(variant, blockEntityType);
-        }
-    }
-
     private void registerItems() {
         itemRegistry.register(CABLE.getPath(), () -> new BlockItem(Blocks.INSTANCE.getCable(), createProperties()));
         itemRegistry.register(QUARTZ_ENRICHED_IRON.getPath(), () -> new QuartzEnrichedIronItem(createProperties()));
@@ -236,8 +185,10 @@ public class ModInitializer extends AbstractModInitializer {
         itemRegistry.register(PROCESSOR_BINDING.getPath(), () -> new ProcessorBindingItem(createProperties()));
         itemRegistry.register(DISK_DRIVE.getPath(), () -> new BlockItem(Blocks.INSTANCE.getDiskDrive(), createProperties()));
         itemRegistry.register(WRENCH.getPath(), () -> new WrenchItem(createProperties().stacksTo(1)));
+
         Items.INSTANCE.setStorageHousing(itemRegistry.register(STORAGE_HOUSING.getPath(), () -> new StorageHousingItem(createProperties())));
         itemRegistry.register(MACHINE_CASING.getPath(), () -> new BlockItem(Blocks.INSTANCE.getMachineCasing(), createProperties()));
+
         Blocks.INSTANCE.getGrid().forEach((color, block) -> itemRegistry.register(Blocks.INSTANCE.getGrid().getId(color, GRID).getPath(), () -> new NameableBlockItem(block.get(), createProperties(), color, Blocks.INSTANCE.getGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")))));
         Blocks.INSTANCE.getFluidGrid().forEach((color, block) -> itemRegistry.register(Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID).getPath(), () -> new NameableBlockItem(block.get(), createProperties(), color, Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")))));
         Blocks.INSTANCE.getController().forEach((color, block) -> Items.INSTANCE.getControllers().add(itemRegistry.register(
@@ -295,6 +246,31 @@ public class ModInitializer extends AbstractModInitializer {
         itemRegistry.register(DESTRUCTION_CORE.getPath(), () -> new CoreItem(createProperties()));
 
         itemRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
+    }
+
+    private void registerBlockEntities() {
+        BlockEntities.INSTANCE.setCable(blockEntityTypeRegistry.register(CABLE.getPath(), () -> BlockEntityType.Builder.of(CableBlockEntity::new, Blocks.INSTANCE.getCable()).build(null)));
+        BlockEntities.INSTANCE.setController(blockEntityTypeRegistry.register(CONTROLLER.getPath(), () -> BlockEntityType.Builder.of((pos, state) -> new ControllerBlockEntity(ControllerType.NORMAL, pos, state), Blocks.INSTANCE.getController().toArray()).build(null)));
+        BlockEntities.INSTANCE.setCreativeController(blockEntityTypeRegistry.register(CREATIVE_CONTROLLER.getPath(), () -> BlockEntityType.Builder.of((pos, state) -> new ControllerBlockEntity(ControllerType.CREATIVE, pos, state), Blocks.INSTANCE.getCreativeController().toArray()).build(null)));
+        BlockEntities.INSTANCE.setDiskDrive(blockEntityTypeRegistry.register(DISK_DRIVE.getPath(), () -> BlockEntityType.Builder.of(ForgeDiskDriveBlockEntity::new, Blocks.INSTANCE.getDiskDrive()).build(null)));
+        BlockEntities.INSTANCE.setGrid(blockEntityTypeRegistry.register(GRID.getPath(), () -> BlockEntityType.Builder.of(ItemGridBlockEntity::new, Blocks.INSTANCE.getGrid().toArray()).build(null)));
+        BlockEntities.INSTANCE.setFluidGrid(blockEntityTypeRegistry.register(FLUID_GRID.getPath(), () -> BlockEntityType.Builder.of(FluidGridBlockEntity::new, Blocks.INSTANCE.getFluidGrid().toArray()).build(null)));
+
+        for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
+            BlockEntities.INSTANCE.getItemStorageBlocks().put(variant, blockEntityTypeRegistry.register(forItemStorageBlock(variant).getPath(), () -> BlockEntityType.Builder.of((pos, state) -> new ItemStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getItemStorageBlocks().get(variant).get()).build(null)));
+        }
+
+        for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
+            BlockEntities.INSTANCE.getFluidStorageBlocks().put(variant, blockEntityTypeRegistry.register(forFluidStorageBlock(variant).getPath(), () -> BlockEntityType.Builder.of((pos, state) -> new FluidStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getFluidStorageBlocks().get(variant).get()).build(null)));
+        }
+
+        blockEntityTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
+    }
+
+    private void registerLootFunctions() {
+        LootFunctions.INSTANCE.setStorageBlock(lootFunctionTypeRegistry.register("storage_block", () -> new LootItemFunctionType(new StorageBlock.StorageBlockLootItemFunctionSerializer())));
+
+        lootFunctionTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void registerTickHandler() {

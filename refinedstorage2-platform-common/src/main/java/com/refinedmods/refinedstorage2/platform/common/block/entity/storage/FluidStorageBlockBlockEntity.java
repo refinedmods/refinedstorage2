@@ -31,7 +31,7 @@ public class FluidStorageBlockBlockEntity extends StorageBlockBlockEntity<FluidR
 
     public FluidStorageBlockBlockEntity(BlockPos pos, BlockState state, FluidStorageType.Variant variant) {
         super(
-                BlockEntities.INSTANCE.getFluidStorageBlocks().get(variant),
+                BlockEntities.INSTANCE.getFluidStorageBlocks().get(variant).get(),
                 pos,
                 state,
                 new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.FLUID),
