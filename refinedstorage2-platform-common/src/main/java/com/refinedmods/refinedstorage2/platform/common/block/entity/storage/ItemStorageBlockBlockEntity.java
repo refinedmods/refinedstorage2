@@ -31,7 +31,7 @@ public class ItemStorageBlockBlockEntity extends StorageBlockBlockEntity<ItemRes
 
     public ItemStorageBlockBlockEntity(BlockPos pos, BlockState state, ItemStorageType.Variant variant) {
         super(
-                BlockEntities.INSTANCE.getItemStorageBlocks().get(variant),
+                BlockEntities.INSTANCE.getItemStorageBlocks().get(variant).get(),
                 pos,
                 state,
                 new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.ITEM),

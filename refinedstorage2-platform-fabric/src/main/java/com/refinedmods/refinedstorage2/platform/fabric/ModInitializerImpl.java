@@ -237,21 +237,21 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerBlockEntities() {
-        BlockEntities.INSTANCE.setCable(Registry.register(Registry.BLOCK_ENTITY_TYPE, CABLE, FabricBlockEntityTypeBuilder.create(CableBlockEntity::new, Blocks.INSTANCE.getCable()).build(null)));
-        BlockEntities.INSTANCE.setDiskDrive(Registry.register(Registry.BLOCK_ENTITY_TYPE, DISK_DRIVE, FabricBlockEntityTypeBuilder.create(FabricDiskDriveBlockEntity::new, Blocks.INSTANCE.getDiskDrive()).build(null)));
-        BlockEntities.INSTANCE.setGrid(Registry.register(Registry.BLOCK_ENTITY_TYPE, GRID, FabricBlockEntityTypeBuilder.create(ItemGridBlockEntity::new, Blocks.INSTANCE.getGrid().toArray()).build(null)));
-        BlockEntities.INSTANCE.setFluidGrid(Registry.register(Registry.BLOCK_ENTITY_TYPE, FLUID_GRID, FabricBlockEntityTypeBuilder.create(FluidGridBlockEntity::new, Blocks.INSTANCE.getFluidGrid().toArray()).build(null)));
-        BlockEntities.INSTANCE.setController(Registry.register(Registry.BLOCK_ENTITY_TYPE, CONTROLLER, FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.NORMAL, pos, state), Blocks.INSTANCE.getController().toArray()).build(null)));
-        BlockEntities.INSTANCE.setCreativeController(Registry.register(Registry.BLOCK_ENTITY_TYPE, CREATIVE_CONTROLLER, FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.CREATIVE, pos, state), Blocks.INSTANCE.getCreativeController().toArray()).build(null)));
+        BlockEntities.INSTANCE.setCable(register(Registry.BLOCK_ENTITY_TYPE, CABLE, FabricBlockEntityTypeBuilder.create(CableBlockEntity::new, Blocks.INSTANCE.getCable()).build(null)));
+        BlockEntities.INSTANCE.setDiskDrive(register(Registry.BLOCK_ENTITY_TYPE, DISK_DRIVE, FabricBlockEntityTypeBuilder.create(FabricDiskDriveBlockEntity::new, Blocks.INSTANCE.getDiskDrive()).build(null)));
+        BlockEntities.INSTANCE.setGrid(register(Registry.BLOCK_ENTITY_TYPE, GRID, FabricBlockEntityTypeBuilder.create(ItemGridBlockEntity::new, Blocks.INSTANCE.getGrid().toArray()).build(null)));
+        BlockEntities.INSTANCE.setFluidGrid(register(Registry.BLOCK_ENTITY_TYPE, FLUID_GRID, FabricBlockEntityTypeBuilder.create(FluidGridBlockEntity::new, Blocks.INSTANCE.getFluidGrid().toArray()).build(null)));
+        BlockEntities.INSTANCE.setController(register(Registry.BLOCK_ENTITY_TYPE, CONTROLLER, FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.NORMAL, pos, state), Blocks.INSTANCE.getController().toArray()).build(null)));
+        BlockEntities.INSTANCE.setCreativeController(register(Registry.BLOCK_ENTITY_TYPE, CREATIVE_CONTROLLER, FabricBlockEntityTypeBuilder.create((pos, state) -> new ControllerBlockEntity(ControllerType.CREATIVE, pos, state), Blocks.INSTANCE.getCreativeController().toArray()).build(null)));
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
             BlockEntityType<ItemStorageBlockBlockEntity> blockEntityType = FabricBlockEntityTypeBuilder.create((pos, state) -> new ItemStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getItemStorageBlocks().get(variant).get()).build(null);
-            BlockEntities.INSTANCE.getItemStorageBlocks().put(variant, Registry.register(Registry.BLOCK_ENTITY_TYPE, forItemStorageBlock(variant), blockEntityType));
+            BlockEntities.INSTANCE.getItemStorageBlocks().put(variant, register(Registry.BLOCK_ENTITY_TYPE, forItemStorageBlock(variant), blockEntityType));
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
             BlockEntityType<FluidStorageBlockBlockEntity> blockEntityType = FabricBlockEntityTypeBuilder.create((pos, state) -> new FluidStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getFluidStorageBlocks().get(variant).get()).build(null);
-            BlockEntities.INSTANCE.getFluidStorageBlocks().put(variant, Registry.register(Registry.BLOCK_ENTITY_TYPE, forFluidStorageBlock(variant), blockEntityType));
+            BlockEntities.INSTANCE.getFluidStorageBlocks().put(variant, register(Registry.BLOCK_ENTITY_TYPE, forFluidStorageBlock(variant), blockEntityType));
         }
     }
 
@@ -265,7 +265,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerLootFunctions() {
-        LootFunctions.INSTANCE.setStorageBlock(Registry.register(Registry.LOOT_FUNCTION_TYPE, createIdentifier("storage_block"), new LootItemFunctionType(new StorageBlock.StorageBlockLootItemFunctionSerializer())));
+        LootFunctions.INSTANCE.setStorageBlock(register(Registry.LOOT_FUNCTION_TYPE, createIdentifier("storage_block"), new LootItemFunctionType(new StorageBlock.StorageBlockLootItemFunctionSerializer())));
     }
 
     private void registerPackets() {
