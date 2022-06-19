@@ -99,6 +99,6 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
         if (variant == ItemStorageType.Variant.CREATIVE) {
             return null;
         }
-        return new ItemStack(Items.INSTANCE.getStoragePart(variant), count);
+        return new ItemStack(Items.INSTANCE.getItemStoragePart(variant), count);
     }
 }

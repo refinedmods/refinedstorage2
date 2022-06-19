@@ -37,12 +37,12 @@ import com.refinedmods.refinedstorage2.platform.common.item.CoreItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
+import com.refinedmods.refinedstorage2.platform.common.item.ItemStoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorBindingItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.QuartzEnrichedIronItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SiliconItem;
 import com.refinedmods.refinedstorage2.platform.common.item.StorageHousingItem;
-import com.refinedmods.refinedstorage2.platform.common.item.StoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
@@ -170,11 +170,11 @@ public class ModInitializer extends AbstractModInitializer {
         Blocks.INSTANCE.getCreativeController().putAll(color -> blockRegistry.register(Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER).getPath(), () -> new ControllerBlock(ControllerType.CREATIVE, Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")))));
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            Blocks.INSTANCE.getItemStorageBlocks().put(variant, blockRegistry.register(forItemStorageBlock(variant).getPath(), () -> new ItemStorageBlock(variant)));
+            Blocks.INSTANCE.setItemStorageBlock(variant, blockRegistry.register(forItemStorageBlock(variant).getPath(), () -> new ItemStorageBlock(variant)));
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            Blocks.INSTANCE.getFluidStorageBlocks().put(variant, blockRegistry.register(forFluidStorageBlock(variant).getPath(), () -> new FluidStorageBlock(variant)));
+            Blocks.INSTANCE.setFluidStorageBlock(variant, blockRegistry.register(forFluidStorageBlock(variant).getPath(), () -> new FluidStorageBlock(variant)));
         }
 
         blockRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -219,13 +219,13 @@ public class ModInitializer extends AbstractModInitializer {
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
             if (variant != ItemStorageType.Variant.CREATIVE) {
-                Items.INSTANCE.getStorageParts().put(variant, itemRegistry.register(forItemStoragePart(variant).getPath(), () -> new StoragePartItem(createProperties())));
+                Items.INSTANCE.setItemStoragePart(variant, itemRegistry.register(forItemStoragePart(variant).getPath(), () -> new ItemStoragePartItem(createProperties())));
             }
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
             if (variant != FluidStorageType.Variant.CREATIVE) {
-                Items.INSTANCE.getFluidStorageParts().put(variant, itemRegistry.register(forFluidStoragePart(variant).getPath(), () -> new FluidStoragePartItem(createProperties())));
+                Items.INSTANCE.setFluidStoragePart(variant, itemRegistry.register(forFluidStoragePart(variant).getPath(), () -> new FluidStoragePartItem(createProperties())));
             }
         }
 
@@ -234,7 +234,7 @@ public class ModInitializer extends AbstractModInitializer {
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            itemRegistry.register(forItemStorageBlock(variant).getPath(), () -> new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlocks().get(variant).get(), createProperties().stacksTo(1).fireResistant(), variant));
+            itemRegistry.register(forItemStorageBlock(variant).getPath(), () -> new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlock(variant), createProperties().stacksTo(1).fireResistant(), variant));
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
@@ -242,7 +242,7 @@ public class ModInitializer extends AbstractModInitializer {
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            itemRegistry.register(forFluidStorageBlock(variant).getPath(), () -> new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlocks().get(variant).get(), createProperties().stacksTo(1).fireResistant(), variant));
+            itemRegistry.register(forFluidStorageBlock(variant).getPath(), () -> new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlock(variant), createProperties().stacksTo(1).fireResistant(), variant));
         }
 
         itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new CoreItem(createProperties()));
@@ -260,11 +260,11 @@ public class ModInitializer extends AbstractModInitializer {
         BlockEntities.INSTANCE.setFluidGrid(blockEntityTypeRegistry.register(FLUID_GRID.getPath(), () -> BlockEntityType.Builder.of(FluidGridBlockEntity::new, Blocks.INSTANCE.getFluidGrid().toArray()).build(null)));
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            BlockEntities.INSTANCE.getItemStorageBlocks().put(variant, blockEntityTypeRegistry.register(forItemStorageBlock(variant).getPath(), () -> BlockEntityType.Builder.of((pos, state) -> new ItemStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getItemStorageBlocks().get(variant).get()).build(null)));
+            BlockEntities.INSTANCE.setItemStorageBlock(variant, blockEntityTypeRegistry.register(forItemStorageBlock(variant).getPath(), () -> BlockEntityType.Builder.of((pos, state) -> new ItemStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getItemStorageBlock(variant)).build(null)));
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            BlockEntities.INSTANCE.getFluidStorageBlocks().put(variant, blockEntityTypeRegistry.register(forFluidStorageBlock(variant).getPath(), () -> BlockEntityType.Builder.of((pos, state) -> new FluidStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getFluidStorageBlocks().get(variant).get()).build(null)));
+            BlockEntities.INSTANCE.setFluidStorageBlock(variant, blockEntityTypeRegistry.register(forFluidStorageBlock(variant).getPath(), () -> BlockEntityType.Builder.of((pos, state) -> new FluidStorageBlockBlockEntity(pos, state, variant), Blocks.INSTANCE.getFluidStorageBlock(variant)).build(null)));
         }
 
         blockEntityTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
