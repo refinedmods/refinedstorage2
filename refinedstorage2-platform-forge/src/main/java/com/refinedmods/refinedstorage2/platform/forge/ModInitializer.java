@@ -75,7 +75,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -130,6 +129,7 @@ public class ModInitializer extends AbstractModInitializer {
     private final DeferredRegister<BlockEntityType<?>> blockEntityTypeRegistry = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, IdentifierUtil.MOD_ID);
     private final DeferredRegister<LootItemFunctionType> lootFunctionTypeRegistry = DeferredRegister.create(Registry.LOOT_FUNCTION_REGISTRY, IdentifierUtil.MOD_ID);
     private final DeferredRegister<MenuType<?>> menuTypeRegistry = DeferredRegister.create(ForgeRegistries.CONTAINERS, IdentifierUtil.MOD_ID);
+    private final DeferredRegister<SoundEvent> soundEventRegistry = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, IdentifierUtil.MOD_ID);
 
     public ModInitializer() {
         initializePlatform(new PlatformImpl(new NetworkManager()));
@@ -138,6 +138,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerStorageChannelTypes();
         registerNetworkComponents();
         registerContent();
+        registerSounds();
         registerAdditionalResourceTypes();
         registerTickHandler();
 
@@ -145,8 +146,6 @@ public class ModInitializer extends AbstractModInitializer {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onClientSetup);
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterModels);
         });
-
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(SoundEvent.class, this::registerSounds);
 
         MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerCapabilities);
@@ -288,6 +287,12 @@ public class ModInitializer extends AbstractModInitializer {
         lootFunctionTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
+    private void registerSounds() {
+        Sounds.INSTANCE.setWrench(soundEventRegistry.register(WRENCH.getPath(), () -> new SoundEvent(WRENCH)));
+
+        soundEventRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
+    }
+
     private void registerTickHandler() {
         MinecraftForge.EVENT_BUS.addListener(this::onServerTick);
     }
@@ -328,14 +333,6 @@ public class ModInitializer extends AbstractModInitializer {
     // TODO: Delegate this responsibility to the items themselves..
     private Item.Properties createProperties() {
         return new Item.Properties().tab(CREATIVE_MODE_TAB);
-    }
-
-    @SubscribeEvent
-    public void registerSounds(RegistryEvent.Register<SoundEvent> e) {
-        SoundEvent wrenchSoundEvent = new SoundEvent(WRENCH);
-        wrenchSoundEvent.setRegistryName(WRENCH);
-        e.getRegistry().register(wrenchSoundEvent);
-        Sounds.INSTANCE.setWrench(wrenchSoundEvent);
     }
 
     @SubscribeEvent

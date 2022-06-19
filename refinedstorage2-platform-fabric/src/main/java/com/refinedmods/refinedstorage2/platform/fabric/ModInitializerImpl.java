@@ -281,7 +281,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerSounds() {
-        Sounds.INSTANCE.setWrench(Registry.register(Registry.SOUND_EVENT, WRENCH, new SoundEvent(WRENCH)));
+        Sounds.INSTANCE.setWrench(register(Registry.SOUND_EVENT, WRENCH, new SoundEvent(WRENCH)));
     }
 
     private void registerSidedHandlers() {
