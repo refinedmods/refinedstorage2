@@ -95,12 +95,15 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_GRID;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.GRID;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.ITEM_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.MACHINE_CASING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SILICON;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_HOUSING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageBlock;
@@ -256,16 +259,16 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerMenus() {
-        Menus.INSTANCE.setDiskDrive(Registry.register(Registry.MENU, DISK_DRIVE, new ExtendedScreenHandlerType<>(DiskDriveContainerMenu::new)));
-        Menus.INSTANCE.setGrid(Registry.register(Registry.MENU, GRID, new ExtendedScreenHandlerType<>(ItemGridContainerMenu::new)));
-        Menus.INSTANCE.setFluidGrid(Registry.register(Registry.MENU, FLUID_GRID, new ExtendedScreenHandlerType<>(FluidGridContainerMenu::new)));
-        Menus.INSTANCE.setController(Registry.register(Registry.MENU, CONTROLLER, new ExtendedScreenHandlerType<>(ControllerContainerMenu::new)));
-        Menus.INSTANCE.setItemStorage(Registry.register(Registry.MENU, createIdentifier("item_storage"), new ExtendedScreenHandlerType<>(ItemStorageBlockContainerMenu::new)));
-        Menus.INSTANCE.setFluidStorage(Registry.register(Registry.MENU, createIdentifier("fluid_storage"), new ExtendedScreenHandlerType<>(FluidStorageBlockContainerMenu::new)));
+        Menus.INSTANCE.setDiskDrive(register(Registry.MENU, DISK_DRIVE, new ExtendedScreenHandlerType<>(DiskDriveContainerMenu::new)));
+        Menus.INSTANCE.setGrid(register(Registry.MENU, GRID, new ExtendedScreenHandlerType<>(ItemGridContainerMenu::new)));
+        Menus.INSTANCE.setFluidGrid(register(Registry.MENU, FLUID_GRID, new ExtendedScreenHandlerType<>(FluidGridContainerMenu::new)));
+        Menus.INSTANCE.setController(register(Registry.MENU, CONTROLLER, new ExtendedScreenHandlerType<>(ControllerContainerMenu::new)));
+        Menus.INSTANCE.setItemStorage(register(Registry.MENU, ITEM_STORAGE_BLOCK, new ExtendedScreenHandlerType<>(ItemStorageBlockContainerMenu::new)));
+        Menus.INSTANCE.setFluidStorage(register(Registry.MENU, FLUID_STORAGE_BLOCK, new ExtendedScreenHandlerType<>(FluidStorageBlockContainerMenu::new)));
     }
 
     private void registerLootFunctions() {
-        LootFunctions.INSTANCE.setStorageBlock(register(Registry.LOOT_FUNCTION_TYPE, createIdentifier("storage_block"), new LootItemFunctionType(new StorageBlock.StorageBlockLootItemFunctionSerializer())));
+        LootFunctions.INSTANCE.setStorageBlock(register(Registry.LOOT_FUNCTION_TYPE, STORAGE_BLOCK, new LootItemFunctionType(new StorageBlock.StorageBlockLootItemFunctionSerializer())));
     }
 
     private void registerPackets() {
