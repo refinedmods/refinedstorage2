@@ -24,6 +24,9 @@ public final class ContentIds {
     public static final ResourceLocation CREATIVE_CONTROLLER = createIdentifier("creative_controller");
     public static final ResourceLocation CONSTRUCTION_CORE = createIdentifier("construction_core");
     public static final ResourceLocation DESTRUCTION_CORE = createIdentifier("destruction_core");
+    public static final ResourceLocation ITEM_STORAGE_BLOCK = createIdentifier("item_storage_block");
+    public static final ResourceLocation FLUID_STORAGE_BLOCK = createIdentifier("fluid_storage_block");
+    public static final ResourceLocation STORAGE_BLOCK = createIdentifier("storage_block");
 
     public static ResourceLocation forItemStoragePart(ItemStorageType.Variant variant) {
         return createIdentifier(variant.getName() + "_storage_part");

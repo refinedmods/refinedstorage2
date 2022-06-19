@@ -94,12 +94,15 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_GRID;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.GRID;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.ITEM_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.MACHINE_CASING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SILICON;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_HOUSING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageBlock;
@@ -126,6 +129,7 @@ public class ModInitializer extends AbstractModInitializer {
     private final DeferredRegister<Item> itemRegistry = DeferredRegister.create(ForgeRegistries.ITEMS, IdentifierUtil.MOD_ID);
     private final DeferredRegister<BlockEntityType<?>> blockEntityTypeRegistry = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, IdentifierUtil.MOD_ID);
     private final DeferredRegister<LootItemFunctionType> lootFunctionTypeRegistry = DeferredRegister.create(Registry.LOOT_FUNCTION_REGISTRY, IdentifierUtil.MOD_ID);
+    private final DeferredRegister<MenuType<?>> menuTypeRegistry = DeferredRegister.create(ForgeRegistries.CONTAINERS, IdentifierUtil.MOD_ID);
 
     public ModInitializer() {
         initializePlatform(new PlatformImpl(new NetworkManager()));
@@ -142,7 +146,6 @@ public class ModInitializer extends AbstractModInitializer {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterModels);
         });
 
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(MenuType.class, this::registerMenus);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(SoundEvent.class, this::registerSounds);
 
         MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);
@@ -153,6 +156,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerBlocks();
         registerItems();
         registerBlockEntities();
+        registerMenus();
         registerLootFunctions();
     }
 
@@ -267,8 +271,19 @@ public class ModInitializer extends AbstractModInitializer {
         blockEntityTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
+    private void registerMenus() {
+        Menus.INSTANCE.setController(menuTypeRegistry.register(CONTROLLER.getPath(), () -> IForgeMenuType.create(ControllerContainerMenu::new)));
+        Menus.INSTANCE.setDiskDrive(menuTypeRegistry.register(DISK_DRIVE.getPath(), () -> IForgeMenuType.create(DiskDriveContainerMenu::new)));
+        Menus.INSTANCE.setGrid(menuTypeRegistry.register(GRID.getPath(), () -> IForgeMenuType.create(ItemGridContainerMenu::new)));
+        Menus.INSTANCE.setFluidGrid(menuTypeRegistry.register(FLUID_GRID.getPath(), () -> IForgeMenuType.create(FluidGridContainerMenu::new)));
+        Menus.INSTANCE.setItemStorage(menuTypeRegistry.register(ITEM_STORAGE_BLOCK.getPath(), () -> IForgeMenuType.create(ItemStorageBlockContainerMenu::new)));
+        Menus.INSTANCE.setFluidStorage(menuTypeRegistry.register(FLUID_STORAGE_BLOCK.getPath(), () -> IForgeMenuType.create(FluidStorageBlockContainerMenu::new)));
+
+        menuTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
+    }
+
     private void registerLootFunctions() {
-        LootFunctions.INSTANCE.setStorageBlock(lootFunctionTypeRegistry.register("storage_block", () -> new LootItemFunctionType(new StorageBlock.StorageBlockLootItemFunctionSerializer())));
+        LootFunctions.INSTANCE.setStorageBlock(lootFunctionTypeRegistry.register(STORAGE_BLOCK.getPath(), () -> new LootItemFunctionType(new StorageBlock.StorageBlockLootItemFunctionSerializer())));
 
         lootFunctionTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -313,39 +328,6 @@ public class ModInitializer extends AbstractModInitializer {
     // TODO: Delegate this responsibility to the items themselves..
     private Item.Properties createProperties() {
         return new Item.Properties().tab(CREATIVE_MODE_TAB);
-    }
-
-    @SubscribeEvent
-    public void registerMenus(RegistryEvent.Register<MenuType<?>> e) {
-        MenuType<ControllerContainerMenu> controllerMenuType = IForgeMenuType.create(ControllerContainerMenu::new);
-        controllerMenuType.setRegistryName(CONTROLLER);
-        e.getRegistry().register(controllerMenuType);
-        Menus.INSTANCE.setController(controllerMenuType);
-
-        MenuType<DiskDriveContainerMenu> diskDriveMenuType = IForgeMenuType.create(DiskDriveContainerMenu::new);
-        diskDriveMenuType.setRegistryName(DISK_DRIVE);
-        e.getRegistry().register(diskDriveMenuType);
-        Menus.INSTANCE.setDiskDrive(diskDriveMenuType);
-
-        MenuType<ItemGridContainerMenu> itemGridMenuType = IForgeMenuType.create(ItemGridContainerMenu::new);
-        itemGridMenuType.setRegistryName(GRID);
-        e.getRegistry().register(itemGridMenuType);
-        Menus.INSTANCE.setGrid(itemGridMenuType);
-
-        MenuType<FluidGridContainerMenu> fluidGridMenuType = IForgeMenuType.create(FluidGridContainerMenu::new);
-        fluidGridMenuType.setRegistryName(FLUID_GRID);
-        e.getRegistry().register(fluidGridMenuType);
-        Menus.INSTANCE.setFluidGrid(fluidGridMenuType);
-
-        MenuType<ItemStorageBlockContainerMenu> itemStorageMenuType = IForgeMenuType.create(ItemStorageBlockContainerMenu::new);
-        itemStorageMenuType.setRegistryName(createIdentifier("item_storage"));
-        e.getRegistry().register(itemStorageMenuType);
-        Menus.INSTANCE.setItemStorage(itemStorageMenuType);
-
-        MenuType<FluidStorageBlockContainerMenu> fluidStorageMenuType = IForgeMenuType.create(FluidStorageBlockContainerMenu::new);
-        fluidStorageMenuType.setRegistryName(createIdentifier("fluid_storage"));
-        e.getRegistry().register(fluidStorageMenuType);
-        Menus.INSTANCE.setFluidStorage(fluidStorageMenuType);
     }
 
     @SubscribeEvent
