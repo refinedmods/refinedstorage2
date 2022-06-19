@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -34,8 +35,8 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     private final ItemStorageType.Variant variant;
     private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
-    public ItemStorageDiskItem(Item.Properties properties, ItemStorageType.Variant variant) {
-        super(properties);
+    public ItemStorageDiskItem(CreativeModeTab tab, ItemStorageType.Variant variant) {
+        super(new Item.Properties().tab(tab).stacksTo(1).fireResistant());
         this.variant = variant;
         this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.STACK_INFO);
         if (variant != ItemStorageType.Variant.CREATIVE) {

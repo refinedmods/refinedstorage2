@@ -16,6 +16,8 @@ import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -30,8 +32,8 @@ public class FluidStorageBlockBlockItem extends StorageBlockBlockItem {
     private final FluidStorageType.Variant variant;
     private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
-    public FluidStorageBlockBlockItem(Block block, Properties properties, FluidStorageType.Variant variant) {
-        super(block, properties);
+    public FluidStorageBlockBlockItem(Block block, CreativeModeTab tab, FluidStorageType.Variant variant) {
+        super(block, new Item.Properties().tab(tab).stacksTo(1).fireResistant());
         this.variant = variant;
         if (variant != FluidStorageType.Variant.CREATIVE) {
             this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);

@@ -34,21 +34,17 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
-import com.refinedmods.refinedstorage2.platform.common.item.CoreItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
-import com.refinedmods.refinedstorage2.platform.common.item.FluidStoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
-import com.refinedmods.refinedstorage2.platform.common.item.ItemStoragePartItem;
-import com.refinedmods.refinedstorage2.platform.common.item.ProcessorBindingItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
-import com.refinedmods.refinedstorage2.platform.common.item.QuartzEnrichedIronItem;
-import com.refinedmods.refinedstorage2.platform.common.item.SiliconItem;
-import com.refinedmods.refinedstorage2.platform.common.item.StorageHousingItem;
+import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.GridBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
@@ -77,9 +73,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -184,59 +178,56 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerItems() {
-        register(Registry.ITEM, CABLE, new BlockItem(Blocks.INSTANCE.getCable(), createProperties()));
-        register(Registry.ITEM, QUARTZ_ENRICHED_IRON, new QuartzEnrichedIronItem(createProperties()));
-        register(Registry.ITEM, QUARTZ_ENRICHED_IRON_BLOCK, new BlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock(), createProperties()));
-        register(Registry.ITEM, SILICON, new SiliconItem(createProperties()));
-        register(Registry.ITEM, PROCESSOR_BINDING, new ProcessorBindingItem(createProperties()));
-        register(Registry.ITEM, DISK_DRIVE, new BlockItem(Blocks.INSTANCE.getDiskDrive(), createProperties()));
-        register(Registry.ITEM, WRENCH, new WrenchItem(createProperties().stacksTo(1)));
+        register(Registry.ITEM, CABLE, new SimpleBlockItem(Blocks.INSTANCE.getCable(), CREATIVE_MODE_TAB));
+        register(Registry.ITEM, QUARTZ_ENRICHED_IRON, new SimpleItem(CREATIVE_MODE_TAB));
+        register(Registry.ITEM, QUARTZ_ENRICHED_IRON_BLOCK, new SimpleBlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock(), CREATIVE_MODE_TAB));
+        register(Registry.ITEM, SILICON, new SimpleItem(CREATIVE_MODE_TAB));
+        register(Registry.ITEM, PROCESSOR_BINDING, new SimpleItem(CREATIVE_MODE_TAB));
+        register(Registry.ITEM, DISK_DRIVE, new SimpleBlockItem(Blocks.INSTANCE.getDiskDrive(), CREATIVE_MODE_TAB));
+        register(Registry.ITEM, WRENCH, new WrenchItem(CREATIVE_MODE_TAB));
 
-        Items.INSTANCE.setStorageHousing(register(Registry.ITEM, STORAGE_HOUSING, new StorageHousingItem(createProperties())));
-        register(Registry.ITEM, MACHINE_CASING, new BlockItem(Blocks.INSTANCE.getMachineCasing(), createProperties()));
-        Blocks.INSTANCE.getGrid().forEach((color, block) -> register(Registry.ITEM, Blocks.INSTANCE.getGrid().getId(color, GRID), new NameableBlockItem(block.get(), createProperties(), color, Blocks.INSTANCE.getGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")))));
-        Blocks.INSTANCE.getFluidGrid().forEach((color, block) -> register(Registry.ITEM, Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID), new NameableBlockItem(block.get(), createProperties(), color, Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")))));
-        Blocks.INSTANCE.getController().forEach((color, block) -> Items.INSTANCE.getControllers().add(register(Registry.ITEM, Blocks.INSTANCE.getController().getId(color, CONTROLLER), new ControllerBlockItem(block.get(), createProperties().stacksTo(1), color, Blocks.INSTANCE.getController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller"))))));
-        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> register(Registry.ITEM, Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER), new NameableBlockItem(block.get(), createProperties().stacksTo(1), color, Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")))));
+        Items.INSTANCE.setStorageHousing(register(Registry.ITEM, STORAGE_HOUSING, new SimpleItem(CREATIVE_MODE_TAB)));
+        register(Registry.ITEM, MACHINE_CASING, new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing(), CREATIVE_MODE_TAB));
+
+        Blocks.INSTANCE.getGrid().forEach((color, block) -> register(Registry.ITEM, Blocks.INSTANCE.getGrid().getId(color, GRID), new GridBlockItem(block.get(), CREATIVE_MODE_TAB, Blocks.INSTANCE.getGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")))));
+        Blocks.INSTANCE.getFluidGrid().forEach((color, block) -> register(Registry.ITEM, Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID), new GridBlockItem(block.get(), CREATIVE_MODE_TAB, Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")))));
+        Blocks.INSTANCE.getController().forEach((color, block) -> Items.INSTANCE.getControllers().add(register(Registry.ITEM, Blocks.INSTANCE.getController().getId(color, CONTROLLER), new ControllerBlockItem(block.get(), CREATIVE_MODE_TAB, Blocks.INSTANCE.getController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller"))))));
+        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> register(Registry.ITEM, Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER), new CreativeControllerBlockItem(block.get(), CREATIVE_MODE_TAB, Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")))));
 
         for (ProcessorItem.Type type : ProcessorItem.Type.values()) {
-            register(Registry.ITEM, forProcessor(type), new ProcessorItem(createProperties()));
+            register(Registry.ITEM, forProcessor(type), new ProcessorItem(CREATIVE_MODE_TAB));
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
             if (variant != ItemStorageType.Variant.CREATIVE) {
-                Items.INSTANCE.setItemStoragePart(variant, register(Registry.ITEM, forItemStoragePart(variant), new ItemStoragePartItem(createProperties())));
+                Items.INSTANCE.setItemStoragePart(variant, register(Registry.ITEM, forItemStoragePart(variant), new SimpleItem(CREATIVE_MODE_TAB)));
             }
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
             if (variant != FluidStorageType.Variant.CREATIVE) {
-                Items.INSTANCE.setFluidStoragePart(variant, register(Registry.ITEM, forFluidStoragePart(variant), new FluidStoragePartItem(createProperties())));
+                Items.INSTANCE.setFluidStoragePart(variant, register(Registry.ITEM, forFluidStoragePart(variant), new SimpleItem(CREATIVE_MODE_TAB)));
             }
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            register(Registry.ITEM, forStorageDisk(variant), new ItemStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant));
+            register(Registry.ITEM, forStorageDisk(variant), new ItemStorageDiskItem(CREATIVE_MODE_TAB, variant));
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            register(Registry.ITEM, forItemStorageBlock(variant), new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlock(variant), createProperties().stacksTo(1).fireResistant(), variant));
+            register(Registry.ITEM, forItemStorageBlock(variant), new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlock(variant), CREATIVE_MODE_TAB, variant));
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            register(Registry.ITEM, forFluidStorageDisk(variant), new FluidStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant));
+            register(Registry.ITEM, forFluidStorageDisk(variant), new FluidStorageDiskItem(CREATIVE_MODE_TAB, variant));
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            register(Registry.ITEM, forFluidStorageBlock(variant), new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlock(variant), createProperties().stacksTo(1).fireResistant(), variant));
+            register(Registry.ITEM, forFluidStorageBlock(variant), new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlock(variant), CREATIVE_MODE_TAB, variant));
         }
 
-        register(Registry.ITEM, CONSTRUCTION_CORE, new CoreItem(createProperties()));
-        register(Registry.ITEM, DESTRUCTION_CORE, new CoreItem(createProperties()));
-    }
-
-    private Item.Properties createProperties() {
-        return new Item.Properties().tab(CREATIVE_MODE_TAB);
+        register(Registry.ITEM, CONSTRUCTION_CORE, new SimpleItem(CREATIVE_MODE_TAB));
+        register(Registry.ITEM, DESTRUCTION_CORE, new SimpleItem(CREATIVE_MODE_TAB));
     }
 
     private void registerBlockEntities() {

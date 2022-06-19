@@ -1,10 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 
 public class ProcessorItem extends Item {
-    public ProcessorItem(Properties properties) {
-        super(properties);
+    public ProcessorItem(CreativeModeTab tab) {
+        super(new Item.Properties().tab(tab));
     }
 
     public enum Type {

@@ -33,21 +33,17 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
-import com.refinedmods.refinedstorage2.platform.common.item.CoreItem;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
-import com.refinedmods.refinedstorage2.platform.common.item.FluidStoragePartItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
-import com.refinedmods.refinedstorage2.platform.common.item.ItemStoragePartItem;
-import com.refinedmods.refinedstorage2.platform.common.item.ProcessorBindingItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
-import com.refinedmods.refinedstorage2.platform.common.item.QuartzEnrichedIronItem;
-import com.refinedmods.refinedstorage2.platform.common.item.SiliconItem;
-import com.refinedmods.refinedstorage2.platform.common.item.StorageHousingItem;
+import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.GridBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.NameableBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
@@ -57,7 +53,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -181,72 +176,70 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerItems() {
-        itemRegistry.register(CABLE.getPath(), () -> new BlockItem(Blocks.INSTANCE.getCable(), createProperties()));
-        itemRegistry.register(QUARTZ_ENRICHED_IRON.getPath(), () -> new QuartzEnrichedIronItem(createProperties()));
-        itemRegistry.register(QUARTZ_ENRICHED_IRON_BLOCK.getPath(), () -> new BlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock(), createProperties()));
-        itemRegistry.register(SILICON.getPath(), () -> new SiliconItem(createProperties()));
-        itemRegistry.register(PROCESSOR_BINDING.getPath(), () -> new ProcessorBindingItem(createProperties()));
-        itemRegistry.register(DISK_DRIVE.getPath(), () -> new BlockItem(Blocks.INSTANCE.getDiskDrive(), createProperties()));
-        itemRegistry.register(WRENCH.getPath(), () -> new WrenchItem(createProperties().stacksTo(1)));
+        itemRegistry.register(CABLE.getPath(), () -> new SimpleBlockItem(Blocks.INSTANCE.getCable(), CREATIVE_MODE_TAB));
+        itemRegistry.register(QUARTZ_ENRICHED_IRON.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
+        itemRegistry.register(QUARTZ_ENRICHED_IRON_BLOCK.getPath(), () -> new SimpleBlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock(), CREATIVE_MODE_TAB));
+        itemRegistry.register(SILICON.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
+        itemRegistry.register(PROCESSOR_BINDING.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
+        itemRegistry.register(DISK_DRIVE.getPath(), () -> new SimpleBlockItem(Blocks.INSTANCE.getDiskDrive(), CREATIVE_MODE_TAB));
+        itemRegistry.register(WRENCH.getPath(), () -> new WrenchItem(CREATIVE_MODE_TAB));
 
-        Items.INSTANCE.setStorageHousing(itemRegistry.register(STORAGE_HOUSING.getPath(), () -> new StorageHousingItem(createProperties())));
-        itemRegistry.register(MACHINE_CASING.getPath(), () -> new BlockItem(Blocks.INSTANCE.getMachineCasing(), createProperties()));
+        Items.INSTANCE.setStorageHousing(itemRegistry.register(STORAGE_HOUSING.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB)));
+        itemRegistry.register(MACHINE_CASING.getPath(), () -> new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing(), CREATIVE_MODE_TAB));
 
-        Blocks.INSTANCE.getGrid().forEach((color, block) -> itemRegistry.register(Blocks.INSTANCE.getGrid().getId(color, GRID).getPath(), () -> new NameableBlockItem(block.get(), createProperties(), color, Blocks.INSTANCE.getGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")))));
-        Blocks.INSTANCE.getFluidGrid().forEach((color, block) -> itemRegistry.register(Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID).getPath(), () -> new NameableBlockItem(block.get(), createProperties(), color, Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")))));
+        Blocks.INSTANCE.getGrid().forEach((color, block) -> itemRegistry.register(Blocks.INSTANCE.getGrid().getId(color, GRID).getPath(), () -> new GridBlockItem(block.get(), CREATIVE_MODE_TAB, Blocks.INSTANCE.getGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")))));
+        Blocks.INSTANCE.getFluidGrid().forEach((color, block) -> itemRegistry.register(Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID).getPath(), () -> new GridBlockItem(block.get(), CREATIVE_MODE_TAB, Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")))));
         Blocks.INSTANCE.getController().forEach((color, block) -> Items.INSTANCE.getControllers().add(itemRegistry.register(
                 Blocks.INSTANCE.getController().getId(color, CONTROLLER).getPath(),
                 () -> new ControllerBlockItem(
                         block.get(),
-                        createProperties().stacksTo(1),
-                        color,
+                        CREATIVE_MODE_TAB,
                         Blocks.INSTANCE.getController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller"))
                 )
         )));
         Blocks.INSTANCE.getCreativeController().forEach((color, block) -> itemRegistry.register(
                 Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER).getPath(),
-                () -> new NameableBlockItem(
+                () -> new CreativeControllerBlockItem(
                         block.get(),
-                        createProperties().stacksTo(1),
-                        color,
+                        CREATIVE_MODE_TAB,
                         Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller"))
                 )
         ));
 
         for (ProcessorItem.Type type : ProcessorItem.Type.values()) {
-            itemRegistry.register(forProcessor(type).getPath(), () -> new ProcessorItem(createProperties()));
+            itemRegistry.register(forProcessor(type).getPath(), () -> new ProcessorItem(CREATIVE_MODE_TAB));
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
             if (variant != ItemStorageType.Variant.CREATIVE) {
-                Items.INSTANCE.setItemStoragePart(variant, itemRegistry.register(forItemStoragePart(variant).getPath(), () -> new ItemStoragePartItem(createProperties())));
+                Items.INSTANCE.setItemStoragePart(variant, itemRegistry.register(forItemStoragePart(variant).getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB)));
             }
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
             if (variant != FluidStorageType.Variant.CREATIVE) {
-                Items.INSTANCE.setFluidStoragePart(variant, itemRegistry.register(forFluidStoragePart(variant).getPath(), () -> new FluidStoragePartItem(createProperties())));
+                Items.INSTANCE.setFluidStoragePart(variant, itemRegistry.register(forFluidStoragePart(variant).getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB)));
             }
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            itemRegistry.register(forStorageDisk(variant).getPath(), () -> new ItemStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant));
+            itemRegistry.register(forStorageDisk(variant).getPath(), () -> new ItemStorageDiskItem(CREATIVE_MODE_TAB, variant));
         }
 
         for (ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            itemRegistry.register(forItemStorageBlock(variant).getPath(), () -> new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlock(variant), createProperties().stacksTo(1).fireResistant(), variant));
+            itemRegistry.register(forItemStorageBlock(variant).getPath(), () -> new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlock(variant), CREATIVE_MODE_TAB, variant));
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            itemRegistry.register(forFluidStorageDisk(variant).getPath(), () -> new FluidStorageDiskItem(createProperties().stacksTo(1).fireResistant(), variant));
+            itemRegistry.register(forFluidStorageDisk(variant).getPath(), () -> new FluidStorageDiskItem(CREATIVE_MODE_TAB, variant));
         }
 
         for (FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            itemRegistry.register(forFluidStorageBlock(variant).getPath(), () -> new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlock(variant), createProperties().stacksTo(1).fireResistant(), variant));
+            itemRegistry.register(forFluidStorageBlock(variant).getPath(), () -> new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlock(variant), CREATIVE_MODE_TAB, variant));
         }
 
-        itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new CoreItem(createProperties()));
-        itemRegistry.register(DESTRUCTION_CORE.getPath(), () -> new CoreItem(createProperties()));
+        itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
+        itemRegistry.register(DESTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
 
         itemRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -328,11 +321,6 @@ public class ModInitializer extends AbstractModInitializer {
                 return LazyOptional.empty();
             }
         });
-    }
-
-    // TODO: Delegate this responsibility to the items themselves..
-    private Item.Properties createProperties() {
-        return new Item.Properties().tab(CREATIVE_MODE_TAB);
     }
 
     @SubscribeEvent
