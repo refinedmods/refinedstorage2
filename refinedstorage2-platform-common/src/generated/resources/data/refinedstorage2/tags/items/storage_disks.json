@@ -1,0 +1,9 @@
+{
+    "replace": false,
+    "values": [
+        "refinedstorage2:1k_storage_disk",
+        "refinedstorage2:4k_storage_disk",
+        "refinedstorage2:16k_storage_disk",
+        "refinedstorage2:64k_storage_disk"
+    ]
+}

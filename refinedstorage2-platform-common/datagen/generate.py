@@ -299,6 +299,31 @@ with open('colors.txt') as colors_file:
         'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'grid'), color_names))
     })
 
+    generate_item_tag('fluid_grids', {
+        'replace': False,
+        'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'fluid_grid'), color_names))
+    })
+
+    generate_item_tag('storage_disks', {
+        'replace': False,
+        'values': [
+            'refinedstorage2:1k_storage_disk',
+            'refinedstorage2:4k_storage_disk',
+            'refinedstorage2:16k_storage_disk',
+            'refinedstorage2:64k_storage_disk'
+        ]
+    })
+
+    generate_item_tag('fluid_storage_disks', {
+        'replace': False,
+        'values': [
+            'refinedstorage2:64b_fluid_storage_disk',
+            'refinedstorage2:256b_fluid_storage_disk',
+            'refinedstorage2:1024b_fluid_storage_disk',
+            'refinedstorage2:4096b_fluid_storage_disk'
+        ]
+    })
+
     generate_item_tag('controllers', {
         'replace': False,
         'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'controller'), color_names))

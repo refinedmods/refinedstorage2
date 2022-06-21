@@ -16,7 +16,8 @@ disks, etc. to intermediate storage like a chest.
     - The Disk Drive in item form now supports rendering of disks that were dismantled.
     - In order to retain Controller energy, the Controller must now be dismantled.
 - You can now use any Wrench from other mods in order to rotate or dismantle.
-- Added item and fluid storage blocks.
+- Item and fluid storage blocks.
+- Initial advancements.
 
 ### Fixed
 
