@@ -1,0 +1,28 @@
+{
+    "display": {
+        "icon": {
+            "item": "refinedstorage2:disk_drive"
+        },
+        "title": {
+            "translate": "advancements.refinedstorage2.drives"
+        },
+        "description": {
+            "translate": "advancements.refinedstorage2.drives.description"
+        }
+    },
+    "parent": "refinedstorage2:root",
+    "criteria": {
+        "disk_drive_in_inventory": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "refinedstorage2:disk_drive"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

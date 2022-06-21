@@ -1,0 +1,28 @@
+{
+    "display": {
+        "icon": {
+            "item": "refinedstorage2:cable"
+        },
+        "title": {
+            "translate": "advancements.refinedstorage2.connecting"
+        },
+        "description": {
+            "translate": "advancements.refinedstorage2.connecting.description"
+        }
+    },
+    "parent": "refinedstorage2:root",
+    "criteria": {
+        "cable_in_inventory": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": [
+                            "refinedstorage2:cable"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

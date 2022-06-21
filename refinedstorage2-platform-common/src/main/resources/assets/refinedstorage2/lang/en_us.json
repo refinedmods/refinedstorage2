@@ -133,5 +133,18 @@
     "text.autoconfig.refinedstorage2.option.storageBlock._4kEnergyUsage": "4K energy usage",
     "text.autoconfig.refinedstorage2.option.storageBlock._16kEnergyUsage": "16K energy usage",
     "text.autoconfig.refinedstorage2.option.storageBlock._64kEnergyUsage": "64K energy usage",
-    "text.autoconfig.refinedstorage2.option.storageBlock.creativeEnergyUsage": "Creative energy usage"
+    "text.autoconfig.refinedstorage2.option.storageBlock.creativeEnergyUsage": "Creative energy usage",
+    "advancements.refinedstorage2.root.description": "Use one or multiple Controllers in a network to provide your network with energy",
+    "advancements.refinedstorage2.connecting": "Connecting",
+    "advancements.refinedstorage2.connecting.description": "Use Cable to connect devices with each other, or place devices against each other",
+    "advancements.refinedstorage2.drives": "Drives",
+    "advancements.refinedstorage2.drives.description": "Craft a Disk Drive to be able to store your storage disks",
+    "advancements.refinedstorage2.storing_items": "Storing items",
+    "advancements.refinedstorage2.storing_items.description": "Craft a Storage Disk and put it in your Disk Drive",
+    "advancements.refinedstorage2.viewing_items": "Viewing items",
+    "advancements.refinedstorage2.viewing_items.description": "Craft a Grid to interact with your item storage",
+    "advancements.refinedstorage2.storing_fluids": "Storing fluids",
+    "advancements.refinedstorage2.storing_fluids.description": "Craft a Fluid Storage Disk and put it in your Disk Drive",
+    "advancements.refinedstorage2.viewing_fluids": "Viewing fluids",
+    "advancements.refinedstorage2.viewing_fluids.description": "Craft a Fluid Grid to interact with your fluid storage"
 }
