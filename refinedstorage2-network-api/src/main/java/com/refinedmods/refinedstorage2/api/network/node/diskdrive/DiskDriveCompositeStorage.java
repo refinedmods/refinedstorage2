@@ -7,17 +7,18 @@ import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.composite.CompositeAwareChild;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageImpl;
-import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageListener;
+import com.refinedmods.refinedstorage2.api.storage.composite.ParentComposite;
 import com.refinedmods.refinedstorage2.api.storage.composite.Priority;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.Collection;
 import java.util.Optional;
 
-public class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, Priority {
-    private final CompositeStorage<T> disks;
+class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, CompositeAwareChild<T>, Priority {
+    private final CompositeStorageImpl<T> disks;
     private final DiskDriveNetworkNode diskDrive;
     private final Filter filter;
 
@@ -74,16 +75,6 @@ public class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, Priori
     }
 
     @Override
-    public void addListener(CompositeStorageListener<T> listener) {
-        disks.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(CompositeStorageListener<T> listener) {
-        disks.removeListener(listener);
-    }
-
-    @Override
     public void clearSources() {
         disks.clearSources();
     }
@@ -91,5 +82,15 @@ public class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, Priori
     @Override
     public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
         return disks.findTrackedResourceBySourceType(resource, sourceType);
+    }
+
+    @Override
+    public void onAddedIntoComposite(ParentComposite<T> parentComposite) {
+        disks.onAddedIntoComposite(parentComposite);
+    }
+
+    @Override
+    public void onRemovedFromComposite(ParentComposite<T> parentComposite) {
+        disks.onRemovedFromComposite(parentComposite);
     }
 }

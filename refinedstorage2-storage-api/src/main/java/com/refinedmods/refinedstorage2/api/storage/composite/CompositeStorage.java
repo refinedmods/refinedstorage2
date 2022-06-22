@@ -13,20 +13,19 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public interface CompositeStorage<T> extends Storage<T>, TrackedStorage<T> {
     /**
-     * Sort the sources of this composite.
-     * If a storage implements {@link Priority}, the composite will account for this.
+     * Sorts storages that implement {@link Priority}.
      */
     void sortSources();
 
     /**
-     * Adds a source and resorts the composite storage.
+     * Adds a source and resorts them.
      *
      * @param source the source
      */
     void addSource(Storage<T> source);
 
     /**
-     * Removes a source and resorts the composite storage.
+     * Removes a source and resorts them.
      *
      * @param source the source
      */
@@ -36,14 +35,4 @@ public interface CompositeStorage<T> extends Storage<T>, TrackedStorage<T> {
      * Clears all sources.
      */
     void clearSources();
-
-    /**
-     * @param listener the listener
-     */
-    void addListener(CompositeStorageListener<T> listener);
-
-    /**
-     * @param listener the listener
-     */
-    void removeListener(CompositeStorageListener<T> listener);
 }

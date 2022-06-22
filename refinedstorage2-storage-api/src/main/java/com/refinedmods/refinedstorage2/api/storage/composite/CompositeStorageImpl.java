@@ -18,11 +18,16 @@ import java.util.Set;
 
 import org.apiguardian.api.API;
 
+/**
+ * An implementation of {@link CompositeStorage} that can be contained into other {@link CompositeStorage}s.
+ *
+ * @param <T> the type of resource
+ */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeStorageListener<T> {
+public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAwareChild<T>, ParentComposite<T> {
     private final List<Storage<T>> sources = new ArrayList<>();
     private final ResourceList<T> list;
-    private final Set<CompositeStorageListener<T>> listeners = new HashSet<>();
+    private final Set<ParentComposite<T>> parentComposites = new HashSet<>();
 
     /**
      * @param list the backing list of this composite storage, used to retrieve a view of the sources
@@ -40,11 +45,10 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeSt
     public void addSource(Storage<T> source) {
         sources.add(source);
         sortSources();
-        onSourceAdded(source);
-        listeners.forEach(listener -> listener.onSourceAdded(source));
-        // TODO: Use CompositeAwareChild
-        if (source instanceof CompositeStorage<T> childComposite) {
-            childComposite.addListener(this);
+        addContentOfSourceToList(source);
+        parentComposites.forEach(parentComposite -> parentComposite.onSourceAddedToChild(source));
+        if (source instanceof CompositeAwareChild compositeAwareChild) {
+            compositeAwareChild.onAddedIntoComposite(this);
         }
     }
 
@@ -52,10 +56,10 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeSt
     public void removeSource(Storage<T> source) {
         sources.remove(source);
         sortSources();
-        onSourceRemoved(source);
-        listeners.forEach(listener -> listener.onSourceRemoved(source));
-        if (source instanceof CompositeStorage<T> childComposite) {
-            childComposite.removeListener(this);
+        removeContentOfSourceFromList(source);
+        parentComposites.forEach(parentComposite -> parentComposite.onSourceRemovedFromChild(source));
+        if (source instanceof CompositeAwareChild compositeAwareChild) {
+            compositeAwareChild.onRemovedFromComposite(this);
         }
     }
 
@@ -63,16 +67,6 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeSt
     public void clearSources() {
         Set<Storage<T>> oldSources = new HashSet<>(sources);
         oldSources.forEach(this::removeSource);
-    }
-
-    @Override
-    public void addListener(CompositeStorageListener<T> listener) {
-        listeners.add(listener);
-    }
-
-    @Override
-    public void removeListener(CompositeStorageListener<T> listener) {
-        listeners.remove(listener);
     }
 
     @Override
@@ -128,16 +122,6 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeSt
     }
 
     @Override
-    public void onSourceAdded(Storage<T> source) {
-        source.getAll().forEach(list::add);
-    }
-
-    @Override
-    public void onSourceRemoved(Storage<T> source) {
-        source.getAll().forEach(resourceAmount -> list.remove(resourceAmount.getResource(), resourceAmount.getAmount()));
-    }
-
-    @Override
     public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
         return sources
                 .stream()
@@ -145,5 +129,33 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeSt
                 .map(storage -> (TrackedStorage<T>) storage)
                 .flatMap(trackedStorage -> trackedStorage.findTrackedResourceBySourceType(resource, sourceType).stream())
                 .max(Comparator.comparingLong(TrackedResource::getTime));
+    }
+
+    @Override
+    public void onAddedIntoComposite(ParentComposite<T> parentComposite) {
+        parentComposites.add(parentComposite);
+    }
+
+    @Override
+    public void onRemovedFromComposite(ParentComposite<T> parentComposite) {
+        parentComposites.remove(parentComposite);
+    }
+
+    @Override
+    public void onSourceAddedToChild(Storage<T> source) {
+        addContentOfSourceToList(source);
+    }
+
+    @Override
+    public void onSourceRemovedFromChild(Storage<T> source) {
+        removeContentOfSourceFromList(source);
+    }
+
+    private void addContentOfSourceToList(Storage<T> source) {
+        source.getAll().forEach(list::add);
+    }
+
+    private void removeContentOfSourceFromList(Storage<T> source) {
+        source.getAll().forEach(resourceAmount -> list.remove(resourceAmount.getResource(), resourceAmount.getAmount()));
     }
 }
