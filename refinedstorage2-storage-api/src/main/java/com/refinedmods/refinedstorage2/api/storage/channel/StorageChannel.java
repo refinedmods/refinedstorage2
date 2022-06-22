@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.api.storage.channel;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
-import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
 import java.util.Optional;
 
@@ -16,7 +16,7 @@ import org.apiguardian.api.API;
  * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public interface StorageChannel<T> extends Storage<T> {
+public interface StorageChannel<T> extends Storage<T>, TrackedStorage<T> {
     /**
      * Adds a listener to the storage channel.
      *
@@ -32,35 +32,6 @@ public interface StorageChannel<T> extends Storage<T> {
     void removeListener(ResourceListListener<T> listener);
 
     /**
-     * Extracts a resource from the storage channel.
-     * This will perform the extraction with {@link com.refinedmods.refinedstorage2.api.core.Action#EXECUTE}
-     * and mark the resource as changed by the given source.
-     *
-     * @param resource the resource, may not be null
-     * @param amount   the amount, must be larger than 0
-     * @param source   the source, may not be null
-     * @return the amount extracted
-     */
-    long extract(T resource, long amount, Source source);
-
-    /**
-     * Inserts a resource into the storage channel.
-     * This will perform the insertion with {@link com.refinedmods.refinedstorage2.api.core.Action#EXECUTE}
-     * and mark the resource as changed by the given source.
-     *
-     * @param resource the resource, may not be null
-     * @param amount   the amount, must be larger than 0
-     * @param source   the source, may not be null
-     * @return the remainder (the amount not inserted)
-     */
-    long insert(T resource, long amount, Source source);
-
-    /**
-     * @return the storage tracker for this storage channel
-     */
-    StorageTracker<T> getTracker();
-
-    /**
      * @param resource the resource to retrieve
      * @return the resource amount for the given resource, if present
      */
@@ -73,8 +44,6 @@ public interface StorageChannel<T> extends Storage<T> {
 
     /**
      * Adds a source to the channel.
-     * This should invalidate the backing storage.
-     * This is an expensive operation and should be done with care.
      *
      * @param source the source
      */
@@ -82,16 +51,8 @@ public interface StorageChannel<T> extends Storage<T> {
 
     /**
      * Removes a source from the channel.
-     * This should invalidate the backing storage.
-     * This is an expensive operation and should be done with care.
      *
      * @param source the source
      */
     void removeSource(Storage<?> source);
-
-    /**
-     * Invalidates the backing storage.
-     * This is an expensive operation and should be done with care.
-     */
-    void invalidate();
 }

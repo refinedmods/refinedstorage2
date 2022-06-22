@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.node.CableNetworkNode;
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 
 import net.minecraft.core.BlockPos;

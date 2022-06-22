@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.integration.energy;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import team.reborn.energy.api.base.LimitingEnergyStorage;
@@ -48,7 +48,7 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
             if (received > 0 && action == Action.EXECUTE) {
                 tx.commit();
             }
-            return amount - received;
+            return received;
         }
     }
 

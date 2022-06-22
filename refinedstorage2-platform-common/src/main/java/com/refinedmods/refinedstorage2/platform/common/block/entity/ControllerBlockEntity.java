@@ -2,13 +2,13 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
-import com.refinedmods.refinedstorage2.platform.abstractions.menu.ExtendedMenuProvider;
-import com.refinedmods.refinedstorage2.platform.api.network.ControllerType;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
+import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -30,6 +30,7 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORED = "stored";
+    private static final String TAG_CAPACITY = "capacity";
     private static final int ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
 
     private final ControllerType type;
@@ -54,6 +55,18 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
                 : BlockEntities.INSTANCE.getController();
     }
 
+    public static long getStored(CompoundTag tag) {
+        return tag.contains(TAG_STORED) ? tag.getLong(TAG_STORED) : 0;
+    }
+
+    public static long getCapacity(CompoundTag tag) {
+        return tag.contains(TAG_CAPACITY) ? tag.getLong(TAG_CAPACITY) : 0;
+    }
+
+    public static boolean hasEnergy(CompoundTag tag) {
+        return tag != null && tag.contains(TAG_STORED) && tag.contains(TAG_CAPACITY);
+    }
+
     public void updateEnergyTypeInLevel(BlockState state) {
         ControllerEnergyType energyType = ControllerEnergyType.ofState(getNode().getState());
         ControllerEnergyType inLevelEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
@@ -75,6 +88,8 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putLong(TAG_STORED, getNode().getActualStored());
+        // this is not deserialized on purpose and is only here for rendering purposes
+        tag.putLong(TAG_CAPACITY, getNode().getActualCapacity());
     }
 
     @Override

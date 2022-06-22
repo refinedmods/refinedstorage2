@@ -3,9 +3,13 @@ package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
 import com.refinedmods.refinedstorage2.platform.common.block.BaseBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.baked.transform.QuadRotator;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.baked.transform.QuadTranslator;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -14,29 +18,63 @@ import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class DiskDriveBakedModel extends ForwardingBakedModel {
-    private final BakedModel diskModel;
-    private final QuadTranslator[] translators = new QuadTranslator[8];
+    private static final QuadTranslator[] TRANSLATORS = new QuadTranslator[8];
+    private static final Map<BiDirection, QuadRotator> ROTATORS = new EnumMap<>(BiDirection.class);
 
-    public DiskDriveBakedModel(BakedModel baseModel, BakedModel diskModel) {
-        this.wrapped = baseModel;
-        this.diskModel = diskModel;
-
+    static {
         int i = 0;
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 2; ++x) {
-                translators[i++] = new QuadTranslator(x == 0 ? -(2F / 16F) : -(9F / 16F), -((y * 3F) / 16F) - (2F / 16F), 0);
+                TRANSLATORS[i++] = new QuadTranslator(x == 0 ? -(2F / 16F) : -(9F / 16F), -((y * 3F) / 16F) - (2F / 16F), 0);
             }
+        }
+
+        for (BiDirection direction : BiDirection.values()) {
+            ROTATORS.put(direction, new QuadRotator(direction));
+        }
+    }
+
+    private final BakedModel diskModel;
+    private final BakedModel diskDisconnectedModel;
+
+    public DiskDriveBakedModel(BakedModel baseModel, BakedModel diskModel, BakedModel diskDisconnectedModel) {
+        this.wrapped = baseModel;
+        this.diskModel = diskModel;
+        this.diskDisconnectedModel = diskDisconnectedModel;
+    }
+
+    @Override
+    public boolean isVanillaAdapter() {
+        return false;
+    }
+
+    @Override
+    public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
+        context.fallbackConsumer().accept(wrapped);
+        CompoundTag tag = BlockItem.getBlockEntityData(stack);
+        if (tag == null) {
+            return;
+        }
+        for (int i = 0; i < TRANSLATORS.length; ++i) {
+            if (!DiskDriveBlockEntity.hasDisk(tag, i)) {
+                continue;
+            }
+            context.pushTransform(TRANSLATORS[i]);
+            context.fallbackConsumer().accept(diskDisconnectedModel);
+            context.popTransform();
         }
     }
 
     @Override
     public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
-        QuadRotator rotator = new QuadRotator(state.getValue(BaseBlock.DIRECTION));
-
+        QuadRotator rotator = ROTATORS.get(state.getValue(BaseBlock.DIRECTION));
         context.pushTransform(rotator);
 
         super.emitBlockQuads(blockView, state, pos, randomSupplier, context);
@@ -44,16 +82,20 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         if (blockView instanceof RenderAttachedBlockView renderAttachedBlockView) {
             Object renderAttachment = renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
             if (renderAttachment instanceof DiskDriveState states) {
-                for (int i = 0; i < translators.length; ++i) {
-                    if (states.getState(i) != StorageDiskState.NONE) {
-                        context.pushTransform(translators[i]);
-                        context.fallbackConsumer().accept(diskModel);
-                        context.popTransform();
-                    }
-                }
+                emitDiskQuads(context, states);
             }
         }
 
         context.popTransform();
+    }
+
+    private void emitDiskQuads(RenderContext context, DiskDriveState states) {
+        for (int i = 0; i < TRANSLATORS.length; ++i) {
+            if (states.getState(i) != StorageDiskState.NONE) {
+                context.pushTransform(TRANSLATORS[i]);
+                context.fallbackConsumer().accept(diskModel);
+                context.popTransform();
+            }
+        }
     }
 }

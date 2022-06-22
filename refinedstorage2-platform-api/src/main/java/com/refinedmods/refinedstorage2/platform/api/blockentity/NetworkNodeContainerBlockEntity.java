@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.api.blockentity;
 
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -23,7 +23,7 @@ public abstract class NetworkNodeContainerBlockEntity<T extends NetworkNode> ext
         if (level.isClientSide) {
             return;
         }
-        Rs2PlatformApiFacade.INSTANCE.requestNetworkNodeInitialization(this, level, this::onNetworkInNodeInitialized);
+        PlatformApi.INSTANCE.requestNetworkNodeInitialization(this, level, this::onNetworkInNodeInitialized);
     }
 
     protected void onNetworkInNodeInitialized() {
@@ -35,11 +35,19 @@ public abstract class NetworkNodeContainerBlockEntity<T extends NetworkNode> ext
         if (level.isClientSide) {
             return;
         }
-        Rs2PlatformApiFacade.INSTANCE.requestNetworkNodeRemoval(this, level);
+        PlatformApi.INSTANCE.requestNetworkNodeRemoval(this, level);
     }
 
     @Override
     public T getNode() {
         return node;
+    }
+
+    @Override
+    public String toString() {
+        return "NetworkNodeContainerBlockEntity{" +
+                "node=" + node +
+                ", worldPosition=" + worldPosition +
+                "}";
     }
 }

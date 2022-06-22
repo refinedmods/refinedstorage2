@@ -6,21 +6,21 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetwo
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
-import com.refinedmods.refinedstorage2.platform.abstractions.menu.ExtendedMenuProvider;
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InternalNetworkNodeContainerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.diskdrive.DiskDriveContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageSettingsProvider;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.EmptyStorageDiskInfoAccessor;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
+import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.LevelUtil;
-
-import java.util.Optional;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -34,7 +34,6 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -49,7 +48,7 @@ import org.apache.logging.log4j.Logger;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements MenuProvider, BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider {
+public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider, StorageSettingsProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_PRIORITY = "pri";
@@ -63,7 +62,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     private static final int DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
 
     private final DiskDriveInventory diskInventory = new DiskDriveInventory(this);
-    private final ResourceFilterContainer resourceFilterContainer = new ResourceFilterContainer(9, this::resourceFilterContainerChanged);
+    private final ResourceFilterContainer resourceFilterContainer = new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, this::resourceFilterContainerChanged);
 
     protected DiskDriveState driveState;
 
@@ -76,7 +75,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new DiskDriveNetworkNode(
                 Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
                 Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
-                StorageChannelTypeRegistry.INSTANCE
+                PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
         ));
         getNode().setDiskProvider(diskInventory);
         getNode().setListener(this);
@@ -86,6 +85,10 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     public static void serverTick(Level level, BlockState state, DiskDriveBlockEntity blockEntity) {
         InternalNetworkNodeContainerBlockEntity.serverTick(level, state, blockEntity);
         blockEntity.updateDiskStateIfNecessaryInLevel();
+    }
+
+    public static boolean hasDisk(CompoundTag tag, int slot) {
+        return tag.contains(TAG_DISK_INVENTORY) && ContainerUtil.hasItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), slot);
     }
 
     private void updateDiskStateIfNecessaryInLevel() {
@@ -128,7 +131,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     public void setLevel(Level level) {
         super.setLevel(level);
         if (!level.isClientSide()) {
-            getNode().initialize(Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level));
+            getNode().initialize(PlatformApi.INSTANCE.getStorageRepository(level));
         }
     }
 
@@ -138,12 +141,28 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
         LevelUtil.updateBlock(level, worldPosition, this.getBlockState());
     }
 
+    /**
+     * When loading a disk drive in a normal flow it is: #load(CompoundTag) -> #setLevel(Level).
+     * Network initialization happens in #setLevel(Level).
+     * Loading data before network initialization ensures that all nbt is present (and thus disks are available).
+     * However, when we place a block entity with nbt, the flow is different: #setLevel(Level) -> #load(CompoundTag) -> #setChanged().
+     * #setLevel(Level) is called first (before #load(CompoundTag)) and initialization will happen BEFORE we load the tag!
+     * That's why we need to override #setChanged() here, to ensure that the network and disks are still initialized correctly in that case.
+     */
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        if (level != null && !level.isClientSide()) {
+            getNode().initialize(PlatformApi.INSTANCE.getStorageRepository(level));
+        }
+    }
+
     @Override
     public void load(CompoundTag tag) {
         fromClientTag(tag);
 
         if (tag.contains(TAG_DISK_INVENTORY)) {
-            diskInventory.fromTag(tag.getList(TAG_DISK_INVENTORY, Tag.TAG_COMPOUND));
+            ContainerUtil.read(tag.getCompound(TAG_DISK_INVENTORY), diskInventory);
         }
 
         if (tag.contains(TAG_RESOURCE_FILTER)) {
@@ -174,7 +193,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.put(TAG_DISK_INVENTORY, diskInventory.createTag());
+        tag.put(TAG_DISK_INVENTORY, ContainerUtil.write(diskInventory));
         tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
         tag.putInt(TAG_PRIORITY, getNode().getPriority());
@@ -186,31 +205,48 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
         return diskInventory;
     }
 
+    @Override
     public FilterMode getFilterMode() {
         return getNode().getFilterMode();
     }
 
+    @Override
     public void setFilterMode(FilterMode mode) {
         getNode().setFilterMode(mode);
         setChanged();
     }
 
+    @Override
     public boolean isExactMode() {
         return exactMode;
     }
 
+    @Override
     public void setExactMode(boolean exactMode) {
         this.exactMode = exactMode;
         initializeResourceFilter();
         setChanged();
     }
 
+    @Override
     public AccessMode getAccessMode() {
         return getNode().getAccessMode();
     }
 
+    @Override
     public void setAccessMode(AccessMode accessMode) {
         getNode().setAccessMode(accessMode);
+        setChanged();
+    }
+
+    @Override
+    public int getPriority() {
+        return getNode().getPriority();
+    }
+
+    @Override
+    public void setPriority(int priority) {
+        getNode().setPriority(priority);
         setChanged();
     }
 
@@ -284,7 +320,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
                 diskInventory,
                 resourceFilterContainer,
                 this,
-                stack -> Optional.empty()
+                new EmptyStorageDiskInfoAccessor()
         );
     }
 
@@ -295,15 +331,6 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
             drops.add(diskInventory.getItem(i));
         }
         return drops;
-    }
-
-    public int getPriority() {
-        return getNode().getPriority();
-    }
-
-    public void setPriority(int priority) {
-        getNode().setPriority(priority);
-        setChanged();
     }
 
     @Override

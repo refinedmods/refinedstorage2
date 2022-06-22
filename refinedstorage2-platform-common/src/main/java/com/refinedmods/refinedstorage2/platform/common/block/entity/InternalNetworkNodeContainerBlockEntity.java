@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.NetworkNodeContainerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.api.network.node.RedstoneMode;
 import com.refinedmods.refinedstorage2.platform.common.block.NetworkNodeContainerBlock;
+import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

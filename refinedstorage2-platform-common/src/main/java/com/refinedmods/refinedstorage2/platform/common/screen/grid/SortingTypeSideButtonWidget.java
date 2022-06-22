@@ -20,19 +20,19 @@ import net.minecraft.network.chat.Component;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class SortingTypeSideButtonWidget extends SideButtonWidget {
-    private final GridContainerMenu screenHandler;
+    private final GridContainerMenu<?> menu;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSortingType, List<Component>> tooltips = new EnumMap<>(GridSortingType.class);
 
-    public SortingTypeSideButtonWidget(GridContainerMenu screenHandler, TooltipRenderer tooltipRenderer) {
-        super(createPressAction(screenHandler));
-        this.screenHandler = screenHandler;
+    public SortingTypeSideButtonWidget(GridContainerMenu<?> menu, TooltipRenderer tooltipRenderer) {
+        super(createPressAction(menu));
+        this.menu = menu;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(GridSortingType.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private static OnPress createPressAction(GridContainerMenu screenHandler) {
-        return btn -> screenHandler.setSortingType(screenHandler.getSortingType().toggle());
+    private static OnPress createPressAction(GridContainerMenu<?> menu) {
+        return btn -> menu.setSortingType(menu.getSortingType().toggle());
     }
 
     private List<Component> calculateTooltip(GridSortingType type) {
@@ -44,7 +44,7 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        return switch (screenHandler.getSortingType()) {
+        return switch (menu.getSortingType()) {
             case QUANTITY -> 0;
             case NAME -> 16;
             case ID -> 32;
@@ -54,11 +54,11 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
 
     @Override
     protected int getYTexture() {
-        return screenHandler.getSortingType() == GridSortingType.LAST_MODIFIED ? 48 : 32;
+        return menu.getSortingType() == GridSortingType.LAST_MODIFIED ? 48 : 32;
     }
 
     @Override
     public void onTooltip(Button buttonWidget, PoseStack poseStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(poseStack, tooltips.get(screenHandler.getSortingType()), mouseX, mouseY);
+        tooltipRenderer.render(poseStack, tooltips.get(menu.getSortingType()), mouseX, mouseY);
     }
 }

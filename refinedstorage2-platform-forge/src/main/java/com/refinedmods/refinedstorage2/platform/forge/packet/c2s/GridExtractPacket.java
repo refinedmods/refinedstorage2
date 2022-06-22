@@ -62,11 +62,11 @@ public class GridExtractPacket {
     public static void handle(GridExtractPacket packet, Supplier<NetworkEvent.Context> ctx) {
         ServerPlayer player = ctx.get().getSender();
         if (player != null) {
-            AbstractContainerMenu screenHandler = player.containerMenu;
-            if (screenHandler instanceof ItemGridEventHandler itemGridEventHandler) {
+            AbstractContainerMenu menu = player.containerMenu;
+            if (menu instanceof ItemGridEventHandler itemGridEventHandler) {
                 ItemResource itemResource = PacketUtil.readItemResource(packet.buf);
                 ctx.get().enqueueWork(() -> itemGridEventHandler.onExtract(itemResource, packet.mode, packet.cursor));
-            } else if (screenHandler instanceof FluidGridEventHandler fluidGridEventHandler) {
+            } else if (menu instanceof FluidGridEventHandler fluidGridEventHandler) {
                 FluidResource fluidResource = PacketUtil.readFluidResource(packet.buf);
                 ctx.get().enqueueWork(() -> fluidGridEventHandler.onExtract(fluidResource, packet.mode, packet.cursor));
             }

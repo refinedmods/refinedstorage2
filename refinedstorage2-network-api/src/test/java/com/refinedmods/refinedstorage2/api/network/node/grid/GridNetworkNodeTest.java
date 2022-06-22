@@ -2,14 +2,16 @@ package com.refinedmods.refinedstorage2.api.network.node.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
-import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.NetworkUtil;
-import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.test.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.api.network.test.extension.AddNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkStorageChannel;
+import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
+import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
+import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.ArrayList;
@@ -18,27 +20,22 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
+@ExtendWith(NetworkTestExtension.class)
+@SetupNetwork
 public class GridNetworkNodeTest {
-    private GridNetworkNode<String> sut;
+    @AddNetworkNode
+    GridNetworkNode<String> sut;
 
     @BeforeEach
-    void setUp() {
-        sut = new GridNetworkNode<>(null, 10, StorageChannelTypes.FAKE);
-
-        Network network = NetworkUtil.create();
-        sut.setNetwork(network);
-        network.addContainer(() -> sut);
-
-        StorageChannel<String> fakeStorageChannel = network.getComponent(StorageNetworkComponent.class)
-                .getStorageChannel(StorageChannelTypes.FAKE);
-
-        fakeStorageChannel.addSource(new CappedStorage<>(1000));
-        fakeStorageChannel.insert("A", 100, () -> "Test");
-        fakeStorageChannel.insert("B", 200, Action.EXECUTE);
+    void setUp(@InjectNetworkStorageChannel StorageChannel<String> networkStorage) {
+        networkStorage.addSource(new TrackedStorageImpl<>(new LimitedStorageImpl<>(1000), () -> 0L));
+        networkStorage.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
+        networkStorage.insert("B", 200, Action.EXECUTE, EmptySource.INSTANCE);
     }
 
     @Test
@@ -54,23 +51,23 @@ public class GridNetworkNodeTest {
     void Test_iterating_through_resources() {
         // Arrange
         List<ResourceAmount<String>> resourceAmounts = new ArrayList<>();
-        List<Optional<StorageTracker.Entry>> trackerEntries = new ArrayList<>();
+        List<Optional<TrackedResource>> trackedResources = new ArrayList<>();
 
         // Act
-        sut.forEachResource((resourceAmount, entry) -> {
+        sut.forEachResource((resourceAmount, trackedResource) -> {
             resourceAmounts.add(resourceAmount);
-            trackerEntries.add(entry);
-        });
+            trackedResources.add(trackedResource);
+        }, EmptySource.class);
 
         // Assert
         assertThat(resourceAmounts).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
                 new ResourceAmount<>("A", 100),
                 new ResourceAmount<>("B", 200)
         );
-        assertThat(trackerEntries)
-                .filteredOn(Optional::isPresent)
-                .map(o -> o.get().name())
-                .containsExactly("Test");
+        assertThat(trackedResources).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+                Optional.of(new TrackedResource(EmptySource.INSTANCE.getName(), 0L)),
+                Optional.of(new TrackedResource(EmptySource.INSTANCE.getName(), 0L))
+        );
     }
 
     @Test

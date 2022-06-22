@@ -8,8 +8,14 @@ import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiIntegration;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEnergyPacket;
@@ -28,8 +34,8 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
@@ -47,6 +53,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         registerScreens();
         registerKeyBindings();
         registerModelPredicates();
+        registerGridSynchronizer();
     }
 
     private void setRenderLayers() {
@@ -72,9 +79,12 @@ public class ClientModInitializerImpl implements ClientModInitializer {
 
     private void registerCustomModels() {
         ResourceLocation diskDriveIdentifier = createIdentifier("block/disk_drive");
+        ResourceLocation diskDriveIdentifierItem = createIdentifier("item/disk_drive");
 
         ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (identifier, modelProviderContext) -> {
             if (identifier.equals(diskDriveIdentifier)) {
+                return new DiskDriveUnbakedModel();
+            } else if (identifier.equals(diskDriveIdentifierItem)) {
                 return new DiskDriveUnbakedModel();
             }
             return null;
@@ -82,10 +92,12 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void registerScreens() {
-        ScreenRegistry.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
-        ScreenRegistry.register(Menus.INSTANCE.getGrid(), ItemGridScreen::new);
-        ScreenRegistry.register(Menus.INSTANCE.getFluidGrid(), FluidGridScreen::new);
-        ScreenRegistry.register(Menus.INSTANCE.getController(), ControllerScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getGrid(), ItemGridScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getFluidGrid(), FluidGridScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getController(), ControllerScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getItemStorage(), ItemStorageBlockScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);
     }
 
     private void registerKeyBindings() {
@@ -99,9 +111,15 @@ public class ClientModInitializerImpl implements ClientModInitializer {
 
     private void registerModelPredicates() {
         Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemPropertiesAccessor.register(
-                controllerBlockItem,
+                controllerBlockItem.get(),
                 createIdentifier("stored_in_controller"),
                 new ControllerModelPredicateProvider()
         ));
+    }
+
+    private void registerGridSynchronizer() {
+        if (ReiIntegration.isLoaded()) {
+            GridScreen.setSynchronizer(new ReiGridSynchronizer(new ReiProxy()));
+        }
     }
 }

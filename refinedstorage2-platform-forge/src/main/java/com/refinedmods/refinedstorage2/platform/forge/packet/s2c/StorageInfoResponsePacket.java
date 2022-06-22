@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
 
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.ClientStorageRepository;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -39,6 +39,6 @@ public class StorageInfoResponsePacket {
 
     private static void handle(StorageInfoResponsePacket packet) {
         Level level = Minecraft.getInstance().player.level;
-        ((ClientStorageRepository) Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)).setInfo(packet.id, packet.stored, packet.capacity);
+        ((ClientStorageRepository) PlatformApi.INSTANCE.getStorageRepository(level)).setInfo(packet.id, packet.stored, packet.capacity);
     }
 }

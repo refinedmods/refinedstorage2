@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
+import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
@@ -31,19 +32,19 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     private static final ItemVariant BUCKET_ITEM_VARIANT = ItemVariant.of(Items.BUCKET);
     private static final ItemResource BUCKET_ITEM_RESOURCE = new ItemResource(Items.BUCKET, null);
 
-    private final AbstractContainerMenu screenHandler;
+    private final AbstractContainerMenu menu;
     private final Player player;
     private final GridService<FluidResource> gridService;
     private final PlayerInventoryStorage playerInventoryStorage;
     private final Storage<ItemVariant> playerCursorStorage;
     private final ExtractableStorage<ItemResource> bucketStorage;
 
-    public FluidGridEventHandlerImpl(AbstractContainerMenu screenHandler, GridService<FluidResource> gridService, Inventory playerInventory, ExtractableStorage<ItemResource> bucketStorage) {
-        this.screenHandler = screenHandler;
+    public FluidGridEventHandlerImpl(AbstractContainerMenu menu, GridService<FluidResource> gridService, Inventory playerInventory, ExtractableStorage<ItemResource> bucketStorage) {
+        this.menu = menu;
         this.player = playerInventory.player;
         this.gridService = gridService;
         this.playerInventoryStorage = PlayerInventoryStorage.of(playerInventory);
-        this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(screenHandler);
+        this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(menu);
         this.bucketStorage = bucketStorage;
     }
 
@@ -58,7 +59,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             return;
         }
         FluidResource fluidResource = ofFluidVariant(extractableResource);
-        gridService.insert(fluidResource, insertMode, (resource, amount, action) -> {
+        gridService.insert(fluidResource, insertMode, (resource, amount, action, source) -> {
             FluidVariant fluidVariant = toFluidVariant(resource);
             try (Transaction tx = Transaction.openOuter()) {
                 long extracted = cursorStorage.extract(fluidVariant, amount, tx);
@@ -85,7 +86,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             return;
         }
         FluidResource fluidResource = ofFluidVariant(extractableResource);
-        gridService.insert(fluidResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action) -> {
+        gridService.insert(fluidResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
             FluidVariant fluidVariant = toFluidVariant(resource);
             try (Transaction tx = Transaction.openOuter()) {
                 long extracted = fluidSlotStorage.extract(fluidVariant, amount, tx);
@@ -100,8 +101,8 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     @Nullable
     private Storage<FluidVariant> getFluidCursorStorage() {
         return FluidStorage.ITEM.find(
-                screenHandler.getCarried(),
-                ContainerItemContext.ofPlayerCursor(player, screenHandler)
+                menu.getCarried(),
+                ContainerItemContext.ofPlayerCursor(player, menu)
         );
     }
 
@@ -125,19 +126,18 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         if (destination == null) {
             return;
         }
-        gridService.extract(fluidResource, mode, (resource, amount, action) -> {
+        gridService.extract(fluidResource, mode, (resource, amount, action, source) -> {
             try (Transaction tx = Transaction.openOuter()) {
                 long inserted = destination.insert(toFluidVariant(resource), amount, tx);
                 boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, tx);
                 if (!couldInsertBucket) {
                     return amount;
                 }
-                long remainder = amount - inserted;
                 if (action == Action.EXECUTE) {
-                    bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE);
+                    bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, source);
                     tx.commit();
                 }
-                return remainder;
+                return inserted;
             }
         });
     }
@@ -153,19 +153,18 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             if (destination == null) {
                 return;
             }
-            gridService.extract(fluidResource, mode, (resource, amount, action) -> {
+            gridService.extract(fluidResource, mode, (resource, amount, action, source) -> {
                 try (Transaction innerTx = tx.openNested()) {
                     long inserted = destination.insert(toFluidVariant(resource), amount, innerTx);
                     boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, innerTx);
                     if (!couldInsertBucket) {
                         return amount;
                     }
-                    long remainder = amount - inserted;
                     if (action == Action.EXECUTE) {
                         innerTx.commit();
                         tx.commit();
                     }
-                    return remainder;
+                    return inserted;
                 }
             });
         }
@@ -184,6 +183,6 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     }
 
     private boolean hasBucketInStorage() {
-        return bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE) == 1;
+        return bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE, EmptySource.INSTANCE) == 1;
     }
 }

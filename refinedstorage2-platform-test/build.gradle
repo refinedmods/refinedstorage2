@@ -1,0 +1,14 @@
+plugins {
+    id 'java-library'
+    id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
+}
+
+archivesBaseName = 'refinedstorage2-platform-test'
+
+minecraft {
+    version(project.minecraftVersion)
+}
+
+dependencies {
+    api "org.junit.jupiter:junit-jupiter-api:${project.junitVersion}"
+}

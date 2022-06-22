@@ -29,10 +29,10 @@ class EnergyStorageImplTest {
         EnergyStorage energyStorage = new EnergyStorageImpl(0);
 
         // Act
-        long remainder = energyStorage.receive(1, action);
+        long inserted = energyStorage.receive(1, action);
 
         // Assert
-        assertThat(remainder).isEqualTo(1);
+        assertThat(inserted).isZero();
         assertThat(energyStorage.getStored()).isZero();
     }
 
@@ -43,10 +43,10 @@ class EnergyStorageImplTest {
         EnergyStorage energyStorage = new EnergyStorageImpl(100);
 
         // Act
-        long remainder = energyStorage.receive(50, action);
+        long inserted = energyStorage.receive(50, action);
 
         // Assert
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(50);
 
         if (action == Action.EXECUTE) {
             assertThat(energyStorage.getStored()).isEqualTo(50);
@@ -62,10 +62,10 @@ class EnergyStorageImplTest {
         EnergyStorage energyStorage = new EnergyStorageImpl(100);
 
         // Act
-        long remainder = energyStorage.receive(100, action);
+        long inserted = energyStorage.receive(100, action);
 
         // Assert
-        assertThat(remainder).isZero();
+        assertThat(inserted).isEqualTo(100);
 
         if (action == Action.EXECUTE) {
             assertThat(energyStorage.getStored()).isEqualTo(100);
@@ -81,10 +81,10 @@ class EnergyStorageImplTest {
         EnergyStorage energyStorage = new EnergyStorageImpl(100);
 
         // Act
-        long remainder = energyStorage.receive(101, action);
+        long inserted = energyStorage.receive(101, action);
 
         // Assert
-        assertThat(remainder).isEqualTo(1);
+        assertThat(inserted).isEqualTo(100);
 
         if (action == Action.EXECUTE) {
             assertThat(energyStorage.getStored()).isEqualTo(100);

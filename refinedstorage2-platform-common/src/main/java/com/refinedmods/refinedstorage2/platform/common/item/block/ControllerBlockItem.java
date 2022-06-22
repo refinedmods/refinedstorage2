@@ -1,71 +1,43 @@
 package com.refinedmods.refinedstorage2.platform.common.item.block;
 
-import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 
 import java.util.List;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ControllerBlockItem extends NameableBlockItem {
-    private static final String TAG_STORED = "stored";
-    private static final String TAG_CAPACITY = "cap";
-
-    public ControllerBlockItem(Block block, Properties properties, DyeColor color, Component displayName) {
-        super(block, properties, color, displayName);
+public class ControllerBlockItem extends CreativeControllerBlockItem {
+    public ControllerBlockItem(Block block, CreativeModeTab tab, Component displayName) {
+        super(block, tab, displayName);
     }
 
     public static float getPercentFull(ItemStack stack) {
-        long stored = getStored(stack);
-        long capacity = getCapacity(stack);
+        CompoundTag tag = getBlockEntityData(stack);
+        if (tag == null) {
+            return 1;
+        }
+        long stored = ControllerBlockEntity.getStored(tag);
+        long capacity = ControllerBlockEntity.getCapacity(tag);
         if (capacity == 0) {
             return 1;
         }
         return (float) stored / (float) capacity;
     }
 
-    private static long getStored(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        if (tag == null) {
-            return 0;
-        }
-        return tag.getLong(TAG_STORED);
-    }
-
-    private static long getCapacity(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        if (tag == null) {
-            return 0;
-        }
-        return tag.getLong(TAG_CAPACITY);
-    }
-
-    public static void setEnergy(ItemStack stack, long stored, long capacity) {
-        if (!stack.hasTag()) {
-            stack.setTag(new CompoundTag());
-        }
-        stack.getTag().putLong(TAG_STORED, stored);
-        stack.getTag().putLong(TAG_CAPACITY, capacity);
-    }
-
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        return stack.hasTag() && stack.getTag().contains(TAG_STORED) && stack.getTag().contains(TAG_CAPACITY);
+        return ControllerBlockEntity.hasEnergy(getBlockEntityData(stack));
     }
 
     @Override
@@ -82,21 +54,11 @@ public class ControllerBlockItem extends NameableBlockItem {
     public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
 
-        long cap = getCapacity(stack);
-        if (cap > 0) {
-            tooltip.add(createTranslation("misc", "stored_with_capacity", QuantityFormatter.format(getStored(stack)), QuantityFormatter.format(cap)).withStyle(ChatFormatting.GRAY));
+        CompoundTag data = getBlockEntityData(stack);
+        if (ControllerBlockEntity.hasEnergy(data)) {
+            long stored = ControllerBlockEntity.getStored(data);
+            long capacity = ControllerBlockEntity.getCapacity(data);
+            tooltip.add(createTranslation("misc", "stored_with_capacity", QuantityFormatter.format(stored), QuantityFormatter.format(capacity)).withStyle(ChatFormatting.GRAY));
         }
-    }
-
-    @Override
-    protected boolean updateCustomBlockEntityTag(BlockPos pos, Level level, Player player, ItemStack stack, BlockState state) {
-        boolean result = super.updateCustomBlockEntityTag(pos, level, player, stack, state);
-        if (!level.isClientSide()) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof ControllerBlockEntity controllerBlockEntity) {
-                controllerBlockEntity.getNode().receive(getStored(stack), Action.EXECUTE);
-            }
-        }
-        return result;
     }
 }

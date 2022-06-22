@@ -7,6 +7,42 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+All device inventories (most notably the Disk Drive inventory) will be empty after upgrading. Make sure to move all
+disks, etc. to intermediate storage like a chest.
+
+### Added
+
+- The Wrench now dismantles devices when crouching.
+    - The Disk Drive in item form now supports rendering of disks that were dismantled.
+    - In order to retain Controller energy, the Controller must now be dismantled.
+- You can now use any Wrench from other mods in order to rotate or dismantle.
+- Item and fluid storage blocks.
+- Initial advancements.
+
+### Fixed
+
+- Fixed inventory contents of devices not retaining their original order when reloading a world.
+- Fixed bug where (already opened) Grid doesn't update if a storage is removed.
+- Fixed last modified info in the Grid not being persisted.
+- Fixed removals in filter inventory not being saved properly.
+
+### Changed
+
+- Ported to Minecraft 1.18.2.
+- Grid auto-selection and JEI/REI synchronization are now two different options.
+- Grid display settings are now stored in the client configuration, no longer per-block.
+- You now need to crouch with a dye in order to change the color of a device.
+- Item storage capacities are now multiples of 1024 to make it more stack-size friendly.
+- Storage tooltips now have colors.
+- Storage tooltips now show percentage full.
+- Item storage tooltips now show amount of stacks and max stacks stored.
+
+### Removed
+
+- Removed the Patchouli integration.
+
+## [2.0.0-milestone.1.3] - 2022-02-12
+
 ### Added
 
 - Forge support.

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge.integration.energy;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import net.minecraftforge.energy.IEnergyStorage;
 
@@ -21,12 +21,11 @@ public class ControllerForgeEnergy extends EnergyStorageImpl implements IEnergyS
 
     @Override
     public long receive(long amount, Action action) {
-        long remainder = super.receive(amount, action);
-        boolean insertedSomething = amount != remainder;
-        if (insertedSomething && action == Action.EXECUTE) {
+        long received = super.receive(amount, action);
+        if (received > 0 && action == Action.EXECUTE) {
             listener.run();
         }
-        return remainder;
+        return received;
     }
 
     @Override
@@ -40,8 +39,7 @@ public class ControllerForgeEnergy extends EnergyStorageImpl implements IEnergyS
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        int remainder = (int) this.receive(maxReceive, simulate ? Action.SIMULATE : Action.EXECUTE);
-        return maxReceive - remainder;
+        return (int) this.receive(maxReceive, simulate ? Action.SIMULATE : Action.EXECUTE);
     }
 
     @Override

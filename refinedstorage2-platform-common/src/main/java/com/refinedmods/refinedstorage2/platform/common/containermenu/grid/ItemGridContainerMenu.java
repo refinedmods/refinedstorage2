@@ -8,14 +8,14 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.ClientItemGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientItemGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -73,7 +73,7 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
                 (ServerPlayer) playerInventory.player,
                 resource,
                 change.change(),
-                storageChannel.getTracker().getEntry(resource).orElse(null)
+                storageChannel.findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
         );
     }
 

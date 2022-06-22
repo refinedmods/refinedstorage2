@@ -15,10 +15,10 @@ public class PropertyChangePacket implements ServerPlayNetworking.PlayChannelHan
         int value = buf.readInt();
 
         server.execute(() -> {
-            AbstractContainerMenu screenHandler = player.containerMenu;
-            if (screenHandler != null) {
+            AbstractContainerMenu menu = player.containerMenu;
+            if (menu != null) {
                 // TODO - Check property type
-                screenHandler.setData(id, value);
+                menu.setData(id, value);
             }
         });
     }

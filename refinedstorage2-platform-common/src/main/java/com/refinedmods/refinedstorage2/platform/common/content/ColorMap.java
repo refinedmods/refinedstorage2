@@ -5,6 +5,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -14,9 +16,9 @@ import net.minecraft.world.item.DyeColor;
 public class ColorMap<T> {
     private static final DyeColor NORMAL_COLOR = DyeColor.LIGHT_BLUE;
 
-    protected final Map<DyeColor, T> map = new EnumMap<>(DyeColor.class);
+    private final Map<DyeColor, Supplier<T>> map = new EnumMap<>(DyeColor.class);
 
-    public void putAll(Function<DyeColor, T> factory) {
+    public void putAll(Function<DyeColor, Supplier<T>> factory) {
         for (DyeColor color : DyeColor.values()) {
             map.put(color, factory.apply(color));
         }
@@ -37,12 +39,12 @@ public class ColorMap<T> {
         }
     }
 
-    public void forEach(BiConsumer<DyeColor, T> consumer) {
+    public void forEach(BiConsumer<DyeColor, Supplier<T>> consumer) {
         map.forEach(consumer);
     }
 
     public T get(DyeColor color) {
-        return map.get(color);
+        return map.get(color).get();
     }
 
     public T getNormal() {
@@ -50,6 +52,6 @@ public class ColorMap<T> {
     }
 
     public Collection<T> values() {
-        return map.values();
+        return map.values().stream().map(Supplier::get).collect(Collectors.toSet());
     }
 }

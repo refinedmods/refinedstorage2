@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -10,15 +10,15 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public enum GridSortingType {
-    QUANTITY(view -> (a, b) -> Long.compare(a.getResourceAmount().getAmount(), b.getResourceAmount().getAmount())),
-    NAME(view -> (a, b) -> a.getName().compareTo(b.getName())),
-    ID(view -> (a, b) -> Integer.compare(a.getId(), b.getId())),
+    QUANTITY(view -> Comparator.comparingLong(a -> a.getResourceAmount().getAmount())),
+    NAME(view -> Comparator.comparing((GridResource<?> a) -> a.getName())),
+    ID(view -> Comparator.comparingInt(GridResource::getId)),
     LAST_MODIFIED(view -> (a, b) -> {
-        Optional<StorageTracker.Entry> trackerEntryA = ((GridView) view).getTrackerEntry(a.getResourceAmount().getResource());
-        Optional<StorageTracker.Entry> trackerEntryB = ((GridView) view).getTrackerEntry(b.getResourceAmount().getResource());
+        Optional<TrackedResource> trackedA = ((GridView) view).getTrackedResource(a.getResourceAmount().getResource());
+        Optional<TrackedResource> trackedB = ((GridView) view).getTrackedResource(b.getResourceAmount().getResource());
 
-        long lastModifiedA = trackerEntryA.map(StorageTracker.Entry::time).orElse(0L);
-        long lastModifiedB = trackerEntryB.map(StorageTracker.Entry::time).orElse(0L);
+        long lastModifiedA = trackedA.map(TrackedResource::getTime).orElse(0L);
+        long lastModifiedB = trackedB.map(TrackedResource::getTime).orElse(0L);
 
         return Long.compare(lastModifiedA, lastModifiedB);
     });

@@ -18,11 +18,11 @@ public class GridInsertPacket implements ServerPlayNetworking.PlayChannelHandler
         boolean single = buf.readBoolean();
 
         server.execute(() -> {
-            AbstractContainerMenu screenHandler = player.containerMenu;
+            AbstractContainerMenu menu = player.containerMenu;
             GridInsertMode mode = single ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
-            if (screenHandler instanceof ItemGridEventHandler itemGridEventHandler) {
+            if (menu instanceof ItemGridEventHandler itemGridEventHandler) {
                 itemGridEventHandler.onInsert(mode);
-            } else if (screenHandler instanceof FluidGridEventHandler fluidGridEventHandler) {
+            } else if (menu instanceof FluidGridEventHandler fluidGridEventHandler) {
                 fluidGridEventHandler.onInsert(mode);
             }
         });

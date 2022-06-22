@@ -242,7 +242,7 @@ with open('colors.txt') as colors_file:
 
         generate_simple_loot_table(get_color_key(color, 'grid'), 'refinedstorage2:' + get_color_key(color, 'grid'))
         generate_simple_loot_table(get_color_key(color, 'fluid_grid'), 'refinedstorage2:' + get_color_key(color, 'fluid_grid'))
-        generate_simple_loot_table(get_color_key(color, 'controller'), 'refinedstorage2:' + get_color_key(color, 'controller'), [{'function': 'refinedstorage2:controller'}])
+        generate_simple_loot_table(get_color_key(color, 'controller'), 'refinedstorage2:' + get_color_key(color, 'controller'))
         generate_simple_loot_table(get_color_key(color, 'creative_controller'), 'refinedstorage2:' + get_color_key(color, 'creative_controller'))
 
         generate_recipe(get_color_key(color, 'fluid_grid'), {
@@ -299,6 +299,31 @@ with open('colors.txt') as colors_file:
         'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'grid'), color_names))
     })
 
+    generate_item_tag('fluid_grids', {
+        'replace': False,
+        'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'fluid_grid'), color_names))
+    })
+
+    generate_item_tag('storage_disks', {
+        'replace': False,
+        'values': [
+            'refinedstorage2:1k_storage_disk',
+            'refinedstorage2:4k_storage_disk',
+            'refinedstorage2:16k_storage_disk',
+            'refinedstorage2:64k_storage_disk'
+        ]
+    })
+
+    generate_item_tag('fluid_storage_disks', {
+        'replace': False,
+        'values': [
+            'refinedstorage2:64b_fluid_storage_disk',
+            'refinedstorage2:256b_fluid_storage_disk',
+            'refinedstorage2:1024b_fluid_storage_disk',
+            'refinedstorage2:4096b_fluid_storage_disk'
+        ]
+    })
+
     generate_item_tag('controllers', {
         'replace': False,
         'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'controller'), color_names))
@@ -309,8 +334,3 @@ with open('colors.txt') as colors_file:
 
     generate_north_cutout_block_model('fluid_grid/disconnected', particle='refinedstorage2:block/fluid_grid/right', east='refinedstorage2:block/fluid_grid/right', south='refinedstorage2:block/fluid_grid/back', west='refinedstorage2:block/fluid_grid/left',
                                       up='refinedstorage2:block/fluid_grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/fluid_grid/front', cutout='refinedstorage2:block/fluid_grid/cutouts/disconnected', fullbright_cutout=False)
-
-create_file(output_dir + '/data/fabric/tags/blocks/wrenchables.json', to_json({
-    'replace': False,
-    'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'grid'), color_names)) + list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'fluid_grid'), color_names)) + ['refinedstorage2:disk_drive']
-}))

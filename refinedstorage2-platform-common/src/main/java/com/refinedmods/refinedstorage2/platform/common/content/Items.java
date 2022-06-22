@@ -1,53 +1,53 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
-import com.refinedmods.refinedstorage2.platform.common.item.FluidStoragePartItem;
-import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
-import com.refinedmods.refinedstorage2.platform.common.item.StorageHousingItem;
-import com.refinedmods.refinedstorage2.platform.common.item.StoragePartItem;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
+
+import net.minecraft.world.item.Item;
 
 public final class Items {
     public static final Items INSTANCE = new Items();
 
-    private final Map<ItemStorageDiskItem.ItemStorageType, StoragePartItem> storageParts = new EnumMap<>(ItemStorageDiskItem.ItemStorageType.class);
-    private final Map<FluidStorageDiskItem.FluidStorageType, FluidStoragePartItem> fluidStorageParts = new EnumMap<>(FluidStorageDiskItem.FluidStorageType.class);
-    private final List<ControllerBlockItem> controllers = new ArrayList<>();
-    private StorageHousingItem storageHousing;
+    private final Map<ItemStorageType.Variant, Supplier<Item>> itemStorageParts = new EnumMap<>(ItemStorageType.Variant.class);
+    private final Map<FluidStorageType.Variant, Supplier<Item>> fluidStorageParts = new EnumMap<>(FluidStorageType.Variant.class);
+    private final List<Supplier<ControllerBlockItem>> controllers = new ArrayList<>();
+    private Supplier<Item> storageHousing;
 
     private Items() {
     }
 
-    public StoragePartItem getStoragePart(ItemStorageDiskItem.ItemStorageType type) {
-        return storageParts.get(type);
+    public Item getItemStoragePart(ItemStorageType.Variant variant) {
+        return itemStorageParts.get(variant).get();
     }
 
-    public FluidStoragePartItem getFluidStoragePart(FluidStorageDiskItem.FluidStorageType type) {
-        return fluidStorageParts.get(type);
+    public void setItemStoragePart(ItemStorageType.Variant variant, Supplier<Item> itemStoragePartSupplier) {
+        itemStorageParts.put(variant, itemStoragePartSupplier);
     }
 
-    public Map<ItemStorageDiskItem.ItemStorageType, StoragePartItem> getStorageParts() {
-        return storageParts;
+    public Item getFluidStoragePart(FluidStorageType.Variant type) {
+        return fluidStorageParts.get(type).get();
     }
 
-    public Map<FluidStorageDiskItem.FluidStorageType, FluidStoragePartItem> getFluidStorageParts() {
-        return fluidStorageParts;
+    public void setFluidStoragePart(FluidStorageType.Variant variant, Supplier<Item> fluidStoragePartSupplier) {
+        fluidStorageParts.put(variant, fluidStoragePartSupplier);
     }
 
-    public List<ControllerBlockItem> getControllers() {
+    public List<Supplier<ControllerBlockItem>> getControllers() {
         return controllers;
     }
 
-    public StorageHousingItem getStorageHousing() {
-        return storageHousing;
+    public Item getStorageHousing() {
+        return storageHousing.get();
     }
 
-    public void setStorageHousing(StorageHousingItem storageHousing) {
-        this.storageHousing = storageHousing;
+    public void setStorageHousing(Supplier<Item> storageHousingSupplier) {
+        this.storageHousing = storageHousingSupplier;
     }
 }

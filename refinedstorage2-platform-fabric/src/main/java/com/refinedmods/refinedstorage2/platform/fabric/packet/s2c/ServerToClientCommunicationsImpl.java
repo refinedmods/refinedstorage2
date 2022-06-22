@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
-import com.refinedmods.refinedstorage2.platform.abstractions.packet.ServerToClientCommunications;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 
@@ -33,20 +33,20 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public void sendGridFluidUpdate(ServerPlayer player, FluidResource fluidResource, long change, StorageTracker.Entry trackerEntry) {
+    public void sendGridFluidUpdate(ServerPlayer player, FluidResource fluidResource, long change, TrackedResource trackerEntry) {
         sendToPlayer(player, PacketIds.GRID_FLUID_UPDATE, buf -> {
             PacketUtil.writeFluidResource(buf, fluidResource);
             buf.writeLong(change);
-            PacketUtil.writeTrackerEntry(buf, trackerEntry);
+            PacketUtil.writeTrackedResource(buf, trackerEntry);
         });
     }
 
     @Override
-    public void sendGridItemUpdate(ServerPlayer player, ItemResource itemResource, long change, StorageTracker.Entry trackerEntry) {
+    public void sendGridItemUpdate(ServerPlayer player, ItemResource itemResource, long change, TrackedResource trackerEntry) {
         sendToPlayer(player, PacketIds.GRID_ITEM_UPDATE, buf -> {
             PacketUtil.writeItemResource(buf, itemResource);
             buf.writeLong(change);
-            PacketUtil.writeTrackerEntry(buf, trackerEntry);
+            PacketUtil.writeTrackedResource(buf, trackerEntry);
         });
     }
 

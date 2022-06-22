@@ -1,26 +1,24 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
-import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxModeRegistry;
-import com.refinedmods.refinedstorage2.api.grid.view.GridSize;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
-import com.refinedmods.refinedstorage2.platform.api.network.node.RedstoneMode;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSynchronizationType;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridSettings;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.BaseContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.RedstoneModeAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.TwoWaySyncProperty;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.search.PlatformSearchBoxModeImpl;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
+import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,17 +36,9 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     protected final Inventory playerInventory;
     protected final GridView<T> view;
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
-    private final TwoWaySyncProperty<GridSortingDirection> sortingDirectionProperty;
-    private final TwoWaySyncProperty<GridSortingType> sortingTypeProperty;
-    private final TwoWaySyncProperty<GridSize> sizeProperty;
-    private final TwoWaySyncProperty<PlatformSearchBoxModeImpl> searchBoxModeProperty;
     protected GridBlockEntity<T> grid;
     protected StorageChannel<T> storageChannel; // TODO - Support changing of the channel.
     private Runnable sizeChangedListener;
-    private GridSearchBox searchBox;
-
-    private GridSize size;
-    private PlatformSearchBoxModeImpl searchBoxMode;
 
     private boolean active;
 
@@ -67,61 +57,27 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
                 redstoneMode -> {
                 }
         );
-        this.sortingDirectionProperty = TwoWaySyncProperty.forClient(
-                1,
-                GridSettings::getSortingDirection,
-                GridSettings::getSortingDirection,
-                GridSortingDirection.ASCENDING,
-                this::onSortingDirectionChanged
-        );
-        this.sortingTypeProperty = TwoWaySyncProperty.forClient(
-                2,
-                GridSettings::getSortingType,
-                GridSettings::getSortingType,
-                GridSortingType.QUANTITY,
-                this::onSortingTypeChanged
-        );
-        this.sizeProperty = TwoWaySyncProperty.forClient(
-                3,
-                GridSettings::getSize,
-                GridSettings::getSize,
-                GridSize.STRETCH,
-                this::onSizeChanged
-        );
-        this.searchBoxModeProperty = TwoWaySyncProperty.forClient(
-                4,
-                GridSearchBoxModeRegistry.INSTANCE::getId,
-                id -> (PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.get(id),
-                (PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.getDefault(),
-                this::onSearchBoxModeChanged
-        );
 
         addDataSlot(redstoneModeProperty);
-        addDataSlot(sortingDirectionProperty);
-        addDataSlot(sortingTypeProperty);
-        addDataSlot(sizeProperty);
-        addDataSlot(searchBoxModeProperty);
 
         active = buf.readBoolean();
 
-        this.view.setSortingDirection(GridSettings.getSortingDirection(buf.readInt()));
-        this.view.setSortingType(GridSettings.getSortingType(buf.readInt()));
-        size = GridSettings.getSize(buf.readInt());
-        searchBoxMode = (PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.get(buf.readInt());
+        this.view.setSortingDirection(Platform.INSTANCE.getConfig().getGrid().getSortingDirection());
+        this.view.setSortingType(Platform.INSTANCE.getConfig().getGrid().getSortingType());
 
         int amountOfResources = buf.readInt();
         for (int i = 0; i < amountOfResources; ++i) {
             ResourceAmount<T> resourceAmount = readResourceAmount(buf);
-            StorageTracker.Entry trackerEntry = PacketUtil.readTrackerEntry(buf);
-            view.loadResource(resourceAmount.getResource(), resourceAmount.getAmount(), trackerEntry);
+            TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
+            view.loadResource(resourceAmount.getResource(), resourceAmount.getAmount(), trackedResource);
         }
         view.sort();
 
         addSlots(0);
     }
 
-    protected GridContainerMenu(MenuType<?> screenHandlerType, int syncId, Inventory playerInventory, GridBlockEntity<T> grid, GridView<T> view) {
-        super(screenHandlerType, syncId);
+    protected GridContainerMenu(MenuType<?> type, int syncId, Inventory playerInventory, GridBlockEntity<T> grid, GridView<T> view) {
+        super(type, syncId);
 
         this.view = view;
 
@@ -132,40 +88,8 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
                 grid::getRedstoneMode,
                 grid::setRedstoneMode
         );
-        this.sortingDirectionProperty = TwoWaySyncProperty.forServer(
-                1,
-                GridSettings::getSortingDirection,
-                GridSettings::getSortingDirection,
-                grid::getSortingDirection,
-                grid::setSortingDirection
-        );
-        this.sortingTypeProperty = TwoWaySyncProperty.forServer(
-                2,
-                GridSettings::getSortingType,
-                GridSettings::getSortingType,
-                grid::getSortingType,
-                grid::setSortingType
-        );
-        this.sizeProperty = TwoWaySyncProperty.forServer(
-                3,
-                GridSettings::getSize,
-                GridSettings::getSize,
-                grid::getSize,
-                grid::setSize
-        );
-        this.searchBoxModeProperty = TwoWaySyncProperty.forServer(
-                4,
-                GridSearchBoxModeRegistry.INSTANCE::getId,
-                id -> (PlatformSearchBoxModeImpl) GridSearchBoxModeRegistry.INSTANCE.get(id),
-                () -> (PlatformSearchBoxModeImpl) grid.getSearchBoxMode(),
-                grid::setSearchBoxMode
-        );
 
         addDataSlot(redstoneModeProperty);
-        addDataSlot(sortingDirectionProperty);
-        addDataSlot(sortingTypeProperty);
-        addDataSlot(sizeProperty);
-        addDataSlot(searchBoxModeProperty);
 
         this.playerInventory = playerInventory;
         this.storageChannel = grid.getNode().getStorageChannel();
@@ -175,15 +99,11 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         addSlots(0);
     }
 
-    private static void updateLastSearchQuery(String query) {
-        lastSearchQuery = query;
-    }
-
     protected abstract ResourceAmount<T> readResourceAmount(FriendlyByteBuf buf);
 
-    public void onResourceUpdate(T template, long amount, StorageTracker.Entry trackerEntry) {
+    public void onResourceUpdate(T template, long amount, TrackedResource trackedResource) {
         LOGGER.info("{} got updated with {}", template, amount);
-        view.onChange(template, amount, trackerEntry);
+        view.onChange(template, amount, trackedResource);
     }
 
     public void setSizeChangedListener(Runnable sizeChangedListener) {
@@ -191,83 +111,42 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     }
 
     public GridSortingDirection getSortingDirection() {
-        return sortingDirectionProperty.getDeserialized();
+        return Platform.INSTANCE.getConfig().getGrid().getSortingDirection();
     }
 
     public void setSortingDirection(GridSortingDirection sortingDirection) {
-        sortingDirectionProperty.syncToServer(sortingDirection);
+        Platform.INSTANCE.getConfig().getGrid().setSortingDirection(sortingDirection);
+        view.setSortingDirection(sortingDirection);
+        view.sort();
     }
 
     public GridSortingType getSortingType() {
-        return sortingTypeProperty.getDeserialized();
+        return Platform.INSTANCE.getConfig().getGrid().getSortingType();
     }
 
     public void setSortingType(GridSortingType sortingType) {
-        sortingTypeProperty.syncToServer(sortingType);
+        Platform.INSTANCE.getConfig().getGrid().setSortingType(sortingType);
+        view.setSortingType(sortingType);
+        view.sort();
     }
 
     public GridSize getSize() {
-        return size;
+        return Platform.INSTANCE.getConfig().getGrid().getSize();
     }
 
     public void setSize(GridSize size) {
-        sizeProperty.syncToServer(size);
-    }
-
-    public PlatformSearchBoxModeImpl getSearchBoxMode() {
-        return searchBoxModeProperty.getDeserialized();
-    }
-
-    public void setSearchBoxMode(PlatformSearchBoxModeImpl searchBoxMode) {
-        searchBoxModeProperty.syncToServer(searchBoxMode);
-    }
-
-    private void onSortingTypeChanged(GridSortingType sortingType) {
-        if (view.getSortingType() != sortingType) {
-            view.setSortingType(sortingType);
-            view.sort();
-        }
-    }
-
-    private void onSortingDirectionChanged(GridSortingDirection sortingDirection) {
-        if (view.getSortingDirection() != sortingDirection) {
-            view.setSortingDirection(sortingDirection);
-            view.sort();
-        }
-    }
-
-    private void onSizeChanged(GridSize size) {
-        if (this.size != size) {
-            this.size = size;
-            if (sizeChangedListener != null) {
-                sizeChangedListener.run();
-            }
-        }
-    }
-
-    private void onSearchBoxModeChanged(PlatformSearchBoxModeImpl searchBoxMode) {
-        if (this.searchBoxMode != searchBoxMode) {
-            this.searchBoxMode = searchBoxMode;
-            this.updateSearchBox();
+        Platform.INSTANCE.getConfig().getGrid().setSize(size);
+        if (sizeChangedListener != null) {
+            sizeChangedListener.run();
         }
     }
 
     public void setSearchBox(GridSearchBox searchBox) {
-        this.searchBox = searchBox;
-        this.updateSearchBox();
+        searchBox.setAutoSelected(isAutoSelected());
         if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
-            this.searchBox.setValue(lastSearchQuery);
+            searchBox.setValue(lastSearchQuery);
+            searchBox.addListener(text -> lastSearchQuery = text);
         }
-    }
-
-    private void updateSearchBox() {
-        this.searchBox.setAutoSelected(searchBoxMode.isAutoSelected());
-        this.searchBox.setListener(text -> {
-            if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
-                updateLastSearchQuery(text);
-            }
-            searchBox.setInvalid(!searchBoxMode.onTextChanged(view, text));
-        });
     }
 
     @Override
@@ -308,5 +187,22 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
 
     public boolean isActive() {
         return active;
+    }
+
+    // TODO cache these values.
+    public void setAutoSelected(boolean autoSelected) {
+        Platform.INSTANCE.getConfig().getGrid().setAutoSelected(autoSelected);
+    }
+
+    public boolean isAutoSelected() {
+        return Platform.INSTANCE.getConfig().getGrid().isAutoSelected();
+    }
+
+    public void setSynchronizationType(GridSynchronizationType type) {
+        Platform.INSTANCE.getConfig().getGrid().setSynchronizationType(type);
+    }
+
+    public GridSynchronizationType getSynchronizationType() {
+        return Platform.INSTANCE.getConfig().getGrid().getSynchronizationType();
     }
 }

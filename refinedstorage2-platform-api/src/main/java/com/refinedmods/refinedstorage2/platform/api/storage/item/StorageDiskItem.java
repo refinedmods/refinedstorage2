@@ -15,4 +15,6 @@ public interface StorageDiskItem {
     Optional<UUID> getDiskId(ItemStack stack);
 
     Optional<StorageInfo> getInfo(Level level, ItemStack stack);
+
+    boolean hasStacking();
 }

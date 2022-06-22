@@ -1,16 +1,13 @@
 package com.refinedmods.refinedstorage2.api.network.node.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
-import com.refinedmods.refinedstorage2.api.grid.search.GridSearchBoxMode;
-import com.refinedmods.refinedstorage2.api.grid.view.GridSize;
-import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
-import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -24,49 +21,12 @@ public class GridNetworkNode<T> extends NetworkNodeImpl {
     private static final Logger LOGGER = LogManager.getLogger(GridNetworkNode.class);
 
     private final Set<GridWatcher> watchers = new HashSet<>();
-    private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
-    private GridSortingType sortingType = GridSortingType.QUANTITY;
-    private GridSize size = GridSize.STRETCH;
-    private GridSearchBoxMode searchBoxMode;
     private final long energyUsage;
     private final StorageChannelType<T> type;
 
-    public GridNetworkNode(GridSearchBoxMode defaultSearchBoxMode, long energyUsage, StorageChannelType<T> type) {
-        this.searchBoxMode = defaultSearchBoxMode;
+    public GridNetworkNode(long energyUsage, StorageChannelType<T> type) {
         this.energyUsage = energyUsage;
         this.type = type;
-    }
-
-    public GridSortingDirection getSortingDirection() {
-        return sortingDirection;
-    }
-
-    public void setSortingDirection(GridSortingDirection sortingDirection) {
-        this.sortingDirection = sortingDirection;
-    }
-
-    public GridSortingType getSortingType() {
-        return sortingType;
-    }
-
-    public void setSortingType(GridSortingType sortingType) {
-        this.sortingType = sortingType;
-    }
-
-    public GridSize getSize() {
-        return size;
-    }
-
-    public void setSize(GridSize size) {
-        this.size = size;
-    }
-
-    public GridSearchBoxMode getSearchBoxMode() {
-        return searchBoxMode;
-    }
-
-    public void setSearchBoxMode(GridSearchBoxMode searchBoxMode) {
-        this.searchBoxMode = searchBoxMode;
     }
 
     public StorageChannel<T> getStorageChannel() {
@@ -77,9 +37,12 @@ public class GridNetworkNode<T> extends NetworkNodeImpl {
         return getStorageChannel().getAll().size();
     }
 
-    public void forEachResource(BiConsumer<ResourceAmount<T>, Optional<StorageTracker.Entry>> consumer) {
+    public void forEachResource(BiConsumer<ResourceAmount<T>, Optional<TrackedResource>> consumer, Class<? extends Source> sourceType) {
         StorageChannel<T> storageChannel = getStorageChannel();
-        storageChannel.getAll().forEach(resourceAmount -> consumer.accept(resourceAmount, storageChannel.getTracker().getEntry(resourceAmount.getResource())));
+        storageChannel.getAll().forEach(resourceAmount -> consumer.accept(
+                resourceAmount,
+                storageChannel.findTrackedResourceBySourceType(resourceAmount.getResource(), sourceType)
+        ));
     }
 
     @Override

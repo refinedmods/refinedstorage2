@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.List;
 import java.util.Optional;
@@ -76,17 +76,17 @@ public interface GridView<T> {
      * Loads a resource in the backing list. The resource still won't be visible in the view list,
      * call {@link #sort()} for that.
      *
-     * @param resource     the resource
-     * @param amount       the amount
-     * @param trackerEntry the tracker entry, can be null
+     * @param resource        the resource
+     * @param amount          the amount
+     * @param trackedResource the tracked resource, can be null
      */
-    void loadResource(T resource, long amount, StorageTracker.Entry trackerEntry);
+    void loadResource(T resource, long amount, TrackedResource trackedResource);
 
     /**
      * @param resource the resource
-     * @return the tracker entry, if present
+     * @return the tracked resource, if present
      */
-    Optional<StorageTracker.Entry> getTrackerEntry(T resource);
+    Optional<TrackedResource> getTrackedResource(T resource);
 
     /**
      * Sorts the view list.
@@ -98,11 +98,11 @@ public interface GridView<T> {
      * Applies a change to a resource. Will update the backing list, and will also update the view list (depending
      * if the view is preventing sorting).
      *
-     * @param resource     the resource
-     * @param amount       the amount, can be negative or positive
-     * @param trackerEntry the tracker entry, can be null
+     * @param resource        the resource
+     * @param amount          the amount, can be negative or positive
+     * @param trackedResource the tracked resource, can be null
      */
-    void onChange(T resource, long amount, StorageTracker.Entry trackerEntry);
+    void onChange(T resource, long amount, TrackedResource trackedResource);
 
     /**
      * @return the view list

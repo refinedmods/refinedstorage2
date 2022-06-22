@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class GridActivePacket implements ClientPlayNetworking.PlayChannelHandler {
     @Override
@@ -15,8 +14,7 @@ public class GridActivePacket implements ClientPlayNetworking.PlayChannelHandler
         boolean active = buf.readBoolean();
 
         client.execute(() -> {
-            AbstractContainerMenu screenHandler = client.player.containerMenu;
-            if (screenHandler instanceof GridWatcher gridWatcher) {
+            if (client.player.containerMenu instanceof GridWatcher gridWatcher) {
                 gridWatcher.onActiveChanged(active);
             }
         });

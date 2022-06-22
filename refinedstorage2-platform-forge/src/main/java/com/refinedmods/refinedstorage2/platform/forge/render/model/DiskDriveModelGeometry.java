@@ -18,6 +18,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class DiskDriveModelGeometry extends BasicModelGeometry<DiskDriveModelGeometry> {
     private static final ResourceLocation BASE_MODEL = createIdentifier("block/disk_drive_base");
+    private static final ResourceLocation DISK_DISCONNECTED_MODEL = createIdentifier("block/disk_disconnected");
     private static final ResourceLocation DISK_MODEL = createIdentifier("block/disk");
 
     @Override
@@ -29,7 +30,8 @@ public class DiskDriveModelGeometry extends BasicModelGeometry<DiskDriveModelGeo
     public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
         return new DiskDriveBakedModel(
                 bakery.bake(BASE_MODEL, modelTransform, spriteGetter),
-                bakery.bake(DISK_MODEL, modelTransform, spriteGetter)
+                bakery.bake(DISK_MODEL, modelTransform, spriteGetter),
+                bakery.bake(DISK_DISCONNECTED_MODEL, modelTransform, spriteGetter)
         );
     }
 }

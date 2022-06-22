@@ -21,11 +21,11 @@ public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandle
         GridExtractMode mode = getMode(buf.readByte());
         boolean cursor = buf.readBoolean();
 
-        AbstractContainerMenu screenHandler = player.containerMenu;
-        if (screenHandler instanceof ItemGridEventHandler itemGridEventHandler) {
+        AbstractContainerMenu menu = player.containerMenu;
+        if (menu instanceof ItemGridEventHandler itemGridEventHandler) {
             ItemResource itemResource = PacketUtil.readItemResource(buf);
             server.execute(() -> itemGridEventHandler.onExtract(itemResource, mode, cursor));
-        } else if (screenHandler instanceof FluidGridEventHandler fluidGridEventHandler) {
+        } else if (menu instanceof FluidGridEventHandler fluidGridEventHandler) {
             FluidResource fluidResource = PacketUtil.readFluidResource(buf);
             server.execute(() -> fluidGridEventHandler.onExtract(fluidResource, mode, cursor));
         }

@@ -1,28 +1,61 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
-import com.refinedmods.refinedstorage2.api.storage.CappedStorage;
+import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.Rs2PlatformApiFacade;
+import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageDiskItemImpl;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformCappedStorage;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorage;
+import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.LimitedPlatformStorage;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 public class ItemStorageDiskItem extends StorageDiskItemImpl {
-    private final ItemStorageType type;
+    private final ItemStorageType.Variant variant;
+    private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
-    public ItemStorageDiskItem(Item.Properties properties, ItemStorageType type) {
-        super(properties);
-        this.type = type;
+    public ItemStorageDiskItem(CreativeModeTab tab, ItemStorageType.Variant variant) {
+        super(new Item.Properties().tab(tab).stacksTo(1).fireResistant());
+        this.variant = variant;
+        this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.STACK_INFO);
+        if (variant != ItemStorageType.Variant.CREATIVE) {
+            this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
+        }
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context) {
+        super.appendHoverText(stack, level, tooltip, context);
+        StorageItemHelper.appendToTooltip(
+                stack,
+                level,
+                tooltip,
+                context,
+                QuantityFormatter::formatWithUnits,
+                QuantityFormatter::format,
+                tooltipOptions
+        );
     }
 
     @Override
@@ -31,59 +64,42 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    protected Optional<ItemStack> createStoragePart(int count) {
-        if (type == ItemStorageType.CREATIVE) {
-            return Optional.empty();
-        }
-        return Optional.of(new ItemStack(Items.INSTANCE.getStoragePart(type), count));
+    public boolean hasStacking() {
+        return true;
     }
 
     @Override
     protected Storage<?> createStorage(Level level) {
-        if (!type.hasCapacity()) {
+        TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
+        if (!variant.hasCapacity()) {
             return new PlatformStorage<>(
-                    new InMemoryStorageImpl<>(),
-                    com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType.INSTANCE,
-                    Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
+                    new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+                    ItemStorageType.INSTANCE,
+                    trackingRepository,
+                    PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
             );
         }
-        return new PlatformCappedStorage<>(
-                new CappedStorage<>(type.getCapacity()),
-                com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType.INSTANCE,
-                Rs2PlatformApiFacade.INSTANCE.getStorageRepository(level)::markAsChanged
+        return new LimitedPlatformStorage<>(
+                new LimitedStorageImpl<>(
+                        new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+                        variant.getCapacity()
+                ),
+                ItemStorageType.INSTANCE,
+                trackingRepository,
+                PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
         );
     }
 
     @Override
-    protected ItemStack createDisassemblyByproduct() {
-        return new ItemStack(Items.INSTANCE.getStorageHousing());
+    protected ItemStack createPrimaryDisassemblyByproduct(int count) {
+        return new ItemStack(Items.INSTANCE.getStorageHousing(), count);
     }
 
-    public enum ItemStorageType {
-        ONE_K("1k", 1000),
-        FOUR_K("4k", 4000),
-        SIXTEEN_K("16k", 16_000),
-        SIXTY_FOUR_K("64k", 64_000),
-        CREATIVE("creative", 0);
-
-        private final String name;
-        private final int capacity;
-
-        ItemStorageType(String name, int capacity) {
-            this.name = name;
-            this.capacity = capacity;
+    @Override
+    protected ItemStack createSecondaryDisassemblyByproduct(int count) {
+        if (variant == ItemStorageType.Variant.CREATIVE) {
+            return null;
         }
-
-        public String getName() {
-            return name;
-        }
-
-        public int getCapacity() {
-            return capacity;
-        }
-
-        public boolean hasCapacity() {
-            return capacity > 0;
-        }
+        return new ItemStack(Items.INSTANCE.getItemStoragePart(variant), count);
     }
 }

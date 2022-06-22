@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 public class PrioritizedStorage<T> extends ProxyStorage<T> implements Priority {
     private int priority;
 
-    public PrioritizedStorage(int priority, Storage<T> parent) {
-        super(parent);
+    public PrioritizedStorage(int priority, Storage<T> delegate) {
+        super(delegate);
         this.priority = priority;
     }
 

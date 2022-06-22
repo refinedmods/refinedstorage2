@@ -9,14 +9,14 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
 import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.ClientFluidGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientFluidGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -74,7 +74,7 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
                 (ServerPlayer) playerInventory.player,
                 resource,
                 change.change(),
-                storageChannel.getTracker().getEntry(resource).orElse(null)
+                storageChannel.findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
         );
     }
 

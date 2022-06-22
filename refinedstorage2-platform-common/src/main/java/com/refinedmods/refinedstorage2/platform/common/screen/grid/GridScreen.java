@@ -1,16 +1,22 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
-import com.refinedmods.refinedstorage2.api.core.LastModified;
+import com.refinedmods.refinedstorage2.api.core.util.LastModified;
+import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageTracker;
-import com.refinedmods.refinedstorage2.platform.abstractions.Platform;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSynchronizationType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.view.GridResourceAttributeKeys;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.screen.BaseScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ScrollbarWidget;
+import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighterColors;
+import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +50,18 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/grid.png");
 
+    private static final int MODIFIED_JUST_NOW_MAX_SECONDS = 10;
+
     private static final int TOP_HEIGHT = 19;
     private static final int BOTTOM_HEIGHT = 99;
     private static final int COLUMNS = 9;
 
     private static final int DISABLED_SLOT_COLOR = 0xFF5B5B5B;
     private static final int SELECTION_SLOT_COLOR = -2130706433;
+
+    private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
+
+    private static GridSynchronizer synchronizer;
 
     private ScrollbarWidget scrollbar;
     private GridSearchBoxWidget searchField;
@@ -70,6 +82,13 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         this.imageHeight = 176;
     }
 
+    public static void setSynchronizer(GridSynchronizer synchronizer) {
+        if (GridScreen.synchronizer != null) {
+            throw new IllegalStateException("Synchronizer is already set!");
+        }
+        GridScreen.synchronizer = synchronizer;
+    }
+
     @Override
     protected void init() {
         LOGGER.info("Initializing grid screen");
@@ -81,7 +100,16 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         super.init();
 
         if (searchField == null) {
-            searchField = new GridSearchBoxWidget(font, leftPos + 80 + 1, topPos + 6 + 1, 88 - 6, new SyntaxHighlighter(SyntaxHighlighterColors.DEFAULT_COLORS));
+            searchField = new GridSearchBoxWidget(
+                    font,
+                    leftPos + 80 + 1,
+                    topPos + 6 + 1,
+                    88 - 6,
+                    new SyntaxHighlighter(SyntaxHighlighterColors.DEFAULT_COLORS),
+                    menu.getView(),
+                    new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS, GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING),
+                    SEARCH_FIELD_HISTORY
+            );
         } else {
             searchField.x = leftPos + 80 + 1;
             searchField.y = topPos + 6 + 1;
@@ -102,17 +130,39 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         addSideButton(new SortingDirectionSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new SortingTypeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new SizeSideButtonWidget(getMenu(), this::renderComponentTooltip));
-        addSideButton(new SearchBoxModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
+        addSideButton(new AutoSelectedSideButtonWidget(getMenu(), this::renderComponentTooltip));
+
+        if (synchronizer != null) {
+            addSideButton(new SynchronizationSideButtonWidget(getMenu(), this::renderComponentTooltip, synchronizer));
+            searchField.addListener(this::trySynchronizeFromGrid);
+        }
+    }
+
+    private void trySynchronizeFromGrid(String text) {
+        if (getMenu().getSynchronizationType() == GridSynchronizationType.OFF) {
+            return;
+        }
+        synchronizer.synchronizeFromGrid(text);
     }
 
     @Override
     protected void containerTick() {
         super.containerTick();
+        trySynchronizeToGrid();
+    }
 
-        String newValue = getMenu().getSearchBoxMode().getOverrideSearchBoxValue();
-        if (searchField != null && newValue != null && !searchField.getValue().equals(newValue)) {
-            searchField.setValue(newValue);
+    private void trySynchronizeToGrid() {
+        if (getMenu().getSynchronizationType() != GridSynchronizationType.TWO_WAY) {
+            return;
         }
+        if (synchronizer == null || searchField == null) {
+            return;
+        }
+        String text = synchronizer.getTextToSynchronizeToGrid();
+        if (text == null || searchField.getValue().equals(text)) {
+            return;
+        }
+        searchField.setValue(text);
     }
 
     private void resourcesChanged() {
@@ -277,7 +327,9 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
             List<FormattedCharSequence> smallLines = new ArrayList<>();
             smallLines.add(createTranslation("misc", "total", getAmountInTooltip(resource)).withStyle(ChatFormatting.GRAY).getVisualOrderText());
 
-            view.getTrackerEntry(resource.getResourceAmount().getResource()).ifPresent(entry -> smallLines.add(getLastModifiedText(entry).withStyle(ChatFormatting.GRAY).getVisualOrderText()));
+            view.getTrackedResource(resource.getResourceAmount().getResource()).ifPresent(entry -> smallLines.add(
+                    getLastModifiedText(entry).withStyle(ChatFormatting.GRAY).getVisualOrderText()
+            ));
 
             renderTooltipWithSmallText(poseStack, lines, smallLines, mouseX, mouseY);
         }
@@ -285,11 +337,11 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
     protected abstract List<Component> getTooltip(GridResource<R> resource);
 
-    private MutableComponent getLastModifiedText(StorageTracker.Entry entry) {
-        LastModified lastModified = LastModified.calculate(entry.time(), System.currentTimeMillis());
+    private MutableComponent getLastModifiedText(TrackedResource trackedResource) {
+        LastModified lastModified = LastModified.calculate(trackedResource.getTime(), System.currentTimeMillis());
 
-        if (lastModified.type() == LastModified.Type.JUST_NOW) {
-            return createTranslation("misc", "last_modified.just_now", entry.name());
+        if (isModifiedJustNow(lastModified)) {
+            return createTranslation("misc", "last_modified.just_now", trackedResource.getSourceName());
         }
 
         String translationKey = lastModified.type().toString().toLowerCase();
@@ -298,7 +350,11 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
             translationKey += "s";
         }
 
-        return createTranslation("misc", "last_modified." + translationKey, lastModified.amount(), entry.name());
+        return createTranslation("misc", "last_modified." + translationKey, lastModified.amount(), trackedResource.getSourceName());
+    }
+
+    private boolean isModifiedJustNow(LastModified lastModified) {
+        return lastModified.type() == LastModified.Type.SECOND && lastModified.amount() <= MODIFIED_JUST_NOW_MAX_SECONDS;
     }
 
     protected void renderAmount(PoseStack poseStack, int x, int y, String amount, int color) {
