@@ -8,7 +8,6 @@ import java.util.function.LongFunction;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 
 public final class StorageTooltipHelper {
     private StorageTooltipHelper() {
@@ -41,7 +40,7 @@ public final class StorageTooltipHelper {
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "stored",
-                new TextComponent(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN)
+                Component.literal(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN)
         ).withStyle(ChatFormatting.GRAY));
     }
 
@@ -49,8 +48,8 @@ public final class StorageTooltipHelper {
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "stored_with_capacity",
-                new TextComponent(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN),
-                new TextComponent(quantityFormatter.apply(capacity)).withStyle(ChatFormatting.BLUE)
+                Component.literal(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN),
+                Component.literal(quantityFormatter.apply(capacity)).withStyle(ChatFormatting.BLUE)
         ).withStyle(ChatFormatting.GRAY));
     }
 
@@ -59,7 +58,7 @@ public final class StorageTooltipHelper {
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "stacks",
-                new TextComponent(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN)
+                Component.literal(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN)
         ).withStyle(ChatFormatting.GRAY));
     }
 
@@ -69,8 +68,8 @@ public final class StorageTooltipHelper {
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "stacks_with_capacity",
-                new TextComponent(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN),
-                new TextComponent(quantityFormatter.apply(maxStacks)).withStyle(ChatFormatting.BLUE)
+                Component.literal(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN),
+                Component.literal(quantityFormatter.apply(maxStacks)).withStyle(ChatFormatting.BLUE)
         ).withStyle(ChatFormatting.GRAY));
     }
 
@@ -79,7 +78,7 @@ public final class StorageTooltipHelper {
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "full",
-                new TextComponent("" + (int) (progress * 100D)).withStyle(ChatFormatting.AQUA)
+                Component.literal("" + (int) (progress * 100D)).withStyle(ChatFormatting.AQUA)
         ).withStyle(ChatFormatting.GRAY));
     }
 }

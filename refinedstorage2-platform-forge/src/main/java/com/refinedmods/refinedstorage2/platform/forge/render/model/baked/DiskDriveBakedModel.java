@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -25,6 +24,7 @@ import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -66,7 +66,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
 
     @NotNull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull IModelData extraData) {
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull IModelData extraData) {
         if (state == null || !state.hasProperty(BaseBlock.DIRECTION)) {
             return super.getQuads(state, side, rand);
         }
@@ -100,9 +100,9 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         private final BlockState state;
         private final Direction side;
         private final StorageDiskState[] diskStates;
-        private final Random random;
+        private final RandomSource random;
 
-        public DiskDriveStateCacheKey(BlockState state, Direction side, StorageDiskState[] diskStates, Random random) {
+        public DiskDriveStateCacheKey(BlockState state, Direction side, StorageDiskState[] diskStates, RandomSource random) {
             this.state = state;
             this.side = side;
             this.diskStates = diskStates;
@@ -133,7 +133,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         }
 
         @NotNull
-        private List<BakedQuad> getQuads(@NotNull BlockState state, @NotNull Random rand, StorageDiskState[] diskStates, Direction side) {
+        private List<BakedQuad> getQuads(@NotNull BlockState state, @NotNull RandomSource rand, StorageDiskState[] diskStates, Direction side) {
             List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(state, side, rand));
             for (int i = 0; i < TRANSLATORS.length; ++i) {
                 StorageDiskState diskState = diskStates[i];
@@ -144,7 +144,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
             return quads;
         }
 
-        private List<BakedQuad> getDiskModel(@NotNull BlockState state, @NotNull Random rand, Direction side, Vector3f translation) {
+        private List<BakedQuad> getDiskModel(@NotNull BlockState state, @NotNull RandomSource rand, Direction side, Vector3f translation) {
             List<BakedQuad> diskQuads = diskModel.getQuads(state, side, rand);
             return QuadTransformer.translate(diskQuads, translation);
         }

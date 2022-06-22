@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +23,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class ItemResourceType implements ResourceType<ItemResource> {
     private static final ResourceLocation ID = createIdentifier("item_resource_type");
-    private static final TranslatableComponent NAME = createTranslation("misc", "resource_type.item");
+    private static final MutableComponent NAME = createTranslation("misc", "resource_type.item");
 
     public static final ItemResourceType INSTANCE = new ItemResourceType();
 

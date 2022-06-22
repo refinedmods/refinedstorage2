@@ -11,7 +11,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
@@ -36,7 +35,7 @@ public class AutoSelectedSideButtonWidget extends SideButtonWidget {
     private List<Component> calculateTooltip(boolean autoSelected) {
         List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "grid.auto_selected"));
-        lines.add(new TranslatableComponent("gui." + (autoSelected ? "yes" : "no")).withStyle(ChatFormatting.GRAY));
+        lines.add(Component.translatable("gui." + (autoSelected ? "yes" : "no")).withStyle(ChatFormatting.GRAY));
         return lines;
     }
 

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
@@ -13,6 +12,7 @@ import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ForgeHooksClient;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,7 @@ public class DiskDriveItemBakedModel extends ForwardingBakedModel {
 
     @NotNull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull Random rand) {
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand) {
         if (side == null) {
             if (cachedQuadsForNoSide == null) {
                 cachedQuadsForNoSide = getDiskModel(null, rand);
@@ -49,7 +49,7 @@ public class DiskDriveItemBakedModel extends ForwardingBakedModel {
         return quadCache.computeIfAbsent(side, key -> getDiskModel(key, rand));
     }
 
-    private List<BakedQuad> getDiskModel(@Nullable Direction side, Random rand) {
+    private List<BakedQuad> getDiskModel(@Nullable Direction side, RandomSource rand) {
         List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(null, side, rand));
         for (int i = 0; i < translators.length; ++i) {
             if ((disks & (1L << i)) != 0) {
@@ -59,7 +59,7 @@ public class DiskDriveItemBakedModel extends ForwardingBakedModel {
         return quads;
     }
 
-    private List<BakedQuad> getDiskModel(@Nullable Direction side, Random rand, Vector3f translation) {
+    private List<BakedQuad> getDiskModel(@Nullable Direction side, RandomSource rand, Vector3f translation) {
         List<BakedQuad> diskQuads = diskDisconnectedModel.getQuads(null, side, rand);
         return QuadTransformer.translate(diskQuads, translation);
     }

@@ -16,7 +16,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
@@ -43,7 +43,7 @@ public class SynchronizationSideButtonWidget extends SideButtonWidget {
         return lines;
     }
 
-    private TranslatableComponent createTranslatedValue(GridSynchronizationType type) {
+    private MutableComponent createTranslatedValue(GridSynchronizationType type) {
         return switch (type) {
             case OFF -> createTranslation("gui", "grid.synchronization.off");
             case ON -> createTranslation("gui", "grid.synchronization.on");

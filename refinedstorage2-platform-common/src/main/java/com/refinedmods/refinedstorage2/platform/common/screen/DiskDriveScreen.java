@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.dis
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -14,7 +14,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class DiskDriveScreen extends StorageScreen<DiskDriveContainerMenu> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/disk_drive.png");
-    private static final TranslatableComponent DISKS_TEXT = createTranslation("gui", "disk_drive.disks");
+    private static final MutableComponent DISKS_TEXT = createTranslation("gui", "disk_drive.disks");
 
     public DiskDriveScreen(DiskDriveContainerMenu menu, Inventory playerInventory, Component text) {
         super(menu, playerInventory, text, 99);

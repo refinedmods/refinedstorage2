@@ -13,7 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
@@ -46,7 +45,7 @@ public class PrioritySideButtonWidget extends SideButtonWidget {
     public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
         List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "priority"));
-        lines.add(new TextComponent(String.valueOf(priorityAccessor.getPriority())).withStyle(ChatFormatting.GRAY));
+        lines.add(Component.literal(String.valueOf(priorityAccessor.getPriority())).withStyle(ChatFormatting.GRAY));
         tooltipRenderer.render(poseStack, lines, mouseX, mouseY);
     }
 }

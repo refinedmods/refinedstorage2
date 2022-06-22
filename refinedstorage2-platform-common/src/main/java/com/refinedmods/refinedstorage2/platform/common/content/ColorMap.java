@@ -8,8 +8,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 
@@ -33,7 +33,7 @@ public class ColorMap<T> {
 
     public MutableComponent getName(DyeColor color, MutableComponent name) {
         if (color != NORMAL_COLOR) {
-            return new TranslatableComponent("color.minecraft." + color.getName()).append(" ").append(name);
+            return Component.translatable("color.minecraft." + color.getName()).append(" ").append(name);
         } else {
             return name;
         }

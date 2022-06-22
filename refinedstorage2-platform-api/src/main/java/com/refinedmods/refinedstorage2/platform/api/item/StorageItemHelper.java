@@ -13,7 +13,6 @@ import java.util.function.LongFunction;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -51,7 +50,7 @@ public final class StorageItemHelper {
     public static void appendToTooltip(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context, LongFunction<String> quantityFormatter, LongFunction<String> stackInfoQuantityFormatter, Set<StorageTooltipHelper.TooltipOption> options) {
         getInfo(level, stack).ifPresent(info -> StorageTooltipHelper.appendToTooltip(tooltip, info.stored(), info.capacity(), quantityFormatter, stackInfoQuantityFormatter, options));
         if (context.isAdvanced()) {
-            getStorageId(stack).ifPresent(id -> tooltip.add(new TextComponent(id.toString()).withStyle(ChatFormatting.GRAY)));
+            getStorageId(stack).ifPresent(id -> tooltip.add(Component.literal(id.toString()).withStyle(ChatFormatting.GRAY)));
         }
     }
 

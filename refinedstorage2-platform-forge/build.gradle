@@ -71,8 +71,9 @@ dependencies {
     project.ext.compileApis.collect {
         implementation project(it)
     }
-    compileOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jeiVersion}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jeiVersion}")
+    compileOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}-common-api:${project.jeiVersion}")
+    compileOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}-forge-api:${project.jeiVersion}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}-forge:${project.jeiVersion}")
 }
 
 processResources {

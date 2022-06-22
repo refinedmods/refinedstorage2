@@ -37,7 +37,7 @@ public abstract class ItemGridResourceFactory implements Function<ResourceAmount
         return itemStack
                 .getTooltipLines(null, TooltipFlag.Default.ADVANCED)
                 .stream()
-                .map(Component::getContents)
+                .map(Component::getString)
                 .collect(Collectors.joining("\n"));
     }
 

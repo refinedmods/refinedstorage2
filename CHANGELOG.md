@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Ported to Minecraft 1.19.
+
 ## [2.0.0-milestone.1.4] - 2022-06-22
 
 All device inventories (most notably the Disk Drive inventory) will be empty after upgrading. Make sure to move all

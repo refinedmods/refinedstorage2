@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.platform.common.render.FluidRenderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -24,13 +23,13 @@ public abstract class FluidRendererImpl implements FluidRenderer {
         int slotYEnd = y + 16;
 
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-        BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
+        Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder bufferBuilder = tesselator.getBuilder();
         bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         bufferBuilder.vertex(poseStack.last().pose(), x, slotYEnd, z).uv(sprite.getU0(), sprite.getV1()).color(r, g, b, 255).endVertex();
         bufferBuilder.vertex(poseStack.last().pose(), slotXEnd, slotYEnd, z).uv(sprite.getU1(), sprite.getV1()).color(r, g, b, 255).endVertex();
         bufferBuilder.vertex(poseStack.last().pose(), slotXEnd, y, z).uv(sprite.getU1(), sprite.getV0()).color(r, g, b, 255).endVertex();
         bufferBuilder.vertex(poseStack.last().pose(), x, y, z).uv(sprite.getU0(), sprite.getV0()).color(r, g, b, 255).endVertex();
-        bufferBuilder.end();
-        BufferUploader.end(bufferBuilder);
+        tesselator.end();
     }
 }

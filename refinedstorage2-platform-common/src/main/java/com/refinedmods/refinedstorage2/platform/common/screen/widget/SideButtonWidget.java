@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -17,7 +17,7 @@ public abstract class SideButtonWidget extends Button implements Button.OnToolti
     private static final int HEIGHT = 18;
 
     protected SideButtonWidget(OnPress pressAction) {
-        super(-1, -1, WIDTH, HEIGHT, TextComponent.EMPTY, pressAction);
+        super(-1, -1, WIDTH, HEIGHT, Component.empty(), pressAction);
     }
 
     protected abstract int getXTexture();
