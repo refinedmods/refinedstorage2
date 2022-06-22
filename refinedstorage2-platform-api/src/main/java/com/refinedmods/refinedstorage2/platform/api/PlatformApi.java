@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepos
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
 
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.Level;
 
 public interface PlatformApi {
@@ -28,7 +28,7 @@ public interface PlatformApi {
 
     StorageType<FluidResource> getFluidStorageType();
 
-    TranslatableComponent createTranslation(String category, String value, Object... args);
+    MutableComponent createTranslation(String category, String value, Object... args);
 
     ResourceTypeRegistry getResourceTypeRegistry();
 

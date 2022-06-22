@@ -14,8 +14,11 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.client.IFluidTypeRenderProperties;
+import net.minecraftforge.client.RenderProperties;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 
 public class FluidStackFluidRenderer extends FluidRendererImpl {
@@ -23,21 +26,25 @@ public class FluidStackFluidRenderer extends FluidRendererImpl {
 
     @NotNull
     private FluidStack getFluidStackFromCache(FluidResource fluidResource) {
-        return stackCache.computeIfAbsent(fluidResource, r -> new FluidStack(r.getFluid(), FluidAttributes.BUCKET_VOLUME, r.getTag()));
+        return stackCache.computeIfAbsent(fluidResource, r -> new FluidStack(r.getFluid(), FluidType.BUCKET_VOLUME, r.getTag()));
     }
 
     @Override
     public void render(PoseStack poseStack, int x, int y, int z, FluidResource fluidResource) {
-        FluidAttributes attributes = fluidResource.getFluid().getAttributes();
         FluidStack stack = getFluidStackFromCache(fluidResource);
-        int packedRgb = attributes.getColor(stack);
-        TextureAtlasSprite sprite = getStillFluidSprite(attributes, stack);
+        Fluid fluid = fluidResource.getFluid();
+
+        IFluidTypeRenderProperties renderProperties = RenderProperties.get(fluid);
+
+        int packedRgb = renderProperties.getColorTint(stack);
+        TextureAtlasSprite sprite = getStillFluidSprite(renderProperties, stack);
+
         render(poseStack, x, y, z, packedRgb, sprite);
     }
 
-    private TextureAtlasSprite getStillFluidSprite(FluidAttributes attributes, FluidStack fluidStack) {
+    private TextureAtlasSprite getStillFluidSprite(IFluidTypeRenderProperties renderProperties, FluidStack fluidStack) {
         Minecraft minecraft = Minecraft.getInstance();
-        ResourceLocation fluidStill = attributes.getStillTexture(fluidStack);
+        ResourceLocation fluidStill = renderProperties.getStillTexture(fluidStack);
         return minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(fluidStill);
     }
 

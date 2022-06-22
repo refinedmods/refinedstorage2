@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.render.model.baked.transf
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Supplier;
 
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
@@ -19,6 +18,7 @@ import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -56,7 +56,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     }
 
     @Override
-    public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
+    public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
         context.fallbackConsumer().accept(wrapped);
         CompoundTag tag = BlockItem.getBlockEntityData(stack);
         if (tag == null) {
@@ -73,7 +73,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     }
 
     @Override
-    public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
+    public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
         QuadRotator rotator = ROTATORS.get(state.getValue(BaseBlock.DIRECTION));
         context.pushTransform(rotator);
 

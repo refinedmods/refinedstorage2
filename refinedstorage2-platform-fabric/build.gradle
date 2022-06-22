@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'fabric-loom' version '0.12-SNAPSHOT'
 }
 
 archivesBaseName = 'refinedstorage2-platform-fabric'
@@ -27,7 +27,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraftVersion}"
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${project.minecraftVersion}:${project.parchmentVersion}@zip")
+/* TODO        parchment("org.parchmentmc.data:parchment-${project.minecraftVersion}:${project.parchmentVersion}@zip")*/
     }
     modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricApiVersion}"

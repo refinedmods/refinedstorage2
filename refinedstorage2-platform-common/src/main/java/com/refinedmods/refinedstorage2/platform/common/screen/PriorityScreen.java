@@ -11,12 +11,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
@@ -32,10 +32,10 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
     private static final int AMOUNT_X = 19;
     private static final int AMOUNT_Y = 48;
 
-    private static final TranslatableComponent PRIORITY_TEXT = createTranslation("gui", "priority");
-    private static final TranslatableComponent SET_TEXT = createTranslation("gui", "priority.set");
-    private static final TranslatableComponent RESET_TEXT = createTranslation("gui", "priority.reset");
-    private static final TranslatableComponent CANCEL_TEXT = new TranslatableComponent("gui.cancel");
+    private static final MutableComponent PRIORITY_TEXT = createTranslation("gui", "priority");
+    private static final MutableComponent SET_TEXT = createTranslation("gui", "priority.set");
+    private static final MutableComponent RESET_TEXT = createTranslation("gui", "priority.reset");
+    private static final MutableComponent CANCEL_TEXT = Component.translatable("gui.cancel");
 
     private static final int[] INCREMENTS_TOP = {1, 5, 10};
     private static final int[] INCREMENTS_BOTTOM = {-1, -5, -10};
@@ -69,7 +69,7 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
         addRenderableWidget(new Button(leftPos + ACTION_BUTTON_X, topPos + ACTION_BUTTON_Y + 24, ACTION_BUTTON_WIDTH, 20, SET_TEXT, btn -> ok()));
         addRenderableWidget(new Button(leftPos + ACTION_BUTTON_X, topPos + ACTION_BUTTON_Y + 48, ACTION_BUTTON_WIDTH, 20, CANCEL_TEXT, btn -> close()));
 
-        amountField = new EditBox(font, leftPos + AMOUNT_X, topPos + AMOUNT_Y, 69 - 6, font.lineHeight, new TextComponent(""));
+        amountField = new EditBox(font, leftPos + AMOUNT_X, topPos + AMOUNT_Y, 69 - 6, font.lineHeight, Component.empty());
         amountField.setBordered(false);
         amountField.setValue(String.valueOf(priorityAccessor.getPriority()));
         amountField.setVisible(true);
@@ -84,7 +84,7 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
 
     private void addIncrementButtons(int[] increments, int x, int y) {
         for (int increment : increments) {
-            Component text = new TextComponent((increment > 0 ? "+" : "") + increment);
+            Component text = Component.literal((increment > 0 ? "+" : "") + increment);
 
             addRenderableWidget(new Button(x, y, INCREMENT_BUTTON_WIDTH, 20, text, btn -> changeAmount(increment)));
 
@@ -175,6 +175,11 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
     private static class DummyContainerMenu extends AbstractContainerMenu {
         protected DummyContainerMenu() {
             super(null, 0);
+        }
+
+        @Override
+        public ItemStack quickMoveStack(Player player, int i) {
+            return ItemStack.EMPTY;
         }
 
         @Override

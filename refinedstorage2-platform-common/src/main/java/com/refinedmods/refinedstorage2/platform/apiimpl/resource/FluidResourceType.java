@@ -12,7 +12,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +22,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class FluidResourceType implements ResourceType<FluidResource> {
     private static final ResourceLocation ID = createIdentifier("fluid_resource_type");
-    private static final TranslatableComponent NAME = createTranslation("misc", "resource_type.fluid");
+    private static final MutableComponent NAME = createTranslation("misc", "resource_type.fluid");
 
     public static final FluidResourceType INSTANCE = new FluidResourceType();
 

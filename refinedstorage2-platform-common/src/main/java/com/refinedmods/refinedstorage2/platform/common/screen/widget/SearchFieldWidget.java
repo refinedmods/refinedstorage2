@@ -6,14 +6,14 @@ import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
 public class SearchFieldWidget extends EditBox {
     private final History history;
 
     public SearchFieldWidget(Font textRenderer, int x, int y, int width, History history) {
-        super(textRenderer, x, y, width, textRenderer.lineHeight, new TextComponent(""));
+        super(textRenderer, x, y, width, textRenderer.lineHeight, Component.empty());
 
         this.history = history;
         this.setBordered(false);

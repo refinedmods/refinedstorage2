@@ -28,7 +28,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.Level;
 
 public class PlatformApiImpl implements PlatformApi {
@@ -72,7 +72,7 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public TranslatableComponent createTranslation(String category, String value, Object... args) {
+    public MutableComponent createTranslation(String category, String value, Object... args) {
         return IdentifierUtil.createTranslation(category, value, args);
     }
 
