@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
@@ -9,7 +10,6 @@ import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,15 +44,15 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
     private int priority;
 
-    public DiskDriveNetworkNode(long energyUsage, long energyUsagePerDisk, StorageChannelTypeRegistry storageChannelTypeRegistry) {
+    public DiskDriveNetworkNode(long energyUsage, long energyUsagePerDisk, OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
         this.energyUsage = energyUsage;
         this.energyUsagePerDisk = energyUsagePerDisk;
         this.compositeStorages = createCompositeStorages(storageChannelTypeRegistry);
     }
 
-    private Map<StorageChannelType<?>, DiskDriveCompositeStorage<?>> createCompositeStorages(StorageChannelTypeRegistry storageChannelTypeRegistry) {
+    private Map<StorageChannelType<?>, DiskDriveCompositeStorage<?>> createCompositeStorages(OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
         return storageChannelTypeRegistry
-                .getTypes()
+                .getAll()
                 .stream()
                 .collect(ImmutableMap.toImmutableMap(type -> type, this::createCompositeStorage));
     }

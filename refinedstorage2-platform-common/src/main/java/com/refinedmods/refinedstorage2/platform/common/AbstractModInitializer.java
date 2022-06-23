@@ -22,13 +22,12 @@ public abstract class AbstractModInitializer {
     }
 
     protected void registerDiskTypes() {
-        PlatformApi.INSTANCE.getStorageTypeRegistry().addType(createIdentifier("item_disk"), ItemStorageType.INSTANCE);
-        PlatformApi.INSTANCE.getStorageTypeRegistry().addType(createIdentifier("fluid_disk"), FluidStorageType.INSTANCE);
+        PlatformApi.INSTANCE.getStorageTypeRegistry().addType(createIdentifier("item"), ItemStorageType.INSTANCE);
+        PlatformApi.INSTANCE.getStorageTypeRegistry().addType(createIdentifier("fluid"), FluidStorageType.INSTANCE);
     }
 
-    protected void registerStorageChannelTypes() {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().addType(StorageChannelTypes.ITEM);
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().addType(StorageChannelTypes.FLUID);
+    protected void registerAdditionalStorageChannelTypes() {
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().register(createIdentifier("fluid"), StorageChannelTypes.FLUID);
     }
 
     protected void registerNetworkComponents() {
@@ -38,6 +37,6 @@ public abstract class AbstractModInitializer {
     }
 
     protected void registerAdditionalResourceTypes() {
-        PlatformApi.INSTANCE.getResourceTypeRegistry().register(createIdentifier("fluid_resource_type"), FluidResourceType.INSTANCE);
+        PlatformApi.INSTANCE.getResourceTypeRegistry().register(createIdentifier("fluid"), FluidResourceType.INSTANCE);
     }
 }

@@ -130,7 +130,7 @@ public class ModInitializer extends AbstractModInitializer {
         initializePlatform(new PlatformImpl(new NetworkManager()));
         initializePlatformApi();
         registerDiskTypes();
-        registerStorageChannelTypes();
+        registerAdditionalStorageChannelTypes();
         registerNetworkComponents();
         registerContent();
         registerSounds();
