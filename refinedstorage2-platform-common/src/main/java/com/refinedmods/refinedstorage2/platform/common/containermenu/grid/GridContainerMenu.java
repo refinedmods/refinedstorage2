@@ -8,8 +8,11 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizerRegistry;
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSize;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSynchronizationType;
+import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
@@ -40,6 +43,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     protected StorageChannel<T> storageChannel; // TODO - Support changing of the channel.
     private Runnable sizeChangedListener;
 
+    private GridSynchronizer synchronizer;
     private boolean active;
 
     protected GridContainerMenu(MenuType<?> type, int syncId, Inventory playerInventory, FriendlyByteBuf buf, GridView<T> view) {
@@ -61,6 +65,8 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         addDataSlot(redstoneModeProperty);
 
         active = buf.readBoolean();
+
+        synchronizer = loadSynchronizer();
 
         this.view.setSortingDirection(Platform.INSTANCE.getConfig().getGrid().getSortingDirection());
         this.view.setSortingType(Platform.INSTANCE.getConfig().getGrid().getSortingType());
@@ -198,11 +204,31 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         return Platform.INSTANCE.getConfig().getGrid().isAutoSelected();
     }
 
-    public void setSynchronizationType(GridSynchronizationType type) {
-        Platform.INSTANCE.getConfig().getGrid().setSynchronizationType(type);
+    private GridSynchronizer loadSynchronizer() {
+        return Platform.INSTANCE
+                .getConfig()
+                .getGrid()
+                .getSynchronizer()
+                .map(id -> PlatformApi.INSTANCE.getGridSynchronizerRegistry().getOrDefault(id))
+                .orElse(PlatformApi.INSTANCE.getGridSynchronizerRegistry().getDefault());
     }
 
-    public GridSynchronizationType getSynchronizationType() {
-        return Platform.INSTANCE.getConfig().getGrid().getSynchronizationType();
+    public GridSynchronizer getSynchronizer() {
+        return synchronizer;
+    }
+
+    public void toggleSynchronizer() {
+        GridSynchronizerRegistry synchronizerRegistry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
+        Config.Grid config = Platform.INSTANCE.getConfig().getGrid();
+
+        GridSynchronizer newSynchronizer = synchronizerRegistry.toggleSynchronizer(getSynchronizer());
+
+        if (newSynchronizer == synchronizerRegistry.getDefault()) {
+            config.clearSynchronizer();
+        } else {
+            config.setSynchronizer(synchronizerRegistry.getId(newSynchronizer));
+        }
+
+        this.synchronizer = newSynchronizer;
     }
 }

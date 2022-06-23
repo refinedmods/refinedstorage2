@@ -10,12 +10,15 @@ import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizerRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceTypeRegistry;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSynchronizerRegistryImpl;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.NoOpGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.apiimpl.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceTypeRegistryImpl;
@@ -31,6 +34,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.Level;
 
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
+
 public class PlatformApiImpl implements PlatformApi {
     private final PlatformStorageRepository clientStorageRepository = new ClientStorageRepository(Platform.INSTANCE.getClientToServerCommunications()::sendStorageInfoRequest);
     private final ResourceTypeRegistry resourceTypeRegistry = new ResourceTypeRegistryImpl(ItemResourceType.INSTANCE);
@@ -38,6 +43,7 @@ public class PlatformApiImpl implements PlatformApi {
     private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentMapFactory));
     private final StorageTypeRegistry storageTypeRegistry = new StorageTypeRegistryImpl();
     private final StorageChannelTypeRegistry storageChannelTypeRegistry = new StorageChannelTypeRegistryImpl();
+    private final GridSynchronizerRegistry gridSynchronizerRegistry = new GridSynchronizerRegistryImpl(createIdentifier("off"), new NoOpGridSynchronizer());
 
     @Override
     public StorageTypeRegistry getStorageTypeRegistry() {
@@ -84,6 +90,11 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public ComponentMapFactory<NetworkComponent, Network> getNetworkComponentMapFactory() {
         return networkComponentMapFactory;
+    }
+
+    @Override
+    public GridSynchronizerRegistry getGridSynchronizerRegistry() {
+        return gridSynchronizerRegistry;
     }
 
     @Override

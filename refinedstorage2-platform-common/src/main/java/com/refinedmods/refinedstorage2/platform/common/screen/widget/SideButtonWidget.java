@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public abstract class SideButtonWidget extends Button implements Button.OnTooltip {
-    private static final ResourceLocation DEFAULT_TEXTURE = createIdentifier("textures/icons.png");
+    public static final ResourceLocation DEFAULT_TEXTURE = createIdentifier("textures/icons.png");
 
     private static final int WIDTH = 18;
     private static final int HEIGHT = 18;
