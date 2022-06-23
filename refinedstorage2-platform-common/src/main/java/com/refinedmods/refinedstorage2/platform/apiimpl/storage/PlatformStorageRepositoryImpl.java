@@ -1,11 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.apiimpl.storage;
 
+import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.SerializableStorage;
-import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
+import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 
 import java.util.Map;
 import java.util.Optional;
@@ -30,9 +31,9 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     private static final String TAG_STORAGE_DATA = "data";
 
     private final StorageRepositoryImpl delegate;
-    private final StorageTypeRegistry storageTypeRegistry;
+    private final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry;
 
-    public PlatformStorageRepositoryImpl(StorageRepositoryImpl delegate, StorageTypeRegistry storageTypeRegistry) {
+    public PlatformStorageRepositoryImpl(StorageRepositoryImpl delegate, OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry) {
         this.delegate = delegate;
         this.storageTypeRegistry = storageTypeRegistry;
     }
@@ -76,7 +77,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
             ResourceLocation typeIdentifier = new ResourceLocation(((CompoundTag) storageTag).getString(TAG_STORAGE_TYPE));
             CompoundTag data = ((CompoundTag) storageTag).getCompound(TAG_STORAGE_DATA);
 
-            storageTypeRegistry.getType(typeIdentifier).ifPresentOrElse(
+            storageTypeRegistry.get(typeIdentifier).ifPresentOrElse(
                     type -> setSilently(id, type.fromTag(data, this::markAsChanged)),
                     () -> LOGGER.warn("Cannot find storage type {} for storage {}", typeIdentifier, id)
             );
@@ -100,7 +101,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     @SuppressWarnings("unchecked")
     private Tag convertStorageToTag(UUID id, Storage<?> storage, SerializableStorage serializableStorage) {
         ResourceLocation typeIdentifier = storageTypeRegistry
-                .getIdentifier(serializableStorage.getType())
+                .getId(serializableStorage.getType())
                 .orElseThrow(() -> new RuntimeException("Storage type is not registered"));
 
         CompoundTag tag = new CompoundTag();
