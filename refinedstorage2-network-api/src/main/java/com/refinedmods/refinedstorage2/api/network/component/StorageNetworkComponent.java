@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.api.network.component;
 
+import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,8 +16,8 @@ public class StorageNetworkComponent implements NetworkComponent {
 
     private final Map<StorageChannelType<?>, StorageChannel<?>> channels = new HashMap<>();
 
-    public StorageNetworkComponent(StorageChannelTypeRegistry storageChannelTypeRegistry) {
-        for (StorageChannelType<?> type : storageChannelTypeRegistry.getTypes()) {
+    public StorageNetworkComponent(OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
+        for (StorageChannelType<?> type : storageChannelTypeRegistry.getAll()) {
             channels.put(type, type.create());
         }
     }

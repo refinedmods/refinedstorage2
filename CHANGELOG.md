@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+Device inventories and disks created in v2.0.0-milestone.1.4 will be lost.
+
 ### Changed
 
 - Ported to Minecraft 1.19.

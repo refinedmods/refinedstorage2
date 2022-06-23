@@ -9,8 +9,7 @@ import com.refinedmods.refinedstorage2.api.network.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistryImpl;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
@@ -24,6 +23,7 @@ import com.refinedmods.refinedstorage2.platform.apiimpl.network.LevelConnectionP
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.ClientStorageRepository;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorageRepositoryImpl;
+import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.StorageTypeRegistryImpl;
@@ -39,11 +39,11 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class PlatformApiImpl implements PlatformApi {
     private final PlatformStorageRepository clientStorageRepository = new ClientStorageRepository(Platform.INSTANCE.getClientToServerCommunications()::sendStorageInfoRequest);
-    private final OrderedRegistry<ResourceLocation, ResourceType<?>> resourceTypeRegistry = new OrderedRegistryImpl<>(createIdentifier("item_resource_type"), ItemResourceType.INSTANCE);
+    private final OrderedRegistry<ResourceLocation, ResourceType<?>> resourceTypeRegistry = new OrderedRegistryImpl<>(createIdentifier("item"), ItemResourceType.INSTANCE);
     private final ComponentMapFactory<NetworkComponent, Network> networkComponentMapFactory = new ComponentMapFactory<>();
     private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentMapFactory));
     private final StorageTypeRegistry storageTypeRegistry = new StorageTypeRegistryImpl();
-    private final StorageChannelTypeRegistry storageChannelTypeRegistry = new StorageChannelTypeRegistryImpl();
+    private final OrderedRegistry<ResourceLocation, StorageChannelType<?>> storageChannelTypeRegistry = new OrderedRegistryImpl<>(createIdentifier("item"), StorageChannelTypes.ITEM);
     private final OrderedRegistry<ResourceLocation, GridSynchronizer> gridSynchronizerRegistry = new OrderedRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
 
     @Override
@@ -64,7 +64,7 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public StorageChannelTypeRegistry getStorageChannelTypeRegistry() {
+    public OrderedRegistry<ResourceLocation, StorageChannelType<?>> getStorageChannelTypeRegistry() {
         return storageChannelTypeRegistry;
     }
 
