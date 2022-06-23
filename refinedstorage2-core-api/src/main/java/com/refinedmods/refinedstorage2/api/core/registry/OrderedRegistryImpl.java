@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.core;
+package com.refinedmods.refinedstorage2.api.core.registry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.2.0")
 public class OrderedRegistryImpl<I, T> implements OrderedRegistry<I, T> {
     private final Map<I, T> idToValueMap = new HashMap<>();
     private final Map<T, I> valueToIdMap = new HashMap<>();

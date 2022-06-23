@@ -13,15 +13,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class FluidResourceType implements ResourceType<FluidResource> {
-    private static final ResourceLocation ID = createIdentifier("fluid_resource_type");
     private static final MutableComponent NAME = createTranslation("misc", "resource_type.fluid");
 
     public static final FluidResourceType INSTANCE = new FluidResourceType();
@@ -42,11 +39,6 @@ public class FluidResourceType implements ResourceType<FluidResource> {
     @Override
     public void render(PoseStack poseStack, FluidResource value, int x, int y, int z) {
         Platform.INSTANCE.getFluidRenderer().render(poseStack, x, y, z, value);
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return ID;
     }
 
     @Override

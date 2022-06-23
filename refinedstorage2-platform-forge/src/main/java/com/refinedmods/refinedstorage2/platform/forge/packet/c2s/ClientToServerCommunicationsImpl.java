@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -45,7 +46,7 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
 
     @Override
     public void sendResourceTypeChange(ResourceType<?> type) {
-        networkManager.send(new ResourceTypeChangePacket(type.getId()));
+        PlatformApi.INSTANCE.getResourceTypeRegistry().getId(type).ifPresent(id -> networkManager.send(new ResourceTypeChangePacket(id)));
     }
 
     @Override

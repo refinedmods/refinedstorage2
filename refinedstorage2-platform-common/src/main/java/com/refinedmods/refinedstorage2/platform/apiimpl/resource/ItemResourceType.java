@@ -13,16 +13,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ItemResourceType implements ResourceType<ItemResource> {
-    private static final ResourceLocation ID = createIdentifier("item_resource_type");
     private static final MutableComponent NAME = createTranslation("misc", "resource_type.item");
 
     public static final ItemResourceType INSTANCE = new ItemResourceType();
@@ -43,11 +40,6 @@ public class ItemResourceType implements ResourceType<ItemResource> {
     @Override
     public void render(PoseStack poseStack, ItemResource value, int x, int y, int z) {
         Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(value.toItemStack(), x, y);
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return ID;
     }
 
     @Override

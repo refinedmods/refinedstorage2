@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.core;
+package com.refinedmods.refinedstorage2.api.core.registry;
 
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 

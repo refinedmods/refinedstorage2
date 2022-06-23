@@ -1,6 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
+import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
+import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistryImpl;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.NetworkBuilder;
 import com.refinedmods.refinedstorage2.api.network.NetworkFactory;
@@ -13,7 +15,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizerRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceTypeRegistry;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
@@ -21,7 +23,6 @@ import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSynchronizerReg
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.NoOpGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.apiimpl.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.ItemResourceType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceTypeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.ClientStorageRepository;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
@@ -32,13 +33,14 @@ import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public class PlatformApiImpl implements PlatformApi {
     private final PlatformStorageRepository clientStorageRepository = new ClientStorageRepository(Platform.INSTANCE.getClientToServerCommunications()::sendStorageInfoRequest);
-    private final ResourceTypeRegistry resourceTypeRegistry = new ResourceTypeRegistryImpl(ItemResourceType.INSTANCE);
+    private final OrderedRegistry<ResourceLocation, ResourceType<?>> resourceTypeRegistry = new OrderedRegistryImpl<>(createIdentifier("item_resource_type"), ItemResourceType.INSTANCE);
     private final ComponentMapFactory<NetworkComponent, Network> networkComponentMapFactory = new ComponentMapFactory<>();
     private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentMapFactory));
     private final StorageTypeRegistry storageTypeRegistry = new StorageTypeRegistryImpl();
@@ -83,7 +85,7 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public ResourceTypeRegistry getResourceTypeRegistry() {
+    public OrderedRegistry<ResourceLocation, ResourceType<?>> getResourceTypeRegistry() {
         return resourceTypeRegistry;
     }
 

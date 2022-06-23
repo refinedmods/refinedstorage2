@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter;
 
+import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceTypeRegistry;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,12 +14,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
 public class ResourceFilterContainer {
-    private final ResourceTypeRegistry resourceTypeRegistry;
+    private final OrderedRegistry<ResourceLocation, ResourceType<?>> resourceTypeRegistry;
     private final Object[] filters;
     private final ResourceType<?>[] types;
     private final Runnable listener;
 
-    public ResourceFilterContainer(ResourceTypeRegistry resourceTypeRegistry, int size, Runnable listener) {
+    public ResourceFilterContainer(OrderedRegistry<ResourceLocation, ResourceType<?>> resourceTypeRegistry, int size, Runnable listener) {
         this.resourceTypeRegistry = resourceTypeRegistry;
         this.filters = new Object[size];
         this.types = new ResourceType[size];
@@ -78,7 +78,7 @@ public class ResourceFilterContainer {
     }
 
     public void writeToUpdatePacket(FriendlyByteBuf buf) {
-        buf.writeResourceLocation(determineDefaultType().getId());
+        buf.writeResourceLocation(resourceTypeRegistry.getId(determineDefaultType()).get());
         for (int i = 0; i < filters.length; ++i) {
             writeToUpdatePacket(i, buf);
         }
@@ -92,7 +92,7 @@ public class ResourceFilterContainer {
             return;
         }
         buf.writeBoolean(true);
-        buf.writeResourceLocation(type.getId());
+        buf.writeResourceLocation(resourceTypeRegistry.getId(type).get());
         type.writeToPacket(buf, getFilter(slot));
     }
 
@@ -104,12 +104,10 @@ public class ResourceFilterContainer {
             return;
         }
         ResourceLocation id = buf.readResourceLocation();
-        ResourceType<Object> type = (ResourceType<Object>) resourceTypeRegistry.get(id);
-        if (type == null) {
-            return;
-        }
-        Object value = type.readFromPacket(buf);
-        setSilently(slot, type, value);
+        resourceTypeRegistry.get(id).ifPresent(type -> {
+            Object value = type.readFromPacket(buf);
+            setSilently(slot, (ResourceType<? super Object>) type, value);
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -122,7 +120,7 @@ public class ResourceFilterContainer {
             }
             ResourceType<Object> type = (ResourceType<Object>) getType(i);
             CompoundTag item = new CompoundTag();
-            item.putString("t", type.getId().toString());
+            item.putString("t", resourceTypeRegistry.getId(type).get().toString());
             item.put("v", type.toTag(value));
             tag.put("s" + i, item);
         }
@@ -143,10 +141,11 @@ public class ResourceFilterContainer {
 
     private void load(int index, CompoundTag item) {
         ResourceLocation typeId = new ResourceLocation(item.getString("t"));
-        ResourceType<Object> type = (ResourceType<Object>) resourceTypeRegistry.get(typeId);
-        if (type == null) {
-            return;
-        }
-        type.fromTag(item.getCompound("v")).ifPresent(value -> setSilently(index, type, value));
+        resourceTypeRegistry.get(typeId).ifPresent(type -> load(index, item, type));
+    }
+
+    private void load(int index, CompoundTag item, ResourceType<?> type) {
+        type.fromTag(item.getCompound("v"))
+                .ifPresent(value -> setSilently(index, (ResourceType<? super Object>) type, value));
     }
 }
