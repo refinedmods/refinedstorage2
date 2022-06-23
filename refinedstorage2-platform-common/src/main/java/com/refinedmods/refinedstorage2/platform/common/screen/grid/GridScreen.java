@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
+import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.core.util.LastModified;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizerRegistry;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
@@ -122,8 +123,8 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         addSideButton(new SizeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new AutoSelectedSideButtonWidget(getMenu(), this::renderComponentTooltip));
 
-        GridSynchronizerRegistry synchronizerRegistry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
-        if (synchronizerRegistry.hasSynchronizers()) {
+        OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
+        if (!synchronizerRegistry.isEmpty()) {
             addSideButton(new SynchronizationSideButtonWidget(getMenu(), this::renderComponentTooltip, synchronizerRegistry.getAll()));
             searchField.addListener(this::trySynchronizeFromGrid);
         }
