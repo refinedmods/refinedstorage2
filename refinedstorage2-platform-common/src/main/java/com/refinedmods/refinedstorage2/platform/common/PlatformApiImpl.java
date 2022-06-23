@@ -12,14 +12,13 @@ import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizerRegistry;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSynchronizerRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.NoOpGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.apiimpl.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.ItemResourceType;
@@ -45,7 +44,7 @@ public class PlatformApiImpl implements PlatformApi {
     private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentMapFactory));
     private final StorageTypeRegistry storageTypeRegistry = new StorageTypeRegistryImpl();
     private final StorageChannelTypeRegistry storageChannelTypeRegistry = new StorageChannelTypeRegistryImpl();
-    private final GridSynchronizerRegistry gridSynchronizerRegistry = new GridSynchronizerRegistryImpl(createIdentifier("off"), new NoOpGridSynchronizer());
+    private final OrderedRegistry<ResourceLocation, GridSynchronizer> gridSynchronizerRegistry = new OrderedRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
 
     @Override
     public StorageTypeRegistry getStorageTypeRegistry() {
@@ -95,7 +94,7 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public GridSynchronizerRegistry getGridSynchronizerRegistry() {
+    public OrderedRegistry<ResourceLocation, GridSynchronizer> getGridSynchronizerRegistry() {
         return gridSynchronizerRegistry;
     }
 

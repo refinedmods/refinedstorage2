@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 
+import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
@@ -10,7 +11,6 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizerRegistry;
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
@@ -24,6 +24,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -209,7 +210,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
                 .getConfig()
                 .getGrid()
                 .getSynchronizer()
-                .map(id -> PlatformApi.INSTANCE.getGridSynchronizerRegistry().getOrDefault(id))
+                .flatMap(id -> PlatformApi.INSTANCE.getGridSynchronizerRegistry().get(id))
                 .orElse(PlatformApi.INSTANCE.getGridSynchronizerRegistry().getDefault());
     }
 
@@ -218,15 +219,15 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     }
 
     public void toggleSynchronizer() {
-        GridSynchronizerRegistry synchronizerRegistry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
+        OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
         Config.Grid config = Platform.INSTANCE.getConfig().getGrid();
 
-        GridSynchronizer newSynchronizer = synchronizerRegistry.toggleSynchronizer(getSynchronizer());
+        GridSynchronizer newSynchronizer = synchronizerRegistry.next(getSynchronizer());
 
         if (newSynchronizer == synchronizerRegistry.getDefault()) {
             config.clearSynchronizer();
         } else {
-            config.setSynchronizer(synchronizerRegistry.getId(newSynchronizer));
+            config.setSynchronizer(synchronizerRegistry.getId(newSynchronizer).get());
         }
 
         this.synchronizer = newSynchronizer;

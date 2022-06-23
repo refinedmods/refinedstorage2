@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelTypeRegistry;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizerRegistry;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
@@ -69,7 +69,7 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public GridSynchronizerRegistry getGridSynchronizerRegistry() {
+    public OrderedRegistry<ResourceLocation, GridSynchronizer> getGridSynchronizerRegistry() {
         return ensureLoaded().getGridSynchronizerRegistry();
     }
 
