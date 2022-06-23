@@ -12,7 +12,6 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
-import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
 
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -29,7 +28,7 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public StorageTypeRegistry getStorageTypeRegistry() {
+    public OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry() {
         return ensureLoaded().getStorageTypeRegistry();
     }
 

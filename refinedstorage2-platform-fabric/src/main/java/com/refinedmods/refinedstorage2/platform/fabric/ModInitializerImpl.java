@@ -121,7 +121,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
         initializePlatform(new PlatformImpl());
         initializePlatformApi();
-        registerDiskTypes();
+        registerAdditionalStorageTypes();
         registerAdditionalStorageChannelTypes();
         registerNetworkComponents();
         registerContent();
