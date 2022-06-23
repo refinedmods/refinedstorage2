@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.0")
@@ -22,6 +23,8 @@ public class OrderedRegistryImpl<I, T> implements OrderedRegistry<I, T> {
 
     @Override
     public void register(I id, T value) {
+        Preconditions.checkNotNull(id, "ID must be present");
+        Preconditions.checkNotNull(value, "Value must be present");
         if (idToValueMap.containsKey(id) || order.contains(value)) {
             throw new IllegalArgumentException("Already registered");
         }
@@ -37,11 +40,13 @@ public class OrderedRegistryImpl<I, T> implements OrderedRegistry<I, T> {
 
     @Override
     public Optional<I> getId(T value) {
+        Preconditions.checkNotNull(value, "Value must be present");
         return Optional.ofNullable(valueToIdMap.get(value));
     }
 
     @Override
     public Optional<T> get(I id) {
+        Preconditions.checkNotNull(id, "ID must be present");
         return Optional.ofNullable(idToValueMap.get(id));
     }
 
@@ -57,6 +62,7 @@ public class OrderedRegistryImpl<I, T> implements OrderedRegistry<I, T> {
 
     @Override
     public T next(T value) {
+        Preconditions.checkNotNull(value, "Value must be present");
         int index = order.indexOf(value);
         int nextIndex = index + 1;
         if (nextIndex >= order.size()) {

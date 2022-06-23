@@ -78,4 +78,31 @@ class OrderedRegistryImplTest {
         assertThrows(IllegalArgumentException.class, () -> sut.register("C", 20));
         assertThat(sut.getAll()).containsExactly(10, 20);
     }
+
+    @Test
+    void Test_invalid_registration() {
+        // Act & assert
+        assertThrows(NullPointerException.class, () -> sut.register(null, 20));
+        assertThrows(NullPointerException.class, () -> sut.register("B", null));
+        assertThrows(NullPointerException.class, () -> sut.register(null, null));
+    }
+
+    @Test
+    void Test_invalid_default() {
+        // Act & assert
+        assertThrows(NullPointerException.class, () -> new OrderedRegistryImpl<>(null, 20));
+        assertThrows(NullPointerException.class, () -> new OrderedRegistryImpl<>("B", null));
+        assertThrows(NullPointerException.class, () -> new OrderedRegistryImpl<>(null, null));
+    }
+
+    @Test
+    void Test_invalid_next_value() {
+        assertThrows(NullPointerException.class, () -> sut.next(null));
+    }
+
+    @Test
+    void Test_invalid_getting_id_and_value() {
+        assertThrows(NullPointerException.class, () -> sut.get(null));
+        assertThrows(NullPointerException.class, () -> sut.getId(null));
+    }
 }
