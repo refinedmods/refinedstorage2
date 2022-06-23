@@ -10,8 +10,8 @@ buildscript {
 }
 
 repositories {
-    // JEI
     maven {
+        name = 'JEI'
         url = "https://dvs1.progwml6.com/files/maven/"
     }
 }

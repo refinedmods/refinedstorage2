@@ -3,9 +3,11 @@ package com.refinedmods.refinedstorage2.platform.forge;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSize;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSynchronizationType;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 
+import java.util.Optional;
+
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ConfigImpl implements Config {
@@ -126,7 +128,7 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.IntValue energyUsage;
         private final ForgeConfigSpec.BooleanValue smoothScrolling;
         private final ForgeConfigSpec.BooleanValue autoSelected;
-        private final ForgeConfigSpec.EnumValue<GridSynchronizationType> synchronizationType;
+        private final ForgeConfigSpec.ConfigValue<String> synchronizer;
         private final ForgeConfigSpec.EnumValue<GridSortingDirection> sortingDirection;
         private final ForgeConfigSpec.EnumValue<GridSortingType> sortingType;
         private final ForgeConfigSpec.EnumValue<GridSize> size;
@@ -141,7 +143,7 @@ public class ConfigImpl implements Config {
             energyUsage = builder.comment("The energy used by the Grid").defineInRange(ENERGY_USAGE, 10, 0, Integer.MAX_VALUE);
             smoothScrolling = builder.comment("Whether the Grid should use smooth scrolling").define("smoothScrolling", true);
             autoSelected = builder.comment("Whether the Grid search box is auto selected").define("autoSelected", false);
-            synchronizationType = builder.comment("The synchronization type of the Grid search box").defineEnum("synchronizationType", GridSynchronizationType.OFF);
+            synchronizer = builder.comment("The synchronization type of the Grid search box").define("synchronizer", "");
             sortingDirection = builder.comment("The sorting direction").defineEnum("sortingDirection", GridSortingDirection.ASCENDING);
             sortingType = builder.comment("The sorting type").defineEnum("sortingType", GridSortingType.QUANTITY);
             size = builder.comment("The size").defineEnum("size", GridSize.STRETCH);
@@ -194,13 +196,21 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public GridSynchronizationType getSynchronizationType() {
-            return synchronizationType.get();
+        public Optional<ResourceLocation> getSynchronizer() {
+            if (synchronizer == null || synchronizer.get().trim().isBlank()) {
+                return Optional.empty();
+            }
+            return Optional.of(synchronizer.get()).map(ResourceLocation::new);
         }
 
         @Override
-        public void setSynchronizationType(GridSynchronizationType type) {
-            this.synchronizationType.set(type);
+        public void setSynchronizer(ResourceLocation synchronizerId) {
+            this.synchronizer.set(synchronizerId.toString());
+        }
+
+        @Override
+        public void clearSynchronizer() {
+            this.synchronizer.set("");
         }
 
         @Override

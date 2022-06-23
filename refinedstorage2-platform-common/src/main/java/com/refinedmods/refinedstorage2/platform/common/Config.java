@@ -3,7 +3,10 @@ package com.refinedmods.refinedstorage2.platform.common;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSize;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSynchronizationType;
+
+import java.util.Optional;
+
+import net.minecraft.resources.ResourceLocation;
 
 public interface Config {
     Grid getGrid();
@@ -37,9 +40,11 @@ public interface Config {
 
         void setAutoSelected(boolean autoSelected);
 
-        GridSynchronizationType getSynchronizationType();
+        Optional<ResourceLocation> getSynchronizer();
 
-        void setSynchronizationType(GridSynchronizationType synchronizationType);
+        void setSynchronizer(ResourceLocation synchronizerId);
+
+        void clearSynchronizer();
 
         GridSortingDirection getSortingDirection();
 

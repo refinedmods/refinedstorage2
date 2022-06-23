@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -11,10 +12,8 @@ import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiGridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
@@ -34,6 +33,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderType;
@@ -53,7 +53,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         registerScreens();
         registerKeyBindings();
         registerModelPredicates();
-        registerGridSynchronizer();
+        registerGridSynchronizers();
     }
 
     private void setRenderLayers() {
@@ -117,9 +117,15 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         ));
     }
 
-    private void registerGridSynchronizer() {
-        if (ReiIntegration.isLoaded()) {
-            GridScreen.setSynchronizer(new ReiGridSynchronizer(new ReiProxy()));
+    private void registerGridSynchronizers() {
+        if (FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {
+            registerReiGridSynchronizers();
         }
+    }
+
+    private void registerReiGridSynchronizers() {
+        ReiProxy reiProxy = new ReiProxy();
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei"), new ReiGridSynchronizer(reiProxy, false));
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei_two_way"), new ReiGridSynchronizer(reiProxy, true));
     }
 }

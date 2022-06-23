@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -11,10 +12,8 @@ import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
 import com.refinedmods.refinedstorage2.platform.forge.integration.jei.JeiGridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.forge.integration.jei.JeiIntegration;
 import com.refinedmods.refinedstorage2.platform.forge.integration.jei.JeiProxy;
 import com.refinedmods.refinedstorage2.platform.forge.render.entity.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.forge.render.model.DiskDriveModelLoader;
@@ -30,6 +29,7 @@ import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
 
@@ -48,7 +48,7 @@ public final class ClientModInitializer {
         e.enqueueWork(ClientModInitializer::registerScreens);
         registerBlockEntityRenderer();
         registerKeyBindings();
-        registerGridSynchronizer();
+        registerGridSynchronizers();
     }
 
     private static void setRenderLayers() {
@@ -92,9 +92,15 @@ public final class ClientModInitializer {
         KeyMappings.INSTANCE.setFocusSearchBar(focusSearchBarKeyBinding);
     }
 
-    private static void registerGridSynchronizer() {
-        if (JeiIntegration.isLoaded()) {
-            GridScreen.setSynchronizer(new JeiGridSynchronizer(new JeiProxy()));
+    private static void registerGridSynchronizers() {
+        if (ModList.get().isLoaded("jei")) {
+            registerJeiGridSynchronizers();
         }
+    }
+
+    private static void registerJeiGridSynchronizers() {
+        JeiProxy jeiProxy = new JeiProxy();
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei"), new JeiGridSynchronizer(jeiProxy, false));
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei_two_way"), new JeiGridSynchronizer(jeiProxy, true));
     }
 }

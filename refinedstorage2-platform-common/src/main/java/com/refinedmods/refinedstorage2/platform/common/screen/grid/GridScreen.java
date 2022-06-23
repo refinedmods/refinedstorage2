@@ -5,8 +5,8 @@ import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSynchronizationType;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizerRegistry;
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
@@ -60,8 +60,6 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
 
-    private static GridSynchronizer synchronizer;
-
     private ScrollbarWidget scrollbar;
     private GridSearchBoxWidget searchField;
     private int totalRows;
@@ -79,13 +77,6 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         this.inventoryLabelY = 75;
         this.imageWidth = 227;
         this.imageHeight = 176;
-    }
-
-    public static void setSynchronizer(GridSynchronizer synchronizer) {
-        if (GridScreen.synchronizer != null) {
-            throw new IllegalStateException("Synchronizer is already set!");
-        }
-        GridScreen.synchronizer = synchronizer;
     }
 
     @Override
@@ -131,17 +122,15 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         addSideButton(new SizeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new AutoSelectedSideButtonWidget(getMenu(), this::renderComponentTooltip));
 
-        if (synchronizer != null) {
-            addSideButton(new SynchronizationSideButtonWidget(getMenu(), this::renderComponentTooltip, synchronizer));
+        GridSynchronizerRegistry synchronizerRegistry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
+        if (synchronizerRegistry.hasSynchronizers()) {
+            addSideButton(new SynchronizationSideButtonWidget(getMenu(), this::renderComponentTooltip, synchronizerRegistry.getAll()));
             searchField.addListener(this::trySynchronizeFromGrid);
         }
     }
 
     private void trySynchronizeFromGrid(String text) {
-        if (getMenu().getSynchronizationType() == GridSynchronizationType.OFF) {
-            return;
-        }
-        synchronizer.synchronizeFromGrid(text);
+        getMenu().getSynchronizer().synchronizeFromGrid(text);
     }
 
     @Override
@@ -151,13 +140,10 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     }
 
     private void trySynchronizeToGrid() {
-        if (getMenu().getSynchronizationType() != GridSynchronizationType.TWO_WAY) {
+        if (searchField == null) {
             return;
         }
-        if (synchronizer == null || searchField == null) {
-            return;
-        }
-        String text = synchronizer.getTextToSynchronizeToGrid();
+        String text = getMenu().getSynchronizer().getTextToSynchronizeToGrid();
         if (text == null || searchField.getValue().equals(text)) {
             return;
         }
