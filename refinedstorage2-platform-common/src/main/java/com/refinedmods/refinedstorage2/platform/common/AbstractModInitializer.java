@@ -38,6 +38,6 @@ public abstract class AbstractModInitializer {
     }
 
     protected void registerAdditionalResourceTypes() {
-        PlatformApi.INSTANCE.getResourceTypeRegistry().register(FluidResourceType.INSTANCE);
+        PlatformApi.INSTANCE.getResourceTypeRegistry().register(createIdentifier("fluid_resource_type"), FluidResourceType.INSTANCE);
     }
 }

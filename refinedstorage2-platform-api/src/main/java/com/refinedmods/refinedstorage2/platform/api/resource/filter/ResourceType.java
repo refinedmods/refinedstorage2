@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -17,8 +16,6 @@ public interface ResourceType<T> {
     Optional<T> translate(ItemStack stack);
 
     void render(PoseStack poseStack, T value, int x, int y, int z);
-
-    ResourceLocation getId();
 
     T readFromPacket(FriendlyByteBuf buf);
 

@@ -1,8 +1,11 @@
-package com.refinedmods.refinedstorage2.api.core;
+package com.refinedmods.refinedstorage2.api.core.registry;
 
 import java.util.List;
 import java.util.Optional;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.2.0")
 public interface OrderedRegistry<I, T> {
     void register(I id, T value);
 

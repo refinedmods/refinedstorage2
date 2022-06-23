@@ -36,7 +36,7 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
 
     protected void initializeResourceFilterSlots(FriendlyByteBuf buf) {
         ResourceLocation type = buf.readResourceLocation();
-        this.currentResourceType = PlatformApi.INSTANCE.getResourceTypeRegistry().get(type);
+        this.currentResourceType = PlatformApi.INSTANCE.getResourceTypeRegistry().get(type).get();
         for (ResourceFilterSlot resourceFilterSlot : resourceFilterSlots) {
             resourceFilterSlot.readFromUpdatePacket(buf);
         }
@@ -90,12 +90,12 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
     }
 
     public void setCurrentResourceType(ResourceLocation id) {
-        this.currentResourceType = PlatformApi.INSTANCE.getResourceTypeRegistry().get(id);
+        this.currentResourceType = PlatformApi.INSTANCE.getResourceTypeRegistry().get(id).get();
     }
 
     @Override
     public void toggleResourceType() {
-        this.currentResourceType = PlatformApi.INSTANCE.getResourceTypeRegistry().toggle(currentResourceType);
+        this.currentResourceType = PlatformApi.INSTANCE.getResourceTypeRegistry().next(currentResourceType);
         Platform.INSTANCE.getClientToServerCommunications().sendResourceTypeChange(this.currentResourceType);
     }
 
