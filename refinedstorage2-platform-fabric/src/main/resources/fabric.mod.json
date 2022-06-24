@@ -24,6 +24,9 @@
         ],
         "modmenu": [
             "com.refinedmods.refinedstorage2.platform.fabric.integration.ModMenuIntegration"
+        ],
+        "jei_mod_plugin": [
+            "com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiPlugin"
         ]
     },
     "custom": {
@@ -46,6 +49,7 @@
     },
     "suggests": {
         "roughlyenoughitems": "*",
+        "jei": "*",
         "modmenu": "*"
     }
 }

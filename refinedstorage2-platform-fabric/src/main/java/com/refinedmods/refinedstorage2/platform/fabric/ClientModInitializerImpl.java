@@ -13,6 +13,8 @@ import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockS
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAccessor;
@@ -118,8 +120,12 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void registerGridSynchronizers() {
-        if (FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {
+        FabricLoader loader = FabricLoader.getInstance();
+        if (loader.isModLoaded("roughlyenoughitems")) {
             registerReiGridSynchronizers();
+        }
+        if (loader.isModLoaded("jei")) {
+            registerJeiGridSynchronizers();
         }
     }
 
@@ -127,5 +133,11 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         ReiProxy reiProxy = new ReiProxy();
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei"), new ReiGridSynchronizer(reiProxy, false));
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei_two_way"), new ReiGridSynchronizer(reiProxy, true));
+    }
+
+    private void registerJeiGridSynchronizers() {
+        JeiProxy jeiProxy = new JeiProxy();
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei"), new JeiGridSynchronizer(jeiProxy, false));
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei_two_way"), new JeiGridSynchronizer(jeiProxy, true));
     }
 }
