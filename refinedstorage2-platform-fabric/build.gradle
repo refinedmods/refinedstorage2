@@ -6,6 +6,10 @@ archivesBaseName = 'refinedstorage2-platform-fabric'
 
 repositories {
     maven {
+        name = 'JEI'
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
         name = 'REI'
         url 'https://maven.terraformersmc.com/'
     }
@@ -54,6 +58,11 @@ dependencies {
         exclude(group: 'me.shedaniel.cloth')
     }
     modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}")
+
+    modCompileOnlyApi "mezz.jei:jei-${project.minecraftVersion}-common-api:${project.jeiVersion}"
+    modCompileOnlyApi "mezz.jei:jei-${project.minecraftVersion}-fabric-api:${project.jeiVersion}"
+    // modRuntimeOnly "mezz.jei:jei-${project.minecraftVersion}-fabric:${project.jeiVersion}"
+
     modImplementation "com.terraformersmc:modmenu:${project.modMenuVersion}"
 
     modRuntimeOnly("mcp.mobius.waila:wthit:fabric-${project.wthitVersion}")
