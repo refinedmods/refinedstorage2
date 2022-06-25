@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
+import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
@@ -35,8 +36,9 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
     }
 
     protected void initializeResourceFilterSlots(FriendlyByteBuf buf) {
+        OrderedRegistry<ResourceLocation, ResourceType<?>> resourceTypeRegistry = PlatformApi.INSTANCE.getResourceTypeRegistry();
         ResourceLocation type = buf.readResourceLocation();
-        this.currentResourceType = PlatformApi.INSTANCE.getResourceTypeRegistry().get(type).get();
+        this.currentResourceType = resourceTypeRegistry.get(type).orElse(resourceTypeRegistry.getDefault());
         for (ResourceFilterSlot resourceFilterSlot : resourceFilterSlots) {
             resourceFilterSlot.readFromUpdatePacket(buf);
         }
@@ -90,7 +92,8 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
     }
 
     public void setCurrentResourceType(ResourceLocation id) {
-        this.currentResourceType = PlatformApi.INSTANCE.getResourceTypeRegistry().get(id).get();
+        OrderedRegistry<ResourceLocation, ResourceType<?>> resourceTypeRegistry = PlatformApi.INSTANCE.getResourceTypeRegistry();
+        this.currentResourceType = resourceTypeRegistry.get(id).orElse(resourceTypeRegistry.getDefault());
     }
 
     @Override

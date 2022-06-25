@@ -12,8 +12,12 @@ import java.util.Set;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ResourceFilterContainer {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private final OrderedRegistry<ResourceLocation, ResourceType<?>> resourceTypeRegistry;
     private final Object[] filters;
     private final ResourceType<?>[] types;
@@ -78,7 +82,7 @@ public class ResourceFilterContainer {
     }
 
     public void writeToUpdatePacket(FriendlyByteBuf buf) {
-        buf.writeResourceLocation(resourceTypeRegistry.getId(determineDefaultType()).get());
+        buf.writeResourceLocation(resourceTypeRegistry.getId(determineDefaultType()).orElseThrow(() -> new IllegalStateException("Default resource type not registered")));
         for (int i = 0; i < filters.length; ++i) {
             writeToUpdatePacket(i, buf);
         }
@@ -91,9 +95,14 @@ public class ResourceFilterContainer {
             buf.writeBoolean(false);
             return;
         }
-        buf.writeBoolean(true);
-        buf.writeResourceLocation(resourceTypeRegistry.getId(type).get());
-        type.writeToPacket(buf, getFilter(slot));
+        resourceTypeRegistry.getId(type).ifPresentOrElse(
+                id -> {
+                    buf.writeBoolean(true);
+                    buf.writeResourceLocation(id);
+                    type.writeToPacket(buf, getFilter(slot));
+                },
+                () -> buf.writeBoolean(false)
+        );
     }
 
     @SuppressWarnings("unchecked")
@@ -104,10 +113,13 @@ public class ResourceFilterContainer {
             return;
         }
         ResourceLocation id = buf.readResourceLocation();
-        resourceTypeRegistry.get(id).ifPresent(type -> {
-            Object value = type.readFromPacket(buf);
-            setSilently(slot, (ResourceType<? super Object>) type, value);
-        });
+        resourceTypeRegistry.get(id).ifPresentOrElse(
+                type -> {
+                    Object value = type.readFromPacket(buf);
+                    setSilently(slot, (ResourceType<? super Object>) type, value);
+                },
+                () -> LOGGER.warn("Resource type {} is not registered on the client, cannot read from packet", id)
+        );
     }
 
     @SuppressWarnings("unchecked")
@@ -119,15 +131,22 @@ public class ResourceFilterContainer {
                 continue;
             }
             ResourceType<Object> type = (ResourceType<Object>) getType(i);
-            CompoundTag item = new CompoundTag();
-            item.putString("t", resourceTypeRegistry.getId(type).get().toString());
-            item.put("v", type.toTag(value));
-            tag.put("s" + i, item);
+            int index = i;
+            resourceTypeRegistry.getId(type).ifPresentOrElse(
+                    id -> addResourceTypeToTag(tag, index, value, type, id),
+                    () -> LOGGER.warn("Resource type {} is not registered, cannot serialize", type)
+            );
         }
         return tag;
     }
 
-    @SuppressWarnings("unchecked")
+    private void addResourceTypeToTag(CompoundTag tag, int index, Object value, ResourceType<Object> type, ResourceLocation typeId) {
+        CompoundTag item = new CompoundTag();
+        item.putString("t", typeId.toString());
+        item.put("v", type.toTag(value));
+        tag.put("s" + index, item);
+    }
+
     public void load(CompoundTag tag) {
         for (int i = 0; i < size(); ++i) {
             String key = "s" + i;
@@ -141,11 +160,14 @@ public class ResourceFilterContainer {
 
     private void load(int index, CompoundTag item) {
         ResourceLocation typeId = new ResourceLocation(item.getString("t"));
-        resourceTypeRegistry.get(typeId).ifPresent(type -> load(index, item, type));
+        resourceTypeRegistry.get(typeId).ifPresentOrElse(
+                type -> load(index, item, type),
+                () -> LOGGER.warn("Resource type {} is not registered, cannot deserialize", typeId)
+        );
     }
 
+    @SuppressWarnings("unchecked")
     private void load(int index, CompoundTag item, ResourceType<?> type) {
-        type.fromTag(item.getCompound("v"))
-                .ifPresent(value -> setSilently(index, (ResourceType<? super Object>) type, value));
+        type.fromTag(item.getCompound("v")).ifPresent(value -> setSilently(index, (ResourceType<? super Object>) type, value));
     }
 }

@@ -12,6 +12,8 @@ import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorag
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public abstract class AbstractModInitializer {
+    private static final String FLUID_REGISTRY_KEY = "fluid";
+
     protected void initializePlatform(Platform platform) {
         ((PlatformProxy) Platform.INSTANCE).setPlatform(platform);
     }
@@ -21,11 +23,11 @@ public abstract class AbstractModInitializer {
     }
 
     protected void registerAdditionalStorageTypes() {
-        PlatformApi.INSTANCE.getStorageTypeRegistry().register(createIdentifier("fluid"), FluidStorageType.INSTANCE);
+        PlatformApi.INSTANCE.getStorageTypeRegistry().register(createIdentifier(FLUID_REGISTRY_KEY), FluidStorageType.INSTANCE);
     }
 
     protected void registerAdditionalStorageChannelTypes() {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().register(createIdentifier("fluid"), StorageChannelTypes.FLUID);
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().register(createIdentifier(FLUID_REGISTRY_KEY), StorageChannelTypes.FLUID);
     }
 
     protected void registerNetworkComponents() {
@@ -35,6 +37,6 @@ public abstract class AbstractModInitializer {
     }
 
     protected void registerAdditionalResourceTypes() {
-        PlatformApi.INSTANCE.getResourceTypeRegistry().register(createIdentifier("fluid"), FluidResourceType.INSTANCE);
+        PlatformApi.INSTANCE.getResourceTypeRegistry().register(createIdentifier(FLUID_REGISTRY_KEY), FluidResourceType.INSTANCE);
     }
 }
