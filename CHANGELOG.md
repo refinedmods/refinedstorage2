@@ -16,6 +16,7 @@ Device inventories and disks created in v2.0.0-milestone.1.4 will be lost.
 ### Added
 
 - Added JEI support to Fabric.
+- Added REI support to Forge.
 
 ## [2.0.0-milestone.1.4] - 2022-06-22
 

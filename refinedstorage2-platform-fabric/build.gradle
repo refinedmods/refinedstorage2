@@ -10,11 +10,11 @@ repositories {
         url = "https://dvs1.progwml6.com/files/maven/"
     }
     maven {
-        name = 'REI'
+        name = 'ModMenu'
         url 'https://maven.terraformersmc.com/'
     }
     maven {
-        name = 'Cloth Config'
+        name = 'Cloth Config, REI'
         url 'https://maven.shedaniel.me/'
     }
     maven {
@@ -57,6 +57,7 @@ dependencies {
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${project.reiVersion}") {
         exclude(group: 'me.shedaniel.cloth')
     }
+    // We test with REI on Fabric.
     modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}")
 
     modCompileOnlyApi "mezz.jei:jei-${project.minecraftVersion}-common-api:${project.jeiVersion}"

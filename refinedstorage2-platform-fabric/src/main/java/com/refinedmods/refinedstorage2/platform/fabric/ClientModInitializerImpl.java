@@ -40,12 +40,16 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationKey;
 
 public class ClientModInitializerImpl implements ClientModInitializer {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @Override
     public void onInitializeClient() {
         setRenderLayers();
@@ -121,23 +125,25 @@ public class ClientModInitializerImpl implements ClientModInitializer {
 
     private void registerGridSynchronizers() {
         FabricLoader loader = FabricLoader.getInstance();
-        if (loader.isModLoaded("roughlyenoughitems")) {
-            registerReiGridSynchronizers();
-        }
         if (loader.isModLoaded("jei")) {
             registerJeiGridSynchronizers();
         }
-    }
-
-    private void registerReiGridSynchronizers() {
-        ReiProxy reiProxy = new ReiProxy();
-        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei"), new ReiGridSynchronizer(reiProxy, false));
-        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei_two_way"), new ReiGridSynchronizer(reiProxy, true));
+        if (loader.isModLoaded("roughlyenoughitems")) {
+            registerReiGridSynchronizers();
+        }
     }
 
     private void registerJeiGridSynchronizers() {
+        LOGGER.info("Activating JEI grid synchronizers");
         JeiProxy jeiProxy = new JeiProxy();
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei"), new JeiGridSynchronizer(jeiProxy, false));
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei_two_way"), new JeiGridSynchronizer(jeiProxy, true));
+    }
+
+    private void registerReiGridSynchronizers() {
+        LOGGER.info("Activating REI grid synchronizers");
+        ReiProxy reiProxy = new ReiProxy();
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei"), new ReiGridSynchronizer(reiProxy, false));
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei_two_way"), new ReiGridSynchronizer(reiProxy, true));
     }
 }

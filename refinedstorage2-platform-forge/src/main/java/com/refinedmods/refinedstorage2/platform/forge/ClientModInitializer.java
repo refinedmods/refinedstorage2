@@ -15,6 +15,8 @@ import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScre
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
 import com.refinedmods.refinedstorage2.platform.forge.integration.jei.JeiGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.forge.integration.jei.JeiProxy;
+import com.refinedmods.refinedstorage2.platform.forge.integration.rei.ReiGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.forge.integration.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.forge.render.entity.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.forge.render.model.DiskDriveModelLoader;
 
@@ -31,6 +33,8 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
@@ -38,6 +42,8 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationKey;
 
 public final class ClientModInitializer {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private ClientModInitializer() {
     }
 
@@ -93,14 +99,27 @@ public final class ClientModInitializer {
     }
 
     private static void registerGridSynchronizers() {
-        if (ModList.get().isLoaded("jei")) {
+        ModList list = ModList.get();
+        // Give priority to REI, as REI requires a JEI compat mod on Forge.
+        // This means that both JEI + REI support would be activated. We only want REI in that case.
+        if (list.isLoaded("roughlyenoughitems")) {
+            registerReiGridSynchronizers();
+        } else if (list.isLoaded("jei")) {
             registerJeiGridSynchronizers();
         }
     }
 
     private static void registerJeiGridSynchronizers() {
+        LOGGER.info("Activating JEI grid synchronizers");
         JeiProxy jeiProxy = new JeiProxy();
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei"), new JeiGridSynchronizer(jeiProxy, false));
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei_two_way"), new JeiGridSynchronizer(jeiProxy, true));
+    }
+
+    private static void registerReiGridSynchronizers() {
+        LOGGER.info("Activating REI grid synchronizers");
+        ReiProxy reiProxy = new ReiProxy();
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei"), new ReiGridSynchronizer(reiProxy, false));
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei_two_way"), new ReiGridSynchronizer(reiProxy, true));
     }
 }
