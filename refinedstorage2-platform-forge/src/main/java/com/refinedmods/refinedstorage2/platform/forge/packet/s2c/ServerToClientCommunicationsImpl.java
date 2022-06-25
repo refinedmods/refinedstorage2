@@ -41,7 +41,7 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
 
     @Override
     public void sendResourceFilterSlotUpdate(ServerPlayer player, ResourceFilterContainer resourceFilterContainer, int slotIndex) {
-        networkManager.send(player, new ResourceFilterSlotUpdatePacket(slotIndex));
+        networkManager.send(player, new ResourceFilterSlotUpdatePacket(slotIndex, resourceFilterContainer));
     }
 
     @Override
