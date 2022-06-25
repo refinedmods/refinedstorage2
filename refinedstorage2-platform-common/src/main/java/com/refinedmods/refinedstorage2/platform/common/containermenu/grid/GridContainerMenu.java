@@ -227,7 +227,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         if (newSynchronizer == synchronizerRegistry.getDefault()) {
             config.clearSynchronizer();
         } else {
-            config.setSynchronizer(synchronizerRegistry.getId(newSynchronizer).get());
+            synchronizerRegistry.getId(newSynchronizer).ifPresent(config::setSynchronizer);
         }
 
         this.synchronizer = newSynchronizer;
