@@ -13,11 +13,11 @@ public class ComponentMapFactory<C, X> {
         this(new LinkedHashMap<>());
     }
 
-    private ComponentMapFactory(LinkedHashMap<Class<? extends C>, Function<X, C>> factories) {
+    private ComponentMapFactory(final LinkedHashMap<Class<? extends C>, Function<X, C>> factories) {
         this.factories = factories;
     }
 
-    public void addFactory(Class<? extends C> componentType, Function<X, C> factory) {
+    public void addFactory(final Class<? extends C> componentType, final Function<X, C> factory) {
         factories.put(componentType, factory);
     }
 
@@ -25,8 +25,8 @@ public class ComponentMapFactory<C, X> {
         return new ComponentMapFactory<>(new LinkedHashMap<>(factories));
     }
 
-    public ComponentMap<C> buildComponentMap(X context) {
-        LinkedHashMap<Class<? extends C>, C> components = new LinkedHashMap<>();
+    public ComponentMap<C> buildComponentMap(final X context) {
+        final LinkedHashMap<Class<? extends C>, C> components = new LinkedHashMap<>();
         factories.forEach((componentType, factory) -> components.put(componentType, factory.apply(context)));
         return new ComponentMap<>(components);
     }

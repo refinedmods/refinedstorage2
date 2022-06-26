@@ -11,7 +11,7 @@ import org.apiguardian.api.API;
 public class ComponentMap<C> implements ComponentAccessor<C> {
     private final Map<Class<? extends C>, C> map;
 
-    public ComponentMap(LinkedHashMap<Class<? extends C>, C> map) {
+    public ComponentMap(final LinkedHashMap<Class<? extends C>, C> map) {
         this.map = Collections.unmodifiableMap(map);
     }
 
@@ -20,7 +20,8 @@ public class ComponentMap<C> implements ComponentAccessor<C> {
     }
 
     @Override
-    public <I extends C> I getComponent(Class<I> componentType) {
+    @SuppressWarnings("unchecked")
+    public <I extends C> I getComponent(final Class<I> componentType) {
         return (I) map.get(componentType);
     }
 }

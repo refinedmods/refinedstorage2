@@ -11,7 +11,7 @@ public final class QuantityFormatter {
     private QuantityFormatter() {
     }
 
-    public static String formatWithUnits(long qty) {
+    public static String formatWithUnits(final long qty) {
         if (qty >= 1_000_000_000) {
             return FORMATTER_WITH_UNITS.format(qty / 1_000_000_000F) + "B";
         } else if (qty >= 1_000_000) {
@@ -28,7 +28,7 @@ public final class QuantityFormatter {
         return String.valueOf(qty);
     }
 
-    public static String format(long qty) {
+    public static String format(final long qty) {
         return FORMATTER.format(qty);
     }
 }

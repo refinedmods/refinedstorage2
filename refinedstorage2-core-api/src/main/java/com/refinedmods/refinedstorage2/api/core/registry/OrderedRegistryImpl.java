@@ -19,13 +19,13 @@ public class OrderedRegistryImpl<I, T> implements OrderedRegistry<I, T> {
     private final List<T> order = new ArrayList<>();
     private final T defaultValue;
 
-    public OrderedRegistryImpl(I defaultValueId, T defaultValue) {
+    public OrderedRegistryImpl(final I defaultValueId, final T defaultValue) {
         this.register(defaultValueId, defaultValue);
         this.defaultValue = defaultValue;
     }
 
     @Override
-    public void register(I id, T value) {
+    public void register(final I id, final T value) {
         Preconditions.checkNotNull(id, ID_NOT_PRESENT_ERROR);
         Preconditions.checkNotNull(value, VALUE_NOT_PRESENT_ERROR);
         if (idToValueMap.containsKey(id) || order.contains(value)) {
@@ -42,13 +42,13 @@ public class OrderedRegistryImpl<I, T> implements OrderedRegistry<I, T> {
     }
 
     @Override
-    public Optional<I> getId(T value) {
+    public Optional<I> getId(final T value) {
         Preconditions.checkNotNull(value, VALUE_NOT_PRESENT_ERROR);
         return Optional.ofNullable(valueToIdMap.get(value));
     }
 
     @Override
-    public Optional<T> get(I id) {
+    public Optional<T> get(final I id) {
         Preconditions.checkNotNull(id, ID_NOT_PRESENT_ERROR);
         return Optional.ofNullable(idToValueMap.get(id));
     }
@@ -64,7 +64,7 @@ public class OrderedRegistryImpl<I, T> implements OrderedRegistry<I, T> {
     }
 
     @Override
-    public T next(T value) {
+    public T next(final T value) {
         Preconditions.checkNotNull(value, VALUE_NOT_PRESENT_ERROR);
         int index = order.indexOf(value);
         int nextIndex = index + 1;

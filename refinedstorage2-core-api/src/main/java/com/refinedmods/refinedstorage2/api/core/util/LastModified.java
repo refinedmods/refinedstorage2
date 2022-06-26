@@ -1,5 +1,8 @@
 package com.refinedmods.refinedstorage2.api.core.util;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public record LastModified(Type type, long amount) {
     private static final long SECOND = 1000;
     private static final long MINUTE = SECOND * 60;
@@ -17,7 +20,7 @@ public record LastModified(Type type, long amount) {
         YEAR
     }
 
-    public static LastModified calculate(long time, long now) {
+    public static LastModified calculate(final long time, final long now) {
         long diff = now - time;
 
         if (diff < MINUTE) {
