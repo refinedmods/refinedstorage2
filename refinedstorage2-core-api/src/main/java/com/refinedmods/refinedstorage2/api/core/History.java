@@ -2,11 +2,14 @@ package com.refinedmods.refinedstorage2.api.core;
 
 import java.util.List;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class History {
     private final List<String> items;
     private int index = -1;
 
-    public History(List<String> items) {
+    public History(final List<String> items) {
         this.items = items;
     }
 
@@ -44,7 +47,7 @@ public class History {
         return items.get(index);
     }
 
-    public boolean save(String value) {
+    public boolean save(final String value) {
         if (value.trim().isEmpty()) {
             return false;
         }
