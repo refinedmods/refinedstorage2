@@ -47,7 +47,7 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
         sortSources();
         addContentOfSourceToList(source);
         parentComposites.forEach(parentComposite -> parentComposite.onSourceAddedToChild(source));
-        if (source instanceof CompositeAwareChild compositeAwareChild) {
+        if (source instanceof CompositeAwareChild<T> compositeAwareChild) {
             compositeAwareChild.onAddedIntoComposite(this);
         }
     }
@@ -58,7 +58,7 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
         sortSources();
         removeContentOfSourceFromList(source);
         parentComposites.forEach(parentComposite -> parentComposite.onSourceRemovedFromChild(source));
-        if (source instanceof CompositeAwareChild compositeAwareChild) {
+        if (source instanceof CompositeAwareChild<T> compositeAwareChild) {
             compositeAwareChild.onRemovedFromComposite(this);
         }
     }
