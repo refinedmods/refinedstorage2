@@ -14,18 +14,18 @@ public enum GridSortingType {
     NAME(view -> Comparator.comparing((GridResource<?> a) -> a.getName())),
     ID(view -> Comparator.comparingInt(GridResource::getId)),
     LAST_MODIFIED(view -> (a, b) -> {
-        Optional<TrackedResource> trackedA = ((GridView) view).getTrackedResource(a.getResourceAmount().getResource());
-        Optional<TrackedResource> trackedB = ((GridView) view).getTrackedResource(b.getResourceAmount().getResource());
+        final Optional<TrackedResource> trackedA = ((GridView) view).getTrackedResource(a.getResourceAmount().getResource());
+        final Optional<TrackedResource> trackedB = ((GridView) view).getTrackedResource(b.getResourceAmount().getResource());
 
-        long lastModifiedA = trackedA.map(TrackedResource::getTime).orElse(0L);
-        long lastModifiedB = trackedB.map(TrackedResource::getTime).orElse(0L);
+        final long lastModifiedA = trackedA.map(TrackedResource::getTime).orElse(0L);
+        final long lastModifiedB = trackedB.map(TrackedResource::getTime).orElse(0L);
 
         return Long.compare(lastModifiedA, lastModifiedB);
     });
 
     private final Function<GridView<?>, Comparator<GridResource<?>>> comparator;
 
-    GridSortingType(Function<GridView<?>, Comparator<GridResource<?>>> comparator) {
+    GridSortingType(final Function<GridView<?>, Comparator<GridResource<?>>> comparator) {
         this.comparator = comparator;
     }
 

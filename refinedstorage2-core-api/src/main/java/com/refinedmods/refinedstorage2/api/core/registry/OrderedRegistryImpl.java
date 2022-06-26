@@ -66,8 +66,8 @@ public class OrderedRegistryImpl<I, T> implements OrderedRegistry<I, T> {
     @Override
     public T next(final T value) {
         Preconditions.checkNotNull(value, VALUE_NOT_PRESENT_ERROR);
-        int index = order.indexOf(value);
-        int nextIndex = index + 1;
+        final int index = order.indexOf(value);
+        final int nextIndex = index + 1;
         if (nextIndex >= order.size()) {
             return order.get(0);
         }
