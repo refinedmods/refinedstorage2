@@ -85,6 +85,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public CompoundTag save(CompoundTag tag) {
         ListTag storageList = new ListTag();
         for (Map.Entry<UUID, Storage<?>> entry : delegate.getAll()) {
@@ -98,8 +99,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
         return tag;
     }
 
-    @SuppressWarnings("unchecked")
-    private Tag convertStorageToTag(UUID id, Storage<?> storage, SerializableStorage serializableStorage) {
+    private <T> Tag convertStorageToTag(UUID id, Storage<T> storage, SerializableStorage<T> serializableStorage) {
         ResourceLocation typeIdentifier = storageTypeRegistry
                 .getId(serializableStorage.getType())
                 .orElseThrow(() -> new RuntimeException("Storage type is not registered"));
