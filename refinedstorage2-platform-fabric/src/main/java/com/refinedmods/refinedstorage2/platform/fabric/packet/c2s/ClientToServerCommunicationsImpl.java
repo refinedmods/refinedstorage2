@@ -45,11 +45,11 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slot) {
+    public void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slotIndex) {
         sendToServer(PacketIds.GRID_SCROLL, buf -> {
             PacketUtil.writeItemResource(buf, itemResource);
             GridScrollModeUtil.writeMode(buf, mode);
-            buf.writeInt(slot);
+            buf.writeInt(slotIndex);
         });
     }
 

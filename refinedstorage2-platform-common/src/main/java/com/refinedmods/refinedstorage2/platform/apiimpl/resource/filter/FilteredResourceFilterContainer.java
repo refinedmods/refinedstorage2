@@ -15,11 +15,11 @@ public class FilteredResourceFilterContainer extends ResourceFilterContainer {
     }
 
     @Override
-    public <T> void set(int slot, FilteredResource resource) {
+    public <T> void set(int index, FilteredResource resource) {
         if (resource.getType() != allowedType) {
             return;
         }
-        super.set(slot, resource);
+        super.set(index, resource);
     }
 
     @Override

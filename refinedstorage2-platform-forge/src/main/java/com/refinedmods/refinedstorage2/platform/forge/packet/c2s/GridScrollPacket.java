@@ -16,12 +16,12 @@ import net.minecraftforge.network.NetworkEvent;
 public class GridScrollPacket {
     private final ItemResource itemResource;
     private final GridScrollMode mode;
-    private final int slot;
+    private final int slotIndex;
 
-    public GridScrollPacket(ItemResource itemResource, GridScrollMode mode, int slot) {
+    public GridScrollPacket(ItemResource itemResource, GridScrollMode mode, int slotIndex) {
         this.itemResource = itemResource;
         this.mode = mode;
-        this.slot = slot;
+        this.slotIndex = slotIndex;
     }
 
     public static GridScrollPacket decode(FriendlyByteBuf buf) {
@@ -35,7 +35,7 @@ public class GridScrollPacket {
     public static void encode(GridScrollPacket packet, FriendlyByteBuf buf) {
         PacketUtil.writeItemResource(buf, packet.itemResource);
         GridScrollModeUtil.writeMode(buf, packet.mode);
-        buf.writeInt(packet.slot);
+        buf.writeInt(packet.slotIndex);
     }
 
     public static void handle(GridScrollPacket packet, Supplier<NetworkEvent.Context> ctx) {
@@ -48,7 +48,7 @@ public class GridScrollPacket {
 
     private static void handle(GridScrollPacket packet, Player player) {
         if (player.containerMenu instanceof ItemGridEventHandler gridEventHandler) {
-            gridEventHandler.onScroll(packet.itemResource, packet.mode, packet.slot);
+            gridEventHandler.onScroll(packet.itemResource, packet.mode, packet.slotIndex);
         }
     }
 }

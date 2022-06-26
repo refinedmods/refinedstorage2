@@ -104,7 +104,7 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
     }
 
     @Override
-    public void onScroll(ItemResource itemResource, GridScrollMode mode, int slot) {
-        itemGridEventHandler.onScroll(itemResource, mode, slot);
+    public void onScroll(ItemResource itemResource, GridScrollMode mode, int slotIndex) {
+        itemGridEventHandler.onScroll(itemResource, mode, slotIndex);
     }
 }

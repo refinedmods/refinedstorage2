@@ -11,17 +11,20 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class ResourceFilterSlotUpdatePacket {
     private final int slotIndex;
+    private final int containerIndex;
     private final FriendlyByteBuf buf;
     private final ResourceFilterContainer resourceFilterContainer;
 
     public ResourceFilterSlotUpdatePacket(int slotIndex, FriendlyByteBuf buf) {
         this.slotIndex = slotIndex;
+        this.containerIndex = -1;
         this.buf = buf;
         this.resourceFilterContainer = null;
     }
 
-    public ResourceFilterSlotUpdatePacket(int slotIndex, ResourceFilterContainer resourceFilterContainer) {
+    public ResourceFilterSlotUpdatePacket(int slotIndex, int containerIndex, ResourceFilterContainer resourceFilterContainer) {
         this.slotIndex = slotIndex;
+        this.containerIndex = containerIndex;
         this.buf = null;
         this.resourceFilterContainer = resourceFilterContainer;
     }
@@ -32,7 +35,7 @@ public class ResourceFilterSlotUpdatePacket {
 
     public static void encode(ResourceFilterSlotUpdatePacket packet, FriendlyByteBuf buf) {
         buf.writeInt(packet.slotIndex);
-        packet.resourceFilterContainer.writeToUpdatePacket(packet.slotIndex, buf);
+        packet.resourceFilterContainer.writeToUpdatePacket(packet.containerIndex, buf);
     }
 
     public static void handle(ResourceFilterSlotUpdatePacket packet, Supplier<NetworkEvent.Context> ctx) {

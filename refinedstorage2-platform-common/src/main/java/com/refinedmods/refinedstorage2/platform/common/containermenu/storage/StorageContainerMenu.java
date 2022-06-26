@@ -1,7 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage;
 
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
@@ -10,6 +12,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceFil
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.TwoWaySyncProperty;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 
@@ -20,8 +23,8 @@ public abstract class StorageContainerMenu extends ResourceFilterableContainerMe
     private final TwoWaySyncProperty<AccessMode> accessModeProperty;
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
 
-    protected StorageContainerMenu(MenuType<?> type, int syncId) {
-        super(type, syncId);
+    protected StorageContainerMenu(MenuType<?> type, int syncId, OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry) {
+        super(type, syncId, resourceTypeRegistry);
 
         this.priorityProperty = TwoWaySyncProperty.integerForClient(0);
         this.filterModeProperty = FilterModeSettings.createClientSyncProperty(1);
@@ -36,8 +39,8 @@ public abstract class StorageContainerMenu extends ResourceFilterableContainerMe
         addDataSlot(redstoneModeProperty);
     }
 
-    protected StorageContainerMenu(MenuType<?> type, int syncId, Player player, StorageSettingsProvider storageSettingsProvider, ResourceFilterContainer container) {
-        super(type, syncId, player, container);
+    protected StorageContainerMenu(MenuType<?> type, int syncId, OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, Player player, StorageSettingsProvider storageSettingsProvider, ResourceFilterContainer container) {
+        super(type, syncId, resourceTypeRegistry, player, container);
 
         this.priorityProperty = TwoWaySyncProperty.forServer(
                 0,

@@ -38,7 +38,7 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
     private final List<Slot> diskSlots = new ArrayList<>();
 
     public DiskDriveContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
-        super(Menus.INSTANCE.getDiskDrive(), syncId);
+        super(Menus.INSTANCE.getDiskDrive(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry());
 
         this.storageInfoAccessor = new StorageDiskInfoAccessorImpl(playerInventory.player.getCommandSenderWorld());
 
@@ -53,7 +53,7 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
     }
 
     public DiskDriveContainerMenu(int syncId, Player player, SimpleContainer diskInventory, ResourceFilterContainer resourceFilterContainer, DiskDriveBlockEntity diskDrive, StorageDiskInfoAccessor storageInfoAccessor) {
-        super(Menus.INSTANCE.getDiskDrive(), syncId, player, diskDrive, resourceFilterContainer);
+        super(Menus.INSTANCE.getDiskDrive(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry(), player, diskDrive, resourceFilterContainer);
         this.storageInfoAccessor = storageInfoAccessor;
         addSlots(player, diskInventory, resourceFilterContainer);
     }
