@@ -146,7 +146,7 @@ public abstract class BaseBlock extends Block {
     }
 
     public static Optional<InteractionResult> tryUpdateColor(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        if (state.getBlock() instanceof ColorableBlock colorableBlock) {
+        if (state.getBlock() instanceof ColorableBlock<?> colorableBlock) {
             return tryUpdateColor(colorableBlock.getBlockColorMap(), state, level, pos, player, hand);
         }
         return Optional.empty();

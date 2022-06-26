@@ -71,7 +71,7 @@ public class ItemStorageType implements StorageType<ItemResource> {
     @Override
     public CompoundTag toTag(Storage<ItemResource> storage) {
         CompoundTag tag = new CompoundTag();
-        if (storage instanceof LimitedStorage limitedStorage) {
+        if (storage instanceof LimitedStorage<?> limitedStorage) {
             tag.putLong(TAG_CAPACITY, limitedStorage.getCapacity());
         }
         ListTag stacks = new ListTag();

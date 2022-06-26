@@ -64,7 +64,7 @@ public class LevelConnectionProvider implements ConnectionProvider {
     }
 
     private void depthScan(ScanState scanState, BlockPos position) {
-        if (getBlockEntity(level, position) instanceof NetworkNodeContainerBlockEntity containerBlockEntity) {
+        if (getBlockEntity(level, position) instanceof NetworkNodeContainerBlockEntity<?> containerBlockEntity) {
             addEntry(scanState, new ScanEntry(containerBlockEntity, level, position));
         }
     }
@@ -92,7 +92,7 @@ public class LevelConnectionProvider implements ConnectionProvider {
         Set<NetworkNodeContainer> containers = new HashSet<>();
         for (Direction direction : Direction.values()) {
             BlockPos offsetPos = pos.relative(direction);
-            if (getBlockEntity(level, offsetPos) instanceof NetworkNodeContainerBlockEntity containerBlockEntity) {
+            if (getBlockEntity(level, offsetPos) instanceof NetworkNodeContainerBlockEntity<?> containerBlockEntity) {
                 containers.add(containerBlockEntity);
             }
         }
