@@ -11,5 +11,5 @@ public interface ItemGridEventHandler {
 
     void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor);
 
-    void onScroll(ItemResource itemResource, GridScrollMode mode, int slot);
+    void onScroll(ItemResource itemResource, GridScrollMode mode, int slotIndex);
 }

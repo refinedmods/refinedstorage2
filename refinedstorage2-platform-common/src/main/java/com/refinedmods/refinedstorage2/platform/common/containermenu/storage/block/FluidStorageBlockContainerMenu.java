@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
@@ -18,11 +19,11 @@ public class FluidStorageBlockContainerMenu extends StorageBlockContainerMenu<Fl
     private static final Set<StorageTooltipHelper.TooltipOption> TOOLTIP_OPTIONS = Set.of(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
 
     public FluidStorageBlockContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
-        super(Menus.INSTANCE.getFluidStorage(), syncId, playerInventory.player, buf, FluidResourceType.INSTANCE);
+        super(Menus.INSTANCE.getFluidStorage(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry(), playerInventory.player, buf, FluidResourceType.INSTANCE);
     }
 
     public FluidStorageBlockContainerMenu(int syncId, Player player, ResourceFilterContainer resourceFilterContainer, StorageBlockBlockEntity<?> storageBlock) {
-        super(Menus.INSTANCE.getFluidStorage(), syncId, player, resourceFilterContainer, storageBlock);
+        super(Menus.INSTANCE.getFluidStorage(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry(), player, resourceFilterContainer, storageBlock);
     }
 
     @Override

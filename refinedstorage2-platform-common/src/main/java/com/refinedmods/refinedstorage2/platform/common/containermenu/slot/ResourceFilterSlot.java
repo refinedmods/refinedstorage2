@@ -53,9 +53,14 @@ public class ResourceFilterSlot extends Slot {
             Platform.INSTANCE.getServerToClientCommunications().sendResourceFilterSlotUpdate(
                     (ServerPlayer) player,
                     resourceFilterContainer,
+                    index,
                     containerIndex
             );
         }
+    }
+
+    public void readFromUpdatePacket(FriendlyByteBuf buf) {
+        resourceFilterContainer.readFromUpdatePacket(containerIndex, buf);
     }
 
     @Override
@@ -77,9 +82,5 @@ public class ResourceFilterSlot extends Slot {
             return Collections.emptyList();
         }
         return slot.getTooltipLines(player);
-    }
-
-    public void readFromUpdatePacket(FriendlyByteBuf buf) {
-        resourceFilterContainer.readFromUpdatePacket(containerIndex, buf);
     }
 }

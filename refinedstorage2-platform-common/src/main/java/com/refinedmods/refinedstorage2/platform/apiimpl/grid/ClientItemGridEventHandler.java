@@ -24,7 +24,7 @@ public class ClientItemGridEventHandler implements ItemGridEventHandler {
     }
 
     @Override
-    public void onScroll(ItemResource itemResource, GridScrollMode mode, int slot) {
-        Platform.INSTANCE.getClientToServerCommunications().sendGridScroll(itemResource, mode, slot);
+    public void onScroll(ItemResource itemResource, GridScrollMode mode, int slotIndex) {
+        Platform.INSTANCE.getClientToServerCommunications().sendGridScroll(itemResource, mode, slotIndex);
     }
 }

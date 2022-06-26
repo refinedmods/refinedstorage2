@@ -35,8 +35,8 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slot) {
-        networkManager.send(new GridScrollPacket(itemResource, mode, slot));
+    public void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slotIndex) {
+        networkManager.send(new GridScrollPacket(itemResource, mode, slotIndex));
     }
 
     @Override

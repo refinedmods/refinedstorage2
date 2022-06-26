@@ -67,8 +67,8 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     }
 
     @Override
-    public void onScroll(ItemResource itemResource, GridScrollMode mode, int slot) {
-        IItemHandler playerStorage = slot >= 0 ? new RangedWrapper(new InvWrapper(playerInventory), slot, slot + 1) : playerInventoryStorage;
+    public void onScroll(ItemResource itemResource, GridScrollMode mode, int slotIndex) {
+        IItemHandler playerStorage = slotIndex >= 0 ? new RangedWrapper(new InvWrapper(playerInventory), slotIndex, slotIndex + 1) : playerInventoryStorage;
         switch (mode) {
             case GRID_TO_INVENTORY -> handleGridToInventoryScroll(itemResource, playerStorage);
             case INVENTORY_TO_GRID -> handleInventoryToGridScroll(itemResource, playerStorage);

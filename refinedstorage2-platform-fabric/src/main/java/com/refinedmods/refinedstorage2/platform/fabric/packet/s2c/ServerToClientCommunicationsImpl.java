@@ -51,10 +51,10 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public void sendResourceFilterSlotUpdate(ServerPlayer player, ResourceFilterContainer resourceFilterContainer, int slotIndex) {
+    public void sendResourceFilterSlotUpdate(ServerPlayer player, ResourceFilterContainer resourceFilterContainer, int slotIndex, int containerIndex) {
         sendToPlayer(player, PacketIds.RESOURCE_FILTER_SLOT_UPDATE, buf -> {
             buf.writeInt(slotIndex);
-            resourceFilterContainer.writeToUpdatePacket(slotIndex, buf);
+            resourceFilterContainer.writeToUpdatePacket(containerIndex, buf);
         });
     }
 

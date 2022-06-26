@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
@@ -23,11 +24,11 @@ public class ItemStorageBlockContainerMenu extends StorageBlockContainerMenu<Ite
     );
 
     public ItemStorageBlockContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
-        super(Menus.INSTANCE.getItemStorage(), syncId, playerInventory.player, buf, ItemResourceType.INSTANCE);
+        super(Menus.INSTANCE.getItemStorage(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry(), playerInventory.player, buf, ItemResourceType.INSTANCE);
     }
 
     public ItemStorageBlockContainerMenu(int syncId, Player player, ResourceFilterContainer resourceFilterContainer, StorageBlockBlockEntity<?> storageBlock) {
-        super(Menus.INSTANCE.getItemStorage(), syncId, player, resourceFilterContainer, storageBlock);
+        super(Menus.INSTANCE.getItemStorage(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry(), player, resourceFilterContainer, storageBlock);
     }
 
     @Override

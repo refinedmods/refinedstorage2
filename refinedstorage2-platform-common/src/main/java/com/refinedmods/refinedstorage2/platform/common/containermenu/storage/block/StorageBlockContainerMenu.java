@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block;
 
+import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.FilteredResourceFilterContainer;
@@ -9,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.Resour
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageContainerMenu;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -20,8 +22,8 @@ public abstract class StorageBlockContainerMenu<T> extends StorageContainerMenu 
     private long stored;
     private long capacity;
 
-    protected StorageBlockContainerMenu(MenuType<?> type, int syncId, Player player, FriendlyByteBuf buf, ResourceType resourceType) {
-        super(type, syncId);
+    protected StorageBlockContainerMenu(MenuType<?> type, int syncId, OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, Player player, FriendlyByteBuf buf, ResourceType resourceType) {
+        super(type, syncId, resourceTypeRegistry);
 
         this.stored = buf.readLong();
         this.capacity = buf.readLong();
@@ -32,8 +34,8 @@ public abstract class StorageBlockContainerMenu<T> extends StorageContainerMenu 
         initializeResourceFilterSlots(buf);
     }
 
-    protected StorageBlockContainerMenu(MenuType<?> type, int syncId, Player player, ResourceFilterContainer resourceFilterContainer, StorageBlockBlockEntity<?> storageBlock) {
-        super(type, syncId, player, storageBlock, resourceFilterContainer);
+    protected StorageBlockContainerMenu(MenuType<?> type, int syncId, OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, Player player, ResourceFilterContainer resourceFilterContainer, StorageBlockBlockEntity<?> storageBlock) {
+        super(type, syncId, resourceTypeRegistry, player, storageBlock, resourceFilterContainer);
         addSlots(player, resourceFilterContainer);
     }
 

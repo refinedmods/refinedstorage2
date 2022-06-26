@@ -16,7 +16,7 @@ public interface ClientToServerCommunications {
 
     void sendGridInsert(GridInsertMode mode);
 
-    void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slot);
+    void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slotIndex);
 
     void sendPropertyChange(int id, int value);
 
