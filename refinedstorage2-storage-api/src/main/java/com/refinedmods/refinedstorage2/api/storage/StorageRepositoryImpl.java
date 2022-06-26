@@ -18,12 +18,13 @@ public class StorageRepositoryImpl implements StorageRepository {
     }
 
     @Override
-    public <T> Optional<Storage<T>> get(UUID id) {
+    @SuppressWarnings("unchecked")
+    public <T> Optional<Storage<T>> get(final UUID id) {
         return Optional.ofNullable((Storage<T>) entries.get(id));
     }
 
     @Override
-    public <T> void set(UUID id, Storage<T> storage) {
+    public <T> void set(final UUID id, final Storage<T> storage) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(storage);
 
@@ -35,18 +36,18 @@ public class StorageRepositoryImpl implements StorageRepository {
     }
 
     @Override
-    public <T> Optional<Storage<T>> disassemble(UUID id) {
-        return get(id).map(storage -> {
+    public <T> Optional<Storage<T>> disassemble(final UUID id) {
+        return this.<T>get(id).map(storage -> {
             if (storage.getStored() == 0) {
                 entries.remove(id);
-                return (Storage<T>) storage;
+                return storage;
             }
             return null;
         });
     }
 
     @Override
-    public StorageInfo getInfo(UUID id) {
+    public StorageInfo getInfo(final UUID id) {
         return get(id).map(StorageInfo::of).orElse(StorageInfo.UNKNOWN);
     }
 }
