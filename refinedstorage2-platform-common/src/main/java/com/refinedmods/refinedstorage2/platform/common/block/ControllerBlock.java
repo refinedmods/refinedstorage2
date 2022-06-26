@@ -50,7 +50,7 @@ public class ControllerBlock extends NetworkNodeContainerBlock implements Colora
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return (type == BlockEntities.INSTANCE.getController() || type == BlockEntities.INSTANCE.getCreativeController()) && !level.isClientSide ? (level2, pos, state2, blockEntity) -> ControllerBlockEntity.serverTick(level2, state2, (ControllerBlockEntity) blockEntity) : null;
+        return (type == BlockEntities.INSTANCE.getController() || type == BlockEntities.INSTANCE.getCreativeController()) && !level.isClientSide ? (level2, pos, state2, blockEntity) -> ControllerBlockEntity.serverTick(state2, (ControllerBlockEntity) blockEntity) : null;
     }
 
     @Override

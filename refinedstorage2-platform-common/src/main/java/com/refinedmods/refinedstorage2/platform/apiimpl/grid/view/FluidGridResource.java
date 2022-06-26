@@ -19,7 +19,7 @@ public class FluidGridResource extends GridResource<FluidResource> {
                 GridResourceAttributeKeys.TAGS, tags,
                 GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
         ));
-        this.id = Registry.FLUID.getId(getResourceAmount().getResource().getFluid());
+        this.id = Registry.FLUID.getId(getResourceAmount().getResource().fluid());
     }
 
     @Override

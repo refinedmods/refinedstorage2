@@ -36,9 +36,7 @@ class StorageRepositoryImplTest {
         Optional<Storage<String>> nonExistent = sut.get(UUID.randomUUID());
 
         // Assert
-        assertThat(foundStorage).isNotEmpty();
         assertThat(foundStorage).containsSame(storage);
-
         assertThat(nonExistent).isEmpty();
     }
 
@@ -124,7 +122,6 @@ class StorageRepositoryImplTest {
         Optional<Storage<String>> afterDisassembly = sut.get(id);
 
         // Assert
-        assertThat(disassembled).isNotEmpty();
         assertThat(disassembled).containsSame(storage);
         assertThat(afterDisassembly).isNotPresent();
     }

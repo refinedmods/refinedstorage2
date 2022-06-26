@@ -41,7 +41,7 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
 
     public ItemGridContainerMenu(int syncId, Inventory playerInventory, GridBlockEntity<ItemResource> grid) {
         super(Menus.INSTANCE.getGrid(), syncId, playerInventory, grid, createView());
-        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), itemResource -> (long) itemResource.getItem().getMaxStackSize(), 1);
+        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), itemResource -> (long) itemResource.item().getMaxStackSize(), 1);
         this.grid.addWatcher(this);
         this.itemGridEventHandler = Platform.INSTANCE.createItemGridEventHandler(this, gridService, playerInventory);
     }

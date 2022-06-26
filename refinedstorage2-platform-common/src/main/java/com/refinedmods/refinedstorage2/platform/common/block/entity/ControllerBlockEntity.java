@@ -18,7 +18,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
@@ -44,7 +43,7 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
         this.getNode().setEnergyStorage(energyStorage);
     }
 
-    public static void serverTick(Level level, BlockState state, ControllerBlockEntity blockEntity) {
+    public static void serverTick(BlockState state, ControllerBlockEntity blockEntity) {
         InternalNetworkNodeContainerBlockEntity.serverTick(state, blockEntity);
         blockEntity.updateEnergyTypeInLevel(state);
     }

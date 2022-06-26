@@ -30,7 +30,7 @@ public class ItemResourceType implements ResourceType {
 
     @Override
     public Optional<FilteredResource> translate(ItemStack stack) {
-        return stack.isEmpty() ? Optional.empty() : Optional.of(new ItemFilteredResource(new ItemResource(stack)));
+        return stack.isEmpty() ? Optional.empty() : Optional.of(new ItemFilteredResource(new ItemResource(stack.getItem(), stack.getTag())));
     }
 
     @Override

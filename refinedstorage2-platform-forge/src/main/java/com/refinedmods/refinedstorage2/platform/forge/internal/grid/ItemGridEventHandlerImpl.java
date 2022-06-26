@@ -37,10 +37,11 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
 
     @Override
     public void onInsert(GridInsertMode insertMode) {
-        if (containerMenu.getCarried().isEmpty()) {
+        ItemStack carried = containerMenu.getCarried();
+        if (carried.isEmpty()) {
             return;
         }
-        ItemResource itemResource = new ItemResource(containerMenu.getCarried());
+        ItemResource itemResource = new ItemResource(carried.getItem(), carried.getTag());
         gridService.insert(itemResource, insertMode, (resource, amount, action, source) -> {
             ItemStack extracted = playerCursorStorage.extractItem(0, (int) amount, action == Action.SIMULATE);
             return extracted.getCount();

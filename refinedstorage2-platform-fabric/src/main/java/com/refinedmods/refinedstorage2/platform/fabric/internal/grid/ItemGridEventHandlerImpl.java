@@ -16,6 +16,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.ofItemVariant;
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toItemVariant;
@@ -35,10 +36,11 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
 
     @Override
     public void onInsert(GridInsertMode insertMode) {
-        if (containerMenu.getCarried().isEmpty()) {
+        ItemStack carried = containerMenu.getCarried();
+        if (carried.isEmpty()) {
             return;
         }
-        ItemResource itemResource = new ItemResource(containerMenu.getCarried());
+        ItemResource itemResource = new ItemResource(carried.getItem(), carried.getTag());
         gridService.insert(itemResource, insertMode, (resource, amount, action, source) -> {
             try (Transaction tx = Transaction.openOuter()) {
                 ItemVariant itemVariant = toItemVariant(resource);

@@ -15,7 +15,7 @@ public final class VariantUtil {
     }
 
     public static FluidStack toFluidStack(FluidResource fluidResource, long amount) {
-        return new FluidStack(fluidResource.getFluid(), (int) amount, fluidResource.getTag());
+        return new FluidStack(fluidResource.fluid(), (int) amount, fluidResource.tag());
     }
 
     public static ItemResource ofItemStack(ItemStack itemStack) {
@@ -23,6 +23,6 @@ public final class VariantUtil {
     }
 
     public static ItemStack toItemStack(ItemResource itemResource, long amount) {
-        return new ItemStack(itemResource.getItem(), (int) amount, itemResource.getTag());
+        return new ItemStack(itemResource.item(), (int) amount, itemResource.tag());
     }
 }

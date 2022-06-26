@@ -26,13 +26,13 @@ public class FluidStackFluidRenderer extends FluidRendererImpl {
 
     @NotNull
     private FluidStack getFluidStackFromCache(FluidResource fluidResource) {
-        return stackCache.computeIfAbsent(fluidResource, r -> new FluidStack(r.getFluid(), FluidType.BUCKET_VOLUME, r.getTag()));
+        return stackCache.computeIfAbsent(fluidResource, r -> new FluidStack(r.fluid(), FluidType.BUCKET_VOLUME, r.tag()));
     }
 
     @Override
     public void render(PoseStack poseStack, int x, int y, int z, FluidResource fluidResource) {
         FluidStack stack = getFluidStackFromCache(fluidResource);
-        Fluid fluid = fluidResource.getFluid();
+        Fluid fluid = fluidResource.fluid();
 
         IFluidTypeRenderProperties renderProperties = RenderProperties.get(fluid);
 

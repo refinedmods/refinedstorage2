@@ -4,6 +4,8 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
+import java.util.Optional;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -12,8 +14,6 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.Optional;
 
 import static com.refinedmods.refinedstorage2.platform.test.TagHelper.createDummyTag;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -101,8 +101,8 @@ class ItemResourceTest {
         ItemResource normalized = itemResource.normalize();
 
         // Assert
-        assertThat(normalized.getItem()).isEqualTo(Items.DIRT);
-        assertThat(normalized.getTag()).isNull();
+        assertThat(normalized.item()).isEqualTo(Items.DIRT);
+        assertThat(normalized.tag()).isNull();
     }
 
     @Test
@@ -110,6 +110,7 @@ class ItemResourceTest {
         // Assert
         EqualsVerifier.forClass(ItemResource.class)
                 .withPrefabValues(Item.class, Items.DIRT, Items.GLASS)
+                .withNonnullFields("item")
                 .verify();
     }
 }
