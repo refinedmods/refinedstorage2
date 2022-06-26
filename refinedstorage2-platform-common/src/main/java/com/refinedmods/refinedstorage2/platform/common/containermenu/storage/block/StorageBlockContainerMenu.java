@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 
-public abstract class StorageBlockContainerMenu<T> extends StorageContainerMenu {
+public abstract class StorageBlockContainerMenu extends StorageContainerMenu {
     private static final int FILTER_SLOT_X = 8;
     private static final int FILTER_SLOT_Y = 20;
 

@@ -29,12 +29,12 @@ public class ResourceFilterContainer {
         this.listener = listener;
     }
 
-    public <T> void set(int index, FilteredResource resource) {
+    public void set(int index, FilteredResource resource) {
         setSilently(index, resource);
         listener.run();
     }
 
-    private <T> void setSilently(int index, FilteredResource resource) {
+    private void setSilently(int index, FilteredResource resource) {
         items[index] = resource;
     }
 

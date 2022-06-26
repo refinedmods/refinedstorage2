@@ -15,7 +15,7 @@ public class FilteredResourceFilterContainer extends ResourceFilterContainer {
     }
 
     @Override
-    public <T> void set(int index, FilteredResource resource) {
+    public void set(int index, FilteredResource resource) {
         if (resource.getType() != allowedType) {
             return;
         }

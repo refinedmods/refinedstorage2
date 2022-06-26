@@ -10,10 +10,10 @@ import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
-public abstract class StorageBlockScreen extends StorageScreen<StorageBlockContainerMenu<?>> {
+public abstract class StorageBlockScreen extends StorageScreen<StorageBlockContainerMenu> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/storage.png");
 
-    protected StorageBlockScreen(StorageBlockContainerMenu<?> menu, Inventory inventory, Component title) {
+    protected StorageBlockScreen(StorageBlockContainerMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, 80);
     }
 
