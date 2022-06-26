@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Rs2Test
-public class ListenableResourceListTest {
+class ListenableResourceListTest {
     private FakeResourceListListener<String> listener;
     private ResourceListImpl<String> list;
     private ListenableResourceList<String> sut;

@@ -88,9 +88,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         ResourceLocation diskDriveIdentifierItem = createIdentifier("item/disk_drive");
 
         ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (identifier, modelProviderContext) -> {
-            if (identifier.equals(diskDriveIdentifier)) {
-                return new DiskDriveUnbakedModel();
-            } else if (identifier.equals(diskDriveIdentifierItem)) {
+            if (identifier.equals(diskDriveIdentifier) || identifier.equals(diskDriveIdentifierItem)) {
                 return new DiskDriveUnbakedModel();
             }
             return null;

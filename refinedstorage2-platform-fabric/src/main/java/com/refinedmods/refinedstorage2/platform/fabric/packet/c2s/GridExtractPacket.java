@@ -39,9 +39,10 @@ public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandle
     }
 
     public static void writeMode(FriendlyByteBuf buf, GridExtractMode mode) {
-        switch (mode) {
-            case ENTIRE_RESOURCE -> buf.writeByte(0);
-            case HALF_RESOURCE -> buf.writeByte(1);
+        if (mode == GridExtractMode.ENTIRE_RESOURCE) {
+            buf.writeByte(0);
+        } else if (mode == GridExtractMode.HALF_RESOURCE) {
+            buf.writeByte(1);
         }
     }
 }

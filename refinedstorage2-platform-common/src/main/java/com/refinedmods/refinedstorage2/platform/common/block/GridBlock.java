@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
-public abstract class GridBlock extends NetworkNodeContainerBlock implements ColorableBlock {
+public abstract class GridBlock extends NetworkNodeContainerBlock {
     protected GridBlock(Properties properties) {
         super(properties);
     }

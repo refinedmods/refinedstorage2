@@ -17,7 +17,7 @@ import org.apiguardian.api.API;
 public abstract class ProxyResourceList<T> implements ResourceList<T> {
     private final ResourceList<T> delegate;
 
-    public ProxyResourceList(ResourceList<T> delegate) {
+    protected ProxyResourceList(ResourceList<T> delegate) {
         this.delegate = delegate;
     }
 

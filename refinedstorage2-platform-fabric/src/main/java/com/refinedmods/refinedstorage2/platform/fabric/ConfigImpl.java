@@ -191,6 +191,10 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
             this.size = size;
             save();
         }
+
+        private static void save() {
+            AutoConfig.getConfigHolder(ConfigImpl.class).save();
+        }
     }
 
     private static class DiskDriveImpl implements DiskDrive {
@@ -290,9 +294,5 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         public long getCreativeEnergyUsage() {
             return creativeEnergyUsage;
         }
-    }
-
-    private static void save() {
-        AutoConfig.getConfigHolder(ConfigImpl.class).save();
     }
 }

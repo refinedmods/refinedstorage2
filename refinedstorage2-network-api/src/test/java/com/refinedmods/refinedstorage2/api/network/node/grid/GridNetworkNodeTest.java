@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Rs2Test
 @ExtendWith(NetworkTestExtension.class)
 @SetupNetwork
-public class GridNetworkNodeTest {
+class GridNetworkNodeTest {
     @AddNetworkNode
     GridNetworkNode<String> sut;
 
