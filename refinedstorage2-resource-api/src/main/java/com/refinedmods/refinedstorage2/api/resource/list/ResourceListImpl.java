@@ -27,7 +27,7 @@ public class ResourceListImpl<T> implements ResourceList<T> {
     public ResourceListOperationResult<T> add(final T resource, final long amount) {
         ResourceAmount.validate(resource, amount);
 
-        ResourceAmount<T> existing = entries.get(resource);
+        final ResourceAmount<T> existing = entries.get(resource);
         if (existing != null) {
             return addToExisting(existing, amount);
         } else {
@@ -42,9 +42,9 @@ public class ResourceListImpl<T> implements ResourceList<T> {
     }
 
     private ResourceListOperationResult<T> addNew(final T resource, final long amount) {
-        ResourceAmount<T> resourceAmount = new ResourceAmount<>(resource, amount);
+        final ResourceAmount<T> resourceAmount = new ResourceAmount<>(resource, amount);
 
-        UUID id = UUID.randomUUID();
+        final UUID id = UUID.randomUUID();
 
         index.put(id, resourceAmount);
         entries.put(resource, resourceAmount);
@@ -56,9 +56,9 @@ public class ResourceListImpl<T> implements ResourceList<T> {
     public Optional<ResourceListOperationResult<T>> remove(final T resource, final long amount) {
         ResourceAmount.validate(resource, amount);
 
-        ResourceAmount<T> existing = entries.get(resource);
+        final ResourceAmount<T> existing = entries.get(resource);
         if (existing != null) {
-            UUID id = index.inverse().get(existing);
+            final UUID id = index.inverse().get(existing);
 
             if (existing.getAmount() - amount <= 0) {
                 return removeCompletely(existing, id);

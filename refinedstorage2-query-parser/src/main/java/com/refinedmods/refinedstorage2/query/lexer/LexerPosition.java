@@ -19,7 +19,7 @@ public class LexerPosition {
         advance(1);
     }
 
-    public void advance(int n) {
+    public void advance(final int n) {
         endIndex += n;
         endColumn += n;
     }
