@@ -17,27 +17,27 @@ import org.apiguardian.api.API;
 public abstract class ProxyResourceList<T> implements ResourceList<T> {
     private final ResourceList<T> delegate;
 
-    protected ProxyResourceList(ResourceList<T> delegate) {
+    protected ProxyResourceList(final ResourceList<T> delegate) {
         this.delegate = delegate;
     }
 
     @Override
-    public ResourceListOperationResult<T> add(T resource, long amount) {
+    public ResourceListOperationResult<T> add(final T resource, final long amount) {
         return delegate.add(resource, amount);
     }
 
     @Override
-    public Optional<ResourceListOperationResult<T>> remove(T resource, long amount) {
+    public Optional<ResourceListOperationResult<T>> remove(final T resource, final long amount) {
         return delegate.remove(resource, amount);
     }
 
     @Override
-    public Optional<ResourceAmount<T>> get(T resource) {
+    public Optional<ResourceAmount<T>> get(final T resource) {
         return delegate.get(resource);
     }
 
     @Override
-    public Optional<ResourceAmount<T>> get(UUID id) {
+    public Optional<ResourceAmount<T>> get(final UUID id) {
         return delegate.get(id);
     }
 
