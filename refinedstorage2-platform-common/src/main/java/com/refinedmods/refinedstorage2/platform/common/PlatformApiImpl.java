@@ -19,7 +19,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepos
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.NoOpGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.apiimpl.network.LevelConnectionProvider;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.ItemResourceType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.item.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.ClientStorageRepository;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageChannelTypes;
@@ -36,12 +36,14 @@ import net.minecraft.world.level.Level;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public class PlatformApiImpl implements PlatformApi {
+    private static final String ITEM_REGISTRY_KEY = "item";
+
     private final PlatformStorageRepository clientStorageRepository = new ClientStorageRepository(Platform.INSTANCE.getClientToServerCommunications()::sendStorageInfoRequest);
-    private final OrderedRegistry<ResourceLocation, ResourceType<?>> resourceTypeRegistry = new OrderedRegistryImpl<>(createIdentifier("item"), ItemResourceType.INSTANCE);
+    private final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry = new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemResourceType.INSTANCE);
     private final ComponentMapFactory<NetworkComponent, Network> networkComponentMapFactory = new ComponentMapFactory<>();
     private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentMapFactory));
-    private final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry = new OrderedRegistryImpl<>(createIdentifier("item"), ItemStorageType.INSTANCE);
-    private final OrderedRegistry<ResourceLocation, StorageChannelType<?>> storageChannelTypeRegistry = new OrderedRegistryImpl<>(createIdentifier("item"), StorageChannelTypes.ITEM);
+    private final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry = new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemStorageType.INSTANCE);
+    private final OrderedRegistry<ResourceLocation, StorageChannelType<?>> storageChannelTypeRegistry = new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageChannelTypes.ITEM);
     private final OrderedRegistry<ResourceLocation, GridSynchronizer> gridSynchronizerRegistry = new OrderedRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
 
     @Override
@@ -82,7 +84,7 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, ResourceType<?>> getResourceTypeRegistry() {
+    public OrderedRegistry<ResourceLocation, ResourceType> getResourceTypeRegistry() {
         return resourceTypeRegistry;
     }
 

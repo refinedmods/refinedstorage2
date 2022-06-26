@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.slot;
 
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
@@ -24,31 +25,31 @@ public class ResourceFilterSlot extends Slot {
 
     private final ResourceFilterContainer resourceFilterContainer;
     private final int containerIndex;
-    private Object cachedResource;
+    private FilteredResource cachedResource;
 
     public ResourceFilterSlot(ResourceFilterContainer resourceFilterContainer, int index, int x, int y) {
         super(createDummyContainer(), 0, x, y);
         this.resourceFilterContainer = resourceFilterContainer;
         this.containerIndex = index;
-        this.cachedResource = resourceFilterContainer.getFilter(index);
+        this.cachedResource = resourceFilterContainer.get(index);
     }
 
     private static SimpleContainer createDummyContainer() {
         return new SimpleContainer(1);
     }
 
-    public <T> void change(ItemStack carried, ResourceType<T> type) {
+    public <T> void change(ItemStack carried, ResourceType type) {
         type.translate(carried).ifPresentOrElse(
-                resource -> resourceFilterContainer.set(containerIndex, type, resource),
+                resource -> resourceFilterContainer.set(containerIndex, resource),
                 () -> resourceFilterContainer.remove(containerIndex)
         );
     }
 
     public void broadcastChanges(Player player) {
-        Object current = resourceFilterContainer.getFilter(containerIndex);
-        if (!Objects.equals(current, cachedResource)) {
+        FilteredResource currentResource = resourceFilterContainer.get(containerIndex);
+        if (!Objects.equals(currentResource, cachedResource)) {
             LOGGER.info("Resource filter slot {} has changed", containerIndex);
-            cachedResource = current;
+            cachedResource = currentResource;
             Platform.INSTANCE.getServerToClientCommunications().sendResourceFilterSlotUpdate(
                     (ServerPlayer) player,
                     resourceFilterContainer,
@@ -62,24 +63,20 @@ public class ResourceFilterSlot extends Slot {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     public void render(PoseStack poseStack, int x, int y, int z) {
-        ResourceType<Object> type = (ResourceType<Object>) resourceFilterContainer.getType(containerIndex);
-        if (type == null) {
+        FilteredResource slot = resourceFilterContainer.get(containerIndex);
+        if (slot == null) {
             return;
         }
-        Object value = resourceFilterContainer.getFilter(containerIndex);
-        type.render(poseStack, value, x, y, z);
+        slot.render(poseStack, x, y, z);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Component> getTooltipLines(Player player) {
-        ResourceType<Object> type = (ResourceType<Object>) resourceFilterContainer.getType(containerIndex);
-        if (type == null) {
+        FilteredResource slot = resourceFilterContainer.get(containerIndex);
+        if (slot == null) {
             return Collections.emptyList();
         }
-        Object value = resourceFilterContainer.getFilter(containerIndex);
-        return type.getTooltipLines(value, player);
+        return slot.getTooltipLines(player);
     }
 
     public void readFromUpdatePacket(FriendlyByteBuf buf) {

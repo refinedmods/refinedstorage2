@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter;
 
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 
 import java.util.Arrays;
@@ -18,26 +19,23 @@ import org.apache.logging.log4j.Logger;
 public class ResourceFilterContainer {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final OrderedRegistry<ResourceLocation, ResourceType<?>> resourceTypeRegistry;
-    private final Object[] filters;
-    private final ResourceType<?>[] types;
+    private final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry;
+    private final FilteredResource[] slots;
     private final Runnable listener;
 
-    public ResourceFilterContainer(OrderedRegistry<ResourceLocation, ResourceType<?>> resourceTypeRegistry, int size, Runnable listener) {
+    public ResourceFilterContainer(OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, int size, Runnable listener) {
         this.resourceTypeRegistry = resourceTypeRegistry;
-        this.filters = new Object[size];
-        this.types = new ResourceType[size];
+        this.slots = new FilteredResource[size];
         this.listener = listener;
     }
 
-    public <T> void set(int slot, ResourceType<T> type, T value) {
-        setSilently(slot, type, value);
+    public <T> void set(int slot, FilteredResource resource) {
+        setSilently(slot, resource);
         listener.run();
     }
 
-    private <T> void setSilently(int slot, ResourceType<T> type, T value) {
-        filters[slot] = value;
-        types[slot] = type;
+    private <T> void setSilently(int slot, FilteredResource resource) {
+        slots[slot] = resource;
     }
 
     public void remove(int slot) {
@@ -46,35 +44,38 @@ public class ResourceFilterContainer {
     }
 
     private void removeSilently(int slot) {
-        filters[slot] = null;
-        types[slot] = null;
+        slots[slot] = null;
     }
 
     public int size() {
-        return filters.length;
+        return slots.length;
     }
 
-    public Object getFilter(int slot) {
-        return filters[slot];
-    }
-
-    public ResourceType<?> getType(int slot) {
-        return types[slot];
+    public FilteredResource get(int slot) {
+        return slots[slot];
     }
 
     public Set<Object> getTemplates() {
-        Set<Object> set = new HashSet<>();
+        Set<Object> result = new HashSet<>();
         for (int i = 0; i < size(); ++i) {
-            Object value = getFilter(i);
+            FilteredResource slot = slots[i];
+            if (slot == null) {
+                continue;
+            }
+            Object value = slot.getValue();
             if (value != null) {
-                set.add(value);
+                result.add(value);
             }
         }
-        return set;
+        return result;
     }
 
-    public ResourceType<?> determineDefaultType() {
-        List<ResourceType<?>> distinctTypes = Arrays.stream(types).filter(Objects::nonNull).distinct().toList();
+    public ResourceType determineDefaultType() {
+        List<ResourceType> distinctTypes = Arrays.stream(slots)
+                .filter(Objects::nonNull)
+                .map(FilteredResource::getType)
+                .distinct()
+                .toList();
         if (distinctTypes.size() == 1) {
             return distinctTypes.get(0);
         }
@@ -83,67 +84,60 @@ public class ResourceFilterContainer {
 
     public void writeToUpdatePacket(FriendlyByteBuf buf) {
         buf.writeResourceLocation(resourceTypeRegistry.getId(determineDefaultType()).orElseThrow(() -> new IllegalStateException("Default resource type not registered")));
-        for (int i = 0; i < filters.length; ++i) {
-            writeToUpdatePacket(i, buf);
+        for (int slotIndex = 0; slotIndex < slots.length; ++slotIndex) {
+            writeToUpdatePacket(slotIndex, buf);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void writeToUpdatePacket(int slot, FriendlyByteBuf buf) {
-        ResourceType<Object> type = (ResourceType<Object>) getType(slot);
-        if (type == null) {
+    public void writeToUpdatePacket(int slotIndex, FriendlyByteBuf buf) {
+        FilteredResource slot = slots[slotIndex];
+        if (slot == null) {
             buf.writeBoolean(false);
             return;
         }
-        resourceTypeRegistry.getId(type).ifPresentOrElse(
+        resourceTypeRegistry.getId(slot.getType()).ifPresentOrElse(
                 id -> {
                     buf.writeBoolean(true);
                     buf.writeResourceLocation(id);
-                    type.writeToPacket(buf, getFilter(slot));
+                    slot.writeToPacket(buf);
                 },
                 () -> buf.writeBoolean(false)
         );
     }
 
-    @SuppressWarnings("unchecked")
-    public void readFromUpdatePacket(int slot, FriendlyByteBuf buf) {
+    public void readFromUpdatePacket(int slotIndex, FriendlyByteBuf buf) {
         boolean present = buf.readBoolean();
         if (!present) {
-            removeSilently(slot);
+            removeSilently(slotIndex);
             return;
         }
         ResourceLocation id = buf.readResourceLocation();
         resourceTypeRegistry.get(id).ifPresentOrElse(
-                type -> {
-                    Object value = type.readFromPacket(buf);
-                    setSilently(slot, (ResourceType<? super Object>) type, value);
-                },
+                type -> setSilently(slotIndex, type.fromPacket(buf)),
                 () -> LOGGER.warn("Resource type {} is not registered on the client, cannot read from packet", id)
         );
     }
 
-    @SuppressWarnings("unchecked")
     public CompoundTag toTag() {
         CompoundTag tag = new CompoundTag();
         for (int i = 0; i < size(); ++i) {
-            Object value = getFilter(i);
-            if (value == null) {
+            FilteredResource slot = slots[i];
+            if (slot == null) {
                 continue;
             }
-            ResourceType<Object> type = (ResourceType<Object>) getType(i);
             int index = i;
-            resourceTypeRegistry.getId(type).ifPresentOrElse(
-                    id -> addResourceTypeToTag(tag, index, value, type, id),
-                    () -> LOGGER.warn("Resource type {} is not registered, cannot serialize", type)
+            resourceTypeRegistry.getId(slot.getType()).ifPresentOrElse(
+                    id -> addToTag(tag, index, slot, id),
+                    () -> LOGGER.warn("Resource type {} is not registered, cannot serialize", slot.getType())
             );
         }
         return tag;
     }
 
-    private void addResourceTypeToTag(CompoundTag tag, int index, Object value, ResourceType<Object> type, ResourceLocation typeId) {
+    private void addToTag(CompoundTag tag, int index, FilteredResource slot, ResourceLocation typeId) {
         CompoundTag item = new CompoundTag();
         item.putString("t", typeId.toString());
-        item.put("v", type.toTag(value));
+        item.put("v", slot.toTag());
         tag.put("s" + index, item);
     }
 
@@ -166,8 +160,7 @@ public class ResourceFilterContainer {
         );
     }
 
-    @SuppressWarnings("unchecked")
-    private void load(int index, CompoundTag item, ResourceType<?> type) {
-        type.fromTag(item.getCompound("v")).ifPresent(value -> setSilently(index, (ResourceType<? super Object>) type, value));
+    private void load(int index, CompoundTag item, ResourceType type) {
+        type.fromTag(item.getCompound("v")).ifPresent(filteredResource -> setSilently(index, filteredResource));
     }
 }

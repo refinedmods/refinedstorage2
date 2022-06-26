@@ -20,7 +20,7 @@ public abstract class StorageBlockContainerMenu<T> extends StorageContainerMenu 
     private long stored;
     private long capacity;
 
-    protected StorageBlockContainerMenu(MenuType<?> type, int syncId, Player player, FriendlyByteBuf buf, ResourceType<T> resourceType) {
+    protected StorageBlockContainerMenu(MenuType<?> type, int syncId, Player player, FriendlyByteBuf buf, ResourceType resourceType) {
         super(type, syncId);
 
         this.stored = buf.readLong();
