@@ -45,7 +45,7 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
     }
 
     public static void serverTick(Level level, BlockState state, ControllerBlockEntity blockEntity) {
-        InternalNetworkNodeContainerBlockEntity.serverTick(level, state, blockEntity);
+        InternalNetworkNodeContainerBlockEntity.serverTick(state, blockEntity);
         blockEntity.updateEnergyTypeInLevel(state);
     }
 

@@ -67,7 +67,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     private int visibleRows;
     private int gridSlotNumber;
 
-    public GridScreen(T menu, Inventory inventory, Component title) {
+    protected GridScreen(T menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
 
         menu.setSizeChangedListener(this::init);

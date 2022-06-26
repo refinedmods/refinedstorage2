@@ -152,8 +152,12 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         searchBox.setAutoSelected(isAutoSelected());
         if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
             searchBox.setValue(lastSearchQuery);
-            searchBox.addListener(text -> lastSearchQuery = text);
+            searchBox.addListener(GridContainerMenu::updateLastSearchQuery);
         }
+    }
+
+    private static void updateLastSearchQuery(String text) {
+        GridContainerMenu.lastSearchQuery = text;
     }
 
     @Override

@@ -15,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +51,7 @@ public class DiskDriveItemBakedModel extends ForwardingBakedModel {
     }
 
     private List<BakedQuad> getDiskModel(@Nullable Direction side, RandomSource rand) {
-        List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(null, side, rand));
+        List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(null, side, rand, EmptyModelData.INSTANCE));
         for (int i = 0; i < translators.length; ++i) {
             if ((disks & (1L << i)) != 0) {
                 quads.addAll(getDiskModel(side, rand, translators[i]));
@@ -60,7 +61,7 @@ public class DiskDriveItemBakedModel extends ForwardingBakedModel {
     }
 
     private List<BakedQuad> getDiskModel(@Nullable Direction side, RandomSource rand, Vector3f translation) {
-        List<BakedQuad> diskQuads = diskDisconnectedModel.getQuads(null, side, rand);
+        List<BakedQuad> diskQuads = diskDisconnectedModel.getQuads(null, side, rand, EmptyModelData.INSTANCE);
         return QuadTransformer.translate(diskQuads, translation);
     }
 

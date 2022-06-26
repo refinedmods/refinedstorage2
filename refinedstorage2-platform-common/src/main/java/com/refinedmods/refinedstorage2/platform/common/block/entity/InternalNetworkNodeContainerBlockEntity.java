@@ -7,7 +7,6 @@ import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +41,7 @@ public abstract class InternalNetworkNodeContainerBlockEntity<T extends NetworkN
         }
     }
 
-    public static void serverTick(Level level, BlockState state, InternalNetworkNodeContainerBlockEntity<?> blockEntity) {
+    public static void serverTick(BlockState state, InternalNetworkNodeContainerBlockEntity<?> blockEntity) {
         blockEntity.getNode().update();
         blockEntity.updateActivenessInLevel(state);
     }

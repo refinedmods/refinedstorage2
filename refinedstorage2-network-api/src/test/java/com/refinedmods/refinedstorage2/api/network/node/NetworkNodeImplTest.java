@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Rs2Test
 @ExtendWith(NetworkTestExtension.class)
 @SetupNetwork(energyStored = 10, energyCapacity = 100)
-public class NetworkNodeImplTest {
+class NetworkNodeImplTest {
     @AddNetworkNode(energyUsage = 10)
     SpyingNetworkNode sut;
 

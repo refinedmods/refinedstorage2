@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
-public class ControllerBlock extends NetworkNodeContainerBlock implements ColorableBlock {
+public class ControllerBlock extends NetworkNodeContainerBlock implements ColorableBlock<ControllerBlock> {
     public static final EnumProperty<ControllerEnergyType> ENERGY_TYPE = EnumProperty.create("energy_type", ControllerEnergyType.class);
 
     private final ControllerType type;
@@ -54,7 +54,7 @@ public class ControllerBlock extends NetworkNodeContainerBlock implements Colora
     }
 
     @Override
-    public BlockColorMap<?> getBlockColorMap() {
+    public BlockColorMap<ControllerBlock> getBlockColorMap() {
         return type == ControllerType.CREATIVE
                 ? Blocks.INSTANCE.getCreativeController()
                 : Blocks.INSTANCE.getController();

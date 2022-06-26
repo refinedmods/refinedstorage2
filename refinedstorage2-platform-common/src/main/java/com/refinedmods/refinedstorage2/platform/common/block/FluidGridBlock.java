@@ -9,7 +9,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class FluidGridBlock extends GridBlock {
+public class FluidGridBlock extends GridBlock implements ColorableBlock<FluidGridBlock> {
     private final MutableComponent name;
 
     public FluidGridBlock(MutableComponent name) {
@@ -23,7 +23,7 @@ public class FluidGridBlock extends GridBlock {
     }
 
     @Override
-    public BlockColorMap<?> getBlockColorMap() {
+    public BlockColorMap<FluidGridBlock> getBlockColorMap() {
         return Blocks.INSTANCE.getFluidGrid();
     }
 

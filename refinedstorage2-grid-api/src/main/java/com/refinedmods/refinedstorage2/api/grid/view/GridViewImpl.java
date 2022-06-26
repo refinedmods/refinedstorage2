@@ -53,11 +53,6 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     @Override
-    public GridSortingType getSortingType() {
-        return sortingType;
-    }
-
-    @Override
     public void setSortingType(GridSortingType sortingType) {
         this.sortingType = sortingType;
     }
@@ -92,11 +87,6 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     @Override
-    public GridSortingDirection getSortingDirection() {
-        return sortingDirection;
-    }
-
-    @Override
     public void setSortingDirection(GridSortingDirection sortingDirection) {
         this.sortingDirection = sortingDirection;
     }
@@ -108,8 +98,8 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     @Override
-    public Optional<TrackedResource> getTrackedResource(Object resource) {
-        return Optional.ofNullable(trackedResources.get((T) resource));
+    public Optional<TrackedResource> getTrackedResource(T resource) {
+        return Optional.ofNullable(trackedResources.get(resource));
     }
 
     @Override

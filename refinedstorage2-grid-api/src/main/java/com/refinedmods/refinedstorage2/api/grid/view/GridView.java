@@ -27,11 +27,6 @@ public interface GridView<T> {
     void setListener(Runnable listener);
 
     /**
-     * @return the sorting type
-     */
-    GridSortingType getSortingType();
-
-    /**
      * Changing the sorting type still requires a call to {@link #sort()}.
      *
      * @param sortingType the sorting type
@@ -59,11 +54,6 @@ public interface GridView<T> {
      * @param preventSorting whether the view should prevent sorting on changes
      */
     void setPreventSorting(boolean preventSorting);
-
-    /**
-     * @return the sorting direction
-     */
-    GridSortingDirection getSortingDirection();
 
     /**
      * Changing the sorting direction still requires a call to {@link #sort()}.

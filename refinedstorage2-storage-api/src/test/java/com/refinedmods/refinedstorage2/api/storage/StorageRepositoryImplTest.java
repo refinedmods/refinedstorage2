@@ -37,7 +37,7 @@ class StorageRepositoryImplTest {
 
         // Assert
         assertThat(foundStorage).isNotEmpty();
-        assertThat(foundStorage.get()).isSameAs(storage);
+        assertThat(foundStorage).containsSame(storage);
 
         assertThat(nonExistent).isEmpty();
     }
@@ -125,7 +125,7 @@ class StorageRepositoryImplTest {
 
         // Assert
         assertThat(disassembled).isNotEmpty();
-        assertThat(disassembled.get()).isSameAs(storage);
+        assertThat(disassembled).containsSame(storage);
         assertThat(afterDisassembly).isNotPresent();
     }
 

@@ -29,6 +29,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -134,7 +135,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
 
         @NotNull
         private List<BakedQuad> getQuads(@NotNull BlockState state, @NotNull RandomSource rand, StorageDiskState[] diskStates, Direction side) {
-            List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(state, side, rand));
+            List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(state, side, rand, EmptyModelData.INSTANCE));
             for (int i = 0; i < TRANSLATORS.length; ++i) {
                 StorageDiskState diskState = diskStates[i];
                 if (diskState != StorageDiskState.NONE) {
@@ -145,7 +146,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         }
 
         private List<BakedQuad> getDiskModel(@NotNull BlockState state, @NotNull RandomSource rand, Direction side, Vector3f translation) {
-            List<BakedQuad> diskQuads = diskModel.getQuads(state, side, rand);
+            List<BakedQuad> diskQuads = diskModel.getQuads(state, side, rand, EmptyModelData.INSTANCE);
             return QuadTransformer.translate(diskQuads, translation);
         }
     }

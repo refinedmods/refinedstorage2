@@ -83,7 +83,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     public static void serverTick(Level level, BlockState state, DiskDriveBlockEntity blockEntity) {
-        InternalNetworkNodeContainerBlockEntity.serverTick(level, state, blockEntity);
+        InternalNetworkNodeContainerBlockEntity.serverTick(state, blockEntity);
         blockEntity.updateDiskStateIfNecessaryInLevel();
     }
 
