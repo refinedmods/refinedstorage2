@@ -32,7 +32,7 @@ public interface PlatformApi {
 
     MutableComponent createTranslation(String category, String value, Object... args);
 
-    OrderedRegistry<ResourceLocation, ResourceType<?>> getResourceTypeRegistry();
+    OrderedRegistry<ResourceLocation, ResourceType> getResourceTypeRegistry();
 
     ComponentMapFactory<NetworkComponent, Network> getNetworkComponentMapFactory();
 

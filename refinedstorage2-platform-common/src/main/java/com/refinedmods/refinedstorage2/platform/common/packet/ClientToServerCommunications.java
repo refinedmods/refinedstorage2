@@ -20,7 +20,7 @@ public interface ClientToServerCommunications {
 
     void sendPropertyChange(int id, int value);
 
-    void sendResourceTypeChange(ResourceType<?> type);
+    void sendResourceTypeChange(ResourceType type);
 
     void sendStorageInfoRequest(UUID storageId);
 }

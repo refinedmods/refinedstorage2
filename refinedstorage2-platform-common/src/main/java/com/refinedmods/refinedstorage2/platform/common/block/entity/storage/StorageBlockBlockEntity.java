@@ -43,7 +43,7 @@ public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeCont
     private UUID storageId;
     private boolean exactMode;
 
-    protected StorageBlockBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, StorageNetworkNode<T> node, ResourceType<T> resourceType) {
+    protected StorageBlockBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, StorageNetworkNode<T> node, ResourceType resourceType) {
         super(type, pos, state, node);
         node.setNormalizer(this::normalize);
         this.resourceFilterContainer = new FilteredResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, this::resourceFilterContainerChanged, resourceType);

@@ -45,7 +45,7 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendResourceTypeChange(ResourceType<?> type) {
+    public void sendResourceTypeChange(ResourceType type) {
         PlatformApi.INSTANCE.getResourceTypeRegistry().getId(type).ifPresent(id -> networkManager.send(new ResourceTypeChangePacket(id)));
     }
 

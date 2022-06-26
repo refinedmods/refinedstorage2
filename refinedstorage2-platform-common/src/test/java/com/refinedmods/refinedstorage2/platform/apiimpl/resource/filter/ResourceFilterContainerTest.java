@@ -4,8 +4,10 @@ import com.refinedmods.refinedstorage2.platform.PlatformTestFixtures;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.FluidResourceType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.ItemResourceType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.fluid.FluidFilteredResource;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.fluid.FluidResourceType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.item.ItemFilteredResource;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.item.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 import com.refinedmods.refinedstorage2.test.SimpleListener;
@@ -36,12 +38,9 @@ class ResourceFilterContainerTest {
     void Test_initial_state() {
         // Assert
         assertThat(listener.isChanged()).isFalse();
-        assertThat(sut.getType(0)).isNull();
-        assertThat(sut.getType(1)).isNull();
-        assertThat(sut.getType(2)).isNull();
-        assertThat(sut.getFilter(0)).isNull();
-        assertThat(sut.getFilter(1)).isNull();
-        assertThat(sut.getFilter(2)).isNull();
+        assertThat(sut.get(0)).isNull();
+        assertThat(sut.get(1)).isNull();
+        assertThat(sut.get(2)).isNull();
         assertThat(sut.size()).isEqualTo(3);
         assertThat(sut.getTemplates()).isEmpty();
         assertThat(sut.determineDefaultType()).isEqualTo(PlatformTestFixtures.RESOURCE_TYPE_REGISTRY.getDefault());
@@ -53,16 +52,13 @@ class ResourceFilterContainerTest {
         ItemResource value = new ItemResource(Items.DIRT, null);
 
         // Act
-        sut.set(1, ItemResourceType.INSTANCE, value);
+        sut.set(1, new ItemFilteredResource(value));
 
         // Assert
         assertThat(listener.isChanged()).isTrue();
-        assertThat(sut.getType(0)).isNull();
-        assertThat(sut.getType(1)).isEqualTo(ItemResourceType.INSTANCE);
-        assertThat(sut.getType(2)).isNull();
-        assertThat(sut.getFilter(0)).isNull();
-        assertThat(sut.getFilter(1)).isEqualTo(value);
-        assertThat(sut.getFilter(2)).isNull();
+        assertThat(sut.get(0)).isNull();
+        assertThat(sut.get(1)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(value));
+        assertThat(sut.get(2)).isNull();
         assertThat(sut.size()).isEqualTo(3);
         assertThat(sut.getTemplates()).containsExactly(value);
         assertThat(sut.determineDefaultType()).isEqualTo(ItemResourceType.INSTANCE);
@@ -71,7 +67,7 @@ class ResourceFilterContainerTest {
     @Test
     void Test_removing_filter() {
         // Arrange
-        sut.set(1, ItemResourceType.INSTANCE, new ItemResource(Items.DIRT, null));
+        sut.set(1, new ItemFilteredResource(new ItemResource(Items.DIRT, null)));
         listener.reset();
 
         // Act
@@ -79,12 +75,9 @@ class ResourceFilterContainerTest {
 
         // Assert
         assertThat(listener.isChanged()).isTrue();
-        assertThat(sut.getType(0)).isNull();
-        assertThat(sut.getType(1)).isNull();
-        assertThat(sut.getType(2)).isNull();
-        assertThat(sut.getFilter(0)).isNull();
-        assertThat(sut.getFilter(1)).isNull();
-        assertThat(sut.getFilter(2)).isNull();
+        assertThat(sut.get(0)).isNull();
+        assertThat(sut.get(1)).isNull();
+        assertThat(sut.get(2)).isNull();
         assertThat(sut.size()).isEqualTo(3);
         assertThat(sut.getTemplates()).isEmpty();
         assertThat(sut.determineDefaultType()).isEqualTo(PlatformTestFixtures.RESOURCE_TYPE_REGISTRY.getDefault());
@@ -94,9 +87,9 @@ class ResourceFilterContainerTest {
     void Test_serializing_and_deserializing() {
         // Arrange
         ItemResource itemValue = new ItemResource(Items.DIRT, null);
-        sut.set(0, ItemResourceType.INSTANCE, itemValue);
+        sut.set(0, new ItemFilteredResource(itemValue));
         FluidResource fluidValue = new FluidResource(Fluids.LAVA, null);
-        sut.set(2, FluidResourceType.INSTANCE, fluidValue);
+        sut.set(2, new FluidFilteredResource(fluidValue));
         listener.reset();
 
         // Act
@@ -106,12 +99,9 @@ class ResourceFilterContainerTest {
 
         // Assert
         assertThat(listener.isChanged()).isFalse();
-        assertThat(deserialized.getType(0)).isEqualTo(ItemResourceType.INSTANCE);
-        assertThat(deserialized.getType(1)).isNull();
-        assertThat(deserialized.getType(2)).isEqualTo(FluidResourceType.INSTANCE);
-        assertThat(deserialized.getFilter(0)).isEqualTo(itemValue);
-        assertThat(deserialized.getFilter(1)).isNull();
-        assertThat(deserialized.getFilter(2)).isEqualTo(fluidValue);
+        assertThat(deserialized.get(0)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(itemValue));
+        assertThat(deserialized.get(1)).isNull();
+        assertThat(deserialized.get(2)).usingRecursiveComparison().isEqualTo(new FluidFilteredResource(fluidValue));
         assertThat(deserialized.size()).isEqualTo(3);
         assertThat(deserialized.getTemplates()).containsExactlyInAnyOrder(itemValue, fluidValue);
         assertThat(deserialized.determineDefaultType()).isEqualTo(ItemResourceType.INSTANCE);
@@ -121,9 +111,9 @@ class ResourceFilterContainerTest {
     void Test_serializing_and_deserializing_with_invalid_type() {
         // Arrange
         ItemResource itemValue = new ItemResource(Items.DIRT, null);
-        sut.set(0, ItemResourceType.INSTANCE, itemValue);
+        sut.set(0, new ItemFilteredResource(itemValue));
         FluidResource fluidValue = new FluidResource(Fluids.LAVA, null);
-        sut.set(2, FluidResourceType.INSTANCE, fluidValue);
+        sut.set(2, new FluidFilteredResource(fluidValue));
         listener.reset();
 
         // Act
@@ -134,12 +124,9 @@ class ResourceFilterContainerTest {
 
         // Assert
         assertThat(listener.isChanged()).isFalse();
-        assertThat(deserialized.getType(0)).isNull();
-        assertThat(deserialized.getType(1)).isNull();
-        assertThat(deserialized.getType(2)).isEqualTo(FluidResourceType.INSTANCE);
-        assertThat(deserialized.getFilter(0)).isNull();
-        assertThat(deserialized.getFilter(1)).isNull();
-        assertThat(deserialized.getFilter(2)).isEqualTo(fluidValue);
+        assertThat(deserialized.get(0)).isNull();
+        assertThat(deserialized.get(1)).isNull();
+        assertThat(deserialized.get(2)).usingRecursiveComparison().isEqualTo(new FluidFilteredResource(fluidValue));
         assertThat(deserialized.size()).isEqualTo(3);
         assertThat(deserialized.getTemplates()).containsExactlyInAnyOrder(fluidValue);
         assertThat(deserialized.determineDefaultType()).isEqualTo(FluidResourceType.INSTANCE);
@@ -148,10 +135,10 @@ class ResourceFilterContainerTest {
     @Test
     void Test_determining_default_type_when_unique_item() {
         // Arrange
-        sut.set(0, ItemResourceType.INSTANCE, new ItemResource(Items.DIRT, null));
+        sut.set(0, new ItemFilteredResource(new ItemResource(Items.DIRT, null)));
 
         // Act
-        ResourceType<?> defaultType = sut.determineDefaultType();
+        ResourceType defaultType = sut.determineDefaultType();
 
         // Assert
         assertThat(defaultType).isEqualTo(ItemResourceType.INSTANCE);
@@ -160,10 +147,10 @@ class ResourceFilterContainerTest {
     @Test
     void Test_determining_default_type_when_unique_fluid() {
         // Arrange
-        sut.set(0, FluidResourceType.INSTANCE, new FluidResource(Fluids.LAVA, null));
+        sut.set(0, new FluidFilteredResource(new FluidResource(Fluids.LAVA, null)));
 
         // Act
-        ResourceType<?> defaultType = sut.determineDefaultType();
+        ResourceType defaultType = sut.determineDefaultType();
 
         // Assert
         assertThat(defaultType).isEqualTo(FluidResourceType.INSTANCE);
@@ -172,11 +159,11 @@ class ResourceFilterContainerTest {
     @Test
     void Test_determining_default_type_when_mixed_resources() {
         // Arrange
-        sut.set(0, FluidResourceType.INSTANCE, new FluidResource(Fluids.LAVA, null));
-        sut.set(1, ItemResourceType.INSTANCE, new ItemResource(Items.DIRT, null));
+        sut.set(0, new ItemFilteredResource(new ItemResource(Items.DIRT, null)));
+        sut.set(1, new FluidFilteredResource(new FluidResource(Fluids.LAVA, null)));
 
         // Act
-        ResourceType<?> defaultType = sut.determineDefaultType();
+        ResourceType defaultType = sut.determineDefaultType();
 
         // Assert
         assertThat(defaultType).isEqualTo(ItemResourceType.INSTANCE);
@@ -186,9 +173,9 @@ class ResourceFilterContainerTest {
     void Test_network_serializing_and_deserializing() {
         // Arrange
         ItemResource itemValue = new ItemResource(Items.DIRT, null);
-        sut.set(0, ItemResourceType.INSTANCE, itemValue);
+        sut.set(0, new ItemFilteredResource(itemValue));
         FluidResource fluidValue = new FluidResource(Fluids.LAVA, null);
-        sut.set(2, FluidResourceType.INSTANCE, fluidValue);
+        sut.set(2, new FluidFilteredResource(fluidValue));
         listener.reset();
 
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
@@ -205,12 +192,9 @@ class ResourceFilterContainerTest {
 
         // Assert
         assertThat(listener.isChanged()).isFalse();
-        assertThat(deserialized.getType(0)).isEqualTo(ItemResourceType.INSTANCE);
-        assertThat(deserialized.getType(1)).isNull();
-        assertThat(deserialized.getType(2)).isEqualTo(FluidResourceType.INSTANCE);
-        assertThat(deserialized.getFilter(0)).isEqualTo(itemValue);
-        assertThat(deserialized.getFilter(1)).isNull();
-        assertThat(deserialized.getFilter(2)).isEqualTo(fluidValue);
+        assertThat(deserialized.get(0)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(itemValue));
+        assertThat(deserialized.get(1)).isNull();
+        assertThat(deserialized.get(2)).usingRecursiveComparison().isEqualTo(new FluidFilteredResource(fluidValue));
         assertThat(deserialized.size()).isEqualTo(3);
         assertThat(deserialized.getTemplates()).containsExactlyInAnyOrder(itemValue, fluidValue);
         assertThat(deserialized.determineDefaultType()).isEqualTo(ItemResourceType.INSTANCE);
@@ -220,9 +204,10 @@ class ResourceFilterContainerTest {
     void Test_network_serializing_and_deserializing_with_invalid_type() {
         // Arrange
         ItemResource itemValue = new ItemResource(Items.DIRT, null);
-        sut.set(0, ItemResourceType.INSTANCE, itemValue);
+        sut.set(0, new ItemFilteredResource(itemValue));
         FluidResource fluidValue = new FluidResource(Fluids.LAVA, null);
-        sut.set(2, FluidResourceType.INSTANCE, fluidValue);
+        FluidFilteredResource fluidFilteredResource = new FluidFilteredResource(fluidValue);
+        sut.set(2, fluidFilteredResource);
         listener.reset();
 
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
@@ -233,7 +218,7 @@ class ResourceFilterContainerTest {
 
         buf.writeBoolean(true);
         buf.writeUtf("invalid");
-        FluidResourceType.INSTANCE.writeToPacket(buf, fluidValue);
+        fluidFilteredResource.writeToPacket(buf);
 
         ResourceFilterContainer deserialized = new ResourceFilterContainer(PlatformTestFixtures.RESOURCE_TYPE_REGISTRY, 3, listener);
         deserialized.readFromUpdatePacket(0, buf);
@@ -242,12 +227,9 @@ class ResourceFilterContainerTest {
 
         // Assert
         assertThat(listener.isChanged()).isFalse();
-        assertThat(deserialized.getType(0)).isEqualTo(ItemResourceType.INSTANCE);
-        assertThat(deserialized.getType(1)).isNull();
-        assertThat(deserialized.getType(2)).isNull();
-        assertThat(deserialized.getFilter(0)).isEqualTo(itemValue);
-        assertThat(deserialized.getFilter(1)).isNull();
-        assertThat(deserialized.getFilter(2)).isNull();
+        assertThat(deserialized.get(0)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(itemValue));
+        assertThat(deserialized.get(1)).isNull();
+        assertThat(deserialized.get(2)).isNull();
         assertThat(deserialized.size()).isEqualTo(3);
         assertThat(deserialized.getTemplates()).containsExactlyInAnyOrder(itemValue);
         assertThat(deserialized.determineDefaultType()).isEqualTo(ItemResourceType.INSTANCE);

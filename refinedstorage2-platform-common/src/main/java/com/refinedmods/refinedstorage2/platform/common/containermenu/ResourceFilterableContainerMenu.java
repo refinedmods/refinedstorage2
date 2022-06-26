@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
@@ -22,7 +23,7 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
     private final List<ResourceFilterSlot> resourceFilterSlots = new ArrayList<>();
     private final Player player;
 
-    private ResourceType<?> currentResourceType;
+    private ResourceType currentResourceType;
 
     protected ResourceFilterableContainerMenu(MenuType<?> type, int syncId, Player player, ResourceFilterContainer container) {
         super(type, syncId);
@@ -36,7 +37,7 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
     }
 
     protected void initializeResourceFilterSlots(FriendlyByteBuf buf) {
-        OrderedRegistry<ResourceLocation, ResourceType<?>> resourceTypeRegistry = PlatformApi.INSTANCE.getResourceTypeRegistry();
+        OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry = PlatformApi.INSTANCE.getResourceTypeRegistry();
         ResourceLocation type = buf.readResourceLocation();
         this.currentResourceType = resourceTypeRegistry.get(type).orElse(resourceTypeRegistry.getDefault());
         for (ResourceFilterSlot resourceFilterSlot : resourceFilterSlots) {
@@ -87,12 +88,12 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
     }
 
     @Override
-    public ResourceType<?> getCurrentResourceType() {
-        return currentResourceType;
+    public Component getCurrentResourceTypeName() {
+        return currentResourceType.getName();
     }
 
     public void setCurrentResourceType(ResourceLocation id) {
-        OrderedRegistry<ResourceLocation, ResourceType<?>> resourceTypeRegistry = PlatformApi.INSTANCE.getResourceTypeRegistry();
+        OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry = PlatformApi.INSTANCE.getResourceTypeRegistry();
         this.currentResourceType = resourceTypeRegistry.get(id).orElse(resourceTypeRegistry.getDefault());
     }
 

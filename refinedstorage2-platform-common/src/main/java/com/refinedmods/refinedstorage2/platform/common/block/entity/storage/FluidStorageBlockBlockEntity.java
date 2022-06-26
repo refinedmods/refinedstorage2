@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorag
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.FluidResourceType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.fluid.FluidResourceType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageChannelTypes;

@@ -58,7 +58,7 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, ResourceType<?>> getResourceTypeRegistry() {
+    public OrderedRegistry<ResourceLocation, ResourceType> getResourceTypeRegistry() {
         return ensureLoaded().getResourceTypeRegistry();
     }
 
