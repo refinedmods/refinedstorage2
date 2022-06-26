@@ -1,13 +1,12 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
-import com.google.common.base.Preconditions;
-
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
-import org.apiguardian.api.API;
-
 import java.util.Collection;
+
+import com.google.common.base.Preconditions;
+import org.apiguardian.api.API;
 
 /**
  * This is a utility class to easily decorate a {@link Storage}.
@@ -21,18 +20,18 @@ public abstract class ProxyStorage<T> implements Storage<T> {
     /**
      * @param delegate the storage to delegate operations to, may not be null
      */
-    protected ProxyStorage(Storage<T> delegate) {
+    protected ProxyStorage(final Storage<T> delegate) {
         Preconditions.checkNotNull(delegate);
         this.delegate = delegate;
     }
 
     @Override
-    public long extract(T resource, long amount, Action action, Source source) {
+    public long extract(final T resource, final long amount, final Action action, final Source source) {
         return delegate.extract(resource, amount, action, source);
     }
 
     @Override
-    public long insert(T resource, long amount, Action action, Source source) {
+    public long insert(final T resource, final long amount, final Action action, final Source source) {
         return delegate.insert(resource, amount, action, source);
     }
 

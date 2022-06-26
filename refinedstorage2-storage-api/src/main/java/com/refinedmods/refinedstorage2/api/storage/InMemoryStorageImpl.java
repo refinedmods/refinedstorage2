@@ -20,7 +20,7 @@ public class InMemoryStorageImpl<T> implements Storage<T> {
     private long stored;
 
     @Override
-    public long extract(T resource, long amount, Action action, Source source) {
+    public long extract(final T resource, final long amount, final Action action, final Source source) {
         ResourceAmount.validate(resource, amount);
 
         return list.get(resource).map(resourceAmount -> {
@@ -32,7 +32,7 @@ public class InMemoryStorageImpl<T> implements Storage<T> {
         }).orElse(0L);
     }
 
-    private long extractPartly(T resource, long amount, Action action) {
+    private long extractPartly(final T resource, final long amount, final Action action) {
         if (action == Action.EXECUTE) {
             list.remove(resource, amount);
             stored -= amount;
@@ -41,7 +41,7 @@ public class InMemoryStorageImpl<T> implements Storage<T> {
         return amount;
     }
 
-    private long extractCompletely(ResourceAmount<T> resourceAmount, Action action) {
+    private long extractCompletely(final ResourceAmount<T> resourceAmount, final Action action) {
         if (action == Action.EXECUTE) {
             list.remove(resourceAmount.getResource(), resourceAmount.getAmount());
             stored -= resourceAmount.getAmount();
@@ -51,7 +51,7 @@ public class InMemoryStorageImpl<T> implements Storage<T> {
     }
 
     @Override
-    public long insert(T resource, long amount, Action action, Source source) {
+    public long insert(final T resource, final long amount, final Action action, final Source source) {
         ResourceAmount.validate(resource, amount);
         insertCompletely(resource, amount, action);
         return amount;
@@ -62,7 +62,7 @@ public class InMemoryStorageImpl<T> implements Storage<T> {
         return list.getAll();
     }
 
-    private void insertCompletely(T template, long amount, Action action) {
+    private void insertCompletely(final T template, final long amount, final Action action) {
         if (action == Action.EXECUTE) {
             stored += amount;
             list.add(template, amount);

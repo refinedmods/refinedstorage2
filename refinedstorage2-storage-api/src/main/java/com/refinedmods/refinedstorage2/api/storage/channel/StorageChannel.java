@@ -47,12 +47,12 @@ public interface StorageChannel<T> extends Storage<T>, TrackedStorage<T> {
      *
      * @param source the source
      */
-    void addSource(Storage<?> source);
+    void addSource(Storage<T> source);
 
     /**
      * Removes a source from the channel.
      *
      * @param source the source
      */
-    void removeSource(Storage<?> source);
+    void removeSource(Storage<T> source);
 }

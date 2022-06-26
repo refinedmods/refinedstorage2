@@ -27,37 +27,37 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
     }
 
     @Override
-    public void addSource(Storage<?> source) {
-        storage.addSource((Storage<T>) source);
+    public void addSource(final Storage<T> source) {
+        storage.addSource(source);
     }
 
     @Override
-    public void removeSource(Storage<?> source) {
-        storage.removeSource((Storage<T>) source);
+    public void removeSource(final Storage<T> source) {
+        storage.removeSource(source);
     }
 
     @Override
-    public void addListener(ResourceListListener<T> listener) {
+    public void addListener(final ResourceListListener<T> listener) {
         list.addListener(listener);
     }
 
     @Override
-    public void removeListener(ResourceListListener<T> listener) {
+    public void removeListener(final ResourceListListener<T> listener) {
         list.removeListener(listener);
     }
 
     @Override
-    public Optional<ResourceAmount<T>> get(T resource) {
+    public Optional<ResourceAmount<T>> get(final T resource) {
         return list.get(resource);
     }
 
     @Override
-    public long extract(T resource, long amount, Action action, Source source) {
+    public long extract(final T resource, final long amount, final Action action, final Source source) {
         return storage.extract(resource, amount, action, source);
     }
 
     @Override
-    public long insert(T resource, long amount, Action action, Source source) {
+    public long insert(final T resource, final long amount, final Action action, final Source source) {
         return storage.insert(resource, amount, action, source);
     }
 
@@ -72,7 +72,7 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
+    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource, final Class<? extends Source> sourceType) {
         return storage.findTrackedResourceBySourceType(resource, sourceType);
     }
 }
