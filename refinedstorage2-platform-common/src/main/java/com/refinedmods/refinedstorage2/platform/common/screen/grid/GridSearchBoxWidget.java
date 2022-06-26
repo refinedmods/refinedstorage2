@@ -16,21 +16,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 
-public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
-    private final GridView<?> view;
-    private final GridQueryParser queryParser;
+public class GridSearchBoxWidget<T> extends SearchFieldWidget implements GridSearchBox {
+    private final GridView<T> view;
+    private final GridQueryParser<T> queryParser;
     private final Set<Consumer<String>> listeners = new HashSet<>();
 
     private boolean valid = true;
 
-    public GridSearchBoxWidget(Font textRenderer, int x, int y, int width, SyntaxHighlighter syntaxHighlighter, GridView<?> view, GridQueryParser queryParser, List<String> history) {
+    public GridSearchBoxWidget(Font textRenderer, int x, int y, int width, SyntaxHighlighter syntaxHighlighter, GridView<T> view, GridQueryParser<T> queryParser, List<String> history) {
         super(textRenderer, x, y, width, new History(history));
 
         setFormatter((text, firstCharacterIndex) -> {
@@ -85,11 +84,10 @@ public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearch
         setCanLoseFocus(!autoSelected);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     private boolean onTextChanged(String text) {
         boolean success = true;
         try {
-            view.setFilter((Predicate) queryParser.parse(text));
+            view.setFilter(queryParser.parse(text));
         } catch (GridQueryParserException e) {
             view.setFilter(resource -> false);
             success = false;
