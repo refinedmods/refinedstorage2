@@ -62,7 +62,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
 
     private ScrollbarWidget scrollbar;
-    private GridSearchBoxWidget searchField;
+    private GridSearchBoxWidget<R> searchField;
     private int totalRows;
     private int visibleRows;
     private int gridSlotNumber;
@@ -91,14 +91,14 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         super.init();
 
         if (searchField == null) {
-            searchField = new GridSearchBoxWidget(
+            searchField = new GridSearchBoxWidget<>(
                     font,
                     leftPos + 80 + 1,
                     topPos + 6 + 1,
                     88 - 6,
                     new SyntaxHighlighter(SyntaxHighlighterColors.DEFAULT_COLORS),
                     menu.getView(),
-                    new GridQueryParserImpl(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS, GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING),
+                    new GridQueryParserImpl<>(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS, GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING),
                     SEARCH_FIELD_HISTORY
             );
         } else {

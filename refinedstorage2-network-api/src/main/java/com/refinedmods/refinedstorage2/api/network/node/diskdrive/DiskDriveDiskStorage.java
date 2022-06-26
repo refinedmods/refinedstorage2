@@ -32,7 +32,7 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     }
 
     public StorageDiskState getState() {
-        if (delegate instanceof LimitedStorage limitedStorage) {
+        if (delegate instanceof LimitedStorage<?> limitedStorage) {
             return getStateWithCapacity(limitedStorage.getCapacity());
         }
         return StorageDiskState.NORMAL;
