@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.api.storage.composite;
 
+import com.refinedmods.refinedstorage2.api.storage.Storage;
+
 import org.apiguardian.api.API;
 
 /**
@@ -10,7 +12,7 @@ import org.apiguardian.api.API;
  * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
-public interface CompositeAwareChild<T> {
+public interface CompositeAwareChild<T> extends Storage<T> {
     /**
      * Called by a {@link CompositeStorage} when this {@link CompositeAwareChild} is added into the composite storage.
      *
