@@ -26,7 +26,7 @@ public class Filter {
     }
 
     public boolean isAllowed(final Object template) {
-        Object normalized = normalizer.apply(template);
+        final Object normalized = normalizer.apply(template);
         return switch (mode) {
             case ALLOW -> templates.contains(normalized);
             case BLOCK -> !templates.contains(normalized);

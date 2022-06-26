@@ -20,7 +20,7 @@ public abstract class GridResource<T> {
     private final Map<GridResourceAttributeKey, Set<String>> attributes;
     private boolean zeroed;
 
-    protected GridResource(ResourceAmount<T> resourceAmount, String name, Map<GridResourceAttributeKey, Set<String>> attributes) {
+    protected GridResource(final ResourceAmount<T> resourceAmount, final String name, final Map<GridResourceAttributeKey, Set<String>> attributes) {
         this.resourceAmount = resourceAmount;
         this.name = name;
         this.attributes = attributes;
@@ -36,7 +36,7 @@ public abstract class GridResource<T> {
         return name;
     }
 
-    public Set<String> getAttribute(GridResourceAttributeKey key) {
+    public Set<String> getAttribute(final GridResourceAttributeKey key) {
         return attributes.getOrDefault(key, Collections.emptySet());
     }
 
@@ -44,7 +44,7 @@ public abstract class GridResource<T> {
         return zeroed;
     }
 
-    public void setZeroed(boolean zeroed) {
+    public void setZeroed(final boolean zeroed) {
         this.zeroed = zeroed;
     }
 }

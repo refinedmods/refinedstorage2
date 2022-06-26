@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.grid.view;
 
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -22,9 +23,9 @@ public interface GridView<T> {
     /**
      * Sets a listener that is called when the grid view changes.
      *
-     * @param listener the listener
+     * @param listener the listener, can be null
      */
-    void setListener(Runnable listener);
+    void setListener(@Nullable Runnable listener);
 
     /**
      * Changing the sorting type still requires a call to {@link #sort()}.
@@ -70,7 +71,7 @@ public interface GridView<T> {
      * @param amount          the amount
      * @param trackedResource the tracked resource, can be null
      */
-    void loadResource(T resource, long amount, TrackedResource trackedResource);
+    void loadResource(T resource, long amount, @Nullable TrackedResource trackedResource);
 
     /**
      * @param resource the resource
@@ -92,7 +93,7 @@ public interface GridView<T> {
      * @param amount          the amount, can be negative or positive
      * @param trackedResource the tracked resource, can be null
      */
-    void onChange(T resource, long amount, TrackedResource trackedResource);
+    void onChange(T resource, long amount, @Nullable TrackedResource trackedResource);
 
     /**
      * @return the view list

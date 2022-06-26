@@ -21,7 +21,7 @@ public record LastModified(Type type, long amount) {
     }
 
     public static LastModified calculate(final long time, final long now) {
-        long diff = now - time;
+        final long diff = now - time;
 
         if (diff < MINUTE) {
             return new LastModified(Type.SECOND, diff / SECOND);

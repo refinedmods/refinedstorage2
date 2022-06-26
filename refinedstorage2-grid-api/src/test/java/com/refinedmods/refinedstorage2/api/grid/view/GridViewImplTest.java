@@ -30,50 +30,6 @@ class GridViewImplTest {
         view.setSortingType(GridSortingType.QUANTITY);
     }
 
-    @Test
-    void Test_sorting_ascending_with_identity_sort() {
-        // Arrange
-        view.setSortingType(null);
-        view.setSortingDirection(GridSortingDirection.ASCENDING);
-
-        view.loadResource("A", 10, null);
-        view.loadResource("A", 5, null);
-        view.loadResource("C", 1, null);
-        view.loadResource("B", 2, null);
-
-        // Act
-        view.sort();
-
-        // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("A", 15),
-                new FakeGridResource("B", 2),
-                new FakeGridResource("C", 1)
-        );
-    }
-
-    @Test
-    void Test_sorting_descending_with_identity_sorting() {
-        // Arrange
-        view.setSortingType(null);
-        view.setSortingDirection(GridSortingDirection.DESCENDING);
-
-        view.loadResource("A", 10, null);
-        view.loadResource("A", 5, null);
-        view.loadResource("B", 1, null);
-        view.loadResource("C", 2, null);
-
-        // Act
-        view.sort();
-
-        // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("C", 2),
-                new FakeGridResource("B", 1),
-                new FakeGridResource("A", 15)
-        );
-    }
-
     @RepeatedTest(100)
     void Test_sorting_when_both_resources_match_should_preserve_order() {
         // Arrange
