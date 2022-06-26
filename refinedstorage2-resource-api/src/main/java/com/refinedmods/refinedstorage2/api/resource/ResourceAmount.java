@@ -14,7 +14,7 @@ public final class ResourceAmount<T> {
     private final T resource;
     private long amount;
 
-    public static <T> void validate(T resource, long amount) {
+    public static <T> void validate(final T resource, final long amount) {
         Preconditions.checkArgument(amount > 0, "Amount must be larger than 0");
         Preconditions.checkNotNull(resource, "Resource must not be null");
     }
@@ -23,7 +23,7 @@ public final class ResourceAmount<T> {
      * @param resource the resource, must be non-null
      * @param amount   the amount, must be larger than 0
      */
-    public ResourceAmount(T resource, long amount) {
+    public ResourceAmount(final T resource, final long amount) {
         validate(resource, amount);
         this.resource = resource;
         this.amount = amount;
@@ -42,7 +42,7 @@ public final class ResourceAmount<T> {
      *
      * @param amount the amount to increment, must be larger than 0
      */
-    public void increment(long amount) {
+    public void increment(final long amount) {
         Preconditions.checkArgument(amount > 0, "Amount to increment must be larger than 0");
         this.amount += amount;
     }
@@ -53,7 +53,7 @@ public final class ResourceAmount<T> {
      *
      * @param amount the amount to decrement, a positive number
      */
-    public void decrement(long amount) {
+    public void decrement(final long amount) {
         Preconditions.checkArgument(amount > 0, "Amount to decrement must be larger than 0");
         Preconditions.checkArgument((this.amount - amount) > 0, "Cannot decrement more than " + (amount - 1));
         this.amount -= amount;
