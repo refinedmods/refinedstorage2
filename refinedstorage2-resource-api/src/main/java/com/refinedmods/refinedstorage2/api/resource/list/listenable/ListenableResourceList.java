@@ -28,7 +28,7 @@ public class ListenableResourceList<T> extends ProxyResourceList<T> {
 
     @Override
     public ResourceListOperationResult<T> add(final T resource, final long amount) {
-        ResourceListOperationResult<T> result = super.add(resource, amount);
+        final ResourceListOperationResult<T> result = super.add(resource, amount);
         listeners.forEach(listener -> listener.onChanged(result));
         return result;
     }

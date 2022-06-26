@@ -16,16 +16,16 @@ public class SyntaxHighlighterColors {
     private final Map<TokenType, String> colors = new EnumMap<>(TokenType.class);
     private final String defaultColor;
 
-    public SyntaxHighlighterColors(String defaultColor) {
+    public SyntaxHighlighterColors(final String defaultColor) {
         this.defaultColor = defaultColor;
     }
 
-    public SyntaxHighlighterColors setColor(TokenType type, String color) {
+    public SyntaxHighlighterColors setColor(final TokenType type, final String color) {
         colors.put(type, color);
         return this;
     }
 
-    public String getColor(TokenType type) {
+    public String getColor(final TokenType type) {
         return colors.getOrDefault(type, defaultColor);
     }
 

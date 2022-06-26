@@ -12,12 +12,12 @@ public class ParserOperatorMappings {
 
     private final Map<String, Operator> binaryOperatorPrecedenceMap = new HashMap<>();
 
-    public ParserOperatorMappings addBinaryOperator(String content, Operator operator) {
+    public ParserOperatorMappings addBinaryOperator(final String content, final Operator operator) {
         binaryOperatorPrecedenceMap.put(content, operator);
         return this;
     }
 
-    public Operator getOperator(Token token) {
+    public Operator getOperator(final Token token) {
         return binaryOperatorPrecedenceMap.get(token.content());
     }
 }

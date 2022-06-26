@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.query.lexer;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -32,6 +33,7 @@ public class LexerTokenMappings {
         return this;
     }
 
+    @Nullable
     public TokenType findMapping(LexerPosition position, Source source) {
         for (LexerTokenMapping mapping : mappings) {
             String content = mapping.value();
