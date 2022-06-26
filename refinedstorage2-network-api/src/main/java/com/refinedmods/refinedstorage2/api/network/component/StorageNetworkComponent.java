@@ -5,18 +5,20 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.1")
 public class StorageNetworkComponent implements NetworkComponent {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Map<StorageChannelType<?>, StorageChannel<?>> channels = new HashMap<>();
 
-    public StorageNetworkComponent(OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
+    public StorageNetworkComponent(final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
         for (StorageChannelType<?> type : storageChannelTypeRegistry.getAll()) {
             channels.put(type, type.create());
         }
@@ -24,15 +26,15 @@ public class StorageNetworkComponent implements NetworkComponent {
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public void onContainerAdded(NetworkNodeContainer container) {
+    public void onContainerAdded(final NetworkNodeContainer container) {
         if (container.getNode() instanceof StorageProvider provider) {
-            for (Map.Entry<StorageChannelType<?>, StorageChannel<?>> entry : channels.entrySet()) {
+            for (final Map.Entry<StorageChannelType<?>, StorageChannel<?>> entry : channels.entrySet()) {
                 tryAddStorageFromProviderToChannel(provider, (StorageChannelType) entry.getKey(), entry.getValue());
             }
         }
     }
 
-    private <T> void tryAddStorageFromProviderToChannel(StorageProvider provider, StorageChannelType<T> type, StorageChannel<T> channel) {
+    private <T> void tryAddStorageFromProviderToChannel(final StorageProvider provider, final StorageChannelType<T> type, final StorageChannel<T> channel) {
         provider.getStorageForChannel(type).ifPresent(storage -> {
             LOGGER.info("Adding source {} to channel {} from provider {}", storage, type, provider);
             channel.addSource(storage);
@@ -41,15 +43,15 @@ public class StorageNetworkComponent implements NetworkComponent {
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public void onContainerRemoved(NetworkNodeContainer container) {
+    public void onContainerRemoved(final NetworkNodeContainer container) {
         if (container.getNode() instanceof StorageProvider provider) {
-            for (Map.Entry<StorageChannelType<?>, StorageChannel<?>> entry : channels.entrySet()) {
+            for (final Map.Entry<StorageChannelType<?>, StorageChannel<?>> entry : channels.entrySet()) {
                 tryRemoveStorageFromProviderFromChannel(provider, (StorageChannelType) entry.getKey(), entry.getValue());
             }
         }
     }
 
-    private <T> void tryRemoveStorageFromProviderFromChannel(StorageProvider provider, StorageChannelType<T> type, StorageChannel<T> channel) {
+    private <T> void tryRemoveStorageFromProviderFromChannel(final StorageProvider provider, final StorageChannelType<T> type, final StorageChannel<T> channel) {
         provider.getStorageForChannel(type).ifPresent(storage -> {
             LOGGER.info("Removing source {} from channel {} of provider {}", storage, type, provider);
             channel.removeSource(storage);
@@ -57,7 +59,7 @@ public class StorageNetworkComponent implements NetworkComponent {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> StorageChannel<T> getStorageChannel(StorageChannelType<T> type) {
+    public <T> StorageChannel<T> getStorageChannel(final StorageChannelType<T> type) {
         return (StorageChannel<T>) channels.get(type);
     }
 }

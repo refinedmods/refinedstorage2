@@ -9,14 +9,16 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.1")
 public class GraphNetworkComponent implements NetworkComponent {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Network network;
     private final Set<NetworkNodeContainer> containers = new HashSet<>();
 
-    public GraphNetworkComponent(Network network) {
+    public GraphNetworkComponent(final Network network) {
         this.network = network;
     }
 
@@ -25,13 +27,13 @@ public class GraphNetworkComponent implements NetworkComponent {
     }
 
     @Override
-    public void onContainerAdded(NetworkNodeContainer container) {
+    public void onContainerAdded(final NetworkNodeContainer container) {
         LOGGER.info("Container {} added to network {}", container, network.hashCode());
         containers.add(container);
     }
 
     @Override
-    public void onContainerRemoved(NetworkNodeContainer container) {
+    public void onContainerRemoved(final NetworkNodeContainer container) {
         LOGGER.info("Container {} removed from network {}", container, network.hashCode());
         containers.remove(container);
     }
@@ -42,12 +44,12 @@ public class GraphNetworkComponent implements NetworkComponent {
     }
 
     @Override
-    public void onNetworkSplit(Set<Network> networks) {
+    public void onNetworkSplit(final Set<Network> networks) {
         LOGGER.info("Network {} has been split into {} other networks ({})", network.hashCode(), networks.size(), networks.stream().map(Network::hashCode).toList());
     }
 
     @Override
-    public void onNetworkMergedWith(Network network) {
+    public void onNetworkMergedWith(final Network network) {
         LOGGER.info("Network {} has merged with network {}", network.hashCode(), this.network.hashCode());
     }
 }

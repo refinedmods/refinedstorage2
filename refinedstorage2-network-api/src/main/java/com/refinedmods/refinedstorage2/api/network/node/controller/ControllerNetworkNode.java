@@ -4,15 +4,18 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
 
+import javax.annotation.Nullable;
+
 public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStorage {
+    @Nullable
     private EnergyStorage energyStorage;
 
-    public void setEnergyStorage(EnergyStorage energyStorage) {
+    public void setEnergyStorage(@Nullable EnergyStorage energyStorage) {
         this.energyStorage = energyStorage;
     }
 
     public ControllerEnergyState getState() {
-        if (!isActive()) {
+        if (!isActive() || energyStorage == null) {
             return ControllerEnergyState.OFF;
         }
         double pct = (double) energyStorage.getStored() / (double) energyStorage.getCapacity();
@@ -42,7 +45,7 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
     }
 
     public long getActualStored() {
-        return energyStorage.getStored();
+        return energyStorage == null ? 0L : energyStorage.getStored();
     }
 
     @Override
@@ -54,16 +57,22 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
     }
 
     public long getActualCapacity() {
-        return energyStorage.getCapacity();
+        return energyStorage == null ? 0L : energyStorage.getCapacity();
     }
 
     @Override
     public long receive(long amount, Action action) {
+        if (energyStorage == null) {
+            return 0L;
+        }
         return energyStorage.receive(amount, action);
     }
 
     @Override
     public long extract(long amount, Action action) {
+        if (energyStorage == null) {
+            return 0L;
+        }
         return energyStorage.extract(amount, action);
     }
 

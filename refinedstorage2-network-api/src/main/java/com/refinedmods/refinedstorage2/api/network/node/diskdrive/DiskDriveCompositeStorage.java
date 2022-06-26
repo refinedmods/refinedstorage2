@@ -22,14 +22,14 @@ class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, CompositeAwar
     private final DiskDriveNetworkNode diskDrive;
     private final Filter filter;
 
-    protected DiskDriveCompositeStorage(DiskDriveNetworkNode diskDrive, Filter filter) {
+    protected DiskDriveCompositeStorage(final DiskDriveNetworkNode diskDrive, final Filter filter) {
         this.disks = new CompositeStorageImpl<>(new ResourceListImpl<>());
         this.diskDrive = diskDrive;
         this.filter = filter;
     }
 
     @Override
-    public long extract(T resource, long amount, Action action, Source source) {
+    public long extract(final T resource, final long amount, final Action action, final Source source) {
         if (diskDrive.getAccessMode() == AccessMode.INSERT || !diskDrive.isActive()) {
             return 0;
         }
@@ -37,7 +37,7 @@ class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, CompositeAwar
     }
 
     @Override
-    public long insert(T resource, long amount, Action action, Source source) {
+    public long insert(final T resource, final long amount, final Action action, final Source source) {
         if (diskDrive.getAccessMode() == AccessMode.EXTRACT || !diskDrive.isActive() || !filter.isAllowed(resource)) {
             return 0;
         }
@@ -65,12 +65,12 @@ class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, CompositeAwar
     }
 
     @Override
-    public void addSource(Storage<T> source) {
+    public void addSource(final Storage<T> source) {
         disks.addSource(source);
     }
 
     @Override
-    public void removeSource(Storage<T> source) {
+    public void removeSource(final Storage<T> source) {
         disks.removeSource(source);
     }
 
@@ -80,17 +80,17 @@ class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, CompositeAwar
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
+    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource, final Class<? extends Source> sourceType) {
         return disks.findTrackedResourceBySourceType(resource, sourceType);
     }
 
     @Override
-    public void onAddedIntoComposite(ParentComposite<T> parentComposite) {
+    public void onAddedIntoComposite(final ParentComposite<T> parentComposite) {
         disks.onAddedIntoComposite(parentComposite);
     }
 
     @Override
-    public void onRemovedFromComposite(ParentComposite<T> parentComposite) {
+    public void onRemovedFromComposite(final ParentComposite<T> parentComposite) {
         disks.onRemovedFromComposite(parentComposite);
     }
 }

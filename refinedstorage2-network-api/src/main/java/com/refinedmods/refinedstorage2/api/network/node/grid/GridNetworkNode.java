@@ -18,18 +18,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class GridNetworkNode<T> extends NetworkNodeImpl {
-    private static final Logger LOGGER = LogManager.getLogger(GridNetworkNode.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final Set<GridWatcher> watchers = new HashSet<>();
     private final long energyUsage;
     private final StorageChannelType<T> type;
 
-    public GridNetworkNode(long energyUsage, StorageChannelType<T> type) {
+    public GridNetworkNode(final long energyUsage, final StorageChannelType<T> type) {
         this.energyUsage = energyUsage;
         this.type = type;
     }
 
     public StorageChannel<T> getStorageChannel() {
+        if (network == null) {
+            throw new IllegalStateException("Network must be present to retrieve storage channel");
+        }
         return network.getComponent(StorageNetworkComponent.class).getStorageChannel(type);
     }
 
@@ -37,8 +40,8 @@ public class GridNetworkNode<T> extends NetworkNodeImpl {
         return getStorageChannel().getAll().size();
     }
 
-    public void forEachResource(BiConsumer<ResourceAmount<T>, Optional<TrackedResource>> consumer, Class<? extends Source> sourceType) {
-        StorageChannel<T> storageChannel = getStorageChannel();
+    public void forEachResource(final BiConsumer<ResourceAmount<T>, Optional<TrackedResource>> consumer, final Class<? extends Source> sourceType) {
+        final StorageChannel<T> storageChannel = getStorageChannel();
         storageChannel.getAll().forEach(resourceAmount -> consumer.accept(
                 resourceAmount,
                 storageChannel.findTrackedResourceBySourceType(resourceAmount.getResource(), sourceType)
@@ -50,18 +53,18 @@ public class GridNetworkNode<T> extends NetworkNodeImpl {
         return energyUsage;
     }
 
-    public void addWatcher(GridWatcher watcher) {
+    public void addWatcher(final GridWatcher watcher) {
         watchers.add(watcher);
         LOGGER.info("Watcher was added, new count is {}", watchers.size());
     }
 
-    public void removeWatcher(GridWatcher watcher) {
+    public void removeWatcher(final GridWatcher watcher) {
         watchers.remove(watcher);
         LOGGER.info("Watcher was removed, new count is {}", watchers.size());
     }
 
     @Override
-    public void onActiveChanged(boolean active) {
+    public void onActiveChanged(final boolean active) {
         super.onActiveChanged(active);
         watchers.forEach(watcher -> watcher.onActiveChanged(active));
     }

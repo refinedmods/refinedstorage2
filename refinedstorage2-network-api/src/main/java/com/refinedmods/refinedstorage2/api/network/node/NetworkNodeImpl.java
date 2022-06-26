@@ -3,30 +3,37 @@ package com.refinedmods.refinedstorage2.api.network.node;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 
+import javax.annotation.Nullable;
 import java.util.function.BooleanSupplier;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public abstract class NetworkNodeImpl implements NetworkNode {
+    @Nullable
     protected Network network;
     private boolean active;
+    @Nullable
     protected BooleanSupplier activenessProvider;
 
-    public void setActivenessProvider(BooleanSupplier activenessProvider) {
+    public void setActivenessProvider(@Nullable final BooleanSupplier activenessProvider) {
         this.activenessProvider = activenessProvider;
     }
 
     @Override
+    @Nullable
     public Network getNetwork() {
         return network;
     }
 
     @Override
-    public void setNetwork(Network network) {
+    public void setNetwork(@Nullable final Network network) {
         this.network = network;
     }
 
     @Override
     public boolean isActive() {
-        if (activenessProvider != null && !activenessProvider.getAsBoolean()) {
+        if (network == null || (activenessProvider != null && !activenessProvider.getAsBoolean())) {
             return false;
         }
         long stored = network.getComponent(EnergyNetworkComponent.class).getStored();
@@ -40,7 +47,7 @@ public abstract class NetworkNodeImpl implements NetworkNode {
     }
 
     private void updateActiveness() {
-        boolean newActive = isActive();
+        final boolean newActive = isActive();
         if (active != newActive) {
             active = newActive;
             onActiveChanged(active);
@@ -48,7 +55,7 @@ public abstract class NetworkNodeImpl implements NetworkNode {
     }
 
     private void extractEnergy() {
-        if (!active) {
+        if (!active || network == null) {
             return;
         }
         network.getComponent(EnergyNetworkComponent.class).extract(getEnergyUsage());
