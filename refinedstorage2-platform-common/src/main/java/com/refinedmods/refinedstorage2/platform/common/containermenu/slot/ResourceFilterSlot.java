@@ -38,7 +38,7 @@ public class ResourceFilterSlot extends Slot {
         return new SimpleContainer(1);
     }
 
-    public <T> void change(ItemStack carried, ResourceType type) {
+    public void change(ItemStack carried, ResourceType type) {
         type.translate(carried).ifPresentOrElse(
                 resource -> resourceFilterContainer.set(containerIndex, resource),
                 () -> resourceFilterContainer.remove(containerIndex)
