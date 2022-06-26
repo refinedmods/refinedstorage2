@@ -5,14 +5,17 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class CompositeEnergyStorage implements EnergyStorage {
     private final List<EnergyStorage> sources = new ArrayList<>();
 
-    public void addSource(EnergyStorage source) {
+    public void addSource(final EnergyStorage source) {
         sources.add(source);
     }
 
-    public void removeSource(EnergyStorage source) {
+    public void removeSource(final EnergyStorage source) {
         sources.remove(source);
     }
 
@@ -41,7 +44,7 @@ public class CompositeEnergyStorage implements EnergyStorage {
     }
 
     @Override
-    public long receive(long amount, Action action) {
+    public long receive(final long amount, final Action action) {
         long inserted = 0;
         for (EnergyStorage source : sources) {
             inserted += source.receive(amount - inserted, action);
@@ -53,7 +56,7 @@ public class CompositeEnergyStorage implements EnergyStorage {
     }
 
     @Override
-    public long extract(long amount, Action action) {
+    public long extract(final long amount, final Action action) {
         long extracted = 0;
         for (EnergyStorage source : sources) {
             extracted += source.extract(amount - extracted, action);

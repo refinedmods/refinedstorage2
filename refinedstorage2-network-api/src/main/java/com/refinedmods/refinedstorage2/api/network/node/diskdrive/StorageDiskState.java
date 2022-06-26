@@ -9,7 +9,7 @@ public enum StorageDiskState {
 
     private final int color;
 
-    StorageDiskState(int color) {
+    StorageDiskState(final int color) {
         this.color = color;
     }
 

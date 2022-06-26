@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -17,10 +18,11 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
 
     private final Storage<T> delegate;
     private final StorageChannelType<T> storageChannelType;
+    @Nullable
     private final DiskDriveListener listener;
     private StorageDiskState state;
 
-    public DiskDriveDiskStorage(Storage<T> delegate, StorageChannelType<T> storageChannelType, DiskDriveListener listener) {
+    public DiskDriveDiskStorage(final Storage<T> delegate, final StorageChannelType<T> storageChannelType, @Nullable final DiskDriveListener listener) {
         this.delegate = delegate;
         this.storageChannelType = storageChannelType;
         this.listener = listener;
@@ -39,7 +41,7 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     }
 
     private StorageDiskState getStateWithCapacity(long capacity) {
-        double fullness = (double) delegate.getStored() / capacity;
+        final double fullness = (double) delegate.getStored() / capacity;
 
         if (fullness >= 1D) {
             return StorageDiskState.FULL;
@@ -51,16 +53,22 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     }
 
     private void checkStateChanged() {
-        StorageDiskState currentDiskState = getState();
+        final StorageDiskState currentDiskState = getState();
         if (state != currentDiskState) {
             this.state = currentDiskState;
-            this.listener.onDiskChanged();
+            notifyListener();
+        }
+    }
+
+    private void notifyListener() {
+        if (listener != null) {
+            listener.onDiskChanged();
         }
     }
 
     @Override
-    public long extract(T resource, long amount, Action action, Source source) {
-        long extracted = delegate.extract(resource, amount, action, source);
+    public long extract(final T resource, final long amount, final Action action, final Source source) {
+        final long extracted = delegate.extract(resource, amount, action, source);
         if (extracted > 0 && action == Action.EXECUTE) {
             checkStateChanged();
         }
@@ -68,8 +76,8 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     }
 
     @Override
-    public long insert(T resource, long amount, Action action, Source source) {
-        long inserted = delegate.insert(resource, amount, action, source);
+    public long insert(final T resource, final long amount, final Action action, final Source source) {
+        final long inserted = delegate.insert(resource, amount, action, source);
         if (inserted > 0 && action == Action.EXECUTE) {
             checkStateChanged();
         }
@@ -87,7 +95,7 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
+    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource, final Class<? extends Source> sourceType) {
         return delegate instanceof TrackedStorage<T> trackedStorage
                 ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType)
                 : Optional.empty();

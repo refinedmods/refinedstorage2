@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,8 +29,11 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
 
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
 
+    @Nullable
     private StorageRepository storageRepository;
+    @Nullable
     private StorageDiskProvider diskProvider;
+    @Nullable
     private DiskDriveListener listener;
 
     private final long energyUsage;
@@ -44,24 +48,24 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
     private int priority;
 
-    public DiskDriveNetworkNode(long energyUsage, long energyUsagePerDisk, OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
+    public DiskDriveNetworkNode(final long energyUsage, final long energyUsagePerDisk, final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
         this.energyUsage = energyUsage;
         this.energyUsagePerDisk = energyUsagePerDisk;
         this.compositeStorages = createCompositeStorages(storageChannelTypeRegistry);
     }
 
-    private Map<StorageChannelType<?>, DiskDriveCompositeStorage<?>> createCompositeStorages(OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
+    private Map<StorageChannelType<?>, DiskDriveCompositeStorage<?>> createCompositeStorages(final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
         return storageChannelTypeRegistry
                 .getAll()
                 .stream()
                 .collect(ImmutableMap.toImmutableMap(type -> type, this::createCompositeStorage));
     }
 
-    private DiskDriveCompositeStorage<?> createCompositeStorage(StorageChannelType<?> type) {
+    private DiskDriveCompositeStorage<?> createCompositeStorage(final StorageChannelType<?> type) {
         return new DiskDriveCompositeStorage<>(this, filter);
     }
 
-    public void initialize(StorageRepository storageRepository) {
+    public void initialize(final StorageRepository storageRepository) {
         this.storageRepository = storageRepository;
         for (int i = 0; i < DISK_COUNT; ++i) {
             initializeDiskInSlot(i);
@@ -69,7 +73,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
         updateDiskCount();
     }
 
-    public void onDiskChanged(int slot) {
+    public void onDiskChanged(final int slot) {
         if (slot < 0 || slot >= disks.length) {
             LOGGER.warn("Tried to change disk in invalid slot {}", slot);
             return;
@@ -78,28 +82,32 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
         updateDiskCount();
     }
 
-    private Set<DiskChange> initializeDiskInSlot(int slot) {
-        Set<DiskChange> results = new HashSet<>();
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private Set<DiskChange> initializeDiskInSlot(final int slot) {
+        final Set<DiskChange> results = new HashSet<>();
         if (disks[slot] != null) {
             results.add(new DiskChange(true, compositeStorages.get(disks[slot].getStorageChannelType()), disks[slot]));
         }
 
-        diskProvider.getStorageChannelType(slot).ifPresentOrElse(type -> {
-            disks[slot] = diskProvider
-                    .getDiskId(slot)
-                    .flatMap(storageRepository::get)
-                    .map(storage -> new DiskDriveDiskStorage(storage, type, listener))
-                    .orElse(null);
+        if (diskProvider != null && storageRepository != null) {
+            diskProvider.getStorageChannelType(slot).ifPresentOrElse(type -> {
+                disks[slot] = diskProvider
+                        .getDiskId(slot)
+                        .flatMap(storageRepository::get)
+                        .map(storage -> new DiskDriveDiskStorage(storage, type, listener))
+                        .orElse(null);
 
-            if (disks[slot] != null) {
-                results.add(new DiskChange(false, compositeStorages.get(disks[slot].getStorageChannelType()), disks[slot]));
-            }
-        }, () -> disks[slot] = null);
+                if (disks[slot] != null) {
+                    results.add(new DiskChange(false, compositeStorages.get(disks[slot].getStorageChannelType()), disks[slot]));
+                }
+            }, () -> disks[slot] = null);
+        }
 
         return results;
     }
 
-    private void processDiskChange(DiskChange change) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private void processDiskChange(final DiskChange change) {
         if (!isActive()) {
             return;
         }
@@ -120,7 +128,7 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
     }
 
     @Override
-    public void onActiveChanged(boolean active) {
+    public void onActiveChanged(final boolean active) {
         super.onActiveChanged(active);
         if (network == null) {
             return;
@@ -141,9 +149,10 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
         compositeStorages.forEach(this::enableAllDisksForChannel);
     }
 
-    private void enableAllDisksForChannel(StorageChannelType<?> type, DiskDriveCompositeStorage<?> composite) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private void enableAllDisksForChannel(final StorageChannelType<?> type, final DiskDriveCompositeStorage<?> composite) {
         for (int i = 0; i < DISK_COUNT; ++i) {
-            DiskDriveDiskStorage<?> disk = disks[i];
+            final DiskDriveDiskStorage<?> disk = disks[i];
             if (disk != null && disk.getStorageChannelType() == type) {
                 composite.addSource((DiskDriveDiskStorage) disk);
             }
@@ -154,23 +163,23 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
         return filter.getMode();
     }
 
-    public void setFilterMode(FilterMode mode) {
+    public void setFilterMode(final FilterMode mode) {
         filter.setMode(mode);
     }
 
-    public void setFilterTemplates(Set<Object> templates) {
+    public void setFilterTemplates(final Set<Object> templates) {
         filter.setTemplates(templates);
     }
 
-    public void setNormalizer(UnaryOperator<Object> normalizer) {
+    public void setNormalizer(final UnaryOperator<Object> normalizer) {
         filter.setNormalizer(normalizer);
     }
 
-    public void setDiskProvider(StorageDiskProvider diskProvider) {
+    public void setDiskProvider(final StorageDiskProvider diskProvider) {
         this.diskProvider = diskProvider;
     }
 
-    public void setListener(DiskDriveListener listener) {
+    public void setListener(final DiskDriveListener listener) {
         this.listener = listener;
     }
 
@@ -180,14 +189,14 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
     }
 
     public DiskDriveState createState() {
-        DiskDriveState states = new DiskDriveState(DISK_COUNT);
+        final DiskDriveState states = new DiskDriveState(DISK_COUNT);
         for (int i = 0; i < DISK_COUNT; ++i) {
             states.setState(i, getState(disks[i]));
         }
         return states;
     }
 
-    private StorageDiskState getState(DiskDriveDiskStorage<?> disk) {
+    private StorageDiskState getState(@Nullable final DiskDriveDiskStorage<?> disk) {
         if (disk == null) {
             return StorageDiskState.NONE;
         } else if (!isActive()) {
@@ -200,11 +209,11 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
         return accessMode;
     }
 
-    public void setAccessMode(AccessMode accessMode) {
+    public void setAccessMode(final AccessMode accessMode) {
         this.accessMode = accessMode;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(final int priority) {
         this.priority = priority;
         if (network != null) {
             compositeStorages.keySet().forEach(type -> network.getComponent(StorageNetworkComponent.class).getStorageChannel(type).sortSources());
@@ -216,8 +225,9 @@ public class DiskDriveNetworkNode extends NetworkNodeImpl implements StorageProv
     }
 
     @Override
-    public <T> Optional<Storage<T>> getStorageForChannel(StorageChannelType<T> channelType) {
-        DiskDriveCompositeStorage<?> storage = compositeStorages.get(channelType);
+    @SuppressWarnings("unchecked")
+    public <T> Optional<Storage<T>> getStorageForChannel(final StorageChannelType<T> channelType) {
+        final DiskDriveCompositeStorage<?> storage = compositeStorages.get(channelType);
         if (storage != null) {
             return Optional.of((Storage<T>) storage);
         }

@@ -17,12 +17,12 @@ public class InfiniteEnergyStorage implements EnergyStorage {
     }
 
     @Override
-    public long receive(long amount, Action action) {
+    public long receive(final long amount, final Action action) {
         return 0;
     }
 
     @Override
-    public long extract(long amount, Action action) {
+    public long extract(final long amount, final Action action) {
         return amount;
     }
 }

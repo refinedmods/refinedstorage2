@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -23,14 +24,15 @@ import com.google.common.base.Preconditions;
 class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwareChild<T> {
     private final StorageNetworkNode<T> networkNode;
     private final Set<ParentComposite<T>> parentComposites = new HashSet<>();
+    @Nullable
     private Storage<T> storage;
 
-    public NetworkNodeStorage(StorageNetworkNode<T> networkNode) {
+    public NetworkNodeStorage(final StorageNetworkNode<T> networkNode) {
         this.networkNode = networkNode;
     }
 
     @Override
-    public long extract(T resource, long amount, Action action, Source source) {
+    public long extract(final T resource, final long amount, final Action action, final Source source) {
         if (storage == null || networkNode.getAccessMode() == AccessMode.INSERT || !networkNode.isActive()) {
             return 0;
         }
@@ -38,7 +40,7 @@ class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwa
     }
 
     @Override
-    public long insert(T resource, long amount, Action action, Source source) {
+    public long insert(final T resource, final long amount, final Action action, final Source source) {
         if (storage == null || networkNode.getAccessMode() == AccessMode.EXTRACT || !networkNode.isActive() || !networkNode.isAllowed(resource)) {
             return 0;
         }
@@ -46,7 +48,7 @@ class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwa
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
+    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource, final Class<? extends Source> sourceType) {
         return storage instanceof TrackedStorage<T> trackedStorage
                 ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType)
                 : Optional.empty();
@@ -58,12 +60,12 @@ class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwa
     }
 
     @Override
-    public void onAddedIntoComposite(ParentComposite<T> parentComposite) {
+    public void onAddedIntoComposite(final ParentComposite<T> parentComposite) {
         parentComposites.add(parentComposite);
     }
 
     @Override
-    public void onRemovedFromComposite(ParentComposite<T> parentComposite) {
+    public void onRemovedFromComposite(final ParentComposite<T> parentComposite) {
         parentComposites.remove(parentComposite);
     }
 
@@ -81,7 +83,7 @@ class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwa
         return storage instanceof LimitedStorage<?> limitedStorage ? limitedStorage.getCapacity() : 0L;
     }
 
-    public void setSource(Storage<T> source) {
+    public void setSource(final Storage<T> source) {
         Preconditions.checkNotNull(source);
         this.storage = source;
         parentComposites.forEach(parentComposite -> parentComposite.onSourceAddedToChild(storage));

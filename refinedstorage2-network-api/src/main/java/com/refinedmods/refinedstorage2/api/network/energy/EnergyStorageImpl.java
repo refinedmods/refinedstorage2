@@ -13,7 +13,7 @@ public class EnergyStorageImpl implements EnergyStorage {
     /**
      * @param capacity the capacity, must be larger than 0
      */
-    public EnergyStorageImpl(long capacity) {
+    public EnergyStorageImpl(final long capacity) {
         Preconditions.checkArgument(capacity >= 0, "Capacity must be 0 or larger than 0");
         this.capacity = capacity;
     }
@@ -29,7 +29,7 @@ public class EnergyStorageImpl implements EnergyStorage {
     }
 
     @Override
-    public long receive(long amount, Action action) {
+    public long receive(final long amount, final Action action) {
         if (stored + amount > capacity) {
             return receivePartly(action);
         } else {
@@ -37,15 +37,15 @@ public class EnergyStorageImpl implements EnergyStorage {
         }
     }
 
-    private long receiveCompletely(long amount, Action action) {
+    private long receiveCompletely(final long amount, final Action action) {
         if (action == Action.EXECUTE) {
             stored += amount;
         }
         return amount;
     }
 
-    private long receivePartly(Action action) {
-        long spaceRemainingInStorage = capacity - stored;
+    private long receivePartly(final Action action) {
+        final long spaceRemainingInStorage = capacity - stored;
         if (spaceRemainingInStorage == 0) {
             return 0;
         }
@@ -56,22 +56,22 @@ public class EnergyStorageImpl implements EnergyStorage {
     }
 
     @Override
-    public long extract(long amount, Action action) {
+    public long extract(final long amount, final Action action) {
         if (amount > stored) {
             return extractCompletely(action);
         }
         return extractPartly(amount, action);
     }
 
-    private long extractPartly(long amount, Action action) {
+    private long extractPartly(final long amount, final Action action) {
         if (action == Action.EXECUTE) {
             this.stored -= amount;
         }
         return amount;
     }
 
-    private long extractCompletely(Action action) {
-        long extracted = stored;
+    private long extractCompletely(final Action action) {
+        final long extracted = stored;
         if (action == Action.EXECUTE) {
             this.stored = 0;
         }
