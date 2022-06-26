@@ -14,8 +14,8 @@ public final class PacketUtil {
     }
 
     public static void writeItemResource(FriendlyByteBuf buf, ItemResource itemResource) {
-        buf.writeVarInt(Item.getId(itemResource.getItem()));
-        buf.writeNbt(itemResource.getTag());
+        buf.writeVarInt(Item.getId(itemResource.item()));
+        buf.writeNbt(itemResource.tag());
     }
 
     public static ItemResource readItemResource(FriendlyByteBuf buf) {
@@ -25,9 +25,9 @@ public final class PacketUtil {
     }
 
     public static void writeItemResourceAmount(FriendlyByteBuf buf, com.refinedmods.refinedstorage2.api.resource.ResourceAmount<ItemResource> resourceAmount) {
-        buf.writeVarInt(Item.getId(resourceAmount.getResource().getItem()));
+        buf.writeVarInt(Item.getId(resourceAmount.getResource().item()));
         buf.writeLong(resourceAmount.getAmount());
-        buf.writeNbt(resourceAmount.getResource().getTag());
+        buf.writeNbt(resourceAmount.getResource().tag());
     }
 
     public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<ItemResource> readItemResourceAmount(FriendlyByteBuf buf) {
@@ -41,8 +41,8 @@ public final class PacketUtil {
     }
 
     public static void writeFluidResource(FriendlyByteBuf buf, FluidResource itemResource) {
-        buf.writeVarInt(Registry.FLUID.getId(itemResource.getFluid()));
-        buf.writeNbt(itemResource.getTag());
+        buf.writeVarInt(Registry.FLUID.getId(itemResource.fluid()));
+        buf.writeNbt(itemResource.tag());
     }
 
     public static FluidResource readFluidResource(FriendlyByteBuf buf) {
@@ -52,9 +52,9 @@ public final class PacketUtil {
     }
 
     public static void writeFluidResourceAmount(FriendlyByteBuf buf, com.refinedmods.refinedstorage2.api.resource.ResourceAmount<FluidResource> resourceAmount) {
-        buf.writeVarInt(Registry.FLUID.getId(resourceAmount.getResource().getFluid()));
+        buf.writeVarInt(Registry.FLUID.getId(resourceAmount.getResource().fluid()));
         buf.writeLong(resourceAmount.getAmount());
-        buf.writeNbt(resourceAmount.getResource().getTag());
+        buf.writeNbt(resourceAmount.getResource().tag());
     }
 
     public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<FluidResource> readFluidResourceAmount(FriendlyByteBuf buf) {

@@ -83,8 +83,8 @@ class FluidResourceTest {
         FluidResource normalized = fluidResource.normalize();
 
         // Assert
-        assertThat(normalized.getFluid()).isEqualTo(Fluids.WATER);
-        assertThat(normalized.getTag()).isNull();
+        assertThat(normalized.fluid()).isEqualTo(Fluids.WATER);
+        assertThat(normalized.tag()).isNull();
     }
 
     @Test
@@ -92,6 +92,7 @@ class FluidResourceTest {
         // Assert
         EqualsVerifier.forClass(FluidResource.class)
                 .withPrefabValues(Fluid.class, Fluids.WATER, Fluids.LAVA)
+                .withNonnullFields("fluid")
                 .verify();
     }
 

@@ -19,7 +19,7 @@ public abstract class FluidGridResourceFactory implements Function<ResourceAmoun
         String modId = getModId(resourceAmount.getResource());
         String modName = getModName(modId);
 
-        Set<String> tags = getTags(resourceAmount.getResource().getFluid());
+        Set<String> tags = getTags(resourceAmount.getResource().fluid());
         String tooltip = getTooltip(resourceAmount.getResource());
 
         return new FluidGridResource(resourceAmount, name, modId, modName, tags, tooltip);
@@ -35,7 +35,7 @@ public abstract class FluidGridResourceFactory implements Function<ResourceAmoun
     }
 
     private String getModId(FluidResource fluid) {
-        return Registry.FLUID.getKey(fluid.getFluid()).getNamespace();
+        return Registry.FLUID.getKey(fluid.fluid()).getNamespace();
     }
 
     protected abstract String getModName(String modId);

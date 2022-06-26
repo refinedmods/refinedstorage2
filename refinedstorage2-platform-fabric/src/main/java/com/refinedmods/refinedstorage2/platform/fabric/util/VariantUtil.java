@@ -11,7 +11,7 @@ public final class VariantUtil {
     }
 
     public static ItemVariant toItemVariant(ItemResource itemResource) {
-        return ItemVariant.of(itemResource.getItem(), itemResource.getTag());
+        return ItemVariant.of(itemResource.item(), itemResource.tag());
     }
 
     public static ItemResource ofItemVariant(ItemVariant itemVariant) {
@@ -19,7 +19,7 @@ public final class VariantUtil {
     }
 
     public static FluidVariant toFluidVariant(FluidResource fluidResource) {
-        return FluidVariant.of(fluidResource.getFluid(), fluidResource.getTag());
+        return FluidVariant.of(fluidResource.fluid(), fluidResource.tag());
     }
 
     public static FluidResource ofFluidVariant(FluidVariant fluidVariant) {

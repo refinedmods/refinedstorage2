@@ -20,7 +20,7 @@ import net.minecraft.world.item.TooltipFlag;
 public abstract class ItemGridResourceFactory implements Function<ResourceAmount<ItemResource>, GridResource<ItemResource>> {
     @Override
     public GridResource<ItemResource> apply(ResourceAmount<ItemResource> resourceAmount) {
-        Item item = resourceAmount.getResource().getItem();
+        Item item = resourceAmount.getResource().item();
         ItemStack itemStack = resourceAmount.getResource().toItemStack();
 
         String name = item.getDescription().getString();

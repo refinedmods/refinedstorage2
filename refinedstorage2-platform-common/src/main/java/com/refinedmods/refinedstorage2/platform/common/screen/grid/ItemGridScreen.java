@@ -107,7 +107,7 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
         if (scrollMode == null) {
             return;
         }
-        getMenu().onScroll(new ItemResource(stack), scrollMode, slotIndex);
+        getMenu().onScroll(new ItemResource(stack.getItem(), stack.getTag()), scrollMode, slotIndex);
     }
 
     @Override

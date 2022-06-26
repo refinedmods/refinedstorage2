@@ -21,7 +21,7 @@ public class ItemGridResource extends GridResource<ItemResource> {
                 GridResourceAttributeKeys.TAGS, tags,
                 GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
         ));
-        this.id = Item.getId(getResourceAmount().getResource().getItem());
+        this.id = Item.getId(getResourceAmount().getResource().item());
         this.itemStack = itemStack;
     }
 
