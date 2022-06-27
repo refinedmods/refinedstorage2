@@ -33,7 +33,7 @@ import net.minecraft.world.phys.BlockHitResult;
 public abstract class BaseBlock extends Block {
     public static final EnumProperty<BiDirection> DIRECTION = EnumProperty.create("direction", BiDirection.class);
 
-    protected BaseBlock(Properties properties) {
+    protected BaseBlock(final Properties properties) {
         super(properties);
 
         if (hasBiDirection()) {
@@ -46,7 +46,7 @@ public abstract class BaseBlock extends Block {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
 
         if (hasBiDirection()) {
@@ -54,7 +54,7 @@ public abstract class BaseBlock extends Block {
         }
     }
 
-    private BiDirection getDirection(Direction playerFacing, float playerPitch) {
+    private BiDirection getDirection(final Direction playerFacing, final float playerPitch) {
         if (playerPitch > 65) {
             return BiDirection.forUp(playerFacing);
         } else if (playerPitch < -65) {
@@ -65,34 +65,32 @@ public abstract class BaseBlock extends Block {
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        BlockState state = defaultBlockState();
-
+    public BlockState getStateForPlacement(final BlockPlaceContext ctx) {
+        final BlockState state = defaultBlockState();
         if (hasBiDirection()) {
-            state = state.setValue(DIRECTION, getDirection(ctx.getHorizontalDirection(), ctx.getPlayer() != null ? ctx.getPlayer().getXRot() : 0));
+            return state.setValue(DIRECTION, getDirection(ctx.getHorizontalDirection(), ctx.getPlayer() != null ? ctx.getPlayer().getXRot() : 0));
         }
-
         return state;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public BlockState rotate(BlockState state, Rotation rotation) {
+    public BlockState rotate(final BlockState state, final Rotation rotation) {
         if (!hasBiDirection()) {
             return state;
         }
-        BiDirection currentDirection = state.getValue(DIRECTION);
+        final BiDirection currentDirection = state.getValue(DIRECTION);
         return state.setValue(DIRECTION, currentDirection.rotate());
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult use(final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hit) {
         return tryOpenScreen(state, level, pos, player).orElseGet(() -> super.use(state, level, pos, player, hand, hit));
     }
 
-    private Optional<InteractionResult> tryOpenScreen(BlockState state, Level level, BlockPos pos, Player player) {
-        MenuProvider menuProvider = state.getMenuProvider(level, pos);
+    private Optional<InteractionResult> tryOpenScreen(final BlockState state, final Level level, final BlockPos pos, final Player player) {
+        final MenuProvider menuProvider = state.getMenuProvider(level, pos);
         if (menuProvider != null) {
             if (player instanceof ServerPlayer serverPlayer) {
                 Platform.INSTANCE.getMenuOpener().openMenu(serverPlayer, menuProvider);
@@ -104,40 +102,39 @@ public abstract class BaseBlock extends Block {
 
     @Override
     @SuppressWarnings("deprecation")
-    public MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
-        BlockEntity blockEntity = level.getBlockEntity(pos);
+    public MenuProvider getMenuProvider(final BlockState state, final Level level, final BlockPos pos) {
+        final BlockEntity blockEntity = level.getBlockEntity(pos);
         return blockEntity instanceof MenuProvider factory ? factory : null;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+    public void onRemove(final BlockState state, final Level level, final BlockPos pos, final BlockState newState, final boolean moved) {
         if (state.getBlock() != newState.getBlock() && !state.getBlock().getClass().equals(newState.getBlock().getClass())) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
+            final BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof BlockEntityWithDrops drops) {
                 Containers.dropContents(level, pos, drops.getDrops());
                 level.updateNeighbourForOutputSignal(pos, this);
             }
-
             super.onRemove(state, level, pos, newState, moved);
         }
     }
 
-    public static Optional<InteractionResult> tryUseWrench(BlockState state, Level level, BlockHitResult hitResult, Player player, InteractionHand hand) {
+    public static Optional<InteractionResult> tryUseWrench(final BlockState state, final Level level, final BlockHitResult hitResult, final Player player, final InteractionHand hand) {
         if (player.isSpectator() || !level.mayInteract(player, hitResult.getBlockPos())) {
             return Optional.empty();
         }
-        ItemStack itemInHand = player.getItemInHand(hand);
-        boolean holdingWrench = isWrench(itemInHand);
+        final ItemStack itemInHand = player.getItemInHand(hand);
+        final boolean holdingWrench = isWrench(itemInHand);
         if (!holdingWrench) {
             return Optional.empty();
         }
-        boolean isWrenchingOwnBlock = state.getBlock() instanceof BaseBlock;
+        final boolean isWrenchingOwnBlock = state.getBlock() instanceof BaseBlock;
         if (!isWrenchingOwnBlock) {
             return Optional.empty();
         }
         if (!level.isClientSide()) {
-            boolean success = dismantleOrRotate(state, level, hitResult, player);
+            final boolean success = dismantleOrRotate(state, level, hitResult, player);
             if (success) {
                 level.playSound(null, hitResult.getBlockPos(), Sounds.INSTANCE.getWrench(), SoundSource.BLOCKS, 1.0F, 1.0F);
             }
@@ -145,21 +142,21 @@ public abstract class BaseBlock extends Block {
         return Optional.of(InteractionResult.sidedSuccess(level.isClientSide()));
     }
 
-    public static Optional<InteractionResult> tryUpdateColor(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
+    public static Optional<InteractionResult> tryUpdateColor(final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand) {
         if (state.getBlock() instanceof ColorableBlock<?> colorableBlock) {
             return tryUpdateColor(colorableBlock.getBlockColorMap(), state, level, pos, player, hand);
         }
         return Optional.empty();
     }
 
-    private static Optional<InteractionResult> tryUpdateColor(BlockColorMap<?> blockColorMap, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
+    private static Optional<InteractionResult> tryUpdateColor(final BlockColorMap<?> blockColorMap, final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand) {
         if (!player.isCrouching()) {
             return Optional.empty();
         }
         return blockColorMap.updateColor(state, player.getItemInHand(hand), level, pos, player);
     }
 
-    private static boolean dismantleOrRotate(BlockState state, Level level, BlockHitResult hitResult, Player player) {
+    private static boolean dismantleOrRotate(final BlockState state, final Level level, final BlockHitResult hitResult, final Player player) {
         if (player.isCrouching()) {
             dismantle(state, level, hitResult);
             return true;
@@ -168,13 +165,13 @@ public abstract class BaseBlock extends Block {
         }
     }
 
-    private static boolean isWrench(ItemStack item) {
+    private static boolean isWrench(final ItemStack item) {
         return item.is(Platform.INSTANCE.getWrenchTag());
     }
 
-    private static void dismantle(BlockState state, Level level, BlockHitResult hitResult) {
-        ItemStack stack = state.getBlock().getCloneItemStack(level, hitResult.getBlockPos(), state);
-        BlockEntity blockEntity = level.getBlockEntity(hitResult.getBlockPos());
+    private static void dismantle(final BlockState state, final Level level, final BlockHitResult hitResult) {
+        final ItemStack stack = state.getBlock().getCloneItemStack(level, hitResult.getBlockPos(), state);
+        final BlockEntity blockEntity = level.getBlockEntity(hitResult.getBlockPos());
         if (blockEntity != null) {
             blockEntity.saveToItem(stack);
             // Ensure that we don't drop items
@@ -184,8 +181,8 @@ public abstract class BaseBlock extends Block {
         level.addFreshEntity(new ItemEntity(level, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z, stack));
     }
 
-    private static boolean rotate(BlockState state, Level level, BlockPos pos) {
-        BlockState rotated = state.rotate(Rotation.CLOCKWISE_90);
+    private static boolean rotate(final BlockState state, final Level level, final BlockPos pos) {
+        final BlockState rotated = state.rotate(Rotation.CLOCKWISE_90);
         level.setBlockAndUpdate(pos, rotated);
         return !state.equals(rotated);
     }

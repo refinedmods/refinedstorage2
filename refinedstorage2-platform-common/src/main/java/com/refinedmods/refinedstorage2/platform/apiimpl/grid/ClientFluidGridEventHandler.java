@@ -8,17 +8,17 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 public class ClientFluidGridEventHandler implements FluidGridEventHandler {
     @Override
-    public void onInsert(GridInsertMode insertMode) {
+    public void onInsert(final GridInsertMode insertMode) {
         Platform.INSTANCE.getClientToServerCommunications().sendGridInsert(insertMode);
     }
 
     @Override
-    public void onTransfer(int slotIndex) {
+    public void onTransfer(final int slotIndex) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void onExtract(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
+    public void onExtract(final FluidResource fluidResource, final GridExtractMode mode, final boolean cursor) {
         Platform.INSTANCE.getClientToServerCommunications().sendGridFluidExtract(fluidResource, mode, cursor);
     }
 }

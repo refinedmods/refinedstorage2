@@ -23,7 +23,7 @@ public abstract class StorageContainerMenu extends ResourceFilterableContainerMe
     private final TwoWaySyncProperty<AccessMode> accessModeProperty;
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
 
-    protected StorageContainerMenu(MenuType<?> type, int syncId, OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry) {
+    protected StorageContainerMenu(final MenuType<?> type, final int syncId, final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry) {
         super(type, syncId, resourceTypeRegistry);
 
         this.priorityProperty = TwoWaySyncProperty.integerForClient(0);
@@ -39,7 +39,7 @@ public abstract class StorageContainerMenu extends ResourceFilterableContainerMe
         addDataSlot(redstoneModeProperty);
     }
 
-    protected StorageContainerMenu(MenuType<?> type, int syncId, OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, Player player, StorageSettingsProvider storageSettingsProvider, ResourceFilterContainer container) {
+    protected StorageContainerMenu(final MenuType<?> type, final int syncId, final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, final Player player, final StorageSettingsProvider storageSettingsProvider, final ResourceFilterContainer container) {
         super(type, syncId, resourceTypeRegistry, player, container);
 
         this.priorityProperty = TwoWaySyncProperty.forServer(
@@ -91,7 +91,7 @@ public abstract class StorageContainerMenu extends ResourceFilterableContainerMe
     }
 
     @Override
-    public void setPriority(int priority) {
+    public void setPriority(final int priority) {
         priorityProperty.syncToServer(priority);
     }
 
@@ -101,7 +101,7 @@ public abstract class StorageContainerMenu extends ResourceFilterableContainerMe
     }
 
     @Override
-    public void setFilterMode(FilterMode filterMode) {
+    public void setFilterMode(final FilterMode filterMode) {
         filterModeProperty.syncToServer(filterMode);
     }
 
@@ -111,7 +111,7 @@ public abstract class StorageContainerMenu extends ResourceFilterableContainerMe
     }
 
     @Override
-    public void setExactMode(boolean exactMode) {
+    public void setExactMode(final boolean exactMode) {
         exactModeProperty.syncToServer(exactMode);
     }
 
@@ -121,7 +121,7 @@ public abstract class StorageContainerMenu extends ResourceFilterableContainerMe
     }
 
     @Override
-    public void setAccessMode(AccessMode accessMode) {
+    public void setAccessMode(final AccessMode accessMode) {
         accessModeProperty.syncToServer(accessMode);
     }
 
@@ -131,7 +131,7 @@ public abstract class StorageContainerMenu extends ResourceFilterableContainerMe
     }
 
     @Override
-    public void setRedstoneMode(RedstoneMode redstoneMode) {
+    public void setRedstoneMode(final RedstoneMode redstoneMode) {
         redstoneModeProperty.syncToServer(redstoneMode);
     }
 }

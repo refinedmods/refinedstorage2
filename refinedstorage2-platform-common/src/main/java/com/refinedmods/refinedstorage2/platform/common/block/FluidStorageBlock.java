@@ -10,13 +10,13 @@ import net.minecraft.world.level.block.state.BlockState;
 public class FluidStorageBlock extends StorageBlock {
     private final FluidStorageType.Variant variant;
 
-    public FluidStorageBlock(FluidStorageType.Variant variant) {
+    public FluidStorageBlock(final FluidStorageType.Variant variant) {
         super(BlockConstants.STONE_PROPERTIES);
         this.variant = variant;
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
         return new FluidStorageBlockBlockEntity(pos, state, variant);
     }
 }

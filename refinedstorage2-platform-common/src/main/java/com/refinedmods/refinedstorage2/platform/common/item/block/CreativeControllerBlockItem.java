@@ -6,7 +6,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 public class CreativeControllerBlockItem extends NameableBlockItem {
-    public CreativeControllerBlockItem(Block block, CreativeModeTab tab, Component name) {
+    public CreativeControllerBlockItem(final Block block, final CreativeModeTab tab, final Component name) {
         super(block, new Item.Properties().tab(tab).stacksTo(1), name);
     }
 }

@@ -14,7 +14,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public abstract class AbstractModInitializer {
     private static final String FLUID_REGISTRY_KEY = "fluid";
 
-    protected void initializePlatform(Platform platform) {
+    protected void initializePlatform(final Platform platform) {
         ((PlatformProxy) Platform.INSTANCE).setPlatform(platform);
     }
 

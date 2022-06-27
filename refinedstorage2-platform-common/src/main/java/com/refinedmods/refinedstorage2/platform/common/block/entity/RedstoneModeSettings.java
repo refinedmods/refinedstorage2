@@ -11,7 +11,7 @@ public class RedstoneModeSettings {
     private RedstoneModeSettings() {
     }
 
-    public static RedstoneMode getRedstoneMode(int redstoneMode) {
+    public static RedstoneMode getRedstoneMode(final int redstoneMode) {
         return switch (redstoneMode) {
             case IGNORE -> RedstoneMode.IGNORE;
             case HIGH -> RedstoneMode.HIGH;
@@ -20,7 +20,7 @@ public class RedstoneModeSettings {
         };
     }
 
-    public static int getRedstoneMode(RedstoneMode redstoneMode) {
+    public static int getRedstoneMode(final RedstoneMode redstoneMode) {
         return switch (redstoneMode) {
             case IGNORE -> IGNORE;
             case HIGH -> HIGH;
@@ -28,7 +28,7 @@ public class RedstoneModeSettings {
         };
     }
 
-    public static TwoWaySyncProperty<RedstoneMode> createClientSyncProperty(int index) {
+    public static TwoWaySyncProperty<RedstoneMode> createClientSyncProperty(final int index) {
         return TwoWaySyncProperty.forClient(
                 index,
                 RedstoneModeSettings::getRedstoneMode,

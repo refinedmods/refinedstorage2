@@ -14,18 +14,18 @@ import net.minecraft.world.level.material.Fluid;
 
 public abstract class FluidGridResourceFactory implements Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> {
     @Override
-    public GridResource<FluidResource> apply(ResourceAmount<FluidResource> resourceAmount) {
-        String name = getName(resourceAmount.getResource());
-        String modId = getModId(resourceAmount.getResource());
-        String modName = getModName(modId);
+    public GridResource<FluidResource> apply(final ResourceAmount<FluidResource> resourceAmount) {
+        final String name = getName(resourceAmount.getResource());
+        final String modId = getModId(resourceAmount.getResource());
+        final String modName = getModName(modId);
 
-        Set<String> tags = getTags(resourceAmount.getResource().fluid());
-        String tooltip = getTooltip(resourceAmount.getResource());
+        final Set<String> tags = getTags(resourceAmount.getResource().fluid());
+        final String tooltip = getTooltip(resourceAmount.getResource());
 
         return new FluidGridResource(resourceAmount, name, modId, modName, tags, tooltip);
     }
 
-    private Set<String> getTags(Fluid fluid) {
+    private Set<String> getTags(final Fluid fluid) {
         return Registry.FLUID.getResourceKey(fluid)
                 .flatMap(Registry.FLUID::getHolder)
                 .stream()

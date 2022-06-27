@@ -16,6 +16,8 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.InternalNetw
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageSettingsProvider;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
+import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
@@ -40,16 +42,17 @@ public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeCont
 
     protected final ResourceFilterContainer resourceFilterContainer;
 
+    @Nullable
     private UUID storageId;
     private boolean exactMode;
 
-    protected StorageBlockBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, StorageNetworkNode<T> node, ResourceType resourceType) {
+    protected StorageBlockBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state, final StorageNetworkNode<T> node, final ResourceType resourceType) {
         super(type, pos, state, node);
         node.setNormalizer(this::normalize);
         this.resourceFilterContainer = new FilteredResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, this::resourceFilterContainerChanged, resourceType);
     }
 
-    private Object normalize(Object value) {
+    private Object normalize(final Object value) {
         if (exactMode) {
             return value;
         }
@@ -71,12 +74,12 @@ public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeCont
     }
 
     @Override
-    public void setLevel(Level level) {
+    public void setLevel(final Level level) {
         super.setLevel(level);
         if (level.isClientSide()) {
             return;
         }
-        PlatformStorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
+        final PlatformStorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
         if (storageId == null) {
             // We are a new block entity, or:
             // - We are placed through NBT (#setLevel(Level) -> #load(CompoundTag)),
@@ -90,16 +93,16 @@ public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeCont
         }
     }
 
-    public void modifyStorageIdAfterAlreadyInitialized(UUID actualStorageId) {
+    public void modifyStorageIdAfterAlreadyInitialized(final UUID actualStorageId) {
         LOGGER.info("Storage {} got placed through nbt, replacing with actual storage {}", storageId, actualStorageId);
         cleanupUnneededInitialStorageAndReinitialize(actualStorageId);
         this.storageId = actualStorageId;
     }
 
     @Override
-    public void load(CompoundTag tag) {
+    public void load(final CompoundTag tag) {
         if (tag.contains(TAG_STORAGE_ID)) {
-            UUID actualStorageId = tag.getUUID(TAG_STORAGE_ID);
+            final UUID actualStorageId = tag.getUUID(TAG_STORAGE_ID);
             if (isPlacedThroughNbtPlacement(actualStorageId)) {
                 LOGGER.info("Storage {} got placed through nbt, replacing with actual storage {}", storageId, actualStorageId);
                 cleanupUnneededInitialStorageAndReinitialize(actualStorageId);
@@ -132,25 +135,25 @@ public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeCont
         super.load(tag);
     }
 
-    private void cleanupUnneededInitialStorageAndReinitialize(UUID actualStorageId) {
+    private void cleanupUnneededInitialStorageAndReinitialize(final UUID actualStorageId) {
         // We got placed through NBT (#setLevel(Level) -> #load(CompoundTag)), or,
         // we got placed with an existing storage ID (#setLevel(Level) -> modifyStorageAfterAlreadyInitialized(UUID)).
         // Clean up the storage created earlier in #setLevel(Level).
-        PlatformStorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
-        storageRepository.disassemble(storageId).ifPresentOrElse(
+        final PlatformStorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(Objects.requireNonNull(level));
+        storageRepository.disassemble(Objects.requireNonNull(storageId)).ifPresentOrElse(
                 storage -> LOGGER.debug("Unneeded storage {} successfully removed", storageId),
                 () -> LOGGER.warn("Unneeded storage {} could not be removed", storageId)
         );
         getNode().initializeExistingStorage(storageRepository, actualStorageId);
     }
 
-    private boolean isPlacedThroughNbtPlacement(UUID otherStorageId) {
+    private boolean isPlacedThroughNbtPlacement(final UUID otherStorageId) {
         // When placed through nbt, the level is already set and a default new storage was created.
         return level != null && storageId != null && !storageId.equals(otherStorageId);
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
+    public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
         if (storageId != null) {
             tag.putUUID(TAG_STORAGE_ID, storageId);
@@ -162,6 +165,7 @@ public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeCont
         tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getNode().getAccessMode()));
     }
 
+    @Nullable
     public UUID getStorageId() {
         return storageId;
     }
@@ -172,7 +176,7 @@ public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeCont
     }
 
     @Override
-    public void setAccessMode(AccessMode accessMode) {
+    public void setAccessMode(final AccessMode accessMode) {
         getNode().setAccessMode(accessMode);
         setChanged();
     }
@@ -183,7 +187,7 @@ public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeCont
     }
 
     @Override
-    public void setExactMode(boolean exactMode) {
+    public void setExactMode(final boolean exactMode) {
         this.exactMode = exactMode;
         initializeResourceFilter();
         setChanged();
@@ -195,7 +199,7 @@ public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeCont
     }
 
     @Override
-    public void setPriority(int priority) {
+    public void setPriority(final int priority) {
         getNode().setPriority(priority);
         setChanged();
     }
@@ -206,13 +210,13 @@ public abstract class StorageBlockBlockEntity<T> extends InternalNetworkNodeCont
     }
 
     @Override
-    public void setFilterMode(FilterMode mode) {
+    public void setFilterMode(final FilterMode mode) {
         getNode().setFilterMode(mode);
         setChanged();
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+    public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
         buf.writeLong(getNode().getStored());
         buf.writeLong(getNode().getCapacity());
         resourceFilterContainer.writeToUpdatePacket(buf);

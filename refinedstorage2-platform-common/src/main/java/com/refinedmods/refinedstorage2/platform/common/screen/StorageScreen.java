@@ -25,7 +25,7 @@ public abstract class StorageScreen<T extends AbstractContainerMenu & StorageAcc
     private final ProgressWidget progressWidget;
     private final Inventory playerInventory;
 
-    protected StorageScreen(T menu, Inventory inventory, Component title, int progressWidgetX) {
+    protected StorageScreen(final T menu, final Inventory inventory, final Component title, final int progressWidgetX) {
         super(menu, inventory, title);
 
         this.titleLabelX = 7;
@@ -56,7 +56,7 @@ public abstract class StorageScreen<T extends AbstractContainerMenu & StorageAcc
     }
 
     private List<Component> createTooltip() {
-        List<Component> tooltip = new ArrayList<>();
+        final List<Component> tooltip = new ArrayList<>();
         StorageTooltipHelper.appendToTooltip(
                 tooltip,
                 menu.getStored(),
@@ -68,17 +68,17 @@ public abstract class StorageScreen<T extends AbstractContainerMenu & StorageAcc
         return tooltip;
     }
 
-    protected String formatQuantity(long qty) {
+    protected String formatQuantity(final long qty) {
         return QuantityFormatter.format(qty);
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float delta, int mouseX, int mouseY) {
+    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        int x = (width - imageWidth) / 2;
-        int y = (height - imageHeight) / 2;
+        final int x = (width - imageWidth) / 2;
+        final int y = (height - imageHeight) / 2;
 
         blit(poseStack, x, y, 0, 0, imageWidth, imageHeight);
 
@@ -86,13 +86,13 @@ public abstract class StorageScreen<T extends AbstractContainerMenu & StorageAcc
     }
 
     @Override
-    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+    protected void renderLabels(final PoseStack poseStack, final int mouseX, final int mouseY) {
         super.renderLabels(poseStack, mouseX, mouseY);
         progressWidget.render(poseStack, mouseX - leftPos, mouseY - topPos, 0);
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float delta) {
         renderBackground(poseStack);
         super.render(poseStack, mouseX, mouseY, delta);
         renderTooltip(poseStack, mouseX, mouseY);

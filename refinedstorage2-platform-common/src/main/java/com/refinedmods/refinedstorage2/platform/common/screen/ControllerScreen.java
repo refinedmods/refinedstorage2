@@ -23,7 +23,7 @@ public class ControllerScreen extends BaseScreen<ControllerContainerMenu> {
 
     private final ProgressWidget progressWidget;
 
-    public ControllerScreen(ControllerContainerMenu menu, Inventory playerInventory, Component text) {
+    public ControllerScreen(final ControllerContainerMenu menu, final Inventory playerInventory, final Component text) {
         super(menu, playerInventory, text);
 
         this.titleLabelX = 7;
@@ -57,25 +57,25 @@ public class ControllerScreen extends BaseScreen<ControllerContainerMenu> {
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float delta, int mouseX, int mouseY) {
+    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
-        int x = (width - imageWidth) / 2;
-        int y = (height - imageHeight) / 2;
+        final int x = (width - imageWidth) / 2;
+        final int y = (height - imageHeight) / 2;
 
         blit(poseStack, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+    protected void renderLabels(final PoseStack poseStack, final int mouseX, final int mouseY) {
         super.renderLabels(poseStack, mouseX, mouseY);
         progressWidget.render(poseStack, mouseX - leftPos, mouseY - topPos, 0);
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float delta) {
         renderBackground(poseStack);
         super.render(poseStack, mouseX, mouseY, delta);
         renderTooltip(poseStack, mouseX, mouseY);

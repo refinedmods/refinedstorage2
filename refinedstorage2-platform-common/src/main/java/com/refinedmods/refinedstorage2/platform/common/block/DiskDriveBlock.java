@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class DiskDriveBlock extends NetworkNodeContainerBlock {
     private final BiFunction<BlockPos, BlockState, DiskDriveBlockEntity> blockEntityFactory;
 
-    public DiskDriveBlock(BiFunction<BlockPos, BlockState, DiskDriveBlockEntity> blockEntityFactory) {
+    public DiskDriveBlock(final BiFunction<BlockPos, BlockState, DiskDriveBlockEntity> blockEntityFactory) {
         super(BlockConstants.STONE_PROPERTIES);
         this.blockEntityFactory = blockEntityFactory;
     }
@@ -26,12 +26,12 @@ public class DiskDriveBlock extends NetworkNodeContainerBlock {
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
         return blockEntityFactory.apply(pos, state);
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level, final BlockState state, final BlockEntityType<T> type) {
         return type == BlockEntities.INSTANCE.getDiskDrive() && !level.isClientSide ? (level2, pos, state2, blockEntity) -> DiskDriveBlockEntity.serverTick(state2, (DiskDriveBlockEntity) blockEntity) : null;
     }
 }

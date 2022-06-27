@@ -33,7 +33,7 @@ public class FluidStorageBlockBlockItem extends StorageBlockBlockItem {
     private final FluidStorageType.Variant variant;
     private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
-    public FluidStorageBlockBlockItem(Block block, CreativeModeTab tab, FluidStorageType.Variant variant) {
+    public FluidStorageBlockBlockItem(final Block block, final CreativeModeTab tab, final FluidStorageType.Variant variant) {
         super(block, new Item.Properties().tab(tab).stacksTo(1).fireResistant());
         this.variant = variant;
         if (variant != FluidStorageType.Variant.CREATIVE) {
@@ -42,7 +42,7 @@ public class FluidStorageBlockBlockItem extends StorageBlockBlockItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context) {
+    public void appendHoverText(final ItemStack stack, @Nullable final Level level, final List<Component> tooltip, final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
         StorageItemHelper.appendToTooltip(
                 stack,
@@ -56,12 +56,13 @@ public class FluidStorageBlockBlockItem extends StorageBlockBlockItem {
     }
 
     @Override
-    protected ItemStack createPrimaryDisassemblyByproduct(int count) {
+    protected ItemStack createPrimaryDisassemblyByproduct(final int count) {
         return new ItemStack(Blocks.INSTANCE.getMachineCasing(), count);
     }
 
     @Override
-    protected ItemStack createSecondaryDisassemblyByproduct(int count) {
+    @Nullable
+    protected ItemStack createSecondaryDisassemblyByproduct(final int count) {
         if (variant == FluidStorageType.Variant.CREATIVE) {
             return null;
         }
@@ -69,7 +70,7 @@ public class FluidStorageBlockBlockItem extends StorageBlockBlockItem {
     }
 
     @Override
-    protected void updateBlockEntityWithStorageId(BlockPos pos, @Nullable BlockEntity blockEntity, UUID id) {
+    protected void updateBlockEntityWithStorageId(final BlockPos pos, @Nullable final BlockEntity blockEntity, final UUID id) {
         if (blockEntity instanceof StorageBlockBlockEntity<?> storageBlockEntity) {
             LOGGER.info("Transferred storage {} to block at {}", id, pos);
             storageBlockEntity.modifyStorageIdAfterAlreadyInitialized(id);

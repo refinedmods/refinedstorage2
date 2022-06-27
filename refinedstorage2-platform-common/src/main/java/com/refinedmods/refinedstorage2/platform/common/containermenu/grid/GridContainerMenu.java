@@ -23,6 +23,8 @@ import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridSearchBox
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -40,14 +42,19 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     protected final Inventory playerInventory;
     protected final GridView<T> view;
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
+
+    @Nullable
     protected GridBlockEntity<T> grid;
+    @Nullable
     protected StorageChannel<T> storageChannel; // TODO - Support changing of the channel.
+    @Nullable
     private Runnable sizeChangedListener;
 
     private GridSynchronizer synchronizer;
+    private boolean autoSelected;
     private boolean active;
 
-    protected GridContainerMenu(MenuType<?> type, int syncId, Inventory playerInventory, FriendlyByteBuf buf, GridView<T> view) {
+    protected GridContainerMenu(final MenuType<?> type, final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf, final GridView<T> view) {
         super(type, syncId);
 
         this.view = view;
@@ -65,9 +72,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
 
         addDataSlot(redstoneModeProperty);
 
-        active = buf.readBoolean();
-
-        synchronizer = loadSynchronizer();
+        this.active = buf.readBoolean();
 
         this.view.setSortingDirection(Platform.INSTANCE.getConfig().getGrid().getSortingDirection());
         this.view.setSortingType(Platform.INSTANCE.getConfig().getGrid().getSortingType());
@@ -78,12 +83,15 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
             TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
             view.loadResource(resourceAmount.getResource(), resourceAmount.getAmount(), trackedResource);
         }
-        view.sort();
+        this.view.sort();
 
         addSlots(0);
+
+        this.synchronizer = loadSynchronizer();
+        this.autoSelected = loadAutoSelected();
     }
 
-    protected GridContainerMenu(MenuType<?> type, int syncId, Inventory playerInventory, GridBlockEntity<T> grid, GridView<T> view) {
+    protected GridContainerMenu(final MenuType<?> type, final int syncId, final Inventory playerInventory, final GridBlockEntity<T> grid, final GridView<T> view) {
         super(type, syncId);
 
         this.view = view;
@@ -104,16 +112,18 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         this.grid = grid;
 
         addSlots(0);
+
+        this.synchronizer = PlatformApi.INSTANCE.getGridSynchronizerRegistry().getDefault();
     }
 
     protected abstract ResourceAmount<T> readResourceAmount(FriendlyByteBuf buf);
 
-    public void onResourceUpdate(T template, long amount, TrackedResource trackedResource) {
+    public void onResourceUpdate(final T template, final long amount, final TrackedResource trackedResource) {
         LOGGER.info("{} got updated with {}", template, amount);
         view.onChange(template, amount, trackedResource);
     }
 
-    public void setSizeChangedListener(Runnable sizeChangedListener) {
+    public void setSizeChangedListener(@Nullable final Runnable sizeChangedListener) {
         this.sizeChangedListener = sizeChangedListener;
     }
 
@@ -121,7 +131,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         return Platform.INSTANCE.getConfig().getGrid().getSortingDirection();
     }
 
-    public void setSortingDirection(GridSortingDirection sortingDirection) {
+    public void setSortingDirection(final GridSortingDirection sortingDirection) {
         Platform.INSTANCE.getConfig().getGrid().setSortingDirection(sortingDirection);
         view.setSortingDirection(sortingDirection);
         view.sort();
@@ -131,7 +141,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         return Platform.INSTANCE.getConfig().getGrid().getSortingType();
     }
 
-    public void setSortingType(GridSortingType sortingType) {
+    public void setSortingType(final GridSortingType sortingType) {
         Platform.INSTANCE.getConfig().getGrid().setSortingType(sortingType);
         view.setSortingType(sortingType);
         view.sort();
@@ -141,14 +151,14 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         return Platform.INSTANCE.getConfig().getGrid().getSize();
     }
 
-    public void setSize(GridSize size) {
+    public void setSize(final GridSize size) {
         Platform.INSTANCE.getConfig().getGrid().setSize(size);
         if (sizeChangedListener != null) {
             sizeChangedListener.run();
         }
     }
 
-    public void setSearchBox(GridSearchBox searchBox) {
+    public void setSearchBox(final GridSearchBox searchBox) {
         searchBox.setAutoSelected(isAutoSelected());
         if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
             searchBox.setValue(lastSearchQuery);
@@ -156,7 +166,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         }
     }
 
-    private static void updateLastSearchQuery(String text) {
+    private static void updateLastSearchQuery(final String text) {
         GridContainerMenu.lastSearchQuery = text;
     }
 
@@ -169,7 +179,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         }
     }
 
-    public void addSlots(int playerInventoryY) {
+    public void addSlots(final int playerInventoryY) {
         resetSlots();
         addPlayerInventory(playerInventory, 8, playerInventoryY);
     }
@@ -184,12 +194,12 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     }
 
     @Override
-    public void setRedstoneMode(RedstoneMode redstoneMode) {
+    public void setRedstoneMode(final RedstoneMode redstoneMode) {
         redstoneModeProperty.syncToServer(redstoneMode);
     }
 
     @Override
-    public void onActiveChanged(boolean active) {
+    public void onActiveChanged(final boolean active) {
         this.active = active;
         if (this.playerInventory.player instanceof ServerPlayer serverPlayerEntity) {
             Platform.INSTANCE.getServerToClientCommunications().sendGridActiveness(serverPlayerEntity, active);
@@ -200,13 +210,17 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         return active;
     }
 
-    // TODO cache these values.
-    public void setAutoSelected(boolean autoSelected) {
+    public void setAutoSelected(final boolean autoSelected) {
+        this.autoSelected = autoSelected;
         Platform.INSTANCE.getConfig().getGrid().setAutoSelected(autoSelected);
     }
 
-    public boolean isAutoSelected() {
+    private boolean loadAutoSelected() {
         return Platform.INSTANCE.getConfig().getGrid().isAutoSelected();
+    }
+
+    public boolean isAutoSelected() {
+        return autoSelected;
     }
 
     private GridSynchronizer loadSynchronizer() {
@@ -223,10 +237,10 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     }
 
     public void toggleSynchronizer() {
-        OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
-        Config.Grid config = Platform.INSTANCE.getConfig().getGrid();
+        final OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
+        final Config.Grid config = Platform.INSTANCE.getConfig().getGrid();
 
-        GridSynchronizer newSynchronizer = synchronizerRegistry.next(getSynchronizer());
+        final GridSynchronizer newSynchronizer = synchronizerRegistry.next(getSynchronizer());
 
         if (newSynchronizer == synchronizerRegistry.getDefault()) {
             config.clearSynchronizer();

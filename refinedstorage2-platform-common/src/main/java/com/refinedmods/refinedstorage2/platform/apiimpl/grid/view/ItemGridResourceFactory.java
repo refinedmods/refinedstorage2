@@ -19,21 +19,21 @@ import net.minecraft.world.item.TooltipFlag;
 
 public abstract class ItemGridResourceFactory implements Function<ResourceAmount<ItemResource>, GridResource<ItemResource>> {
     @Override
-    public GridResource<ItemResource> apply(ResourceAmount<ItemResource> resourceAmount) {
-        Item item = resourceAmount.getResource().item();
-        ItemStack itemStack = resourceAmount.getResource().toItemStack();
+    public GridResource<ItemResource> apply(final ResourceAmount<ItemResource> resourceAmount) {
+        final Item item = resourceAmount.getResource().item();
+        final ItemStack itemStack = resourceAmount.getResource().toItemStack();
 
-        String name = item.getDescription().getString();
-        String modId = getModId(itemStack);
-        String modName = getModName(modId).orElse("");
+        final String name = item.getDescription().getString();
+        final String modId = getModId(itemStack);
+        final String modName = getModName(modId).orElse("");
 
-        Set<String> tags = getTags(item);
-        String tooltip = getTooltip(itemStack);
+        final Set<String> tags = getTags(item);
+        final String tooltip = getTooltip(itemStack);
 
         return new ItemGridResource(resourceAmount, itemStack, name, modId, modName, tags, tooltip);
     }
 
-    private String getTooltip(ItemStack itemStack) {
+    private String getTooltip(final ItemStack itemStack) {
         return itemStack
                 .getTooltipLines(null, TooltipFlag.Default.ADVANCED)
                 .stream()
@@ -41,7 +41,7 @@ public abstract class ItemGridResourceFactory implements Function<ResourceAmount
                 .collect(Collectors.joining("\n"));
     }
 
-    private Set<String> getTags(Item item) {
+    private Set<String> getTags(final Item item) {
         return Registry.ITEM.getResourceKey(item)
                 .flatMap(Registry.ITEM::getHolder)
                 .stream()

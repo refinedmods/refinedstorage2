@@ -12,7 +12,7 @@ import org.lwjgl.glfw.GLFW;
 public class SearchFieldWidget extends EditBox {
     private final History history;
 
-    public SearchFieldWidget(Font textRenderer, int x, int y, int width, History history) {
+    public SearchFieldWidget(final Font textRenderer, final int x, final int y, final int width, final History history) {
         super(textRenderer, x, y, width, textRenderer.lineHeight, Component.empty());
 
         this.history = history;
@@ -21,10 +21,10 @@ public class SearchFieldWidget extends EditBox {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        boolean wasFocused = isFocused();
-        boolean result = super.mouseClicked(mouseX, mouseY, mouseButton);
-        boolean clickedWidget = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
+    public boolean mouseClicked(final double mouseX, final double mouseY, final int mouseButton) {
+        final boolean wasFocused = isFocused();
+        final boolean result = super.mouseClicked(mouseX, mouseY, mouseButton);
+        final boolean clickedWidget = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
 
         if (clickedWidget && mouseButton == 1) {
             setValue("");
@@ -37,10 +37,10 @@ public class SearchFieldWidget extends EditBox {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifier) {
+    public boolean keyPressed(final int keyCode, final int scanCode, final int modifier) {
         boolean result = super.keyPressed(keyCode, scanCode, modifier);
 
-        boolean canLoseFocus = Platform.INSTANCE.canEditBoxLoseFocus(this);
+        final boolean canLoseFocus = Platform.INSTANCE.canEditBoxLoseFocus(this);
 
         if (isFocused()) {
             if (keyCode == GLFW.GLFW_KEY_UP) {

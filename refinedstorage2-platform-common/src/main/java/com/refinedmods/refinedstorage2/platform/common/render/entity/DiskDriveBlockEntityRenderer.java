@@ -7,6 +7,8 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.Di
 import com.refinedmods.refinedstorage2.platform.common.render.CubeBuilder;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
@@ -14,6 +16,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class DiskDriveBlockEntityRenderer<T extends DiskDriveBlockEntity> implements BlockEntityRenderer<T> {
@@ -27,21 +30,27 @@ public abstract class DiskDriveBlockEntityRenderer<T extends DiskDriveBlockEntit
 
     private final RenderType renderType;
 
-    protected DiskDriveBlockEntityRenderer(RenderType renderType) {
+    protected DiskDriveBlockEntityRenderer(final RenderType renderType) {
         this.renderType = renderType;
     }
 
-    protected abstract DiskDriveState getDriveState(T diskDriveBlockEntity);
+    @Nullable
+    protected abstract DiskDriveState getDriveState(T blockEntity);
 
     @Override
-    public void render(T entity, float tickDelta, PoseStack poseStack, MultiBufferSource vertexConsumers, int light, int overlay) {
-        DiskDriveState driveState = getDriveState(entity);
+    public void render(final T entity, final float tickDelta, final PoseStack poseStack, final MultiBufferSource vertexConsumers, final int light, final int overlay) {
+        final Level level = entity.getLevel();
+        if (level == null) {
+            return;
+        }
 
         // Always sanity check the block state first, these may not always be correct and can cause crashes (see #20).
-        BlockState blockState = entity.getLevel().getBlockState(entity.getBlockPos());
+        final BlockState blockState = level.getBlockState(entity.getBlockPos());
         if (!blockState.hasProperty(BaseBlock.DIRECTION)) {
             return;
         }
+
+        final DiskDriveState driveState = getDriveState(entity);
 
         poseStack.pushPose();
 
@@ -58,7 +67,7 @@ public abstract class DiskDriveBlockEntityRenderer<T extends DiskDriveBlockEntit
         poseStack.popPose();
     }
 
-    private void renderDisks(PoseStack poseStack, DiskDriveState driveState, VertexConsumer vertexConsumer) {
+    private void renderDisks(final PoseStack poseStack, final DiskDriveState driveState, final VertexConsumer vertexConsumer) {
         int i = 0;
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 2; ++x) {
@@ -68,16 +77,16 @@ public abstract class DiskDriveBlockEntityRenderer<T extends DiskDriveBlockEntit
         }
     }
 
-    private void renderDisk(PoseStack poseStack, VertexConsumer vertexConsumer, int y, int x, StorageDiskState state) {
+    private void renderDisk(final PoseStack poseStack, final VertexConsumer vertexConsumer, final int y, final int x, final StorageDiskState state) {
         if (state == StorageDiskState.NONE) {
             return;
         }
 
-        float x1 = LED_X1 - (x * 7F);
-        float y1 = LED_Y1 - (y * 3F);
+        final float x1 = LED_X1 - (x * 7F);
+        final float y1 = LED_Y1 - (y * 3F);
 
-        float x2 = LED_X2 - (x * 7F);
-        float y2 = LED_Y2 - (y * 3F);
+        final float x2 = LED_X2 - (x * 7F);
+        final float y2 = LED_Y2 - (y * 3F);
 
         CubeBuilder.INSTANCE.putCube(
                 poseStack,
@@ -96,7 +105,7 @@ public abstract class DiskDriveBlockEntityRenderer<T extends DiskDriveBlockEntit
         );
     }
 
-    private Quaternion createQuaternion(BiDirection direction) {
+    private Quaternion createQuaternion(final BiDirection direction) {
         return new Quaternion(direction.getVec().x(), direction.getVec().y(), direction.getVec().z(), true);
     }
 }

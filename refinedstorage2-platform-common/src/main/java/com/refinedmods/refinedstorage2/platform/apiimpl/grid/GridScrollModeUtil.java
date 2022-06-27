@@ -8,7 +8,7 @@ public final class GridScrollModeUtil {
     private GridScrollModeUtil() {
     }
 
-    public static GridScrollMode getMode(byte mode) {
+    public static GridScrollMode getMode(final byte mode) {
         if (mode == 0) {
             return GridScrollMode.GRID_TO_INVENTORY;
         } else if (mode == 1) {
@@ -17,7 +17,7 @@ public final class GridScrollModeUtil {
         return GridScrollMode.INVENTORY_TO_GRID;
     }
 
-    public static void writeMode(FriendlyByteBuf buf, GridScrollMode mode) {
+    public static void writeMode(final FriendlyByteBuf buf, final GridScrollMode mode) {
         switch (mode) {
             case GRID_TO_INVENTORY -> buf.writeByte(0);
             case GRID_TO_CURSOR -> buf.writeByte(1);

@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 public abstract class NetworkNodeContainerBlock extends BaseBlock implements EntityBlock {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
-    protected NetworkNodeContainerBlock(Properties properties) {
+    protected NetworkNodeContainerBlock(final Properties properties) {
         super(properties);
 
         if (hasActive()) {
@@ -24,7 +24,7 @@ public abstract class NetworkNodeContainerBlock extends BaseBlock implements Ent
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
 
         if (hasActive()) {
@@ -37,7 +37,8 @@ public abstract class NetworkNodeContainerBlock extends BaseBlock implements Ent
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return !level.isClientSide ? (level2, pos, state2, blockEntity) -> InternalNetworkNodeContainerBlockEntity.serverTick(state2, (InternalNetworkNodeContainerBlockEntity) blockEntity) : null;
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level, final BlockState state, final BlockEntityType<T> type) {
+        // TODO: Check block entity type.
+        return !level.isClientSide ? (level2, pos, state2, blockEntity) -> InternalNetworkNodeContainerBlockEntity.serverTick(state2, (InternalNetworkNodeContainerBlockEntity<?>) blockEntity) : null;
     }
 }

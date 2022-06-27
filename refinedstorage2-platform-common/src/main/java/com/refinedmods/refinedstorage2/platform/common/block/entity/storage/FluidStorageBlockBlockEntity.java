@@ -29,7 +29,7 @@ public class FluidStorageBlockBlockEntity extends StorageBlockBlockEntity<FluidR
     private final FluidStorageType.Variant variant;
     private final Component displayName;
 
-    public FluidStorageBlockBlockEntity(BlockPos pos, BlockState state, FluidStorageType.Variant variant) {
+    public FluidStorageBlockBlockEntity(final BlockPos pos, final BlockState state, final FluidStorageType.Variant variant) {
         super(
                 BlockEntities.INSTANCE.getFluidStorageBlock(variant),
                 pos,
@@ -41,7 +41,7 @@ public class FluidStorageBlockBlockEntity extends StorageBlockBlockEntity<FluidR
         this.displayName = createTranslation("block", String.format("%s_fluid_storage_block", variant.getName()));
     }
 
-    private static long getEnergyUsage(FluidStorageType.Variant variant) {
+    private static long getEnergyUsage(final FluidStorageType.Variant variant) {
         return switch (variant) {
             case SIXTY_FOUR_B -> Platform.INSTANCE.getConfig().getFluidStorageBlock().get64bEnergyUsage();
             case TWO_HUNDRED_FIFTY_SIX_B -> Platform.INSTANCE.getConfig().getFluidStorageBlock().get256bEnergyUsage();
@@ -53,8 +53,8 @@ public class FluidStorageBlockBlockEntity extends StorageBlockBlockEntity<FluidR
     }
 
     @Override
-    protected PlatformStorage<FluidResource> createStorage(Runnable listener) {
-        TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
+    protected PlatformStorage<FluidResource> createStorage(final Runnable listener) {
+        final TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
             return new PlatformStorage<>(
                     new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
@@ -80,7 +80,7 @@ public class FluidStorageBlockBlockEntity extends StorageBlockBlockEntity<FluidR
     }
 
     @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inventory, Player player) {
+    public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         return new FluidStorageBlockContainerMenu(
                 syncId,
                 player,

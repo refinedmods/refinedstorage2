@@ -22,11 +22,11 @@ public class ItemStorageBlockContainerMenu extends StorageBlockContainerMenu {
             StorageTooltipHelper.TooltipOption.STACK_INFO
     );
 
-    public ItemStorageBlockContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
+    public ItemStorageBlockContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getItemStorage(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry(), playerInventory.player, buf, ItemResourceType.INSTANCE);
     }
 
-    public ItemStorageBlockContainerMenu(int syncId, Player player, ResourceFilterContainer resourceFilterContainer, StorageBlockBlockEntity<?> storageBlock) {
+    public ItemStorageBlockContainerMenu(final int syncId, final Player player, final ResourceFilterContainer resourceFilterContainer, final StorageBlockBlockEntity<?> storageBlock) {
         super(Menus.INSTANCE.getItemStorage(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry(), player, resourceFilterContainer, storageBlock);
     }
 

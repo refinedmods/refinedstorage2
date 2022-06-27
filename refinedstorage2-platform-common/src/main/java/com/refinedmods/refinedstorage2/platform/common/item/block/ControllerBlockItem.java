@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.item.block;
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 import net.minecraft.ChatFormatting;
@@ -18,17 +19,17 @@ import net.minecraft.world.level.block.Block;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ControllerBlockItem extends CreativeControllerBlockItem {
-    public ControllerBlockItem(Block block, CreativeModeTab tab, Component displayName) {
+    public ControllerBlockItem(final Block block, final CreativeModeTab tab, final Component displayName) {
         super(block, tab, displayName);
     }
 
-    public static float getPercentFull(ItemStack stack) {
-        CompoundTag tag = getBlockEntityData(stack);
+    public static float getPercentFull(final ItemStack stack) {
+        final CompoundTag tag = getBlockEntityData(stack);
         if (tag == null) {
             return 1;
         }
-        long stored = ControllerBlockEntity.getStored(tag);
-        long capacity = ControllerBlockEntity.getCapacity(tag);
+        final long stored = ControllerBlockEntity.getStored(tag);
+        final long capacity = ControllerBlockEntity.getCapacity(tag);
         if (capacity == 0) {
             return 1;
         }
@@ -36,28 +37,28 @@ public class ControllerBlockItem extends CreativeControllerBlockItem {
     }
 
     @Override
-    public boolean isBarVisible(ItemStack stack) {
+    public boolean isBarVisible(final ItemStack stack) {
         return ControllerBlockEntity.hasEnergy(getBlockEntityData(stack));
     }
 
     @Override
-    public int getBarWidth(ItemStack stack) {
+    public int getBarWidth(final ItemStack stack) {
         return Math.round(getPercentFull(stack) * 13F);
     }
 
     @Override
-    public int getBarColor(ItemStack stack) {
+    public int getBarColor(final ItemStack stack) {
         return Mth.hsvToRgb(Math.max(0.0F, getPercentFull(stack)) / 3.0F, 1.0F, 1.0F);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context) {
+    public void appendHoverText(final ItemStack stack, @Nullable final Level level, final List<Component> tooltip, final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
 
-        CompoundTag data = getBlockEntityData(stack);
+        final CompoundTag data = getBlockEntityData(stack);
         if (ControllerBlockEntity.hasEnergy(data)) {
-            long stored = ControllerBlockEntity.getStored(data);
-            long capacity = ControllerBlockEntity.getCapacity(data);
+            final long stored = ControllerBlockEntity.getStored(data);
+            final long capacity = ControllerBlockEntity.getCapacity(data);
             tooltip.add(createTranslation("misc", "stored_with_capacity", QuantityFormatter.format(stored), QuantityFormatter.format(capacity)).withStyle(ChatFormatting.GRAY));
         }
     }

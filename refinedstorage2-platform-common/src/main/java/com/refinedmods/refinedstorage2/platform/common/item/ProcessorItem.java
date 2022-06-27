@@ -4,7 +4,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 
 public class ProcessorItem extends Item {
-    public ProcessorItem(CreativeModeTab tab) {
+    public ProcessorItem(final CreativeModeTab tab) {
         super(new Item.Properties().tab(tab));
     }
 
@@ -18,7 +18,7 @@ public class ProcessorItem extends Item {
 
         final String name;
 
-        Type(String name) {
+        Type(final String name) {
             this.name = name;
         }
 

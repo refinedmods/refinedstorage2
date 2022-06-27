@@ -19,8 +19,10 @@ import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighterColors;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -38,6 +40,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,13 +64,15 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
 
+    @Nullable
     private ScrollbarWidget scrollbar;
+    @Nullable
     private GridSearchBoxWidget<R> searchField;
     private int totalRows;
     private int visibleRows;
     private int gridSlotNumber;
 
-    protected GridScreen(T menu, Inventory inventory, Component title) {
+    protected GridScreen(final T menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title);
 
         menu.setSizeChangedListener(this::init);
@@ -130,7 +135,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         }
     }
 
-    private void trySynchronizeFromGrid(String text) {
+    private void trySynchronizeFromGrid(final String text) {
         getMenu().getSynchronizer().synchronizeFromGrid(text);
     }
 
@@ -152,18 +157,18 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     }
 
     private void resourcesChanged() {
+        if (scrollbar == null) {
+            return;
+        }
         totalRows = (int) Math.ceil((float) getMenu().getView().getAll().size() / (float) COLUMNS);
-
         scrollbar.setEnabled(totalRows > visibleRows);
-
         int rowsExcludingVisibleOnes = totalRows - visibleRows;
         scrollbar.setMaxOffset(scrollbar.isScrollAnimation() ? ((rowsExcludingVisibleOnes) * 18) : rowsExcludingVisibleOnes);
     }
 
     private int calculateVisibleRows() {
-        int screenSpaceAvailable = height - TOP_HEIGHT - BOTTOM_HEIGHT;
-        int maxRows = getMaxRows();
-
+        final int screenSpaceAvailable = height - TOP_HEIGHT - BOTTOM_HEIGHT;
+        final int maxRows = getMaxRows();
         return Math.max(3, Math.min((screenSpaceAvailable / 18) - 3, maxRows));
     }
 
@@ -180,18 +185,17 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     private boolean isOverStorageArea(int mouseX, int mouseY) {
         mouseX -= leftPos;
         mouseY -= topPos;
-
         return mouseX >= 7 && mouseY >= TOP_HEIGHT && mouseX <= 168 && mouseY <= TOP_HEIGHT + (visibleRows * 18);
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float delta, int mouseX, int mouseY) {
+    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
-        int x = (width - imageWidth) / 2;
-        int y = (height - imageHeight) / 2;
+        final int x = (width - imageWidth) / 2;
+        final int y = (height - imageHeight) / 2;
 
         blit(poseStack, x, y, 0, 0, imageWidth - 34, TOP_HEIGHT);
 
@@ -202,7 +206,6 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
             } else if (row == visibleRows - 1) {
                 textureY = 55;
             }
-
             blit(poseStack, x, y + TOP_HEIGHT + (18 * row), 0, textureY, imageWidth - 34, 18);
         }
 
@@ -221,16 +224,11 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         }
     }
 
-    private void renderRow(PoseStack poseStack, int mouseX, int mouseY, int x, int y, int row) {
-        int scrollbarOffset = (int) scrollbar.getOffset();
-        if (!scrollbar.isScrollAnimation()) {
-            scrollbarOffset *= 18;
-        }
+    private void renderRow(final PoseStack poseStack, final int mouseX, final int mouseY, final int x, final int y, final int row) {
+        final int rowX = x + 7;
+        final int rowY = y + TOP_HEIGHT + (row * 18) - getScrollbarOffset();
 
-        int rowX = x + 7;
-        int rowY = y + TOP_HEIGHT + (row * 18) - scrollbarOffset;
-
-        boolean isOutOfFrame = (rowY < y + TOP_HEIGHT - 18) || (rowY > y + TOP_HEIGHT + (visibleRows * 18));
+        final boolean isOutOfFrame = (rowY < y + TOP_HEIGHT - 18) || (rowY > y + TOP_HEIGHT + (visibleRows * 18));
         if (isOutOfFrame) {
             return;
         }
@@ -246,11 +244,22 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         }
     }
 
-    private void renderColumnInRow(PoseStack poseStack, int mouseX, int mouseY, int rowX, int rowY, int idx, int column) {
-        GridView<R> view = getMenu().getView();
+    private int getScrollbarOffset() {
+        if (scrollbar == null) {
+            return 0;
+        }
+        final int scrollbarOffset = (int) scrollbar.getOffset();
+        if (!scrollbar.isScrollAnimation()) {
+            return scrollbarOffset * 18;
+        }
+        return scrollbarOffset;
+    }
 
-        int slotX = rowX + 1 + (column * 18);
-        int slotY = rowY + 1;
+    private void renderColumnInRow(final PoseStack poseStack, final int mouseX, final int mouseY, final int rowX, final int rowY, final int idx, final int column) {
+        final GridView<R> view = getMenu().getView();
+
+        final int slotX = rowX + 1 + (column * 18);
+        final int slotY = rowY + 1;
 
         GridResource<R> resource = null;
         if (idx < view.getAll().size()) {
@@ -268,14 +277,14 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         }
     }
 
-    private void renderResourceWithAmount(PoseStack poseStack, int slotX, int slotY, GridResource<R> resource) {
+    private void renderResourceWithAmount(final PoseStack poseStack, final int slotX, final int slotY, final GridResource<R> resource) {
         renderResource(poseStack, slotX, slotY, resource);
         renderAmount(poseStack, slotX, slotY, resource);
     }
 
-    private void renderAmount(PoseStack poseStack, int slotX, int slotY, GridResource<R> resource) {
-        String text = getAmount(resource);
-        Integer color = resource.isZeroed() ? ChatFormatting.RED.getColor() : ChatFormatting.WHITE.getColor();
+    private void renderAmount(final PoseStack poseStack, final int slotX, final int slotY, final GridResource<R> resource) {
+        final String text = getAmount(resource);
+        final int color = resource.isZeroed() ? Objects.requireNonNullElse(ChatFormatting.RED.getColor(), 15) : Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15);
         renderAmount(poseStack, slotX, slotY, text, color);
     }
 
@@ -285,7 +294,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
     protected abstract String getAmountInTooltip(GridResource<R> resource);
 
-    private void renderDisabledSlot(PoseStack poseStack, int slotX, int slotY) {
+    private void renderDisabledSlot(final PoseStack poseStack, final int slotX, final int slotY) {
         RenderSystem.disableDepthTest();
         RenderSystem.colorMask(true, true, true, false);
         fillGradient(poseStack, slotX, slotY, slotX + 16, slotY + 16, DISABLED_SLOT_COLOR, DISABLED_SLOT_COLOR);
@@ -293,7 +302,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         RenderSystem.enableDepthTest();
     }
 
-    private void renderSelection(PoseStack poseStack, int slotX, int slotY) {
+    private void renderSelection(final PoseStack poseStack, final int slotX, final int slotY) {
         RenderSystem.disableDepthTest();
         RenderSystem.colorMask(true, true, true, false);
         fillGradient(poseStack, slotX, slotY, slotX + 16, slotY + 16, SELECTION_SLOT_COLOR, SELECTION_SLOT_COLOR);
@@ -301,16 +310,16 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         RenderSystem.enableDepthTest();
     }
 
-    private void renderTooltipWithMaybeSmallLines(PoseStack poseStack, int mouseX, int mouseY) {
-        GridView<R> view = getMenu().getView();
-        GridResource<R> resource = view.getAll().get(gridSlotNumber);
+    private void renderTooltipWithMaybeSmallLines(final PoseStack poseStack, final int mouseX, final int mouseY) {
+        final GridView<R> view = getMenu().getView();
+        final GridResource<R> resource = view.getAll().get(gridSlotNumber);
 
-        List<FormattedCharSequence> lines = Lists.transform(getTooltip(resource), Component::getVisualOrderText);
+        final List<FormattedCharSequence> lines = Lists.transform(getTooltip(resource), Component::getVisualOrderText);
 
         if (!Platform.INSTANCE.getConfig().getGrid().isDetailedTooltip()) {
             renderTooltip(poseStack, lines, mouseX, mouseY);
         } else {
-            List<FormattedCharSequence> smallLines = new ArrayList<>();
+            final List<FormattedCharSequence> smallLines = new ArrayList<>();
             smallLines.add(createTranslation("misc", "total", getAmountInTooltip(resource)).withStyle(ChatFormatting.GRAY).getVisualOrderText());
 
             view.getTrackedResource(resource.getResourceAmount().getResource()).ifPresent(entry -> smallLines.add(
@@ -323,15 +332,14 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
     protected abstract List<Component> getTooltip(GridResource<R> resource);
 
-    private MutableComponent getLastModifiedText(TrackedResource trackedResource) {
-        LastModified lastModified = LastModified.calculate(trackedResource.getTime(), System.currentTimeMillis());
-
+    private MutableComponent getLastModifiedText(final TrackedResource trackedResource) {
+        final LastModified lastModified = LastModified.calculate(trackedResource.getTime(), System.currentTimeMillis());
         if (isModifiedJustNow(lastModified)) {
             return createTranslation("misc", "last_modified.just_now", trackedResource.getSourceName());
         }
 
         String translationKey = lastModified.type().toString().toLowerCase();
-        boolean plural = lastModified.amount() != 1;
+        final boolean plural = lastModified.amount() != 1;
         if (plural) {
             translationKey += "s";
         }
@@ -339,12 +347,12 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         return createTranslation("misc", "last_modified." + translationKey, lastModified.amount(), trackedResource.getSourceName());
     }
 
-    private boolean isModifiedJustNow(LastModified lastModified) {
+    private boolean isModifiedJustNow(final LastModified lastModified) {
         return lastModified.type() == LastModified.Type.SECOND && lastModified.amount() <= MODIFIED_JUST_NOW_MAX_SECONDS;
     }
 
-    protected void renderAmount(PoseStack poseStack, int x, int y, String amount, int color) {
-        boolean large = this.minecraft.isEnforceUnicode() || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
+    protected void renderAmount(final PoseStack poseStack, final int x, final int y, final String amount, final int color) {
+        final boolean large = (minecraft != null && minecraft.isEnforceUnicode()) || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
 
         poseStack.pushPose();
         poseStack.translate(x, y, 300);
@@ -358,22 +366,24 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         poseStack.popPose();
     }
 
-    private void renderTooltipWithSmallText(PoseStack poseStack, List<? extends FormattedCharSequence> lines, List<? extends FormattedCharSequence> smallLines, int x, int y) {
+    private void renderTooltipWithSmallText(final PoseStack poseStack,
+                                            final List<? extends FormattedCharSequence> lines,
+                                            final List<? extends FormattedCharSequence> smallLines,
+                                            final int x,
+                                            final int y) {
         if (lines.isEmpty()) {
             return;
         }
 
-        float smallTextScale = minecraft.isEnforceUnicode() ? 1F : 0.7F;
+        final float smallTextScale = (minecraft != null && minecraft.isEnforceUnicode()) ? 1F : 0.7F;
 
         int tooltipWidth = 0;
-
         for (FormattedCharSequence text : lines) {
             int textWidth = font.width(text);
             if (textWidth > tooltipWidth) {
                 tooltipWidth = textWidth;
             }
         }
-
         for (FormattedCharSequence text : smallLines) {
             int textWidth = (int) (font.width(text) * smallTextScale);
             if (textWidth > tooltipWidth) {
@@ -429,7 +439,6 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
             if (text != null) {
                 font.drawInBatch(text, tooltipX, tooltipY, -1, true, matrix4f, immediate, false, 0, 15728880);
             }
-
             tooltipY += 12;
         }
 
@@ -448,29 +457,34 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float partialTicks) {
         renderBackground(poseStack);
         super.render(poseStack, mouseX, mouseY, partialTicks);
         renderTooltip(poseStack, mouseX, mouseY);
 
-        scrollbar.render(poseStack, mouseX, mouseY, partialTicks);
-        searchField.render(poseStack, 0, 0, 0);
+        if (scrollbar != null) {
+            scrollbar.render(poseStack, mouseX, mouseY, partialTicks);
+        }
+
+        if (searchField != null) {
+            searchField.render(poseStack, 0, 0, 0);
+        }
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int clickedButton) {
-        if (scrollbar.mouseClicked(mouseX, mouseY, clickedButton)) {
+        if (scrollbar != null && scrollbar.mouseClicked(mouseX, mouseY, clickedButton)) {
             return true;
         }
 
-        ItemStack cursorStack = getMenu().getCarried();
+        final ItemStack carriedStack = getMenu().getCarried();
 
-        if (!getMenu().getView().getAll().isEmpty() && gridSlotNumber >= 0 && cursorStack.isEmpty()) {
+        if (!getMenu().getView().getAll().isEmpty() && gridSlotNumber >= 0 && carriedStack.isEmpty()) {
             mouseClickedInGrid(clickedButton, getMenu().getView().getAll().get(gridSlotNumber));
             return true;
         }
 
-        if (isOverStorageArea((int) mouseX, (int) mouseY) && !cursorStack.isEmpty() && (clickedButton == 0 || clickedButton == 1)) {
+        if (isOverStorageArea((int) mouseX, (int) mouseY) && !carriedStack.isEmpty() && (clickedButton == 0 || clickedButton == 1)) {
             mouseClickedInGrid(clickedButton);
             return true;
         }
@@ -483,38 +497,40 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     protected abstract void mouseClickedInGrid(int clickedButton, GridResource<R> resource);
 
     @Override
-    public void mouseMoved(double mx, double my) {
-        scrollbar.mouseMoved(mx, my);
+    public void mouseMoved(final double mx, final double my) {
+        if (scrollbar != null) {
+            scrollbar.mouseMoved(mx, my);
+        }
         super.mouseMoved(mx, my);
     }
 
     @Override
-    public boolean mouseReleased(double mx, double my, int button) {
-        return scrollbar.mouseReleased(mx, my, button) || super.mouseReleased(mx, my, button);
+    public boolean mouseReleased(final double mx, final double my, final int button) {
+        return (scrollbar != null && scrollbar.mouseReleased(mx, my, button)) || super.mouseReleased(mx, my, button);
     }
 
     @Override
-    public boolean mouseScrolled(double x, double y, double delta) {
-        boolean up = delta > 0;
+    public boolean mouseScrolled(final double x, final double y, final double delta) {
+        final boolean up = delta > 0;
 
         if (isOverStorageArea((int) x, (int) y) && gridSlotNumber >= 0) {
             mouseScrolledInGrid(up);
         } else if (hoveredSlot != null && hoveredSlot.hasItem()) {
-            mouseScrolledInInventory(up);
+            mouseScrolledInInventory(up, hoveredSlot);
         }
 
-        return this.scrollbar.mouseScrolled(x, y, delta) || super.mouseScrolled(x, y, delta);
+        return (scrollbar != null && scrollbar.mouseScrolled(x, y, delta)) || super.mouseScrolled(x, y, delta);
     }
 
-    private void mouseScrolledInInventory(boolean up) {
+    private void mouseScrolledInInventory(final boolean up, final Slot slot) {
         getMenu().getView().setPreventSorting(true);
-        int slotIndex = hoveredSlot.getContainerSlot();
-        mouseScrolledInInventory(up, hoveredSlot.getItem(), slotIndex);
+        final int slotIndex = slot.getContainerSlot();
+        mouseScrolledInInventory(up, slot.getItem(), slotIndex);
     }
 
     protected abstract void mouseScrolledInInventory(boolean up, ItemStack stack, int slotIndex);
 
-    private void mouseScrolledInGrid(boolean up) {
+    private void mouseScrolledInGrid(final boolean up) {
         getMenu().getView().setPreventSorting(true);
         GridResource<R> resource = getMenu().getView().getAll().get(gridSlotNumber);
         mouseScrolledInGrid(up, resource);
@@ -523,13 +539,13 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     protected abstract void mouseScrolledInGrid(boolean up, GridResource<R> resource);
 
     @Override
-    public boolean charTyped(char unknown1, int unknown2) {
-        return searchField.charTyped(unknown1, unknown2) || super.charTyped(unknown1, unknown2);
+    public boolean charTyped(final char unknown1, final int unknown2) {
+        return (searchField != null && searchField.charTyped(unknown1, unknown2)) || super.charTyped(unknown1, unknown2);
     }
 
     @Override
-    public boolean keyPressed(int key, int scanCode, int modifiers) {
-        if (searchField.keyPressed(key, scanCode, modifiers) || searchField.canConsumeInput()) {
+    public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
+        if (searchField != null && (searchField.keyPressed(key, scanCode, modifiers) || searchField.canConsumeInput())) {
             return true;
         }
 
@@ -541,7 +557,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     }
 
     @Override
-    public boolean keyReleased(int key, int scanCode, int modifiers) {
+    public boolean keyReleased(final int key, final int scanCode, final int modifiers) {
         if (getMenu().getView().isPreventSorting()) {
             getMenu().getView().setPreventSorting(false);
             getMenu().getView().sort();

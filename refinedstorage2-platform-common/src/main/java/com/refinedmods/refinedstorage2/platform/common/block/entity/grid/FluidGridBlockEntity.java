@@ -10,6 +10,8 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidG
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
+import java.util.Objects;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -21,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class FluidGridBlockEntity extends GridBlockEntity<FluidResource> {
-    public FluidGridBlockEntity(BlockPos pos, BlockState state) {
+    public FluidGridBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getFluidGrid(), pos, state, StorageChannelTypes.FLUID);
     }
 
@@ -31,18 +33,17 @@ public class FluidGridBlockEntity extends GridBlockEntity<FluidResource> {
     }
 
     @Override
-    protected void writeResourceAmount(FriendlyByteBuf buf, ResourceAmount<FluidResource> resourceAmount) {
+    protected void writeResourceAmount(final FriendlyByteBuf buf, final ResourceAmount<FluidResource> resourceAmount) {
         PacketUtil.writeFluidResourceAmount(buf, resourceAmount);
     }
 
     @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+    public AbstractContainerMenu createMenu(final int syncId, final Inventory inv, final Player player) {
         return new FluidGridContainerMenu(syncId, inv, this, getBucketStorage());
     }
 
     private ExtractableStorage<ItemResource> getBucketStorage() {
-        return getNode()
-                .getNetwork()
+        return Objects.requireNonNull(getNode().getNetwork())
                 .getComponent(StorageNetworkComponent.class)
                 .getStorageChannel(StorageChannelTypes.ITEM);
     }

@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
-import java.util.Collections;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,7 +27,7 @@ public class ResourceFilterSlot extends Slot {
     private final int containerIndex;
     private FilteredResource cachedResource;
 
-    public ResourceFilterSlot(ResourceFilterContainer resourceFilterContainer, int index, int x, int y) {
+    public ResourceFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int index, final int x, final int y) {
         super(createDummyContainer(), 0, x, y);
         this.resourceFilterContainer = resourceFilterContainer;
         this.containerIndex = index;
@@ -38,18 +38,18 @@ public class ResourceFilterSlot extends Slot {
         return new SimpleContainer(1);
     }
 
-    public void change(ItemStack carried, ResourceType type) {
+    public void change(final ItemStack carried, final ResourceType type) {
         type.translate(carried).ifPresentOrElse(
                 resource -> resourceFilterContainer.set(containerIndex, resource),
                 () -> resourceFilterContainer.remove(containerIndex)
         );
     }
 
-    public void broadcastChanges(Player player) {
-        FilteredResource currentResource = resourceFilterContainer.get(containerIndex);
+    public void broadcastChanges(final Player player) {
+        final FilteredResource currentResource = resourceFilterContainer.get(containerIndex);
         if (!Objects.equals(currentResource, cachedResource)) {
             LOGGER.info("Resource filter slot {} has changed", containerIndex);
-            cachedResource = currentResource;
+            this.cachedResource = currentResource;
             Platform.INSTANCE.getServerToClientCommunications().sendResourceFilterSlotUpdate(
                     (ServerPlayer) player,
                     resourceFilterContainer,
@@ -59,28 +59,22 @@ public class ResourceFilterSlot extends Slot {
         }
     }
 
-    public void readFromUpdatePacket(FriendlyByteBuf buf) {
+    public void readFromUpdatePacket(final FriendlyByteBuf buf) {
         resourceFilterContainer.readFromUpdatePacket(containerIndex, buf);
     }
 
     @Override
-    public boolean mayPickup(Player player) {
+    public boolean mayPickup(final Player player) {
         return false;
     }
 
-    public void render(PoseStack poseStack, int x, int y, int z) {
-        FilteredResource slot = resourceFilterContainer.get(containerIndex);
-        if (slot == null) {
-            return;
-        }
-        slot.render(poseStack, x, y, z);
+    public void render(final PoseStack poseStack, final int x, final int y, final int z) {
+        final FilteredResource filteredResource = resourceFilterContainer.get(containerIndex);
+        filteredResource.render(poseStack, x, y, z);
     }
 
-    public List<Component> getTooltipLines(Player player) {
-        FilteredResource slot = resourceFilterContainer.get(containerIndex);
-        if (slot == null) {
-            return Collections.emptyList();
-        }
-        return slot.getTooltipLines(player);
+    public List<Component> getTooltipLines(@Nullable final Player player) {
+        final FilteredResource filteredResource = resourceFilterContainer.get(containerIndex);
+        return filteredResource.getTooltipLines(player);
     }
 }

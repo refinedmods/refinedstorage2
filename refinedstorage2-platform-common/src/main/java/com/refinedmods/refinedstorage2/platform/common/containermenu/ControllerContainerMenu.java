@@ -7,6 +7,8 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.property.Tw
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
+import javax.annotation.Nullable;
+
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,11 +21,13 @@ public class ControllerContainerMenu extends BaseContainerMenu implements Redsto
     private long capacity;
     private long serverStored;
     private long serverCapacity;
+    @Nullable
     private ControllerBlockEntity controller;
+    @Nullable
     private Player playerEntity;
     private final RateLimiter energyUpdateRateLimiter = RateLimiter.create(4);
 
-    public ControllerContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
+    public ControllerContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getController(), syncId);
         addPlayerInventory(playerInventory, 8, 107);
 
@@ -42,7 +46,7 @@ public class ControllerContainerMenu extends BaseContainerMenu implements Redsto
         addDataSlot(redstoneModeProperty);
     }
 
-    public ControllerContainerMenu(int syncId, Inventory playerInventory, ControllerBlockEntity controller, Player playerEntity) {
+    public ControllerContainerMenu(final int syncId, final Inventory playerInventory, final ControllerBlockEntity controller, final Player playerEntity) {
         super(Menus.INSTANCE.getController(), syncId);
         this.controller = controller;
         this.serverStored = controller.getActualStored();
@@ -64,14 +68,14 @@ public class ControllerContainerMenu extends BaseContainerMenu implements Redsto
     @Override
     public void broadcastChanges() {
         super.broadcastChanges();
-        if ((serverStored != controller.getActualStored() || serverCapacity != controller.getActualCapacity()) && energyUpdateRateLimiter.tryAcquire()) {
+        if (controller != null && (serverStored != controller.getActualStored() || serverCapacity != controller.getActualCapacity()) && energyUpdateRateLimiter.tryAcquire()) {
             serverStored = controller.getActualStored();
             serverCapacity = controller.getActualCapacity();
             Platform.INSTANCE.getServerToClientCommunications().sendControllerEnergy((ServerPlayer) playerEntity, serverStored, serverCapacity);
         }
     }
 
-    public void setEnergy(long stored, long capacity) {
+    public void setEnergy(final long stored, final long capacity) {
         this.stored = stored;
         this.capacity = capacity;
     }
@@ -90,7 +94,7 @@ public class ControllerContainerMenu extends BaseContainerMenu implements Redsto
     }
 
     @Override
-    public void setRedstoneMode(RedstoneMode redstoneMode) {
+    public void setRedstoneMode(final RedstoneMode redstoneMode) {
         redstoneModeProperty.syncToServer(redstoneMode);
     }
 }

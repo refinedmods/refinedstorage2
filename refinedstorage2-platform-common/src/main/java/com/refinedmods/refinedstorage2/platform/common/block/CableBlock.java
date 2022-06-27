@@ -54,83 +54,75 @@ public class CableBlock extends NetworkNodeContainerBlock implements SimpleWater
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter blockGetter, BlockPos pos) {
+    public boolean propagatesSkylightDown(final BlockState state, final BlockGetter blockGetter, final BlockPos pos) {
         return !state.getValue(BlockStateProperties.WATERLOGGED);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public FluidState getFluidState(BlockState state) {
+    public FluidState getFluidState(final BlockState state) {
         return Boolean.TRUE.equals(state.getValue(BlockStateProperties.WATERLOGGED)) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor level, BlockPos pos, BlockPos posFrom) {
+    public BlockState updateShape(final BlockState state, final Direction direction, final BlockState newState, final LevelAccessor level, final BlockPos pos, final BlockPos posFrom) {
         return getState(state, level, pos);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
+    public boolean isPathfindable(final BlockState state, final BlockGetter world, final BlockPos pos, final PathComputationType type) {
         return false;
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+    public BlockState getStateForPlacement(final BlockPlaceContext ctx) {
         return getState(defaultBlockState(), ctx.getLevel(), ctx.getClickedPos());
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-
         builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN, BlockStateProperties.WATERLOGGED);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(final BlockState state, final BlockGetter world, final BlockPos pos, final CollisionContext context) {
         VoxelShape shape = SHAPE_CORE;
-
         if (Boolean.TRUE.equals(state.getValue(NORTH))) {
             shape = Shapes.or(shape, SHAPE_NORTH);
         }
-
         if (Boolean.TRUE.equals(state.getValue(EAST))) {
             shape = Shapes.or(shape, SHAPE_EAST);
         }
-
         if (Boolean.TRUE.equals(state.getValue(SOUTH))) {
             shape = Shapes.or(shape, SHAPE_SOUTH);
         }
-
         if (Boolean.TRUE.equals(state.getValue(WEST))) {
             shape = Shapes.or(shape, SHAPE_WEST);
         }
-
         if (Boolean.TRUE.equals(state.getValue(UP))) {
             shape = Shapes.or(shape, SHAPE_UP);
         }
-
         if (Boolean.TRUE.equals(state.getValue(DOWN))) {
             shape = Shapes.or(shape, SHAPE_DOWN);
         }
-
         return shape;
     }
 
-    private boolean hasConnection(LevelAccessor world, BlockPos pos) {
+    private boolean hasConnection(final LevelAccessor world, final BlockPos pos) {
         return world.getBlockState(pos).getBlock() instanceof NetworkNodeContainerBlock;
     }
 
-    private BlockState getState(BlockState currentState, LevelAccessor world, BlockPos pos) {
-        boolean north = hasConnection(world, pos.relative(Direction.NORTH));
-        boolean east = hasConnection(world, pos.relative(Direction.EAST));
-        boolean south = hasConnection(world, pos.relative(Direction.SOUTH));
-        boolean west = hasConnection(world, pos.relative(Direction.WEST));
-        boolean up = hasConnection(world, pos.relative(Direction.UP));
-        boolean down = hasConnection(world, pos.relative(Direction.DOWN));
+    private BlockState getState(final BlockState currentState, final LevelAccessor world, final BlockPos pos) {
+        final boolean north = hasConnection(world, pos.relative(Direction.NORTH));
+        final boolean east = hasConnection(world, pos.relative(Direction.EAST));
+        final boolean south = hasConnection(world, pos.relative(Direction.SOUTH));
+        final boolean west = hasConnection(world, pos.relative(Direction.WEST));
+        final boolean up = hasConnection(world, pos.relative(Direction.UP));
+        final boolean down = hasConnection(world, pos.relative(Direction.DOWN));
 
         return currentState
                 .setValue(NORTH, north)
@@ -142,7 +134,7 @@ public class CableBlock extends NetworkNodeContainerBlock implements SimpleWater
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
         return new CableBlockEntity(pos, state);
     }
 }

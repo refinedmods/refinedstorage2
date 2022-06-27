@@ -28,9 +28,12 @@ import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorage
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
+import java.util.Objects;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
@@ -52,15 +55,22 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public PlatformStorageRepository getStorageRepository(Level level) {
+    public PlatformStorageRepository getStorageRepository(final Level level) {
         if (level.getServer() == null) {
             return clientStorageRepository;
         }
-        return level
-                .getServer()
-                .getLevel(Level.OVERWORLD)
-                .getDataStorage()
-                .computeIfAbsent(this::createStorageRepository, this::createStorageRepository, PlatformStorageRepositoryImpl.NAME);
+        final ServerLevel serverLevel = Objects.requireNonNull(level.getServer().getLevel(Level.OVERWORLD));
+        return serverLevel.getDataStorage().computeIfAbsent(this::createStorageRepository, this::createStorageRepository, PlatformStorageRepositoryImpl.NAME);
+    }
+
+    private PlatformStorageRepositoryImpl createStorageRepository(final CompoundTag tag) {
+        final PlatformStorageRepositoryImpl manager = createStorageRepository();
+        manager.read(tag);
+        return manager;
+    }
+
+    private PlatformStorageRepositoryImpl createStorageRepository() {
+        return new PlatformStorageRepositoryImpl(new StorageRepositoryImpl(), storageTypeRegistry);
     }
 
     @Override
@@ -79,7 +89,7 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public MutableComponent createTranslation(String category, String value, Object... args) {
+    public MutableComponent createTranslation(final String category, final String value, final Object... args) {
         return IdentifierUtil.createTranslation(category, value, args);
     }
 
@@ -99,8 +109,8 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level, Runnable callback) {
-        LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
+    public void requestNetworkNodeInitialization(final NetworkNodeContainer container, final Level level, final Runnable callback) {
+        final LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
         TickHandler.runWhenReady(() -> {
             networkBuilder.initialize(container, connectionProvider);
             callback.run();
@@ -108,18 +118,8 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public void requestNetworkNodeRemoval(NetworkNodeContainer container, Level level) {
-        LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
+    public void requestNetworkNodeRemoval(final NetworkNodeContainer container, final Level level) {
+        final LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
         networkBuilder.remove(container, connectionProvider);
-    }
-
-    private PlatformStorageRepositoryImpl createStorageRepository(CompoundTag tag) {
-        var manager = createStorageRepository();
-        manager.read(tag);
-        return manager;
-    }
-
-    private PlatformStorageRepositoryImpl createStorageRepository() {
-        return new PlatformStorageRepositoryImpl(new StorageRepositoryImpl(), storageTypeRegistry);
     }
 }

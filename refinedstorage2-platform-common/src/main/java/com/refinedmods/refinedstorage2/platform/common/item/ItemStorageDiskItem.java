@@ -36,7 +36,7 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     private final ItemStorageType.Variant variant;
     private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
-    public ItemStorageDiskItem(CreativeModeTab tab, ItemStorageType.Variant variant) {
+    public ItemStorageDiskItem(final CreativeModeTab tab, final ItemStorageType.Variant variant) {
         super(new Item.Properties().tab(tab).stacksTo(1).fireResistant());
         this.variant = variant;
         this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.STACK_INFO);
@@ -46,7 +46,7 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context) {
+    public void appendHoverText(final ItemStack stack, @Nullable final Level level, final List<Component> tooltip, final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
         StorageItemHelper.appendToTooltip(
                 stack,
@@ -60,7 +60,7 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    public Optional<StorageChannelType<?>> getType(ItemStack stack) {
+    public Optional<StorageChannelType<?>> getType(final ItemStack stack) {
         return Optional.of(StorageChannelTypes.ITEM);
     }
 
@@ -70,8 +70,8 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    protected Storage<?> createStorage(Level level) {
-        TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
+    protected Storage<?> createStorage(final Level level) {
+        final TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
             return new PlatformStorage<>(
                     new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
@@ -92,13 +92,13 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    protected ItemStack createPrimaryDisassemblyByproduct(int count) {
+    protected ItemStack createPrimaryDisassemblyByproduct(final int count) {
         return new ItemStack(Items.INSTANCE.getStorageHousing(), count);
     }
 
     @Override
     @Nullable
-    protected ItemStack createSecondaryDisassemblyByproduct(int count) {
+    protected ItemStack createSecondaryDisassemblyByproduct(final int count) {
         if (variant == ItemStorageType.Variant.CREATIVE) {
             return null;
         }

@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class FluidGridBlock extends GridBlock implements ColorableBlock<FluidGridBlock> {
     private final MutableComponent name;
 
-    public FluidGridBlock(MutableComponent name) {
+    public FluidGridBlock(final MutableComponent name) {
         super(BlockConstants.STONE_PROPERTIES);
         this.name = name;
     }

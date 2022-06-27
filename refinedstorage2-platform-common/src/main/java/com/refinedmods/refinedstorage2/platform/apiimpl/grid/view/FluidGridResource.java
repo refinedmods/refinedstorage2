@@ -12,7 +12,7 @@ import net.minecraft.core.Registry;
 public class FluidGridResource extends GridResource<FluidResource> {
     private final int id;
 
-    public FluidGridResource(ResourceAmount<FluidResource> resourceAmount, String name, String modId, String modName, Set<String> tags, String tooltip) {
+    public FluidGridResource(final ResourceAmount<FluidResource> resourceAmount, final String name, final String modId, final String modName, final Set<String> tags, final String tooltip) {
         super(resourceAmount, name, Map.of(
                 GridResourceAttributeKeys.MOD_ID, Set.of(modId),
                 GridResourceAttributeKeys.MOD_NAME, Set.of(modName),

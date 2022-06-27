@@ -23,18 +23,18 @@ public class RedstoneModeSideButtonWidget extends SideButtonWidget {
     private final TooltipRenderer tooltipRenderer;
     private final RedstoneModeAccessor redstoneModeAccessor;
 
-    public RedstoneModeSideButtonWidget(RedstoneModeAccessor redstoneModeAccessor, TooltipRenderer tooltipRenderer) {
+    public RedstoneModeSideButtonWidget(final RedstoneModeAccessor redstoneModeAccessor, final TooltipRenderer tooltipRenderer) {
         super(createPressAction(redstoneModeAccessor));
         this.tooltipRenderer = tooltipRenderer;
         this.redstoneModeAccessor = redstoneModeAccessor;
         Arrays.stream(RedstoneMode.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private static OnPress createPressAction(RedstoneModeAccessor redstoneModeAccessor) {
+    private static OnPress createPressAction(final RedstoneModeAccessor redstoneModeAccessor) {
         return btn -> redstoneModeAccessor.setRedstoneMode(redstoneModeAccessor.getRedstoneMode().toggle());
     }
 
-    private List<Component> calculateTooltip(RedstoneMode type) {
+    private List<Component> calculateTooltip(final RedstoneMode type) {
         List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "redstone_mode"));
         lines.add(createTranslation("gui", "redstone_mode." + type.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
@@ -56,7 +56,7 @@ public class RedstoneModeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
+    public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
         tooltipRenderer.render(poseStack, tooltips.get(redstoneModeAccessor.getRedstoneMode()), mouseX, mouseY);
     }
 }

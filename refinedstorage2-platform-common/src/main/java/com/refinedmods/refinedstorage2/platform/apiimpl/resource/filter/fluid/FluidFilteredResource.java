@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -17,12 +18,12 @@ import net.minecraft.world.entity.player.Player;
 public class FluidFilteredResource implements FilteredResource {
     private final FluidResource value;
 
-    public FluidFilteredResource(FluidResource value) {
+    public FluidFilteredResource(final FluidResource value) {
         this.value = value;
     }
 
     @Override
-    public void writeToPacket(FriendlyByteBuf buf) {
+    public void writeToPacket(final FriendlyByteBuf buf) {
         PacketUtil.writeFluidResource(buf, value);
     }
 
@@ -32,7 +33,7 @@ public class FluidFilteredResource implements FilteredResource {
     }
 
     @Override
-    public void render(PoseStack poseStack, int x, int y, int z) {
+    public void render(final PoseStack poseStack, final int x, final int y, final int z) {
         Platform.INSTANCE.getFluidRenderer().render(poseStack, x, y, z, value);
     }
 
@@ -47,7 +48,7 @@ public class FluidFilteredResource implements FilteredResource {
     }
 
     @Override
-    public List<Component> getTooltipLines(Player player) {
+    public List<Component> getTooltipLines(@Nullable final Player player) {
         return Platform.INSTANCE.getFluidRenderer().getTooltip(value);
     }
 }

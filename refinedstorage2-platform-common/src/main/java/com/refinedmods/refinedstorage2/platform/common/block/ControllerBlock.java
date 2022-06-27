@@ -22,7 +22,7 @@ public class ControllerBlock extends NetworkNodeContainerBlock implements Colora
     private final ControllerType type;
     private final MutableComponent name;
 
-    public ControllerBlock(ControllerType type, MutableComponent name) {
+    public ControllerBlock(final ControllerType type, final MutableComponent name) {
         super(BlockConstants.STONE_PROPERTIES);
 
         this.type = type;
@@ -37,19 +37,19 @@ public class ControllerBlock extends NetworkNodeContainerBlock implements Colora
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
 
         builder.add(ENERGY_TYPE);
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
         return new ControllerBlockEntity(type, pos, state);
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level, final BlockState state, final BlockEntityType<T> type) {
         return (type == BlockEntities.INSTANCE.getController() || type == BlockEntities.INSTANCE.getCreativeController()) && !level.isClientSide ? (level2, pos, state2, blockEntity) -> ControllerBlockEntity.serverTick(state2, (ControllerBlockEntity) blockEntity) : null;
     }
 

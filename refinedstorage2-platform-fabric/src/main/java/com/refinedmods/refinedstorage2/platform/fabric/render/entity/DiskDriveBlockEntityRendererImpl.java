@@ -19,8 +19,8 @@ public class DiskDriveBlockEntityRendererImpl<T extends DiskDriveBlockEntity> ex
     }
 
     @Override
-    protected DiskDriveState getDriveState(DiskDriveBlockEntity diskDriveBlockEntity) {
-        if (!(diskDriveBlockEntity instanceof FabricDiskDriveBlockEntity fabricDiskDriveBlockEntity)) {
+    protected DiskDriveState getDriveState(DiskDriveBlockEntity blockEntity) {
+        if (!(blockEntity instanceof FabricDiskDriveBlockEntity fabricDiskDriveBlockEntity)) {
             return null;
         }
         if (fabricDiskDriveBlockEntity.getRenderAttachmentData() instanceof DiskDriveState driveState) {

@@ -12,19 +12,19 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
 public abstract class FluidRendererImpl implements FluidRenderer {
-    protected void render(PoseStack poseStack, int x, int y, int z, int packedRgb, TextureAtlasSprite sprite) {
+    protected void render(final PoseStack poseStack, final int x, final int y, final int z, final int packedRgb, final TextureAtlasSprite sprite) {
         RenderSystem.setShaderTexture(0, sprite.atlas().getId());
 
-        int r = (packedRgb >> 16 & 255);
-        int g = (packedRgb >> 8 & 255);
-        int b = (packedRgb & 255);
+        final int r = (packedRgb >> 16 & 255);
+        final int g = (packedRgb >> 8 & 255);
+        final int b = (packedRgb & 255);
 
-        int slotXEnd = x + 16;
-        int slotYEnd = y + 16;
+        final int slotXEnd = x + 16;
+        final int slotYEnd = y + 16;
 
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-        Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder bufferBuilder = tesselator.getBuilder();
+        final Tesselator tesselator = Tesselator.getInstance();
+        final BufferBuilder bufferBuilder = tesselator.getBuilder();
         bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         bufferBuilder.vertex(poseStack.last().pose(), x, slotYEnd, z).uv(sprite.getU0(), sprite.getV1()).color(r, g, b, 255).endVertex();
         bufferBuilder.vertex(poseStack.last().pose(), slotXEnd, slotYEnd, z).uv(sprite.getU1(), sprite.getV1()).color(r, g, b, 255).endVertex();

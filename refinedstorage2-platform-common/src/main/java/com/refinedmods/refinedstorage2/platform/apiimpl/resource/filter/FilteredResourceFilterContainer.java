@@ -9,13 +9,13 @@ import net.minecraft.resources.ResourceLocation;
 public class FilteredResourceFilterContainer extends ResourceFilterContainer {
     private final ResourceType allowedType;
 
-    public FilteredResourceFilterContainer(OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, int size, Runnable listener, ResourceType allowedType) {
+    public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, final int size, final Runnable listener, final ResourceType allowedType) {
         super(resourceTypeRegistry, size, listener);
         this.allowedType = allowedType;
     }
 
     @Override
-    public void set(int index, FilteredResource resource) {
+    public void set(final int index, final FilteredResource resource) {
         if (resource.getType() != allowedType) {
             return;
         }

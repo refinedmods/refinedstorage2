@@ -29,7 +29,7 @@ public class ItemStorageBlockBlockEntity extends StorageBlockBlockEntity<ItemRes
     private final ItemStorageType.Variant variant;
     private final Component displayName;
 
-    public ItemStorageBlockBlockEntity(BlockPos pos, BlockState state, ItemStorageType.Variant variant) {
+    public ItemStorageBlockBlockEntity(final BlockPos pos, final BlockState state, final ItemStorageType.Variant variant) {
         super(
                 BlockEntities.INSTANCE.getItemStorageBlock(variant),
                 pos,
@@ -41,7 +41,7 @@ public class ItemStorageBlockBlockEntity extends StorageBlockBlockEntity<ItemRes
         this.displayName = createTranslation("block", String.format("%s_storage_block", variant.getName()));
     }
 
-    private static long getEnergyUsage(ItemStorageType.Variant variant) {
+    private static long getEnergyUsage(final ItemStorageType.Variant variant) {
         return switch (variant) {
             case ONE_K -> Platform.INSTANCE.getConfig().getStorageBlock().get1kEnergyUsage();
             case FOUR_K -> Platform.INSTANCE.getConfig().getStorageBlock().get4kEnergyUsage();
@@ -52,8 +52,8 @@ public class ItemStorageBlockBlockEntity extends StorageBlockBlockEntity<ItemRes
     }
 
     @Override
-    protected PlatformStorage<ItemResource> createStorage(Runnable listener) {
-        TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
+    protected PlatformStorage<ItemResource> createStorage(final Runnable listener) {
+        final TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
             return new PlatformStorage<>(
                     new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
@@ -79,7 +79,7 @@ public class ItemStorageBlockBlockEntity extends StorageBlockBlockEntity<ItemRes
     }
 
     @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inventory, Player player) {
+    public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         return new ItemStorageBlockContainerMenu(
                 syncId,
                 player,

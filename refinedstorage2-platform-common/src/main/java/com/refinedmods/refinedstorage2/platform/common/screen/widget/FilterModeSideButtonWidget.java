@@ -21,7 +21,7 @@ public class FilterModeSideButtonWidget extends SideButtonWidget {
     private final List<Component> blockModeTooltip;
     private final List<Component> allowModeTooltip;
 
-    public FilterModeSideButtonWidget(FilterModeAccessor filterModeAccessor, TooltipRenderer tooltipRenderer) {
+    public FilterModeSideButtonWidget(final FilterModeAccessor filterModeAccessor, final TooltipRenderer tooltipRenderer) {
         super(createPressAction(filterModeAccessor));
         this.filterModeAccessor = filterModeAccessor;
         this.tooltipRenderer = tooltipRenderer;
@@ -29,11 +29,11 @@ public class FilterModeSideButtonWidget extends SideButtonWidget {
         this.allowModeTooltip = calculateTooltip(FilterMode.ALLOW);
     }
 
-    private static OnPress createPressAction(FilterModeAccessor filterModeAccessor) {
+    private static OnPress createPressAction(final FilterModeAccessor filterModeAccessor) {
         return btn -> filterModeAccessor.setFilterMode(filterModeAccessor.getFilterMode().toggle());
     }
 
-    private List<Component> calculateTooltip(FilterMode filterMode) {
+    private List<Component> calculateTooltip(final FilterMode filterMode) {
         List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "filter_mode"));
         lines.add(createTranslation("gui", "filter_mode." + filterMode.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
@@ -51,7 +51,7 @@ public class FilterModeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
+    public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
         tooltipRenderer.render(poseStack, filterModeAccessor.getFilterMode() == FilterMode.BLOCK ? blockModeTooltip : allowModeTooltip, mouseX, mouseY);
     }
 }
