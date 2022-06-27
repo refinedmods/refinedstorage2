@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.Resource
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,6 +26,7 @@ public class ResourceFilterSlot extends Slot {
 
     private final ResourceFilterContainer resourceFilterContainer;
     private final int containerIndex;
+    @Nullable
     private FilteredResource cachedResource;
 
     public ResourceFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int index, final int x, final int y) {
@@ -70,11 +72,17 @@ public class ResourceFilterSlot extends Slot {
 
     public void render(final PoseStack poseStack, final int x, final int y, final int z) {
         final FilteredResource filteredResource = resourceFilterContainer.get(containerIndex);
+        if (filteredResource == null) {
+            return;
+        }
         filteredResource.render(poseStack, x, y, z);
     }
 
     public List<Component> getTooltipLines(@Nullable final Player player) {
         final FilteredResource filteredResource = resourceFilterContainer.get(containerIndex);
+        if (filteredResource == null) {
+            return Collections.emptyList();
+        }
         return filteredResource.getTooltipLines(player);
     }
 }

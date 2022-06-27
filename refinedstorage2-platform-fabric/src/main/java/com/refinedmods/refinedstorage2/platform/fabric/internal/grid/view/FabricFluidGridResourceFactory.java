@@ -16,7 +16,7 @@ import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.t
 
 public class FabricFluidGridResourceFactory extends FluidGridResourceFactory {
     @Override
-    protected String getTooltip(FluidResource resource) {
+    protected String getTooltip(final FluidResource resource) {
         return FluidVariantRendering
                 .getTooltip(toFluidVariant(resource))
                 .stream()
@@ -25,7 +25,7 @@ public class FabricFluidGridResourceFactory extends FluidGridResourceFactory {
     }
 
     @Override
-    protected String getModName(String modId) {
+    protected String getModName(final String modId) {
         return FabricLoader
                 .getInstance()
                 .getModContainer(modId)
@@ -35,7 +35,7 @@ public class FabricFluidGridResourceFactory extends FluidGridResourceFactory {
     }
 
     @Override
-    protected String getName(FluidResource fluidResource) {
+    protected String getName(final FluidResource fluidResource) {
         return FluidVariantAttributes.getName(toFluidVariant(fluidResource)).getString();
     }
 }

@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -51,6 +52,7 @@ public class ResourceFilterContainer {
         return items.length;
     }
 
+    @Nullable
     public FilteredResource get(final int index) {
         return items[index];
     }

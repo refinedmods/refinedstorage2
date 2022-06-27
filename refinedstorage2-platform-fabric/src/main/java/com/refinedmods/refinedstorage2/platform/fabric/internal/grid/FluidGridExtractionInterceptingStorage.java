@@ -13,7 +13,7 @@ public class FluidGridExtractionInterceptingStorage extends SingleStackStorage {
     }
 
     @Override
-    protected void setStack(ItemStack stack) {
+    protected void setStack(final ItemStack stack) {
         this.stack = stack;
     }
 }

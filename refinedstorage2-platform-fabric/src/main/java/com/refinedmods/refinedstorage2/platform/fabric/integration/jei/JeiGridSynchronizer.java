@@ -2,6 +2,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.integration.jei;
 
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.DefaultGridSynchronizer;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
@@ -13,7 +15,7 @@ public class JeiGridSynchronizer extends DefaultGridSynchronizer {
     private final JeiProxy jeiProxy;
     private final boolean twoWay;
 
-    public JeiGridSynchronizer(JeiProxy jeiProxy, boolean twoWay) {
+    public JeiGridSynchronizer(final JeiProxy jeiProxy, final boolean twoWay) {
         this.jeiProxy = jeiProxy;
         this.twoWay = twoWay;
     }
@@ -29,6 +31,7 @@ public class JeiGridSynchronizer extends DefaultGridSynchronizer {
     }
 
     @Override
+    @Nullable
     public String getTextToSynchronizeToGrid() {
         return twoWay ? jeiProxy.getSearchFieldText() : null;
     }

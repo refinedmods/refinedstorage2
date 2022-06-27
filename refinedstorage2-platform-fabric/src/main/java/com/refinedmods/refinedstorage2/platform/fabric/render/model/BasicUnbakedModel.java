@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public interface BasicUnbakedModel extends UnbakedModel {
     @Override
-    default Collection<Material> getMaterials(Function<ResourceLocation, UnbakedModel> unbakedModelGetter, Set<Pair<String, String>> unresolvedTextureReferences) {
+    default Collection<Material> getMaterials(final Function<ResourceLocation, UnbakedModel> unbakedModelGetter, final Set<Pair<String, String>> unresolvedTextureReferences) {
         return getDependencies()
                 .stream()
                 .map(unbakedModelGetter)
