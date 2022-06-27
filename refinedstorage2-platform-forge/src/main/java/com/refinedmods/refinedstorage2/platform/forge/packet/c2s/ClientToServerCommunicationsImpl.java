@@ -15,42 +15,42 @@ import java.util.UUID;
 public class ClientToServerCommunicationsImpl implements ClientToServerCommunications {
     private final NetworkManager networkManager;
 
-    public ClientToServerCommunicationsImpl(NetworkManager networkManager) {
+    public ClientToServerCommunicationsImpl(final NetworkManager networkManager) {
         this.networkManager = networkManager;
     }
 
     @Override
-    public void sendGridItemExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
+    public void sendGridItemExtract(final ItemResource itemResource, final GridExtractMode mode, final boolean cursor) {
         networkManager.send(new GridExtractPacket(mode, cursor, itemResource));
     }
 
     @Override
-    public void sendGridFluidExtract(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
+    public void sendGridFluidExtract(final FluidResource fluidResource, final GridExtractMode mode, final boolean cursor) {
         networkManager.send(new GridExtractPacket(mode, cursor, fluidResource));
     }
 
     @Override
-    public void sendGridInsert(GridInsertMode mode) {
+    public void sendGridInsert(final GridInsertMode mode) {
         networkManager.send(new GridInsertPacket(mode == GridInsertMode.SINGLE_RESOURCE));
     }
 
     @Override
-    public void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slotIndex) {
+    public void sendGridScroll(final ItemResource itemResource, final GridScrollMode mode, final int slotIndex) {
         networkManager.send(new GridScrollPacket(itemResource, mode, slotIndex));
     }
 
     @Override
-    public void sendPropertyChange(int id, int value) {
+    public void sendPropertyChange(final int id, final int value) {
         networkManager.send(new PropertyChangePacket(id, value));
     }
 
     @Override
-    public void sendResourceTypeChange(ResourceType type) {
+    public void sendResourceTypeChange(final ResourceType type) {
         PlatformApi.INSTANCE.getResourceTypeRegistry().getId(type).ifPresent(id -> networkManager.send(new ResourceTypeChangePacket(id)));
     }
 
     @Override
-    public void sendStorageInfoRequest(UUID storageId) {
+    public void sendStorageInfoRequest(final UUID storageId) {
         networkManager.send(new StorageInfoRequestPacket(storageId));
     }
 }

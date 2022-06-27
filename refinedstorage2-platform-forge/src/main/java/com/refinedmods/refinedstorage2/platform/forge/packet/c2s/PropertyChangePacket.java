@@ -11,29 +11,29 @@ public class PropertyChangePacket {
     private final int id;
     private final int value;
 
-    public PropertyChangePacket(int id, int value) {
+    public PropertyChangePacket(final int id, final int value) {
         this.id = id;
         this.value = value;
     }
 
-    public static PropertyChangePacket decode(FriendlyByteBuf buf) {
+    public static PropertyChangePacket decode(final FriendlyByteBuf buf) {
         return new PropertyChangePacket(buf.readInt(), buf.readInt());
     }
 
-    public static void encode(PropertyChangePacket packet, FriendlyByteBuf buf) {
+    public static void encode(final PropertyChangePacket packet, final FriendlyByteBuf buf) {
         buf.writeInt(packet.id);
         buf.writeInt(packet.value);
     }
 
-    public static void handle(PropertyChangePacket packet, Supplier<NetworkEvent.Context> ctx) {
-        ServerPlayer player = ctx.get().getSender();
+    public static void handle(final PropertyChangePacket packet, final Supplier<NetworkEvent.Context> ctx) {
+        final ServerPlayer player = ctx.get().getSender();
         if (player != null) {
             ctx.get().enqueueWork(() -> handle(packet, player));
         }
         ctx.get().setPacketHandled(true);
     }
 
-    private static void handle(PropertyChangePacket packet, Player player) {
+    private static void handle(final PropertyChangePacket packet, final Player player) {
         player.containerMenu.setData(packet.id, packet.value);
     }
 }

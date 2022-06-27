@@ -39,7 +39,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     private final PlayerMainInvWrapper playerInventoryStorage;
     private final ExtractableStorage<ItemResource> bucketStorage;
 
-    public FluidGridEventHandlerImpl(AbstractContainerMenu menu, Inventory playerInventory, GridService<FluidResource> gridService, ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridEventHandlerImpl(final AbstractContainerMenu menu, final Inventory playerInventory, final GridService<FluidResource> gridService, final ExtractableStorage<ItemResource> bucketStorage) {
         this.menu = menu;
         this.playerInventory = playerInventory;
         this.gridService = gridService;
@@ -48,19 +48,19 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     }
 
     @Override
-    public void onInsert(GridInsertMode insertMode) {
-        IFluidHandlerItem cursorStorage = getFluidCursorStorage();
+    public void onInsert(final GridInsertMode insertMode) {
+        final IFluidHandlerItem cursorStorage = getFluidCursorStorage();
         if (cursorStorage == null) {
             return;
         }
-        FluidStack extractableResource = cursorStorage.getFluidInTank(0);
+        final FluidStack extractableResource = cursorStorage.getFluidInTank(0);
         if (extractableResource.isEmpty()) {
             return;
         }
-        FluidResource fluidResource = ofFluidStack(extractableResource);
+        final FluidResource fluidResource = ofFluidStack(extractableResource);
         gridService.insert(fluidResource, insertMode, (resource, amount, action, source) -> {
-            FluidStack toDrain = toFluidStack(resource, amount == Long.MAX_VALUE ? Integer.MAX_VALUE : amount);
-            FluidStack drained = cursorStorage.drain(toDrain, toFluidAction(action));
+            final FluidStack toDrain = toFluidStack(resource, amount == Long.MAX_VALUE ? Integer.MAX_VALUE : amount);
+            final FluidStack drained = cursorStorage.drain(toDrain, toFluidAction(action));
             if (action == Action.EXECUTE) {
                 menu.setCarried(cursorStorage.getContainer());
             }
@@ -68,7 +68,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         });
     }
 
-    private IFluidHandler.FluidAction toFluidAction(Action action) {
+    private IFluidHandler.FluidAction toFluidAction(final Action action) {
         return action == Action.SIMULATE ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE;
     }
 
@@ -77,25 +77,26 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         return getFluidStorage(menu.getCarried());
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Nullable
     private IFluidHandlerItem getFluidStorage(ItemStack stack) {
         return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).orElse(null);
     }
 
     @Override
-    public void onTransfer(int slotIndex) {
-        IFluidHandlerItem storage = getFluidStorage(playerInventory.getItem(slotIndex));
+    public void onTransfer(final int slotIndex) {
+        final IFluidHandlerItem storage = getFluidStorage(playerInventory.getItem(slotIndex));
         if (storage == null) {
             return;
         }
-        FluidStack extractableResource = storage.getFluidInTank(0);
+        final FluidStack extractableResource = storage.getFluidInTank(0);
         if (extractableResource.isEmpty()) {
             return;
         }
-        FluidResource fluidResource = ofFluidStack(extractableResource);
+        final FluidResource fluidResource = ofFluidStack(extractableResource);
         gridService.insert(fluidResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
-            FluidStack toDrain = toFluidStack(resource, amount == Long.MAX_VALUE ? Integer.MAX_VALUE : amount);
-            FluidStack drained = storage.drain(toDrain, toFluidAction(action));
+            final FluidStack toDrain = toFluidStack(resource, amount == Long.MAX_VALUE ? Integer.MAX_VALUE : amount);
+            final FluidStack drained = storage.drain(toDrain, toFluidAction(action));
             if (action == Action.EXECUTE) {
                 playerInventory.setItem(slotIndex, storage.getContainer());
             }
@@ -104,9 +105,9 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     }
 
     @Override
-    public void onExtract(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
-        boolean bucketInInventory = hasBucketInInventory();
-        boolean bucketInStorageChannel = hasBucketInStorage();
+    public void onExtract(final FluidResource fluidResource, final GridExtractMode mode, final boolean cursor) {
+        final boolean bucketInInventory = hasBucketInInventory();
+        final boolean bucketInStorageChannel = hasBucketInStorage();
         if (bucketInInventory) {
             extract(fluidResource, mode, cursor, true);
         } else if (bucketInStorageChannel) {
@@ -114,13 +115,13 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         }
     }
 
-    private void extract(FluidResource fluidResource, GridExtractMode mode, boolean cursor, boolean bucketFromInventory) {
-        IFluidHandlerItem destination = getFluidStorage(toItemStack(BUCKET_ITEM_RESOURCE, 1));
+    private void extract(final FluidResource fluidResource, final GridExtractMode mode, final boolean cursor, final boolean bucketFromInventory) {
+        final IFluidHandlerItem destination = getFluidStorage(toItemStack(BUCKET_ITEM_RESOURCE, 1));
         if (destination == null) {
             return; // shouldn't happen
         }
         gridService.extract(fluidResource, mode, (resource, amount, action, source) -> {
-            int inserted = destination.fill(toFluidStack(resource, amount), toFluidAction(action));
+            final int inserted = destination.fill(toFluidStack(resource, amount), toFluidAction(action));
             if (action == Action.EXECUTE) {
                 extractSourceBucket(bucketFromInventory, source);
                 insertResultingBucket(cursor, destination);
@@ -129,7 +130,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         });
     }
 
-    private void extractSourceBucket(boolean bucketFromInventory, Source source) {
+    private void extractSourceBucket(final boolean bucketFromInventory, final Source source) {
         if (bucketFromInventory) {
             extractBucket(playerInventoryStorage, Action.EXECUTE);
         } else {
@@ -137,11 +138,11 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         }
     }
 
-    private void insertResultingBucket(boolean cursor, IFluidHandlerItem destination) {
+    private void insertResultingBucket(final boolean cursor, final IFluidHandlerItem destination) {
         if (cursor) {
             menu.setCarried(destination.getContainer());
         } else {
-            ItemStack remainder = ItemHandlerHelper.insertItem(playerInventoryStorage, destination.getContainer(), false);
+            final ItemStack remainder = ItemHandlerHelper.insertItem(playerInventoryStorage, destination.getContainer(), false);
             if (!remainder.isEmpty()) {
                 // TODO: This isn't ideal, but dealing without transactions on the inventory doesn't make it exactly easy.
                 Containers.dropItemStack(playerInventory.player.getCommandSenderWorld(), playerInventory.player.getX(), playerInventory.player.getY(), playerInventory.player.getZ(), destination.getContainer());
@@ -158,9 +159,9 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     }
 
     private boolean extractBucket(IItemHandler source, Action action) {
-        ItemStack toExtractStack = toItemStack(BUCKET_ITEM_RESOURCE, 1);
+        final ItemStack toExtractStack = toItemStack(BUCKET_ITEM_RESOURCE, 1);
         for (int slot = 0; slot < source.getSlots(); ++slot) {
-            boolean relevant = isSame(source.getStackInSlot(slot), toExtractStack);
+            final boolean relevant = isSame(source.getStackInSlot(slot), toExtractStack);
             if (!relevant) {
                 continue;
             }
@@ -171,7 +172,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         return false;
     }
 
-    private boolean isSame(ItemStack a, ItemStack b) {
+    private boolean isSame(final ItemStack a, final ItemStack b) {
         return ItemStack.isSameItemSameTags(a, b);
     }
 }

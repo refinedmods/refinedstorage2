@@ -49,7 +49,7 @@ public final class PlatformImpl extends AbstractPlatform {
 
     private final ConfigImpl config = new ConfigImpl();
 
-    public PlatformImpl(NetworkManager networkManager) {
+    public PlatformImpl(final NetworkManager networkManager) {
         super(new ServerToClientCommunicationsImpl(networkManager), new ClientToServerCommunicationsImpl(networkManager), new MenuOpenerImpl(), new BucketQuantityFormatter(FluidType.BUCKET_VOLUME), new FluidStackFluidRenderer());
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getSpec());
     }
@@ -70,22 +70,22 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public boolean canEditBoxLoseFocus(EditBox editBox) {
+    public boolean canEditBoxLoseFocus(final EditBox editBox) {
         return editBox.canLoseFocus;
     }
 
     @Override
-    public boolean isKeyDown(KeyMapping keyMapping) {
+    public boolean isKeyDown(final KeyMapping keyMapping) {
         return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), keyMapping.getKey().getValue());
     }
 
     @Override
-    public ItemGridEventHandler createItemGridEventHandler(AbstractContainerMenu containerMenu, GridService<ItemResource> gridService, Inventory playerInventory) {
+    public ItemGridEventHandler createItemGridEventHandler(final AbstractContainerMenu containerMenu, final GridService<ItemResource> gridService, final Inventory playerInventory) {
         return new ItemGridEventHandlerImpl(containerMenu, gridService, playerInventory);
     }
 
     @Override
-    public FluidGridEventHandler createFluidGridEventHandler(AbstractContainerMenu containerMenu, GridService<FluidResource> gridService, Inventory playerInventory, ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu, final GridService<FluidResource> gridService, final Inventory playerInventory, final ExtractableStorage<ItemResource> bucketStorage) {
         return new FluidGridEventHandlerImpl(containerMenu, playerInventory, gridService, bucketStorage);
     }
 
@@ -100,12 +100,12 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public Optional<FluidResource> convertToFluid(ItemStack stack) {
+    public Optional<FluidResource> convertToFluid(final ItemStack stack) {
         return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).map(handler -> handler.getFluidInTank(0)).map(contents -> contents.isEmpty() ? null : new FluidResource(contents.getFluid(), contents.getTag()));
     }
 
     @Override
-    public EnergyStorage createEnergyStorage(ControllerType controllerType, Runnable listener) {
+    public EnergyStorage createEnergyStorage(final ControllerType controllerType, final Runnable listener) {
         return switch (controllerType) {
             case NORMAL -> new ControllerForgeEnergy(listener);
             case CREATIVE -> new InfiniteEnergyStorage();
@@ -113,7 +113,7 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public void setEnergy(EnergyStorage energyStorage, long stored) {
+    public void setEnergy(final EnergyStorage energyStorage, final long stored) {
         if (energyStorage instanceof ControllerForgeEnergy controllerForgeEnergy) {
             controllerForgeEnergy.setSilently(stored);
         }

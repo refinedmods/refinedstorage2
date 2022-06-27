@@ -4,7 +4,7 @@ import mezz.jei.api.runtime.IJeiRuntime;
 
 public class JeiProxy {
     public String getSearchFieldText() {
-        IJeiRuntime runtime = JeiPlugin.getRuntime();
+        final IJeiRuntime runtime = JeiPlugin.getRuntime();
         if (runtime == null) {
             return "";
         }
@@ -12,7 +12,7 @@ public class JeiProxy {
     }
 
     public void setSearchFieldText(final String text) {
-        IJeiRuntime runtime = JeiPlugin.getRuntime();
+        final IJeiRuntime runtime = JeiPlugin.getRuntime();
         if (runtime != null) {
             runtime.getIngredientFilter().setFilterText(text);
         }

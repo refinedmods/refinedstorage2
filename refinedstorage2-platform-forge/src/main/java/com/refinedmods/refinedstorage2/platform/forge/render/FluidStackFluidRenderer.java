@@ -25,31 +25,31 @@ public class FluidStackFluidRenderer extends FluidRendererImpl {
     private final Map<FluidResource, FluidStack> stackCache = new HashMap<>();
 
     @NotNull
-    private FluidStack getFluidStackFromCache(FluidResource fluidResource) {
+    private FluidStack getFluidStackFromCache(final FluidResource fluidResource) {
         return stackCache.computeIfAbsent(fluidResource, r -> new FluidStack(r.fluid(), FluidType.BUCKET_VOLUME, r.tag()));
     }
 
     @Override
-    public void render(PoseStack poseStack, int x, int y, int z, FluidResource fluidResource) {
-        FluidStack stack = getFluidStackFromCache(fluidResource);
-        Fluid fluid = fluidResource.fluid();
+    public void render(final PoseStack poseStack, final int x, final int y, final int z, final FluidResource fluidResource) {
+        final FluidStack stack = getFluidStackFromCache(fluidResource);
+        final Fluid fluid = fluidResource.fluid();
 
-        IFluidTypeRenderProperties renderProperties = RenderProperties.get(fluid);
+        final IFluidTypeRenderProperties renderProperties = RenderProperties.get(fluid);
 
-        int packedRgb = renderProperties.getColorTint(stack);
-        TextureAtlasSprite sprite = getStillFluidSprite(renderProperties, stack);
+        final int packedRgb = renderProperties.getColorTint(stack);
+        final TextureAtlasSprite sprite = getStillFluidSprite(renderProperties, stack);
 
         render(poseStack, x, y, z, packedRgb, sprite);
     }
 
-    private TextureAtlasSprite getStillFluidSprite(IFluidTypeRenderProperties renderProperties, FluidStack fluidStack) {
-        Minecraft minecraft = Minecraft.getInstance();
-        ResourceLocation fluidStill = renderProperties.getStillTexture(fluidStack);
+    private TextureAtlasSprite getStillFluidSprite(final IFluidTypeRenderProperties renderProperties, final FluidStack fluidStack) {
+        final Minecraft minecraft = Minecraft.getInstance();
+        final ResourceLocation fluidStill = renderProperties.getStillTexture(fluidStack);
         return minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(fluidStill);
     }
 
     @Override
-    public List<Component> getTooltip(FluidResource fluidResource) {
+    public List<Component> getTooltip(final FluidResource fluidResource) {
         return Collections.singletonList(getFluidStackFromCache(fluidResource).getDisplayName());
     }
 }

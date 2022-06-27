@@ -15,7 +15,7 @@ public abstract class BasicModelGeometry<T extends IModelGeometry<T>> implements
     protected abstract Set<ResourceLocation> getModels();
 
     @Override
-    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
+    public Collection<Material> getTextures(final IModelConfiguration owner, final Function<ResourceLocation, UnbakedModel> modelGetter, final Set<Pair<String, String>> missingTextureErrors) {
         return getModels()
                 .stream()
                 .map(modelGetter)

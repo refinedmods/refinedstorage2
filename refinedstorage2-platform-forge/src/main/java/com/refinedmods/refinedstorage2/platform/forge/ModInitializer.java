@@ -291,8 +291,8 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     @SubscribeEvent
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock e) {
-        BlockState state = e.getWorld().getBlockState(e.getHitVec().getBlockPos());
+    public void onRightClickBlock(final PlayerInteractEvent.RightClickBlock e) {
+        final BlockState state = e.getWorld().getBlockState(e.getHitVec().getBlockPos());
 
         BaseBlock.tryUseWrench(state, e.getWorld(), e.getHitVec(), e.getPlayer(), e.getHand())
                 .or(() -> BaseBlock.tryUpdateColor(state, e.getWorld(), e.getHitVec().getBlockPos(), e.getPlayer(), e.getHand()))
@@ -303,14 +303,14 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     @SubscribeEvent
-    public void registerCapabilities(AttachCapabilitiesEvent<BlockEntity> e) {
+    public void registerCapabilities(final AttachCapabilitiesEvent<BlockEntity> e) {
         if (e.getObject() instanceof ControllerBlockEntity controllerBlockEntity) {
             registerControllerEnergy(e, controllerBlockEntity);
         }
     }
 
-    private void registerControllerEnergy(AttachCapabilitiesEvent<BlockEntity> e, ControllerBlockEntity controllerBlockEntity) {
-        LazyOptional<IEnergyStorage> capability = LazyOptional.of(() -> (IEnergyStorage) controllerBlockEntity.getEnergyStorage());
+    private void registerControllerEnergy(final AttachCapabilitiesEvent<BlockEntity> e, final ControllerBlockEntity controllerBlockEntity) {
+        final LazyOptional<IEnergyStorage> capability = LazyOptional.of(() -> (IEnergyStorage) controllerBlockEntity.getEnergyStorage());
         e.addCapability(createIdentifier("energy"), new ICapabilityProvider() {
             @NotNull
             @Override
@@ -324,7 +324,7 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     @SubscribeEvent
-    public void onServerTick(TickEvent.ServerTickEvent e) {
+    public void onServerTick(final TickEvent.ServerTickEvent e) {
         if (e.phase == TickEvent.Phase.START) {
             TickHandler.runQueuedActions();
         }

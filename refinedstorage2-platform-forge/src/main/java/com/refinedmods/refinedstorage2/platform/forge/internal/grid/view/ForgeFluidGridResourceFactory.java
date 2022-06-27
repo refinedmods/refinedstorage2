@@ -10,12 +10,12 @@ import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.to
 
 public class ForgeFluidGridResourceFactory extends FluidGridResourceFactory {
     @Override
-    protected String getTooltip(FluidResource resource) {
+    protected String getTooltip(final FluidResource resource) {
         return getName(resource);
     }
 
     @Override
-    protected String getModName(String modId) {
+    protected String getModName(final String modId) {
         return ModList
                 .get()
                 .getModContainerById(modId)
@@ -24,7 +24,7 @@ public class ForgeFluidGridResourceFactory extends FluidGridResourceFactory {
     }
 
     @Override
-    protected String getName(FluidResource fluidResource) {
+    protected String getName(final FluidResource fluidResource) {
         return toFluidStack(fluidResource, FluidType.BUCKET_VOLUME).getDisplayName().getString();
     }
 }

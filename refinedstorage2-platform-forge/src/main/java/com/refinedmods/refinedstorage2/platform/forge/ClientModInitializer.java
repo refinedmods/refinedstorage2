@@ -88,7 +88,7 @@ public final class ClientModInitializer {
     }
 
     private static void registerKeyBindings() {
-        KeyMapping focusSearchBarKeyBinding = new KeyMapping(
+        final KeyMapping focusSearchBarKeyBinding = new KeyMapping(
                 createTranslationKey("key", "focus_search_bar"),
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_TAB,
@@ -99,7 +99,7 @@ public final class ClientModInitializer {
     }
 
     private static void registerGridSynchronizers() {
-        ModList list = ModList.get();
+        final ModList list = ModList.get();
         // Give priority to REI, as REI requires a JEI compat mod on Forge.
         // This means that both JEI + REI support would be activated. We only want REI in that case.
         if (list.isLoaded("roughlyenoughitems")) {
@@ -111,14 +111,14 @@ public final class ClientModInitializer {
 
     private static void registerJeiGridSynchronizers() {
         LOGGER.info("Activating JEI grid synchronizers");
-        JeiProxy jeiProxy = new JeiProxy();
+        final JeiProxy jeiProxy = new JeiProxy();
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei"), new JeiGridSynchronizer(jeiProxy, false));
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei_two_way"), new JeiGridSynchronizer(jeiProxy, true));
     }
 
     private static void registerReiGridSynchronizers() {
         LOGGER.info("Activating REI grid synchronizers");
-        ReiProxy reiProxy = new ReiProxy();
+        final ReiProxy reiProxy = new ReiProxy();
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei"), new ReiGridSynchronizer(reiProxy, false));
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei_two_way"), new ReiGridSynchronizer(reiProxy, true));
     }
