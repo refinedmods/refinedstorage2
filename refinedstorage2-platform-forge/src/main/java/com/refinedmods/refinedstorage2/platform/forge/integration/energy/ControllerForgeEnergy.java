@@ -9,19 +9,19 @@ import net.minecraftforge.energy.IEnergyStorage;
 public class ControllerForgeEnergy extends EnergyStorageImpl implements IEnergyStorage {
     private final Runnable listener;
 
-    public ControllerForgeEnergy(Runnable listener) {
+    public ControllerForgeEnergy(final Runnable listener) {
         super((int) Platform.INSTANCE.getConfig().getController().getEnergyCapacity());
         this.listener = listener;
     }
 
-    public void setSilently(long amount) {
+    public void setSilently(final long amount) {
         this.extract(Long.MAX_VALUE, Action.EXECUTE);
         this.receive(amount, Action.EXECUTE);
     }
 
     @Override
-    public long receive(long amount, Action action) {
-        long received = super.receive(amount, action);
+    public long receive(final long amount, final Action action) {
+        final long received = super.receive(amount, action);
         if (received > 0 && action == Action.EXECUTE) {
             listener.run();
         }
@@ -29,8 +29,8 @@ public class ControllerForgeEnergy extends EnergyStorageImpl implements IEnergyS
     }
 
     @Override
-    public long extract(long amount, Action action) {
-        long extracted = super.extract(amount, action);
+    public long extract(final long amount, final Action action) {
+        final long extracted = super.extract(amount, action);
         if (extracted > 0 && action == Action.EXECUTE) {
             listener.run();
         }
@@ -38,12 +38,12 @@ public class ControllerForgeEnergy extends EnergyStorageImpl implements IEnergyS
     }
 
     @Override
-    public int receiveEnergy(int maxReceive, boolean simulate) {
+    public int receiveEnergy(final int maxReceive, final boolean simulate) {
         return (int) this.receive(maxReceive, simulate ? Action.SIMULATE : Action.EXECUTE);
     }
 
     @Override
-    public int extractEnergy(int maxExtract, boolean simulate) {
+    public int extractEnergy(final int maxExtract, final boolean simulate) {
         return 0;
     }
 

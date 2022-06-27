@@ -54,7 +54,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
             .build(new DiskDriveCacheLoader());
     private final Map<Long, DiskDriveItemBakedModel> itemModelCache = new HashMap<>();
 
-    public DiskDriveBakedModel(BakedModel baseModel, BakedModel diskModel, BakedModel diskDisconnectedModel) {
+    public DiskDriveBakedModel(final BakedModel baseModel, final BakedModel diskModel, final BakedModel diskDisconnectedModel) {
         super(baseModel);
         this.diskModel = diskModel;
         this.diskDisconnectedModel = diskDisconnectedModel;
@@ -67,23 +67,23 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
 
     @NotNull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull IModelData extraData) {
+    public List<BakedQuad> getQuads(@Nullable final BlockState state, @Nullable final Direction side, @NotNull final RandomSource rand, @NotNull final IModelData extraData) {
         if (state == null || !state.hasProperty(BaseBlock.DIRECTION)) {
             return super.getQuads(state, side, rand);
         }
-        DiskDriveState driveState = extraData.getData(ForgeDiskDriveBlockEntity.STATE_PROPERTY);
+        final DiskDriveState driveState = extraData.getData(ForgeDiskDriveBlockEntity.STATE_PROPERTY);
         if (driveState == null) {
             return super.getQuads(state, side, rand);
         }
-        DiskDriveStateCacheKey cacheKey = new DiskDriveStateCacheKey(state, side, driveState.getStates(), rand);
+        final DiskDriveStateCacheKey cacheKey = new DiskDriveStateCacheKey(state, side, driveState.getStates(), rand);
         return cache.getUnchecked(cacheKey);
     }
 
     private class DiskDriveItemOverrides extends ItemOverrides {
         @Nullable
         @Override
-        public BakedModel resolve(BakedModel bakedModel, ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
-            CompoundTag tag = BlockItem.getBlockEntityData(stack);
+        public BakedModel resolve(final BakedModel bakedModel, final ItemStack stack, @Nullable final ClientLevel level, @Nullable final LivingEntity entity, final int seed) {
+            final CompoundTag tag = BlockItem.getBlockEntityData(stack);
             if (tag == null) {
                 return baseModel.getOverrides().resolve(bakedModel, stack, level, entity, seed);
             }
@@ -99,11 +99,12 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
 
     private static final class DiskDriveStateCacheKey {
         private final BlockState state;
+        @Nullable
         private final Direction side;
         private final StorageDiskState[] diskStates;
         private final RandomSource random;
 
-        public DiskDriveStateCacheKey(BlockState state, Direction side, StorageDiskState[] diskStates, RandomSource random) {
+        public DiskDriveStateCacheKey(final BlockState state, @Nullable final Direction side, final StorageDiskState[] diskStates, final RandomSource random) {
             this.state = state;
             this.side = side;
             this.diskStates = diskStates;
@@ -111,10 +112,10 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            DiskDriveStateCacheKey that = (DiskDriveStateCacheKey) o;
+            final DiskDriveStateCacheKey that = (DiskDriveStateCacheKey) o;
             return state.equals(that.state) && side == that.side && Arrays.equals(diskStates, that.diskStates);
         }
 
@@ -128,16 +129,16 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
 
     private class DiskDriveCacheLoader extends CacheLoader<DiskDriveStateCacheKey, List<BakedQuad>> {
         @Override
-        public List<BakedQuad> load(DiskDriveStateCacheKey key) {
-            BiDirection direction = key.state.getValue(BaseBlock.DIRECTION);
+        public List<BakedQuad> load(final DiskDriveStateCacheKey key) {
+            final BiDirection direction = key.state.getValue(BaseBlock.DIRECTION);
             return QuadTransformer.transformSideAndRotate(resultingSide -> getQuads(key.state, key.random, key.diskStates, resultingSide), direction, key.side);
         }
 
         @NotNull
-        private List<BakedQuad> getQuads(@NotNull BlockState state, @NotNull RandomSource rand, StorageDiskState[] diskStates, Direction side) {
-            List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(state, side, rand, EmptyModelData.INSTANCE));
+        private List<BakedQuad> getQuads(@NotNull final BlockState state, @NotNull final RandomSource rand, final StorageDiskState[] diskStates, @Nullable final Direction side) {
+            final List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(state, side, rand, EmptyModelData.INSTANCE));
             for (int i = 0; i < TRANSLATORS.length; ++i) {
-                StorageDiskState diskState = diskStates[i];
+                final StorageDiskState diskState = diskStates[i];
                 if (diskState != StorageDiskState.NONE) {
                     quads.addAll(getDiskModel(state, rand, side, TRANSLATORS[i]));
                 }
@@ -145,8 +146,8 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
             return quads;
         }
 
-        private List<BakedQuad> getDiskModel(@NotNull BlockState state, @NotNull RandomSource rand, Direction side, Vector3f translation) {
-            List<BakedQuad> diskQuads = diskModel.getQuads(state, side, rand, EmptyModelData.INSTANCE);
+        private List<BakedQuad> getDiskModel(@NotNull final BlockState state, @NotNull final RandomSource rand, @Nullable final Direction side, final Vector3f translation) {
+            final List<BakedQuad> diskQuads = diskModel.getQuads(state, side, rand, EmptyModelData.INSTANCE);
             return QuadTransformer.translate(diskQuads, translation);
         }
     }

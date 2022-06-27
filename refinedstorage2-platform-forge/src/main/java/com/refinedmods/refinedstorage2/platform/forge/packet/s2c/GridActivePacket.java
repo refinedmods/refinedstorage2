@@ -6,31 +6,36 @@ import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent;
 
 public class GridActivePacket {
     private final boolean active;
 
-    public GridActivePacket(boolean active) {
+    public GridActivePacket(final boolean active) {
         this.active = active;
     }
 
-    public static GridActivePacket decode(FriendlyByteBuf buf) {
+    public static GridActivePacket decode(final FriendlyByteBuf buf) {
         return new GridActivePacket(buf.readBoolean());
     }
 
-    public static void encode(GridActivePacket packet, FriendlyByteBuf buf) {
+    public static void encode(final GridActivePacket packet, final FriendlyByteBuf buf) {
         buf.writeBoolean(packet.active);
     }
 
-    public static void handle(GridActivePacket packet, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(final GridActivePacket packet, final Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> handle(packet));
         ctx.get().setPacketHandled(true);
     }
 
-    private static void handle(GridActivePacket packet) {
-        AbstractContainerMenu menu = Minecraft.getInstance().player.containerMenu;
+    private static void handle(final GridActivePacket packet) {
+        final Player player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        final AbstractContainerMenu menu = player.containerMenu;
         if (menu instanceof GridWatcher gridWatcher) {
             gridWatcher.onActiveChanged(packet.active);
         }

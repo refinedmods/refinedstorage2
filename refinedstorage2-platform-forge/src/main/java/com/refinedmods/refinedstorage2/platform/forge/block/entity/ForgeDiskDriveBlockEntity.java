@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class ForgeDiskDriveBlockEntity extends DiskDriveBlockEntity {
     public static final ModelProperty<DiskDriveState> STATE_PROPERTY = new ModelProperty<>();
 
-    public ForgeDiskDriveBlockEntity(BlockPos pos, BlockState state) {
+    public ForgeDiskDriveBlockEntity(final BlockPos pos, final BlockState state) {
         super(pos, state);
     }
 

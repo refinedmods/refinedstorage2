@@ -204,7 +204,7 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public void setSynchronizer(ResourceLocation synchronizerId) {
+        public void setSynchronizer(final ResourceLocation synchronizerId) {
             this.synchronizer.set(synchronizerId.toString());
         }
 
@@ -219,7 +219,7 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public void setSortingDirection(GridSortingDirection sortingDirection) {
+        public void setSortingDirection(final GridSortingDirection sortingDirection) {
             this.sortingDirection.set(sortingDirection);
         }
 
@@ -229,7 +229,7 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public void setSortingType(GridSortingType sortingType) {
+        public void setSortingType(final GridSortingType sortingType) {
             this.sortingType.set(sortingType);
         }
 

@@ -43,11 +43,11 @@ public class NetworkManager {
         handler.registerMessage(id++, GridFluidUpdatePacket.class, GridFluidUpdatePacket::encode, GridFluidUpdatePacket::decode, GridFluidUpdatePacket::handle);
     }
 
-    public void send(ServerPlayer player, Object message) {
+    public void send(final ServerPlayer player, final Object message) {
         handler.send(PacketDistributor.PLAYER.with(() -> player), message);
     }
 
-    public void send(Object message) {
+    public void send(final Object message) {
         handler.sendToServer(message);
     }
 }

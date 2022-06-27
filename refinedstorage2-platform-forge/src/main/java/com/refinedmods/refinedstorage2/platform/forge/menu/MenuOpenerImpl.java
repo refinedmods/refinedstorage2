@@ -9,7 +9,7 @@ import net.minecraftforge.network.NetworkHooks;
 
 public class MenuOpenerImpl implements MenuOpener {
     @Override
-    public void openMenu(ServerPlayer player, MenuProvider menuProvider) {
+    public void openMenu(final ServerPlayer player, final MenuProvider menuProvider) {
         if (menuProvider instanceof ExtendedMenuProvider extendedMenuProvider) {
             NetworkHooks.openGui(player, menuProvider, buf -> extendedMenuProvider.writeScreenOpeningData(player, buf));
         } else {

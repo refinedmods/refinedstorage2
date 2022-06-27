@@ -16,13 +16,13 @@ import net.minecraft.world.level.block.state.BlockState;
 public abstract class ForwardingBakedModel implements BakedModel {
     protected final BakedModel baseModel;
 
-    protected ForwardingBakedModel(BakedModel baseModel) {
+    protected ForwardingBakedModel(final BakedModel baseModel) {
         this.baseModel = baseModel;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
+    public List<BakedQuad> getQuads(@Nullable final BlockState state, @Nullable final Direction side, final RandomSource rand) {
         return baseModel.getQuads(state, side, rand);
     }
 
@@ -65,7 +65,7 @@ public abstract class ForwardingBakedModel implements BakedModel {
 
     @Override
     @SuppressWarnings("deprecation")
-    public BakedModel handlePerspective(ItemTransforms.TransformType cameraTransformType, PoseStack poseStack) {
+    public BakedModel handlePerspective(final ItemTransforms.TransformType cameraTransformType, final PoseStack poseStack) {
         return baseModel.handlePerspective(cameraTransformType, poseStack);
     }
 }

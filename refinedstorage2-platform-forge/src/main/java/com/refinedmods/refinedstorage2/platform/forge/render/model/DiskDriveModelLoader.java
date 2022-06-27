@@ -7,12 +7,12 @@ import net.minecraftforge.client.model.IModelLoader;
 
 public class DiskDriveModelLoader implements IModelLoader<DiskDriveModelGeometry> {
     @Override
-    public DiskDriveModelGeometry read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
+    public DiskDriveModelGeometry read(final JsonDeserializationContext deserializationContext, final JsonObject modelContents) {
         return new DiskDriveModelGeometry();
     }
 
     @Override
-    public void onResourceManagerReload(ResourceManager resourceManager) {
+    public void onResourceManagerReload(final ResourceManager resourceManager) {
         // no op
     }
 }

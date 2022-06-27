@@ -10,19 +10,19 @@ public final class VariantUtil {
     private VariantUtil() {
     }
 
-    public static FluidResource ofFluidStack(FluidStack fluidStack) {
+    public static FluidResource ofFluidStack(final FluidStack fluidStack) {
         return new FluidResource(fluidStack.getFluid(), fluidStack.getTag());
     }
 
-    public static FluidStack toFluidStack(FluidResource fluidResource, long amount) {
+    public static FluidStack toFluidStack(final FluidResource fluidResource, final long amount) {
         return new FluidStack(fluidResource.fluid(), (int) amount, fluidResource.tag());
     }
 
-    public static ItemResource ofItemStack(ItemStack itemStack) {
+    public static ItemResource ofItemStack(final ItemStack itemStack) {
         return new ItemResource(itemStack.getItem(), itemStack.getTag());
     }
 
-    public static ItemStack toItemStack(ItemResource itemResource, long amount) {
+    public static ItemStack toItemStack(final ItemResource itemResource, final long amount) {
         return new ItemStack(itemResource.item(), (int) amount, itemResource.tag());
     }
 }

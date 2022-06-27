@@ -5,25 +5,28 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent;
 
 public class GridItemUpdatePacket {
     private final ItemResource resource;
     private final long amount;
+    @Nullable
     private final TrackedResource trackedResource;
 
-    public GridItemUpdatePacket(ItemResource resource, long amount, TrackedResource trackedResource) {
+    public GridItemUpdatePacket(final ItemResource resource, final long amount, @Nullable final TrackedResource trackedResource) {
         this.resource = resource;
         this.amount = amount;
         this.trackedResource = trackedResource;
     }
 
-    public static GridItemUpdatePacket decode(FriendlyByteBuf buf) {
+    public static GridItemUpdatePacket decode(final FriendlyByteBuf buf) {
         return new GridItemUpdatePacket(
                 PacketUtil.readItemResource(buf),
                 buf.readLong(),
@@ -31,19 +34,23 @@ public class GridItemUpdatePacket {
         );
     }
 
-    public static void encode(GridItemUpdatePacket packet, FriendlyByteBuf buf) {
+    public static void encode(final GridItemUpdatePacket packet, final FriendlyByteBuf buf) {
         PacketUtil.writeItemResource(buf, packet.resource);
         buf.writeLong(packet.amount);
         PacketUtil.writeTrackedResource(buf, packet.trackedResource);
     }
 
-    public static void handle(GridItemUpdatePacket packet, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(final GridItemUpdatePacket packet, final Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> handle(packet));
         ctx.get().setPacketHandled(true);
     }
 
     private static void handle(GridItemUpdatePacket packet) {
-        AbstractContainerMenu menu = Minecraft.getInstance().player.containerMenu;
+        final Player player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        final AbstractContainerMenu menu = player.containerMenu;
         if (menu instanceof ItemGridContainerMenu itemGrid) {
             itemGrid.onResourceUpdate(packet.resource, packet.amount, packet.trackedResource);
         }

@@ -2,6 +2,8 @@ package com.refinedmods.refinedstorage2.platform.forge.integration.rei;
 
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.DefaultGridSynchronizer;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
@@ -13,7 +15,7 @@ public class ReiGridSynchronizer extends DefaultGridSynchronizer {
     private final ReiProxy reiProxy;
     private final boolean twoWay;
 
-    public ReiGridSynchronizer(ReiProxy reiProxy, boolean twoWay) {
+    public ReiGridSynchronizer(final ReiProxy reiProxy, final boolean twoWay) {
         this.reiProxy = reiProxy;
         this.twoWay = twoWay;
     }
@@ -24,11 +26,12 @@ public class ReiGridSynchronizer extends DefaultGridSynchronizer {
     }
 
     @Override
-    public void synchronizeFromGrid(String text) {
+    public void synchronizeFromGrid(final String text) {
         reiProxy.setSearchFieldText(text);
     }
 
     @Override
+    @Nullable
     public String getTextToSynchronizeToGrid() {
         return twoWay ? reiProxy.getSearchFieldText() : null;
     }
