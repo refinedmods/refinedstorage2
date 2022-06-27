@@ -26,6 +26,7 @@ class ProxyStorageTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_invalid_parent() {
         // Act & assert
         assertThrows(NullPointerException.class, () -> new ProxyStorage<String>(null) {

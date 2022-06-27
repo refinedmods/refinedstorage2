@@ -61,7 +61,7 @@ class PlatformStorageRepositoryImplTest {
         sut.set(id, storage);
 
         // Assert
-        assertThat(sut.get(id)).containsSame((Storage) storage);
+        assertThat(sut.<ItemResource>get(id)).containsSame(storage);
         assertThat(sut.isDirty()).isTrue();
         assertThat(sut.getInfo(id)).usingRecursiveComparison().isEqualTo(new StorageInfo(10, 0));
     }

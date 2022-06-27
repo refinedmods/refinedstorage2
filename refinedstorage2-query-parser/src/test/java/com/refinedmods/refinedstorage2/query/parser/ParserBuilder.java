@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ParserBuilder {
+    @SuppressWarnings("ConstantConditions")
     private static final TokenPosition DUMMY_POSITION = new TokenPosition(new Source("<dummy>", null), new TokenRange(0, 0, 0, 0));
 
     private static final ParserOperatorMappings OPERATOR_MAPPINGS = new ParserOperatorMappings()

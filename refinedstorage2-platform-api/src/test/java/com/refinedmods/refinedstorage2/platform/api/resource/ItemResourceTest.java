@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SetupMinecraft
 class ItemResourceTest {
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_invalid_item() {
         // Assert
         assertThrows(NullPointerException.class, () -> new ItemResource(null, null));

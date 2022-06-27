@@ -29,6 +29,7 @@ public class FakeStorageProviderRepository implements StorageDiskProvider, Stora
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> Optional<Storage<T>> get(UUID id) {
         Storage<?> disk = storages.get(id);
         return Optional.ofNullable(disk == null ? null : (Storage<T>) disk);
@@ -60,6 +61,6 @@ public class FakeStorageProviderRepository implements StorageDiskProvider, Stora
 
     @Override
     public StorageInfo getInfo(UUID id) {
-        return null;
+        return StorageInfo.UNKNOWN;
     }
 }

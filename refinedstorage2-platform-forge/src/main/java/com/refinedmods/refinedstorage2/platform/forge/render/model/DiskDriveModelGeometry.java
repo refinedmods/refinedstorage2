@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge.render.model;
 
 import com.refinedmods.refinedstorage2.platform.forge.render.model.baked.DiskDriveBakedModel;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -29,9 +30,9 @@ public class DiskDriveModelGeometry extends BasicModelGeometry<DiskDriveModelGeo
     @Override
     public BakedModel bake(final IModelConfiguration owner, final ModelBakery bakery, final Function<Material, TextureAtlasSprite> spriteGetter, final ModelState modelTransform, final ItemOverrides overrides, final ResourceLocation modelLocation) {
         return new DiskDriveBakedModel(
-                bakery.bake(BASE_MODEL, modelTransform, spriteGetter),
-                bakery.bake(DISK_MODEL, modelTransform, spriteGetter),
-                bakery.bake(DISK_DISCONNECTED_MODEL, modelTransform, spriteGetter)
+                Objects.requireNonNull(bakery.bake(BASE_MODEL, modelTransform, spriteGetter)),
+                Objects.requireNonNull(bakery.bake(DISK_MODEL, modelTransform, spriteGetter)),
+                Objects.requireNonNull(bakery.bake(DISK_DISCONNECTED_MODEL, modelTransform, spriteGetter))
         );
     }
 }

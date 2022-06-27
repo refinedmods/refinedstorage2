@@ -115,6 +115,7 @@ class LimitedStorageImplTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_adding_invalid_resource() {
         // Act
         Executable action1 = () -> sut.insert("A", 0, Action.EXECUTE, EmptySource.INSTANCE);

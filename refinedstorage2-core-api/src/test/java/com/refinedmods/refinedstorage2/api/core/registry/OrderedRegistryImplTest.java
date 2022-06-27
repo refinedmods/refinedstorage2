@@ -2,10 +2,10 @@ package com.refinedmods.refinedstorage2.api.core.registry;
 
 import com.refinedmods.refinedstorage2.test.Rs2Test;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -80,6 +80,7 @@ class OrderedRegistryImplTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_invalid_registration() {
         // Act & assert
         assertThrows(NullPointerException.class, () -> sut.register(null, 20));
@@ -88,6 +89,7 @@ class OrderedRegistryImplTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_invalid_default() {
         // Act & assert
         assertThrows(NullPointerException.class, () -> new OrderedRegistryImpl<>(null, 20));
@@ -96,11 +98,13 @@ class OrderedRegistryImplTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_invalid_next_value() {
         assertThrows(NullPointerException.class, () -> sut.next(null));
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_invalid_getting_id_and_value() {
         assertThrows(NullPointerException.class, () -> sut.get(null));
         assertThrows(NullPointerException.class, () -> sut.getId(null));

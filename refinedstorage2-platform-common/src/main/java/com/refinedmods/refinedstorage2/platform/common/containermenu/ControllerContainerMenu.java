@@ -23,7 +23,6 @@ public class ControllerContainerMenu extends BaseContainerMenu implements Redsto
     private long serverCapacity;
     @Nullable
     private ControllerBlockEntity controller;
-    @Nullable
     private Player playerEntity;
     private final RateLimiter energyUpdateRateLimiter = RateLimiter.create(4);
 
@@ -33,6 +32,7 @@ public class ControllerContainerMenu extends BaseContainerMenu implements Redsto
 
         this.stored = buf.readLong();
         this.capacity = buf.readLong();
+        this.playerEntity = playerInventory.player;
 
         this.redstoneModeProperty = TwoWaySyncProperty.forClient(
                 0,

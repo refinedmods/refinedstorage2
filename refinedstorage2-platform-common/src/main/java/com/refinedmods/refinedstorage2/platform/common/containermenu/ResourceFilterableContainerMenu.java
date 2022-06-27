@@ -60,6 +60,9 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
     @Override
     public void broadcastChanges() {
         super.broadcastChanges();
+        if (player == null) {
+            return;
+        }
         for (final ResourceFilterSlot resourceFilterSlot : resourceFilterSlots) {
             resourceFilterSlot.broadcastChanges(player);
         }
