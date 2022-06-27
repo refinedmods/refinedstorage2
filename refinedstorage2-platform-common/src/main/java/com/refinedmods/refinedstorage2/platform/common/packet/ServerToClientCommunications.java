@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 import net.minecraft.server.level.ServerPlayer;
@@ -15,9 +16,9 @@ public interface ServerToClientCommunications {
 
     void sendGridActiveness(ServerPlayer player, boolean active);
 
-    void sendGridFluidUpdate(ServerPlayer player, FluidResource fluidResource, long change, TrackedResource trackedResource);
+    void sendGridFluidUpdate(ServerPlayer player, FluidResource fluidResource, long change, @Nullable TrackedResource trackedResource);
 
-    void sendGridItemUpdate(ServerPlayer player, ItemResource itemResource, long change, TrackedResource trackedResource);
+    void sendGridItemUpdate(ServerPlayer player, ItemResource itemResource, long change, @Nullable TrackedResource trackedResource);
 
     void sendResourceFilterSlotUpdate(ServerPlayer player, ResourceFilterContainer resourceFilterContainer, int slotIndex, int containerIndex);
 

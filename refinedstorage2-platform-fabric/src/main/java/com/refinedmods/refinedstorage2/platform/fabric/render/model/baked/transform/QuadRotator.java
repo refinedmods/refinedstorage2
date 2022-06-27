@@ -14,13 +14,13 @@ import net.minecraft.core.Vec3i;
 public class QuadRotator implements RenderContext.QuadTransform {
     private final BiDirection direction;
 
-    public QuadRotator(BiDirection biDirection) {
+    public QuadRotator(final BiDirection biDirection) {
         this.direction = biDirection;
     }
 
     @Override
-    public boolean transform(MutableQuadView quad) {
-        Vector3f tmp = new Vector3f();
+    public boolean transform(final MutableQuadView quad) {
+        final Vector3f tmp = new Vector3f();
 
         for (int i = 0; i < 4; ++i) {
             quad.copyPos(i, tmp);
@@ -38,14 +38,14 @@ public class QuadRotator implements RenderContext.QuadTransform {
             }
         }
 
-        Matrix4f mat = new Matrix4f();
+        final Matrix4f mat = new Matrix4f();
         mat.setIdentity();
         mat.multiply(Vector3f.XP.rotationDegrees(direction.getVec().x()));
         mat.multiply(Vector3f.YP.rotationDegrees(direction.getVec().y()));
         mat.multiply(Vector3f.ZP.rotationDegrees(direction.getVec().z()));
 
-        Direction nominalFace = quad.nominalFace();
-        Direction cullFace = quad.cullFace();
+        final Direction nominalFace = quad.nominalFace();
+        final Direction cullFace = quad.cullFace();
         if (cullFace != null) {
             quad.cullFace(rotate(cullFace, mat));
         }
@@ -55,13 +55,13 @@ public class QuadRotator implements RenderContext.QuadTransform {
         return true;
     }
 
-    private Quaternion createQuaternion(BiDirection direction) {
+    private Quaternion createQuaternion(final BiDirection direction) {
         return new Quaternion(direction.getVec().x(), direction.getVec().y(), direction.getVec().z(), true);
     }
 
-    private Direction rotate(Direction facing, Matrix4f mat) {
-        Vec3i dir = facing.getNormal();
-        Vector4f vec = new Vector4f(dir.getX(), dir.getY(), dir.getZ(), 1.0F);
+    private Direction rotate(final Direction facing, final Matrix4f mat) {
+        final Vec3i dir = facing.getNormal();
+        final Vector4f vec = new Vector4f(dir.getX(), dir.getY(), dir.getZ(), 1.0F);
         vec.transform(mat);
         return Direction.getNearest(vec.x(), vec.y(), vec.z());
     }

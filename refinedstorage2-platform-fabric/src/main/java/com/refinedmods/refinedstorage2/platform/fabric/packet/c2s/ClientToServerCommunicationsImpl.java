@@ -22,7 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ClientToServerCommunicationsImpl implements ClientToServerCommunications {
     @Override
-    public void sendGridItemExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
+    public void sendGridItemExtract(final ItemResource itemResource, final GridExtractMode mode, final boolean cursor) {
         sendToServer(PacketIds.GRID_EXTRACT, buf -> {
             GridExtractPacket.writeMode(buf, mode);
             buf.writeBoolean(cursor);
@@ -31,7 +31,7 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendGridFluidExtract(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
+    public void sendGridFluidExtract(final FluidResource fluidResource, final GridExtractMode mode, final boolean cursor) {
         sendToServer(PacketIds.GRID_EXTRACT, buf -> {
             GridExtractPacket.writeMode(buf, mode);
             buf.writeBoolean(cursor);
@@ -40,12 +40,12 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendGridInsert(GridInsertMode mode) {
+    public void sendGridInsert(final GridInsertMode mode) {
         sendToServer(PacketIds.GRID_INSERT, buf -> buf.writeBoolean(mode == GridInsertMode.SINGLE_RESOURCE));
     }
 
     @Override
-    public void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slotIndex) {
+    public void sendGridScroll(final ItemResource itemResource, final GridScrollMode mode, final int slotIndex) {
         sendToServer(PacketIds.GRID_SCROLL, buf -> {
             PacketUtil.writeItemResource(buf, itemResource);
             GridScrollModeUtil.writeMode(buf, mode);
@@ -54,7 +54,7 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendPropertyChange(int id, int value) {
+    public void sendPropertyChange(final int id, final int value) {
         sendToServer(PacketIds.PROPERTY_CHANGE, buf -> {
             buf.writeInt(id);
             buf.writeInt(value);
@@ -62,16 +62,16 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendResourceTypeChange(ResourceType type) {
+    public void sendResourceTypeChange(final ResourceType type) {
         PlatformApi.INSTANCE.getResourceTypeRegistry().getId(type).ifPresent(id -> sendToServer(PacketIds.RESOURCE_TYPE_CHANGE, buf -> buf.writeResourceLocation(id)));
     }
 
     @Override
-    public void sendStorageInfoRequest(UUID storageId) {
+    public void sendStorageInfoRequest(final UUID storageId) {
         sendToServer(PacketIds.STORAGE_INFO_REQUEST, data -> data.writeUUID(storageId));
     }
 
-    private static void sendToServer(ResourceLocation id, Consumer<FriendlyByteBuf> bufConsumer) {
+    private static void sendToServer(final ResourceLocation id, final Consumer<FriendlyByteBuf> bufConsumer) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         bufConsumer.accept(buf);
         ClientPlayNetworking.send(id, buf);

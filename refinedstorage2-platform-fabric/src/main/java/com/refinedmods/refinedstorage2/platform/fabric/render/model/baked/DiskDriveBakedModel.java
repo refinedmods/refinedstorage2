@@ -44,7 +44,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     private final BakedModel diskModel;
     private final BakedModel diskDisconnectedModel;
 
-    public DiskDriveBakedModel(BakedModel baseModel, BakedModel diskModel, BakedModel diskDisconnectedModel) {
+    public DiskDriveBakedModel(final BakedModel baseModel, final BakedModel diskModel, final BakedModel diskDisconnectedModel) {
         this.wrapped = baseModel;
         this.diskModel = diskModel;
         this.diskDisconnectedModel = diskDisconnectedModel;
@@ -56,9 +56,9 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     }
 
     @Override
-    public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
+    public void emitItemQuads(final ItemStack stack, final Supplier<RandomSource> randomSupplier, final RenderContext context) {
         context.fallbackConsumer().accept(wrapped);
-        CompoundTag tag = BlockItem.getBlockEntityData(stack);
+        final CompoundTag tag = BlockItem.getBlockEntityData(stack);
         if (tag == null) {
             return;
         }
@@ -73,14 +73,14 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     }
 
     @Override
-    public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
-        QuadRotator rotator = ROTATORS.get(state.getValue(BaseBlock.DIRECTION));
+    public void emitBlockQuads(final BlockAndTintGetter blockView, final BlockState state, final BlockPos pos, final Supplier<RandomSource> randomSupplier, final RenderContext context) {
+        final QuadRotator rotator = ROTATORS.get(state.getValue(BaseBlock.DIRECTION));
         context.pushTransform(rotator);
 
         super.emitBlockQuads(blockView, state, pos, randomSupplier, context);
 
         if (blockView instanceof RenderAttachedBlockView renderAttachedBlockView) {
-            Object renderAttachment = renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
+            final Object renderAttachment = renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
             if (renderAttachment instanceof DiskDriveState states) {
                 emitDiskQuads(context, states);
             }
@@ -89,13 +89,14 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         context.popTransform();
     }
 
-    private void emitDiskQuads(RenderContext context, DiskDriveState states) {
+    private void emitDiskQuads(final RenderContext context, final DiskDriveState states) {
         for (int i = 0; i < TRANSLATORS.length; ++i) {
-            if (states.getState(i) != StorageDiskState.NONE) {
-                context.pushTransform(TRANSLATORS[i]);
-                context.fallbackConsumer().accept(diskModel);
-                context.popTransform();
+            if (states.getState(i) == StorageDiskState.NONE) {
+                continue;
             }
+            context.pushTransform(TRANSLATORS[i]);
+            context.fallbackConsumer().accept(diskModel);
+            context.popTransform();
         }
     }
 }

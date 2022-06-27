@@ -10,8 +10,8 @@ import net.minecraft.network.FriendlyByteBuf;
 
 public class ResourceFilterSlotUpdatePacket implements ClientPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        int slotIndex = buf.readInt();
+    public void receive(final Minecraft client, final ClientPacketListener handler, final FriendlyByteBuf buf, final PacketSender responseSender) {
+        final int slotIndex = buf.readInt();
         if (client.player.containerMenu instanceof ResourceFilterableContainerMenu containerMenu) {
             containerMenu.readResourceFilterSlotUpdate(slotIndex, buf);
         }

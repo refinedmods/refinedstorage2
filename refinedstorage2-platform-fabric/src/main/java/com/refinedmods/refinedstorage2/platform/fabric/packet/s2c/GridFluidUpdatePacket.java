@@ -13,10 +13,10 @@ import net.minecraft.network.FriendlyByteBuf;
 
 public class GridFluidUpdatePacket implements ClientPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        FluidResource fluidResource = PacketUtil.readFluidResource(buf);
-        long amount = buf.readLong();
-        TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
+    public void receive(final Minecraft client, final ClientPacketListener handler, final FriendlyByteBuf buf, final PacketSender responseSender) {
+        final FluidResource fluidResource = PacketUtil.readFluidResource(buf);
+        final long amount = buf.readLong();
+        final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
 
         client.execute(() -> {
             if (client.player.containerMenu instanceof FluidGridContainerMenu fluidGrid) {

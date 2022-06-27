@@ -12,7 +12,7 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
     private final Runnable listener;
     private final LimitingEnergyStorage exposedStorage;
 
-    public ControllerTeamRebornEnergy(Runnable listener) {
+    public ControllerTeamRebornEnergy(final Runnable listener) {
         super(Platform.INSTANCE.getConfig().getController().getEnergyCapacity(), Platform.INSTANCE.getConfig().getController().getEnergyCapacity(), Platform.INSTANCE.getConfig().getController().getEnergyCapacity());
         this.listener = listener;
         this.exposedStorage = new LimitingEnergyStorage(
@@ -26,7 +26,7 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
         return exposedStorage;
     }
 
-    public void setStoredSilently(long stored) {
+    public void setStoredSilently(final long stored) {
         this.amount = stored;
     }
 
@@ -42,9 +42,9 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
     }
 
     @Override
-    public long receive(long amount, Action action) {
-        try (Transaction tx = Transaction.openOuter()) {
-            long received = this.insert(amount, tx);
+    public long receive(final long amount, final Action action) {
+        try (final Transaction tx = Transaction.openOuter()) {
+            final long received = this.insert(amount, tx);
             if (received > 0 && action == Action.EXECUTE) {
                 tx.commit();
             }
@@ -54,8 +54,8 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
 
     @Override
     public long extract(long amount, Action action) {
-        try (Transaction tx = Transaction.openOuter()) {
-            long extracted = this.extract(amount, tx);
+        try (final Transaction tx = Transaction.openOuter()) {
+            final long extracted = this.extract(amount, tx);
             if (extracted > 0 && action == Action.EXECUTE) {
                 tx.commit();
             }

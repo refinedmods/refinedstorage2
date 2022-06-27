@@ -134,7 +134,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
 
         @Override
-        public void setAutoSelected(boolean autoSelected) {
+        public void setAutoSelected(final boolean autoSelected) {
             this.autoSelected = autoSelected;
             save();
         }
@@ -148,7 +148,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
 
         @Override
-        public void setSynchronizer(ResourceLocation synchronizerId) {
+        public void setSynchronizer(final ResourceLocation synchronizerId) {
             this.synchronizer = synchronizerId.toString();
             save();
         }
@@ -165,7 +165,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
 
         @Override
-        public void setSortingDirection(GridSortingDirection sortingDirection) {
+        public void setSortingDirection(final GridSortingDirection sortingDirection) {
             this.sortingDirection = sortingDirection;
             save();
         }
@@ -176,7 +176,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
 
         @Override
-        public void setSortingType(GridSortingType sortingType) {
+        public void setSortingType(final GridSortingType sortingType) {
             this.sortingType = sortingType;
             save();
         }
@@ -187,7 +187,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
 
         @Override
-        public void setSize(GridSize size) {
+        public void setSize(final GridSize size) {
             this.size = size;
             save();
         }

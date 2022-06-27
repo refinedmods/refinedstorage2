@@ -118,7 +118,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
 
     protected abstract ResourceAmount<T> readResourceAmount(FriendlyByteBuf buf);
 
-    public void onResourceUpdate(final T template, final long amount, final TrackedResource trackedResource) {
+    public void onResourceUpdate(final T template, final long amount, @Nullable final TrackedResource trackedResource) {
         LOGGER.info("{} got updated with {}", template, amount);
         view.onChange(template, amount, trackedResource);
     }

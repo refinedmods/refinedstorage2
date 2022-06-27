@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class FabricDiskDriveBlockEntity extends DiskDriveBlockEntity implements RenderAttachmentBlockEntity {
-    public FabricDiskDriveBlockEntity(BlockPos pos, BlockState state) {
+    public FabricDiskDriveBlockEntity(final BlockPos pos, final BlockState state) {
         super(pos, state);
     }
 

@@ -152,8 +152,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerLootFunctions();
     }
 
-    private <T, R extends T> Supplier<R> register(Registry<T> registry, ResourceLocation id, R value) {
-        R result = Registry.register(registry, id, value);
+    private <T, R extends T> Supplier<R> register(final Registry<T> registry, final ResourceLocation id, final R value) {
+        final R result = Registry.register(registry, id, value);
         return () -> result;
     }
 

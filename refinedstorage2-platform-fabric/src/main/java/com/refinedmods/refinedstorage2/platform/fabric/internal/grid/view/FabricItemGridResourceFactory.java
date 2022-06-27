@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class FabricItemGridResourceFactory extends ItemGridResourceFactory {
     @Override
-    public Optional<String> getModName(String modId) {
+    public Optional<String> getModName(final String modId) {
         return FabricLoader
                 .getInstance()
                 .getModContainer(modId)
@@ -21,7 +21,7 @@ public class FabricItemGridResourceFactory extends ItemGridResourceFactory {
     }
 
     @Override
-    public String getModId(ItemStack itemStack) {
+    public String getModId(final ItemStack itemStack) {
         return Registry.ITEM.getKey(itemStack.getItem()).getNamespace();
     }
 }

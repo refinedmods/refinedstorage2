@@ -14,12 +14,12 @@ import org.jetbrains.annotations.Nullable;
 public class FabricExtendedMenuProviderAdapter implements ExtendedScreenHandlerFactory {
     private final ExtendedMenuProvider extendedMenuProvider;
 
-    public FabricExtendedMenuProviderAdapter(ExtendedMenuProvider extendedMenuProvider) {
+    public FabricExtendedMenuProviderAdapter(final ExtendedMenuProvider extendedMenuProvider) {
         this.extendedMenuProvider = extendedMenuProvider;
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+    public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
         extendedMenuProvider.writeScreenOpeningData(player, buf);
     }
 
@@ -30,7 +30,7 @@ public class FabricExtendedMenuProviderAdapter implements ExtendedScreenHandlerF
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inventory, Player player) {
+    public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         return extendedMenuProvider.createMenu(syncId, inventory, player);
     }
 }

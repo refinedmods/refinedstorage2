@@ -84,8 +84,8 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void registerCustomModels() {
-        ResourceLocation diskDriveIdentifier = createIdentifier("block/disk_drive");
-        ResourceLocation diskDriveIdentifierItem = createIdentifier("item/disk_drive");
+        final ResourceLocation diskDriveIdentifier = createIdentifier("block/disk_drive");
+        final ResourceLocation diskDriveIdentifierItem = createIdentifier("item/disk_drive");
 
         ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (identifier, modelProviderContext) -> {
             if (identifier.equals(diskDriveIdentifier) || identifier.equals(diskDriveIdentifierItem)) {
@@ -122,7 +122,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void registerGridSynchronizers() {
-        FabricLoader loader = FabricLoader.getInstance();
+        final FabricLoader loader = FabricLoader.getInstance();
         if (loader.isModLoaded("jei")) {
             registerJeiGridSynchronizers();
         }
@@ -133,14 +133,14 @@ public class ClientModInitializerImpl implements ClientModInitializer {
 
     private void registerJeiGridSynchronizers() {
         LOGGER.info("Activating JEI grid synchronizers");
-        JeiProxy jeiProxy = new JeiProxy();
+        final JeiProxy jeiProxy = new JeiProxy();
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei"), new JeiGridSynchronizer(jeiProxy, false));
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei_two_way"), new JeiGridSynchronizer(jeiProxy, true));
     }
 
     private void registerReiGridSynchronizers() {
         LOGGER.info("Activating REI grid synchronizers");
-        ReiProxy reiProxy = new ReiProxy();
+        final ReiProxy reiProxy = new ReiProxy();
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei"), new ReiGridSynchronizer(reiProxy, false));
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei_two_way"), new ReiGridSynchronizer(reiProxy, true));
     }

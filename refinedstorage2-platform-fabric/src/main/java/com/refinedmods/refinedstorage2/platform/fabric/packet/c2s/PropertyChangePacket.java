@@ -10,12 +10,12 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class PropertyChangePacket implements ServerPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        int id = buf.readInt();
-        int value = buf.readInt();
+    public void receive(final MinecraftServer server, final ServerPlayer player, final ServerGamePacketListenerImpl handler, final FriendlyByteBuf buf, final PacketSender responseSender) {
+        final int id = buf.readInt();
+        final int value = buf.readInt();
 
         server.execute(() -> {
-            AbstractContainerMenu menu = player.containerMenu;
+            final AbstractContainerMenu menu = player.containerMenu;
             if (menu != null) {
                 // TODO - Check property type
                 menu.setData(id, value);
