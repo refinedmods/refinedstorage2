@@ -20,7 +20,7 @@ public class AutoSelectedSideButtonWidget extends SideButtonWidget {
     private final List<Component> yes;
     private final List<Component> no;
 
-    public AutoSelectedSideButtonWidget(GridContainerMenu<?> menu, TooltipRenderer tooltipRenderer) {
+    public AutoSelectedSideButtonWidget(final GridContainerMenu<?> menu, final TooltipRenderer tooltipRenderer) {
         super(createPressAction(menu));
         this.menu = menu;
         this.tooltipRenderer = tooltipRenderer;
@@ -28,11 +28,11 @@ public class AutoSelectedSideButtonWidget extends SideButtonWidget {
         this.no = calculateTooltip(false);
     }
 
-    private static OnPress createPressAction(GridContainerMenu<?> menu) {
+    private static OnPress createPressAction(final GridContainerMenu<?> menu) {
         return btn -> menu.setAutoSelected(!menu.isAutoSelected());
     }
 
-    private List<Component> calculateTooltip(boolean autoSelected) {
+    private List<Component> calculateTooltip(final boolean autoSelected) {
         List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "grid.auto_selected"));
         lines.add(Component.translatable("gui." + (autoSelected ? "yes" : "no")).withStyle(ChatFormatting.GRAY));
@@ -50,7 +50,7 @@ public class AutoSelectedSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button buttonWidget, PoseStack poseStack, int mouseX, int mouseY) {
+    public void onTooltip(final Button buttonWidget, final PoseStack poseStack, final int mouseX, final int mouseY) {
         tooltipRenderer.render(poseStack, menu.isAutoSelected() ? yes : no, mouseX, mouseY);
     }
 }

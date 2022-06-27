@@ -11,12 +11,12 @@ import net.minecraft.world.level.Level;
 public class StorageDiskInfoAccessorImpl implements StorageDiskInfoAccessor {
     private final Level level;
 
-    public StorageDiskInfoAccessorImpl(Level level) {
+    public StorageDiskInfoAccessorImpl(final Level level) {
         this.level = level;
     }
 
     @Override
-    public Optional<StorageInfo> getInfo(ItemStack stack) {
+    public Optional<StorageInfo> getInfo(final ItemStack stack) {
         if (stack.getItem() instanceof StorageDiskItem storageDiskItem) {
             return storageDiskItem.getInfo(level, stack);
         }
@@ -24,7 +24,7 @@ public class StorageDiskInfoAccessorImpl implements StorageDiskInfoAccessor {
     }
 
     @Override
-    public boolean hasStacking(ItemStack stack) {
+    public boolean hasStacking(final ItemStack stack) {
         if (stack.getItem() instanceof StorageDiskItem storageDiskItem) {
             return storageDiskItem.hasStacking();
         }

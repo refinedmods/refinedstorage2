@@ -24,18 +24,18 @@ public class SizeSideButtonWidget extends SideButtonWidget {
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSize, List<Component>> tooltips = new EnumMap<>(GridSize.class);
 
-    public SizeSideButtonWidget(GridContainerMenu<?> menu, TooltipRenderer tooltipRenderer) {
+    public SizeSideButtonWidget(final GridContainerMenu<?> menu, final TooltipRenderer tooltipRenderer) {
         super(createPressAction(menu));
         this.menu = menu;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(GridSize.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private static OnPress createPressAction(GridContainerMenu<?> menu) {
+    private static OnPress createPressAction(final GridContainerMenu<?> menu) {
         return btn -> menu.setSize(menu.getSize().toggle());
     }
 
-    private List<Component> calculateTooltip(GridSize size) {
+    private List<Component> calculateTooltip(final GridSize size) {
         List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "grid.size"));
         lines.add(createTranslation("gui", "grid.size." + size.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
@@ -58,7 +58,7 @@ public class SizeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button buttonWidget, PoseStack poseStack, int mouseX, int mouseY) {
+    public void onTooltip(final Button buttonWidget, final PoseStack poseStack, final int mouseX, final int mouseY) {
         tooltipRenderer.render(poseStack, tooltips.get(menu.getSize()), mouseX, mouseY);
     }
 }

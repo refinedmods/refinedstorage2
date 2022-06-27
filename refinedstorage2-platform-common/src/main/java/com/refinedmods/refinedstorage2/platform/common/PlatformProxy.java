@@ -16,6 +16,7 @@ import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientComm
 import com.refinedmods.refinedstorage2.platform.common.render.FluidRenderer;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -28,9 +29,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class PlatformProxy implements Platform {
+    @Nullable
     private Platform platform;
 
-    public void setPlatform(Platform platform) {
+    public void setPlatform(final Platform platform) {
         if (this.platform != null) {
             throw new IllegalStateException("Platform already set");
         }
@@ -73,22 +75,22 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public boolean canEditBoxLoseFocus(EditBox editBox) {
+    public boolean canEditBoxLoseFocus(final EditBox editBox) {
         return ensureLoaded().canEditBoxLoseFocus(editBox);
     }
 
     @Override
-    public boolean isKeyDown(KeyMapping keyMapping) {
+    public boolean isKeyDown(final KeyMapping keyMapping) {
         return ensureLoaded().isKeyDown(keyMapping);
     }
 
     @Override
-    public ItemGridEventHandler createItemGridEventHandler(AbstractContainerMenu containerMenu, GridService<ItemResource> gridService, Inventory playerInventory) {
+    public ItemGridEventHandler createItemGridEventHandler(final AbstractContainerMenu containerMenu, final GridService<ItemResource> gridService, final Inventory playerInventory) {
         return ensureLoaded().createItemGridEventHandler(containerMenu, gridService, playerInventory);
     }
 
     @Override
-    public FluidGridEventHandler createFluidGridEventHandler(AbstractContainerMenu containerMenu, GridService<FluidResource> gridService, Inventory playerInventory, ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu, final GridService<FluidResource> gridService, final Inventory playerInventory, final ExtractableStorage<ItemResource> bucketStorage) {
         return ensureLoaded().createFluidGridEventHandler(containerMenu, gridService, playerInventory, bucketStorage);
     }
 
@@ -108,17 +110,17 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public Optional<FluidResource> convertToFluid(ItemStack stack) {
+    public Optional<FluidResource> convertToFluid(final ItemStack stack) {
         return ensureLoaded().convertToFluid(stack);
     }
 
     @Override
-    public EnergyStorage createEnergyStorage(ControllerType controllerType, Runnable listener) {
+    public EnergyStorage createEnergyStorage(final ControllerType controllerType, final Runnable listener) {
         return ensureLoaded().createEnergyStorage(controllerType, listener);
     }
 
     @Override
-    public void setEnergy(EnergyStorage energyStorage, long stored) {
+    public void setEnergy(final EnergyStorage energyStorage, final long stored) {
         ensureLoaded().setEnergy(energyStorage, stored);
     }
 

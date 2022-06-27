@@ -8,7 +8,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public abstract class BaseContainerMenu extends AbstractContainerMenu {
-    protected BaseContainerMenu(MenuType<?> type, int syncId) {
+    protected BaseContainerMenu(final MenuType<?> type, final int syncId) {
         super(type, syncId);
     }
 
@@ -16,9 +16,8 @@ public abstract class BaseContainerMenu extends AbstractContainerMenu {
         slots.clear();
     }
 
-    protected void addPlayerInventory(Inventory inventory, int xInventory, int yInventory) {
+    protected void addPlayerInventory(final Inventory inventory, final int xInventory, final int yInventory) {
         int id = 9;
-
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 9; x++) {
                 addSlot(new Slot(inventory, id++, xInventory + x * 18, yInventory + y * 18));
@@ -26,22 +25,20 @@ public abstract class BaseContainerMenu extends AbstractContainerMenu {
         }
 
         id = 0;
-
         for (int i = 0; i < 9; i++) {
-            int x = xInventory + i * 18;
-            int y = yInventory + 4 + (3 * 18);
-
+            final int x = xInventory + i * 18;
+            final int y = yInventory + 4 + (3 * 18);
             addSlot(new Slot(inventory, id++, x, y));
         }
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(final Player player) {
         return true;
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int index) {
+    public ItemStack quickMoveStack(final Player player, final int index) {
         return ItemStack.EMPTY;
     }
 }

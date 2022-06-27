@@ -22,6 +22,8 @@ import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.LevelUtil;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.ByteTag;
@@ -64,6 +66,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     private final DiskDriveInventory diskInventory = new DiskDriveInventory(this);
     private final ResourceFilterContainer resourceFilterContainer = new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, this::resourceFilterContainerChanged);
 
+    @Nullable
     protected DiskDriveState driveState;
 
     private boolean syncRequested;
@@ -71,7 +74,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
 
     private boolean exactMode;
 
-    protected DiskDriveBlockEntity(BlockPos pos, BlockState state) {
+    protected DiskDriveBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new DiskDriveNetworkNode(
                 Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
                 Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
@@ -82,12 +85,12 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
         getNode().setNormalizer(this::normalize);
     }
 
-    public static void serverTick(BlockState state, DiskDriveBlockEntity blockEntity) {
+    public static void serverTick(final BlockState state, final DiskDriveBlockEntity blockEntity) {
         InternalNetworkNodeContainerBlockEntity.serverTick(state, blockEntity);
         blockEntity.updateDiskStateIfNecessaryInLevel();
     }
 
-    public static boolean hasDisk(CompoundTag tag, int slot) {
+    public static boolean hasDisk(final CompoundTag tag, final int slot) {
         return tag.contains(TAG_DISK_INVENTORY) && ContainerUtil.hasItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), slot);
     }
 
@@ -105,7 +108,9 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     private void sync() {
-        this.getLevel().sendBlockUpdated(worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
+        }
     }
 
     private void resourceFilterContainerChanged() {
@@ -117,7 +122,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
         getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
     }
 
-    private Object normalize(Object value) {
+    private Object normalize(final Object value) {
         if (exactMode) {
             return value;
         }
@@ -128,7 +133,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     @Override
-    public void setLevel(Level level) {
+    public void setLevel(final Level level) {
         super.setLevel(level);
         if (!level.isClientSide()) {
             getNode().initialize(PlatformApi.INSTANCE.getStorageRepository(level));
@@ -136,7 +141,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     @Override
-    public void activenessChanged(boolean active) {
+    public void activenessChanged(final boolean active) {
         super.activenessChanged(active);
         LevelUtil.updateBlock(level, worldPosition, this.getBlockState());
     }
@@ -158,7 +163,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     @Override
-    public void load(CompoundTag tag) {
+    public void load(final CompoundTag tag) {
         fromClientTag(tag);
 
         if (tag.contains(TAG_DISK_INVENTORY)) {
@@ -191,7 +196,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
+    public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
         tag.put(TAG_DISK_INVENTORY, ContainerUtil.write(diskInventory));
         tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
@@ -211,7 +216,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     @Override
-    public void setFilterMode(FilterMode mode) {
+    public void setFilterMode(final FilterMode mode) {
         getNode().setFilterMode(mode);
         setChanged();
     }
@@ -222,7 +227,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     @Override
-    public void setExactMode(boolean exactMode) {
+    public void setExactMode(final boolean exactMode) {
         this.exactMode = exactMode;
         initializeResourceFilter();
         setChanged();
@@ -234,7 +239,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     @Override
-    public void setAccessMode(AccessMode accessMode) {
+    public void setAccessMode(final AccessMode accessMode) {
         getNode().setAccessMode(accessMode);
         setChanged();
     }
@@ -245,12 +250,12 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     @Override
-    public void setPriority(int priority) {
+    public void setPriority(final int priority) {
         getNode().setPriority(priority);
         setChanged();
     }
 
-    void onDiskChanged(int slot) {
+    void onDiskChanged(final int slot) {
         getNode().onDiskChanged(slot);
         LevelUtil.updateBlock(level, worldPosition, this.getBlockState());
         setChanged();
@@ -264,12 +269,12 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
         LevelUtil.updateBlock(level, worldPosition, this.getBlockState());
     }
 
-    private void fromClientTag(CompoundTag tag) {
+    private void fromClientTag(final CompoundTag tag) {
         if (!tag.contains(TAG_STATES)) {
             return;
         }
 
-        ListTag statesList = tag.getList(TAG_STATES, Tag.TAG_BYTE);
+        final ListTag statesList = tag.getList(TAG_STATES, Tag.TAG_BYTE);
 
         driveState = new DiskDriveState(statesList.size());
         for (int i = 0; i < statesList.size(); ++i) {
@@ -294,13 +299,13 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
 
     @Override
     public CompoundTag getUpdateTag() {
-        CompoundTag tag = new CompoundTag();
+        final CompoundTag tag = new CompoundTag();
         // This null check is important. #getUpdateTag() can be called before the node's network is initialized!
         if (getNode().getNetwork() == null) {
             return tag;
         }
-        ListTag statesList = new ListTag();
-        for (StorageDiskState state : getNode().createState().getStates()) {
+        final ListTag statesList = new ListTag();
+        for (final StorageDiskState state : getNode().createState().getStates()) {
             statesList.add(ByteTag.valueOf((byte) state.ordinal()));
         }
         tag.put(TAG_STATES, statesList);
@@ -313,7 +318,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+    public AbstractContainerMenu createMenu(final int syncId, final Inventory inv, final Player player) {
         return new DiskDriveContainerMenu(
                 syncId,
                 player,
@@ -326,7 +331,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
 
     @Override
     public NonNullList<ItemStack> getDrops() {
-        NonNullList<ItemStack> drops = NonNullList.create();
+        final NonNullList<ItemStack> drops = NonNullList.create();
         for (int i = 0; i < diskInventory.getContainerSize(); ++i) {
             drops.add(diskInventory.getItem(i));
         }
@@ -339,7 +344,7 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+    public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
         resourceFilterContainer.writeToUpdatePacket(buf);
     }
 }

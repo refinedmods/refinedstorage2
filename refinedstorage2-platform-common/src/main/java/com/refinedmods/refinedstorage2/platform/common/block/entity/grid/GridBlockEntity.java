@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public abstract class GridBlockEntity<T> extends InternalNetworkNodeContainerBlockEntity<GridNetworkNode<T>> implements ExtendedMenuProvider {
-    protected GridBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, StorageChannelType<T> storageChannelType) {
+    protected GridBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state, final StorageChannelType<T> storageChannelType) {
         super(type, pos, state, new GridNetworkNode<>(
                 Platform.INSTANCE.getConfig().getGrid().getEnergyUsage(),
                 storageChannelType
@@ -33,7 +33,7 @@ public abstract class GridBlockEntity<T> extends InternalNetworkNodeContainerBlo
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+    public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
         buf.writeBoolean(getNode().isActive());
 
         buf.writeInt(getNode().getResourceCount());
@@ -45,11 +45,11 @@ public abstract class GridBlockEntity<T> extends InternalNetworkNodeContainerBlo
 
     protected abstract void writeResourceAmount(FriendlyByteBuf buf, ResourceAmount<T> stack);
 
-    public void addWatcher(GridWatcher watcher) {
+    public void addWatcher(final GridWatcher watcher) {
         getNode().addWatcher(watcher);
     }
 
-    public void removeWatcher(GridWatcher watcher) {
+    public void removeWatcher(final GridWatcher watcher) {
         getNode().removeWatcher(watcher);
     }
 }

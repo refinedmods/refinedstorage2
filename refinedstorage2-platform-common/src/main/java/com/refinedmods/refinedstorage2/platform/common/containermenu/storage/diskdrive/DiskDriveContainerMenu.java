@@ -37,7 +37,7 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
 
     private final List<Slot> diskSlots = new ArrayList<>();
 
-    public DiskDriveContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
+    public DiskDriveContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getDiskDrive(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry());
 
         this.storageInfoAccessor = new StorageDiskInfoAccessorImpl(playerInventory.player.getCommandSenderWorld());
@@ -52,13 +52,13 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
         initializeResourceFilterSlots(buf);
     }
 
-    public DiskDriveContainerMenu(int syncId, Player player, SimpleContainer diskInventory, ResourceFilterContainer resourceFilterContainer, DiskDriveBlockEntity diskDrive, StorageDiskInfoAccessor storageInfoAccessor) {
+    public DiskDriveContainerMenu(final int syncId, final Player player, final SimpleContainer diskInventory, final ResourceFilterContainer resourceFilterContainer, final DiskDriveBlockEntity diskDrive, final StorageDiskInfoAccessor storageInfoAccessor) {
         super(Menus.INSTANCE.getDiskDrive(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry(), player, diskDrive, resourceFilterContainer);
         this.storageInfoAccessor = storageInfoAccessor;
         addSlots(player, diskInventory, resourceFilterContainer);
     }
 
-    private void addSlots(Player player, SimpleContainer diskInventory, ResourceFilterContainer resourceFilterContainer) {
+    private void addSlots(final Player player, final SimpleContainer diskInventory, final ResourceFilterContainer resourceFilterContainer) {
         for (int i = 0; i < DiskDriveNetworkNode.DISK_COUNT; ++i) {
             diskSlots.add(addSlot(createDiskSlot(diskInventory, i)));
         }
@@ -68,12 +68,12 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
         addPlayerInventory(player.getInventory(), 8, 141);
     }
 
-    private Slot createFilterSlot(ResourceFilterContainer resourceFilterContainer, int i) {
+    private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
         int x = FILTER_SLOT_X + (18 * i);
         return new ResourceFilterSlot(resourceFilterContainer, i, x, FILTER_SLOT_Y);
     }
 
-    private Slot createDiskSlot(SimpleContainer diskInventory, int i) {
+    private Slot createDiskSlot(final SimpleContainer diskInventory, final int i) {
         int x = DISK_SLOT_X + ((i % 2) * 18);
         int y = DISK_SLOT_Y + Math.floorDiv(i, 2) * 18;
         return new ValidatedSlot(diskInventory, i, x, y, stack -> stack.getItem() instanceof StorageDiskItem);
@@ -93,7 +93,7 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
 
     @Override
     public Set<StorageTooltipHelper.TooltipOption> getTooltipOptions() {
-        Set<StorageTooltipHelper.TooltipOption> options = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
+        final Set<StorageTooltipHelper.TooltipOption> options = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
         if (hasCapacity()) {
             options.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
         }
@@ -127,11 +127,11 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int index) {
+    public ItemStack quickMoveStack(final Player player, final int index) {
         ItemStack originalStack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(index);
+        final Slot slot = this.slots.get(index);
         if (slot.hasItem()) {
-            ItemStack stackInSlot = slot.getItem();
+            final ItemStack stackInSlot = slot.getItem();
             originalStack = stackInSlot.copy();
 
             if (index < 8) {

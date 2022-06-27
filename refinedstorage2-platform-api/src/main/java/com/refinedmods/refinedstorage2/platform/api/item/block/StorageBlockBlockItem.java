@@ -2,9 +2,6 @@ package com.refinedmods.refinedstorage2.platform.api.item.block;
 
 import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
 
-import javax.annotation.Nullable;
-import java.util.UUID;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -15,6 +12,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 public abstract class StorageBlockBlockItem extends BlockItem {
     protected StorageBlockBlockItem(final Block block, final Properties properties) {
@@ -41,6 +41,7 @@ public abstract class StorageBlockBlockItem extends BlockItem {
 
     protected abstract ItemStack createPrimaryDisassemblyByproduct(int count);
 
+    @Nullable
     protected abstract ItemStack createSecondaryDisassemblyByproduct(int count);
 
     protected abstract void updateBlockEntityWithStorageId(BlockPos pos, @Nullable BlockEntity blockEntity, UUID id);

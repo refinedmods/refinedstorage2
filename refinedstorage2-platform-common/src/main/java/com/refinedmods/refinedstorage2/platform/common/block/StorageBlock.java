@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 public abstract class StorageBlock extends NetworkNodeContainerBlock {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    protected StorageBlock(Properties properties) {
+    protected StorageBlock(final Properties properties) {
         super(properties);
     }
 

@@ -23,27 +23,27 @@ public class ResourceFilterContainer {
     private final FilteredResource[] items;
     private final Runnable listener;
 
-    public ResourceFilterContainer(OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, int size, Runnable listener) {
+    public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, final int size, final Runnable listener) {
         this.resourceTypeRegistry = resourceTypeRegistry;
         this.items = new FilteredResource[size];
         this.listener = listener;
     }
 
-    public void set(int index, FilteredResource resource) {
+    public void set(final int index, final FilteredResource resource) {
         setSilently(index, resource);
         listener.run();
     }
 
-    private void setSilently(int index, FilteredResource resource) {
+    private void setSilently(final int index, final FilteredResource resource) {
         items[index] = resource;
     }
 
-    public void remove(int index) {
+    public void remove(final int index) {
         removeSilently(index);
         listener.run();
     }
 
-    private void removeSilently(int index) {
+    private void removeSilently(final int index) {
         items[index] = null;
     }
 
@@ -51,27 +51,24 @@ public class ResourceFilterContainer {
         return items.length;
     }
 
-    public FilteredResource get(int index) {
+    public FilteredResource get(final int index) {
         return items[index];
     }
 
     public Set<Object> getTemplates() {
-        Set<Object> result = new HashSet<>();
+        final Set<Object> result = new HashSet<>();
         for (int i = 0; i < size(); ++i) {
-            FilteredResource item = items[i];
+            final FilteredResource item = items[i];
             if (item == null) {
                 continue;
             }
-            Object value = item.getValue();
-            if (value != null) {
-                result.add(value);
-            }
+            result.add(item.getValue());
         }
         return result;
     }
 
     public ResourceType determineDefaultType() {
-        List<ResourceType> distinctTypes = Arrays.stream(items)
+        final List<ResourceType> distinctTypes = Arrays.stream(items)
                 .filter(Objects::nonNull)
                 .map(FilteredResource::getType)
                 .distinct()
@@ -82,15 +79,15 @@ public class ResourceFilterContainer {
         return resourceTypeRegistry.getDefault();
     }
 
-    public void writeToUpdatePacket(FriendlyByteBuf buf) {
+    public void writeToUpdatePacket(final FriendlyByteBuf buf) {
         buf.writeResourceLocation(resourceTypeRegistry.getId(determineDefaultType()).orElseThrow(() -> new IllegalStateException("Default resource type not registered")));
         for (int index = 0; index < items.length; ++index) {
             writeToUpdatePacket(index, buf);
         }
     }
 
-    public void writeToUpdatePacket(int index, FriendlyByteBuf buf) {
-        FilteredResource item = items[index];
+    public void writeToUpdatePacket(final int index, final FriendlyByteBuf buf) {
+        final FilteredResource item = items[index];
         if (item == null) {
             buf.writeBoolean(false);
             return;
@@ -105,13 +102,13 @@ public class ResourceFilterContainer {
         );
     }
 
-    public void readFromUpdatePacket(int index, FriendlyByteBuf buf) {
-        boolean present = buf.readBoolean();
+    public void readFromUpdatePacket(final int index, final FriendlyByteBuf buf) {
+        final boolean present = buf.readBoolean();
         if (!present) {
             removeSilently(index);
             return;
         }
-        ResourceLocation id = buf.readResourceLocation();
+        final ResourceLocation id = buf.readResourceLocation();
         resourceTypeRegistry.get(id).ifPresentOrElse(
                 type -> setSilently(index, type.fromPacket(buf)),
                 () -> LOGGER.warn("Resource type {} is not registered on the client, cannot read from packet", id)
@@ -119,13 +116,13 @@ public class ResourceFilterContainer {
     }
 
     public CompoundTag toTag() {
-        CompoundTag tag = new CompoundTag();
+        final CompoundTag tag = new CompoundTag();
         for (int i = 0; i < size(); ++i) {
-            FilteredResource item = items[i];
+            final FilteredResource item = items[i];
             if (item == null) {
                 continue;
             }
-            int index = i;
+            final int index = i;
             resourceTypeRegistry.getId(item.getType()).ifPresentOrElse(
                     id -> addToTag(tag, index, item, id),
                     () -> LOGGER.warn("Resource type {} is not registered, cannot serialize", item.getType())
@@ -134,33 +131,33 @@ public class ResourceFilterContainer {
         return tag;
     }
 
-    private void addToTag(CompoundTag tag, int index, FilteredResource item, ResourceLocation typeId) {
-        CompoundTag serialized = new CompoundTag();
+    private void addToTag(final CompoundTag tag, final int index, final FilteredResource item, final ResourceLocation typeId) {
+        final CompoundTag serialized = new CompoundTag();
         serialized.putString("t", typeId.toString());
         serialized.put("v", item.toTag());
         tag.put("s" + index, serialized);
     }
 
-    public void load(CompoundTag tag) {
+    public void load(final CompoundTag tag) {
         for (int i = 0; i < size(); ++i) {
-            String key = "s" + i;
+            final String key = "s" + i;
             if (!tag.contains(key)) {
                 continue;
             }
-            CompoundTag item = tag.getCompound(key);
+            final CompoundTag item = tag.getCompound(key);
             load(i, item);
         }
     }
 
-    private void load(int index, CompoundTag item) {
-        ResourceLocation typeId = new ResourceLocation(item.getString("t"));
+    private void load(final int index, final CompoundTag item) {
+        final ResourceLocation typeId = new ResourceLocation(item.getString("t"));
         resourceTypeRegistry.get(typeId).ifPresentOrElse(
                 type -> load(index, item, type),
                 () -> LOGGER.warn("Resource type {} is not registered, cannot deserialize", typeId)
         );
     }
 
-    private void load(int index, CompoundTag item, ResourceType type) {
+    private void load(final int index, final CompoundTag item, final ResourceType type) {
         type.fromTag(item.getCompound("v")).ifPresent(resource -> setSilently(index, resource));
     }
 }

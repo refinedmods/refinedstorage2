@@ -13,7 +13,11 @@ public abstract class AbstractPlatform implements Platform {
     private final BucketQuantityFormatter bucketQuantityFormatter;
     private final FluidRenderer fluidRenderer;
 
-    protected AbstractPlatform(ServerToClientCommunications serverToClientCommunications, ClientToServerCommunications clientToServerCommunications, MenuOpener menuOpener, BucketQuantityFormatter bucketQuantityFormatter, FluidRenderer fluidRenderer) {
+    protected AbstractPlatform(final ServerToClientCommunications serverToClientCommunications,
+                               final ClientToServerCommunications clientToServerCommunications,
+                               final MenuOpener menuOpener,
+                               final BucketQuantityFormatter bucketQuantityFormatter,
+                               final FluidRenderer fluidRenderer) {
         this.serverToClientCommunications = serverToClientCommunications;
         this.clientToServerCommunications = clientToServerCommunications;
         this.menuOpener = menuOpener;

@@ -23,18 +23,18 @@ public class AccessModeSideButtonWidget extends SideButtonWidget {
     private final TooltipRenderer tooltipRenderer;
     private final Map<AccessMode, List<Component>> tooltips = new EnumMap<>(AccessMode.class);
 
-    public AccessModeSideButtonWidget(AccessModeAccessor accessModeAccessor, TooltipRenderer tooltipRenderer) {
+    public AccessModeSideButtonWidget(final AccessModeAccessor accessModeAccessor, final TooltipRenderer tooltipRenderer) {
         super(createPressAction(accessModeAccessor));
         this.accessModeAccessor = accessModeAccessor;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(AccessMode.values()).forEach(accessMode -> tooltips.put(accessMode, calculateTooltip(accessMode)));
     }
 
-    private static OnPress createPressAction(AccessModeAccessor accessModeAccessor) {
+    private static OnPress createPressAction(final AccessModeAccessor accessModeAccessor) {
         return btn -> accessModeAccessor.setAccessMode(accessModeAccessor.getAccessMode().toggle());
     }
 
-    private List<Component> calculateTooltip(AccessMode accessMode) {
+    private List<Component> calculateTooltip(final AccessMode accessMode) {
         List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "access_mode"));
         lines.add(createTranslation("gui", "access_mode." + accessMode.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
@@ -43,16 +43,11 @@ public class AccessModeSideButtonWidget extends SideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        switch (accessModeAccessor.getAccessMode()) {
-            case INSERT_EXTRACT:
-                return 0;
-            case INSERT:
-                return 16;
-            case EXTRACT:
-                return 32;
-            default:
-                return 0;
-        }
+        return switch (accessModeAccessor.getAccessMode()) {
+            case INSERT_EXTRACT -> 0;
+            case INSERT -> 16;
+            case EXTRACT -> 32;
+        };
     }
 
     @Override
@@ -61,7 +56,7 @@ public class AccessModeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
+    public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
         tooltipRenderer.render(poseStack, tooltips.get(accessModeAccessor.getAccessMode()), mouseX, mouseY);
     }
 }

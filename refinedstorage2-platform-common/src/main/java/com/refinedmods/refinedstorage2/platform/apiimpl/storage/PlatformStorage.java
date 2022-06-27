@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class PlatformStorage<T> extends ProxyStorage<T> implements SerializableStorage<T>, TrackedStorage<T> {
@@ -19,14 +20,14 @@ public class PlatformStorage<T> extends ProxyStorage<T> implements SerializableS
     private final TrackedStorageRepository<T> trackingRepository;
     private final Runnable listener;
 
-    public PlatformStorage(Storage<T> delegate, StorageType<T> type, TrackedStorageRepository<T> trackingRepository, Runnable listener) {
+    public PlatformStorage(final Storage<T> delegate, final StorageType<T> type, final TrackedStorageRepository<T> trackingRepository, final Runnable listener) {
         super(delegate);
         this.type = type;
         this.trackingRepository = trackingRepository;
         this.listener = listener;
     }
 
-    public void load(T resource, long amount, String changedBy, long changedAt) {
+    public void load(final T resource, final long amount, @Nullable final String changedBy, final long changedAt) {
         super.insert(resource, amount, Action.EXECUTE, EmptySource.INSTANCE);
         if (changedBy != null && !changedBy.isBlank()) {
             trackingRepository.update(resource, new PlayerSource(changedBy), changedAt);
@@ -34,8 +35,8 @@ public class PlatformStorage<T> extends ProxyStorage<T> implements SerializableS
     }
 
     @Override
-    public long extract(T resource, long amount, Action action, Source source) {
-        long extracted = super.extract(resource, amount, action, source);
+    public long extract(final T resource, final long amount, final Action action, final Source source) {
+        final long extracted = super.extract(resource, amount, action, source);
         if (extracted > 0 && action == Action.EXECUTE) {
             listener.run();
         }
@@ -43,8 +44,8 @@ public class PlatformStorage<T> extends ProxyStorage<T> implements SerializableS
     }
 
     @Override
-    public long insert(T resource, long amount, Action action, Source source) {
-        long inserted = super.insert(resource, amount, action, source);
+    public long insert(final T resource, final long amount, final Action action, final Source source) {
+        final long inserted = super.insert(resource, amount, action, source);
         if (inserted > 0 && action == Action.EXECUTE) {
             listener.run();
         }
@@ -57,7 +58,7 @@ public class PlatformStorage<T> extends ProxyStorage<T> implements SerializableS
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
+    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource, final Class<? extends Source> sourceType) {
         return trackingRepository.findTrackedResourceBySourceType(resource, sourceType);
     }
 }

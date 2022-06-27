@@ -10,15 +10,15 @@ public final class IdentifierUtil {
     private IdentifierUtil() {
     }
 
-    public static ResourceLocation createIdentifier(String value) {
+    public static ResourceLocation createIdentifier(final String value) {
         return new ResourceLocation(MOD_ID, value);
     }
 
-    public static String createTranslationKey(String category, String value) {
+    public static String createTranslationKey(final String category, final String value) {
         return String.format("%s.%s.%s", category, MOD_ID, value);
     }
 
-    public static MutableComponent createTranslation(String category, String value, Object... args) {
+    public static MutableComponent createTranslation(final String category, final String value, final Object... args) {
         return Component.translatable(createTranslationKey(category, value), args);
     }
 }

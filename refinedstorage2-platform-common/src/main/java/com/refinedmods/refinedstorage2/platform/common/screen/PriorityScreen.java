@@ -2,6 +2,8 @@ package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.PriorityAccessor;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -47,9 +49,10 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
     private final Screen parent;
     private final PriorityAccessor priorityAccessor;
 
+    @Nullable
     private EditBox amountField;
 
-    public PriorityScreen(PriorityAccessor priorityAccessor, Screen parent, Inventory playerInventory) {
+    public PriorityScreen(final PriorityAccessor priorityAccessor, final Screen parent, final Inventory playerInventory) {
         super(new DummyContainerMenu(), playerInventory, PriorityScreen.PRIORITY_TEXT);
 
         this.parent = parent;
@@ -82,23 +85,27 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
         addIncrementButtons(INCREMENTS_BOTTOM, leftPos + INCREMENT_BUTTON_X, topPos + INCREMENT_BUTTON_BOTTOM_Y);
     }
 
-    private void addIncrementButtons(int[] increments, int x, int y) {
-        for (int increment : increments) {
+    private void addIncrementButtons(final int[] increments, int x, final int y) {
+        for (final int increment : increments) {
             Component text = Component.literal((increment > 0 ? "+" : "") + increment);
-
             addRenderableWidget(new Button(x, y, INCREMENT_BUTTON_WIDTH, 20, text, btn -> changeAmount(increment)));
-
             x += INCREMENT_BUTTON_WIDTH + 3;
         }
     }
 
-    private void changeAmount(int delta) {
-        int oldAmount = getAmount();
-        int newAmount = oldAmount + delta;
+    private void changeAmount(final int delta) {
+        if (amountField == null) {
+            return;
+        }
+        final int oldAmount = getAmount();
+        final int newAmount = oldAmount + delta;
         amountField.setValue(String.valueOf(newAmount));
     }
 
     private int getAmount() {
+        if (amountField == null) {
+            return 0;
+        }
         try {
             return Integer.parseInt(amountField.getValue());
         } catch (NumberFormatException e) {
@@ -107,7 +114,7 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
     }
 
     @Override
-    public boolean mouseScrolled(double x, double y, double delta) {
+    public boolean mouseScrolled(final double x, final double y, final double delta) {
         if (delta > 0) {
             changeAmount(1);
         } else {
@@ -117,49 +124,49 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float delta, int mouseX, int mouseY) {
+    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
-        int x = (width - imageWidth) / 2;
-        int y = (height - imageHeight) / 2;
+        final int x = (width - imageWidth) / 2;
+        final int y = (height - imageHeight) / 2;
 
         blit(poseStack, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+    protected void renderLabels(final PoseStack poseStack, final int mouseX, final int mouseY) {
         font.draw(poseStack, title, titleLabelX, titleLabelY, 4210752);
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float delta) {
         renderBackground(poseStack);
         super.render(poseStack, mouseX, mouseY, delta);
         renderTooltip(poseStack, mouseX, mouseY);
     }
 
     @Override
-    public boolean keyPressed(int key, int scanCode, int modifiers) {
+    public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
         if (key == GLFW.GLFW_KEY_ESCAPE) {
             close();
             return true;
         }
-
-        if ((key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) && amountField.isFocused()) {
+        if (amountField != null && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) && amountField.isFocused()) {
             ok();
             return true;
         }
-
-        if (amountField.keyPressed(key, scanCode, modifiers)) {
+        if (amountField != null && amountField.keyPressed(key, scanCode, modifiers)) {
             return true;
         }
-
         return super.keyPressed(key, scanCode, modifiers);
     }
 
     private void reset() {
+        if (amountField == null) {
+            return;
+        }
         amountField.setValue("0");
     }
 
@@ -178,12 +185,12 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
         }
 
         @Override
-        public ItemStack quickMoveStack(Player player, int i) {
+        public ItemStack quickMoveStack(final Player player, final int i) {
             return ItemStack.EMPTY;
         }
 
         @Override
-        public boolean stillValid(Player player) {
+        public boolean stillValid(final Player player) {
             return true;
         }
     }

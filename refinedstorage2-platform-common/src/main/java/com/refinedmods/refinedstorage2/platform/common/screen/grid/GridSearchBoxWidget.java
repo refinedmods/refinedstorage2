@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -29,7 +30,14 @@ public class GridSearchBoxWidget<T> extends SearchFieldWidget implements GridSea
 
     private boolean valid = true;
 
-    public GridSearchBoxWidget(Font textRenderer, int x, int y, int width, SyntaxHighlighter syntaxHighlighter, GridView<T> view, GridQueryParser<T> queryParser, List<String> history) {
+    public GridSearchBoxWidget(final Font textRenderer,
+                               final int x,
+                               final int y,
+                               final int width,
+                               final SyntaxHighlighter syntaxHighlighter,
+                               final GridView<T> view,
+                               final GridQueryParser<T> queryParser,
+                               final List<String> history) {
         super(textRenderer, x, y, width, new History(history));
 
         setFormatter((text, firstCharacterIndex) -> {
@@ -57,34 +65,34 @@ public class GridSearchBoxWidget<T> extends SearchFieldWidget implements GridSea
         this.queryParser = queryParser;
     }
 
-    private FormattedCharSequence invalidText(String text) {
+    private FormattedCharSequence invalidText(final String text) {
         return FormattedCharSequence.forward(text, Style.EMPTY.applyFormat(ChatFormatting.RED));
     }
 
-    private FormattedCharSequence convertCharactersToOrderedText(List<SyntaxHighlightedCharacter> characters) {
+    private FormattedCharSequence convertCharactersToOrderedText(final List<SyntaxHighlightedCharacter> characters) {
         FormattedCharSequence orderedText = FormattedCharSequence.EMPTY;
-        for (SyntaxHighlightedCharacter character : characters) {
+        for (final SyntaxHighlightedCharacter character : characters) {
             orderedText = FormattedCharSequence.composite(orderedText, convertCharacterToOrderedText(character));
         }
         return orderedText;
     }
 
-    private FormattedCharSequence convertCharacterToOrderedText(SyntaxHighlightedCharacter character) {
-        ChatFormatting color = ChatFormatting.getByName(character.getColor());
+    private FormattedCharSequence convertCharacterToOrderedText(final SyntaxHighlightedCharacter character) {
+        final ChatFormatting color = ChatFormatting.getByName(character.getColor());
         return FormattedCharSequence.forward(character.getCharacter(), Style.EMPTY.withColor(color));
     }
 
-    private Lexer createLexer(String text) {
+    private Lexer createLexer(final String text) {
         return new Lexer(new Source("Grid search box syntax highlighting", text), LexerTokenMappings.DEFAULT_MAPPINGS);
     }
 
     @Override
-    public void setAutoSelected(boolean autoSelected) {
+    public void setAutoSelected(final boolean autoSelected) {
         setFocused(autoSelected);
         setCanLoseFocus(!autoSelected);
     }
 
-    private boolean onTextChanged(String text) {
+    private boolean onTextChanged(final String text) {
         boolean success = true;
         try {
             view.setFilter(queryParser.parse(text));
@@ -97,12 +105,12 @@ public class GridSearchBoxWidget<T> extends SearchFieldWidget implements GridSea
     }
 
     @Override
-    public void addListener(Consumer<String> listener) {
+    public void addListener(final Consumer<String> listener) {
         this.listeners.add(listener);
     }
 
     private void setValid(boolean valid) {
         this.valid = valid;
-        setTextColor(valid ? ChatFormatting.WHITE.getColor() : ChatFormatting.RED.getColor());
+        setTextColor(valid ? Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15) : Objects.requireNonNullElse(ChatFormatting.RED.getColor(), 15));
     }
 }

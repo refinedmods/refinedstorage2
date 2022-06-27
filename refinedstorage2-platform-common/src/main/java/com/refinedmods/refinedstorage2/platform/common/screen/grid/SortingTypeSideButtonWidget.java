@@ -24,18 +24,18 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSortingType, List<Component>> tooltips = new EnumMap<>(GridSortingType.class);
 
-    public SortingTypeSideButtonWidget(GridContainerMenu<?> menu, TooltipRenderer tooltipRenderer) {
+    public SortingTypeSideButtonWidget(final GridContainerMenu<?> menu, final TooltipRenderer tooltipRenderer) {
         super(createPressAction(menu));
         this.menu = menu;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(GridSortingType.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private static OnPress createPressAction(GridContainerMenu<?> menu) {
+    private static OnPress createPressAction(final GridContainerMenu<?> menu) {
         return btn -> menu.setSortingType(menu.getSortingType().toggle());
     }
 
-    private List<Component> calculateTooltip(GridSortingType type) {
+    private List<Component> calculateTooltip(final GridSortingType type) {
         List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "grid.sorting.type"));
         lines.add(createTranslation("gui", "grid.sorting.type." + type.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
@@ -58,7 +58,7 @@ public class SortingTypeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button buttonWidget, PoseStack poseStack, int mouseX, int mouseY) {
+    public void onTooltip(final Button buttonWidget, final PoseStack poseStack, final int mouseX, final int mouseY) {
         tooltipRenderer.render(poseStack, tooltips.get(menu.getSortingType()), mouseX, mouseY);
     }
 }

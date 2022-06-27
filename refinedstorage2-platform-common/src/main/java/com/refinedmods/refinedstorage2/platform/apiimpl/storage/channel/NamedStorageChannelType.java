@@ -9,7 +9,7 @@ public class NamedStorageChannelType<T> implements StorageChannelType<T> {
     private final String name;
     private final StorageChannelType<T> delegate;
 
-    public NamedStorageChannelType(String name, StorageChannelType<T> delegate) {
+    public NamedStorageChannelType(final String name, final StorageChannelType<T> delegate) {
         Preconditions.checkNotNull(delegate);
         this.name = name;
         this.delegate = delegate;

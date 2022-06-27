@@ -2,6 +2,8 @@ package com.refinedmods.refinedstorage2.platform.apiimpl.grid;
 
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.network.chat.MutableComponent;
 
 public class NoOpGridSynchronizer extends DefaultGridSynchronizer {
@@ -13,11 +15,12 @@ public class NoOpGridSynchronizer extends DefaultGridSynchronizer {
     }
 
     @Override
-    public void synchronizeFromGrid(String text) {
+    public void synchronizeFromGrid(final String text) {
         // no op
     }
 
     @Override
+    @Nullable
     public String getTextToSynchronizeToGrid() {
         return null;
     }

@@ -12,8 +12,10 @@ import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
 
+import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public final class Blocks {
@@ -23,9 +25,13 @@ public final class Blocks {
     private final BlockColorMap<FluidGridBlock> fluidGrid = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
+    @Nullable
     private Supplier<CableBlock> cable;
+    @Nullable
     private Supplier<QuartzEnrichedIronBlock> quartzEnrichedIronBlock;
+    @Nullable
     private Supplier<DiskDriveBlock> diskDrive;
+    @Nullable
     private Supplier<MachineCasingBlock> machineCasing;
     private final Map<ItemStorageType.Variant, Supplier<ItemStorageBlock>> itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
     private final Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
@@ -34,19 +40,19 @@ public final class Blocks {
     }
 
     public CableBlock getCable() {
-        return cable.get();
+        return Objects.requireNonNull(cable).get();
     }
 
     public QuartzEnrichedIronBlock getQuartzEnrichedIronBlock() {
-        return quartzEnrichedIronBlock.get();
+        return Objects.requireNonNull(quartzEnrichedIronBlock).get();
     }
 
     public DiskDriveBlock getDiskDrive() {
-        return diskDrive.get();
+        return Objects.requireNonNull(diskDrive).get();
     }
 
     public MachineCasingBlock getMachineCasing() {
-        return machineCasing.get();
+        return Objects.requireNonNull(machineCasing).get();
     }
 
     public BlockColorMap<ItemGridBlock> getGrid() {
@@ -65,35 +71,35 @@ public final class Blocks {
         return creativeController;
     }
 
-    public void setCable(Supplier<CableBlock> cableSupplier) {
+    public void setCable(final Supplier<CableBlock> cableSupplier) {
         this.cable = cableSupplier;
     }
 
-    public void setQuartzEnrichedIronBlock(Supplier<QuartzEnrichedIronBlock> quartzEnrichedIronBlockSupplier) {
+    public void setQuartzEnrichedIronBlock(final Supplier<QuartzEnrichedIronBlock> quartzEnrichedIronBlockSupplier) {
         this.quartzEnrichedIronBlock = quartzEnrichedIronBlockSupplier;
     }
 
-    public void setDiskDrive(Supplier<DiskDriveBlock> diskDriveSupplier) {
+    public void setDiskDrive(final Supplier<DiskDriveBlock> diskDriveSupplier) {
         this.diskDrive = diskDriveSupplier;
     }
 
-    public void setMachineCasing(Supplier<MachineCasingBlock> machineCasingSupplier) {
+    public void setMachineCasing(final Supplier<MachineCasingBlock> machineCasingSupplier) {
         this.machineCasing = machineCasingSupplier;
     }
 
-    public void setItemStorageBlock(ItemStorageType.Variant variant, Supplier<ItemStorageBlock> itemStorageBlockSupplier) {
+    public void setItemStorageBlock(final ItemStorageType.Variant variant, final Supplier<ItemStorageBlock> itemStorageBlockSupplier) {
         itemStorageBlocks.put(variant, itemStorageBlockSupplier);
     }
 
-    public ItemStorageBlock getItemStorageBlock(ItemStorageType.Variant variant) {
+    public ItemStorageBlock getItemStorageBlock(final ItemStorageType.Variant variant) {
         return itemStorageBlocks.get(variant).get();
     }
 
-    public void setFluidStorageBlock(FluidStorageType.Variant variant, Supplier<FluidStorageBlock> fluidStorageBlockSupplier) {
+    public void setFluidStorageBlock(final FluidStorageType.Variant variant, final Supplier<FluidStorageBlock> fluidStorageBlockSupplier) {
         fluidStorageBlocks.put(variant, fluidStorageBlockSupplier);
     }
 
-    public FluidStorageBlock getFluidStorageBlock(FluidStorageType.Variant variant) {
+    public FluidStorageBlock getFluidStorageBlock(final FluidStorageType.Variant variant) {
         return fluidStorageBlocks.get(variant).get();
     }
 }

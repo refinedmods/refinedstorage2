@@ -5,7 +5,7 @@ public enum RedstoneMode {
     HIGH,
     LOW;
 
-    public boolean isActive(boolean powered) {
+    public boolean isActive(final boolean powered) {
         return switch (this) {
             case IGNORE -> true;
             case HIGH -> powered;

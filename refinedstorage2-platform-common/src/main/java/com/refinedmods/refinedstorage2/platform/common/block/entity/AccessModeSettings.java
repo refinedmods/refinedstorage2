@@ -11,7 +11,7 @@ public class AccessModeSettings {
     private AccessModeSettings() {
     }
 
-    public static AccessMode getAccessMode(int accessMode) {
+    public static AccessMode getAccessMode(final int accessMode) {
         return switch (accessMode) {
             case INSERT_EXTRACT -> AccessMode.INSERT_EXTRACT;
             case INSERT -> AccessMode.INSERT;
@@ -20,7 +20,7 @@ public class AccessModeSettings {
         };
     }
 
-    public static int getAccessMode(AccessMode accessMode) {
+    public static int getAccessMode(final AccessMode accessMode) {
         return switch (accessMode) {
             case INSERT_EXTRACT -> INSERT_EXTRACT;
             case INSERT -> INSERT;
@@ -28,7 +28,7 @@ public class AccessModeSettings {
         };
     }
 
-    public static TwoWaySyncProperty<AccessMode> createClientSyncProperty(int index) {
+    public static TwoWaySyncProperty<AccessMode> createClientSyncProperty(final int index) {
         return TwoWaySyncProperty.forClient(
                 index,
                 AccessModeSettings::getAccessMode,

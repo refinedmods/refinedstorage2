@@ -16,7 +16,7 @@ public abstract class SideButtonWidget extends Button implements Button.OnToolti
     private static final int WIDTH = 18;
     private static final int HEIGHT = 18;
 
-    protected SideButtonWidget(OnPress pressAction) {
+    protected SideButtonWidget(final OnPress pressAction) {
         super(-1, -1, WIDTH, HEIGHT, Component.empty(), pressAction);
     }
 
@@ -29,7 +29,7 @@ public abstract class SideButtonWidget extends Button implements Button.OnToolti
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(final PoseStack poseStack, final int mouseX, final int mouseY, final float partialTicks) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, getTextureIdentifier());
@@ -38,7 +38,7 @@ public abstract class SideButtonWidget extends Button implements Button.OnToolti
         this.isHovered = mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
 
         // Ensure that the tooltip is drawn over the side buttons (tooltips have a Z offset of 400).
-        int originalZOffset = getBlitOffset();
+        final int originalZOffset = getBlitOffset();
         setBlitOffset(300);
         blit(poseStack, x, y, 238, isHovered ? 35 : 16, WIDTH, HEIGHT);
         blit(poseStack, x + 1, y + 1, getXTexture(), getYTexture(), WIDTH, HEIGHT);

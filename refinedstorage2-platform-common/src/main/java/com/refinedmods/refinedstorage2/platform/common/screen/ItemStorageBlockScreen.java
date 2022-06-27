@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ItemStorageBlockScreen extends StorageBlockScreen {
-    public ItemStorageBlockScreen(StorageBlockContainerMenu menu, Inventory inventory, Component title) {
+    public ItemStorageBlockScreen(final StorageBlockContainerMenu menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title);
     }
 }

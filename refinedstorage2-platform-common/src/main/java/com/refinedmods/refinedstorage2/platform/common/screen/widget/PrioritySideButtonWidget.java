@@ -21,13 +21,13 @@ public class PrioritySideButtonWidget extends SideButtonWidget {
     private final PriorityAccessor priorityAccessor;
     private final TooltipRenderer tooltipRenderer;
 
-    public PrioritySideButtonWidget(PriorityAccessor priorityAccessor, Inventory playerInventory, Screen parent, TooltipRenderer tooltipRenderer) {
+    public PrioritySideButtonWidget(final PriorityAccessor priorityAccessor, final Inventory playerInventory, final Screen parent, final TooltipRenderer tooltipRenderer) {
         super(createPressAction(priorityAccessor, playerInventory, parent));
         this.priorityAccessor = priorityAccessor;
         this.tooltipRenderer = tooltipRenderer;
     }
 
-    private static OnPress createPressAction(PriorityAccessor priorityAccessor, Inventory playerInventory, Screen parent) {
+    private static OnPress createPressAction(final PriorityAccessor priorityAccessor, final Inventory playerInventory, final Screen parent) {
         return btn -> Minecraft.getInstance().setScreen(new PriorityScreen(priorityAccessor, parent, playerInventory));
     }
 
@@ -42,7 +42,7 @@ public class PrioritySideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
+    public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
         List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "priority"));
         lines.add(Component.literal(String.valueOf(priorityAccessor.getPriority())).withStyle(ChatFormatting.GRAY));

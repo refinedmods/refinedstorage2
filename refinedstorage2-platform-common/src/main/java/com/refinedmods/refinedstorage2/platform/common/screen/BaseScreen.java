@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage2.platform.common.screen.widget.SideButtonW
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,7 +16,7 @@ import org.lwjgl.opengl.GL11;
 public abstract class BaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     private int sideButtonY;
 
-    protected BaseScreen(T menu, Inventory playerInventory, Component text) {
+    protected BaseScreen(final T menu, final Inventory playerInventory, final Component text) {
         super(menu, playerInventory, text);
     }
 
@@ -29,19 +28,19 @@ public abstract class BaseScreen<T extends AbstractContainerMenu> extends Abstra
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float delta, int mouseX, int mouseY) {
+    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
         renderResourceFilterSlots(poseStack);
     }
 
-    protected void renderResourceFilterSlots(PoseStack poseStack) {
-        for (Slot slot : menu.slots) {
+    protected void renderResourceFilterSlots(final PoseStack poseStack) {
+        for (final Slot slot : menu.slots) {
             if (slot instanceof ResourceFilterSlot resourceFilterSlot) {
                 resourceFilterSlot.render(poseStack, leftPos + slot.x, topPos + slot.y, getBlitOffset());
             }
         }
     }
 
-    public void addSideButton(SideButtonWidget button) {
+    public void addSideButton(final SideButtonWidget button) {
         button.x = leftPos - button.getWidth() - 2;
         button.y = topPos + sideButtonY;
 
@@ -50,12 +49,15 @@ public abstract class BaseScreen<T extends AbstractContainerMenu> extends Abstra
         addRenderableWidget(button);
     }
 
-    protected void setScissor(int x, int y, int w, int h) {
-        double scale = minecraft.getWindow().getGuiScale();
-        int sx = (int) (x * scale);
-        int sy = (int) ((minecraft.getWindow().getGuiScaledHeight() - (y + h)) * scale);
-        int sw = (int) (w * scale);
-        int sh = (int) (h * scale);
+    protected void setScissor(final int x, final int y, final int w, final int h) {
+        if (minecraft == null) {
+            return;
+        }
+        final double scale = minecraft.getWindow().getGuiScale();
+        final int sx = (int) (x * scale);
+        final int sy = (int) ((minecraft.getWindow().getGuiScaledHeight() - (y + h)) * scale);
+        final int sw = (int) (w * scale);
+        final int sh = (int) (h * scale);
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(sx, sy, sw, sh);
@@ -66,10 +68,10 @@ public abstract class BaseScreen<T extends AbstractContainerMenu> extends Abstra
     }
 
     @Override
-    protected void renderTooltip(PoseStack poseStack, int x, int y) {
+    protected void renderTooltip(final PoseStack poseStack, final int x, final int y) {
         super.renderTooltip(poseStack, x, y);
-        if (menu.getCarried().isEmpty() && hoveredSlot instanceof ResourceFilterSlot resourceFilterSlot) {
-            List<Component> lines = resourceFilterSlot.getTooltipLines(Minecraft.getInstance().player);
+        if (minecraft != null && menu.getCarried().isEmpty() && hoveredSlot instanceof ResourceFilterSlot resourceFilterSlot) {
+            List<Component> lines = resourceFilterSlot.getTooltipLines(minecraft.player);
             if (!lines.isEmpty()) {
                 this.renderComponentTooltip(poseStack, lines, x, y);
             }

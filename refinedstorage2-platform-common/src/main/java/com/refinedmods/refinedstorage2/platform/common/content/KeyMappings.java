@@ -1,20 +1,24 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
+import javax.annotation.Nullable;
+import java.util.Objects;
+
 import net.minecraft.client.KeyMapping;
 
 public final class KeyMappings {
     public static final KeyMappings INSTANCE = new KeyMappings();
 
+    @Nullable
     private KeyMapping focusSearchBar;
 
     private KeyMappings() {
     }
 
     public KeyMapping getFocusSearchBar() {
-        return focusSearchBar;
+        return Objects.requireNonNull(focusSearchBar);
     }
 
-    public void setFocusSearchBar(KeyMapping focusSearchBar) {
+    public void setFocusSearchBar(final KeyMapping focusSearchBar) {
         this.focusSearchBar = focusSearchBar;
     }
 }

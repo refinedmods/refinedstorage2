@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.Block;
 public abstract class NameableBlockItem extends BlockItem {
     private final Component name;
 
-    protected NameableBlockItem(Block block, Properties properties, Component name) {
+    protected NameableBlockItem(final Block block, final Properties properties, final Component name) {
         super(block, properties);
         this.name = name;
     }

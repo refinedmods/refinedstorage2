@@ -6,7 +6,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 public class GridBlockItem extends NameableBlockItem {
-    public GridBlockItem(Block block, CreativeModeTab tab, Component name) {
+    public GridBlockItem(final Block block, final CreativeModeTab tab, final Component name) {
         super(block, new Item.Properties().tab(tab), name);
     }
 }

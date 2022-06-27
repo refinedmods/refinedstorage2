@@ -16,7 +16,7 @@ public class DiskDriveScreen extends StorageScreen<DiskDriveContainerMenu> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/disk_drive.png");
     private static final MutableComponent DISKS_TEXT = createTranslation("gui", "disk_drive.disks");
 
-    public DiskDriveScreen(DiskDriveContainerMenu menu, Inventory playerInventory, Component text) {
+    public DiskDriveScreen(final DiskDriveContainerMenu menu, final Inventory playerInventory, final Component text) {
         super(menu, playerInventory, text, 99);
     }
 
@@ -26,13 +26,13 @@ public class DiskDriveScreen extends StorageScreen<DiskDriveContainerMenu> {
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float delta, int mouseX, int mouseY) {
+    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
         RenderSystem.setShaderTexture(0, TEXTURE);
         super.renderBg(poseStack, delta, mouseX, mouseY);
     }
 
     @Override
-    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+    protected void renderLabels(final PoseStack poseStack, final int mouseX, final int mouseY) {
         super.renderLabels(poseStack, mouseX, mouseY);
         font.draw(poseStack, DISKS_TEXT, 60, 42, 4210752);
     }

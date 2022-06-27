@@ -7,6 +7,8 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.blo
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 
+import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import net.minecraft.world.inventory.MenuType;
@@ -14,61 +16,67 @@ import net.minecraft.world.inventory.MenuType;
 public final class Menus {
     public static final Menus INSTANCE = new Menus();
 
+    @Nullable
     private Supplier<MenuType<DiskDriveContainerMenu>> diskDrive;
+    @Nullable
     private Supplier<MenuType<ItemGridContainerMenu>> grid;
+    @Nullable
     private Supplier<MenuType<FluidGridContainerMenu>> fluidGrid;
+    @Nullable
     private Supplier<MenuType<ControllerContainerMenu>> controller;
+    @Nullable
     private Supplier<MenuType<ItemStorageBlockContainerMenu>> itemStorage;
+    @Nullable
     private Supplier<MenuType<FluidStorageBlockContainerMenu>> fluidStorage;
 
     private Menus() {
     }
 
     public MenuType<DiskDriveContainerMenu> getDiskDrive() {
-        return diskDrive.get();
+        return Objects.requireNonNull(diskDrive).get();
     }
 
     public MenuType<ItemGridContainerMenu> getGrid() {
-        return grid.get();
+        return Objects.requireNonNull(grid).get();
     }
 
     public MenuType<FluidGridContainerMenu> getFluidGrid() {
-        return fluidGrid.get();
+        return Objects.requireNonNull(fluidGrid).get();
     }
 
     public MenuType<ControllerContainerMenu> getController() {
-        return controller.get();
+        return Objects.requireNonNull(controller).get();
     }
 
-    public void setDiskDrive(Supplier<MenuType<DiskDriveContainerMenu>> diskDriveSupplier) {
+    public void setDiskDrive(final Supplier<MenuType<DiskDriveContainerMenu>> diskDriveSupplier) {
         this.diskDrive = diskDriveSupplier;
     }
 
-    public void setGrid(Supplier<MenuType<ItemGridContainerMenu>> gridSupplier) {
+    public void setGrid(final Supplier<MenuType<ItemGridContainerMenu>> gridSupplier) {
         this.grid = gridSupplier;
     }
 
-    public void setFluidGrid(Supplier<MenuType<FluidGridContainerMenu>> fluidGridSupplier) {
+    public void setFluidGrid(final Supplier<MenuType<FluidGridContainerMenu>> fluidGridSupplier) {
         this.fluidGrid = fluidGridSupplier;
     }
 
-    public void setController(Supplier<MenuType<ControllerContainerMenu>> controllerSupplier) {
+    public void setController(final Supplier<MenuType<ControllerContainerMenu>> controllerSupplier) {
         this.controller = controllerSupplier;
     }
 
     public MenuType<ItemStorageBlockContainerMenu> getItemStorage() {
-        return itemStorage.get();
+        return Objects.requireNonNull(itemStorage).get();
     }
 
-    public void setItemStorage(Supplier<MenuType<ItemStorageBlockContainerMenu>> itemStorageSupplier) {
+    public void setItemStorage(final Supplier<MenuType<ItemStorageBlockContainerMenu>> itemStorageSupplier) {
         this.itemStorage = itemStorageSupplier;
     }
 
     public MenuType<FluidStorageBlockContainerMenu> getFluidStorage() {
-        return fluidStorage.get();
+        return Objects.requireNonNull(fluidStorage).get();
     }
 
-    public void setFluidStorage(Supplier<MenuType<FluidStorageBlockContainerMenu>> fluidStorageSupplier) {
+    public void setFluidStorage(final Supplier<MenuType<FluidStorageBlockContainerMenu>> fluidStorageSupplier) {
         this.fluidStorage = fluidStorageSupplier;
     }
 }

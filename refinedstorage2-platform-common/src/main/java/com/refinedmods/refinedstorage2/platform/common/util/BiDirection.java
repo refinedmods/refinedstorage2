@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common.util;
 
-import java.util.Locale;
-
 import com.mojang.math.Vector3f;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
+
+import java.util.Locale;
 
 public enum BiDirection implements StringRepresentable {
     NORTH(new Vector3f(0, 0, 0)),
@@ -21,12 +21,14 @@ public enum BiDirection implements StringRepresentable {
     DOWN_WEST(new Vector3f(-90, 0, 90));
 
     private final Vector3f vec;
+    private final String name;
 
-    BiDirection(Vector3f vec) {
+    BiDirection(final Vector3f vec) {
         this.vec = vec;
+        this.name = name().toLowerCase(Locale.ROOT);
     }
 
-    public static BiDirection forHorizontal(Direction horizontalDirection) {
+    public static BiDirection forHorizontal(final Direction horizontalDirection) {
         return switch (horizontalDirection) {
             case NORTH -> NORTH;
             case SOUTH -> SOUTH;
@@ -36,7 +38,7 @@ public enum BiDirection implements StringRepresentable {
         };
     }
 
-    public static BiDirection forUp(Direction verticalDirection) {
+    public static BiDirection forUp(final Direction verticalDirection) {
         return switch (verticalDirection) {
             case NORTH -> UP_NORTH;
             case SOUTH -> UP_SOUTH;
@@ -46,7 +48,7 @@ public enum BiDirection implements StringRepresentable {
         };
     }
 
-    public static BiDirection forDown(Direction verticalDirection) {
+    public static BiDirection forDown(final Direction verticalDirection) {
         return switch (verticalDirection) {
             case NORTH -> DOWN_NORTH;
             case SOUTH -> DOWN_SOUTH;
@@ -79,6 +81,6 @@ public enum BiDirection implements StringRepresentable {
 
     @Override
     public String getSerializedName() {
-        return name().toLowerCase(Locale.ROOT);
+        return name;
     }
 }

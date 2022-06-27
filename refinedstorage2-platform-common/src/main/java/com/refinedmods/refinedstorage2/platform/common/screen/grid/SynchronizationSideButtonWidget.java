@@ -23,18 +23,18 @@ public class SynchronizationSideButtonWidget extends SideButtonWidget {
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSynchronizer, List<Component>> tooltips = new HashMap<>();
 
-    public SynchronizationSideButtonWidget(GridContainerMenu<?> menu, TooltipRenderer tooltipRenderer, List<GridSynchronizer> synchronizers) {
+    public SynchronizationSideButtonWidget(final GridContainerMenu<?> menu, final TooltipRenderer tooltipRenderer, final List<GridSynchronizer> synchronizers) {
         super(createPressAction(menu));
         this.menu = menu;
         this.tooltipRenderer = tooltipRenderer;
         synchronizers.forEach(synchronizer -> tooltips.put(synchronizer, calculateTooltip(synchronizer)));
     }
 
-    private static OnPress createPressAction(GridContainerMenu<?> menu) {
+    private static OnPress createPressAction(final GridContainerMenu<?> menu) {
         return btn -> menu.toggleSynchronizer();
     }
 
-    private List<Component> calculateTooltip(GridSynchronizer synchronizer) {
+    private List<Component> calculateTooltip(final GridSynchronizer synchronizer) {
         List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "grid.synchronizer"));
         lines.add(synchronizer.getTitle().withStyle(ChatFormatting.GRAY));
@@ -57,7 +57,7 @@ public class SynchronizationSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button buttonWidget, PoseStack poseStack, int mouseX, int mouseY) {
+    public void onTooltip(final Button buttonWidget, final PoseStack poseStack, final int mouseX, final int mouseY) {
         tooltipRenderer.render(poseStack, tooltips.get(menu.getSynchronizer()), mouseX, mouseY);
     }
 }

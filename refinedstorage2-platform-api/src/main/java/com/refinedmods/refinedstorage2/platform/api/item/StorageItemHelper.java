@@ -41,11 +41,14 @@ public final class StorageItemHelper {
         stack.setTag(tag);
     }
 
-    static Optional<StorageInfo> getInfo(final Level level, final ItemStack stack) {
+    static Optional<StorageInfo> getInfo(@Nullable final Level level, final ItemStack stack) {
+        if (level == null) {
+            return Optional.empty();
+        }
         return getStorageId(stack).map(PlatformApi.INSTANCE.getStorageRepository(level)::getInfo);
     }
 
-    public static void appendToTooltip(final ItemStack stack, final Level level, final List<Component> tooltip, final TooltipFlag context, final LongFunction<String> quantityFormatter, LongFunction<String> stackInfoQuantityFormatter, final Set<StorageTooltipHelper.TooltipOption> options) {
+    public static void appendToTooltip(final ItemStack stack, @Nullable final Level level, final List<Component> tooltip, final TooltipFlag context, final LongFunction<String> quantityFormatter, LongFunction<String> stackInfoQuantityFormatter, final Set<StorageTooltipHelper.TooltipOption> options) {
         getInfo(level, stack).ifPresent(info -> StorageTooltipHelper.appendToTooltip(tooltip, info.stored(), info.capacity(), quantityFormatter, stackInfoQuantityFormatter, options));
         if (context.isAdvanced()) {
             getStorageId(stack).ifPresent(id -> tooltip.add(Component.literal(id.toString()).withStyle(ChatFormatting.GRAY)));

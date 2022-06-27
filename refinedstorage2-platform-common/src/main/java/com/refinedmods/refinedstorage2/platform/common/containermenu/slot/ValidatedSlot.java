@@ -9,13 +9,13 @@ import net.minecraft.world.item.ItemStack;
 public class ValidatedSlot extends Slot {
     private final Predicate<ItemStack> predicate;
 
-    public ValidatedSlot(Container inventory, int index, int x, int y, Predicate<ItemStack> predicate) {
+    public ValidatedSlot(final Container inventory, final int index, final int x, final int y, final Predicate<ItemStack> predicate) {
         super(inventory, index, x, y);
         this.predicate = predicate;
     }
 
     @Override
-    public boolean mayPlace(ItemStack stack) {
+    public boolean mayPlace(final ItemStack stack) {
         return predicate.test(stack);
     }
 }

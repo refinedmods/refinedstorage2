@@ -22,7 +22,7 @@ public abstract class StorageBlockContainerMenu extends StorageContainerMenu {
     private long stored;
     private long capacity;
 
-    protected StorageBlockContainerMenu(MenuType<?> type, int syncId, OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, Player player, FriendlyByteBuf buf, ResourceType resourceType) {
+    protected StorageBlockContainerMenu(final MenuType<?> type, final int syncId, final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, final Player player, final FriendlyByteBuf buf, final ResourceType resourceType) {
         super(type, syncId, resourceTypeRegistry);
 
         this.stored = buf.readLong();
@@ -34,19 +34,19 @@ public abstract class StorageBlockContainerMenu extends StorageContainerMenu {
         initializeResourceFilterSlots(buf);
     }
 
-    protected StorageBlockContainerMenu(MenuType<?> type, int syncId, OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, Player player, ResourceFilterContainer resourceFilterContainer, StorageBlockBlockEntity<?> storageBlock) {
+    protected StorageBlockContainerMenu(final MenuType<?> type, final int syncId, final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, final Player player, final ResourceFilterContainer resourceFilterContainer, final StorageBlockBlockEntity<?> storageBlock) {
         super(type, syncId, resourceTypeRegistry, player, storageBlock, resourceFilterContainer);
         addSlots(player, resourceFilterContainer);
     }
 
-    private void addSlots(Player player, ResourceFilterContainer resourceFilterContainer) {
+    private void addSlots(final Player player, final ResourceFilterContainer resourceFilterContainer) {
         for (int i = 0; i < 9; ++i) {
             addSlot(createFilterSlot(resourceFilterContainer, i));
         }
         addPlayerInventory(player.getInventory(), 8, 141);
     }
 
-    private Slot createFilterSlot(ResourceFilterContainer resourceFilterContainer, int i) {
+    private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
         int x = FILTER_SLOT_X + (18 * i);
         return new ResourceFilterSlot(resourceFilterContainer, i, x, FILTER_SLOT_Y);
     }

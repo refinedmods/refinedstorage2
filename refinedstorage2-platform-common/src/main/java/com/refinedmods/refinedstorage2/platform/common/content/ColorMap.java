@@ -18,20 +18,20 @@ public class ColorMap<T> {
 
     private final Map<DyeColor, Supplier<T>> map = new EnumMap<>(DyeColor.class);
 
-    public void putAll(Function<DyeColor, Supplier<T>> factory) {
+    public void putAll(final Function<DyeColor, Supplier<T>> factory) {
         for (DyeColor color : DyeColor.values()) {
             map.put(color, factory.apply(color));
         }
     }
 
-    public ResourceLocation getId(DyeColor color, ResourceLocation id) {
+    public ResourceLocation getId(final DyeColor color, final ResourceLocation id) {
         if (color == NORMAL_COLOR) {
             return id;
         }
         return new ResourceLocation(id.getNamespace(), color.getSerializedName() + "_" + id.getPath());
     }
 
-    public MutableComponent getName(DyeColor color, MutableComponent name) {
+    public MutableComponent getName(final DyeColor color, final MutableComponent name) {
         if (color != NORMAL_COLOR) {
             return Component.translatable("color.minecraft." + color.getName()).append(" ").append(name);
         } else {
@@ -39,11 +39,11 @@ public class ColorMap<T> {
         }
     }
 
-    public void forEach(BiConsumer<DyeColor, Supplier<T>> consumer) {
+    public void forEach(final BiConsumer<DyeColor, Supplier<T>> consumer) {
         map.forEach(consumer);
     }
 
-    public T get(DyeColor color) {
+    public T get(final DyeColor color) {
         return map.get(color).get();
     }
 

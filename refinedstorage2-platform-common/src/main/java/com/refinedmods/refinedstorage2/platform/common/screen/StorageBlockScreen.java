@@ -13,7 +13,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public abstract class StorageBlockScreen extends StorageScreen<StorageBlockContainerMenu> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/storage.png");
 
-    protected StorageBlockScreen(StorageBlockContainerMenu menu, Inventory inventory, Component title) {
+    protected StorageBlockScreen(final StorageBlockContainerMenu menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title, 80);
     }
 
@@ -23,7 +23,7 @@ public abstract class StorageBlockScreen extends StorageScreen<StorageBlockConta
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float delta, int mouseX, int mouseY) {
+    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
         RenderSystem.setShaderTexture(0, TEXTURE);
         super.renderBg(poseStack, delta, mouseX, mouseY);
     }

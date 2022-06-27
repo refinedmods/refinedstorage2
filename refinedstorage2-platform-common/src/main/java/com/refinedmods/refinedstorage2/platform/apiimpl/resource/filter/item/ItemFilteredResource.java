@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredReso
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -18,12 +19,12 @@ import net.minecraft.world.item.TooltipFlag;
 public class ItemFilteredResource implements FilteredResource {
     private final ItemResource value;
 
-    public ItemFilteredResource(ItemResource value) {
+    public ItemFilteredResource(final ItemResource value) {
         this.value = value;
     }
 
     @Override
-    public void writeToPacket(FriendlyByteBuf buf) {
+    public void writeToPacket(final FriendlyByteBuf buf) {
         PacketUtil.writeItemResource(buf, value);
     }
 
@@ -33,7 +34,7 @@ public class ItemFilteredResource implements FilteredResource {
     }
 
     @Override
-    public void render(PoseStack poseStack, int x, int y, int z) {
+    public void render(final PoseStack poseStack, final int x, final int y, final int z) {
         Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(value.toItemStack(), x, y);
     }
 
@@ -48,8 +49,8 @@ public class ItemFilteredResource implements FilteredResource {
     }
 
     @Override
-    public List<Component> getTooltipLines(Player player) {
-        TooltipFlag.Default flag = Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL;
+    public List<Component> getTooltipLines(@Nullable final Player player) {
+        final TooltipFlag.Default flag = Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL;
         return value.toItemStack().getTooltipLines(player, flag);
     }
 }

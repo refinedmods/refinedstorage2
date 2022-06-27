@@ -4,23 +4,23 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 public final class TickHandler {
-    private static final Deque<Runnable> actions = new ArrayDeque<>();
+    private static final Deque<Runnable> ACTIONS = new ArrayDeque<>();
 
     private TickHandler() {
     }
 
     public static void runQueuedActions() {
-        synchronized (actions) {
+        synchronized (ACTIONS) {
             Runnable action;
-            while ((action = actions.poll()) != null) {
+            while ((action = ACTIONS.poll()) != null) {
                 action.run();
             }
         }
     }
 
-    public static void runWhenReady(Runnable runnable) {
-        synchronized (actions) {
-            actions.add(runnable);
+    public static void runWhenReady(final Runnable runnable) {
+        synchronized (ACTIONS) {
+            ACTIONS.add(runnable);
         }
     }
 }
