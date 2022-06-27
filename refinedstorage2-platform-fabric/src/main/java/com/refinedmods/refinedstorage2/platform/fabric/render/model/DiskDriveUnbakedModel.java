@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.render.model;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.baked.DiskDriveBakedModel;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Function;
 
 import com.google.common.collect.ImmutableSet;
@@ -33,9 +34,9 @@ public class DiskDriveUnbakedModel implements BasicUnbakedModel {
     @Nullable
     public BakedModel bake(final ModelBakery loader, final Function<Material, TextureAtlasSprite> textureGetter, final ModelState rotationContainer, final ResourceLocation modelId) {
         return new DiskDriveBakedModel(
-                loader.bake(BASE_MODEL, rotationContainer),
-                loader.bake(DISK_MODEL, rotationContainer),
-                loader.bake(DISK_DISCONNECTED_MODEL, rotationContainer)
+                Objects.requireNonNull(loader.bake(BASE_MODEL, rotationContainer)),
+                Objects.requireNonNull(loader.bake(DISK_MODEL, rotationContainer)),
+                Objects.requireNonNull(loader.bake(DISK_DISCONNECTED_MODEL, rotationContainer))
         );
     }
 }

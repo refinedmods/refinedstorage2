@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Rs2Test
 @SetupMinecraft
 class FluidResourceTest {
+    @SuppressWarnings("ConstantConditions")
     @Test
     void Test_invalid_fluid() {
         // Assert

@@ -17,6 +17,7 @@ class LimitedPlatformStorageTest {
     LimitedPlatformStorage<ItemResource> sut;
 
     @BeforeEach
+    @SuppressWarnings("ConstantConditions")
     void setUp() {
         LimitedStorageImpl<ItemResource> delegate = new LimitedStorageImpl<>(new InMemoryStorageImpl<>(), 100);
         sut = new LimitedPlatformStorage<>(delegate, ItemStorageType.INSTANCE, null, null);

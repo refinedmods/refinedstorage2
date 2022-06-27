@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Rs2Test
 class ResourceAmountTest {
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_invalid_resource() {
         // Act & assert
         assertThrows(NullPointerException.class, () -> new ResourceAmount<>(null, 1));

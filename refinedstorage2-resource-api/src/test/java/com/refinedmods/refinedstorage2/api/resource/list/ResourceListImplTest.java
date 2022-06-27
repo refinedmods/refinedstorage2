@@ -98,6 +98,7 @@ class ResourceListImplTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_adding_an_invalid_resource() {
         // Act
         Executable action1 = () -> list.add("A", 0);
@@ -181,6 +182,7 @@ class ResourceListImplTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_removing_an_invalid_resource() {
         // Act
         Executable action1 = () -> list.remove("A", 0);

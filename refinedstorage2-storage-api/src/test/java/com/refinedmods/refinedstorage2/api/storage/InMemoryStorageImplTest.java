@@ -37,6 +37,7 @@ class InMemoryStorageImplTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_inserting_invalid_resource() {
         // Act
         Executable action1 = () -> sut.insert("A", 0, Action.EXECUTE, EmptySource.INSTANCE);

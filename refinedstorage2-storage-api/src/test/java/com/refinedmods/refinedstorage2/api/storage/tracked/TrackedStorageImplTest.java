@@ -42,12 +42,14 @@ class TrackedStorageImplTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_invalid_parent() {
         // Act & assert
         assertThrows(NullPointerException.class, () -> new TrackedStorageImpl<>(null, clock::get));
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_inserting_with_invalid_source() {
         // Act
         Executable action = () -> sut.insert("A", 1, Action.EXECUTE, null);
@@ -57,6 +59,7 @@ class TrackedStorageImplTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void Test_extracting_with_invalid_source() {
         // Act
         Executable action = () -> sut.extract("A", 1, Action.EXECUTE, null);

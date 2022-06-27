@@ -13,6 +13,7 @@ public enum GridSortingType {
     QUANTITY(view -> Comparator.comparingLong(a -> a.getResourceAmount().getAmount())),
     NAME(view -> Comparator.comparing((GridResource<?> a) -> a.getName())),
     ID(view -> Comparator.comparingInt(GridResource::getId)),
+    @SuppressWarnings({"unchecked", "rawtypes"})
     LAST_MODIFIED(view -> (a, b) -> {
         final Optional<TrackedResource> trackedA = ((GridView) view).getTrackedResource(a.getResourceAmount().getResource());
         final Optional<TrackedResource> trackedB = ((GridView) view).getTrackedResource(b.getResourceAmount().getResource());
