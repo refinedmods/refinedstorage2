@@ -19,12 +19,10 @@ import net.minecraftforge.client.IFluidTypeRenderProperties;
 import net.minecraftforge.client.RenderProperties;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
-import org.jetbrains.annotations.NotNull;
 
 public class FluidStackFluidRenderer extends FluidRendererImpl {
     private final Map<FluidResource, FluidStack> stackCache = new HashMap<>();
 
-    @NotNull
     private FluidStack getFluidStackFromCache(final FluidResource fluidResource) {
         return stackCache.computeIfAbsent(fluidResource, r -> new FluidStack(r.fluid(), FluidType.BUCKET_VOLUME, r.tag()));
     }

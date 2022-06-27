@@ -146,7 +146,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
             return quads;
         }
 
-        private List<BakedQuad> getDiskModel(@NotNull final BlockState state, @NotNull final RandomSource rand, @Nullable final Direction side, final Vector3f translation) {
+        private List<BakedQuad> getDiskModel(final BlockState state, final RandomSource rand, @Nullable final Direction side, final Vector3f translation) {
             final List<BakedQuad> diskQuads = diskModel.getQuads(state, side, rand, EmptyModelData.INSTANCE);
             return QuadTransformer.translate(diskQuads, translation);
         }
