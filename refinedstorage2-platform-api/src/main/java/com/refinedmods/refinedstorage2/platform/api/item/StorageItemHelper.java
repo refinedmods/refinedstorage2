@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,43 +28,40 @@ public final class StorageItemHelper {
     private StorageItemHelper() {
     }
 
-    public static Optional<UUID> getStorageId(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().hasUUID(TAG_ID)) {
+    public static Optional<UUID> getStorageId(final ItemStack stack) {
+        if (stack.hasTag() && stack.getTag() != null && stack.getTag().hasUUID(TAG_ID)) {
             return Optional.of(stack.getTag().getUUID(TAG_ID));
         }
         return Optional.empty();
     }
 
-    public static void setStorageId(ItemStack stack, UUID id) {
-        CompoundTag tag = stack.hasTag() ? stack.getTag() : new CompoundTag();
+    public static void setStorageId(final ItemStack stack, final UUID id) {
+        final CompoundTag tag = stack.hasTag() && stack.getTag() != null ? stack.getTag() : new CompoundTag();
         tag.putUUID(TAG_ID, id);
         stack.setTag(tag);
     }
 
-    static Optional<StorageInfo> getInfo(Level level, ItemStack stack) {
-        if (level == null) {
-            return Optional.empty();
-        }
+    static Optional<StorageInfo> getInfo(final Level level, final ItemStack stack) {
         return getStorageId(stack).map(PlatformApi.INSTANCE.getStorageRepository(level)::getInfo);
     }
 
-    public static void appendToTooltip(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context, LongFunction<String> quantityFormatter, LongFunction<String> stackInfoQuantityFormatter, Set<StorageTooltipHelper.TooltipOption> options) {
+    public static void appendToTooltip(final ItemStack stack, final Level level, final List<Component> tooltip, final TooltipFlag context, final LongFunction<String> quantityFormatter, LongFunction<String> stackInfoQuantityFormatter, final Set<StorageTooltipHelper.TooltipOption> options) {
         getInfo(level, stack).ifPresent(info -> StorageTooltipHelper.appendToTooltip(tooltip, info.stored(), info.capacity(), quantityFormatter, stackInfoQuantityFormatter, options));
         if (context.isAdvanced()) {
             getStorageId(stack).ifPresent(id -> tooltip.add(Component.literal(id.toString()).withStyle(ChatFormatting.GRAY)));
         }
     }
 
-    public static InteractionResultHolder<ItemStack> tryDisassembly(Level level,
-                                                                    Player player,
-                                                                    ItemStack stack,
-                                                                    ItemStack primaryDisassemblyByproduct,
-                                                                    ItemStack secondaryDisassemblyByproduct) {
+    public static InteractionResultHolder<ItemStack> tryDisassembly(final Level level,
+                                                                    final Player player,
+                                                                    final ItemStack stack,
+                                                                    final ItemStack primaryDisassemblyByproduct,
+                                                                    @Nullable final ItemStack secondaryDisassemblyByproduct) {
         if (!(level instanceof ServerLevel) || !player.isShiftKeyDown()) {
             return InteractionResultHolder.fail(stack);
         }
 
-        Optional<UUID> storageId = getStorageId(stack);
+        final Optional<UUID> storageId = getStorageId(stack);
         if (storageId.isEmpty()) {
             return returnByproducts(level, player, primaryDisassemblyByproduct, secondaryDisassemblyByproduct);
         }
@@ -74,12 +72,12 @@ public final class StorageItemHelper {
                 .orElseGet(() -> InteractionResultHolder.fail(stack));
     }
 
-    private static InteractionResultHolder<ItemStack> returnByproducts(Level level, Player player, ItemStack primaryDisassemblyByproduct, ItemStack secondaryDisassemblyByproduct) {
+    private static InteractionResultHolder<ItemStack> returnByproducts(final Level level, final Player player, final ItemStack primaryDisassemblyByproduct, @Nullable final ItemStack secondaryDisassemblyByproduct) {
         tryReturnByproductToInventory(level, player, secondaryDisassemblyByproduct);
         return InteractionResultHolder.success(primaryDisassemblyByproduct);
     }
 
-    private static void tryReturnByproductToInventory(Level level, Player player, ItemStack byproduct) {
+    private static void tryReturnByproductToInventory(final Level level, final Player player, @Nullable final ItemStack byproduct) {
         if (byproduct != null && !player.getInventory().add(byproduct.copy())) {
             level.addFreshEntity(new ItemEntity(level, player.getX(), player.getY(), player.getZ(), byproduct));
         }

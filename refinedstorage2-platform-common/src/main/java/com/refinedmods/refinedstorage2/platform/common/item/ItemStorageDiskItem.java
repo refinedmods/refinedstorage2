@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageC
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
@@ -96,6 +97,7 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
+    @Nullable
     protected ItemStack createSecondaryDisassemblyByproduct(int count) {
         if (variant == ItemStorageType.Variant.CREATIVE) {
             return null;

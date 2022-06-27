@@ -13,14 +13,17 @@ import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 
 public class PlatformApiProxy implements PlatformApi {
+    @Nullable
     private PlatformApi delegate;
 
-    public void setDelegate(PlatformApi delegate) {
+    public void setDelegate(final PlatformApi delegate) {
         if (this.delegate != null) {
             throw new IllegalStateException("Platform API already injected");
         }

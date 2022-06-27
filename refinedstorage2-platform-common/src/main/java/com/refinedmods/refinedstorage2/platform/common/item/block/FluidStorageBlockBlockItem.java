@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.Stor
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -68,7 +69,7 @@ public class FluidStorageBlockBlockItem extends StorageBlockBlockItem {
     }
 
     @Override
-    protected void updateBlockEntityWithStorageId(BlockPos pos, BlockEntity blockEntity, UUID id) {
+    protected void updateBlockEntityWithStorageId(BlockPos pos, @Nullable BlockEntity blockEntity, UUID id) {
         if (blockEntity instanceof StorageBlockBlockEntity<?> storageBlockEntity) {
             LOGGER.info("Transferred storage {} to block at {}", id, pos);
             storageBlockEntity.modifyStorageIdAfterAlreadyInitialized(id);
