@@ -7,11 +7,11 @@ import net.minecraft.world.entity.player.Player;
 public final class PlayerSource implements Source {
     private final String playerName;
 
-    public PlayerSource(Player player) {
+    public PlayerSource(final Player player) {
         this(player.getGameProfile().getName());
     }
 
-    public PlayerSource(String playerName) {
+    public PlayerSource(final String playerName) {
         this.playerName = playerName;
     }
 

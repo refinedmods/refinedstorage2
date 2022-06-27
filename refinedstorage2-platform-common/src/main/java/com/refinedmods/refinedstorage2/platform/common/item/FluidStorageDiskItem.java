@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorag
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
@@ -95,6 +96,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
+    @Nullable
     protected ItemStack createSecondaryDisassemblyByproduct(int count) {
         if (variant == FluidStorageType.Variant.CREATIVE) {
             return null;

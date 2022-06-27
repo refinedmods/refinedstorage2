@@ -18,7 +18,12 @@ public final class StorageTooltipHelper {
         STACK_INFO
     }
 
-    public static void appendToTooltip(List<Component> tooltip, long stored, long capacity, LongFunction<String> quantityFormatter, LongFunction<String> stackInfoQuantityFormatter, Set<TooltipOption> options) {
+    public static void appendToTooltip(final List<Component> tooltip,
+                                       final long stored,
+                                       final long capacity,
+                                       final LongFunction<String> quantityFormatter,
+                                       final LongFunction<String> stackInfoQuantityFormatter,
+                                       final Set<TooltipOption> options) {
         if (!options.contains(TooltipOption.CAPACITY_AND_PROGRESS)) {
             addAmountStoredWithoutCapacity(tooltip, stored, quantityFormatter);
         } else {
@@ -36,7 +41,7 @@ public final class StorageTooltipHelper {
         }
     }
 
-    private static void addAmountStoredWithoutCapacity(List<Component> tooltip, long stored, LongFunction<String> quantityFormatter) {
+    private static void addAmountStoredWithoutCapacity(final List<Component> tooltip, final long stored, final LongFunction<String> quantityFormatter) {
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "stored",
@@ -44,7 +49,7 @@ public final class StorageTooltipHelper {
         ).withStyle(ChatFormatting.GRAY));
     }
 
-    private static void addAmountStoredWithCapacity(List<Component> tooltip, long stored, long capacity, LongFunction<String> quantityFormatter) {
+    private static void addAmountStoredWithCapacity(final List<Component> tooltip, final long stored, final long capacity, final LongFunction<String> quantityFormatter) {
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "stored_with_capacity",
@@ -53,8 +58,8 @@ public final class StorageTooltipHelper {
         ).withStyle(ChatFormatting.GRAY));
     }
 
-    private static void addAmountOfStacksWithoutCapacity(List<Component> tooltip, LongFunction<String> quantityFormatter, long stored) {
-        long stacks = stored / 64L;
+    private static void addAmountOfStacksWithoutCapacity(final List<Component> tooltip, final LongFunction<String> quantityFormatter, final long stored) {
+        final long stacks = stored / 64L;
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "stacks",
@@ -62,9 +67,9 @@ public final class StorageTooltipHelper {
         ).withStyle(ChatFormatting.GRAY));
     }
 
-    private static void addAmountOfStacksWithCapacity(List<Component> tooltip, LongFunction<String> quantityFormatter, long stored, long capacity) {
-        long stacks = stored / 64L;
-        long maxStacks = capacity / 64L;
+    private static void addAmountOfStacksWithCapacity(final List<Component> tooltip, final LongFunction<String> quantityFormatter, final long stored, final long capacity) {
+        final long stacks = stored / 64L;
+        final long maxStacks = capacity / 64L;
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "stacks_with_capacity",
@@ -73,8 +78,8 @@ public final class StorageTooltipHelper {
         ).withStyle(ChatFormatting.GRAY));
     }
 
-    private static void addProgress(List<Component> tooltip, double stored, double capacity) {
-        double progress = stored / capacity;
+    private static void addProgress(final List<Component> tooltip, final double stored, final double capacity) {
+        final double progress = stored / capacity;
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
                 "misc",
                 "full",

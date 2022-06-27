@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public abstract class NetworkNodeContainerBlockEntity<T extends NetworkNode> extends BlockEntity implements NetworkNodeContainer {
     private final T node;
 
-    protected NetworkNodeContainerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, T node) {
+    protected NetworkNodeContainerBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state, final T node) {
         super(type, pos, state);
         this.node = node;
     }
@@ -20,7 +20,7 @@ public abstract class NetworkNodeContainerBlockEntity<T extends NetworkNode> ext
     @Override
     public void clearRemoved() {
         super.clearRemoved();
-        if (level.isClientSide) {
+        if (level == null || level.isClientSide) {
             return;
         }
         PlatformApi.INSTANCE.requestNetworkNodeInitialization(this, level, this::onNetworkInNodeInitialized);
@@ -32,7 +32,7 @@ public abstract class NetworkNodeContainerBlockEntity<T extends NetworkNode> ext
     @Override
     public void setRemoved() {
         super.setRemoved();
-        if (level.isClientSide) {
+        if (level == null || level.isClientSide) {
             return;
         }
         PlatformApi.INSTANCE.requestNetworkNodeRemoval(this, level);
