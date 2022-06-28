@@ -45,12 +45,21 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public final class PlatformImpl extends AbstractPlatform {
-    private static final TagKey<Item> WRENCH_TAG = TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(), new ResourceLocation("forge", "tools/wrench"));
+    private static final TagKey<Item> WRENCH_TAG = TagKey.create(
+            ForgeRegistries.ITEMS.getRegistryKey(),
+            new ResourceLocation("forge", "tools/wrench")
+    );
 
     private final ConfigImpl config = new ConfigImpl();
 
     public PlatformImpl(final NetworkManager networkManager) {
-        super(new ServerToClientCommunicationsImpl(networkManager), new ClientToServerCommunicationsImpl(networkManager), new MenuOpenerImpl(), new BucketQuantityFormatter(FluidType.BUCKET_VOLUME), new FluidStackFluidRenderer());
+        super(
+                new ServerToClientCommunicationsImpl(networkManager),
+                new ClientToServerCommunicationsImpl(networkManager),
+                new MenuOpenerImpl(),
+                new BucketQuantityFormatter(FluidType.BUCKET_VOLUME),
+                new FluidStackFluidRenderer()
+        );
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getSpec());
     }
 
@@ -76,16 +85,24 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public boolean isKeyDown(final KeyMapping keyMapping) {
-        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), keyMapping.getKey().getValue());
+        return InputConstants.isKeyDown(
+                Minecraft.getInstance().getWindow().getWindow(),
+                keyMapping.getKey().getValue()
+        );
     }
 
     @Override
-    public ItemGridEventHandler createItemGridEventHandler(final AbstractContainerMenu containerMenu, final GridService<ItemResource> gridService, final Inventory playerInventory) {
+    public ItemGridEventHandler createItemGridEventHandler(final AbstractContainerMenu containerMenu,
+                                                           final GridService<ItemResource> gridService,
+                                                           final Inventory playerInventory) {
         return new ItemGridEventHandlerImpl(containerMenu, gridService, playerInventory);
     }
 
     @Override
-    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu, final GridService<FluidResource> gridService, final Inventory playerInventory, final ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu,
+                                                             final GridService<FluidResource> gridService,
+                                                             final Inventory playerInventory,
+                                                             final ExtractableStorage<ItemResource> bucketStorage) {
         return new FluidGridEventHandlerImpl(containerMenu, playerInventory, gridService, bucketStorage);
     }
 
@@ -101,7 +118,10 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public Optional<FluidResource> convertToFluid(final ItemStack stack) {
-        return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).map(handler -> handler.getFluidInTank(0)).map(contents -> contents.isEmpty() ? null : new FluidResource(contents.getFluid(), contents.getTag()));
+        return stack
+                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
+                .map(handler -> handler.getFluidInTank(0))
+                .map(contents -> contents.isEmpty() ? null : new FluidResource(contents.getFluid(), contents.getTag()));
     }
 
     @Override

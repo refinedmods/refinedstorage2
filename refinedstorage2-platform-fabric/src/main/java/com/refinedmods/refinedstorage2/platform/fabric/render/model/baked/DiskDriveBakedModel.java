@@ -32,7 +32,11 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         int i = 0;
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 2; ++x) {
-                TRANSLATORS[i++] = new QuadTranslator(x == 0 ? -(2F / 16F) : -(9F / 16F), -((y * 3F) / 16F) - (2F / 16F), 0);
+                TRANSLATORS[i++] = new QuadTranslator(
+                        x == 0 ? -(2F / 16F) : -(9F / 16F),
+                        -((y * 3F) / 16F) - (2F / 16F),
+                        0
+                );
             }
         }
 
@@ -44,7 +48,9 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     private final BakedModel diskModel;
     private final BakedModel diskDisconnectedModel;
 
-    public DiskDriveBakedModel(final BakedModel baseModel, final BakedModel diskModel, final BakedModel diskDisconnectedModel) {
+    public DiskDriveBakedModel(final BakedModel baseModel,
+                               final BakedModel diskModel,
+                               final BakedModel diskDisconnectedModel) {
         this.wrapped = baseModel;
         this.diskModel = diskModel;
         this.diskDisconnectedModel = diskDisconnectedModel;
@@ -56,7 +62,9 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     }
 
     @Override
-    public void emitItemQuads(final ItemStack stack, final Supplier<RandomSource> randomSupplier, final RenderContext context) {
+    public void emitItemQuads(final ItemStack stack,
+                              final Supplier<RandomSource> randomSupplier,
+                              final RenderContext context) {
         context.fallbackConsumer().accept(wrapped);
         final CompoundTag tag = BlockItem.getBlockEntityData(stack);
         if (tag == null) {
@@ -73,7 +81,11 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     }
 
     @Override
-    public void emitBlockQuads(final BlockAndTintGetter blockView, final BlockState state, final BlockPos pos, final Supplier<RandomSource> randomSupplier, final RenderContext context) {
+    public void emitBlockQuads(final BlockAndTintGetter blockView,
+                               final BlockState state,
+                               final BlockPos pos,
+                               final Supplier<RandomSource> randomSupplier,
+                               final RenderContext context) {
         final QuadRotator rotator = ROTATORS.get(state.getValue(BaseBlock.DIRECTION));
         context.pushTransform(rotator);
 

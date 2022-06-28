@@ -31,7 +31,9 @@ public class TrackedStorageImpl<T> extends ProxyStorage<T> implements TrackedSto
      * @param repository a repository for persisting and retrieving tracked resources
      * @param clock      a supplier for unix timestamps
      */
-    public TrackedStorageImpl(final Storage<T> delegate, final TrackedStorageRepository<T> repository, final LongSupplier clock) {
+    public TrackedStorageImpl(final Storage<T> delegate,
+                              final TrackedStorageRepository<T> repository,
+                              final LongSupplier clock) {
         super(delegate);
         this.repository = repository;
         this.clock = clock;
@@ -58,7 +60,8 @@ public class TrackedStorageImpl<T> extends ProxyStorage<T> implements TrackedSto
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource, final Class<? extends Source> sourceType) {
+    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
+                                                                     final Class<? extends Source> sourceType) {
         return repository.findTrackedResourceBySourceType(resource, sourceType);
     }
 }

@@ -10,7 +10,10 @@ import net.minecraft.network.FriendlyByteBuf;
 
 public class GridActivePacket implements ClientPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(final Minecraft client, final ClientPacketListener handler, final FriendlyByteBuf buf, final PacketSender responseSender) {
+    public void receive(final Minecraft client,
+                        final ClientPacketListener handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
         final boolean active = buf.readBoolean();
 
         client.execute(() -> {

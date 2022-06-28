@@ -13,7 +13,9 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public abstract class StorageBlockScreen extends StorageScreen<StorageBlockContainerMenu> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/storage.png");
 
-    protected StorageBlockScreen(final StorageBlockContainerMenu menu, final Inventory inventory, final Component title) {
+    protected StorageBlockScreen(final StorageBlockContainerMenu menu,
+                                 final Inventory inventory,
+                                 final Component title) {
         super(menu, inventory, title, 80);
     }
 

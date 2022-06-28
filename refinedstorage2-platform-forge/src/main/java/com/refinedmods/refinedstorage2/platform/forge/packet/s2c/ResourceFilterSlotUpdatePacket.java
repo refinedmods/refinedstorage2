@@ -28,7 +28,9 @@ public class ResourceFilterSlotUpdatePacket {
         this.resourceFilterContainer = null;
     }
 
-    public ResourceFilterSlotUpdatePacket(final int slotIndex, final int containerIndex, final ResourceFilterContainer resourceFilterContainer) {
+    public ResourceFilterSlotUpdatePacket(final int slotIndex,
+                                          final int containerIndex,
+                                          final ResourceFilterContainer resourceFilterContainer) {
         this.slotIndex = slotIndex;
         this.containerIndex = containerIndex;
         this.buf = null;

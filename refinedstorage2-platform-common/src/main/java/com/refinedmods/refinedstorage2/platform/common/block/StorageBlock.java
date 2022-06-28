@@ -54,12 +54,15 @@ public abstract class StorageBlock extends NetworkNodeContainerBlock {
 
     public static class StorageBlockLootItemFunctionSerializer implements Serializer<LootItemFunction> {
         @Override
-        public void serialize(final JsonObject jsonObject, final LootItemFunction lootItemFunction, final JsonSerializationContext jsonSerializationContext) {
+        public void serialize(final JsonObject jsonObject,
+                              final LootItemFunction lootItemFunction,
+                              final JsonSerializationContext jsonSerializationContext) {
             // nothing to do
         }
 
         @Override
-        public LootItemFunction deserialize(final JsonObject jsonObject, final JsonDeserializationContext jsonDeserializationContext) {
+        public LootItemFunction deserialize(final JsonObject jsonObject,
+                                            final JsonDeserializationContext jsonDeserializationContext) {
             return new StorageBlockLootItemFunction();
         }
     }

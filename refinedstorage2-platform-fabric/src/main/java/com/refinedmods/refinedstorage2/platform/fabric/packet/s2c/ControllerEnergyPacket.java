@@ -10,7 +10,10 @@ import net.minecraft.network.FriendlyByteBuf;
 
 public class ControllerEnergyPacket implements ClientPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(final Minecraft client, final ClientPacketListener handler, final FriendlyByteBuf buf, final PacketSender responseSender) {
+    public void receive(final Minecraft client,
+                        final ClientPacketListener handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
         final long stored = buf.readLong();
         final long capacity = buf.readLong();
 

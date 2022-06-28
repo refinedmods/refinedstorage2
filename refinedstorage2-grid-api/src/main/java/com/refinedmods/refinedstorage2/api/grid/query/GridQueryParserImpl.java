@@ -35,7 +35,9 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
     private final ParserOperatorMappings operatorMappings;
     private final Map<String, Set<GridResourceAttributeKey>> unaryOperatorToAttributeKeyMapping;
 
-    public GridQueryParserImpl(final LexerTokenMappings tokenMappings, final ParserOperatorMappings operatorMappings, final Map<String, Set<GridResourceAttributeKey>> unaryOperatorToAttributeKeyMapping) {
+    public GridQueryParserImpl(final LexerTokenMappings tokenMappings,
+                               final ParserOperatorMappings operatorMappings,
+                               final Map<String, Set<GridResourceAttributeKey>> unaryOperatorToAttributeKeyMapping) {
         this.tokenMappings = tokenMappings;
         this.operatorMappings = operatorMappings;
         this.unaryOperatorToAttributeKeyMapping = unaryOperatorToAttributeKeyMapping;
@@ -144,7 +146,9 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
         }
     }
 
-    private static <T> Predicate<GridResource<T>> count(final Node node, final BiPredicate<Long, Long> predicate) throws GridQueryParserException {
+    private static <T> Predicate<GridResource<T>> count(final Node node,
+                                                        final BiPredicate<Long, Long> predicate)
+            throws GridQueryParserException {
         if (!(node instanceof LiteralNode)) {
             throw new GridQueryParserException(node.getRange(), "Count filtering expects a literal", null);
         }
@@ -158,7 +162,8 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
         return resource -> predicate.test(resource.getResourceAmount().getAmount(), wantedCount);
     }
 
-    private static <T> Predicate<GridResource<T>> attributeMatch(final Set<GridResourceAttributeKey> keys, final String query) {
+    private static <T> Predicate<GridResource<T>> attributeMatch(final Set<GridResourceAttributeKey> keys,
+                                                                 final String query) {
         return resource -> keys
                 .stream()
                 .map(resource::getAttribute)

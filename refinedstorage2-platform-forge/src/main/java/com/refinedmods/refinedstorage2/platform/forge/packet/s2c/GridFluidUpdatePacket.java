@@ -20,7 +20,9 @@ public class GridFluidUpdatePacket {
     @Nullable
     private final TrackedResource trackedResource;
 
-    public GridFluidUpdatePacket(final FluidResource resource, final long amount, @Nullable final TrackedResource trackedResource) {
+    public GridFluidUpdatePacket(final FluidResource resource,
+                                 final long amount,
+                                 @Nullable final TrackedResource trackedResource) {
         this.resource = resource;
         this.amount = amount;
         this.trackedResource = trackedResource;

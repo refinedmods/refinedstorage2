@@ -12,7 +12,17 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 
 public class DiskDriveBlockEntityRendererImpl<T extends DiskDriveBlockEntity> extends DiskDriveBlockEntityRenderer<T> {
-    private static final RenderType RENDER_TYPE = RenderType.create("drive_leds", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 32565, false, true, RenderType.CompositeState.builder().setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionColorShader)).createCompositeState(false));
+    private static final RenderType RENDER_TYPE = RenderType.create(
+            "drive_leds",
+            DefaultVertexFormat.POSITION_COLOR,
+            VertexFormat.Mode.QUADS,
+            32565,
+            false,
+            true,
+            RenderType.CompositeState.builder()
+                    .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionColorShader))
+                    .createCompositeState(false)
+    );
 
     public DiskDriveBlockEntityRendererImpl() {
         super(RENDER_TYPE);

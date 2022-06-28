@@ -22,19 +22,30 @@ public abstract class StorageBlockContainerMenu extends StorageContainerMenu {
     private long stored;
     private long capacity;
 
-    protected StorageBlockContainerMenu(final MenuType<?> type, final int syncId, final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, final Player player, final FriendlyByteBuf buf, final ResourceType resourceType) {
+    protected StorageBlockContainerMenu(final MenuType<?> type,
+                                        final int syncId,
+                                        final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                        final Player player,
+                                        final FriendlyByteBuf buf,
+                                        final ResourceType resourceType) {
         super(type, syncId, resourceTypeRegistry);
 
         this.stored = buf.readLong();
         this.capacity = buf.readLong();
 
-        addSlots(player, new FilteredResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, () -> {
+        addSlots(player, new FilteredResourceFilterContainer(
+                PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, () -> {
         }, resourceType));
 
         initializeResourceFilterSlots(buf);
     }
 
-    protected StorageBlockContainerMenu(final MenuType<?> type, final int syncId, final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, final Player player, final ResourceFilterContainer resourceFilterContainer, final StorageBlockBlockEntity<?> storageBlock) {
+    protected StorageBlockContainerMenu(final MenuType<?> type,
+                                        final int syncId,
+                                        final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                        final Player player,
+                                        final ResourceFilterContainer resourceFilterContainer,
+                                        final StorageBlockBlockEntity<?> storageBlock) {
         super(type, syncId, resourceTypeRegistry, player, storageBlock, resourceFilterContainer);
         addSlots(player, resourceFilterContainer);
     }

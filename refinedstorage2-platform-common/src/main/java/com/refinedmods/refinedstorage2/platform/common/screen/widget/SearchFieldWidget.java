@@ -12,7 +12,11 @@ import org.lwjgl.glfw.GLFW;
 public class SearchFieldWidget extends EditBox {
     private final History history;
 
-    public SearchFieldWidget(final Font textRenderer, final int x, final int y, final int width, final History history) {
+    public SearchFieldWidget(final Font textRenderer,
+                             final int x,
+                             final int y,
+                             final int width,
+                             final History history) {
         super(textRenderer, x, y, width, textRenderer.lineHeight, Component.empty());
 
         this.history = history;

@@ -29,7 +29,10 @@ public class ResourceFilterSlot extends Slot {
     @Nullable
     private FilteredResource cachedResource;
 
-    public ResourceFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int index, final int x, final int y) {
+    public ResourceFilterSlot(final ResourceFilterContainer resourceFilterContainer,
+                              final int index,
+                              final int x,
+                              final int y) {
         super(createDummyContainer(), 0, x, y);
         this.resourceFilterContainer = resourceFilterContainer;
         this.containerIndex = index;

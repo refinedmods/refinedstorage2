@@ -14,7 +14,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class InternalNetworkNodeContainerBlockEntity<T extends NetworkNodeImpl> extends NetworkNodeContainerBlockEntity<T> {
+public abstract class InternalNetworkNodeContainerBlockEntity<T extends NetworkNodeImpl>
+        extends NetworkNodeContainerBlockEntity<T> {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final int ACTIVE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
@@ -25,9 +26,15 @@ public abstract class InternalNetworkNodeContainerBlockEntity<T extends NetworkN
     private long lastActiveChanged;
     private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
 
-    protected InternalNetworkNodeContainerBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state, final T node) {
+    protected InternalNetworkNodeContainerBlockEntity(final BlockEntityType<?> type,
+                                                      final BlockPos pos,
+                                                      final BlockState state,
+                                                      final T node) {
         super(type, pos, state, node);
-        getNode().setActivenessProvider(() -> level != null && level.isLoaded(pos) && redstoneMode.isActive(level.hasNeighborSignal(pos)));
+        getNode().setActivenessProvider(() -> level != null
+                && level.isLoaded(pos)
+                && redstoneMode.isActive(level.hasNeighborSignal(pos))
+        );
     }
 
     @Override
@@ -44,7 +51,8 @@ public abstract class InternalNetworkNodeContainerBlockEntity<T extends NetworkN
         }
     }
 
-    public static void serverTick(final BlockState state, final InternalNetworkNodeContainerBlockEntity<?> blockEntity) {
+    public static void serverTick(final BlockState state,
+                                  final InternalNetworkNodeContainerBlockEntity<?> blockEntity) {
         blockEntity.getNode().update();
         blockEntity.updateActivenessInLevel(state);
     }
@@ -57,8 +65,9 @@ public abstract class InternalNetworkNodeContainerBlockEntity<T extends NetworkN
         }
 
         final boolean active = getNode().isActive();
+        final boolean inTime = System.currentTimeMillis() - lastActiveChanged > ACTIVE_CHANGE_MINIMUM_INTERVAL_MS;
 
-        if (active != lastActive && (lastActiveChanged == 0 || System.currentTimeMillis() - lastActiveChanged > ACTIVE_CHANGE_MINIMUM_INTERVAL_MS)) {
+        if (active != lastActive && (lastActiveChanged == 0 || inTime)) {
             LOGGER.info("Activeness state change for block at {}: {} -> {}", getBlockPos(), lastActive, active);
 
             this.lastActive = active;

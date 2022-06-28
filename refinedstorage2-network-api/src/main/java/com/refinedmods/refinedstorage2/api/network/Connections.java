@@ -10,7 +10,9 @@ public record Connections(
         Set<NetworkNodeContainer> newEntries,
         Set<NetworkNodeContainer> removedEntries
 ) {
-    public Connections(final Set<NetworkNodeContainer> foundEntries, final Set<NetworkNodeContainer> newEntries, final Set<NetworkNodeContainer> removedEntries) {
+    public Connections(final Set<NetworkNodeContainer> foundEntries,
+                       final Set<NetworkNodeContainer> newEntries,
+                       final Set<NetworkNodeContainer> removedEntries) {
         this.foundEntries = Collections.unmodifiableSet(foundEntries);
         this.newEntries = Collections.unmodifiableSet(newEntries);
         this.removedEntries = Collections.unmodifiableSet(removedEntries);

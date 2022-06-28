@@ -36,7 +36,15 @@ public abstract class StorageScreen<T extends AbstractContainerMenu & StorageAcc
         this.imageHeight = 223;
         this.playerInventory = inventory;
 
-        this.progressWidget = new ProgressWidget(progressWidgetX, 54, 16, 70, menu::getProgress, this::renderComponentTooltip, this::createTooltip);
+        this.progressWidget = new ProgressWidget(
+                progressWidgetX,
+                54,
+                16,
+                70,
+                menu::getProgress,
+                this::renderComponentTooltip,
+                this::createTooltip
+        );
         addRenderableWidget(progressWidget);
     }
 
@@ -50,7 +58,11 @@ public abstract class StorageScreen<T extends AbstractContainerMenu & StorageAcc
         addSideButton(new ExactModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new AccessModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new PrioritySideButtonWidget(getMenu(), playerInventory, this, this::renderComponentTooltip));
-        final ResourceFilterButtonWidget resourceFilterButton = new ResourceFilterButtonWidget(leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7, topPos + 4, menu);
+        final ResourceFilterButtonWidget resourceFilterButton = new ResourceFilterButtonWidget(
+                leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7,
+                topPos + 4,
+                menu
+        );
         resourceFilterButton.active = isResourceFilterButtonActive();
         addRenderableWidget(resourceFilterButton);
     }

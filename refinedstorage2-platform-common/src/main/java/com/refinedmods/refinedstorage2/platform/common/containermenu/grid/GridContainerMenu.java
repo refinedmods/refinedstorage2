@@ -34,7 +34,8 @@ import net.minecraft.world.inventory.MenuType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class GridContainerMenu<T> extends BaseContainerMenu implements ResourceListListener<T>, RedstoneModeAccessor, GridWatcher {
+public abstract class GridContainerMenu<T> extends BaseContainerMenu
+        implements ResourceListListener<T>, RedstoneModeAccessor, GridWatcher {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static String lastSearchQuery = "";
@@ -54,7 +55,11 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     private boolean autoSelected;
     private boolean active;
 
-    protected GridContainerMenu(final MenuType<?> type, final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf, final GridView<T> view) {
+    protected GridContainerMenu(final MenuType<?> type,
+                                final int syncId,
+                                final Inventory playerInventory,
+                                final FriendlyByteBuf buf,
+                                final GridView<T> view) {
         super(type, syncId);
 
         this.view = view;
@@ -91,7 +96,11 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         this.autoSelected = loadAutoSelected();
     }
 
-    protected GridContainerMenu(final MenuType<?> type, final int syncId, final Inventory playerInventory, final GridBlockEntity<T> grid, final GridView<T> view) {
+    protected GridContainerMenu(final MenuType<?> type,
+                                final int syncId,
+                                final Inventory playerInventory,
+                                final GridBlockEntity<T> grid,
+                                final GridView<T> view) {
         super(type, syncId);
 
         this.view = view;
@@ -237,7 +246,8 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     }
 
     public void toggleSynchronizer() {
-        final OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
+        final OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry =
+                PlatformApi.INSTANCE.getGridSynchronizerRegistry();
         final Config.Grid config = Platform.INSTANCE.getConfig().getGrid();
 
         final GridSynchronizer newSynchronizer = synchronizerRegistry.next(getSynchronizer());

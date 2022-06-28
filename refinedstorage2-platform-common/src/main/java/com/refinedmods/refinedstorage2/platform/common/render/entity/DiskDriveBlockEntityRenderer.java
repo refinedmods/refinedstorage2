@@ -38,7 +38,12 @@ public abstract class DiskDriveBlockEntityRenderer<T extends DiskDriveBlockEntit
     protected abstract DiskDriveState getDriveState(T blockEntity);
 
     @Override
-    public void render(final T entity, final float tickDelta, final PoseStack poseStack, final MultiBufferSource vertexConsumers, final int light, final int overlay) {
+    public void render(final T entity,
+                       final float tickDelta,
+                       final PoseStack poseStack,
+                       final MultiBufferSource vertexConsumers,
+                       final int light,
+                       final int overlay) {
         final Level level = entity.getLevel();
         if (level == null) {
             return;
@@ -67,7 +72,9 @@ public abstract class DiskDriveBlockEntityRenderer<T extends DiskDriveBlockEntit
         poseStack.popPose();
     }
 
-    private void renderDisks(final PoseStack poseStack, final DiskDriveState driveState, final VertexConsumer vertexConsumer) {
+    private void renderDisks(final PoseStack poseStack,
+                             final DiskDriveState driveState,
+                             final VertexConsumer vertexConsumer) {
         int i = 0;
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 2; ++x) {
@@ -77,7 +84,11 @@ public abstract class DiskDriveBlockEntityRenderer<T extends DiskDriveBlockEntit
         }
     }
 
-    private void renderDisk(final PoseStack poseStack, final VertexConsumer vertexConsumer, final int y, final int x, final StorageDiskState state) {
+    private void renderDisk(final PoseStack poseStack,
+                            final VertexConsumer vertexConsumer,
+                            final int y,
+                            final int x,
+                            final StorageDiskState state) {
         if (state == StorageDiskState.NONE) {
             return;
         }

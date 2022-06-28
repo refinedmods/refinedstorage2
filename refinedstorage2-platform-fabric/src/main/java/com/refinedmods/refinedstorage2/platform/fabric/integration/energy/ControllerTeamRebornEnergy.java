@@ -13,7 +13,11 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
     private final LimitingEnergyStorage exposedStorage;
 
     public ControllerTeamRebornEnergy(final Runnable listener) {
-        super(Platform.INSTANCE.getConfig().getController().getEnergyCapacity(), Platform.INSTANCE.getConfig().getController().getEnergyCapacity(), Platform.INSTANCE.getConfig().getController().getEnergyCapacity());
+        super(
+                Platform.INSTANCE.getConfig().getController().getEnergyCapacity(),
+                Platform.INSTANCE.getConfig().getController().getEnergyCapacity(),
+                Platform.INSTANCE.getConfig().getController().getEnergyCapacity()
+        );
         this.listener = listener;
         this.exposedStorage = new LimitingEnergyStorage(
                 this,

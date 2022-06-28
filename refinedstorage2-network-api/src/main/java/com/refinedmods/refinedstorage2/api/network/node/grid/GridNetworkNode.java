@@ -40,7 +40,8 @@ public class GridNetworkNode<T> extends NetworkNodeImpl {
         return getStorageChannel().getAll().size();
     }
 
-    public void forEachResource(final BiConsumer<ResourceAmount<T>, Optional<TrackedResource>> consumer, final Class<? extends Source> sourceType) {
+    public void forEachResource(final BiConsumer<ResourceAmount<T>, Optional<TrackedResource>> consumer,
+                                final Class<? extends Source> sourceType) {
         final StorageChannel<T> storageChannel = getStorageChannel();
         storageChannel.getAll().forEach(resourceAmount -> consumer.accept(
                 resourceAmount,

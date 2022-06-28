@@ -20,7 +20,9 @@ public abstract class GridResource<T> {
     private final Map<GridResourceAttributeKey, Set<String>> attributes;
     private boolean zeroed;
 
-    protected GridResource(final ResourceAmount<T> resourceAmount, final String name, final Map<GridResourceAttributeKey, Set<String>> attributes) {
+    protected GridResource(final ResourceAmount<T> resourceAmount,
+                           final String name,
+                           final Map<GridResourceAttributeKey, Set<String>> attributes) {
         this.resourceAmount = resourceAmount;
         this.name = name;
         this.attributes = attributes;

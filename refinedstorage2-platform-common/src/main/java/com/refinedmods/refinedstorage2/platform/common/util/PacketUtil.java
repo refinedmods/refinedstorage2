@@ -26,13 +26,17 @@ public final class PacketUtil {
         return new ItemResource(Item.byId(id), nbt);
     }
 
-    public static void writeItemResourceAmount(final FriendlyByteBuf buf, final com.refinedmods.refinedstorage2.api.resource.ResourceAmount<ItemResource> resourceAmount) {
+    public static void writeItemResourceAmount(final FriendlyByteBuf buf,
+                                               final com.refinedmods.refinedstorage2.api.resource.
+                                                       ResourceAmount<ItemResource> resourceAmount) {
         buf.writeVarInt(Item.getId(resourceAmount.getResource().item()));
         buf.writeLong(resourceAmount.getAmount());
         buf.writeNbt(resourceAmount.getResource().tag());
     }
 
-    public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<ItemResource> readItemResourceAmount(final FriendlyByteBuf buf) {
+    public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<ItemResource> readItemResourceAmount(
+            final FriendlyByteBuf buf
+    ) {
         final int id = buf.readVarInt();
         final long amount = buf.readLong();
         final CompoundTag nbt = buf.readNbt();
@@ -53,13 +57,17 @@ public final class PacketUtil {
         return new FluidResource(Registry.FLUID.byId(id), nbt);
     }
 
-    public static void writeFluidResourceAmount(final FriendlyByteBuf buf, final com.refinedmods.refinedstorage2.api.resource.ResourceAmount<FluidResource> resourceAmount) {
+    public static void writeFluidResourceAmount(final FriendlyByteBuf buf,
+                                                final com.refinedmods.refinedstorage2.api.resource.
+                                                        ResourceAmount<FluidResource> resourceAmount) {
         buf.writeVarInt(Registry.FLUID.getId(resourceAmount.getResource().fluid()));
         buf.writeLong(resourceAmount.getAmount());
         buf.writeNbt(resourceAmount.getResource().tag());
     }
 
-    public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<FluidResource> readFluidResourceAmount(final FriendlyByteBuf buf) {
+    public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<FluidResource> readFluidResourceAmount(
+            final FriendlyByteBuf buf
+    ) {
         final int id = buf.readVarInt();
         final long amount = buf.readLong();
         final CompoundTag nbt = buf.readNbt();
@@ -69,7 +77,8 @@ public final class PacketUtil {
         );
     }
 
-    public static void writeTrackedResource(final FriendlyByteBuf buf, @Nullable final TrackedResource trackedResource) {
+    public static void writeTrackedResource(final FriendlyByteBuf buf,
+                                            @Nullable final TrackedResource trackedResource) {
         if (trackedResource == null) {
             buf.writeBoolean(false);
         } else {

@@ -21,13 +21,18 @@ public class PrioritySideButtonWidget extends SideButtonWidget {
     private final PriorityAccessor priorityAccessor;
     private final TooltipRenderer tooltipRenderer;
 
-    public PrioritySideButtonWidget(final PriorityAccessor priorityAccessor, final Inventory playerInventory, final Screen parent, final TooltipRenderer tooltipRenderer) {
+    public PrioritySideButtonWidget(final PriorityAccessor priorityAccessor,
+                                    final Inventory playerInventory,
+                                    final Screen parent,
+                                    final TooltipRenderer tooltipRenderer) {
         super(createPressAction(priorityAccessor, playerInventory, parent));
         this.priorityAccessor = priorityAccessor;
         this.tooltipRenderer = tooltipRenderer;
     }
 
-    private static OnPress createPressAction(final PriorityAccessor priorityAccessor, final Inventory playerInventory, final Screen parent) {
+    private static OnPress createPressAction(final PriorityAccessor priorityAccessor,
+                                             final Inventory playerInventory,
+                                             final Screen parent) {
         return btn -> Minecraft.getInstance().setScreen(new PriorityScreen(priorityAccessor, parent, playerInventory));
     }
 

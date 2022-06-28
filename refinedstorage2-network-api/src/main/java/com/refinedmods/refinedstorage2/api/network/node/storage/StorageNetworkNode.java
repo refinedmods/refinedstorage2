@@ -48,7 +48,9 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl implements StoragePro
         );
     }
 
-    public void initializeNewStorage(final StorageRepository storageRepository, final Storage<T> newStorage, final UUID storageId) {
+    public void initializeNewStorage(final StorageRepository storageRepository,
+                                     final Storage<T> newStorage,
+                                     final UUID storageId) {
         LOGGER.info("Loaded new storage {}", storageId);
         storageRepository.set(storageId, newStorage);
         this.internalStorage = newStorage;

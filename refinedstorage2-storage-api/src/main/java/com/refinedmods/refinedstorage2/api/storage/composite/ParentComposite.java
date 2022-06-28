@@ -12,14 +12,16 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
 public interface ParentComposite<T> {
     /**
-     * Called by the {@link CompositeAwareChild} to notify to this parent composite storage that a source has been added.
+     * Called by the {@link CompositeAwareChild} to notify to this parent composite storage
+     * that a source has been added.
      *
      * @param source the source
      */
     void onSourceAddedToChild(Storage<T> source);
 
     /**
-     * Called by the {@link CompositeAwareChild} to notify to this parent composite storage that a source has been removed.
+     * Called by the {@link CompositeAwareChild} to notify to this parent composite storage
+     * that a source has been removed.
      *
      * @param source the source
      */

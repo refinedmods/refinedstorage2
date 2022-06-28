@@ -19,7 +19,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockColorMap<T extends Block> extends ColorMap<T> {
-    public Optional<InteractionResult> updateColor(final BlockState state, final ItemStack heldItem, final Level level, final BlockPos pos, final Player player) {
+    public Optional<InteractionResult> updateColor(final BlockState state,
+                                                   final ItemStack heldItem,
+                                                   final Level level,
+                                                   final BlockPos pos,
+                                                   final Player player) {
         final DyeColor color = heldItem.getItem() instanceof DyeItem dye ? dye.getDyeColor() : null;
         if (color == null || state.getBlock().equals(get(color))) {
             return Optional.empty();
@@ -30,7 +34,12 @@ public class BlockColorMap<T extends Block> extends ColorMap<T> {
         return Optional.of(InteractionResult.sidedSuccess(level.isClientSide()));
     }
 
-    private void updateColorOnServer(final BlockState state, final ItemStack heldItem, final Level level, final BlockPos pos, final ServerPlayer player, final DyeColor color) {
+    private void updateColorOnServer(final BlockState state,
+                                     final ItemStack heldItem,
+                                     final Level level,
+                                     final BlockPos pos,
+                                     final ServerPlayer player,
+                                     final DyeColor color) {
         final T newBlock = get(color);
         level.setBlockAndUpdate(pos, getNewState(newBlock, state));
         if (player.gameMode.getGameModeForPlayer() != GameType.CREATIVE) {
@@ -59,7 +68,10 @@ public class BlockColorMap<T extends Block> extends ColorMap<T> {
 
     private BlockState transferNetworkNodeProperties(final BlockState oldState, final BlockState newState) {
         if (newState.hasProperty(NetworkNodeContainerBlock.ACTIVE)) {
-            return newState.setValue(NetworkNodeContainerBlock.ACTIVE, oldState.getValue(NetworkNodeContainerBlock.ACTIVE));
+            return newState.setValue(
+                    NetworkNodeContainerBlock.ACTIVE,
+                    oldState.getValue(NetworkNodeContainerBlock.ACTIVE)
+            );
         }
         return newState;
     }

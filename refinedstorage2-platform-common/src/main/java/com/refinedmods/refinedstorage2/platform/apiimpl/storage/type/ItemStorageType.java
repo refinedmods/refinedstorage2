@@ -50,11 +50,16 @@ public class ItemStorageType implements StorageType<ItemResource> {
     private PlatformStorage<ItemResource> createStorage(final CompoundTag tag, final Runnable listener) {
         final TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (tag.contains(TAG_CAPACITY)) {
-            return new LimitedPlatformStorage<>(
-                    new LimitedStorageImpl<>(
-                            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                            tag.getLong(TAG_CAPACITY)
+            final LimitedStorageImpl<ItemResource> delegate = new LimitedStorageImpl<>(
+                    new TrackedStorageImpl<>(
+                            new InMemoryStorageImpl<>(),
+                            trackingRepository,
+                            System::currentTimeMillis
                     ),
+                    tag.getLong(TAG_CAPACITY)
+            );
+            return new LimitedPlatformStorage<>(
+                    delegate,
                     ItemStorageType.INSTANCE,
                     trackingRepository,
                     listener

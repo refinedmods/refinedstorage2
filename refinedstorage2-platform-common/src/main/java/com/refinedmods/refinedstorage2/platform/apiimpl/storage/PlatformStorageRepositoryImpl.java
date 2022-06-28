@@ -33,7 +33,8 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     private final StorageRepositoryImpl delegate;
     private final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry;
 
-    public PlatformStorageRepositoryImpl(final StorageRepositoryImpl delegate, final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry) {
+    public PlatformStorageRepositoryImpl(final StorageRepositoryImpl delegate,
+                                         final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry) {
         this.delegate = delegate;
         this.storageTypeRegistry = storageTypeRegistry;
     }
@@ -74,12 +75,14 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
         final ListTag storages = tag.getList(TAG_STORAGES, Tag.TAG_COMPOUND);
         for (final Tag storageTag : storages) {
             final UUID id = ((CompoundTag) storageTag).getUUID(TAG_STORAGE_ID);
-            final ResourceLocation typeIdentifier = new ResourceLocation(((CompoundTag) storageTag).getString(TAG_STORAGE_TYPE));
+            final ResourceLocation typeId = new ResourceLocation(
+                    ((CompoundTag) storageTag).getString(TAG_STORAGE_TYPE)
+            );
             final CompoundTag data = ((CompoundTag) storageTag).getCompound(TAG_STORAGE_DATA);
 
-            storageTypeRegistry.get(typeIdentifier).ifPresentOrElse(
+            storageTypeRegistry.get(typeId).ifPresentOrElse(
                     type -> setSilently(id, type.fromTag(data, this::markAsChanged)),
-                    () -> LOGGER.warn("Cannot find storage type {} for storage {}", typeIdentifier, id)
+                    () -> LOGGER.warn("Cannot find storage type {} for storage {}", typeId, id)
             );
         }
     }
@@ -99,7 +102,8 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
         return tag;
     }
 
-    private <T> Tag convertStorageToTag(final UUID id, final Storage<T> storage, final SerializableStorage<T> serializableStorage) {
+    private <T> Tag convertStorageToTag(final UUID id, final Storage<T> storage,
+                                        final SerializableStorage<T> serializableStorage) {
         final ResourceLocation typeIdentifier = storageTypeRegistry
                 .getId(serializableStorage.getType())
                 .orElseThrow(() -> new RuntimeException("Storage type is not registered"));

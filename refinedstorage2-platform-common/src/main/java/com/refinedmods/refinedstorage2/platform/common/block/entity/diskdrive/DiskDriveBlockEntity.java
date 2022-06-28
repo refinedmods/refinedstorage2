@@ -50,7 +50,8 @@ import org.apache.logging.log4j.Logger;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode> implements BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider, StorageSettingsProvider {
+public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode>
+        implements BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider, StorageSettingsProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_PRIORITY = "pri";
@@ -64,7 +65,11 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     private static final int DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
 
     private final DiskDriveInventory diskInventory = new DiskDriveInventory(this);
-    private final ResourceFilterContainer resourceFilterContainer = new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, this::resourceFilterContainerChanged);
+    private final ResourceFilterContainer resourceFilterContainer = new ResourceFilterContainer(
+            PlatformApi.INSTANCE.getResourceTypeRegistry(),
+            9,
+            this::resourceFilterContainerChanged
+    );
 
     @Nullable
     protected DiskDriveState driveState;
@@ -91,15 +96,16 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
     }
 
     public static boolean hasDisk(final CompoundTag tag, final int slot) {
-        return tag.contains(TAG_DISK_INVENTORY) && ContainerUtil.hasItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), slot);
+        return tag.contains(TAG_DISK_INVENTORY)
+                && ContainerUtil.hasItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), slot);
     }
 
     private void updateDiskStateIfNecessaryInLevel() {
         if (!syncRequested) {
             return;
         }
-
-        if (lastStateChanged == 0 || (System.currentTimeMillis() - lastStateChanged) > DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS) {
+        final boolean inTime = (System.currentTimeMillis() - lastStateChanged) > DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS;
+        if (lastStateChanged == 0 || inTime) {
             LOGGER.info("Disk state change for block at {}", getBlockPos());
             this.lastStateChanged = System.currentTimeMillis();
             this.syncRequested = false;
@@ -150,9 +156,12 @@ public abstract class DiskDriveBlockEntity extends InternalNetworkNodeContainerB
      * When loading a disk drive in a normal flow it is: #load(CompoundTag) -> #setLevel(Level).
      * Network initialization happens in #setLevel(Level).
      * Loading data before network initialization ensures that all nbt is present (and thus disks are available).
-     * However, when we place a block entity with nbt, the flow is different: #setLevel(Level) -> #load(CompoundTag) -> #setChanged().
-     * #setLevel(Level) is called first (before #load(CompoundTag)) and initialization will happen BEFORE we load the tag!
-     * That's why we need to override #setChanged() here, to ensure that the network and disks are still initialized correctly in that case.
+     * However, when we place a block entity with nbt, the flow is different:
+     * #setLevel(Level) -> #load(CompoundTag) -> #setChanged().
+     * #setLevel(Level) is called first (before #load(CompoundTag)) and initialization will happen BEFORE
+     * we load the tag!
+     * That's why we need to override #setChanged() here, to ensure that the network and disks are still initialized
+     * correctly in that case.
      */
     @Override
     public void setChanged() {

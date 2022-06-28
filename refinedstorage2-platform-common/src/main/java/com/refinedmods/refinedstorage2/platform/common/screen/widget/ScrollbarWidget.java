@@ -79,7 +79,8 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
         final double relativeAnimationProgress = easeOutQuint(absoluteAnimationProgress);
 
         final double scrollHeight = ANIMATION_SCROLL_HEIGHT_IN_PIXELS + ((animationSpeed + 1) * 4D);
-        final double newOffset = animationStartOffset + (relativeAnimationProgress * scrollHeight * animationScrollDirection);
+        final double newOffset = animationStartOffset
+                + (relativeAnimationProgress * scrollHeight * animationScrollDirection);
         setOffset(newOffset);
 
         animationTickCounter += partialTicks;

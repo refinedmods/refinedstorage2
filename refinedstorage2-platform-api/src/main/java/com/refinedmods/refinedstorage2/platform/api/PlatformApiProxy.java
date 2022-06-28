@@ -76,7 +76,9 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public void requestNetworkNodeInitialization(final NetworkNodeContainer container, final Level level, final Runnable callback) {
+    public void requestNetworkNodeInitialization(final NetworkNodeContainer container,
+                                                 final Level level,
+                                                 final Runnable callback) {
         ensureLoaded().requestNetworkNodeInitialization(container, level, callback);
     }
 

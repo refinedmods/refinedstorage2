@@ -27,7 +27,9 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     private final PlayerMainInvWrapper playerInventoryStorage;
     private final CursorStorage playerCursorStorage;
 
-    public ItemGridEventHandlerImpl(final AbstractContainerMenu containerMenu, final GridService<ItemResource> gridService, final Inventory playerInventory) {
+    public ItemGridEventHandlerImpl(final AbstractContainerMenu containerMenu,
+                                    final GridService<ItemResource> gridService,
+                                    final Inventory playerInventory) {
         this.containerMenu = containerMenu;
         this.gridService = gridService;
         this.playerInventory = playerInventory;
@@ -43,20 +45,32 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         }
         final ItemResource itemResource = new ItemResource(carried.getItem(), carried.getTag());
         gridService.insert(itemResource, insertMode, (resource, amount, action, source) -> {
-            final ItemStack extracted = playerCursorStorage.extractItem(0, (int) amount, action == Action.SIMULATE);
+            final ItemStack extracted = playerCursorStorage.extractItem(
+                    0,
+                    (int) amount,
+                    action == Action.SIMULATE
+            );
             return extracted.getCount();
         });
     }
 
     @Override
     public void onTransfer(final int slotIndex) {
-        final RangedWrapper storage = new RangedWrapper(new InvWrapper(playerInventory), slotIndex, slotIndex + 1);
+        final RangedWrapper storage = new RangedWrapper(
+                new InvWrapper(playerInventory),
+                slotIndex,
+                slotIndex + 1
+        );
         final ItemStack itemStackInSlot = storage.getStackInSlot(0);
         if (itemStackInSlot.isEmpty()) {
             return;
         }
         final ItemResource itemResource = ofItemStack(itemStackInSlot);
-        gridService.insert(itemResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> extract(storage, resource, amount, action));
+        gridService.insert(
+                itemResource,
+                GridInsertMode.ENTIRE_RESOURCE,
+                (resource, amount, action, source) -> extract(storage, resource, amount, action)
+        );
     }
 
     @Override
@@ -69,7 +83,9 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
 
     @Override
     public void onScroll(final ItemResource itemResource, final GridScrollMode mode, final int slotIndex) {
-        final IItemHandler playerStorage = slotIndex >= 0 ? new RangedWrapper(new InvWrapper(playerInventory), slotIndex, slotIndex + 1) : playerInventoryStorage;
+        final IItemHandler playerStorage = slotIndex >= 0
+                ? new RangedWrapper(new InvWrapper(playerInventory), slotIndex, slotIndex + 1)
+                : playerInventoryStorage;
         switch (mode) {
             case GRID_TO_INVENTORY -> handleGridToInventoryScroll(itemResource, playerStorage);
             case INVENTORY_TO_GRID -> handleInventoryToGridScroll(itemResource, playerStorage);
@@ -78,13 +94,21 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     }
 
     private void handleInventoryToGridScroll(final ItemResource itemResource, final IItemHandler sourceStorage) {
-        gridService.insert(itemResource, GridInsertMode.SINGLE_RESOURCE, (resource, amount, action, source) -> extract(sourceStorage, resource, amount, action));
+        gridService.insert(
+                itemResource,
+                GridInsertMode.SINGLE_RESOURCE,
+                (resource, amount, action, source) -> extract(sourceStorage, resource, amount, action)
+        );
     }
 
     private void handleGridToInventoryScroll(final ItemResource itemResource, final IItemHandler destinationStorage) {
         gridService.extract(itemResource, GridExtractMode.SINGLE_RESOURCE, (resource, amount, action, source) -> {
             final ItemStack toInsert = toItemStack(resource, amount);
-            final ItemStack remainder = ItemHandlerHelper.insertItem(destinationStorage, toInsert, action == Action.SIMULATE);
+            final ItemStack remainder = ItemHandlerHelper.insertItem(
+                    destinationStorage,
+                    toInsert,
+                    action == Action.SIMULATE
+            );
             return amount - remainder.getCount();
         });
     }
@@ -95,7 +119,10 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         return (long) itemStack.getCount() - remainder.getCount();
     }
 
-    private long extract(final IItemHandler source, final ItemResource template, final long amount, final Action action) {
+    private long extract(final IItemHandler source,
+                         final ItemResource template,
+                         final long amount,
+                         final Action action) {
         final ItemStack toExtractStack = toItemStack(template, amount);
         long extracted = 0;
         for (int slot = 0; slot < source.getSlots(); ++slot) {

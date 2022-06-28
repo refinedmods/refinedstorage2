@@ -39,10 +39,17 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
         this.itemGridEventHandler = new ClientItemGridEventHandler();
     }
 
-    public ItemGridContainerMenu(final int syncId, final Inventory playerInventory, final GridBlockEntity<ItemResource> grid) {
+    public ItemGridContainerMenu(final int syncId,
+                                 final Inventory playerInventory,
+                                 final GridBlockEntity<ItemResource> grid) {
         super(Menus.INSTANCE.getGrid(), syncId, playerInventory, grid, createView());
         grid.addWatcher(this);
-        final GridService<ItemResource> gridService = new GridServiceImpl<>(Objects.requireNonNull(storageChannel), new PlayerSource(playerInventory.player), itemResource -> (long) itemResource.item().getMaxStackSize(), 1);
+        final GridService<ItemResource> gridService = new GridServiceImpl<>(
+                Objects.requireNonNull(storageChannel),
+                new PlayerSource(playerInventory.player),
+                itemResource -> (long) itemResource.item().getMaxStackSize(),
+                1
+        );
         this.itemGridEventHandler = Platform.INSTANCE.createItemGridEventHandler(this, gridService, playerInventory);
     }
 
@@ -73,7 +80,8 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
                 (ServerPlayer) playerInventory.player,
                 resource,
                 change.change(),
-                Objects.requireNonNull(storageChannel).findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
+                Objects.requireNonNull(storageChannel)
+                        .findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
         );
     }
 

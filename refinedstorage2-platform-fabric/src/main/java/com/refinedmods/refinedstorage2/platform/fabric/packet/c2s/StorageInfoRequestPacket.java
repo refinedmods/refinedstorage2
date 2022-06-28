@@ -15,7 +15,11 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 public class StorageInfoRequestPacket implements ServerPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(final MinecraftServer server, final ServerPlayer player, final ServerGamePacketListenerImpl handler, final FriendlyByteBuf buf, final PacketSender responseSender) {
+    public void receive(final MinecraftServer server,
+                        final ServerPlayer player,
+                        final ServerGamePacketListenerImpl handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
         final UUID id = buf.readUUID();
 
         server.execute(() -> {

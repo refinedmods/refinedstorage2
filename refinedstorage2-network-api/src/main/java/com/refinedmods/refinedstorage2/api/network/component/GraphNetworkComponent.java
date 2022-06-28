@@ -45,7 +45,12 @@ public class GraphNetworkComponent implements NetworkComponent {
 
     @Override
     public void onNetworkSplit(final Set<Network> networks) {
-        LOGGER.info("Network {} has been split into {} other networks ({})", network.hashCode(), networks.size(), networks.stream().map(Network::hashCode).toList());
+        LOGGER.info(
+                "Network {} has been split into {} other networks ({})",
+                network.hashCode(),
+                networks.size(),
+                networks.stream().map(Network::hashCode).toList()
+        );
     }
 
     @Override

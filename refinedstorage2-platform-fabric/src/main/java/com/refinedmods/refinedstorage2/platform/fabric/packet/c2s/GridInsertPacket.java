@@ -14,7 +14,11 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class GridInsertPacket implements ServerPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(final MinecraftServer server, final ServerPlayer player, final ServerGamePacketListenerImpl handler, final FriendlyByteBuf buf, final PacketSender responseSender) {
+    public void receive(final MinecraftServer server,
+                        final ServerPlayer player,
+                        final ServerGamePacketListenerImpl handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
         final boolean single = buf.readBoolean();
 
         server.execute(() -> {

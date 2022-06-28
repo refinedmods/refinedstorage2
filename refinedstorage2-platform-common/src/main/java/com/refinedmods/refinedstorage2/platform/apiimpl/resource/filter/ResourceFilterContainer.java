@@ -24,7 +24,9 @@ public class ResourceFilterContainer {
     private final FilteredResource[] items;
     private final Runnable listener;
 
-    public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, final int size, final Runnable listener) {
+    public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                   final int size,
+                                   final Runnable listener) {
         this.resourceTypeRegistry = resourceTypeRegistry;
         this.items = new FilteredResource[size];
         this.listener = listener;
@@ -82,7 +84,8 @@ public class ResourceFilterContainer {
     }
 
     public void writeToUpdatePacket(final FriendlyByteBuf buf) {
-        buf.writeResourceLocation(resourceTypeRegistry.getId(determineDefaultType()).orElseThrow(() -> new IllegalStateException("Default resource type not registered")));
+        buf.writeResourceLocation(resourceTypeRegistry.getId(determineDefaultType())
+                .orElseThrow(() -> new IllegalStateException("Default resource type not registered")));
         for (int index = 0; index < items.length; ++index) {
             writeToUpdatePacket(index, buf);
         }
@@ -133,7 +136,10 @@ public class ResourceFilterContainer {
         return tag;
     }
 
-    private void addToTag(final CompoundTag tag, final int index, final FilteredResource item, final ResourceLocation typeId) {
+    private void addToTag(final CompoundTag tag,
+                          final int index,
+                          final FilteredResource item,
+                          final ResourceLocation typeId) {
         final CompoundTag serialized = new CompoundTag();
         serialized.putString("t", typeId.toString());
         serialized.put("v", item.toTag());

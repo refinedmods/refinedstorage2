@@ -85,12 +85,17 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public ItemGridEventHandler createItemGridEventHandler(final AbstractContainerMenu containerMenu, final GridService<ItemResource> gridService, final Inventory playerInventory) {
+    public ItemGridEventHandler createItemGridEventHandler(final AbstractContainerMenu containerMenu,
+                                                           final GridService<ItemResource> gridService,
+                                                           final Inventory playerInventory) {
         return ensureLoaded().createItemGridEventHandler(containerMenu, gridService, playerInventory);
     }
 
     @Override
-    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu, final GridService<FluidResource> gridService, final Inventory playerInventory, final ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu,
+                                                             final GridService<FluidResource> gridService,
+                                                             final Inventory playerInventory,
+                                                             final ExtractableStorage<ItemResource> bucketStorage) {
         return ensureLoaded().createFluidGridEventHandler(containerMenu, gridService, playerInventory, bucketStorage);
     }
 

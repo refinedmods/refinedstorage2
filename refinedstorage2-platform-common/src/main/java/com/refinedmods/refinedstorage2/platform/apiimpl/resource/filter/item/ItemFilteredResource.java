@@ -50,7 +50,9 @@ public class ItemFilteredResource implements FilteredResource {
 
     @Override
     public List<Component> getTooltipLines(@Nullable final Player player) {
-        final TooltipFlag.Default flag = Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL;
+        final TooltipFlag.Default flag = Minecraft.getInstance().options.advancedItemTooltips
+                ? TooltipFlag.Default.ADVANCED
+                : TooltipFlag.Default.NORMAL;
         return value.toItemStack().getTooltipLines(player, flag);
     }
 }

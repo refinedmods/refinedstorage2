@@ -20,7 +20,10 @@ public class PlatformStorage<T> extends ProxyStorage<T> implements SerializableS
     private final TrackedStorageRepository<T> trackingRepository;
     private final Runnable listener;
 
-    public PlatformStorage(final Storage<T> delegate, final StorageType<T> type, final TrackedStorageRepository<T> trackingRepository, final Runnable listener) {
+    public PlatformStorage(final Storage<T> delegate,
+                           final StorageType<T> type,
+                           final TrackedStorageRepository<T> trackingRepository,
+                           final Runnable listener) {
         super(delegate);
         this.type = type;
         this.trackingRepository = trackingRepository;
@@ -58,7 +61,8 @@ public class PlatformStorage<T> extends ProxyStorage<T> implements SerializableS
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource, final Class<? extends Source> sourceType) {
+    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
+                                                                     final Class<? extends Source> sourceType) {
         return trackingRepository.findTrackedResourceBySourceType(resource, sourceType);
     }
 }

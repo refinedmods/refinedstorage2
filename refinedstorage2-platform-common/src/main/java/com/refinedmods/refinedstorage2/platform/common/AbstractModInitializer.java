@@ -23,20 +23,38 @@ public abstract class AbstractModInitializer {
     }
 
     protected void registerAdditionalStorageTypes() {
-        PlatformApi.INSTANCE.getStorageTypeRegistry().register(createIdentifier(FLUID_REGISTRY_KEY), FluidStorageType.INSTANCE);
+        PlatformApi.INSTANCE.getStorageTypeRegistry().register(
+                createIdentifier(FLUID_REGISTRY_KEY),
+                FluidStorageType.INSTANCE
+        );
     }
 
     protected void registerAdditionalStorageChannelTypes() {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().register(createIdentifier(FLUID_REGISTRY_KEY), StorageChannelTypes.FLUID);
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().register(
+                createIdentifier(FLUID_REGISTRY_KEY),
+                StorageChannelTypes.FLUID
+        );
     }
 
     protected void registerNetworkComponents() {
-        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
-        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(GraphNetworkComponent.class, GraphNetworkComponent::new);
-        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(StorageNetworkComponent.class, network -> new StorageNetworkComponent(PlatformApi.INSTANCE.getStorageChannelTypeRegistry()));
+        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
+                EnergyNetworkComponent.class,
+                network -> new EnergyNetworkComponent()
+        );
+        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
+                GraphNetworkComponent.class,
+                GraphNetworkComponent::new
+        );
+        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
+                StorageNetworkComponent.class,
+                network -> new StorageNetworkComponent(PlatformApi.INSTANCE.getStorageChannelTypeRegistry())
+        );
     }
 
     protected void registerAdditionalResourceTypes() {
-        PlatformApi.INSTANCE.getResourceTypeRegistry().register(createIdentifier(FLUID_REGISTRY_KEY), FluidResourceType.INSTANCE);
+        PlatformApi.INSTANCE.getResourceTypeRegistry().register(
+                createIdentifier(FLUID_REGISTRY_KEY),
+                FluidResourceType.INSTANCE
+        );
     }
 }

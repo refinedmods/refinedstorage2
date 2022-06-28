@@ -15,7 +15,11 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 public class GridScrollPacket implements ServerPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(final MinecraftServer server, final ServerPlayer player, final ServerGamePacketListenerImpl handler, final FriendlyByteBuf buf, final PacketSender responseSender) {
+    public void receive(final MinecraftServer server,
+                        final ServerPlayer player,
+                        final ServerGamePacketListenerImpl handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
         final ItemResource itemResource = PacketUtil.readItemResource(buf);
         final GridScrollMode mode = GridScrollModeUtil.getMode(buf.readByte());
         final int slot = buf.readInt();

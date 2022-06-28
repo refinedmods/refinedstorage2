@@ -25,22 +25,99 @@ public class NetworkManager {
     private static final String PROTOCOL_VERSION = "1";
 
     private final ResourceLocation channel = createIdentifier("main_channel");
-    private final SimpleChannel handler = NetworkRegistry.ChannelBuilder.named(channel).clientAcceptedVersions(PROTOCOL_VERSION::equals).serverAcceptedVersions(PROTOCOL_VERSION::equals).networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
+    private final SimpleChannel handler = NetworkRegistry.ChannelBuilder
+            .named(channel)
+            .clientAcceptedVersions(PROTOCOL_VERSION::equals)
+            .serverAcceptedVersions(PROTOCOL_VERSION::equals)
+            .networkProtocolVersion(() -> PROTOCOL_VERSION)
+            .simpleChannel();
 
     public NetworkManager() {
         int id = 0;
-        handler.registerMessage(id++, ControllerEnergyPacket.class, ControllerEnergyPacket::encode, ControllerEnergyPacket::decode, ControllerEnergyPacket::handle);
-        handler.registerMessage(id++, PropertyChangePacket.class, PropertyChangePacket::encode, PropertyChangePacket::decode, PropertyChangePacket::handle);
-        handler.registerMessage(id++, StorageInfoRequestPacket.class, StorageInfoRequestPacket::encode, StorageInfoRequestPacket::decode, StorageInfoRequestPacket::handle);
-        handler.registerMessage(id++, StorageInfoResponsePacket.class, StorageInfoResponsePacket::encode, StorageInfoResponsePacket::decode, StorageInfoResponsePacket::handle);
-        handler.registerMessage(id++, ResourceTypeChangePacket.class, ResourceTypeChangePacket::encode, ResourceTypeChangePacket::decode, ResourceTypeChangePacket::handle);
-        handler.registerMessage(id++, ResourceFilterSlotUpdatePacket.class, ResourceFilterSlotUpdatePacket::encode, ResourceFilterSlotUpdatePacket::decode, ResourceFilterSlotUpdatePacket::handle);
-        handler.registerMessage(id++, GridActivePacket.class, GridActivePacket::encode, GridActivePacket::decode, GridActivePacket::handle);
-        handler.registerMessage(id++, GridItemUpdatePacket.class, GridItemUpdatePacket::encode, GridItemUpdatePacket::decode, GridItemUpdatePacket::handle);
-        handler.registerMessage(id++, GridInsertPacket.class, GridInsertPacket::encode, GridInsertPacket::decode, GridInsertPacket::handle);
-        handler.registerMessage(id++, GridExtractPacket.class, GridExtractPacket::encode, GridExtractPacket::decode, GridExtractPacket::handle);
-        handler.registerMessage(id++, GridScrollPacket.class, GridScrollPacket::encode, GridScrollPacket::decode, GridScrollPacket::handle);
-        handler.registerMessage(id++, GridFluidUpdatePacket.class, GridFluidUpdatePacket::encode, GridFluidUpdatePacket::decode, GridFluidUpdatePacket::handle);
+        handler.registerMessage(
+                id++,
+                ControllerEnergyPacket.class,
+                ControllerEnergyPacket::encode,
+                ControllerEnergyPacket::decode,
+                ControllerEnergyPacket::handle
+        );
+        handler.registerMessage(
+                id++,
+                PropertyChangePacket.class,
+                PropertyChangePacket::encode,
+                PropertyChangePacket::decode,
+                PropertyChangePacket::handle
+        );
+        handler.registerMessage(
+                id++,
+                StorageInfoRequestPacket.class,
+                StorageInfoRequestPacket::encode,
+                StorageInfoRequestPacket::decode,
+                StorageInfoRequestPacket::handle
+        );
+        handler.registerMessage(
+                id++,
+                StorageInfoResponsePacket.class,
+                StorageInfoResponsePacket::encode,
+                StorageInfoResponsePacket::decode,
+                StorageInfoResponsePacket::handle
+        );
+        handler.registerMessage(
+                id++,
+                ResourceTypeChangePacket.class,
+                ResourceTypeChangePacket::encode,
+                ResourceTypeChangePacket::decode,
+                ResourceTypeChangePacket::handle
+        );
+        handler.registerMessage(
+                id++,
+                ResourceFilterSlotUpdatePacket.class,
+                ResourceFilterSlotUpdatePacket::encode,
+                ResourceFilterSlotUpdatePacket::decode,
+                ResourceFilterSlotUpdatePacket::handle
+        );
+        handler.registerMessage(
+                id++,
+                GridActivePacket.class,
+                GridActivePacket::encode,
+                GridActivePacket::decode,
+                GridActivePacket::handle
+        );
+        handler.registerMessage(
+                id++,
+                GridItemUpdatePacket.class,
+                GridItemUpdatePacket::encode,
+                GridItemUpdatePacket::decode,
+                GridItemUpdatePacket::handle
+        );
+        handler.registerMessage(
+                id++,
+                GridInsertPacket.class,
+                GridInsertPacket::encode,
+                GridInsertPacket::decode,
+                GridInsertPacket::handle
+        );
+        handler.registerMessage(
+                id++,
+                GridExtractPacket.class,
+                GridExtractPacket::encode,
+                GridExtractPacket::decode,
+                GridExtractPacket::handle
+        );
+        handler.registerMessage(
+                id++,
+                GridScrollPacket.class,
+                GridScrollPacket::encode,
+                GridScrollPacket::decode,
+                GridScrollPacket::handle
+        );
+        handler.registerMessage(
+                id++,
+                GridFluidUpdatePacket.class,
+                GridFluidUpdatePacket::encode,
+                GridFluidUpdatePacket::decode,
+                GridFluidUpdatePacket::handle
+        );
     }
 
     public void send(final ServerPlayer player, final Object message) {

@@ -35,8 +35,17 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
     }
 
     @Override
-    protected void renderResource(final PoseStack poseStack, final int slotX, final int slotY, final GridResource<FluidResource> resource) {
-        Platform.INSTANCE.getFluidRenderer().render(poseStack, slotX, slotY, getBlitOffset(), resource.getResourceAmount().getResource());
+    protected void renderResource(final PoseStack poseStack,
+                                  final int slotX,
+                                  final int slotY,
+                                  final GridResource<FluidResource> resource) {
+        Platform.INSTANCE.getFluidRenderer().render(
+                poseStack,
+                slotX,
+                slotY,
+                getBlitOffset(),
+                resource.getResourceAmount().getResource()
+        );
     }
 
     @Override
@@ -67,7 +76,11 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
 
     @Override
     protected void mouseClickedInGrid(final int clickedButton, final GridResource<FluidResource> resource) {
-        getMenu().onExtract(resource.getResourceAmount().getResource(), getExtractMode(clickedButton), shouldExtractToCursor());
+        getMenu().onExtract(
+                resource.getResourceAmount().getResource(),
+                getExtractMode(clickedButton),
+                shouldExtractToCursor()
+        );
     }
 
     @Override

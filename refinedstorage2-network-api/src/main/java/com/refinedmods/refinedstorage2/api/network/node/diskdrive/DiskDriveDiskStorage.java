@@ -22,7 +22,9 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     private final DiskDriveListener listener;
     private StorageDiskState state;
 
-    public DiskDriveDiskStorage(final Storage<T> delegate, final StorageChannelType<T> storageChannelType, @Nullable final DiskDriveListener listener) {
+    public DiskDriveDiskStorage(final Storage<T> delegate,
+                                final StorageChannelType<T> storageChannelType,
+                                @Nullable final DiskDriveListener listener) {
         this.delegate = delegate;
         this.storageChannelType = storageChannelType;
         this.listener = listener;
@@ -95,7 +97,8 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource, final Class<? extends Source> sourceType) {
+    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
+                                                                     final Class<? extends Source> sourceType) {
         return delegate instanceof TrackedStorage<T> trackedStorage
                 ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType)
                 : Optional.empty();

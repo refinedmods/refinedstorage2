@@ -31,7 +31,9 @@ public class NetworkBuilder {
         return true;
     }
 
-    private void mergeNetworksOfNodes(final ConnectionProvider connectionProvider, final NetworkNodeContainer pivot, final Set<NetworkNodeContainer> foundEntries) {
+    private void mergeNetworksOfNodes(final ConnectionProvider connectionProvider,
+                                      final NetworkNodeContainer pivot,
+                                      final Set<NetworkNodeContainer> foundEntries) {
         final Network pivotNetwork = findPivotNetworkForMerge(connectionProvider, pivot, foundEntries)
                 .orElseGet(() -> createNetwork(pivot));
 
@@ -39,7 +41,8 @@ public class NetworkBuilder {
 
         for (final NetworkNodeContainer entry : foundEntries) {
             final NetworkNode entryNode = entry.getNode();
-            final boolean isNotInPivotNetwork = !pivotNetwork.getComponent(GraphNetworkComponent.class).getContainers().contains(entry);
+            final boolean isNotInPivotNetwork = !pivotNetwork.getComponent(GraphNetworkComponent.class)
+                    .getContainers().contains(entry);
             if (isNotInPivotNetwork) {
                 final Network mergedNetwork = mergeNetworkOfNode(pivotNetwork, entry, entryNode);
                 if (mergedNetwork != null) {
@@ -52,7 +55,9 @@ public class NetworkBuilder {
     }
 
     @Nullable
-    private Network mergeNetworkOfNode(final Network newNetwork, final NetworkNodeContainer entry, final NetworkNode entryNode) {
+    private Network mergeNetworkOfNode(final Network newNetwork,
+                                       final NetworkNodeContainer entry,
+                                       final NetworkNode entryNode) {
         final Network oldNetwork = entryNode.getNetwork();
         entryNode.setNetwork(newNetwork);
         newNetwork.addContainer(entry);
@@ -66,7 +71,9 @@ public class NetworkBuilder {
         return network;
     }
 
-    private Optional<Network> findPivotNetworkForMerge(final ConnectionProvider connectionProvider, final NetworkNodeContainer addedContainer, final Set<NetworkNodeContainer> foundEntries) {
+    private Optional<Network> findPivotNetworkForMerge(final ConnectionProvider connectionProvider,
+                                                       final NetworkNodeContainer addedContainer,
+                                                       final Set<NetworkNodeContainer> foundEntries) {
         for (final NetworkNodeContainer entry : connectionProvider.sort(foundEntries)) {
             if (entry == addedContainer) {
                 continue;
@@ -96,12 +103,17 @@ public class NetworkBuilder {
         }
 
         final Connections connections = connectionProvider.findConnections(pivot, containers);
-        Preconditions.checkState(connections.removedEntries().contains(container), "The removed container isn't present in the removed entries");
+        Preconditions.checkState(
+                connections.removedEntries().contains(container),
+                "The removed container isn't present in the removed entries"
+        );
         splitNetworks(connectionProvider, connections.removedEntries(), container);
     }
 
     @Nullable
-    private NetworkNodeContainer findPivotNodeForRemove(final ConnectionProvider connectionProvider, final NetworkNodeContainer removedContainer, final Set<NetworkNodeContainer> containers) {
+    private NetworkNodeContainer findPivotNodeForRemove(final ConnectionProvider connectionProvider,
+                                                        final NetworkNodeContainer removedContainer,
+                                                        final Set<NetworkNodeContainer> containers) {
         for (final NetworkNodeContainer entry : connectionProvider.sort(containers)) {
             if (!entry.equals(removedContainer)) {
                 return entry;
@@ -110,7 +122,9 @@ public class NetworkBuilder {
         return null;
     }
 
-    private void splitNetworks(final ConnectionProvider connectionProvider, final Set<NetworkNodeContainer> removedEntries, final NetworkNodeContainer removedEntry) {
+    private void splitNetworks(final ConnectionProvider connectionProvider,
+                               final Set<NetworkNodeContainer> removedEntries,
+                               final NetworkNodeContainer removedEntry) {
         final Network networkOfRemovedNode = removedEntry.getNode().getNetwork();
         if (networkOfRemovedNode == null) {
             throw new IllegalStateException("Network of removed node cannot be empty");

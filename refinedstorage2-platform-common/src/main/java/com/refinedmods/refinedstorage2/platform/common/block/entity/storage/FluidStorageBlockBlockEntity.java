@@ -29,7 +29,9 @@ public class FluidStorageBlockBlockEntity extends StorageBlockBlockEntity<FluidR
     private final FluidStorageType.Variant variant;
     private final Component displayName;
 
-    public FluidStorageBlockBlockEntity(final BlockPos pos, final BlockState state, final FluidStorageType.Variant variant) {
+    public FluidStorageBlockBlockEntity(final BlockPos pos,
+                                        final BlockState state,
+                                        final FluidStorageType.Variant variant) {
         super(
                 BlockEntities.INSTANCE.getFluidStorageBlock(variant),
                 pos,
@@ -38,7 +40,10 @@ public class FluidStorageBlockBlockEntity extends StorageBlockBlockEntity<FluidR
                 FluidResourceType.INSTANCE
         );
         this.variant = variant;
-        this.displayName = createTranslation("block", String.format("%s_fluid_storage_block", variant.getName()));
+        this.displayName = createTranslation(
+                "block",
+                String.format("%s_fluid_storage_block", variant.getName())
+        );
     }
 
     private static long getEnergyUsage(final FluidStorageType.Variant variant) {
@@ -56,22 +61,18 @@ public class FluidStorageBlockBlockEntity extends StorageBlockBlockEntity<FluidR
     protected PlatformStorage<FluidResource> createStorage(final Runnable listener) {
         final TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
-            return new PlatformStorage<>(
-                    new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                    FluidStorageType.INSTANCE,
+            final TrackedStorageImpl<FluidResource> delegate = new TrackedStorageImpl<>(
+                    new InMemoryStorageImpl<>(),
                     trackingRepository,
-                    listener
+                    System::currentTimeMillis
             );
+            return new PlatformStorage<>(delegate, FluidStorageType.INSTANCE, trackingRepository, listener);
         }
-        return new LimitedPlatformStorage<>(
-                new LimitedStorageImpl<>(
-                        new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                        variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()
-                ),
-                FluidStorageType.INSTANCE,
-                trackingRepository,
-                listener
+        final LimitedStorageImpl<FluidResource> delegate = new LimitedStorageImpl<>(
+                new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+                variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()
         );
+        return new LimitedPlatformStorage<>(delegate, FluidStorageType.INSTANCE, trackingRepository, listener);
     }
 
     @Override

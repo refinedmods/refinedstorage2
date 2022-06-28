@@ -22,7 +22,9 @@ public final class QuadTransformer {
     private QuadTransformer() {
     }
 
-    public static List<BakedQuad> transformSideAndRotate(final Function<Direction, List<BakedQuad>> quadGetter, final BiDirection direction, @Nullable final Direction side) {
+    public static List<BakedQuad> transformSideAndRotate(final Function<Direction, List<BakedQuad>> quadGetter,
+                                                         final BiDirection direction,
+                                                         @Nullable final Direction side) {
         final Transformation transformation = new Transformation(null, createQuaternion(direction), null, null);
 
         final ImmutableList.Builder<BakedQuad> rotated = ImmutableList.builder();

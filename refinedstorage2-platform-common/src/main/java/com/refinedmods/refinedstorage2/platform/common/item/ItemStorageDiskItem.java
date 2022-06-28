@@ -34,7 +34,8 @@ import net.minecraft.world.level.Level;
 
 public class ItemStorageDiskItem extends StorageDiskItemImpl {
     private final ItemStorageType.Variant variant;
-    private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
+    private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions =
+            EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
     public ItemStorageDiskItem(final CreativeModeTab tab, final ItemStorageType.Variant variant) {
         super(new Item.Properties().tab(tab).stacksTo(1).fireResistant());
@@ -46,7 +47,10 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    public void appendHoverText(final ItemStack stack, @Nullable final Level level, final List<Component> tooltip, final TooltipFlag context) {
+    public void appendHoverText(final ItemStack stack,
+                                @Nullable final Level level,
+                                final List<Component> tooltip,
+                                final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
         StorageItemHelper.appendToTooltip(
                 stack,
@@ -73,18 +77,24 @@ public class ItemStorageDiskItem extends StorageDiskItemImpl {
     protected Storage<?> createStorage(final Level level) {
         final TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
+            final TrackedStorageImpl<ItemResource> delegate = new TrackedStorageImpl<>(
+                    new InMemoryStorageImpl<>(),
+                    trackingRepository,
+                    System::currentTimeMillis
+            );
             return new PlatformStorage<>(
-                    new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+                    delegate,
                     ItemStorageType.INSTANCE,
                     trackingRepository,
                     PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
             );
         }
+        final LimitedStorageImpl<ItemResource> delegate = new LimitedStorageImpl<>(
+                new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+                variant.getCapacity()
+        );
         return new LimitedPlatformStorage<>(
-                new LimitedStorageImpl<>(
-                        new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                        variant.getCapacity()
-                ),
+                delegate,
                 ItemStorageType.INSTANCE,
                 trackingRepository,
                 PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged

@@ -9,7 +9,10 @@ import net.minecraft.resources.ResourceLocation;
 public class FilteredResourceFilterContainer extends ResourceFilterContainer {
     private final ResourceType allowedType;
 
-    public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, final int size, final Runnable listener, final ResourceType allowedType) {
+    public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                           final int size,
+                                           final Runnable listener,
+                                           final ResourceType allowedType) {
         super(resourceTypeRegistry, size, listener);
         this.allowedType = allowedType;
     }

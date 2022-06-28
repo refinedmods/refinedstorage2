@@ -27,7 +27,9 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     private final PlayerInventoryStorage playerInventoryStorage;
     private final SingleSlotStorage<ItemVariant> playerCursorStorage;
 
-    public ItemGridEventHandlerImpl(final AbstractContainerMenu containerMenu, final GridService<ItemResource> gridService, final Inventory playerInventory) {
+    public ItemGridEventHandlerImpl(final AbstractContainerMenu containerMenu,
+                                    final GridService<ItemResource> gridService,
+                                    final Inventory playerInventory) {
         this.containerMenu = containerMenu;
         this.gridService = gridService;
         this.playerInventoryStorage = PlayerInventoryStorage.of(playerInventory);
@@ -89,7 +91,9 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
 
     @Override
     public void onScroll(final ItemResource itemResource, final GridScrollMode mode, final int slotIndex) {
-        final Storage<ItemVariant> playerStorage = slotIndex >= 0 ? playerInventoryStorage.getSlot(slotIndex) : playerInventoryStorage;
+        final Storage<ItemVariant> playerStorage = slotIndex >= 0
+                ? playerInventoryStorage.getSlot(slotIndex)
+                : playerInventoryStorage;
         switch (mode) {
             case GRID_TO_INVENTORY -> handleGridToInventoryScroll(itemResource, playerStorage);
             case INVENTORY_TO_GRID -> handleInventoryToGridScroll(itemResource, playerStorage);
@@ -97,7 +101,8 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         }
     }
 
-    private void handleInventoryToGridScroll(final ItemResource itemResource, final Storage<ItemVariant> sourceStorage) {
+    private void handleInventoryToGridScroll(final ItemResource itemResource,
+                                             final Storage<ItemVariant> sourceStorage) {
         gridService.insert(itemResource, GridInsertMode.SINGLE_RESOURCE, (resource, amount, action, source) -> {
             try (final Transaction tx = Transaction.openOuter()) {
                 final ItemVariant itemVariant = toItemVariant(resource);
@@ -110,7 +115,8 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         });
     }
 
-    private void handleGridToInventoryScroll(final ItemResource itemResource, final Storage<ItemVariant> destinationStorage) {
+    private void handleGridToInventoryScroll(final ItemResource itemResource,
+                                             final Storage<ItemVariant> destinationStorage) {
         gridService.extract(itemResource, GridExtractMode.SINGLE_RESOURCE, (resource, amount, action, source) -> {
             final ItemVariant itemVariant = toItemVariant(resource);
             try (final Transaction tx = Transaction.openOuter()) {

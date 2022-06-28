@@ -27,7 +27,8 @@ import org.apache.logging.log4j.Logger;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEntity<ControllerNetworkNode> implements ExtendedMenuProvider {
+public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEntity<ControllerNetworkNode>
+        implements ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORED = "stored";
@@ -71,12 +72,16 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
     public void updateEnergyTypeInLevel(final BlockState state) {
         final ControllerEnergyType energyType = ControllerEnergyType.ofState(getNode().getState());
         final ControllerEnergyType inLevelEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
+        final boolean inTime = System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS;
 
-        if (energyType != inLevelEnergyType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
-            LOGGER.info("Energy type state change for block at {}: {} -> {}", getBlockPos(), inLevelEnergyType, energyType);
-
+        if (energyType != inLevelEnergyType && (lastTypeChanged == 0 || inTime)) {
+            LOGGER.info(
+                    "Energy type state change for block at {}: {} -> {}",
+                    getBlockPos(),
+                    inLevelEnergyType,
+                    energyType
+            );
             this.lastTypeChanged = System.currentTimeMillis();
-
             updateEnergyTypeInLevel(state, energyType);
         }
     }
@@ -105,7 +110,10 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
 
     @Override
     public Component getDisplayName() {
-        return createTranslation("block", type == ControllerType.CREATIVE ? "creative_controller" : "controller");
+        return createTranslation(
+                "block",
+                type == ControllerType.CREATIVE ? "creative_controller" : "controller"
+        );
     }
 
     @Override

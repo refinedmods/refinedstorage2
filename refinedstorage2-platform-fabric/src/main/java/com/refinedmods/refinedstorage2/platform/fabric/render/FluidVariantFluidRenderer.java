@@ -24,7 +24,11 @@ public class FluidVariantFluidRenderer extends FluidRendererImpl {
     }
 
     @Override
-    public void render(final PoseStack poseStack, final int x, final int y, final int z, final FluidResource fluidResource) {
+    public void render(final PoseStack poseStack,
+                       final int x,
+                       final int y,
+                       final int z,
+                       final FluidResource fluidResource) {
         final FluidVariant fluidVariant = getFluidVariantFromCache(fluidResource);
         final TextureAtlasSprite sprite = FluidVariantRendering.getSprite(fluidVariant);
         if (sprite != null) {
@@ -37,7 +41,9 @@ public class FluidVariantFluidRenderer extends FluidRendererImpl {
     public List<Component> getTooltip(final FluidResource fluidResource) {
         return FluidVariantRendering.getTooltip(
                 getFluidVariantFromCache(fluidResource),
-                Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL
+                Minecraft.getInstance().options.advancedItemTooltips
+                        ? TooltipFlag.Default.ADVANCED
+                        : TooltipFlag.Default.NORMAL
         );
     }
 }

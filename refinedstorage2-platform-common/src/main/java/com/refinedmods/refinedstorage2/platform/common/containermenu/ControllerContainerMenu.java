@@ -46,7 +46,10 @@ public class ControllerContainerMenu extends BaseContainerMenu implements Redsto
         addDataSlot(redstoneModeProperty);
     }
 
-    public ControllerContainerMenu(final int syncId, final Inventory playerInventory, final ControllerBlockEntity controller, final Player playerEntity) {
+    public ControllerContainerMenu(final int syncId,
+                                   final Inventory playerInventory,
+                                   final ControllerBlockEntity controller,
+                                   final Player playerEntity) {
         super(Menus.INSTANCE.getController(), syncId);
         this.controller = controller;
         this.serverStored = controller.getActualStored();
@@ -68,10 +71,19 @@ public class ControllerContainerMenu extends BaseContainerMenu implements Redsto
     @Override
     public void broadcastChanges() {
         super.broadcastChanges();
-        if (controller != null && (serverStored != controller.getActualStored() || serverCapacity != controller.getActualCapacity()) && energyUpdateRateLimiter.tryAcquire()) {
+        if (controller == null) {
+            return;
+        }
+        final boolean changed = serverStored != controller.getActualStored()
+                || serverCapacity != controller.getActualCapacity();
+        if (changed && energyUpdateRateLimiter.tryAcquire()) {
             serverStored = controller.getActualStored();
             serverCapacity = controller.getActualCapacity();
-            Platform.INSTANCE.getServerToClientCommunications().sendControllerEnergy((ServerPlayer) playerEntity, serverStored, serverCapacity);
+            Platform.INSTANCE.getServerToClientCommunications().sendControllerEnergy(
+                    (ServerPlayer) playerEntity,
+                    serverStored,
+                    serverCapacity
+            );
         }
     }
 

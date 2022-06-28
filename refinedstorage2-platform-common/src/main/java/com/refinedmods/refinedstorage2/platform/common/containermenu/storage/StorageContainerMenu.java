@@ -23,7 +23,9 @@ public abstract class StorageContainerMenu extends ResourceFilterableContainerMe
     private final TwoWaySyncProperty<AccessMode> accessModeProperty;
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
 
-    protected StorageContainerMenu(final MenuType<?> type, final int syncId, final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry) {
+    protected StorageContainerMenu(final MenuType<?> type,
+                                   final int syncId,
+                                   final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry) {
         super(type, syncId, resourceTypeRegistry);
 
         this.priorityProperty = TwoWaySyncProperty.integerForClient(0);
@@ -39,7 +41,12 @@ public abstract class StorageContainerMenu extends ResourceFilterableContainerMe
         addDataSlot(redstoneModeProperty);
     }
 
-    protected StorageContainerMenu(final MenuType<?> type, final int syncId, final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, final Player player, final StorageSettingsProvider storageSettingsProvider, final ResourceFilterContainer container) {
+    protected StorageContainerMenu(final MenuType<?> type,
+                                   final int syncId,
+                                   final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                   final Player player,
+                                   final StorageSettingsProvider storageSettingsProvider,
+                                   final ResourceFilterContainer container) {
         super(type, syncId, resourceTypeRegistry, player, container);
 
         this.priorityProperty = TwoWaySyncProperty.forServer(

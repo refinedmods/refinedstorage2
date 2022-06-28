@@ -11,7 +11,10 @@ import net.minecraft.world.item.ItemStack;
 
 public class ControllerModelPredicateProvider implements ClampedItemPropertyFunction {
     @Override
-    public float unclampedCall(final ItemStack stack, @Nullable final ClientLevel level, @Nullable final LivingEntity entity, final int seed) {
+    public float unclampedCall(final ItemStack stack,
+                               @Nullable final ClientLevel level,
+                               @Nullable final LivingEntity entity,
+                               final int seed) {
         return ControllerBlockItem.getPercentFull(stack);
     }
 }

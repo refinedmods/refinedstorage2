@@ -103,7 +103,11 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
                     88 - 6,
                     new SyntaxHighlighter(SyntaxHighlighterColors.DEFAULT_COLORS),
                     menu.getView(),
-                    new GridQueryParserImpl<>(LexerTokenMappings.DEFAULT_MAPPINGS, ParserOperatorMappings.DEFAULT_MAPPINGS, GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING),
+                    new GridQueryParserImpl<>(
+                            LexerTokenMappings.DEFAULT_MAPPINGS,
+                            ParserOperatorMappings.DEFAULT_MAPPINGS,
+                            GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING
+                    ),
                     SEARCH_FIELD_HISTORY
             );
         } else {
@@ -128,9 +132,14 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         addSideButton(new SizeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new AutoSelectedSideButtonWidget(getMenu(), this::renderComponentTooltip));
 
-        final OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
+        final OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry =
+                PlatformApi.INSTANCE.getGridSynchronizerRegistry();
         if (!synchronizerRegistry.isEmpty()) {
-            addSideButton(new SynchronizationSideButtonWidget(getMenu(), this::renderComponentTooltip, synchronizerRegistry.getAll()));
+            addSideButton(new SynchronizationSideButtonWidget(
+                    getMenu(),
+                    this::renderComponentTooltip,
+                    synchronizerRegistry.getAll()
+            ));
             searchField.addListener(this::trySynchronizeFromGrid);
         }
     }
@@ -163,7 +172,10 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         totalRows = (int) Math.ceil((float) getMenu().getView().getAll().size() / (float) COLUMNS);
         scrollbar.setEnabled(totalRows > visibleRows);
         final int rowsExcludingVisibleOnes = totalRows - visibleRows;
-        scrollbar.setMaxOffset(scrollbar.isScrollAnimation() ? ((rowsExcludingVisibleOnes) * 18) : rowsExcludingVisibleOnes);
+        final int maxOffset = scrollbar.isScrollAnimation()
+                ? ((rowsExcludingVisibleOnes) * 18)
+                : rowsExcludingVisibleOnes;
+        scrollbar.setMaxOffset(maxOffset);
     }
 
     private int calculateVisibleRows() {
@@ -185,7 +197,10 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     private boolean isOverStorageArea(final int mouseX, final int mouseY) {
         final int relativeMouseX = mouseX - leftPos;
         final int relativeMouseY = mouseY - topPos;
-        return relativeMouseX >= 7 && relativeMouseY >= TOP_HEIGHT && relativeMouseX <= 168 && relativeMouseY <= TOP_HEIGHT + (visibleRows * 18);
+        return relativeMouseX >= 7
+                && relativeMouseY >= TOP_HEIGHT
+                && relativeMouseX <= 168
+                && relativeMouseY <= TOP_HEIGHT + (visibleRows * 18);
     }
 
     @Override
@@ -224,7 +239,12 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         }
     }
 
-    private void renderRow(final PoseStack poseStack, final int mouseX, final int mouseY, final int x, final int y, final int row) {
+    private void renderRow(final PoseStack poseStack,
+                           final int mouseX,
+                           final int mouseY,
+                           final int x,
+                           final int y,
+                           final int row) {
         final int rowX = x + 7;
         final int rowY = y + TOP_HEIGHT + (row * 18) - getScrollbarOffset();
 
@@ -255,7 +275,13 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         return scrollbarOffset;
     }
 
-    private void renderColumnInRow(final PoseStack poseStack, final int mouseX, final int mouseY, final int rowX, final int rowY, final int idx, final int column) {
+    private void renderColumnInRow(final PoseStack poseStack,
+                                   final int mouseX,
+                                   final int mouseY,
+                                   final int rowX,
+                                   final int rowY,
+                                   final int idx,
+                                   final int column) {
         final GridView<R> view = getMenu().getView();
 
         final int slotX = rowX + 1 + (column * 18);
@@ -269,7 +295,11 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
         if (!getMenu().isActive()) {
             renderDisabledSlot(poseStack, slotX, slotY);
-        } else if (mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16 && isOverStorageArea(mouseX, mouseY)) {
+        } else if (mouseX >= slotX
+                && mouseY >= slotY
+                && mouseX <= slotX + 16
+                && mouseY <= slotY + 16
+                && isOverStorageArea(mouseX, mouseY)) {
             renderSelection(poseStack, slotX, slotY);
             if (resource != null) {
                 gridSlotNumber = idx;
@@ -277,14 +307,22 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         }
     }
 
-    private void renderResourceWithAmount(final PoseStack poseStack, final int slotX, final int slotY, final GridResource<R> resource) {
+    private void renderResourceWithAmount(final PoseStack poseStack,
+                                          final int slotX,
+                                          final int slotY,
+                                          final GridResource<R> resource) {
         renderResource(poseStack, slotX, slotY, resource);
         renderAmount(poseStack, slotX, slotY, resource);
     }
 
-    private void renderAmount(final PoseStack poseStack, final int slotX, final int slotY, final GridResource<R> resource) {
+    private void renderAmount(final PoseStack poseStack,
+                              final int slotX,
+                              final int slotY,
+                              final GridResource<R> resource) {
         final String text = getAmount(resource);
-        final int color = resource.isZeroed() ? Objects.requireNonNullElse(ChatFormatting.RED.getColor(), 15) : Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15);
+        final int color = resource.isZeroed()
+                ? Objects.requireNonNullElse(ChatFormatting.RED.getColor(), 15)
+                : Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15);
         renderAmount(poseStack, slotX, slotY, text, color);
     }
 
@@ -320,7 +358,8 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
             renderTooltip(poseStack, lines, mouseX, mouseY);
         } else {
             final List<FormattedCharSequence> smallLines = new ArrayList<>();
-            smallLines.add(createTranslation("misc", "total", getAmountInTooltip(resource)).withStyle(ChatFormatting.GRAY).getVisualOrderText());
+            smallLines.add(createTranslation("misc", "total", getAmountInTooltip(resource))
+                    .withStyle(ChatFormatting.GRAY).getVisualOrderText());
 
             view.getTrackedResource(resource.getResourceAmount().getResource()).ifPresent(entry -> smallLines.add(
                     getLastModifiedText(entry).withStyle(ChatFormatting.GRAY).getVisualOrderText()
@@ -344,15 +383,26 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
             translationKey += "s";
         }
 
-        return createTranslation("misc", "last_modified." + translationKey, lastModified.amount(), trackedResource.getSourceName());
+        return createTranslation(
+                "misc",
+                "last_modified." + translationKey,
+                lastModified.amount(),
+                trackedResource.getSourceName()
+        );
     }
 
     private boolean isModifiedJustNow(final LastModified lastModified) {
-        return lastModified.type() == LastModified.Type.SECOND && lastModified.amount() <= MODIFIED_JUST_NOW_MAX_SECONDS;
+        return lastModified.type() == LastModified.Type.SECOND
+                && lastModified.amount() <= MODIFIED_JUST_NOW_MAX_SECONDS;
     }
 
-    protected void renderAmount(final PoseStack poseStack, final int x, final int y, final String amount, final int color) {
-        final boolean large = (minecraft != null && minecraft.isEnforceUnicode()) || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
+    protected void renderAmount(final PoseStack poseStack,
+                                final int x,
+                                final int y,
+                                final String amount,
+                                final int color) {
+        final boolean large = (minecraft != null && minecraft.isEnforceUnicode())
+                || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
 
         poseStack.pushPose();
         poseStack.translate(x, y, 300);
@@ -415,15 +465,24 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         final Matrix4f matrix4f = poseStack.last().pose();
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 4, tooltipX + tooltipWidth + 3, tooltipY - 3, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY + tooltipHeight + 3, tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 4, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3, tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 4, tooltipY - 3, tooltipX - 3, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, tooltipX + tooltipWidth + 3, tooltipY - 3, tooltipX + tooltipWidth + 4, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3 + 1, tooltipX - 3 + 1, tooltipY + tooltipHeight + 3 - 1, 400, 1347420415, 1344798847);
-        fillGradient(matrix4f, bufferBuilder, tooltipX + tooltipWidth + 2, tooltipY - 3 + 1, tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3 - 1, 400, 1347420415, 1344798847);
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3, tooltipX + tooltipWidth + 3, tooltipY - 3 + 1, 400, 1347420415, 1347420415);
-        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY + tooltipHeight + 2, tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3, 400, 1344798847, 1344798847);
+        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 4,
+                tooltipX + tooltipWidth + 3, tooltipY - 3, 400, -267386864, -267386864);
+        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY + tooltipHeight + 3,
+                tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 4, 400, -267386864, -267386864);
+        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3,
+                tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
+        fillGradient(matrix4f, bufferBuilder, tooltipX - 4, tooltipY - 3,
+                tooltipX - 3, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
+        fillGradient(matrix4f, bufferBuilder, tooltipX + tooltipWidth + 3, tooltipY - 3,
+                tooltipX + tooltipWidth + 4, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
+        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3 + 1,
+                tooltipX - 3 + 1, tooltipY + tooltipHeight + 3 - 1, 400, 1347420415, 1344798847);
+        fillGradient(matrix4f, bufferBuilder, tooltipX + tooltipWidth + 2, tooltipY - 3 + 1,
+                tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3 - 1, 400, 1347420415, 1344798847);
+        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3,
+                tooltipX + tooltipWidth + 3, tooltipY - 3 + 1, 400, 1347420415, 1347420415);
+        fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY + tooltipHeight + 2,
+                tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3, 400, 1344798847, 1344798847);
         RenderSystem.enableDepthTest();
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
@@ -431,7 +490,9 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         tesselator.end();
         RenderSystem.disableBlend();
         RenderSystem.enableTexture();
-        final MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
+        final MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(
+                Tesselator.getInstance().getBuilder()
+        );
         poseStack.translate(0.0D, 0.0D, 400.0D);
 
         for (int i = 0; i < lines.size(); ++i) {
@@ -446,7 +507,18 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
             poseStack.pushPose();
             poseStack.scale(smallTextScale, smallTextScale, 1);
 
-            font.drawInBatch(smallLine, tooltipX / smallTextScale, tooltipY / smallTextScale, -1, true, poseStack.last().pose(), immediate, false, 0, 15728880);
+            font.drawInBatch(
+                    smallLine,
+                    tooltipX / smallTextScale,
+                    tooltipY / smallTextScale,
+                    -1,
+                    true,
+                    poseStack.last().pose(),
+                    immediate,
+                    false,
+                    0,
+                    15728880
+            );
             poseStack.popPose();
 
             tooltipY += 9;
@@ -484,7 +556,8 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
             return true;
         }
 
-        if (isOverStorageArea((int) mouseX, (int) mouseY) && !carriedStack.isEmpty() && (clickedButton == 0 || clickedButton == 1)) {
+        if (isOverStorageArea((int) mouseX, (int) mouseY)
+                && !carriedStack.isEmpty() && (clickedButton == 0 || clickedButton == 1)) {
             mouseClickedInGrid(clickedButton);
             return true;
         }
@@ -540,12 +613,14 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
     @Override
     public boolean charTyped(final char unknown1, final int unknown2) {
-        return (searchField != null && searchField.charTyped(unknown1, unknown2)) || super.charTyped(unknown1, unknown2);
+        return (searchField != null && searchField.charTyped(unknown1, unknown2))
+                || super.charTyped(unknown1, unknown2);
     }
 
     @Override
     public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
-        if (searchField != null && (searchField.keyPressed(key, scanCode, modifiers) || searchField.canConsumeInput())) {
+        if (searchField != null &&
+                (searchField.keyPressed(key, scanCode, modifiers) || searchField.canConsumeInput())) {
             return true;
         }
 

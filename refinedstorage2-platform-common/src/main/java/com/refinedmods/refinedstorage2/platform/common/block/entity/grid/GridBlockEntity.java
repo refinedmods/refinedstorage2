@@ -19,8 +19,12 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public abstract class GridBlockEntity<T> extends InternalNetworkNodeContainerBlockEntity<GridNetworkNode<T>> implements ExtendedMenuProvider {
-    protected GridBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state, final StorageChannelType<T> storageChannelType) {
+public abstract class GridBlockEntity<T> extends InternalNetworkNodeContainerBlockEntity<GridNetworkNode<T>>
+        implements ExtendedMenuProvider {
+    protected GridBlockEntity(final BlockEntityType<?> type,
+                              final BlockPos pos,
+                              final BlockState state,
+                              final StorageChannelType<T> storageChannelType) {
         super(type, pos, state, new GridNetworkNode<>(
                 Platform.INSTANCE.getConfig().getGrid().getEnergyUsage(),
                 storageChannelType

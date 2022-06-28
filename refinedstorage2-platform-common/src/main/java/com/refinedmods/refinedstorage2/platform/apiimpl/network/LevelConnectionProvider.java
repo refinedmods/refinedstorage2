@@ -28,7 +28,8 @@ public class LevelConnectionProvider implements ConnectionProvider {
     }
 
     @Override
-    public Connections findConnections(final NetworkNodeContainer pivot, final Set<NetworkNodeContainer> existingConnections) {
+    public Connections findConnections(final NetworkNodeContainer pivot,
+                                       final Set<NetworkNodeContainer> existingConnections) {
         final ScanState scanState = new ScanState(convertToScanEntries(existingConnections));
 
         // TODO: Convert to queue
@@ -84,7 +85,10 @@ public class LevelConnectionProvider implements ConnectionProvider {
 
         scanState.removedEntries.remove(entry);
 
-        final Set<NetworkNodeContainer> connections = findConnectionsAt(level, ((NetworkNodeContainerBlockEntity<?>) entry.getContainer()).getBlockPos());
+        final Set<NetworkNodeContainer> connections = findConnectionsAt(
+                level,
+                ((NetworkNodeContainerBlockEntity<?>) entry.getContainer()).getBlockPos()
+        );
         for (final NetworkNodeContainer connection : connections) {
             depthScan(scanState, ((NetworkNodeContainerBlockEntity<?>) connection).getBlockPos());
         }
@@ -114,8 +118,8 @@ public class LevelConnectionProvider implements ConnectionProvider {
         // this causes a problematic situation that the block entity IS gone,
         // but that the #getBlockEntity() call here with type IMMEDIATE would recreate the block entity because
         // the block is still there.
-        // If the block entity is returned here again even if it is removed, the preconditions in NetworkBuilder will fail
-        // as the "removed" block entity/connection would still be present.
+        // If the block entity is returned here again even if it is removed, the preconditions in NetworkBuilder will
+        // fail as the "removed" block entity/connection would still be present.
         return level.getChunkAt(pos).getBlockEntity(pos, LevelChunk.EntityCreationType.CHECK);
     }
 

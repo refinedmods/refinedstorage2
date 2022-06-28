@@ -28,7 +28,12 @@ public class DiskDriveModelGeometry extends BasicModelGeometry<DiskDriveModelGeo
     }
 
     @Override
-    public BakedModel bake(final IModelConfiguration owner, final ModelBakery bakery, final Function<Material, TextureAtlasSprite> spriteGetter, final ModelState modelTransform, final ItemOverrides overrides, final ResourceLocation modelLocation) {
+    public BakedModel bake(final IModelConfiguration owner,
+                           final ModelBakery bakery,
+                           final Function<Material, TextureAtlasSprite> spriteGetter,
+                           final ModelState modelTransform,
+                           final ItemOverrides overrides,
+                           final ResourceLocation modelLocation) {
         return new DiskDriveBakedModel(
                 Objects.requireNonNull(bakery.bake(BASE_MODEL, modelTransform, spriteGetter)),
                 Objects.requireNonNull(bakery.bake(DISK_MODEL, modelTransform, spriteGetter)),

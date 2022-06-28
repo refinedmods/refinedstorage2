@@ -23,11 +23,13 @@ public class AccessModeSideButtonWidget extends SideButtonWidget {
     private final TooltipRenderer tooltipRenderer;
     private final Map<AccessMode, List<Component>> tooltips = new EnumMap<>(AccessMode.class);
 
-    public AccessModeSideButtonWidget(final AccessModeAccessor accessModeAccessor, final TooltipRenderer tooltipRenderer) {
+    public AccessModeSideButtonWidget(final AccessModeAccessor accessModeAccessor,
+                                      final TooltipRenderer tooltipRenderer) {
         super(createPressAction(accessModeAccessor));
         this.accessModeAccessor = accessModeAccessor;
         this.tooltipRenderer = tooltipRenderer;
-        Arrays.stream(AccessMode.values()).forEach(accessMode -> tooltips.put(accessMode, calculateTooltip(accessMode)));
+        Arrays.stream(AccessMode.values()).forEach(accessMode ->
+                tooltips.put(accessMode, calculateTooltip(accessMode)));
     }
 
     private static OnPress createPressAction(final AccessModeAccessor accessModeAccessor) {
@@ -37,7 +39,10 @@ public class AccessModeSideButtonWidget extends SideButtonWidget {
     private List<Component> calculateTooltip(final AccessMode accessMode) {
         final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "access_mode"));
-        lines.add(createTranslation("gui", "access_mode." + accessMode.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
+        lines.add(createTranslation(
+                "gui",
+                "access_mode." + accessMode.toString().toLowerCase(Locale.ROOT)
+        ).withStyle(ChatFormatting.GRAY));
         return lines;
     }
 
