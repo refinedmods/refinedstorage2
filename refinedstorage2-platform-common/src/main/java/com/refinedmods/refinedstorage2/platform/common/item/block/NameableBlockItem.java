@@ -19,7 +19,7 @@ public abstract class NameableBlockItem extends BlockItem {
     }
 
     @Override
-    public Component getName(ItemStack stack) {
+    public Component getName(final ItemStack stack) {
         return name;
     }
 }

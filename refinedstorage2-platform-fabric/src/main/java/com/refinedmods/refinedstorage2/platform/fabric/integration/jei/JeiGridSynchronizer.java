@@ -26,7 +26,7 @@ public class JeiGridSynchronizer extends DefaultGridSynchronizer {
     }
 
     @Override
-    public void synchronizeFromGrid(String text) {
+    public void synchronizeFromGrid(final String text) {
         jeiProxy.setSearchFieldText(text);
     }
 

@@ -84,7 +84,7 @@ public class TwoWaySyncProperty<T> extends DataSlot {
     }
 
     @Override
-    public void set(int value) {
+    public void set(final int value) {
         final T deserializedValue = deserializer.apply(value);
         changed.accept(deserializedValue);
         this.value = deserializedValue;

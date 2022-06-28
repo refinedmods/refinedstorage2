@@ -28,7 +28,7 @@ public class FluidGridBlock extends GridBlock implements ColorableBlock<FluidGri
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
         return new FluidGridBlockEntity(pos, state);
     }
 }

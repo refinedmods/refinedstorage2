@@ -10,7 +10,7 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
     @Nullable
     private EnergyStorage energyStorage;
 
-    public void setEnergyStorage(@Nullable EnergyStorage energyStorage) {
+    public void setEnergyStorage(@Nullable final EnergyStorage energyStorage) {
         this.energyStorage = energyStorage;
     }
 
@@ -61,7 +61,7 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
     }
 
     @Override
-    public long receive(long amount, Action action) {
+    public long receive(final long amount, final Action action) {
         if (energyStorage == null) {
             return 0L;
         }
@@ -69,7 +69,7 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
     }
 
     @Override
-    public long extract(long amount, Action action) {
+    public long extract(final long amount, final Action action) {
         if (energyStorage == null) {
             return 0L;
         }

@@ -77,7 +77,7 @@ public class CursorStorage implements IItemHandler {
     }
 
     @Override
-    public int getSlotLimit(int slot) {
+    public int getSlotLimit(final int slot) {
         return 64;
     }
 

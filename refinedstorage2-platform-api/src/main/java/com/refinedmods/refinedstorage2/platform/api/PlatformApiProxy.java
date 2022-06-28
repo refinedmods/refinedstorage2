@@ -36,7 +36,7 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public PlatformStorageRepository getStorageRepository(Level level) {
+    public PlatformStorageRepository getStorageRepository(final Level level) {
         return ensureLoaded().getStorageRepository(level);
     }
 
@@ -56,7 +56,7 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public MutableComponent createTranslation(String category, String value, Object... args) {
+    public MutableComponent createTranslation(final String category, final String value, final Object... args) {
         return ensureLoaded().createTranslation(category, value, args);
     }
 
@@ -76,12 +76,12 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level, Runnable callback) {
+    public void requestNetworkNodeInitialization(final NetworkNodeContainer container, final Level level, final Runnable callback) {
         ensureLoaded().requestNetworkNodeInitialization(container, level, callback);
     }
 
     @Override
-    public void requestNetworkNodeRemoval(NetworkNodeContainer container, Level level) {
+    public void requestNetworkNodeRemoval(final NetworkNodeContainer container, final Level level) {
         ensureLoaded().requestNetworkNodeRemoval(container, level);
     }
 

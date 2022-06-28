@@ -40,7 +40,7 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
         return StorageDiskState.NORMAL;
     }
 
-    private StorageDiskState getStateWithCapacity(long capacity) {
+    private StorageDiskState getStateWithCapacity(final long capacity) {
         final double fullness = (double) delegate.getStored() / capacity;
 
         if (fullness >= 1D) {

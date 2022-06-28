@@ -52,7 +52,7 @@ public class NetworkBuilder {
     }
 
     @Nullable
-    private Network mergeNetworkOfNode(Network newNetwork, NetworkNodeContainer entry, NetworkNode entryNode) {
+    private Network mergeNetworkOfNode(final Network newNetwork, final NetworkNodeContainer entry, final NetworkNode entryNode) {
         final Network oldNetwork = entryNode.getNetwork();
         entryNode.setNetwork(newNetwork);
         newNetwork.addContainer(entry);

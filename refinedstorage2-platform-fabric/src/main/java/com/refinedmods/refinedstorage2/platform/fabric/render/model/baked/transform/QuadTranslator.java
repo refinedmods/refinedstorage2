@@ -15,7 +15,7 @@ public class QuadTranslator implements RenderContext.QuadTransform {
         this.z = z;
     }
 
-    public boolean transform(MutableQuadView quad) {
+    public boolean transform(final MutableQuadView quad) {
         final Vector3f target = new Vector3f();
         for (int i = 0; i < 4; ++i) {
             quad.copyPos(i, target);

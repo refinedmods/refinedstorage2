@@ -34,7 +34,7 @@ public abstract class FluidGridResourceFactory implements Function<ResourceAmoun
                 .collect(Collectors.toSet());
     }
 
-    private String getModId(FluidResource fluid) {
+    private String getModId(final FluidResource fluid) {
         return Registry.FLUID.getKey(fluid.fluid()).getNamespace();
     }
 

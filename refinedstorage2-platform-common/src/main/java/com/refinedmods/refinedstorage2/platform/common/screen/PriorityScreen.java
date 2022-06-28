@@ -85,11 +85,12 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
         addIncrementButtons(INCREMENTS_BOTTOM, leftPos + INCREMENT_BUTTON_X, topPos + INCREMENT_BUTTON_BOTTOM_Y);
     }
 
-    private void addIncrementButtons(final int[] increments, int x, final int y) {
-        for (final int increment : increments) {
+    private void addIncrementButtons(final int[] increments, final int x, final int y) {
+        for (int i = 0; i < increments.length; ++i) {
+            final int increment = increments[i];
             final Component text = Component.literal((increment > 0 ? "+" : "") + increment);
-            addRenderableWidget(new Button(x, y, INCREMENT_BUTTON_WIDTH, 20, text, btn -> changeAmount(increment)));
-            x += INCREMENT_BUTTON_WIDTH + 3;
+            final int xx = x + ((INCREMENT_BUTTON_WIDTH + 3) * i);
+            addRenderableWidget(new Button(xx, y, INCREMENT_BUTTON_WIDTH, 20, text, btn -> changeAmount(increment)));
         }
     }
 

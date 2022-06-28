@@ -17,7 +17,7 @@ public class DiskDriveState {
         this.states[id] = state;
     }
 
-    public StorageDiskState getState(int id) {
+    public StorageDiskState getState(final int id) {
         return states[id];
     }
 
