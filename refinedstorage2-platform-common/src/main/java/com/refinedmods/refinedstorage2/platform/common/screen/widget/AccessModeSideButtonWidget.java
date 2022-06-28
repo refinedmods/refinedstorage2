@@ -35,7 +35,7 @@ public class AccessModeSideButtonWidget extends SideButtonWidget {
     }
 
     private List<Component> calculateTooltip(final AccessMode accessMode) {
-        List<Component> lines = new ArrayList<>();
+        final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "access_mode"));
         lines.add(createTranslation("gui", "access_mode." + accessMode.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
         return lines;

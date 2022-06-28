@@ -69,13 +69,13 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
     }
 
     private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
-        int x = FILTER_SLOT_X + (18 * i);
+        final int x = FILTER_SLOT_X + (18 * i);
         return new ResourceFilterSlot(resourceFilterContainer, i, x, FILTER_SLOT_Y);
     }
 
     private Slot createDiskSlot(final SimpleContainer diskInventory, final int i) {
-        int x = DISK_SLOT_X + ((i % 2) * 18);
-        int y = DISK_SLOT_Y + Math.floorDiv(i, 2) * 18;
+        final int x = DISK_SLOT_X + ((i % 2) * 18);
+        final int y = DISK_SLOT_Y + Math.floorDiv(i, 2) * 18;
         return new ValidatedSlot(diskInventory, i, x, y, stack -> stack.getItem() instanceof StorageDiskItem);
     }
 

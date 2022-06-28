@@ -128,7 +128,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         addSideButton(new SizeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new AutoSelectedSideButtonWidget(getMenu(), this::renderComponentTooltip));
 
-        OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
+        final OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
         if (!synchronizerRegistry.isEmpty()) {
             addSideButton(new SynchronizationSideButtonWidget(getMenu(), this::renderComponentTooltip, synchronizerRegistry.getAll()));
             searchField.addListener(this::trySynchronizeFromGrid);
@@ -149,7 +149,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         if (searchField == null) {
             return;
         }
-        String text = getMenu().getSynchronizer().getTextToSynchronizeToGrid();
+        final String text = getMenu().getSynchronizer().getTextToSynchronizeToGrid();
         if (text == null || searchField.getValue().equals(text)) {
             return;
         }
@@ -162,7 +162,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         }
         totalRows = (int) Math.ceil((float) getMenu().getView().getAll().size() / (float) COLUMNS);
         scrollbar.setEnabled(totalRows > visibleRows);
-        int rowsExcludingVisibleOnes = totalRows - visibleRows;
+        final int rowsExcludingVisibleOnes = totalRows - visibleRows;
         scrollbar.setMaxOffset(scrollbar.isScrollAnimation() ? ((rowsExcludingVisibleOnes) * 18) : rowsExcludingVisibleOnes);
     }
 
@@ -378,14 +378,14 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         final float smallTextScale = (minecraft != null && minecraft.isEnforceUnicode()) ? 1F : 0.7F;
 
         int tooltipWidth = 0;
-        for (FormattedCharSequence text : lines) {
-            int textWidth = font.width(text);
+        for (final FormattedCharSequence text : lines) {
+            final int textWidth = font.width(text);
             if (textWidth > tooltipWidth) {
                 tooltipWidth = textWidth;
             }
         }
-        for (FormattedCharSequence text : smallLines) {
-            int textWidth = (int) (font.width(text) * smallTextScale);
+        for (final FormattedCharSequence text : smallLines) {
+            final int textWidth = (int) (font.width(text) * smallTextScale);
             if (textWidth > tooltipWidth) {
                 tooltipWidth = textWidth;
             }
@@ -410,11 +410,11 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         }
 
         poseStack.pushPose();
-        Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder bufferBuilder = tesselator.getBuilder();
+        final Tesselator tesselator = Tesselator.getInstance();
+        final BufferBuilder bufferBuilder = tesselator.getBuilder();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        Matrix4f matrix4f = poseStack.last().pose();
+        final Matrix4f matrix4f = poseStack.last().pose();
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 4, tooltipX + tooltipWidth + 3, tooltipY - 3, 400, -267386864, -267386864);
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY + tooltipHeight + 3, tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 4, 400, -267386864, -267386864);
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3, tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
@@ -431,18 +431,18 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         tesselator.end();
         RenderSystem.disableBlend();
         RenderSystem.enableTexture();
-        MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
+        final MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
         poseStack.translate(0.0D, 0.0D, 400.0D);
 
         for (int i = 0; i < lines.size(); ++i) {
-            FormattedCharSequence text = lines.get(i);
+            final FormattedCharSequence text = lines.get(i);
             if (text != null) {
                 font.drawInBatch(text, tooltipX, tooltipY, -1, true, matrix4f, immediate, false, 0, 15728880);
             }
             tooltipY += 12;
         }
 
-        for (FormattedCharSequence smallLine : smallLines) {
+        for (final FormattedCharSequence smallLine : smallLines) {
             poseStack.pushPose();
             poseStack.scale(smallTextScale, smallTextScale, 1);
 
@@ -532,7 +532,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
 
     private void mouseScrolledInGrid(final boolean up) {
         getMenu().getView().setPreventSorting(true);
-        GridResource<R> resource = getMenu().getView().getAll().get(gridSlotNumber);
+        final GridResource<R> resource = getMenu().getView().getAll().get(gridSlotNumber);
         mouseScrolledInGrid(up, resource);
     }
 

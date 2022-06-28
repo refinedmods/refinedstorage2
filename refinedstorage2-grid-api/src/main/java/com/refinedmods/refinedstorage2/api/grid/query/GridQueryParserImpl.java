@@ -75,7 +75,7 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
 
     private Predicate<GridResource<T>> implicitAnd(final List<Node> nodes) throws GridQueryParserException {
         final List<Predicate<GridResource<T>>> conditions = new ArrayList<>();
-        for (Node node : nodes) {
+        for (final Node node : nodes) {
             conditions.add(parseNode(node));
         }
         return and(conditions);

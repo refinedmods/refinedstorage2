@@ -36,9 +36,10 @@ public class StorageInfoRequestPacket {
     }
 
     private static void handle(final StorageInfoRequestPacket packet, final ServerPlayer player) {
-        StorageInfo info = PlatformApi.INSTANCE
+        final StorageInfo info = PlatformApi.INSTANCE
                 .getStorageRepository(player.getCommandSenderWorld())
                 .getInfo(packet.id);
+
         Platform.INSTANCE.getServerToClientCommunications().sendStorageInfoResponse(player, packet.id, info);
     }
 }

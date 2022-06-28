@@ -33,7 +33,7 @@ public class AutoSelectedSideButtonWidget extends SideButtonWidget {
     }
 
     private List<Component> calculateTooltip(final boolean autoSelected) {
-        List<Component> lines = new ArrayList<>();
+        final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "grid.auto_selected"));
         lines.add(Component.translatable("gui." + (autoSelected ? "yes" : "no")).withStyle(ChatFormatting.GRAY));
         return lines;

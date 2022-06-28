@@ -47,7 +47,7 @@ public abstract class StorageBlockContainerMenu extends StorageContainerMenu {
     }
 
     private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
-        int x = FILTER_SLOT_X + (18 * i);
+        final int x = FILTER_SLOT_X + (18 * i);
         return new ResourceFilterSlot(resourceFilterContainer, i, x, FILTER_SLOT_Y);
     }
 

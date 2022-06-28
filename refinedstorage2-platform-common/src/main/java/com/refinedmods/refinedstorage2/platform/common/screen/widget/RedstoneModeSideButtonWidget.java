@@ -35,7 +35,7 @@ public class RedstoneModeSideButtonWidget extends SideButtonWidget {
     }
 
     private List<Component> calculateTooltip(final RedstoneMode type) {
-        List<Component> lines = new ArrayList<>();
+        final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "redstone_mode"));
         lines.add(createTranslation("gui", "redstone_mode." + type.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
         return lines;

@@ -35,7 +35,7 @@ public class SynchronizationSideButtonWidget extends SideButtonWidget {
     }
 
     private List<Component> calculateTooltip(final GridSynchronizer synchronizer) {
-        List<Component> lines = new ArrayList<>();
+        final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "grid.synchronizer"));
         lines.add(synchronizer.getTitle().withStyle(ChatFormatting.GRAY));
         return lines;

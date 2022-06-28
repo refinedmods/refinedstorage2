@@ -84,7 +84,7 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
 
     @Override
     public void clicked(final int id, final int dragType, final ClickType actionType, final Player player) {
-        Slot slot = id >= 0 && id < slots.size() ? getSlot(id) : null;
+        final Slot slot = id >= 0 && id < slots.size() ? getSlot(id) : null;
         if (currentResourceType != null && slot instanceof ResourceFilterSlot resourceFilterSlot) {
             resourceFilterSlot.change(getCarried(), currentResourceType);
         } else {

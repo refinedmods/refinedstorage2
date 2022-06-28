@@ -72,7 +72,7 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     private static void sendToServer(final ResourceLocation id, final Consumer<FriendlyByteBuf> bufConsumer) {
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         bufConsumer.accept(buf);
         ClientPlayNetworking.send(id, buf);
     }

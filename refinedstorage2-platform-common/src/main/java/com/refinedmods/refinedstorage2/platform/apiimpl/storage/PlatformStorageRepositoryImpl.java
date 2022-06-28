@@ -72,7 +72,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
 
     public void read(final CompoundTag tag) {
         final ListTag storages = tag.getList(TAG_STORAGES, Tag.TAG_COMPOUND);
-        for (Tag storageTag : storages) {
+        for (final Tag storageTag : storages) {
             final UUID id = ((CompoundTag) storageTag).getUUID(TAG_STORAGE_ID);
             final ResourceLocation typeIdentifier = new ResourceLocation(((CompoundTag) storageTag).getString(TAG_STORAGE_TYPE));
             final CompoundTag data = ((CompoundTag) storageTag).getCompound(TAG_STORAGE_DATA);

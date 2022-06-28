@@ -43,7 +43,7 @@ public class PrioritySideButtonWidget extends SideButtonWidget {
 
     @Override
     public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
-        List<Component> lines = new ArrayList<>();
+        final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "priority"));
         lines.add(Component.literal(String.valueOf(priorityAccessor.getPriority())).withStyle(ChatFormatting.GRAY));
         tooltipRenderer.render(poseStack, lines, mouseX, mouseY);

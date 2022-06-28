@@ -69,10 +69,10 @@ public class GridExtractPacket {
         if (player != null) {
             final AbstractContainerMenu menu = player.containerMenu;
             if (menu instanceof ItemGridEventHandler itemGridEventHandler) {
-                ItemResource itemResource = PacketUtil.readItemResource(Objects.requireNonNull(packet.buf));
+                final ItemResource itemResource = PacketUtil.readItemResource(Objects.requireNonNull(packet.buf));
                 ctx.get().enqueueWork(() -> itemGridEventHandler.onExtract(itemResource, packet.mode, packet.cursor));
             } else if (menu instanceof FluidGridEventHandler fluidGridEventHandler) {
-                FluidResource fluidResource = PacketUtil.readFluidResource(Objects.requireNonNull(packet.buf));
+                final FluidResource fluidResource = PacketUtil.readFluidResource(Objects.requireNonNull(packet.buf));
                 ctx.get().enqueueWork(() -> fluidGridEventHandler.onExtract(fluidResource, packet.mode, packet.cursor));
             }
         }

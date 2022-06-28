@@ -36,7 +36,7 @@ public abstract class NetworkNodeImpl implements NetworkNode {
         if (network == null || (activenessProvider != null && !activenessProvider.getAsBoolean())) {
             return false;
         }
-        long stored = network.getComponent(EnergyNetworkComponent.class).getStored();
+        final long stored = network.getComponent(EnergyNetworkComponent.class).getStored();
         return stored >= getEnergyUsage();
     }
 

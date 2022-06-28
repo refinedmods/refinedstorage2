@@ -125,7 +125,7 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
     @Override
     public boolean mouseScrolled(final double mouseX, final double mouseY, final double scrollDelta) {
         if (enabled) {
-            int scrollDirection = Math.max(Math.min(-(int) scrollDelta, 1), -1);
+            final int scrollDirection = Math.max(Math.min(-(int) scrollDelta, 1), -1);
             if (scrollAnimation) {
                 startScrollAnimation(scrollDirection);
             } else {

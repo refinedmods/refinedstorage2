@@ -77,10 +77,10 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
         this.view.setSortingDirection(Platform.INSTANCE.getConfig().getGrid().getSortingDirection());
         this.view.setSortingType(Platform.INSTANCE.getConfig().getGrid().getSortingType());
 
-        int amountOfResources = buf.readInt();
+        final int amountOfResources = buf.readInt();
         for (int i = 0; i < amountOfResources; ++i) {
-            ResourceAmount<T> resourceAmount = readResourceAmount(buf);
-            TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
+            final ResourceAmount<T> resourceAmount = readResourceAmount(buf);
+            final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
             view.loadResource(resourceAmount.getResource(), resourceAmount.getAmount(), trackedResource);
         }
         this.view.sort();

@@ -102,7 +102,7 @@ public class NetworkBuilder {
 
     @Nullable
     private NetworkNodeContainer findPivotNodeForRemove(final ConnectionProvider connectionProvider, final NetworkNodeContainer removedContainer, final Set<NetworkNodeContainer> containers) {
-        for (NetworkNodeContainer entry : connectionProvider.sort(containers)) {
+        for (final NetworkNodeContainer entry : connectionProvider.sort(containers)) {
             if (!entry.equals(removedContainer)) {
                 return entry;
             }
@@ -124,7 +124,7 @@ public class NetworkBuilder {
             e.getNode().setNetwork(null);
         });
 
-        Set<Network> networksResultingOfSplit = removedEntries
+        final Set<Network> networksResultingOfSplit = removedEntries
                 .stream()
                 .filter(e -> !e.equals(removedEntry))
                 .map(e -> {

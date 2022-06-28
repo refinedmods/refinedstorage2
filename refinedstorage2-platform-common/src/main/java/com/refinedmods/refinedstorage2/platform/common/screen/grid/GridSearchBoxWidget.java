@@ -45,14 +45,14 @@ public class GridSearchBoxWidget<T> extends SearchFieldWidget implements GridSea
                 return invalidText(text);
             }
 
-            Lexer lexer = createLexer(text);
+            final Lexer lexer = createLexer(text);
             try {
                 lexer.scan();
             } catch (LexerException e) {
                 return invalidText(text);
             }
 
-            List<SyntaxHighlightedCharacter> characters = syntaxHighlighter.highlight(text, lexer.getTokens());
+            final List<SyntaxHighlightedCharacter> characters = syntaxHighlighter.highlight(text, lexer.getTokens());
             return convertCharactersToOrderedText(characters);
         });
 
