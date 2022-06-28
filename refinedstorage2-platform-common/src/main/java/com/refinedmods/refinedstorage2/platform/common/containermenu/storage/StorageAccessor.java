@@ -10,7 +10,12 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceTyp
 
 import java.util.Set;
 
-public interface StorageAccessor extends PriorityAccessor, FilterModeAccessor, ExactModeAccessor, AccessModeAccessor, RedstoneModeAccessor, ResourceTypeAccessor {
+public interface StorageAccessor extends PriorityAccessor,
+        FilterModeAccessor,
+        ExactModeAccessor,
+        AccessModeAccessor,
+        RedstoneModeAccessor,
+        ResourceTypeAccessor {
     long getStored();
 
     long getCapacity();

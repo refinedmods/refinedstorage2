@@ -20,7 +20,9 @@ public class GridItemUpdatePacket {
     @Nullable
     private final TrackedResource trackedResource;
 
-    public GridItemUpdatePacket(final ItemResource resource, final long amount, @Nullable final TrackedResource trackedResource) {
+    public GridItemUpdatePacket(final ItemResource resource,
+                                final long amount,
+                                @Nullable final TrackedResource trackedResource) {
         this.resource = resource;
         this.amount = amount;
         this.trackedResource = trackedResource;

@@ -37,11 +37,21 @@ public abstract class StorageDiskItemImpl extends Item implements StorageDiskIte
     @Override
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
-        return StorageItemHelper.tryDisassembly(level, player, stack, createPrimaryDisassemblyByproduct(stack.getCount()), createSecondaryDisassemblyByproduct(stack.getCount()));
+        return StorageItemHelper.tryDisassembly(
+                level,
+                player,
+                stack,
+                createPrimaryDisassemblyByproduct(stack.getCount()),
+                createSecondaryDisassemblyByproduct(stack.getCount())
+        );
     }
 
     @Override
-    public void inventoryTick(final ItemStack stack, final Level level, final Entity entity, final int slot, final boolean selected) {
+    public void inventoryTick(final ItemStack stack,
+                              final Level level,
+                              final Entity entity,
+                              final int slot,
+                              final boolean selected) {
         super.inventoryTick(stack, level, entity, slot, selected);
 
         if (!level.isClientSide() && !stack.hasTag() && entity instanceof Player) {

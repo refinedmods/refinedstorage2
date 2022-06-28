@@ -17,7 +17,10 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 public class ControllerBlock extends NetworkNodeContainerBlock implements ColorableBlock<ControllerBlock> {
-    public static final EnumProperty<ControllerEnergyType> ENERGY_TYPE = EnumProperty.create("energy_type", ControllerEnergyType.class);
+    public static final EnumProperty<ControllerEnergyType> ENERGY_TYPE = EnumProperty.create(
+            "energy_type",
+            ControllerEnergyType.class
+    );
 
     private final ControllerType type;
     private final MutableComponent name;
@@ -49,8 +52,14 @@ public class ControllerBlock extends NetworkNodeContainerBlock implements Colora
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level, final BlockState state, final BlockEntityType<T> type) {
-        return (type == BlockEntities.INSTANCE.getController() || type == BlockEntities.INSTANCE.getCreativeController()) && !level.isClientSide ? (level2, pos, state2, blockEntity) -> ControllerBlockEntity.serverTick(state2, (ControllerBlockEntity) blockEntity) : null;
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level,
+                                                                  final BlockState state,
+                                                                  final BlockEntityType<T> type) {
+        if ((type == BlockEntities.INSTANCE.getController() || type == BlockEntities.INSTANCE.getCreativeController())
+                && !level.isClientSide) {
+            return (l, p, s, be) -> ControllerBlockEntity.serverTick(s, (ControllerBlockEntity) be);
+        }
+        return null;
     }
 
     @Override

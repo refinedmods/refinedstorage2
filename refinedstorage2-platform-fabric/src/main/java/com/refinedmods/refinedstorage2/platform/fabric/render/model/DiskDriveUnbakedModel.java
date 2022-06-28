@@ -32,7 +32,10 @@ public class DiskDriveUnbakedModel implements BasicUnbakedModel {
 
     @Override
     @Nullable
-    public BakedModel bake(final ModelBakery loader, final Function<Material, TextureAtlasSprite> textureGetter, final ModelState rotationContainer, final ResourceLocation modelId) {
+    public BakedModel bake(final ModelBakery loader,
+                           final Function<Material, TextureAtlasSprite> textureGetter,
+                           final ModelState rotationContainer,
+                           final ResourceLocation modelId) {
         return new DiskDriveBakedModel(
                 Objects.requireNonNull(loader.bake(BASE_MODEL, rotationContainer)),
                 Objects.requireNonNull(loader.bake(DISK_MODEL, rotationContainer)),

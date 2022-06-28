@@ -31,7 +31,9 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendGridFluidExtract(final FluidResource fluidResource, final GridExtractMode mode, final boolean cursor) {
+    public void sendGridFluidExtract(final FluidResource fluidResource,
+                                     final GridExtractMode mode,
+                                     final boolean cursor) {
         sendToServer(PacketIds.GRID_EXTRACT, buf -> {
             GridExtractPacket.writeMode(buf, mode);
             buf.writeBoolean(cursor);
@@ -63,7 +65,9 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
 
     @Override
     public void sendResourceTypeChange(final ResourceType type) {
-        PlatformApi.INSTANCE.getResourceTypeRegistry().getId(type).ifPresent(id -> sendToServer(PacketIds.RESOURCE_TYPE_CHANGE, buf -> buf.writeResourceLocation(id)));
+        PlatformApi.INSTANCE.getResourceTypeRegistry()
+                .getId(type)
+                .ifPresent(id -> sendToServer(PacketIds.RESOURCE_TYPE_CHANGE, buf -> buf.writeResourceLocation(id)));
     }
 
     @Override

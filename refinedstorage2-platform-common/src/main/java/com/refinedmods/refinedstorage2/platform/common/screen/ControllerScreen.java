@@ -33,7 +33,15 @@ public class ControllerScreen extends BaseScreen<ControllerContainerMenu> {
         this.imageWidth = 176;
         this.imageHeight = 189;
 
-        this.progressWidget = new ProgressWidget(80, 20, 16, 70, this::getPercentageFull, this::renderComponentTooltip, this::createTooltip);
+        this.progressWidget = new ProgressWidget(
+                80,
+                20,
+                16,
+                70,
+                this::getPercentageFull,
+                this::renderComponentTooltip,
+                this::createTooltip
+        );
         addRenderableWidget(progressWidget);
     }
 

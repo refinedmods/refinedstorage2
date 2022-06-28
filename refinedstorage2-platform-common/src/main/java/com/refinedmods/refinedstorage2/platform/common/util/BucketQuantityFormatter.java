@@ -7,8 +7,10 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public final class BucketQuantityFormatter {
-    private static final DecimalFormat LESS_THAN_1_BUCKET_FORMATTER = new DecimalFormat("0.#", DecimalFormatSymbols.getInstance(Locale.US));
-    private static final DecimalFormat FORMATTER = new DecimalFormat("#,###.#", DecimalFormatSymbols.getInstance(Locale.US));
+    private static final DecimalFormat LESS_THAN_1_BUCKET_FORMATTER =
+            new DecimalFormat("0.#", DecimalFormatSymbols.getInstance(Locale.US));
+    private static final DecimalFormat FORMATTER =
+            new DecimalFormat("#,###.#", DecimalFormatSymbols.getInstance(Locale.US));
 
     private final long bucketAmount;
 

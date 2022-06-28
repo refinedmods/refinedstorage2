@@ -35,9 +35,13 @@ public class Parser {
         Node lhs = parseAtom();
 
         Token cur = currentOrNull();
-        while (cur != null && cur.type() == TokenType.BIN_OP && operatorMappings.getOperator(cur).level() >= minPrecedence) {
+        while (cur != null
+                && cur.type() == TokenType.BIN_OP
+                && operatorMappings.getOperator(cur).level() >= minPrecedence) {
             final Operator currentOp = operatorMappings.getOperator(cur);
-            final int nextMinPrecedence = currentOp.associativity() == Associativity.LEFT ? (currentOp.level() + 1) : currentOp.level();
+            final int nextMinPrecedence = currentOp.associativity() == Associativity.LEFT
+                    ? (currentOp.level() + 1)
+                    : currentOp.level();
 
             next();
             if (!isNotEof()) {
@@ -77,7 +81,8 @@ public class Parser {
                     throw new ParserException("Expected ')'", tokens.get(tokens.size() - 1));
                 }
 
-                if (currentAfterExpression.type() == TokenType.PAREN_CLOSE && ")".equals(currentAfterExpression.content())) {
+                if (currentAfterExpression.type() == TokenType.PAREN_CLOSE
+                        && ")".equals(currentAfterExpression.content())) {
                     next();
                     break;
                 }

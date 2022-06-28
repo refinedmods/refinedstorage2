@@ -39,7 +39,10 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     private final PlayerMainInvWrapper playerInventoryStorage;
     private final ExtractableStorage<ItemResource> bucketStorage;
 
-    public FluidGridEventHandlerImpl(final AbstractContainerMenu menu, final Inventory playerInventory, final GridService<FluidResource> gridService, final ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridEventHandlerImpl(final AbstractContainerMenu menu,
+                                     final Inventory playerInventory,
+                                     final GridService<FluidResource> gridService,
+                                     final ExtractableStorage<ItemResource> bucketStorage) {
         this.menu = menu;
         this.playerInventory = playerInventory;
         this.gridService = gridService;
@@ -115,7 +118,10 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         }
     }
 
-    private void extract(final FluidResource fluidResource, final GridExtractMode mode, final boolean cursor, final boolean bucketFromInventory) {
+    private void extract(final FluidResource fluidResource,
+                         final GridExtractMode mode,
+                         final boolean cursor,
+                         final boolean bucketFromInventory) {
         final IFluidHandlerItem destination = getFluidStorage(toItemStack(BUCKET_ITEM_RESOURCE, 1));
         if (destination == null) {
             return; // shouldn't happen
@@ -142,10 +148,20 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         if (cursor) {
             menu.setCarried(destination.getContainer());
         } else {
-            final ItemStack remainder = ItemHandlerHelper.insertItem(playerInventoryStorage, destination.getContainer(), false);
+            final ItemStack remainder = ItemHandlerHelper.insertItem(
+                    playerInventoryStorage,
+                    destination.getContainer(),
+                    false
+            );
             if (!remainder.isEmpty()) {
-                // TODO: This isn't ideal, but dealing without transactions on the inventory doesn't make it exactly easy.
-                Containers.dropItemStack(playerInventory.player.getCommandSenderWorld(), playerInventory.player.getX(), playerInventory.player.getY(), playerInventory.player.getZ(), destination.getContainer());
+                // TODO: This isn't ideal, but dealing without transactions on the inventory doesn't make it easy.
+                Containers.dropItemStack(
+                        playerInventory.player.getCommandSenderWorld(),
+                        playerInventory.player.getX(),
+                        playerInventory.player.getY(),
+                        playerInventory.player.getZ(),
+                        destination.getContainer()
+                );
             }
         }
     }

@@ -40,7 +40,10 @@ public class LexerTokenMappings {
             final int contentLength = mapping.value().length();
 
             if ((position.getEndIndex() + contentLength <= source.content().length()) &&
-                    (content.equals(source.content().substring(position.getEndIndex(), position.getEndIndex() + contentLength)))) {
+                    (content.equals(source.content().substring(
+                            position.getEndIndex(),
+                            position.getEndIndex() + contentLength
+                    )))) {
                 position.advance(contentLength);
 
                 return mapping.type();

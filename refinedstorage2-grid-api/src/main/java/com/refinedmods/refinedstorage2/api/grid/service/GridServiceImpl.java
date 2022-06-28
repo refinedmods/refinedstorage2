@@ -22,9 +22,13 @@ public class GridServiceImpl<T> implements GridService<T> {
      * @param storageChannel   the storage channel to act on
      * @param source           the source performing the grid interactions
      * @param maxCountProvider provider for the maximum amount of a given resource
-     * @param singleAmount     amount that needs to be extracted when using {@link GridInsertMode#SINGLE_RESOURCE} or {@link GridExtractMode#SINGLE_RESOURCE}
+     * @param singleAmount     amount that needs to be extracted when using
+     *                         {@link GridInsertMode#SINGLE_RESOURCE} or {@link GridExtractMode#SINGLE_RESOURCE}
      */
-    public GridServiceImpl(final StorageChannel<T> storageChannel, final Source source, final Function<T, Long> maxCountProvider, final long singleAmount) {
+    public GridServiceImpl(final StorageChannel<T> storageChannel,
+                           final Source source,
+                           final Function<T, Long> maxCountProvider,
+                           final long singleAmount) {
         this.storageChannel = storageChannel;
         this.source = source;
         this.maxCountProvider = maxCountProvider;
@@ -41,9 +45,19 @@ public class GridServiceImpl<T> implements GridService<T> {
         if (extractedFromSource == 0) {
             return;
         }
-        final long amountInsertedIntoDestination = destination.insert(resource, extractedFromSource, Action.SIMULATE, source);
+        final long amountInsertedIntoDestination = destination.insert(
+                resource,
+                extractedFromSource,
+                Action.SIMULATE,
+                source
+        );
         if (amountInsertedIntoDestination > 0) {
-            extractedFromSource = storageChannel.extract(resource, amountInsertedIntoDestination, Action.EXECUTE, source);
+            extractedFromSource = storageChannel.extract(
+                    resource,
+                    amountInsertedIntoDestination,
+                    Action.EXECUTE,
+                    source
+            );
             destination.insert(resource, extractedFromSource, Action.EXECUTE, source);
         }
     }
@@ -73,7 +87,12 @@ public class GridServiceImpl<T> implements GridService<T> {
         if (extractedFromSource == 0) {
             return;
         }
-        final long amountInsertedIntoDestination = storageChannel.insert(resource, extractedFromSource, Action.SIMULATE, this.source);
+        final long amountInsertedIntoDestination = storageChannel.insert(
+                resource,
+                extractedFromSource,
+                Action.SIMULATE,
+                this.source
+        );
         if (amountInsertedIntoDestination > 0) {
             extractedFromSource = source.extract(resource, amountInsertedIntoDestination, Action.EXECUTE, this.source);
             if (extractedFromSource > 0) {

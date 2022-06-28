@@ -16,11 +16,20 @@ public interface ServerToClientCommunications {
 
     void sendGridActiveness(ServerPlayer player, boolean active);
 
-    void sendGridFluidUpdate(ServerPlayer player, FluidResource fluidResource, long change, @Nullable TrackedResource trackedResource);
+    void sendGridFluidUpdate(ServerPlayer player,
+                             FluidResource fluidResource,
+                             long change,
+                             @Nullable TrackedResource trackedResource);
 
-    void sendGridItemUpdate(ServerPlayer player, ItemResource itemResource, long change, @Nullable TrackedResource trackedResource);
+    void sendGridItemUpdate(ServerPlayer player,
+                            ItemResource itemResource,
+                            long change,
+                            @Nullable TrackedResource trackedResource);
 
-    void sendResourceFilterSlotUpdate(ServerPlayer player, ResourceFilterContainer resourceFilterContainer, int slotIndex, int containerIndex);
+    void sendResourceFilterSlotUpdate(ServerPlayer player,
+                                      ResourceFilterContainer resourceFilterContainer,
+                                      int slotIndex,
+                                      int containerIndex);
 
     void sendStorageInfoResponse(ServerPlayer player, UUID id, StorageInfo storageInfo);
 }

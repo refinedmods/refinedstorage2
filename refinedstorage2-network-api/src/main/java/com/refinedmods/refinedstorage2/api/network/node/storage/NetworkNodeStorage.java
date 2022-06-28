@@ -41,14 +41,18 @@ class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwa
 
     @Override
     public long insert(final T resource, final long amount, final Action action, final Source source) {
-        if (storage == null || networkNode.getAccessMode() == AccessMode.EXTRACT || !networkNode.isActive() || !networkNode.isAllowed(resource)) {
+        if (storage == null
+                || networkNode.getAccessMode() == AccessMode.EXTRACT
+                || !networkNode.isActive()
+                || !networkNode.isAllowed(resource)) {
             return 0;
         }
         return storage.insert(resource, amount, action, source);
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource, final Class<? extends Source> sourceType) {
+    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
+                                                                     final Class<? extends Source> sourceType) {
         return storage instanceof TrackedStorage<T> trackedStorage
                 ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType)
                 : Optional.empty();

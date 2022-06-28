@@ -27,16 +27,22 @@ public abstract class ResourceFilterableContainerMenu extends BaseContainerMenu 
     @Nullable
     private ResourceType currentResourceType;
 
-    protected ResourceFilterableContainerMenu(final MenuType<?> type, final int syncId, final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry, final Player player, final ResourceFilterContainer container) {
+    protected ResourceFilterableContainerMenu(final MenuType<?> type,
+                                              final int syncId,
+                                              final OrderedRegistry<ResourceLocation, ResourceType> resourceRegistry,
+                                              final Player player,
+                                              final ResourceFilterContainer container) {
         super(type, syncId);
-        this.resourceTypeRegistry = resourceTypeRegistry;
+        this.resourceTypeRegistry = resourceRegistry;
         this.player = player;
         this.currentResourceType = container.determineDefaultType();
     }
 
-    protected ResourceFilterableContainerMenu(final MenuType<?> type, final int syncId, final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry) {
+    protected ResourceFilterableContainerMenu(final MenuType<?> type,
+                                              final int syncId,
+                                              final OrderedRegistry<ResourceLocation, ResourceType> resourceRegistry) {
         super(type, syncId);
-        this.resourceTypeRegistry = resourceTypeRegistry;
+        this.resourceTypeRegistry = resourceRegistry;
         this.player = null;
     }
 

@@ -34,7 +34,9 @@ public class StorageNetworkComponent implements NetworkComponent {
         }
     }
 
-    private <T> void tryAddStorageFromProviderToChannel(final StorageProvider provider, final StorageChannelType<T> type, final StorageChannel<T> channel) {
+    private <T> void tryAddStorageFromProviderToChannel(final StorageProvider provider,
+                                                        final StorageChannelType<T> type,
+                                                        final StorageChannel<T> channel) {
         provider.getStorageForChannel(type).ifPresent(storage -> {
             LOGGER.info("Adding source {} to channel {} from provider {}", storage, type, provider);
             channel.addSource(storage);
@@ -46,12 +48,16 @@ public class StorageNetworkComponent implements NetworkComponent {
     public void onContainerRemoved(final NetworkNodeContainer container) {
         if (container.getNode() instanceof StorageProvider provider) {
             for (final Map.Entry<StorageChannelType<?>, StorageChannel<?>> entry : channels.entrySet()) {
-                tryRemoveStorageFromProviderFromChannel(provider, (StorageChannelType) entry.getKey(), entry.getValue());
+                final StorageChannelType storageChannelType = entry.getKey();
+                final StorageChannel<?> storageChannel = entry.getValue();
+                tryRemoveStorageFromProviderFromChannel(provider, storageChannelType, storageChannel);
             }
         }
     }
 
-    private <T> void tryRemoveStorageFromProviderFromChannel(final StorageProvider provider, final StorageChannelType<T> type, final StorageChannel<T> channel) {
+    private <T> void tryRemoveStorageFromProviderFromChannel(final StorageProvider provider,
+                                                             final StorageChannelType<T> type,
+                                                             final StorageChannel<T> channel) {
         provider.getStorageForChannel(type).ifPresent(storage -> {
             LOGGER.info("Removing source {} from channel {} of provider {}", storage, type, provider);
             channel.removeSource(storage);

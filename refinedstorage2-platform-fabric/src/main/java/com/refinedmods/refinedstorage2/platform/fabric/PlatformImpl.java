@@ -50,10 +50,19 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public final class PlatformImpl extends AbstractPlatform {
-    private static final TagKey<Item> WRENCH_TAG = TagKey.create(Registry.ITEM.key(), new ResourceLocation("c", "wrenches"));
+    private static final TagKey<Item> WRENCH_TAG = TagKey.create(
+            Registry.ITEM.key(),
+            new ResourceLocation("c", "wrenches")
+    );
 
     public PlatformImpl() {
-        super(new ServerToClientCommunicationsImpl(), new ClientToServerCommunicationsImpl(), new MenuOpenerImpl(), new BucketQuantityFormatter(FluidConstants.BUCKET), new FluidVariantFluidRenderer());
+        super(
+                new ServerToClientCommunicationsImpl(),
+                new ClientToServerCommunicationsImpl(),
+                new MenuOpenerImpl(),
+                new BucketQuantityFormatter(FluidConstants.BUCKET),
+                new FluidVariantFluidRenderer()
+        );
     }
 
     @Override
@@ -78,16 +87,24 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public boolean isKeyDown(final KeyMapping keyMapping) {
-        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), ((KeyMappingAccessor) keyMapping).getKey().getValue());
+        return InputConstants.isKeyDown(
+                Minecraft.getInstance().getWindow().getWindow(),
+                ((KeyMappingAccessor) keyMapping).getKey().getValue()
+        );
     }
 
     @Override
-    public ItemGridEventHandler createItemGridEventHandler(final AbstractContainerMenu containerMenu, final GridService<ItemResource> gridService, final Inventory playerInventory) {
+    public ItemGridEventHandler createItemGridEventHandler(final AbstractContainerMenu containerMenu,
+                                                           final GridService<ItemResource> gridService,
+                                                           final Inventory playerInventory) {
         return new ItemGridEventHandlerImpl(containerMenu, gridService, playerInventory);
     }
 
     @Override
-    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu, final GridService<FluidResource> gridService, final Inventory playerInventory, final ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu,
+                                                             final GridService<FluidResource> gridService,
+                                                             final Inventory playerInventory,
+                                                             final ExtractableStorage<ItemResource> bucketStorage) {
         return new FluidGridEventHandlerImpl(containerMenu, gridService, playerInventory, bucketStorage);
     }
 

@@ -42,6 +42,7 @@ public class StorageInfoResponsePacket {
         if (player == null) {
             return;
         }
-        ((ClientStorageRepository) PlatformApi.INSTANCE.getStorageRepository(player.level)).setInfo(packet.id, packet.stored, packet.capacity);
+        ((ClientStorageRepository) PlatformApi.INSTANCE.getStorageRepository(player.level))
+                .setInfo(packet.id, packet.stored, packet.capacity);
     }
 }

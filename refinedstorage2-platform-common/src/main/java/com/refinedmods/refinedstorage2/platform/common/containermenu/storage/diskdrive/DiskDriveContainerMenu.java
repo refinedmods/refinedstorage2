@@ -52,13 +52,27 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
         initializeResourceFilterSlots(buf);
     }
 
-    public DiskDriveContainerMenu(final int syncId, final Player player, final SimpleContainer diskInventory, final ResourceFilterContainer resourceFilterContainer, final DiskDriveBlockEntity diskDrive, final StorageDiskInfoAccessor storageInfoAccessor) {
-        super(Menus.INSTANCE.getDiskDrive(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry(), player, diskDrive, resourceFilterContainer);
+    public DiskDriveContainerMenu(final int syncId,
+                                  final Player player,
+                                  final SimpleContainer diskInventory,
+                                  final ResourceFilterContainer resourceFilterContainer,
+                                  final DiskDriveBlockEntity diskDrive,
+                                  final StorageDiskInfoAccessor storageInfoAccessor) {
+        super(
+                Menus.INSTANCE.getDiskDrive(),
+                syncId,
+                PlatformApi.INSTANCE.getResourceTypeRegistry(),
+                player,
+                diskDrive,
+                resourceFilterContainer
+        );
         this.storageInfoAccessor = storageInfoAccessor;
         addSlots(player, diskInventory, resourceFilterContainer);
     }
 
-    private void addSlots(final Player player, final SimpleContainer diskInventory, final ResourceFilterContainer resourceFilterContainer) {
+    private void addSlots(final Player player,
+                          final SimpleContainer diskInventory,
+                          final ResourceFilterContainer resourceFilterContainer) {
         for (int i = 0; i < DiskDriveNetworkNode.DISK_COUNT; ++i) {
             diskSlots.add(addSlot(createDiskSlot(diskInventory, i)));
         }
@@ -93,7 +107,8 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
 
     @Override
     public Set<StorageTooltipHelper.TooltipOption> getTooltipOptions() {
-        final Set<StorageTooltipHelper.TooltipOption> options = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
+        final Set<StorageTooltipHelper.TooltipOption> options =
+                EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
         if (hasCapacity()) {
             options.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
         }

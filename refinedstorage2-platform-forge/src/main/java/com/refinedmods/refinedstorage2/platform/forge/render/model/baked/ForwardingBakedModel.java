@@ -22,7 +22,9 @@ public abstract class ForwardingBakedModel implements BakedModel {
 
     @Override
     @SuppressWarnings("deprecation")
-    public List<BakedQuad> getQuads(@Nullable final BlockState state, @Nullable final Direction side, final RandomSource rand) {
+    public List<BakedQuad> getQuads(@Nullable final BlockState state,
+                                    @Nullable final Direction side,
+                                    final RandomSource rand) {
         return baseModel.getQuads(state, side, rand);
     }
 
@@ -65,7 +67,8 @@ public abstract class ForwardingBakedModel implements BakedModel {
 
     @Override
     @SuppressWarnings("deprecation")
-    public BakedModel handlePerspective(final ItemTransforms.TransformType cameraTransformType, final PoseStack poseStack) {
+    public BakedModel handlePerspective(final ItemTransforms.TransformType cameraTransformType,
+                                        final PoseStack poseStack) {
         return baseModel.handlePerspective(cameraTransformType, poseStack);
     }
 }

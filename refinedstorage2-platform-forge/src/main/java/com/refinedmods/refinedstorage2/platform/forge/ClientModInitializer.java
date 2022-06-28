@@ -59,14 +59,22 @@ public final class ClientModInitializer {
 
     private static void setRenderLayers() {
         ItemBlockRenderTypes.setRenderLayer(Blocks.INSTANCE.getCable(), RenderType.cutout());
-        Blocks.INSTANCE.getGrid().values().forEach(block -> ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout()));
-        Blocks.INSTANCE.getFluidGrid().values().forEach(block -> ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout()));
-        Blocks.INSTANCE.getController().values().forEach(block -> ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout()));
-        Blocks.INSTANCE.getCreativeController().values().forEach(block -> ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout()));
+        Blocks.INSTANCE.getGrid().values().forEach(block ->
+                ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout()));
+        Blocks.INSTANCE.getFluidGrid().values().forEach(block ->
+                ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout()));
+        Blocks.INSTANCE.getController().values().forEach(block ->
+                ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout()));
+        Blocks.INSTANCE.getCreativeController().values().forEach(block ->
+                ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout()));
     }
 
     private static void registerModelPredicates() {
-        Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemProperties.register(controllerBlockItem.get(), createIdentifier("stored_in_controller"), new ControllerModelPredicateProvider()));
+        Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemProperties.register(
+                controllerBlockItem.get(),
+                createIdentifier("stored_in_controller"),
+                new ControllerModelPredicateProvider()
+        ));
     }
 
     private static void registerScreens() {
@@ -84,7 +92,8 @@ public final class ClientModInitializer {
     }
 
     private static void registerBlockEntityRenderer() {
-        BlockEntityRenderers.register(BlockEntities.INSTANCE.getDiskDrive(), ctx -> new DiskDriveBlockEntityRendererImpl<>());
+        BlockEntityRenderers.register(BlockEntities.INSTANCE.getDiskDrive(),
+                ctx -> new DiskDriveBlockEntityRendererImpl<>());
     }
 
     private static void registerKeyBindings() {
@@ -112,14 +121,26 @@ public final class ClientModInitializer {
     private static void registerJeiGridSynchronizers() {
         LOGGER.info("Activating JEI grid synchronizers");
         final JeiProxy jeiProxy = new JeiProxy();
-        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei"), new JeiGridSynchronizer(jeiProxy, false));
-        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("jei_two_way"), new JeiGridSynchronizer(jeiProxy, true));
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
+                createIdentifier("jei"),
+                new JeiGridSynchronizer(jeiProxy, false)
+        );
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
+                createIdentifier("jei_two_way"),
+                new JeiGridSynchronizer(jeiProxy, true)
+        );
     }
 
     private static void registerReiGridSynchronizers() {
         LOGGER.info("Activating REI grid synchronizers");
         final ReiProxy reiProxy = new ReiProxy();
-        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei"), new ReiGridSynchronizer(reiProxy, false));
-        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(createIdentifier("rei_two_way"), new ReiGridSynchronizer(reiProxy, true));
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
+                createIdentifier("rei"),
+                new ReiGridSynchronizer(reiProxy, false)
+        );
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
+                createIdentifier("rei_two_way"),
+                new ReiGridSynchronizer(reiProxy, true)
+        );
     }
 }

@@ -72,7 +72,8 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource, final Class<? extends Source> sourceType) {
+    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
+                                                                     final Class<? extends Source> sourceType) {
         return storage.findTrackedResourceBySourceType(resource, sourceType);
     }
 }

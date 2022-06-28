@@ -11,11 +11,13 @@ import net.minecraft.resources.ResourceLocation;
 
 public interface BasicUnbakedModel extends UnbakedModel {
     @Override
-    default Collection<Material> getMaterials(final Function<ResourceLocation, UnbakedModel> unbakedModelGetter, final Set<Pair<String, String>> unresolvedTextureReferences) {
+    default Collection<Material> getMaterials(final Function<ResourceLocation, UnbakedModel> unbakedModelGetter,
+                                              final Set<Pair<String, String>> unresolvedTextureReferences) {
         return getDependencies()
                 .stream()
                 .map(unbakedModelGetter)
-                .flatMap(unbakedModel -> unbakedModel.getMaterials(unbakedModelGetter, unresolvedTextureReferences).stream())
+                .flatMap(unbakedModel -> unbakedModel.getMaterials(unbakedModelGetter, unresolvedTextureReferences)
+                        .stream())
                 .toList();
     }
 }

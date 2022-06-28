@@ -12,7 +12,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.material.Fluid;
 
-public abstract class FluidGridResourceFactory implements Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> {
+public abstract class FluidGridResourceFactory
+        implements Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> {
     @Override
     public GridResource<FluidResource> apply(final ResourceAmount<FluidResource> resourceAmount) {
         final String name = getName(resourceAmount.getResource());

@@ -24,7 +24,8 @@ public class InMemoryTrackedStorageRepository<T> implements TrackedStorageReposi
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource, final Class<? extends Source> sourceType) {
+    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
+                                                                     final Class<? extends Source> sourceType) {
         final Map<T, TrackedResource> resourceMap = map.get(sourceType);
         if (resourceMap != null) {
             return Optional.ofNullable(resourceMap.get(resource));

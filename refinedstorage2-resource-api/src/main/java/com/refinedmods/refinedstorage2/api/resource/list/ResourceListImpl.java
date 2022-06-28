@@ -70,17 +70,25 @@ public class ResourceListImpl<T> implements ResourceList<T> {
         return Optional.empty();
     }
 
-    private Optional<ResourceListOperationResult<T>> removePartly(final long amount, final ResourceAmount<T> resourceAmount, final UUID id) {
+    private Optional<ResourceListOperationResult<T>> removePartly(final long amount,
+                                                                  final ResourceAmount<T> resourceAmount,
+                                                                  final UUID id) {
         resourceAmount.decrement(amount);
 
         return Optional.of(new ResourceListOperationResult<>(resourceAmount, -amount, id, true));
     }
 
-    private Optional<ResourceListOperationResult<T>> removeCompletely(final ResourceAmount<T> resourceAmount, final UUID id) {
+    private Optional<ResourceListOperationResult<T>> removeCompletely(final ResourceAmount<T> resourceAmount,
+                                                                      final UUID id) {
         index.remove(id);
         entries.remove(resourceAmount.getResource());
 
-        return Optional.of(new ResourceListOperationResult<>(resourceAmount, -resourceAmount.getAmount(), id, false));
+        return Optional.of(new ResourceListOperationResult<>(
+                resourceAmount,
+                -resourceAmount.getAmount(),
+                id,
+                false
+        ));
     }
 
     @Override

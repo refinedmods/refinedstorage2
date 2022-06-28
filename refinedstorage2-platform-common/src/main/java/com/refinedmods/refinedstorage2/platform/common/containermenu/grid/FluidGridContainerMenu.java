@@ -40,11 +40,24 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
         this.fluidGridEventHandler = new ClientFluidGridEventHandler();
     }
 
-    public FluidGridContainerMenu(final int syncId, final Inventory playerInventory, final FluidGridBlockEntity grid, final ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridContainerMenu(final int syncId,
+                                  final Inventory playerInventory,
+                                  final FluidGridBlockEntity grid,
+                                  final ExtractableStorage<ItemResource> bucketStorage) {
         super(Menus.INSTANCE.getFluidGrid(), syncId, playerInventory, grid, createView());
         grid.addWatcher(this);
-        final GridService<FluidResource> gridService = new GridServiceImpl<>(Objects.requireNonNull(storageChannel), new PlayerSource(playerInventory.player), resource -> Long.MAX_VALUE, Platform.INSTANCE.getBucketAmount());
-        this.fluidGridEventHandler = Platform.INSTANCE.createFluidGridEventHandler(this, gridService, playerInventory, bucketStorage);
+        final GridService<FluidResource> gridService = new GridServiceImpl<>(
+                Objects.requireNonNull(storageChannel),
+                new PlayerSource(playerInventory.player),
+                resource -> Long.MAX_VALUE,
+                Platform.INSTANCE.getBucketAmount()
+        );
+        this.fluidGridEventHandler = Platform.INSTANCE.createFluidGridEventHandler(
+                this,
+                gridService,
+                playerInventory,
+                bucketStorage
+        );
     }
 
     @Override
@@ -74,7 +87,8 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
                 (ServerPlayer) playerInventory.player,
                 resource,
                 change.change(),
-                Objects.requireNonNull(storageChannel).findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
+                Objects.requireNonNull(storageChannel)
+                        .findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
         );
     }
 

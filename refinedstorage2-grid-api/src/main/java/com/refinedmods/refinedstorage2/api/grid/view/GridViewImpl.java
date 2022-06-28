@@ -43,7 +43,8 @@ public class GridViewImpl<T> implements GridView<T> {
      * @param gridResourceFactory a factory that transforms a resource amount to a grid resource
      * @param backingList         the backing list
      */
-    public GridViewImpl(final Function<ResourceAmount<T>, GridResource<T>> gridResourceFactory, final ResourceList<T> backingList) {
+    public GridViewImpl(final Function<ResourceAmount<T>, GridResource<T>> gridResourceFactory,
+                        final ResourceList<T> backingList) {
         this.gridResourceFactory = gridResourceFactory;
         this.identitySort = GridSortingType.NAME.getComparator().apply(this);
         this.backingList = backingList;
@@ -161,7 +162,9 @@ public class GridViewImpl<T> implements GridView<T> {
         }
     }
 
-    private void handleChangeForExistingResource(final T resource, final ResourceListOperationResult<T> operationResult, final GridResource<T> gridResource) {
+    private void handleChangeForExistingResource(final T resource,
+                                                 final ResourceListOperationResult<T> operationResult,
+                                                 final GridResource<T> gridResource) {
         if (!preventSorting) {
             if (!filter.test(gridResource) || !operationResult.available()) {
                 viewList.remove(gridResource);
@@ -177,7 +180,9 @@ public class GridViewImpl<T> implements GridView<T> {
         }
     }
 
-    private void handleChangeForZeroedResource(final T resource, final ResourceListOperationResult<T> operationResult, final GridResource<T> oldGridResource) {
+    private void handleChangeForZeroedResource(final T resource,
+                                               final ResourceListOperationResult<T> operationResult,
+                                               final GridResource<T> oldGridResource) {
         final GridResource<T> newResource = gridResourceFactory.apply(operationResult.resourceAmount());
 
         resourceIndex.put(resource, newResource);

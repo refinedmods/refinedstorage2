@@ -23,7 +23,8 @@ public class RedstoneModeSideButtonWidget extends SideButtonWidget {
     private final TooltipRenderer tooltipRenderer;
     private final RedstoneModeAccessor redstoneModeAccessor;
 
-    public RedstoneModeSideButtonWidget(final RedstoneModeAccessor redstoneModeAccessor, final TooltipRenderer tooltipRenderer) {
+    public RedstoneModeSideButtonWidget(final RedstoneModeAccessor redstoneModeAccessor,
+                                        final TooltipRenderer tooltipRenderer) {
         super(createPressAction(redstoneModeAccessor));
         this.tooltipRenderer = tooltipRenderer;
         this.redstoneModeAccessor = redstoneModeAccessor;
@@ -37,7 +38,8 @@ public class RedstoneModeSideButtonWidget extends SideButtonWidget {
     private List<Component> calculateTooltip(final RedstoneMode type) {
         final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "redstone_mode"));
-        lines.add(createTranslation("gui", "redstone_mode." + type.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
+        lines.add(createTranslation("gui", "redstone_mode." + type.toString().toLowerCase(Locale.ROOT))
+                .withStyle(ChatFormatting.GRAY));
         return lines;
     }
 

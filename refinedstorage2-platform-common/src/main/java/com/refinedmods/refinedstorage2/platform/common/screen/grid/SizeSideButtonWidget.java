@@ -38,7 +38,8 @@ public class SizeSideButtonWidget extends SideButtonWidget {
     private List<Component> calculateTooltip(final GridSize size) {
         final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "grid.size"));
-        lines.add(createTranslation("gui", "grid.size." + size.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
+        lines.add(createTranslation("gui", "grid.size." + size.toString().toLowerCase(Locale.ROOT))
+                .withStyle(ChatFormatting.GRAY));
         return lines;
     }
 

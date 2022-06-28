@@ -17,7 +17,11 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(final MinecraftServer server, final ServerPlayer player, final ServerGamePacketListenerImpl handler, final FriendlyByteBuf buf, final PacketSender responseSender) {
+    public void receive(final MinecraftServer server,
+                        final ServerPlayer player,
+                        final ServerGamePacketListenerImpl handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
         final GridExtractMode mode = getMode(buf.readByte());
         final boolean cursor = buf.readBoolean();
 

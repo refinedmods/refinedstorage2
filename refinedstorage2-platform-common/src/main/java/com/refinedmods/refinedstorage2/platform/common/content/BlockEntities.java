@@ -33,8 +33,10 @@ public final class BlockEntities {
     private Supplier<BlockEntityType<ControllerBlockEntity>> controller;
     @Nullable
     private Supplier<BlockEntityType<ControllerBlockEntity>> creativeController;
-    private final Map<ItemStorageType.Variant, Supplier<BlockEntityType<ItemStorageBlockBlockEntity>>> itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
-    private final Map<FluidStorageType.Variant, Supplier<BlockEntityType<FluidStorageBlockBlockEntity>>> fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
+    private final Map<ItemStorageType.Variant, Supplier<BlockEntityType<ItemStorageBlockBlockEntity>>>
+            itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
+    private final Map<FluidStorageType.Variant, Supplier<BlockEntityType<FluidStorageBlockBlockEntity>>>
+            fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
 
     private BlockEntities() {
     }
@@ -83,20 +85,22 @@ public final class BlockEntities {
         return Objects.requireNonNull(creativeController).get();
     }
 
-    public void setCreativeController(final Supplier<BlockEntityType<ControllerBlockEntity>> creativeControllerSupplier) {
-        this.creativeController = creativeControllerSupplier;
+    public void setCreativeController(final Supplier<BlockEntityType<ControllerBlockEntity>> creativeController) {
+        this.creativeController = creativeController;
     }
 
-    public void setItemStorageBlock(final ItemStorageType.Variant variant, final Supplier<BlockEntityType<ItemStorageBlockBlockEntity>> storageBlockBlockEntitySupplier) {
-        itemStorageBlocks.put(variant, storageBlockBlockEntitySupplier);
+    public void setItemStorageBlock(final ItemStorageType.Variant variant,
+                                    final Supplier<BlockEntityType<ItemStorageBlockBlockEntity>> supplier) {
+        itemStorageBlocks.put(variant, supplier);
     }
 
     public BlockEntityType<ItemStorageBlockBlockEntity> getItemStorageBlock(final ItemStorageType.Variant variant) {
         return itemStorageBlocks.get(variant).get();
     }
 
-    public void setFluidStorageBlock(final FluidStorageType.Variant variant, final Supplier<BlockEntityType<FluidStorageBlockBlockEntity>> storageBlockBlockEntitySupplier) {
-        fluidStorageBlocks.put(variant, storageBlockBlockEntitySupplier);
+    public void setFluidStorageBlock(final FluidStorageType.Variant variant,
+                                     final Supplier<BlockEntityType<FluidStorageBlockBlockEntity>> supplier) {
+        fluidStorageBlocks.put(variant, supplier);
     }
 
     public BlockEntityType<FluidStorageBlockBlockEntity> getFluidStorageBlock(final FluidStorageType.Variant variant) {

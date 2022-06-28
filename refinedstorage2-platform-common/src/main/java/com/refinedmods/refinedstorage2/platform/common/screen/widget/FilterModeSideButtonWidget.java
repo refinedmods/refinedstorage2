@@ -21,7 +21,8 @@ public class FilterModeSideButtonWidget extends SideButtonWidget {
     private final List<Component> blockModeTooltip;
     private final List<Component> allowModeTooltip;
 
-    public FilterModeSideButtonWidget(final FilterModeAccessor filterModeAccessor, final TooltipRenderer tooltipRenderer) {
+    public FilterModeSideButtonWidget(final FilterModeAccessor filterModeAccessor,
+                                      final TooltipRenderer tooltipRenderer) {
         super(createPressAction(filterModeAccessor));
         this.filterModeAccessor = filterModeAccessor;
         this.tooltipRenderer = tooltipRenderer;
@@ -36,7 +37,10 @@ public class FilterModeSideButtonWidget extends SideButtonWidget {
     private List<Component> calculateTooltip(final FilterMode filterMode) {
         final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "filter_mode"));
-        lines.add(createTranslation("gui", "filter_mode." + filterMode.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
+        lines.add(createTranslation(
+                "gui",
+                "filter_mode." + filterMode.toString().toLowerCase(Locale.ROOT)
+        ).withStyle(ChatFormatting.GRAY));
         return lines;
     }
 
@@ -52,6 +56,11 @@ public class FilterModeSideButtonWidget extends SideButtonWidget {
 
     @Override
     public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
-        tooltipRenderer.render(poseStack, filterModeAccessor.getFilterMode() == FilterMode.BLOCK ? blockModeTooltip : allowModeTooltip, mouseX, mouseY);
+        tooltipRenderer.render(
+                poseStack,
+                filterModeAccessor.getFilterMode() == FilterMode.BLOCK ? blockModeTooltip : allowModeTooltip,
+                mouseX,
+                mouseY
+        );
     }
 }

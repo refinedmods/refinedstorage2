@@ -25,7 +25,9 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendGridFluidExtract(final FluidResource fluidResource, final GridExtractMode mode, final boolean cursor) {
+    public void sendGridFluidExtract(final FluidResource fluidResource,
+                                     final GridExtractMode mode,
+                                     final boolean cursor) {
         networkManager.send(new GridExtractPacket(mode, cursor, fluidResource));
     }
 
@@ -46,7 +48,9 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
 
     @Override
     public void sendResourceTypeChange(final ResourceType type) {
-        PlatformApi.INSTANCE.getResourceTypeRegistry().getId(type).ifPresent(id -> networkManager.send(new ResourceTypeChangePacket(id)));
+        PlatformApi.INSTANCE.getResourceTypeRegistry()
+                .getId(type)
+                .ifPresent(id -> networkManager.send(new ResourceTypeChangePacket(id)));
     }
 
     @Override

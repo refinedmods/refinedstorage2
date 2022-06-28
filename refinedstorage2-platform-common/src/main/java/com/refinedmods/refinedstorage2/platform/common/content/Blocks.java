@@ -33,8 +33,10 @@ public final class Blocks {
     private Supplier<DiskDriveBlock> diskDrive;
     @Nullable
     private Supplier<MachineCasingBlock> machineCasing;
-    private final Map<ItemStorageType.Variant, Supplier<ItemStorageBlock>> itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
-    private final Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
+    private final Map<ItemStorageType.Variant, Supplier<ItemStorageBlock>> itemStorageBlocks
+            = new EnumMap<>(ItemStorageType.Variant.class);
+    private final Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> fluidStorageBlocks
+            = new EnumMap<>(FluidStorageType.Variant.class);
 
     private Blocks() {
     }
@@ -87,16 +89,17 @@ public final class Blocks {
         this.machineCasing = machineCasingSupplier;
     }
 
-    public void setItemStorageBlock(final ItemStorageType.Variant variant, final Supplier<ItemStorageBlock> itemStorageBlockSupplier) {
-        itemStorageBlocks.put(variant, itemStorageBlockSupplier);
+    public void setItemStorageBlock(final ItemStorageType.Variant variant, final Supplier<ItemStorageBlock> supplier) {
+        itemStorageBlocks.put(variant, supplier);
     }
 
     public ItemStorageBlock getItemStorageBlock(final ItemStorageType.Variant variant) {
         return itemStorageBlocks.get(variant).get();
     }
 
-    public void setFluidStorageBlock(final FluidStorageType.Variant variant, final Supplier<FluidStorageBlock> fluidStorageBlockSupplier) {
-        fluidStorageBlocks.put(variant, fluidStorageBlockSupplier);
+    public void setFluidStorageBlock(final FluidStorageType.Variant variant,
+                                     final Supplier<FluidStorageBlock> supplier) {
+        fluidStorageBlocks.put(variant, supplier);
     }
 
     public FluidStorageBlock getFluidStorageBlock(final FluidStorageType.Variant variant) {

@@ -12,7 +12,11 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 public class ResourceTypeChangePacket implements ServerPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(final MinecraftServer server, final ServerPlayer player, final ServerGamePacketListenerImpl handler, final FriendlyByteBuf buf, final PacketSender responseSender) {
+    public void receive(final MinecraftServer server,
+                        final ServerPlayer player,
+                        final ServerGamePacketListenerImpl handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
         final ResourceLocation id = buf.readResourceLocation();
 
         server.execute(() -> {

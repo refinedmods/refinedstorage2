@@ -34,7 +34,10 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public void sendGridFluidUpdate(final ServerPlayer player, final FluidResource fluidResource, final long change, @Nullable final TrackedResource trackerEntry) {
+    public void sendGridFluidUpdate(final ServerPlayer player,
+                                    final FluidResource fluidResource,
+                                    final long change,
+                                    @Nullable final TrackedResource trackerEntry) {
         sendToPlayer(player, PacketIds.GRID_FLUID_UPDATE, buf -> {
             PacketUtil.writeFluidResource(buf, fluidResource);
             buf.writeLong(change);
@@ -43,7 +46,10 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public void sendGridItemUpdate(final ServerPlayer player, final ItemResource itemResource, final long change, @Nullable final TrackedResource trackerEntry) {
+    public void sendGridItemUpdate(final ServerPlayer player,
+                                   final ItemResource itemResource,
+                                   final long change,
+                                   @Nullable final TrackedResource trackerEntry) {
         sendToPlayer(player, PacketIds.GRID_ITEM_UPDATE, buf -> {
             PacketUtil.writeItemResource(buf, itemResource);
             buf.writeLong(change);
@@ -52,7 +58,10 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public void sendResourceFilterSlotUpdate(final ServerPlayer player, final ResourceFilterContainer resourceFilterContainer, final int slotIndex, final int containerIndex) {
+    public void sendResourceFilterSlotUpdate(final ServerPlayer player,
+                                             final ResourceFilterContainer resourceFilterContainer,
+                                             final int slotIndex,
+                                             final int containerIndex) {
         sendToPlayer(player, PacketIds.RESOURCE_FILTER_SLOT_UPDATE, buf -> {
             buf.writeInt(slotIndex);
             resourceFilterContainer.writeToUpdatePacket(containerIndex, buf);
@@ -68,7 +77,9 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
         });
     }
 
-    private static void sendToPlayer(final ServerPlayer playerEntity, final ResourceLocation id, final Consumer<FriendlyByteBuf> bufConsumer) {
+    private static void sendToPlayer(final ServerPlayer playerEntity,
+                                     final ResourceLocation id,
+                                     final Consumer<FriendlyByteBuf> bufConsumer) {
         final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         bufConsumer.accept(buf);
         ServerPlayNetworking.send(playerEntity, id, buf);

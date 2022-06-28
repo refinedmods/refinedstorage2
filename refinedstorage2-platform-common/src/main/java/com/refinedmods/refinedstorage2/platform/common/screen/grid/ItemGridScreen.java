@@ -69,7 +69,10 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
     }
 
     @Override
-    protected void renderResource(final PoseStack poseStack, final int slotX, final int slotY, final GridResource<ItemResource> resource) {
+    protected void renderResource(final PoseStack poseStack,
+                                  final int slotX,
+                                  final int slotY,
+                                  final GridResource<ItemResource> resource) {
         itemRenderer.renderAndDecorateItem(((ItemGridResource) resource).getItemStack(), slotX, slotY);
     }
 
@@ -101,7 +104,11 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
 
     @Override
     protected void mouseClickedInGrid(final int clickedButton, final GridResource<ItemResource> resource) {
-        getMenu().onExtract(resource.getResourceAmount().getResource(), getExtractMode(clickedButton), shouldExtractToCursor());
+        getMenu().onExtract(
+                resource.getResourceAmount().getResource(),
+                getExtractMode(clickedButton),
+                shouldExtractToCursor()
+        );
     }
 
     @Override

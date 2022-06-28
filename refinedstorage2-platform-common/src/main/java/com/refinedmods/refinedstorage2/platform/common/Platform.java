@@ -48,9 +48,14 @@ public interface Platform {
 
     boolean isKeyDown(KeyMapping keyMapping);
 
-    ItemGridEventHandler createItemGridEventHandler(AbstractContainerMenu containerMenu, GridService<ItemResource> gridService, Inventory playerInventory);
+    ItemGridEventHandler createItemGridEventHandler(AbstractContainerMenu containerMenu,
+                                                    GridService<ItemResource> gridService,
+                                                    Inventory playerInventory);
 
-    FluidGridEventHandler createFluidGridEventHandler(AbstractContainerMenu containerMenu, GridService<FluidResource> gridService, Inventory playerInventory, ExtractableStorage<ItemResource> bucketStorage);
+    FluidGridEventHandler createFluidGridEventHandler(AbstractContainerMenu containerMenu,
+                                                      GridService<FluidResource> gridService,
+                                                      Inventory playerInventory,
+                                                      ExtractableStorage<ItemResource> bucketStorage);
 
     Function<ResourceAmount<ItemResource>, GridResource<ItemResource>> getItemGridResourceFactory();
 

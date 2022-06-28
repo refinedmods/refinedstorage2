@@ -52,7 +52,9 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
     @Nullable
     private EditBox amountField;
 
-    public PriorityScreen(final PriorityAccessor priorityAccessor, final Screen parent, final Inventory playerInventory) {
+    public PriorityScreen(final PriorityAccessor priorityAccessor,
+                          final Screen parent,
+                          final Inventory playerInventory) {
         super(new DummyContainerMenu(), playerInventory, PriorityScreen.PRIORITY_TEXT);
 
         this.parent = parent;
@@ -68,11 +70,36 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
     protected void init() {
         super.init();
 
-        addRenderableWidget(new Button(leftPos + ACTION_BUTTON_X, topPos + ACTION_BUTTON_Y, ACTION_BUTTON_WIDTH, 20, RESET_TEXT, btn -> reset()));
-        addRenderableWidget(new Button(leftPos + ACTION_BUTTON_X, topPos + ACTION_BUTTON_Y + 24, ACTION_BUTTON_WIDTH, 20, SET_TEXT, btn -> ok()));
-        addRenderableWidget(new Button(leftPos + ACTION_BUTTON_X, topPos + ACTION_BUTTON_Y + 48, ACTION_BUTTON_WIDTH, 20, CANCEL_TEXT, btn -> close()));
+        addRenderableWidget(new Button(
+                leftPos + ACTION_BUTTON_X,
+                topPos + ACTION_BUTTON_Y, ACTION_BUTTON_WIDTH,
+                20,
+                RESET_TEXT,
+                btn -> reset()
+        ));
+        addRenderableWidget(new Button(
+                leftPos + ACTION_BUTTON_X,
+                topPos + ACTION_BUTTON_Y + 24, ACTION_BUTTON_WIDTH,
+                20,
+                SET_TEXT,
+                btn -> ok()
+        ));
+        addRenderableWidget(new Button(
+                leftPos + ACTION_BUTTON_X,
+                topPos + ACTION_BUTTON_Y + 48, ACTION_BUTTON_WIDTH,
+                20,
+                CANCEL_TEXT,
+                btn -> close()
+        ));
 
-        amountField = new EditBox(font, leftPos + AMOUNT_X, topPos + AMOUNT_Y, 69 - 6, font.lineHeight, Component.empty());
+        amountField = new EditBox(
+                font,
+                leftPos + AMOUNT_X,
+                topPos + AMOUNT_Y,
+                69 - 6,
+                font.lineHeight,
+                Component.empty()
+        );
         amountField.setBordered(false);
         amountField.setValue(String.valueOf(priorityAccessor.getPriority()));
         amountField.setVisible(true);
@@ -154,7 +181,9 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
             close();
             return true;
         }
-        if (amountField != null && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) && amountField.isFocused()) {
+        if (amountField != null
+                && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER)
+                && amountField.isFocused()) {
             ok();
             return true;
         }

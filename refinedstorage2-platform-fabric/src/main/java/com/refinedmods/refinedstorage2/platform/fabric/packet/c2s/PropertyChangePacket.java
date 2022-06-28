@@ -10,7 +10,11 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class PropertyChangePacket implements ServerPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(final MinecraftServer server, final ServerPlayer player, final ServerGamePacketListenerImpl handler, final FriendlyByteBuf buf, final PacketSender responseSender) {
+    public void receive(final MinecraftServer server,
+                        final ServerPlayer player,
+                        final ServerGamePacketListenerImpl handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
         final int id = buf.readInt();
         final int value = buf.readInt();
 

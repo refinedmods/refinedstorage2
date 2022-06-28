@@ -38,7 +38,10 @@ public class SortingDirectionSideButtonWidget extends SideButtonWidget {
     private List<Component> calculateTooltip(final GridSortingDirection type) {
         final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "grid.sorting.direction"));
-        lines.add(createTranslation("gui", "grid.sorting.direction." + type.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
+        lines.add(createTranslation(
+                "gui",
+                "grid.sorting.direction." + type.toString().toLowerCase(Locale.ROOT)
+        ).withStyle(ChatFormatting.GRAY));
         return lines;
     }
 

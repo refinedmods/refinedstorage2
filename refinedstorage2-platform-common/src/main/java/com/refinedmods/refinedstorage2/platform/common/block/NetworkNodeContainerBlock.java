@@ -37,8 +37,16 @@ public abstract class NetworkNodeContainerBlock extends BaseBlock implements Ent
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level, final BlockState state, final BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level,
+                                                                  final BlockState state,
+                                                                  final BlockEntityType<T> type) {
+        if (level.isClientSide) {
+            return null;
+        }
         // TODO: Check block entity type.
-        return !level.isClientSide ? (level2, pos, state2, blockEntity) -> InternalNetworkNodeContainerBlockEntity.serverTick(state2, (InternalNetworkNodeContainerBlockEntity<?>) blockEntity) : null;
+        return (l, p, s, be) -> InternalNetworkNodeContainerBlockEntity.serverTick(
+                s,
+                (InternalNetworkNodeContainerBlockEntity<?>) be
+        );
     }
 }

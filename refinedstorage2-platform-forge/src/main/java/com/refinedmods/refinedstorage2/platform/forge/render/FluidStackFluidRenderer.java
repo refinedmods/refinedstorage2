@@ -24,11 +24,18 @@ public class FluidStackFluidRenderer extends FluidRendererImpl {
     private final Map<FluidResource, FluidStack> stackCache = new HashMap<>();
 
     private FluidStack getFluidStackFromCache(final FluidResource fluidResource) {
-        return stackCache.computeIfAbsent(fluidResource, r -> new FluidStack(r.fluid(), FluidType.BUCKET_VOLUME, r.tag()));
+        return stackCache.computeIfAbsent(
+                fluidResource,
+                r -> new FluidStack(r.fluid(), FluidType.BUCKET_VOLUME, r.tag())
+        );
     }
 
     @Override
-    public void render(final PoseStack poseStack, final int x, final int y, final int z, final FluidResource fluidResource) {
+    public void render(final PoseStack poseStack,
+                       final int x,
+                       final int y,
+                       final int z,
+                       final FluidResource fluidResource) {
         final FluidStack stack = getFluidStackFromCache(fluidResource);
         final Fluid fluid = fluidResource.fluid();
 
@@ -40,7 +47,8 @@ public class FluidStackFluidRenderer extends FluidRendererImpl {
         render(poseStack, x, y, z, packedRgb, sprite);
     }
 
-    private TextureAtlasSprite getStillFluidSprite(final IFluidTypeRenderProperties renderProperties, final FluidStack fluidStack) {
+    private TextureAtlasSprite getStillFluidSprite(final IFluidTypeRenderProperties renderProperties,
+                                                   final FluidStack fluidStack) {
         final Minecraft minecraft = Minecraft.getInstance();
         final ResourceLocation fluidStill = renderProperties.getStillTexture(fluidStack);
         return minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(fluidStill);

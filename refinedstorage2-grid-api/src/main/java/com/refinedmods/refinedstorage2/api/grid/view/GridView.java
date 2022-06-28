@@ -13,8 +13,8 @@ import org.apiguardian.api.API;
  * Represents a grid view.
  * The grid view internally has a backing list and a view list.
  * The backing list is the logical view of the grid without any filtering or sorting applied. It's the source of truth.
- * The view list has filtering and sorting rules applied and is semi in sync with the backing list (depending if the view
- * is in "prevent sorting" mode).
+ * The view list has filtering and sorting rules applied and is semi in sync with the backing list (depending if the
+ * view is in "prevent sorting" mode).
  *
  * @param <T> the resource type
  */

@@ -61,18 +61,28 @@ public class CableBlock extends NetworkNodeContainerBlock implements SimpleWater
     @Override
     @SuppressWarnings("deprecation")
     public FluidState getFluidState(final BlockState state) {
-        return Boolean.TRUE.equals(state.getValue(BlockStateProperties.WATERLOGGED)) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+        return Boolean.TRUE.equals(state.getValue(BlockStateProperties.WATERLOGGED))
+                ? Fluids.WATER.getSource(false)
+                : super.getFluidState(state);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public BlockState updateShape(final BlockState state, final Direction direction, final BlockState newState, final LevelAccessor level, final BlockPos pos, final BlockPos posFrom) {
+    public BlockState updateShape(final BlockState state,
+                                  final Direction direction,
+                                  final BlockState newState,
+                                  final LevelAccessor level,
+                                  final BlockPos pos,
+                                  final BlockPos posFrom) {
         return getState(state, level, pos);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean isPathfindable(final BlockState state, final BlockGetter world, final BlockPos pos, final PathComputationType type) {
+    public boolean isPathfindable(final BlockState state,
+                                  final BlockGetter world,
+                                  final BlockPos pos,
+                                  final PathComputationType type) {
         return false;
     }
 
@@ -89,7 +99,10 @@ public class CableBlock extends NetworkNodeContainerBlock implements SimpleWater
 
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getShape(final BlockState state, final BlockGetter world, final BlockPos pos, final CollisionContext context) {
+    public VoxelShape getShape(final BlockState state,
+                               final BlockGetter world,
+                               final BlockPos pos,
+                               final CollisionContext context) {
         VoxelShape shape = SHAPE_CORE;
         if (Boolean.TRUE.equals(state.getValue(NORTH))) {
             shape = Shapes.or(shape, SHAPE_NORTH);

@@ -50,6 +50,11 @@ public class ExactModeSideButtonWidget extends SideButtonWidget {
 
     @Override
     public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
-        tooltipRenderer.render(poseStack, exactModeAccessor.isExactMode() ? tooltipWhenOn : tooltipWhenOff, mouseX, mouseY);
+        tooltipRenderer.render(
+                poseStack,
+                exactModeAccessor.isExactMode() ? tooltipWhenOn : tooltipWhenOff,
+                mouseX,
+                mouseY
+        );
     }
 }

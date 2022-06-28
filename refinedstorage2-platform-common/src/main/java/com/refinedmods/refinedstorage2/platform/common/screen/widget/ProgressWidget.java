@@ -30,7 +30,13 @@ public class ProgressWidget extends GuiComponent implements Widget, GuiEventList
     private final TooltipRenderer tooltipRenderer;
     private final Supplier<List<Component>> tooltipSupplier;
 
-    public ProgressWidget(final int x, final int y, final int width, final int height, final DoubleSupplier progressSupplier, final TooltipRenderer tooltipRenderer, final Supplier<List<Component>> tooltipSupplier) {
+    public ProgressWidget(final int x,
+                          final int y,
+                          final int width,
+                          final int height,
+                          final DoubleSupplier progressSupplier,
+                          final TooltipRenderer tooltipRenderer,
+                          final Supplier<List<Component>> tooltipSupplier) {
         this.x = x;
         this.y = y;
         this.width = width;

@@ -50,11 +50,16 @@ public class FluidStorageType implements StorageType<FluidResource> {
     private PlatformStorage<FluidResource> createStorage(final CompoundTag tag, final Runnable listener) {
         final TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (tag.contains(TAG_CAPACITY)) {
-            return new LimitedPlatformStorage<>(
-                    new LimitedStorageImpl<>(
-                            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                            tag.getLong(TAG_CAPACITY)
+            final LimitedStorageImpl<FluidResource> delegate = new LimitedStorageImpl<>(
+                    new TrackedStorageImpl<>(
+                            new InMemoryStorageImpl<>(),
+                            trackingRepository,
+                            System::currentTimeMillis
                     ),
+                    tag.getLong(TAG_CAPACITY)
+            );
+            return new LimitedPlatformStorage<>(
+                    delegate,
                     FluidStorageType.INSTANCE,
                     trackingRepository,
                     listener
@@ -82,7 +87,8 @@ public class FluidStorageType implements StorageType<FluidResource> {
         return tag;
     }
 
-    private CompoundTag toTag(final Storage<FluidResource> storage, final ResourceAmount<FluidResource> resourceAmount) {
+    private CompoundTag toTag(final Storage<FluidResource> storage,
+                              final ResourceAmount<FluidResource> resourceAmount) {
         final CompoundTag tag = FluidResource.toTagWithAmount(resourceAmount);
         if (storage instanceof TrackedStorage<FluidResource> trackedStorage) {
             trackedStorage

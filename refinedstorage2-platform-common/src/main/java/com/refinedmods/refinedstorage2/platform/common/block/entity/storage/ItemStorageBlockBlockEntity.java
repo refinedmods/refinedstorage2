@@ -29,7 +29,9 @@ public class ItemStorageBlockBlockEntity extends StorageBlockBlockEntity<ItemRes
     private final ItemStorageType.Variant variant;
     private final Component displayName;
 
-    public ItemStorageBlockBlockEntity(final BlockPos pos, final BlockState state, final ItemStorageType.Variant variant) {
+    public ItemStorageBlockBlockEntity(final BlockPos pos,
+                                       final BlockState state,
+                                       final ItemStorageType.Variant variant) {
         super(
                 BlockEntities.INSTANCE.getItemStorageBlock(variant),
                 pos,
@@ -55,18 +57,24 @@ public class ItemStorageBlockBlockEntity extends StorageBlockBlockEntity<ItemRes
     protected PlatformStorage<ItemResource> createStorage(final Runnable listener) {
         final TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
+            final TrackedStorageImpl<ItemResource> delegate = new TrackedStorageImpl<>(
+                    new InMemoryStorageImpl<>(),
+                    trackingRepository,
+                    System::currentTimeMillis
+            );
             return new PlatformStorage<>(
-                    new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+                    delegate,
                     ItemStorageType.INSTANCE,
                     trackingRepository,
                     listener
             );
         }
+        final LimitedStorageImpl<ItemResource> delegate = new LimitedStorageImpl<>(
+                new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+                variant.getCapacity()
+        );
         return new LimitedPlatformStorage<>(
-                new LimitedStorageImpl<>(
-                        new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                        variant.getCapacity()
-                ),
+                delegate,
                 ItemStorageType.INSTANCE,
                 trackingRepository,
                 listener

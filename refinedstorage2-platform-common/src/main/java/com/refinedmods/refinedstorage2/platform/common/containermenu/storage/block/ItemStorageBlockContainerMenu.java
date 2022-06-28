@@ -23,11 +23,27 @@ public class ItemStorageBlockContainerMenu extends StorageBlockContainerMenu {
     );
 
     public ItemStorageBlockContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
-        super(Menus.INSTANCE.getItemStorage(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry(), playerInventory.player, buf, ItemResourceType.INSTANCE);
+        super(
+                Menus.INSTANCE.getItemStorage(),
+                syncId,
+                PlatformApi.INSTANCE.getResourceTypeRegistry(),
+                playerInventory.player,
+                buf,
+                ItemResourceType.INSTANCE);
     }
 
-    public ItemStorageBlockContainerMenu(final int syncId, final Player player, final ResourceFilterContainer resourceFilterContainer, final StorageBlockBlockEntity<?> storageBlock) {
-        super(Menus.INSTANCE.getItemStorage(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry(), player, resourceFilterContainer, storageBlock);
+    public ItemStorageBlockContainerMenu(final int syncId,
+                                         final Player player,
+                                         final ResourceFilterContainer resourceFilterContainer,
+                                         final StorageBlockBlockEntity<?> storageBlock) {
+        super(
+                Menus.INSTANCE.getItemStorage(),
+                syncId,
+                PlatformApi.INSTANCE.getResourceTypeRegistry(),
+                player,
+                resourceFilterContainer,
+                storageBlock
+        );
     }
 
     @Override

@@ -52,14 +52,22 @@ public class ControllerBlockItem extends CreativeControllerBlockItem {
     }
 
     @Override
-    public void appendHoverText(final ItemStack stack, @Nullable final Level level, final List<Component> tooltip, final TooltipFlag context) {
+    public void appendHoverText(final ItemStack stack,
+                                @Nullable final Level level,
+                                final List<Component> tooltip,
+                                final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
 
         final CompoundTag data = getBlockEntityData(stack);
         if (ControllerBlockEntity.hasEnergy(data)) {
             final long stored = ControllerBlockEntity.getStored(data);
             final long capacity = ControllerBlockEntity.getCapacity(data);
-            tooltip.add(createTranslation("misc", "stored_with_capacity", QuantityFormatter.format(stored), QuantityFormatter.format(capacity)).withStyle(ChatFormatting.GRAY));
+            tooltip.add(createTranslation(
+                    "misc",
+                    "stored_with_capacity",
+                    QuantityFormatter.format(stored),
+                    QuantityFormatter.format(capacity)
+            ).withStyle(ChatFormatting.GRAY));
         }
     }
 }

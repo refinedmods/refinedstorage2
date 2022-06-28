@@ -31,9 +31,12 @@ public class FluidStorageBlockBlockItem extends StorageBlockBlockItem {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final FluidStorageType.Variant variant;
-    private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
+    private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions =
+            EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
-    public FluidStorageBlockBlockItem(final Block block, final CreativeModeTab tab, final FluidStorageType.Variant variant) {
+    public FluidStorageBlockBlockItem(final Block block,
+                                      final CreativeModeTab tab,
+                                      final FluidStorageType.Variant variant) {
         super(block, new Item.Properties().tab(tab).stacksTo(1).fireResistant());
         this.variant = variant;
         if (variant != FluidStorageType.Variant.CREATIVE) {
@@ -42,7 +45,10 @@ public class FluidStorageBlockBlockItem extends StorageBlockBlockItem {
     }
 
     @Override
-    public void appendHoverText(final ItemStack stack, @Nullable final Level level, final List<Component> tooltip, final TooltipFlag context) {
+    public void appendHoverText(final ItemStack stack,
+                                @Nullable final Level level,
+                                final List<Component> tooltip,
+                                final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
         StorageItemHelper.appendToTooltip(
                 stack,
@@ -70,7 +76,9 @@ public class FluidStorageBlockBlockItem extends StorageBlockBlockItem {
     }
 
     @Override
-    protected void updateBlockEntityWithStorageId(final BlockPos pos, @Nullable final BlockEntity blockEntity, final UUID id) {
+    protected void updateBlockEntityWithStorageId(final BlockPos pos,
+                                                  @Nullable final BlockEntity blockEntity,
+                                                  final UUID id) {
         if (blockEntity instanceof StorageBlockBlockEntity<?> storageBlockEntity) {
             LOGGER.info("Transferred storage {} to block at {}", id, pos);
             storageBlockEntity.modifyStorageIdAfterAlreadyInitialized(id);

@@ -23,7 +23,9 @@ public class SynchronizationSideButtonWidget extends SideButtonWidget {
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSynchronizer, List<Component>> tooltips = new HashMap<>();
 
-    public SynchronizationSideButtonWidget(final GridContainerMenu<?> menu, final TooltipRenderer tooltipRenderer, final List<GridSynchronizer> synchronizers) {
+    public SynchronizationSideButtonWidget(final GridContainerMenu<?> menu,
+                                           final TooltipRenderer tooltipRenderer,
+                                           final List<GridSynchronizer> synchronizers) {
         super(createPressAction(menu));
         this.menu = menu;
         this.tooltipRenderer = tooltipRenderer;

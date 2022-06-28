@@ -41,7 +41,11 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         int i = 0;
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 2; ++x) {
-                TRANSLATORS[i++] = new Vector3f(x == 0 ? -(2F / 16F) : -(9F / 16F), -((y * 3F) / 16F) - (2F / 16F), 0);
+                TRANSLATORS[i++] = new Vector3f(
+                        x == 0 ? -(2F / 16F) : -(9F / 16F),
+                        -((y * 3F) / 16F) - (2F / 16F),
+                        0
+                );
             }
         }
     }
@@ -54,7 +58,9 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
             .build(new DiskDriveCacheLoader());
     private final Map<Long, DiskDriveItemBakedModel> itemModelCache = new HashMap<>();
 
-    public DiskDriveBakedModel(final BakedModel baseModel, final BakedModel diskModel, final BakedModel diskDisconnectedModel) {
+    public DiskDriveBakedModel(final BakedModel baseModel,
+                               final BakedModel diskModel,
+                               final BakedModel diskDisconnectedModel) {
         super(baseModel);
         this.diskModel = diskModel;
         this.diskDisconnectedModel = diskDisconnectedModel;
@@ -67,7 +73,10 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
 
     @NotNull
     @Override
-    public List<BakedQuad> getQuads(@Nullable final BlockState state, @Nullable final Direction side, @NotNull final RandomSource rand, @NotNull final IModelData extraData) {
+    public List<BakedQuad> getQuads(@Nullable final BlockState state,
+                                    @Nullable final Direction side,
+                                    @NotNull final RandomSource rand,
+                                    @NotNull final IModelData extraData) {
         if (state == null || !state.hasProperty(BaseBlock.DIRECTION)) {
             return super.getQuads(state, side, rand);
         }
@@ -82,7 +91,11 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     private class DiskDriveItemOverrides extends ItemOverrides {
         @Nullable
         @Override
-        public BakedModel resolve(final BakedModel bakedModel, final ItemStack stack, @Nullable final ClientLevel level, @Nullable final LivingEntity entity, final int seed) {
+        public BakedModel resolve(final BakedModel bakedModel,
+                                  final ItemStack stack,
+                                  @Nullable final ClientLevel level,
+                                  @Nullable final LivingEntity entity,
+                                  final int seed) {
             final CompoundTag tag = BlockItem.getBlockEntityData(stack);
             if (tag == null) {
                 return baseModel.getOverrides().resolve(bakedModel, stack, level, entity, seed);
@@ -93,7 +106,12 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
                     disks |= 1 << i;
                 }
             }
-            return itemModelCache.computeIfAbsent(disks, key -> new DiskDriveItemBakedModel(baseModel, diskDisconnectedModel, TRANSLATORS, key));
+            return itemModelCache.computeIfAbsent(disks, key -> new DiskDriveItemBakedModel(
+                    baseModel,
+                    diskDisconnectedModel,
+                    TRANSLATORS,
+                    key
+            ));
         }
     }
 
@@ -104,7 +122,10 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         private final StorageDiskState[] diskStates;
         private final RandomSource random;
 
-        public DiskDriveStateCacheKey(final BlockState state, @Nullable final Direction side, final StorageDiskState[] diskStates, final RandomSource random) {
+        public DiskDriveStateCacheKey(final BlockState state,
+                                      @Nullable final Direction side,
+                                      final StorageDiskState[] diskStates,
+                                      final RandomSource random) {
             this.state = state;
             this.side = side;
             this.diskStates = diskStates;
@@ -131,12 +152,25 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         @Override
         public List<BakedQuad> load(final DiskDriveStateCacheKey key) {
             final BiDirection direction = key.state.getValue(BaseBlock.DIRECTION);
-            return QuadTransformer.transformSideAndRotate(resultingSide -> getQuads(key.state, key.random, key.diskStates, resultingSide), direction, key.side);
+            return QuadTransformer.transformSideAndRotate(resultingSide -> getQuads(
+                    key.state,
+                    key.random,
+                    key.diskStates,
+                    resultingSide
+            ), direction, key.side);
         }
 
         @NotNull
-        private List<BakedQuad> getQuads(@NotNull final BlockState state, @NotNull final RandomSource rand, final StorageDiskState[] diskStates, @Nullable final Direction side) {
-            final List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(state, side, rand, EmptyModelData.INSTANCE));
+        private List<BakedQuad> getQuads(@NotNull final BlockState state,
+                                         @NotNull final RandomSource rand,
+                                         final StorageDiskState[] diskStates,
+                                         @Nullable final Direction side) {
+            final List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(
+                    state,
+                    side,
+                    rand,
+                    EmptyModelData.INSTANCE
+            ));
             for (int i = 0; i < TRANSLATORS.length; ++i) {
                 final StorageDiskState diskState = diskStates[i];
                 if (diskState != StorageDiskState.NONE) {
@@ -146,7 +180,10 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
             return quads;
         }
 
-        private List<BakedQuad> getDiskModel(final BlockState state, final RandomSource rand, @Nullable final Direction side, final Vector3f translation) {
+        private List<BakedQuad> getDiskModel(final BlockState state,
+                                             final RandomSource rand,
+                                             @Nullable final Direction side,
+                                             final Vector3f translation) {
             final List<BakedQuad> diskQuads = diskModel.getQuads(state, side, rand, EmptyModelData.INSTANCE);
             return QuadTransformer.translate(diskQuads, translation);
         }
