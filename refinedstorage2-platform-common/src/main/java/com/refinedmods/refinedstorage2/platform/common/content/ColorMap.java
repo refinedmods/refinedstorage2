@@ -19,7 +19,7 @@ public class ColorMap<T> {
     private final Map<DyeColor, Supplier<T>> map = new EnumMap<>(DyeColor.class);
 
     public void putAll(final Function<DyeColor, Supplier<T>> factory) {
-        for (DyeColor color : DyeColor.values()) {
+        for (final DyeColor color : DyeColor.values()) {
             map.put(color, factory.apply(color));
         }
     }

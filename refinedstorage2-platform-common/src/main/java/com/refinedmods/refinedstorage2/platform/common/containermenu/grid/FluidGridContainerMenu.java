@@ -66,7 +66,7 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
 
     @Override
     public void onChanged(final ResourceListOperationResult<FluidResource> change) {
-        FluidResource resource = change.resourceAmount().getResource();
+        final FluidResource resource = change.resourceAmount().getResource();
 
         LOGGER.info("Received a change of {} for {}", change.change(), resource);
 

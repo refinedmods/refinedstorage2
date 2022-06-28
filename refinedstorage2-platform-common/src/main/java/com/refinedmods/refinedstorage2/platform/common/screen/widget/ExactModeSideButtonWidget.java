@@ -32,7 +32,7 @@ public class ExactModeSideButtonWidget extends SideButtonWidget {
     }
 
     private List<Component> calculateTooltip(final boolean exactMode) {
-        List<Component> lines = new ArrayList<>();
+        final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "exact_mode"));
         lines.add(createTranslation("gui", "exact_mode." + (exactMode ? "on" : "off")).withStyle(ChatFormatting.GRAY));
         return lines;

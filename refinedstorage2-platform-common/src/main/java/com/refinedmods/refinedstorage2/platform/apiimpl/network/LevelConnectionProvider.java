@@ -150,7 +150,7 @@ public class LevelConnectionProvider implements ConnectionProvider {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            ScanEntry that = (ScanEntry) o;
+            final ScanEntry that = (ScanEntry) o;
             return Objects.equals(dimension, that.dimension) && Objects.equals(position, that.position);
         }
 

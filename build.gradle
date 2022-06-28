@@ -1,6 +1,7 @@
 plugins {
-    id("maven-publish")
-    id "org.sonarqube" version "3.3"
+    id 'maven-publish'
+    id 'org.sonarqube' version "3.3"
+    id 'checkstyle'
 }
 
 allprojects {
@@ -35,6 +36,11 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
+
+    checkstyle {
+        configFile rootProject.file("checkstyle.xml")
+    }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 

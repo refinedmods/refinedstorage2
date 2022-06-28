@@ -106,7 +106,7 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
 
     @Override
     protected void mouseScrolledInInventory(final boolean up, final ItemStack stack, final int slotIndex) {
-        GridScrollMode scrollMode = getScrollModeWhenScrollingOnInventoryArea(up);
+        final GridScrollMode scrollMode = getScrollModeWhenScrollingOnInventoryArea(up);
         if (scrollMode == null) {
             return;
         }
@@ -115,7 +115,7 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
 
     @Override
     protected void mouseScrolledInGrid(final boolean up, final GridResource<ItemResource> resource) {
-        GridScrollMode scrollMode = getScrollModeWhenScrollingOnGridArea(up);
+        final GridScrollMode scrollMode = getScrollModeWhenScrollingOnGridArea(up);
         if (scrollMode == null) {
             return;
         }

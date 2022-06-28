@@ -36,7 +36,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     private final FluidStorageType.Variant variant;
     private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
-    public FluidStorageDiskItem(CreativeModeTab tab, FluidStorageType.Variant variant) {
+    public FluidStorageDiskItem(final CreativeModeTab tab, final FluidStorageType.Variant variant) {
         super(new Item.Properties().tab(tab).stacksTo(1).fireResistant());
         this.variant = variant;
         if (variant != FluidStorageType.Variant.CREATIVE) {
@@ -45,7 +45,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag context) {
+    public void appendHoverText(final ItemStack stack, @Nullable final Level level, final List<Component> tooltip, final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
         StorageItemHelper.appendToTooltip(
                 stack,
@@ -59,7 +59,7 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    public Optional<StorageChannelType<?>> getType(ItemStack stack) {
+    public Optional<StorageChannelType<?>> getType(final ItemStack stack) {
         return Optional.of(StorageChannelTypes.FLUID);
     }
 
@@ -69,8 +69,8 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    protected Storage<?> createStorage(Level level) {
-        TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
+    protected Storage<?> createStorage(final Level level) {
+        final TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
             return new PlatformStorage<>(
                     new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
@@ -91,13 +91,13 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    protected ItemStack createPrimaryDisassemblyByproduct(int count) {
+    protected ItemStack createPrimaryDisassemblyByproduct(final int count) {
         return new ItemStack(Items.INSTANCE.getStorageHousing(), count);
     }
 
     @Override
     @Nullable
-    protected ItemStack createSecondaryDisassemblyByproduct(int count) {
+    protected ItemStack createSecondaryDisassemblyByproduct(final int count) {
         if (variant == FluidStorageType.Variant.CREATIVE) {
             return null;
         }

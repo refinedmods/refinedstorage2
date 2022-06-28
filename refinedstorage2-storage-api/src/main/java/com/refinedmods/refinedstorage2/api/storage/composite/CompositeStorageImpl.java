@@ -80,7 +80,7 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
 
     private long extractFromStorages(final T template, final long amount, final Action action, final Source actionSource) {
         long remaining = amount;
-        for (Storage<T> source : sources) {
+        for (final Storage<T> source : sources) {
             final long extracted = source.extract(template, remaining, action, actionSource);
             remaining -= extracted;
             if (remaining == 0) {
@@ -102,7 +102,7 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
 
     private long insertIntoStorages(final T template, final long amount, final Action action, final Source actionSource) {
         long inserted = 0;
-        for (Storage<T> source : sources) {
+        for (final Storage<T> source : sources) {
             inserted += source.insert(template, amount - inserted, action, actionSource);
             if (inserted == amount) {
                 break;

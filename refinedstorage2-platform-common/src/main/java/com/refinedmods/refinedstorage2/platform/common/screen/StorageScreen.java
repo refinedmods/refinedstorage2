@@ -50,7 +50,7 @@ public abstract class StorageScreen<T extends AbstractContainerMenu & StorageAcc
         addSideButton(new ExactModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new AccessModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new PrioritySideButtonWidget(getMenu(), playerInventory, this, this::renderComponentTooltip));
-        ResourceFilterButtonWidget resourceFilterButton = new ResourceFilterButtonWidget(leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7, topPos + 4, menu);
+        final ResourceFilterButtonWidget resourceFilterButton = new ResourceFilterButtonWidget(leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7, topPos + 4, menu);
         resourceFilterButton.active = isResourceFilterButtonActive();
         addRenderableWidget(resourceFilterButton);
     }

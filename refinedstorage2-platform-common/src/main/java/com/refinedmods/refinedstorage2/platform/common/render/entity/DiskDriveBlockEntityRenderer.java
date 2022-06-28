@@ -58,7 +58,7 @@ public abstract class DiskDriveBlockEntityRenderer<T extends DiskDriveBlockEntit
         poseStack.mulPose(createQuaternion(blockState.getValue(BaseBlock.DIRECTION)));
         poseStack.translate(-0.5F, -0.5F, -0.5F);
 
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderType);
+        final VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderType);
 
         if (driveState != null) {
             renderDisks(poseStack, driveState, vertexConsumer);
@@ -71,7 +71,7 @@ public abstract class DiskDriveBlockEntityRenderer<T extends DiskDriveBlockEntit
         int i = 0;
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 2; ++x) {
-                StorageDiskState state = driveState.getState(i++);
+                final StorageDiskState state = driveState.getState(i++);
                 renderDisk(poseStack, vertexConsumer, y, x, state);
             }
         }

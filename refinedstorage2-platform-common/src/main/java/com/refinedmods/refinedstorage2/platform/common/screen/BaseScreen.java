@@ -71,7 +71,7 @@ public abstract class BaseScreen<T extends AbstractContainerMenu> extends Abstra
     protected void renderTooltip(final PoseStack poseStack, final int x, final int y) {
         super.renderTooltip(poseStack, x, y);
         if (minecraft != null && menu.getCarried().isEmpty() && hoveredSlot instanceof ResourceFilterSlot resourceFilterSlot) {
-            List<Component> lines = resourceFilterSlot.getTooltipLines(minecraft.player);
+            final List<Component> lines = resourceFilterSlot.getTooltipLines(minecraft.player);
             if (!lines.isEmpty()) {
                 this.renderComponentTooltip(poseStack, lines, x, y);
             }

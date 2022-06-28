@@ -87,7 +87,7 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
 
     private void addIncrementButtons(final int[] increments, int x, final int y) {
         for (final int increment : increments) {
-            Component text = Component.literal((increment > 0 ? "+" : "") + increment);
+            final Component text = Component.literal((increment > 0 ? "+" : "") + increment);
             addRenderableWidget(new Button(x, y, INCREMENT_BUTTON_WIDTH, 20, text, btn -> changeAmount(increment)));
             x += INCREMENT_BUTTON_WIDTH + 3;
         }

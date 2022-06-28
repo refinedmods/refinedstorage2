@@ -19,7 +19,7 @@ public class StorageNetworkComponent implements NetworkComponent {
     private final Map<StorageChannelType<?>, StorageChannel<?>> channels = new HashMap<>();
 
     public StorageNetworkComponent(final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
-        for (StorageChannelType<?> type : storageChannelTypeRegistry.getAll()) {
+        for (final StorageChannelType<?> type : storageChannelTypeRegistry.getAll()) {
             channels.put(type, type.create());
         }
     }

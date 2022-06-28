@@ -22,7 +22,7 @@ public class CompositeEnergyStorage implements EnergyStorage {
     @Override
     public long getStored() {
         long stored = 0;
-        for (EnergyStorage source : sources) {
+        for (final EnergyStorage source : sources) {
             if (stored + source.getStored() < 0) {
                 return Long.MAX_VALUE;
             }
@@ -34,7 +34,7 @@ public class CompositeEnergyStorage implements EnergyStorage {
     @Override
     public long getCapacity() {
         long capacity = 0;
-        for (EnergyStorage source : sources) {
+        for (final EnergyStorage source : sources) {
             if (capacity + source.getCapacity() < 0) {
                 return Long.MAX_VALUE;
             }
@@ -46,7 +46,7 @@ public class CompositeEnergyStorage implements EnergyStorage {
     @Override
     public long receive(final long amount, final Action action) {
         long inserted = 0;
-        for (EnergyStorage source : sources) {
+        for (final EnergyStorage source : sources) {
             inserted += source.receive(amount - inserted, action);
             if (inserted == amount) {
                 break;
@@ -58,7 +58,7 @@ public class CompositeEnergyStorage implements EnergyStorage {
     @Override
     public long extract(final long amount, final Action action) {
         long extracted = 0;
-        for (EnergyStorage source : sources) {
+        for (final EnergyStorage source : sources) {
             extracted += source.extract(amount - extracted, action);
             if (extracted == amount) {
                 break;

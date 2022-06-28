@@ -36,7 +36,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
             }
         }
 
-        for (BiDirection direction : BiDirection.values()) {
+        for (final BiDirection direction : BiDirection.values()) {
             ROTATORS.put(direction, new QuadRotator(direction));
         }
     }

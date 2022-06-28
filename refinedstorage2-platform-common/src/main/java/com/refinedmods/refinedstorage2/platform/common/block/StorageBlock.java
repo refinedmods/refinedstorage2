@@ -33,16 +33,16 @@ public abstract class StorageBlock extends NetworkNodeContainerBlock {
         }
 
         @Override
-        public ItemStack apply(ItemStack stack, LootContext lootContext) {
-            BlockEntity blockEntity = lootContext.getParam(LootContextParams.BLOCK_ENTITY);
+        public ItemStack apply(final ItemStack stack, final LootContext lootContext) {
+            final BlockEntity blockEntity = lootContext.getParam(LootContextParams.BLOCK_ENTITY);
             if (blockEntity instanceof StorageBlockBlockEntity<?> storageBlockEntity) {
                 apply(stack, storageBlockEntity);
             }
             return stack;
         }
 
-        private void apply(ItemStack stack, StorageBlockBlockEntity<?> storageBlockEntity) {
-            UUID storageId = storageBlockEntity.getStorageId();
+        private void apply(final ItemStack stack, final StorageBlockBlockEntity<?> storageBlockEntity) {
+            final UUID storageId = storageBlockEntity.getStorageId();
             if (storageId != null) {
                 LOGGER.info("Transferred storage {} at {} to stack", storageId, storageBlockEntity.getBlockPos());
                 StorageItemHelper.setStorageId(stack, storageId);
@@ -54,12 +54,12 @@ public abstract class StorageBlock extends NetworkNodeContainerBlock {
 
     public static class StorageBlockLootItemFunctionSerializer implements Serializer<LootItemFunction> {
         @Override
-        public void serialize(JsonObject jsonObject, LootItemFunction lootItemFunction, JsonSerializationContext jsonSerializationContext) {
+        public void serialize(final JsonObject jsonObject, final LootItemFunction lootItemFunction, final JsonSerializationContext jsonSerializationContext) {
             // nothing to do
         }
 
         @Override
-        public LootItemFunction deserialize(JsonObject jsonObject, JsonDeserializationContext jsonDeserializationContext) {
+        public LootItemFunction deserialize(final JsonObject jsonObject, final JsonDeserializationContext jsonDeserializationContext) {
             return new StorageBlockLootItemFunction();
         }
     }

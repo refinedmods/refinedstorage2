@@ -34,7 +34,7 @@ public class FilterModeSideButtonWidget extends SideButtonWidget {
     }
 
     private List<Component> calculateTooltip(final FilterMode filterMode) {
-        List<Component> lines = new ArrayList<>();
+        final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "filter_mode"));
         lines.add(createTranslation("gui", "filter_mode." + filterMode.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
         return lines;

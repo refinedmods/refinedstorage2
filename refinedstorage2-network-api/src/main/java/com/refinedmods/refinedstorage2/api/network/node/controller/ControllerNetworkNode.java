@@ -18,7 +18,7 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
         if (!isActive() || energyStorage == null) {
             return ControllerEnergyState.OFF;
         }
-        double pct = (double) energyStorage.getStored() / (double) energyStorage.getCapacity();
+        final double pct = (double) energyStorage.getStored() / (double) energyStorage.getCapacity();
         if (pct >= 0.4) {
             return ControllerEnergyState.ON;
         }
