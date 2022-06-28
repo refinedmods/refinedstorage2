@@ -314,7 +314,7 @@ public class ModInitializer extends AbstractModInitializer {
         e.addCapability(createIdentifier("energy"), new ICapabilityProvider() {
             @NotNull
             @Override
-            public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+            public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> cap, @Nullable final Direction side) {
                 if (cap == CapabilityEnergy.ENERGY && controllerBlockEntity.getEnergyStorage() instanceof IEnergyStorage) {
                     return capability.cast();
                 }

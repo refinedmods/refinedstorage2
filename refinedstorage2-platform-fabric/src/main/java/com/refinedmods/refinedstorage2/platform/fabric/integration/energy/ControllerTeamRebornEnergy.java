@@ -53,7 +53,7 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
     }
 
     @Override
-    public long extract(long amount, Action action) {
+    public long extract(final long amount, final Action action) {
         try (final Transaction tx = Transaction.openOuter()) {
             final long extracted = this.extract(amount, tx);
             if (extracted > 0 && action == Action.EXECUTE) {

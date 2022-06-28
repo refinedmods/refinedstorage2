@@ -20,7 +20,7 @@ public final class PacketUtil {
         buf.writeNbt(itemResource.tag());
     }
 
-    public static ItemResource readItemResource(FriendlyByteBuf buf) {
+    public static ItemResource readItemResource(final FriendlyByteBuf buf) {
         final int id = buf.readVarInt();
         final CompoundTag nbt = buf.readNbt();
         return new ItemResource(Item.byId(id), nbt);

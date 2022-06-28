@@ -109,7 +109,7 @@ public class GridSearchBoxWidget<T> extends SearchFieldWidget implements GridSea
         this.listeners.add(listener);
     }
 
-    private void setValid(boolean valid) {
+    private void setValid(final boolean valid) {
         this.valid = valid;
         setTextColor(valid ? Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15) : Objects.requireNonNullElse(ChatFormatting.RED.getColor(), 15));
     }

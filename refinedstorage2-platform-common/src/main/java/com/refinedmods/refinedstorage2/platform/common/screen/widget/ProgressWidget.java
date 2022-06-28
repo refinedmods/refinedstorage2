@@ -60,7 +60,7 @@ public class ProgressWidget extends GuiComponent implements Widget, GuiEventList
         }
     }
 
-    private boolean isHovered(int mouseX, int mouseY) {
+    private boolean isHovered(final int mouseX, final int mouseY) {
         return mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
     }
 
@@ -70,7 +70,7 @@ public class ProgressWidget extends GuiComponent implements Widget, GuiEventList
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput builder) {
+    public void updateNarration(final NarrationElementOutput builder) {
         // intentionally empty
     }
 }

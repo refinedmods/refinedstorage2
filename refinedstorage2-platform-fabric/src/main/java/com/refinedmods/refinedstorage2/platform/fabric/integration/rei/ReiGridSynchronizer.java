@@ -26,7 +26,7 @@ public class ReiGridSynchronizer extends DefaultGridSynchronizer {
     }
 
     @Override
-    public void synchronizeFromGrid(String text) {
+    public void synchronizeFromGrid(final String text) {
         reiProxy.setSearchFieldText(text);
     }
 

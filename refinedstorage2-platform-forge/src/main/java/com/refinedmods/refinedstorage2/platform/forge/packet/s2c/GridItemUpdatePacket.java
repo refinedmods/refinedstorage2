@@ -45,7 +45,7 @@ public class GridItemUpdatePacket {
         ctx.get().setPacketHandled(true);
     }
 
-    private static void handle(GridItemUpdatePacket packet) {
+    private static void handle(final GridItemUpdatePacket packet) {
         final Player player = Minecraft.getInstance().player;
         if (player == null) {
             return;

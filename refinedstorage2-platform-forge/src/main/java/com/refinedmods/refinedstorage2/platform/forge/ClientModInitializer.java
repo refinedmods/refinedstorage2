@@ -48,7 +48,7 @@ public final class ClientModInitializer {
     }
 
     @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent e) {
+    public static void onClientSetup(final FMLClientSetupEvent e) {
         e.enqueueWork(ClientModInitializer::setRenderLayers);
         e.enqueueWork(ClientModInitializer::registerModelPredicates);
         e.enqueueWork(ClientModInitializer::registerScreens);
@@ -79,7 +79,7 @@ public final class ClientModInitializer {
     }
 
     @SubscribeEvent
-    public static void onRegisterModels(ModelRegistryEvent e) {
+    public static void onRegisterModels(final ModelRegistryEvent e) {
         ModelLoaderRegistry.registerLoader(DISK_DRIVE, new DiskDriveModelLoader());
     }
 

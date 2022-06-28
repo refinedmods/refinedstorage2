@@ -33,12 +33,12 @@ public class NetworkImpl implements Network {
     }
 
     @Override
-    public void split(Set<Network> networks) {
+    public void split(final Set<Network> networks) {
         componentMap.getComponents().forEach(c -> c.onNetworkSplit(networks));
     }
 
     @Override
-    public void merge(Network network) {
+    public void merge(final Network network) {
         componentMap.getComponents().forEach(c -> c.onNetworkMergedWith(network));
     }
 

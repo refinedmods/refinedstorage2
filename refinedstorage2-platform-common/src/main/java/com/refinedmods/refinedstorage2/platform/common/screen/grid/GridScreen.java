@@ -182,10 +182,10 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
         };
     }
 
-    private boolean isOverStorageArea(int mouseX, int mouseY) {
-        mouseX -= leftPos;
-        mouseY -= topPos;
-        return mouseX >= 7 && mouseY >= TOP_HEIGHT && mouseX <= 168 && mouseY <= TOP_HEIGHT + (visibleRows * 18);
+    private boolean isOverStorageArea(final int mouseX, final int mouseY) {
+        final int relativeMouseX = mouseX - leftPos;
+        final int relativeMouseY = mouseY - topPos;
+        return relativeMouseX >= 7 && relativeMouseY >= TOP_HEIGHT && relativeMouseX <= 168 && relativeMouseY <= TOP_HEIGHT + (visibleRows * 18);
     }
 
     @Override
@@ -472,7 +472,7 @@ public abstract class GridScreen<R, T extends GridContainerMenu<R>> extends Base
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int clickedButton) {
+    public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
         if (scrollbar != null && scrollbar.mouseClicked(mouseX, mouseY, clickedButton)) {
             return true;
         }

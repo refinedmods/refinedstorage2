@@ -35,12 +35,12 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
 
     private final FluidGridEventHandler fluidGridEventHandler;
 
-    public FluidGridContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
+    public FluidGridContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getFluidGrid(), syncId, playerInventory, buf, createView());
         this.fluidGridEventHandler = new ClientFluidGridEventHandler();
     }
 
-    public FluidGridContainerMenu(int syncId, Inventory playerInventory, FluidGridBlockEntity grid, ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridContainerMenu(final int syncId, final Inventory playerInventory, final FluidGridBlockEntity grid, final ExtractableStorage<ItemResource> bucketStorage) {
         super(Menus.INSTANCE.getFluidGrid(), syncId, playerInventory, grid, createView());
         grid.addWatcher(this);
         final GridService<FluidResource> gridService = new GridServiceImpl<>(Objects.requireNonNull(storageChannel), new PlayerSource(playerInventory.player), resource -> Long.MAX_VALUE, Platform.INSTANCE.getBucketAmount());

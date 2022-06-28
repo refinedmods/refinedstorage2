@@ -191,7 +191,7 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public void setAutoSelected(boolean autoSelected) {
+        public void setAutoSelected(final boolean autoSelected) {
             this.autoSelected.set(autoSelected);
         }
 
@@ -239,7 +239,7 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public void setSize(GridSize size) {
+        public void setSize(final GridSize size) {
             this.size.set(size);
         }
     }

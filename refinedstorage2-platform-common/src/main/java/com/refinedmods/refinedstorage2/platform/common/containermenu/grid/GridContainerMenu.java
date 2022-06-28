@@ -171,7 +171,7 @@ public abstract class GridContainerMenu<T> extends BaseContainerMenu implements 
     }
 
     @Override
-    public void removed(Player playerEntity) {
+    public void removed(final Player playerEntity) {
         super.removed(playerEntity);
 
         if (storageChannel != null) {

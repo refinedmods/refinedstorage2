@@ -17,7 +17,7 @@ public class SyntaxHighlightedCharacter {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(final String color) {
         this.color = color;
     }
 }

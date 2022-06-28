@@ -79,7 +79,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
 
     @SuppressWarnings("ConstantConditions")
     @Nullable
-    private IFluidHandlerItem getFluidStorage(ItemStack stack) {
+    private IFluidHandlerItem getFluidStorage(final ItemStack stack) {
         return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).orElse(null);
     }
 
@@ -158,7 +158,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         return extractBucket(playerInventoryStorage, Action.SIMULATE);
     }
 
-    private boolean extractBucket(IItemHandler source, Action action) {
+    private boolean extractBucket(final IItemHandler source, final Action action) {
         final ItemStack toExtractStack = toItemStack(BUCKET_ITEM_RESOURCE, 1);
         for (int slot = 0; slot < source.getSlots(); ++slot) {
             final boolean relevant = isSame(source.getStackInSlot(slot), toExtractStack);

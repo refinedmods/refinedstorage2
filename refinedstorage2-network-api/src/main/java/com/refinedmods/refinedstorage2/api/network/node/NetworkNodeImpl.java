@@ -61,7 +61,7 @@ public abstract class NetworkNodeImpl implements NetworkNode {
         network.getComponent(EnergyNetworkComponent.class).extract(getEnergyUsage());
     }
 
-    protected void onActiveChanged(boolean active) {
+    protected void onActiveChanged(final boolean active) {
     }
 
     public abstract long getEnergyUsage();
