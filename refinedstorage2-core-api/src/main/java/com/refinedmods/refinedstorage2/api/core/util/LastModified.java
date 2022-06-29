@@ -22,19 +22,20 @@ public record LastModified(Type type, long amount) {
 
     public static LastModified calculate(final long time, final long now) {
         final long diff = now - time;
-
+        final LastModified lastModified;
         if (diff < MINUTE) {
-            return new LastModified(Type.SECOND, diff / SECOND);
+            lastModified = new LastModified(Type.SECOND, diff / SECOND);
         } else if (diff < HOUR) {
-            return new LastModified(Type.MINUTE, diff / MINUTE);
+            lastModified = new LastModified(Type.MINUTE, diff / MINUTE);
         } else if (diff < DAY) {
-            return new LastModified(Type.HOUR, diff / HOUR);
+            lastModified = new LastModified(Type.HOUR, diff / HOUR);
         } else if (diff < WEEK) {
-            return new LastModified(Type.DAY, diff / DAY);
+            lastModified = new LastModified(Type.DAY, diff / DAY);
         } else if (diff < YEAR) {
-            return new LastModified(Type.WEEK, diff / WEEK);
+            lastModified = new LastModified(Type.WEEK, diff / WEEK);
+        } else {
+            lastModified = new LastModified(Type.YEAR, diff / YEAR);
         }
-
-        return new LastModified(Type.YEAR, diff / YEAR);
+        return lastModified;
     }
 }

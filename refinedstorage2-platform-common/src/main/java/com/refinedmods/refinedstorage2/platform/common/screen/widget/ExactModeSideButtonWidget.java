@@ -13,7 +13,7 @@ import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ExactModeSideButtonWidget extends SideButtonWidget {
+public class ExactModeSideButtonWidget extends AbstractSideButtonWidget {
     private final ExactModeAccessor exactModeAccessor;
     private final TooltipRenderer tooltipRenderer;
     private final List<Component> tooltipWhenOn;

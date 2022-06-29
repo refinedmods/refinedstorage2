@@ -30,7 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> implements FluidGridEventHandler {
+public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResource> implements FluidGridEventHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final FluidGridEventHandler fluidGridEventHandler;

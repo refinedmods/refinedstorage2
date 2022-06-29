@@ -3,8 +3,8 @@ package com.refinedmods.refinedstorage2.platform.common.item.block;
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 
-import javax.annotation.Nullable;
 import java.util.List;
+import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;

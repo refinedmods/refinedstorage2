@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.api.network.test;
 
-import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
+import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 
-public final class SpyingNetworkNode extends NetworkNodeImpl {
+public final class SpyingNetworkNode extends AbstractNetworkNode {
     private final long energyUsage;
     private int activenessChanges;
 
@@ -11,8 +11,8 @@ public final class SpyingNetworkNode extends NetworkNodeImpl {
     }
 
     @Override
-    protected void onActiveChanged(boolean active) {
-        super.onActiveChanged(active);
+    protected void onActiveChanged(boolean newActive) {
+        super.onActiveChanged(newActive);
         activenessChanges++;
     }
 

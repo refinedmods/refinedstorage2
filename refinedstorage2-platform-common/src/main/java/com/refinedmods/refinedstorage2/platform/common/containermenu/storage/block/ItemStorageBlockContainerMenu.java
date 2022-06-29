@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.item.ItemResourceType;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.AbstractStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 
 import java.util.Set;
@@ -13,7 +13,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
-public class ItemStorageBlockContainerMenu extends StorageBlockContainerMenu {
+public class ItemStorageBlockContainerMenu extends AbstractStorageBlockContainerMenu {
     private static final Set<StorageTooltipHelper.TooltipOption> TOOLTIP_OPTIONS = Set.of(
             StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS,
             StorageTooltipHelper.TooltipOption.STACK_INFO
@@ -35,7 +35,7 @@ public class ItemStorageBlockContainerMenu extends StorageBlockContainerMenu {
     public ItemStorageBlockContainerMenu(final int syncId,
                                          final Player player,
                                          final ResourceFilterContainer resourceFilterContainer,
-                                         final StorageBlockBlockEntity<?> storageBlock) {
+                                         final AbstractStorageBlockBlockEntity<?> storageBlock) {
         super(
                 Menus.INSTANCE.getItemStorage(),
                 syncId,

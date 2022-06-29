@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked.trans
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
 import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
@@ -26,14 +25,14 @@ public class QuadRotator implements RenderContext.QuadTransform {
             quad.copyPos(i, tmp);
 
             tmp.add(-0.5F, -0.5F, -0.5F);
-            tmp.transform(createQuaternion(direction));
+            tmp.transform(direction.getQuaternion());
             tmp.add(0.5F, 0.5F, 0.5F);
 
             quad.pos(i, tmp);
 
             if (quad.hasNormal(i)) {
                 quad.copyNormal(i, tmp);
-                tmp.transform(createQuaternion(direction));
+                tmp.transform(direction.getQuaternion());
                 quad.normal(i, tmp);
             }
         }
@@ -53,10 +52,6 @@ public class QuadRotator implements RenderContext.QuadTransform {
         quad.nominalFace(rotate(nominalFace, mat));
 
         return true;
-    }
-
-    private Quaternion createQuaternion(final BiDirection direction) {
-        return new Quaternion(direction.getVec().x(), direction.getVec().y(), direction.getVec().z(), true);
     }
 
     private Direction rotate(final Direction facing, final Matrix4f mat) {

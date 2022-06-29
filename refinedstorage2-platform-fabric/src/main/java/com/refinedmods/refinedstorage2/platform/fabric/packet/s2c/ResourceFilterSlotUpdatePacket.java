@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceFilterableContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -15,7 +15,7 @@ public class ResourceFilterSlotUpdatePacket implements ClientPlayNetworking.Play
                         final FriendlyByteBuf buf,
                         final PacketSender responseSender) {
         final int slotIndex = buf.readInt();
-        if (client.player.containerMenu instanceof ResourceFilterableContainerMenu containerMenu) {
+        if (client.player.containerMenu instanceof AbstractResourceFilterContainerMenu containerMenu) {
             containerMenu.readResourceFilterSlotUpdate(slotIndex, buf);
         }
     }

@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 import net.minecraft.sounds.SoundEvent;
 

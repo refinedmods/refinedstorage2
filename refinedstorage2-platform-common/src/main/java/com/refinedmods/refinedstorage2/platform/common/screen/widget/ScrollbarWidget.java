@@ -99,14 +99,16 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
 
     @Override
     public void mouseMoved(final double mouseX, final double mouseY) {
-        if (clicked && mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height) {
+        final boolean inBounds = mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
+        if (clicked && inBounds) {
             updateOffset(mouseY);
         }
     }
 
     @Override
     public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
-        if (button == 0 && mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height) {
+        final boolean inBounds = mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
+        if (button == 0 && inBounds) {
             updateOffset(mouseY);
             clicked = true;
             return true;

@@ -24,7 +24,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class CableBlock extends NetworkNodeContainerBlock implements SimpleWaterloggedBlock {
+public class CableBlock extends AbstractNetworkNodeContainerBlock implements SimpleWaterloggedBlock {
     private static final BooleanProperty NORTH = BooleanProperty.create("north");
     private static final BooleanProperty EAST = BooleanProperty.create("east");
     private static final BooleanProperty SOUTH = BooleanProperty.create("south");
@@ -126,7 +126,7 @@ public class CableBlock extends NetworkNodeContainerBlock implements SimpleWater
     }
 
     private boolean hasConnection(final LevelAccessor world, final BlockPos pos) {
-        return world.getBlockState(pos).getBlock() instanceof NetworkNodeContainerBlock;
+        return world.getBlockState(pos).getBlock() instanceof AbstractNetworkNodeContainerBlock;
     }
 
     private BlockState getState(final BlockState currentState, final LevelAccessor world, final BlockPos pos) {

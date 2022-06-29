@@ -7,9 +7,9 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.blo
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 import net.minecraft.world.inventory.MenuType;
 

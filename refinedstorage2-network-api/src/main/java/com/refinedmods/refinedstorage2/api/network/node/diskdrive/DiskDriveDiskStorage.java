@@ -9,9 +9,9 @@ import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     private static final double DISK_NEAR_CAPACITY_THRESHOLD = .75;

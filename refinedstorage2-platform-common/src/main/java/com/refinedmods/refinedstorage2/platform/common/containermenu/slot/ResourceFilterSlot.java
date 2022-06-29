@@ -5,10 +5,10 @@ import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.FriendlyByteBuf;

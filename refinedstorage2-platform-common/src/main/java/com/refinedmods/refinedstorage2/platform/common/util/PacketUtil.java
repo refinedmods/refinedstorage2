@@ -27,8 +27,8 @@ public final class PacketUtil {
     }
 
     public static void writeItemResourceAmount(final FriendlyByteBuf buf,
-                                               final com.refinedmods.refinedstorage2.api.resource.
-                                                       ResourceAmount<ItemResource> resourceAmount) {
+                                               final com.refinedmods.refinedstorage2.api.resource
+                                                       .ResourceAmount<ItemResource> resourceAmount) {
         buf.writeVarInt(Item.getId(resourceAmount.getResource().item()));
         buf.writeLong(resourceAmount.getAmount());
         buf.writeNbt(resourceAmount.getResource().tag());
@@ -58,8 +58,8 @@ public final class PacketUtil {
     }
 
     public static void writeFluidResourceAmount(final FriendlyByteBuf buf,
-                                                final com.refinedmods.refinedstorage2.api.resource.
-                                                        ResourceAmount<FluidResource> resourceAmount) {
+                                                final com.refinedmods.refinedstorage2.api.resource
+                                                        .ResourceAmount<FluidResource> resourceAmount) {
         buf.writeVarInt(Registry.FLUID.getId(resourceAmount.getResource().fluid()));
         buf.writeLong(resourceAmount.getAmount());
         buf.writeNbt(resourceAmount.getResource().tag());

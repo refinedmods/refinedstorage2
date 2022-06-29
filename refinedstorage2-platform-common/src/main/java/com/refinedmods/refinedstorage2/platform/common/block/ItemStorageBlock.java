@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ItemStorageBlock extends StorageBlock {
+public class ItemStorageBlock extends AbstractStorageBlock {
     private final ItemStorageType.Variant variant;
 
     public ItemStorageBlock(final ItemStorageType.Variant variant) {

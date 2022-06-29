@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
-import com.refinedmods.refinedstorage2.platform.common.screen.widget.SideButtonWidget;
+import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +14,14 @@ import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class AutoSelectedSideButtonWidget extends SideButtonWidget {
-    private final GridContainerMenu<?> menu;
+public class AutoSelectedSideButtonWidget extends AbstractSideButtonWidget {
+    private final AbstractGridContainerMenu<?> menu;
     private final TooltipRenderer tooltipRenderer;
     private final List<Component> yes;
     private final List<Component> no;
 
-    public AutoSelectedSideButtonWidget(final GridContainerMenu<?> menu, final TooltipRenderer tooltipRenderer) {
+    public AutoSelectedSideButtonWidget(final AbstractGridContainerMenu<?> menu,
+                                        final TooltipRenderer tooltipRenderer) {
         super(createPressAction(menu));
         this.menu = menu;
         this.tooltipRenderer = tooltipRenderer;
@@ -28,7 +29,7 @@ public class AutoSelectedSideButtonWidget extends SideButtonWidget {
         this.no = calculateTooltip(false);
     }
 
-    private static OnPress createPressAction(final GridContainerMenu<?> menu) {
+    private static OnPress createPressAction(final AbstractGridContainerMenu<?> menu) {
         return btn -> menu.setAutoSelected(!menu.isAutoSelected());
     }
 

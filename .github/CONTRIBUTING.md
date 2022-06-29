@@ -30,7 +30,9 @@ Make sure to implement a Minecraft advancement if needed.
 
 ## Code style
 
-Please use the `.editorconfig` file as provided.
+We use Checkstyle in our build pipeline to validate coding style.
+
+It is recommended to import the `checkstyle.xml` config into your IDE and/or install a Checkstyle plugin.
 
 ## Testing
 

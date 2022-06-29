@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Inventory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class DiskDriveScreen extends StorageScreen<DiskDriveContainerMenu> {
+public class DiskDriveScreen extends AbstractStorageScreen<DiskDriveContainerMenu> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/disk_drive.png");
     private static final MutableComponent DISKS_TEXT = createTranslation("gui", "disk_drive.disks");
 

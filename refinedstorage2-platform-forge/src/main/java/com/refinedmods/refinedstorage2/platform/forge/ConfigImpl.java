@@ -137,7 +137,7 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.EnumValue<GridSortingType> sortingType;
         private final ForgeConfigSpec.EnumValue<GridSize> size;
 
-        public GridImpl() {
+        GridImpl() {
             builder.push("grid");
             largeFont = builder
                     .comment("Whether the Grid should use a large font for quantities")
@@ -279,7 +279,7 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.LongValue sixtyFourKEnergyUsage;
         private final ForgeConfigSpec.LongValue creativeUsage;
 
-        public StorageBlockImpl() {
+        StorageBlockImpl() {
             builder.push("storageBlock");
             oneKEnergyUsage = builder
                     .comment("The energy used by the 1K Storage Block")
@@ -332,7 +332,7 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.LongValue fourThousandNinetySixBEnergyUsage;
         private final ForgeConfigSpec.LongValue creativeUsage;
 
-        public FluidStorageBlockImpl() {
+        FluidStorageBlockImpl() {
             builder.push("fluidStorageBlock");
             sixtyFourBEnergyUsage = builder
                     .comment("The energy used by the 64B Fluid Storage Block")

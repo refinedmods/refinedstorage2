@@ -8,8 +8,8 @@ import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.Resource
 import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
-import javax.annotation.Nullable;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import net.minecraft.server.level.ServerPlayer;
 

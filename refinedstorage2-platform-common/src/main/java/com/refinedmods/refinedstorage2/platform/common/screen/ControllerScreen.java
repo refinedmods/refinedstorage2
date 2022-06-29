@@ -18,7 +18,7 @@ import net.minecraft.world.entity.player.Inventory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ControllerScreen extends BaseScreen<ControllerContainerMenu> {
+public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/controller.png");
 
     private final ProgressWidget progressWidget;

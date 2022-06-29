@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class RedstoneModeSideButtonWidget extends SideButtonWidget {
+public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
     private final Map<RedstoneMode, List<Component>> tooltips = new EnumMap<>(RedstoneMode.class);
     private final TooltipRenderer tooltipRenderer;
     private final RedstoneModeAccessor redstoneModeAccessor;

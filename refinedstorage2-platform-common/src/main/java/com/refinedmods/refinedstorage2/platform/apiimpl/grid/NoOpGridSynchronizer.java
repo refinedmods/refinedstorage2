@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.MutableComponent;
 
-public class NoOpGridSynchronizer extends DefaultGridSynchronizer {
+public class NoOpGridSynchronizer extends AbstractGridSynchronizer {
     private static final MutableComponent TITLE = IdentifierUtil.createTranslation("gui", "grid.synchronizer.off");
 
     @Override

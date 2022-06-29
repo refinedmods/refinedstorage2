@@ -44,7 +44,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         }
         final ItemResource itemResource = new ItemResource(carried.getItem(), carried.getTag());
         gridService.insert(itemResource, insertMode, (resource, amount, action, source) -> {
-            try (final Transaction tx = Transaction.openOuter()) {
+            try (Transaction tx = Transaction.openOuter()) {
                 final ItemVariant itemVariant = toItemVariant(resource);
                 final long extracted = playerCursorStorage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
@@ -64,7 +64,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
         }
         final ItemResource itemResource = ofItemVariant(itemVariantInSlot);
         gridService.insert(itemResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
-            try (final Transaction tx = Transaction.openOuter()) {
+            try (Transaction tx = Transaction.openOuter()) {
                 final ItemVariant itemVariant = toItemVariant(resource);
                 final long extracted = storage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
@@ -79,7 +79,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     public void onExtract(final ItemResource itemResource, final GridExtractMode mode, final boolean cursor) {
         gridService.extract(itemResource, mode, (resource, amount, action, source) -> {
             final ItemVariant itemVariant = toItemVariant(resource);
-            try (final Transaction tx = Transaction.openOuter()) {
+            try (Transaction tx = Transaction.openOuter()) {
                 final long inserted = insert(itemVariant, amount, tx, cursor);
                 if (action == Action.EXECUTE) {
                     tx.commit();
@@ -104,7 +104,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     private void handleInventoryToGridScroll(final ItemResource itemResource,
                                              final Storage<ItemVariant> sourceStorage) {
         gridService.insert(itemResource, GridInsertMode.SINGLE_RESOURCE, (resource, amount, action, source) -> {
-            try (final Transaction tx = Transaction.openOuter()) {
+            try (Transaction tx = Transaction.openOuter()) {
                 final ItemVariant itemVariant = toItemVariant(resource);
                 final long extracted = sourceStorage.extract(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
@@ -119,7 +119,7 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
                                              final Storage<ItemVariant> destinationStorage) {
         gridService.extract(itemResource, GridExtractMode.SINGLE_RESOURCE, (resource, amount, action, source) -> {
             final ItemVariant itemVariant = toItemVariant(resource);
-            try (final Transaction tx = Transaction.openOuter()) {
+            try (Transaction tx = Transaction.openOuter()) {
                 final long inserted = destinationStorage.insert(itemVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();

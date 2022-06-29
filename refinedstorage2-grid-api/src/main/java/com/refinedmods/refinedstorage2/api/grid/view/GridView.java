@@ -2,10 +2,10 @@ package com.refinedmods.refinedstorage2.api.grid.view;
 
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
 
@@ -39,7 +39,7 @@ public interface GridView<T> {
      *
      * @param filter the filter
      */
-    void setFilter(Predicate<GridResource<T>> filter);
+    void setFilter(Predicate<AbstractGridResource<T>> filter);
 
     /**
      * @return whether the view is currently not sorting
@@ -98,5 +98,5 @@ public interface GridView<T> {
     /**
      * @return the view list
      */
-    List<GridResource<T>> getAll();
+    List<AbstractGridResource<T>> getAll();
 }

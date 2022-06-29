@@ -3,7 +3,8 @@ package com.refinedmods.refinedstorage2.platform.forge;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
-import com.refinedmods.refinedstorage2.platform.common.block.BaseBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
@@ -12,9 +13,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.StorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
@@ -164,7 +163,7 @@ public class ModInitializer extends AbstractModInitializer {
         Blocks.INSTANCE.setCable(blockRegistry.register(CABLE.getPath(), CableBlock::new));
         Blocks.INSTANCE.setQuartzEnrichedIronBlock(blockRegistry.register(
                 QUARTZ_ENRICHED_IRON_BLOCK.getPath(),
-                QuartzEnrichedIronBlock::new
+                SimpleBlock::new
         ));
         Blocks.INSTANCE.setDiskDrive(blockRegistry.register(
                 DISK_DRIVE.getPath(),
@@ -172,7 +171,7 @@ public class ModInitializer extends AbstractModInitializer {
         ));
         Blocks.INSTANCE.setMachineCasing(blockRegistry.register(
                 MACHINE_CASING.getPath(),
-                MachineCasingBlock::new
+                SimpleBlock::new
         ));
         Blocks.INSTANCE.getGrid().putAll(color -> blockRegistry.register(
                 Blocks.INSTANCE.getGrid().getId(color, GRID).getPath(),
@@ -464,7 +463,7 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerLootFunctions() {
         LootFunctions.INSTANCE.setStorageBlock(lootFunctionTypeRegistry.register(
                 STORAGE_BLOCK.getPath(),
-                () -> new LootItemFunctionType(new StorageBlock.StorageBlockLootItemFunctionSerializer())
+                () -> new LootItemFunctionType(new AbstractStorageBlock.StorageBlockLootItemFunctionSerializer())
         ));
 
         lootFunctionTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -484,8 +483,8 @@ public class ModInitializer extends AbstractModInitializer {
     public void onRightClickBlock(final PlayerInteractEvent.RightClickBlock e) {
         final BlockState state = e.getWorld().getBlockState(e.getHitVec().getBlockPos());
 
-        BaseBlock.tryUseWrench(state, e.getWorld(), e.getHitVec(), e.getPlayer(), e.getHand())
-                .or(() -> BaseBlock.tryUpdateColor(
+        AbstractBaseBlock.tryUseWrench(state, e.getWorld(), e.getHitVec(), e.getPlayer(), e.getHand())
+                .or(() -> AbstractBaseBlock.tryUpdateColor(
                         state,
                         e.getWorld(),
                         e.getHitVec().getBlockPos(),

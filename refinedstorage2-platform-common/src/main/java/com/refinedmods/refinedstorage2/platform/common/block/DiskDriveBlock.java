@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
-import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 
 import java.util.function.BiFunction;
@@ -12,10 +12,10 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class DiskDriveBlock extends NetworkNodeContainerBlock {
-    private final BiFunction<BlockPos, BlockState, DiskDriveBlockEntity> blockEntityFactory;
+public class DiskDriveBlock extends AbstractNetworkNodeContainerBlock {
+    private final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> blockEntityFactory;
 
-    public DiskDriveBlock(final BiFunction<BlockPos, BlockState, DiskDriveBlockEntity> blockEntityFactory) {
+    public DiskDriveBlock(final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> blockEntityFactory) {
         super(BlockConstants.STONE_PROPERTIES);
         this.blockEntityFactory = blockEntityFactory;
     }
@@ -35,7 +35,7 @@ public class DiskDriveBlock extends NetworkNodeContainerBlock {
                                                                   final BlockState state,
                                                                   final BlockEntityType<T> type) {
         return type == BlockEntities.INSTANCE.getDiskDrive() && !level.isClientSide
-                ? (l, p, s, be) -> DiskDriveBlockEntity.serverTick(s, (DiskDriveBlockEntity) be)
+                ? (l, p, s, be) -> AbstractDiskDriveBlockEntity.serverTick(s, (AbstractDiskDriveBlockEntity) be)
                 : null;
     }
 }

@@ -3,7 +3,8 @@ package com.refinedmods.refinedstorage2.platform.fabric;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
-import com.refinedmods.refinedstorage2.platform.common.block.BaseBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
@@ -12,12 +13,10 @@ import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.StorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
@@ -141,8 +140,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     private void registerEvents() {
         UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
             final BlockState state = level.getBlockState(hitResult.getBlockPos());
-            return BaseBlock.tryUseWrench(state, level, hitResult, player, hand)
-                    .or(() -> BaseBlock.tryUpdateColor(state, level, hitResult.getBlockPos(), player, hand))
+            return AbstractBaseBlock.tryUseWrench(state, level, hitResult, player, hand)
+                    .or(() -> AbstractBaseBlock.tryUpdateColor(state, level, hitResult.getBlockPos(), player, hand))
                     .orElse(InteractionResult.PASS);
         });
     }
@@ -171,7 +170,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.setQuartzEnrichedIronBlock(register(
                 Registry.BLOCK,
                 QUARTZ_ENRICHED_IRON_BLOCK,
-                new QuartzEnrichedIronBlock()
+                new SimpleBlock()
         ));
         Blocks.INSTANCE.setDiskDrive(register(
                 Registry.BLOCK,
@@ -181,7 +180,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.setMachineCasing(register(
                 Registry.BLOCK,
                 MACHINE_CASING,
-                new MachineCasingBlock()
+                new SimpleBlock()
         ));
 
         Blocks.INSTANCE.getGrid().putAll(color -> register(
@@ -492,7 +491,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         LootFunctions.INSTANCE.setStorageBlock(register(
                 Registry.LOOT_FUNCTION_TYPE,
                 STORAGE_BLOCK,
-                new LootItemFunctionType(new StorageBlock.StorageBlockLootItemFunctionSerializer())
+                new LootItemFunctionType(new AbstractStorageBlock.StorageBlockLootItemFunctionSerializer())
         ));
     }
 
@@ -516,7 +515,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerDiskDriveInventory() {
         ItemStorage.SIDED.registerForBlockEntities((blockEntity, context) -> {
-            if (blockEntity instanceof DiskDriveBlockEntity diskDrive) {
+            if (blockEntity instanceof AbstractDiskDriveBlockEntity diskDrive) {
                 return InventoryStorage.of(diskDrive.getDiskInventory(), context);
             }
             return null;

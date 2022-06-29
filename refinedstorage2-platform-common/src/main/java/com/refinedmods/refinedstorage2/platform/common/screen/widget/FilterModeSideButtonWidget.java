@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class FilterModeSideButtonWidget extends SideButtonWidget {
+public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
     private final FilterModeAccessor filterModeAccessor;
     private final TooltipRenderer tooltipRenderer;
     private final List<Component> blockModeTooltip;

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.api.storage.tracked;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
+import com.refinedmods.refinedstorage2.api.storage.AbstractProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 
@@ -12,7 +12,7 @@ import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
-public class TrackedStorageImpl<T> extends ProxyStorage<T> implements TrackedStorage<T> {
+public class TrackedStorageImpl<T> extends AbstractProxyStorage<T> implements TrackedStorage<T> {
     private final TrackedStorageRepository<T> repository;
     private final LongSupplier clock;
 

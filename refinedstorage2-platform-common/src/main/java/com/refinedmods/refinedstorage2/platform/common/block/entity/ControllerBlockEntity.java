@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEntity<ControllerNetworkNode>
+public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<ControllerNetworkNode>
         implements ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -47,7 +47,7 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
     }
 
     public static void serverTick(final BlockState state, final ControllerBlockEntity blockEntity) {
-        InternalNetworkNodeContainerBlockEntity.serverTick(state, blockEntity);
+        AbstractInternalNetworkNodeContainerBlockEntity.serverTick(state, blockEntity);
         blockEntity.updateEnergyTypeInLevel(state);
     }
 
@@ -86,9 +86,9 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
         }
     }
 
-    private void updateEnergyTypeInLevel(final BlockState state, final ControllerEnergyType type) {
+    private void updateEnergyTypeInLevel(final BlockState state, final ControllerEnergyType energyType) {
         if (level != null) {
-            level.setBlockAndUpdate(getBlockPos(), state.setValue(ControllerBlock.ENERGY_TYPE, type));
+            level.setBlockAndUpdate(getBlockPos(), state.setValue(ControllerBlock.ENERGY_TYPE, energyType));
         }
     }
 

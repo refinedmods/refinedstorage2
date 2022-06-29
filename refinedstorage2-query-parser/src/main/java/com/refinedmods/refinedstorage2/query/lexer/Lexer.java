@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.query.lexer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.UnaryOperator;
 
 public class Lexer {
@@ -19,7 +20,6 @@ public class Lexer {
         while (isNotEof()) {
             final char current = current();
 
-            final TokenType mapping;
             if (current == '\r') {
                 position.advanceAndReset();
             } else if (current == '\n') {
@@ -28,8 +28,8 @@ public class Lexer {
                 position.reset();
             } else if (current == ' ') {
                 position.advanceAndReset();
-            } else if ((mapping = tokenMappings.findMapping(position, source)) != null) {
-                addToken(mapping);
+            } else if (tokenMappings.hasMapping(position, source)) {
+                addToken(Objects.requireNonNull(tokenMappings.findMapping(position, source)));
             } else if (Character.isDigit(current)) {
                 scanNumber();
             } else if (current == '"') {

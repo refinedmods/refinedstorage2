@@ -4,13 +4,13 @@ import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorag
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 import net.minecraft.world.item.Item;
 

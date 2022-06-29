@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.api.grid.query;
 
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceAttributeKey;
 import com.refinedmods.refinedstorage2.query.lexer.Lexer;
 import com.refinedmods.refinedstorage2.query.lexer.LexerException;
@@ -44,14 +44,12 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
     }
 
     @Override
-    public Predicate<GridResource<T>> parse(final String query) throws GridQueryParserException {
+    public Predicate<AbstractGridResource<T>> parse(final String query) throws GridQueryParserException {
         if ("".equals(query.trim())) {
             return resource -> true;
         }
-
         final List<Token> tokens = getTokens(query);
         final List<Node> nodes = getNodes(tokens);
-
         return implicitAnd(nodes);
     }
 
@@ -75,79 +73,84 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
         }
     }
 
-    private Predicate<GridResource<T>> implicitAnd(final List<Node> nodes) throws GridQueryParserException {
-        final List<Predicate<GridResource<T>>> conditions = new ArrayList<>();
+    private Predicate<AbstractGridResource<T>> implicitAnd(final List<Node> nodes) throws GridQueryParserException {
+        final List<Predicate<AbstractGridResource<T>>> conditions = new ArrayList<>();
         for (final Node node : nodes) {
             conditions.add(parseNode(node));
         }
         return and(conditions);
     }
 
-    private Predicate<GridResource<T>> parseNode(final Node node) throws GridQueryParserException {
+    private Predicate<AbstractGridResource<T>> parseNode(final Node node) throws GridQueryParserException {
         if (node instanceof LiteralNode literalNode) {
-            final String content = literalNode.token().content();
-            return name(content);
+            return parseLiteral(literalNode);
         } else if (node instanceof UnaryOpNode unaryOpNode) {
-            return parseUnaryOpNode(unaryOpNode);
+            return parseUnaryOp(unaryOpNode);
         } else if (node instanceof BinOpNode binOpNode) {
-            final String operator = binOpNode.binOp().content();
-
-            if ("&&".equals(operator)) {
-                return parseAndBinOpNode(binOpNode);
-            } else if ("||".equals(operator)) {
-                return parseOrBinOpNode(binOpNode);
-            }
+            return parseBinOp(binOpNode);
         } else if (node instanceof ParenNode parenNode) {
             return implicitAnd(parenNode.nodes());
         }
-
         throw new GridQueryParserException(node.getRange(), "Unsupported node", null);
     }
 
-    private Predicate<GridResource<T>> parseOrBinOpNode(final BinOpNode node) throws GridQueryParserException {
-        return or(Arrays.asList(
-                parseNode(node.left()),
-                parseNode(node.right())
-        ));
+    private Predicate<AbstractGridResource<T>> parseBinOp(final BinOpNode node) throws GridQueryParserException {
+        final String operator = node.binOp().content();
+        if ("&&".equals(operator)) {
+            return parseAndBinOpNode(node);
+        } else if ("||".equals(operator)) {
+            return parseOrBinOpNode(node);
+        } else {
+            throw new GridQueryParserException(node.getRange(), "Unsupported operator: " + operator, null);
+        }
     }
 
-    private Predicate<GridResource<T>> parseAndBinOpNode(final BinOpNode node) throws GridQueryParserException {
+    private Predicate<AbstractGridResource<T>> parseAndBinOpNode(final BinOpNode node) throws GridQueryParserException {
         return and(Arrays.asList(
                 parseNode(node.left()),
                 parseNode(node.right())
         ));
     }
 
-    private Predicate<GridResource<T>> parseUnaryOpNode(final UnaryOpNode node) throws GridQueryParserException {
+    private Predicate<AbstractGridResource<T>> parseOrBinOpNode(final BinOpNode node) throws GridQueryParserException {
+        return or(Arrays.asList(
+                parseNode(node.left()),
+                parseNode(node.right())
+        ));
+    }
+
+    private Predicate<AbstractGridResource<T>> parseUnaryOp(final UnaryOpNode node) throws GridQueryParserException {
         final String operator = node.operator().content();
         final Node content = node.node();
+        final Predicate<AbstractGridResource<T>> predicate;
 
         if ("!".equals(operator)) {
-            return not(parseNode(content));
+            predicate = not(parseNode(content));
         } else if (unaryOperatorToAttributeKeyMapping.containsKey(operator)) {
             final Set<GridResourceAttributeKey> keys = unaryOperatorToAttributeKeyMapping.get(operator);
             if (content instanceof LiteralNode literalNode) {
-                return attributeMatch(keys, literalNode.token().content());
+                predicate = attributeMatch(keys, literalNode.token().content());
             } else {
                 throw new GridQueryParserException(content.getRange(), "Expected a literal", null);
             }
         } else if (">".equals(operator)) {
-            return count(content, (actualCount, wantedCount) -> actualCount > wantedCount);
+            predicate = count(content, (actualCount, wantedCount) -> actualCount > wantedCount);
         } else if (">=".equals(operator)) {
-            return count(content, (actualCount, wantedCount) -> actualCount >= wantedCount);
+            predicate = count(content, (actualCount, wantedCount) -> actualCount >= wantedCount);
         } else if ("<".equals(operator)) {
-            return count(content, (actualCount, wantedCount) -> actualCount < wantedCount);
+            predicate = count(content, (actualCount, wantedCount) -> actualCount < wantedCount);
         } else if ("<=".equals(operator)) {
-            return count(content, (actualCount, wantedCount) -> actualCount <= wantedCount);
+            predicate = count(content, (actualCount, wantedCount) -> actualCount <= wantedCount);
         } else if ("=".equals(operator)) {
-            return count(content, Long::equals);
+            predicate = count(content, Long::equals);
         } else {
             throw new GridQueryParserException(content.getRange(), "Unsupported unary operator", null);
         }
+        return predicate;
     }
 
-    private static <T> Predicate<GridResource<T>> count(final Node node,
-                                                        final BiPredicate<Long, Long> predicate)
+    private static <T> Predicate<AbstractGridResource<T>> count(final Node node,
+                                                                final BiPredicate<Long, Long> predicate)
             throws GridQueryParserException {
         if (!(node instanceof LiteralNode)) {
             throw new GridQueryParserException(node.getRange(), "Count filtering expects a literal", null);
@@ -162,8 +165,8 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
         return resource -> predicate.test(resource.getResourceAmount().getAmount(), wantedCount);
     }
 
-    private static <T> Predicate<GridResource<T>> attributeMatch(final Set<GridResourceAttributeKey> keys,
-                                                                 final String query) {
+    private static <T> Predicate<AbstractGridResource<T>> attributeMatch(final Set<GridResourceAttributeKey> keys,
+                                                                         final String query) {
         return resource -> keys
                 .stream()
                 .map(resource::getAttribute)
@@ -175,13 +178,13 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
         return value.trim().toLowerCase(Locale.ROOT);
     }
 
-    private static <T> Predicate<GridResource<T>> name(final String name) {
-        return resource -> normalize(resource.getName()).contains(normalize(name));
+    private static <T> Predicate<AbstractGridResource<T>> parseLiteral(final LiteralNode node) {
+        return resource -> normalize(resource.getName()).contains(normalize(node.token().content()));
     }
 
-    private static <T> Predicate<GridResource<T>> and(final List<Predicate<GridResource<T>>> predicates) {
+    private static <T> Predicate<AbstractGridResource<T>> and(final List<Predicate<AbstractGridResource<T>>> chain) {
         return resource -> {
-            for (final Predicate<GridResource<T>> predicate : predicates) {
+            for (final Predicate<AbstractGridResource<T>> predicate : chain) {
                 if (!predicate.test(resource)) {
                     return false;
                 }
@@ -190,9 +193,9 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
         };
     }
 
-    private static <T> Predicate<GridResource<T>> or(final List<Predicate<GridResource<T>>> predicates) {
+    private static <T> Predicate<AbstractGridResource<T>> or(final List<Predicate<AbstractGridResource<T>>> chain) {
         return resource -> {
-            for (final Predicate<GridResource<T>> predicate : predicates) {
+            for (final Predicate<AbstractGridResource<T>> predicate : chain) {
                 if (predicate.test(resource)) {
                     return true;
                 }
@@ -201,7 +204,7 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
         };
     }
 
-    private static <T> Predicate<GridResource<T>> not(final Predicate<GridResource<T>> predicate) {
+    private static <T> Predicate<AbstractGridResource<T>> not(final Predicate<AbstractGridResource<T>> predicate) {
         return resource -> !predicate.test(resource);
     }
 }

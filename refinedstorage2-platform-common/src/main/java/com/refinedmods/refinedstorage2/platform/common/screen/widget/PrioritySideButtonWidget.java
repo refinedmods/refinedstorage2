@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class PrioritySideButtonWidget extends SideButtonWidget {
+public class PrioritySideButtonWidget extends AbstractSideButtonWidget {
     private final PriorityAccessor priorityAccessor;
     private final TooltipRenderer tooltipRenderer;
 

@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.common.block.BaseBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.AbstractNetworkNodeContainerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.NetworkNodeContainerBlock;
 
 import java.util.Optional;
 
@@ -60,17 +60,17 @@ public class BlockColorMap<T extends Block> extends ColorMap<T> {
     }
 
     private BlockState transferBaseProperties(final BlockState oldState, final BlockState newState) {
-        if (newState.hasProperty(BaseBlock.DIRECTION)) {
-            return newState.setValue(BaseBlock.DIRECTION, oldState.getValue(BaseBlock.DIRECTION));
+        if (newState.hasProperty(AbstractBaseBlock.DIRECTION)) {
+            return newState.setValue(AbstractBaseBlock.DIRECTION, oldState.getValue(AbstractBaseBlock.DIRECTION));
         }
         return newState;
     }
 
     private BlockState transferNetworkNodeProperties(final BlockState oldState, final BlockState newState) {
-        if (newState.hasProperty(NetworkNodeContainerBlock.ACTIVE)) {
+        if (newState.hasProperty(AbstractNetworkNodeContainerBlock.ACTIVE)) {
             return newState.setValue(
-                    NetworkNodeContainerBlock.ACTIVE,
-                    oldState.getValue(NetworkNodeContainerBlock.ACTIVE)
+                    AbstractNetworkNodeContainerBlock.ACTIVE,
+                    oldState.getValue(AbstractNetworkNodeContainerBlock.ACTIVE)
             );
         }
         return newState;

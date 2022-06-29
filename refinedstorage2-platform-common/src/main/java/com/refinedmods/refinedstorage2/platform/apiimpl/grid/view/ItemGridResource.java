@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.apiimpl.grid.view;
 
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 
@@ -10,7 +10,7 @@ import java.util.Set;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemGridResource extends GridResource<ItemResource> {
+public class ItemGridResource extends AbstractGridResource<ItemResource> {
     private final int id;
     private final ItemStack itemStack;
 

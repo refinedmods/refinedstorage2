@@ -1,19 +1,20 @@
 package com.refinedmods.refinedstorage2.api.core.component;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
 public class ComponentMapFactory<C, X> {
-    private final LinkedHashMap<Class<? extends C>, Function<X, C>> factories;
+    private final Map<Class<? extends C>, Function<X, C>> factories;
 
     public ComponentMapFactory() {
         this(new LinkedHashMap<>());
     }
 
-    private ComponentMapFactory(final LinkedHashMap<Class<? extends C>, Function<X, C>> factories) {
+    private ComponentMapFactory(final Map<Class<? extends C>, Function<X, C>> factories) {
         this.factories = factories;
     }
 
@@ -26,7 +27,7 @@ public class ComponentMapFactory<C, X> {
     }
 
     public ComponentMap<C> buildComponentMap(final X context) {
-        final LinkedHashMap<Class<? extends C>, C> components = new LinkedHashMap<>();
+        final Map<Class<? extends C>, C> components = new LinkedHashMap<>();
         factories.forEach((componentType, factory) -> components.put(componentType, factory.apply(context)));
         return new ComponentMap<>(components);
     }

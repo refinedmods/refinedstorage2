@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
+import javax.annotation.Nullable;
 
 import net.minecraft.client.KeyMapping;
 

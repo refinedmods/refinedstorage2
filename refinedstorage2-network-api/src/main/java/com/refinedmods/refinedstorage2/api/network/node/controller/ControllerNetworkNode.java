@@ -2,11 +2,11 @@ package com.refinedmods.refinedstorage2.api.network.node.controller;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
+import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 
 import javax.annotation.Nullable;
 
-public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStorage {
+public class ControllerNetworkNode extends AbstractNetworkNode implements EnergyStorage {
     @Nullable
     private EnergyStorage energyStorage;
 
@@ -19,6 +19,10 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
             return ControllerEnergyState.OFF;
         }
         final double pct = (double) energyStorage.getStored() / (double) energyStorage.getCapacity();
+        return getState(pct);
+    }
+
+    private ControllerEnergyState getState(final double pct) {
         if (pct >= 0.4) {
             return ControllerEnergyState.ON;
         }

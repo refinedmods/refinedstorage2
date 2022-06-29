@@ -7,9 +7,9 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

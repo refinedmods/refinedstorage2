@@ -12,9 +12,9 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
 public class DiskDriveInventory extends SimpleContainer implements StorageDiskProvider {
-    private final DiskDriveBlockEntity diskDrive;
+    private final AbstractDiskDriveBlockEntity diskDrive;
 
-    public DiskDriveInventory(final DiskDriveBlockEntity diskDrive) {
+    public DiskDriveInventory(final AbstractDiskDriveBlockEntity diskDrive) {
         super(DiskDriveNetworkNode.DISK_COUNT);
         this.diskDrive = diskDrive;
     }

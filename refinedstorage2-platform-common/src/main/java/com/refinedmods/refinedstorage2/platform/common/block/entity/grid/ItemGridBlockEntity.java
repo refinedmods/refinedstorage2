@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ItemGridBlockEntity extends GridBlockEntity<ItemResource> {
+public class ItemGridBlockEntity extends AbstractGridBlockEntity<ItemResource> {
     public ItemGridBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getGrid(), pos, state, StorageChannelTypes.ITEM);
     }

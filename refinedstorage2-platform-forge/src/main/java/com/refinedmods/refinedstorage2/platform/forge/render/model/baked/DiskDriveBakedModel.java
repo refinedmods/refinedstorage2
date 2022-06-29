@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.forge.render.model.baked;
 
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
-import com.refinedmods.refinedstorage2.platform.common.block.BaseBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
 
@@ -34,7 +34,7 @@ import net.minecraftforge.client.model.data.IModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveBakedModel extends ForwardingBakedModel {
+public class DiskDriveBakedModel extends AbstractForwardingBakedModel {
     private static final Vector3f[] TRANSLATORS = new Vector3f[8];
 
     static {
@@ -77,7 +77,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
                                     @Nullable final Direction side,
                                     @NotNull final RandomSource rand,
                                     @NotNull final IModelData extraData) {
-        if (state == null || !state.hasProperty(BaseBlock.DIRECTION)) {
+        if (state == null || !state.hasProperty(AbstractBaseBlock.DIRECTION)) {
             return super.getQuads(state, side, rand);
         }
         final DiskDriveState driveState = extraData.getData(ForgeDiskDriveBlockEntity.STATE_PROPERTY);
@@ -102,7 +102,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
             }
             long disks = 0;
             for (int i = 0; i < TRANSLATORS.length; ++i) {
-                if (DiskDriveBlockEntity.hasDisk(tag, i)) {
+                if (AbstractDiskDriveBlockEntity.hasDisk(tag, i)) {
                     disks |= 1 << i;
                 }
             }
@@ -122,10 +122,10 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         private final StorageDiskState[] diskStates;
         private final RandomSource random;
 
-        public DiskDriveStateCacheKey(final BlockState state,
-                                      @Nullable final Direction side,
-                                      final StorageDiskState[] diskStates,
-                                      final RandomSource random) {
+        DiskDriveStateCacheKey(final BlockState state,
+                               @Nullable final Direction side,
+                               final StorageDiskState[] diskStates,
+                               final RandomSource random) {
             this.state = state;
             this.side = side;
             this.diskStates = diskStates;
@@ -134,8 +134,12 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
 
         @Override
         public boolean equals(final Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             final DiskDriveStateCacheKey that = (DiskDriveStateCacheKey) o;
             return state.equals(that.state) && side == that.side && Arrays.equals(diskStates, that.diskStates);
         }
@@ -151,7 +155,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     private class DiskDriveCacheLoader extends CacheLoader<DiskDriveStateCacheKey, List<BakedQuad>> {
         @Override
         public List<BakedQuad> load(final DiskDriveStateCacheKey key) {
-            final BiDirection direction = key.state.getValue(BaseBlock.DIRECTION);
+            final BiDirection direction = key.state.getValue(AbstractBaseBlock.DIRECTION);
             return QuadTransformer.transformSideAndRotate(resultingSide -> getQuads(
                     key.state,
                     key.random,

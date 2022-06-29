@@ -21,8 +21,8 @@ public class JeiPlugin implements IModPlugin {
     }
 
     @Override
-    public void onRuntimeAvailable(final IJeiRuntime runtime) {
-        JeiPlugin.runtime = runtime;
+    public void onRuntimeAvailable(final IJeiRuntime newRuntime) {
+        JeiPlugin.runtime = newRuntime;
     }
 
     @Nullable

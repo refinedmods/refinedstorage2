@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
@@ -16,9 +16,9 @@ import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientComm
 import com.refinedmods.refinedstorage2.platform.common.render.FluidRenderer;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.EditBox;
@@ -100,12 +100,12 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public Function<ResourceAmount<ItemResource>, GridResource<ItemResource>> getItemGridResourceFactory() {
+    public Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> getItemGridResourceFactory() {
         return ensureLoaded().getItemGridResourceFactory();
     }
 
     @Override
-    public Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> getFluidGridResourceFactory() {
+    public Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> getFluidGridResourceFactory() {
         return ensureLoaded().getFluidGridResourceFactory();
     }
 

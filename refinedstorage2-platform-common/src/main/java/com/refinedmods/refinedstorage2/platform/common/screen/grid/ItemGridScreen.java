@@ -3,21 +3,21 @@ package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.view.ItemGridResource;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
 
-import javax.annotation.Nullable;
 import java.util.List;
+import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMenu> {
+public class ItemGridScreen extends AbstractGridScreen<ItemResource, ItemGridContainerMenu> {
     public ItemGridScreen(final ItemGridContainerMenu menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title);
     }
@@ -52,7 +52,13 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
         if (shift && ctrl) {
             return null;
         }
+        return getScrollModeWhenScorllingOnGridArea(up, shift, ctrl);
+    }
 
+    @Nullable
+    private static GridScrollMode getScrollModeWhenScorllingOnGridArea(final boolean up,
+                                                                       final boolean shift,
+                                                                       final boolean ctrl) {
         if (up) {
             if (shift) {
                 return GridScrollMode.INVENTORY_TO_GRID;
@@ -64,7 +70,6 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
                 return GridScrollMode.GRID_TO_CURSOR;
             }
         }
-
         return null;
     }
 
@@ -72,12 +77,12 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
     protected void renderResource(final PoseStack poseStack,
                                   final int slotX,
                                   final int slotY,
-                                  final GridResource<ItemResource> resource) {
+                                  final AbstractGridResource<ItemResource> resource) {
         itemRenderer.renderAndDecorateItem(((ItemGridResource) resource).getItemStack(), slotX, slotY);
     }
 
     @Override
-    protected String getAmount(final GridResource<ItemResource> resource) {
+    protected String getAmount(final AbstractGridResource<ItemResource> resource) {
         if (resource.isZeroed()) {
             return "0";
         }
@@ -85,7 +90,7 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
     }
 
     @Override
-    protected String getAmountInTooltip(final GridResource<ItemResource> resource) {
+    protected String getAmountInTooltip(final AbstractGridResource<ItemResource> resource) {
         if (resource.isZeroed()) {
             return "0";
         }
@@ -93,7 +98,7 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
     }
 
     @Override
-    protected List<Component> getTooltip(final GridResource<ItemResource> resource) {
+    protected List<Component> getTooltip(final AbstractGridResource<ItemResource> resource) {
         return getTooltipFromItem(((ItemGridResource) resource).getItemStack());
     }
 
@@ -103,7 +108,7 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
     }
 
     @Override
-    protected void mouseClickedInGrid(final int clickedButton, final GridResource<ItemResource> resource) {
+    protected void mouseClickedInGrid(final int clickedButton, final AbstractGridResource<ItemResource> resource) {
         getMenu().onExtract(
                 resource.getResourceAmount().getResource(),
                 getExtractMode(clickedButton),
@@ -121,7 +126,7 @@ public class ItemGridScreen extends GridScreen<ItemResource, ItemGridContainerMe
     }
 
     @Override
-    protected void mouseScrolledInGrid(final boolean up, final GridResource<ItemResource> resource) {
+    protected void mouseScrolledInGrid(final boolean up, final AbstractGridResource<ItemResource> resource) {
         final GridScrollMode scrollMode = getScrollModeWhenScrollingOnGridArea(up);
         if (scrollMode == null) {
             return;

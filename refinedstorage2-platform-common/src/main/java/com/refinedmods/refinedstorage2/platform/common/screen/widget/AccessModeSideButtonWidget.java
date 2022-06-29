@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class AccessModeSideButtonWidget extends SideButtonWidget {
+public class AccessModeSideButtonWidget extends AbstractSideButtonWidget {
     private final AccessModeAccessor accessModeAccessor;
     private final TooltipRenderer tooltipRenderer;
     private final Map<AccessMode, List<Component>> tooltips = new EnumMap<>(AccessMode.class);

@@ -64,7 +64,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         final FluidResource fluidResource = ofFluidVariant(extractableResource);
         gridService.insert(fluidResource, insertMode, (resource, amount, action, source) -> {
             final FluidVariant fluidVariant = toFluidVariant(resource);
-            try (final Transaction tx = Transaction.openOuter()) {
+            try (Transaction tx = Transaction.openOuter()) {
                 final long extracted = cursorStorage.extract(fluidVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
@@ -94,7 +94,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         final FluidResource fluidResource = ofFluidVariant(extractableResource);
         gridService.insert(fluidResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
             final FluidVariant fluidVariant = toFluidVariant(resource);
-            try (final Transaction tx = Transaction.openOuter()) {
+            try (Transaction tx = Transaction.openOuter()) {
                 final long extracted = fluidSlotStorage.extract(fluidVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
@@ -135,7 +135,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             return;
         }
         gridService.extract(fluidResource, mode, (resource, amount, action, source) -> {
-            try (final Transaction tx = Transaction.openOuter()) {
+            try (Transaction tx = Transaction.openOuter()) {
                 final long inserted = destination.insert(toFluidVariant(resource), amount, tx);
                 final boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, tx);
                 if (!couldInsertBucket) {
@@ -153,7 +153,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     private void extractWithBucketInInventory(final FluidResource fluidResource,
                                               final GridExtractMode mode,
                                               final boolean cursor) {
-        try (final Transaction tx = Transaction.openOuter()) {
+        try (Transaction tx = Transaction.openOuter()) {
             playerInventoryStorage.extract(BUCKET_ITEM_VARIANT, 1, tx);
             final FluidGridExtractionInterceptingStorage interceptingStorage
                     = new FluidGridExtractionInterceptingStorage();
@@ -165,7 +165,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
                 return;
             }
             gridService.extract(fluidResource, mode, (resource, amount, action, source) -> {
-                try (final Transaction innerTx = tx.openNested()) {
+                try (Transaction innerTx = tx.openNested()) {
                     final long inserted = destination.insert(toFluidVariant(resource), amount, innerTx);
                     final boolean couldInsertBucket = insertResultingBucketIntoInventory(
                             interceptingStorage,
@@ -194,7 +194,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     }
 
     private boolean hasBucketInInventory() {
-        try (final Transaction tx = Transaction.openOuter()) {
+        try (Transaction tx = Transaction.openOuter()) {
             return playerInventoryStorage.extract(BUCKET_ITEM_VARIANT, 1, tx) == 1;
         }
     }

@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.apiimpl.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.storage.AbstractProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
-import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
@@ -12,10 +12,10 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
-public class PlatformStorage<T> extends ProxyStorage<T> implements SerializableStorage<T>, TrackedStorage<T> {
+public class PlatformStorage<T> extends AbstractProxyStorage<T> implements SerializableStorage<T>, TrackedStorage<T> {
     private final StorageType<T> type;
     private final TrackedStorageRepository<T> trackingRepository;
     private final Runnable listener;

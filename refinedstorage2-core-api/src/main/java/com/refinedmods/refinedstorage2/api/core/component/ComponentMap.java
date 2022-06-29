@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.api.core.component;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apiguardian.api.API;
@@ -11,7 +10,7 @@ import org.apiguardian.api.API;
 public class ComponentMap<C> implements ComponentAccessor<C> {
     private final Map<Class<? extends C>, C> map;
 
-    public ComponentMap(final LinkedHashMap<Class<? extends C>, C> map) {
+    public ComponentMap(final Map<Class<? extends C>, C> map) {
         this.map = Collections.unmodifiableMap(map);
     }
 

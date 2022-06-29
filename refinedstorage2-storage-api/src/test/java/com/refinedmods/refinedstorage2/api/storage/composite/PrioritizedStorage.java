@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.api.storage.composite;
 
-import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
+import com.refinedmods.refinedstorage2.api.storage.AbstractProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 
-public class PrioritizedStorage<T> extends ProxyStorage<T> implements Priority {
+public class PrioritizedStorage<T> extends AbstractProxyStorage<T> implements Priority {
     private int priority;
 
     public PrioritizedStorage(int priority, Storage<T> delegate) {

@@ -6,10 +6,10 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.DiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ValidatedSlot;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public class DiskDriveContainerMenu extends StorageContainerMenu {
+public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
     private static final int DISK_SLOT_X = 61;
     private static final int DISK_SLOT_Y = 54;
 
@@ -56,7 +56,7 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
                                   final Player player,
                                   final SimpleContainer diskInventory,
                                   final ResourceFilterContainer resourceFilterContainer,
-                                  final DiskDriveBlockEntity diskDrive,
+                                  final AbstractDiskDriveBlockEntity diskDrive,
                                   final StorageDiskInfoAccessor storageInfoAccessor) {
         super(
                 Menus.INSTANCE.getDiskDrive(),
@@ -149,11 +149,9 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
             final ItemStack stackInSlot = slot.getItem();
             originalStack = stackInSlot.copy();
 
-            if (index < 8) {
-                if (!moveItemStackTo(stackInSlot, 8, slots.size(), true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!moveItemStackTo(stackInSlot, 0, 8, false)) {
+            if (index < 8 && !moveItemStackTo(stackInSlot, 8, slots.size(), true)) {
+                return ItemStack.EMPTY;
+            } else if (index >= 8 && !moveItemStackTo(stackInSlot, 0, 8, false)) {
                 return ItemStack.EMPTY;
             }
 
@@ -163,7 +161,6 @@ public class DiskDriveContainerMenu extends StorageContainerMenu {
                 slot.setChanged();
             }
         }
-
         return originalStack;
     }
 }

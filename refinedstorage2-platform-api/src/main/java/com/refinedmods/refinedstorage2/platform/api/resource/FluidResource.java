@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.api.resource;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.core.Registry;

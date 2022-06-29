@@ -12,12 +12,12 @@ import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 
@@ -27,7 +27,7 @@ class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwa
     @Nullable
     private Storage<T> storage;
 
-    public NetworkNodeStorage(final StorageNetworkNode<T> networkNode) {
+    NetworkNodeStorage(final StorageNetworkNode<T> networkNode) {
         this.networkNode = networkNode;
     }
 
