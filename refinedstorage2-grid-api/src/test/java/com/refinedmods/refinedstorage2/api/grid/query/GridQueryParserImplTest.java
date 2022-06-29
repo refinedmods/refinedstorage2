@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.api.grid.query;
 
+import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.FakeGridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.FakeGridResourceAttributeKeys;
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 import com.refinedmods.refinedstorage2.test.Rs2Test;
@@ -30,7 +30,7 @@ class GridQueryParserImplTest {
     @ValueSource(strings = {"", "   "})
     void Test_empty_query(String query) throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse(query);
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse(query);
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Dirt"))).isTrue();
@@ -41,7 +41,7 @@ class GridQueryParserImplTest {
     @ValueSource(strings = {"dirt", "Dirt", "DiRt", "Di", "irt"})
     void Test_name_query(String query) throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse(query);
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse(query);
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Dirt"))).isTrue();
@@ -52,7 +52,7 @@ class GridQueryParserImplTest {
     @ValueSource(strings = {"@refined", "@\"Refined Storage\"", "@ReFiNe", "@Storage", "@rs", "@RS"})
     void Test_mod_query(String query) throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse(query);
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse(query);
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Sponge", 1, "rs", "Refined Storage", Set.of()))).isTrue();
@@ -63,7 +63,7 @@ class GridQueryParserImplTest {
     @ValueSource(strings = {"$underwater", "$UnDerWate", "$water", "$unrelated", "$UNREL", "$laTed"})
     void Test_tag_query(String query) throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse(query);
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse(query);
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Sponge", 1, "mc", "Minecraft", Set.of("underwater", "unrelated")))).isTrue();
@@ -83,7 +83,7 @@ class GridQueryParserImplTest {
     @Test
     void Test_implicit_and_query() throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse("DirT di RT");
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse("DirT di RT");
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Dirt"))).isTrue();
@@ -93,7 +93,7 @@ class GridQueryParserImplTest {
     @Test
     void Test_implicit_and_query_in_parenthesis() throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse("(DirT di RT) || (sto stone)");
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse("(DirT di RT) || (sto stone)");
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Dirt"))).isTrue();
@@ -104,7 +104,7 @@ class GridQueryParserImplTest {
     @Test
     void Test_implicit_and_query_with_unary_operator() throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse("@minecraft >5");
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse("@minecraft >5");
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Dirt", 6, "minecraft", "Minecraft", Set.of()))).isTrue();
@@ -116,7 +116,7 @@ class GridQueryParserImplTest {
     @Test
     void Test_and_query() throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse("DirT && di && RT");
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse("DirT && di && RT");
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Dirt"))).isTrue();
@@ -126,7 +126,7 @@ class GridQueryParserImplTest {
     @Test
     void Test_or_query() throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse("dir || glass || StoNe");
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse("dir || glass || StoNe");
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Dirt"))).isTrue();
@@ -141,7 +141,7 @@ class GridQueryParserImplTest {
     @Test
     void Test_simple_not_query() throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse("!stone");
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse("!stone");
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Dirt"))).isTrue();
@@ -154,7 +154,7 @@ class GridQueryParserImplTest {
     @Test
     void Test_not_query_with_multiple_and_parts() throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse("!(stone || dirt)");
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse("!(stone || dirt)");
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Sponge"))).isTrue();
@@ -167,7 +167,7 @@ class GridQueryParserImplTest {
     @Test
     void Test_complex_mod_query() throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse("((spo || buck) && @refined) || (glass && @mine)");
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse("((spo || buck) && @refined) || (glass && @mine)");
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Sponge", 1, "rs", "Refined Storage", Set.of()))).isTrue();
@@ -181,7 +181,7 @@ class GridQueryParserImplTest {
     @Test
     void Test_less_than_count_query() throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse("<5");
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse("<5");
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Glass", 5))).isFalse();
@@ -191,7 +191,7 @@ class GridQueryParserImplTest {
     @Test
     void Test_less_than_equals_count_query() throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse("<=5");
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse("<=5");
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Glass", 6))).isFalse();
@@ -202,7 +202,7 @@ class GridQueryParserImplTest {
     @Test
     void Test_greater_than_count_query() throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse(">5");
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse(">5");
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Glass", 5))).isFalse();
@@ -212,7 +212,7 @@ class GridQueryParserImplTest {
     @Test
     void Test_greater_than_equals_count_query() throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse(">=5");
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse(">=5");
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Glass", 4))).isFalse();
@@ -223,7 +223,7 @@ class GridQueryParserImplTest {
     @Test
     void Test_equals_count_query() throws GridQueryParserException {
         // Act
-        Predicate<GridResource<String>> predicate = queryParser.parse("=5");
+        Predicate<AbstractGridResource<String>> predicate = queryParser.parse("=5");
 
         // Assert
         assertThat(predicate.test(new FakeGridResource("Glass", 4))).isFalse();

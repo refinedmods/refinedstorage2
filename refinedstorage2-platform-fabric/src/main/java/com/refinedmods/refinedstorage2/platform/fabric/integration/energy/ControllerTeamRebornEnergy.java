@@ -47,7 +47,7 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
 
     @Override
     public long receive(final long amount, final Action action) {
-        try (final Transaction tx = Transaction.openOuter()) {
+        try (Transaction tx = Transaction.openOuter()) {
             final long received = this.insert(amount, tx);
             if (received > 0 && action == Action.EXECUTE) {
                 tx.commit();
@@ -58,7 +58,7 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
 
     @Override
     public long extract(final long amount, final Action action) {
-        try (final Transaction tx = Transaction.openOuter()) {
+        try (Transaction tx = Transaction.openOuter()) {
             final long extracted = this.extract(amount, tx);
             if (extracted > 0 && action == Action.EXECUTE) {
                 tx.commit();

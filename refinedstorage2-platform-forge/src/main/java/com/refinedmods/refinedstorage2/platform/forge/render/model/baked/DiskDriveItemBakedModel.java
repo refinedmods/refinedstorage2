@@ -19,7 +19,7 @@ import net.minecraftforge.client.model.data.EmptyModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveItemBakedModel extends ForwardingBakedModel {
+public class DiskDriveItemBakedModel extends AbstractForwardingBakedModel {
     private final BakedModel diskDisconnectedModel;
     private final Vector3f[] translators;
     private final long disks;

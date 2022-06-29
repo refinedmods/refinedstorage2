@@ -466,8 +466,8 @@ class NetworkBuilderTest {
         }
 
         @Override
-        public void onNetworkMergedWith(Network network) {
-            merges.add(network);
+        public void onNetworkMergedWith(Network newMainNetwork) {
+            merges.add(newMainNetwork);
         }
     }
 }

@@ -22,8 +22,8 @@ public class NamedStorageChannelType<T> implements StorageChannelType<T> {
 
     @Override
     public String toString() {
-        return "NamedStorageChannelType{" +
-                "name='" + name + '\'' +
-                '}';
+        return "NamedStorageChannelType{"
+                + "name='" + name + '\''
+                + '}';
     }
 }

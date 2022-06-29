@@ -4,22 +4,22 @@ import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
-import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
+import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
+import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class StorageNetworkNode<T> extends NetworkNodeImpl implements StorageProvider {
+public class StorageNetworkNode<T> extends AbstractNetworkNode implements StorageProvider {
     public static final Logger LOGGER = LogManager.getLogger();
 
     private final long energyUsage;
@@ -57,13 +57,13 @@ public class StorageNetworkNode<T> extends NetworkNodeImpl implements StoragePro
     }
 
     @Override
-    public void onActiveChanged(final boolean active) {
-        super.onActiveChanged(active);
+    public void onActiveChanged(final boolean newActive) {
+        super.onActiveChanged(newActive);
         if (network == null || internalStorage == null) {
             return;
         }
-        LOGGER.info("Storage activeness got changed to '{}', updating underlying storage", active);
-        if (active) {
+        LOGGER.info("Storage activeness got changed to '{}', updating underlying storage", newActive);
+        if (newActive) {
             exposedStorage.setSource(internalStorage);
         } else {
             exposedStorage.removeSource();

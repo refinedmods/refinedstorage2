@@ -91,8 +91,8 @@ class GridNetworkNodeTest {
         private final List<Boolean> changes = new ArrayList<>();
 
         @Override
-        public void onActiveChanged(boolean active) {
-            changes.add(active);
+        public void onActiveChanged(boolean newActive) {
+            changes.add(newActive);
         }
     }
 }

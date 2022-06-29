@@ -15,7 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
-public class ControllerContainerMenu extends BaseContainerMenu implements RedstoneModeAccessor {
+public class ControllerContainerMenu extends AbstractBaseContainerMenu implements RedstoneModeAccessor {
     private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
     private long stored;
     private long capacity;
@@ -87,9 +87,9 @@ public class ControllerContainerMenu extends BaseContainerMenu implements Redsto
         }
     }
 
-    public void setEnergy(final long stored, final long capacity) {
-        this.stored = stored;
-        this.capacity = capacity;
+    public void setEnergy(final long newStored, final long newCapacity) {
+        this.stored = newStored;
+        this.capacity = newCapacity;
     }
 
     public long getStored() {

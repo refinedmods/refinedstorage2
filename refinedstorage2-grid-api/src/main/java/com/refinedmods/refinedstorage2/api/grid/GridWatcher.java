@@ -10,7 +10,7 @@ public interface GridWatcher {
     /**
      * Called when the activeness state of the grid has changed.
      *
-     * @param active the new activeness state
+     * @param newActive the new activeness state
      */
-    void onActiveChanged(boolean active);
+    void onActiveChanged(boolean newActive);
 }

@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.integration.rei;
 
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.DefaultGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.AbstractGridSynchronizer;
 
 import javax.annotation.Nullable;
 
@@ -8,7 +8,7 @@ import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ReiGridSynchronizer extends DefaultGridSynchronizer {
+public class ReiGridSynchronizer extends AbstractGridSynchronizer {
     private static final MutableComponent TITLE = createTranslation("gui", "grid.synchronizer.rei");
     private static final MutableComponent TITLE_TWO_WAY = createTranslation("gui", "grid.synchronizer.rei.two_way");
 

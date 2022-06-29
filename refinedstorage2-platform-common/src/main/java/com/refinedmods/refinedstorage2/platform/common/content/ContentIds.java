@@ -28,6 +28,9 @@ public final class ContentIds {
     public static final ResourceLocation FLUID_STORAGE_BLOCK = createIdentifier("fluid_storage_block");
     public static final ResourceLocation STORAGE_BLOCK = createIdentifier("storage_block");
 
+    private ContentIds() {
+    }
+
     public static ResourceLocation forItemStoragePart(final ItemStorageType.Variant variant) {
         return createIdentifier(variant.getName() + "_storage_part");
     }
@@ -54,8 +57,5 @@ public final class ContentIds {
 
     public static ResourceLocation forFluidStorageDisk(final FluidStorageType.Variant variant) {
         return createIdentifier(variant.getName() + "_fluid_storage_disk");
-    }
-
-    private ContentIds() {
     }
 }

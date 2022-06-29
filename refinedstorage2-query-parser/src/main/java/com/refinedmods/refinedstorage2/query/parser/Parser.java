@@ -8,9 +8,9 @@ import com.refinedmods.refinedstorage2.query.parser.node.Node;
 import com.refinedmods.refinedstorage2.query.parser.node.ParenNode;
 import com.refinedmods.refinedstorage2.query.parser.node.UnaryOpNode;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 public class Parser {
     private final List<Token> tokens;
@@ -111,9 +111,9 @@ public class Parser {
     private Node parseLiteral() {
         final Token current = current();
 
-        if (current.type() == TokenType.IDENTIFIER ||
-                current.type() == TokenType.FLOATING_NUMBER ||
-                current.type() == TokenType.INTEGER_NUMBER) {
+        if (current.type() == TokenType.IDENTIFIER
+                || current.type() == TokenType.FLOATING_NUMBER
+                || current.type() == TokenType.INTEGER_NUMBER) {
             next();
             return new LiteralNode(current);
         } else {

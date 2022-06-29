@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.api.network.node.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
+import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
@@ -17,7 +17,7 @@ import java.util.function.BiConsumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GridNetworkNode<T> extends NetworkNodeImpl {
+public class GridNetworkNode<T> extends AbstractNetworkNode {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Set<GridWatcher> watchers = new HashSet<>();
@@ -65,8 +65,8 @@ public class GridNetworkNode<T> extends NetworkNodeImpl {
     }
 
     @Override
-    public void onActiveChanged(final boolean active) {
-        super.onActiveChanged(active);
-        watchers.forEach(watcher -> watcher.onActiveChanged(active));
+    public void onActiveChanged(final boolean newActive) {
+        super.onActiveChanged(newActive);
+        watchers.forEach(watcher -> watcher.onActiveChanged(newActive));
     }
 }

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
@@ -14,7 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContainerMenu> {
+public class FluidGridScreen extends AbstractGridScreen<FluidResource, FluidGridContainerMenu> {
     public FluidGridScreen(final FluidGridContainerMenu menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title);
     }
@@ -38,7 +38,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
     protected void renderResource(final PoseStack poseStack,
                                   final int slotX,
                                   final int slotY,
-                                  final GridResource<FluidResource> resource) {
+                                  final AbstractGridResource<FluidResource> resource) {
         Platform.INSTANCE.getFluidRenderer().render(
                 poseStack,
                 slotX,
@@ -49,7 +49,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
     }
 
     @Override
-    protected String getAmount(final GridResource<FluidResource> resource) {
+    protected String getAmount(final AbstractGridResource<FluidResource> resource) {
         if (resource.isZeroed()) {
             return "0";
         }
@@ -57,7 +57,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
     }
 
     @Override
-    protected String getAmountInTooltip(final GridResource<FluidResource> resource) {
+    protected String getAmountInTooltip(final AbstractGridResource<FluidResource> resource) {
         if (resource.isZeroed()) {
             return "0";
         }
@@ -65,7 +65,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
     }
 
     @Override
-    protected List<Component> getTooltip(final GridResource<FluidResource> resource) {
+    protected List<Component> getTooltip(final AbstractGridResource<FluidResource> resource) {
         return Platform.INSTANCE.getFluidRenderer().getTooltip(resource.getResourceAmount().getResource());
     }
 
@@ -75,7 +75,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
     }
 
     @Override
-    protected void mouseClickedInGrid(final int clickedButton, final GridResource<FluidResource> resource) {
+    protected void mouseClickedInGrid(final int clickedButton, final AbstractGridResource<FluidResource> resource) {
         getMenu().onExtract(
                 resource.getResourceAmount().getResource(),
                 getExtractMode(clickedButton),
@@ -89,7 +89,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
     }
 
     @Override
-    protected void mouseScrolledInGrid(final boolean up, final GridResource<FluidResource> resource) {
+    protected void mouseScrolledInGrid(final boolean up, final AbstractGridResource<FluidResource> resource) {
         // no op
     }
 }

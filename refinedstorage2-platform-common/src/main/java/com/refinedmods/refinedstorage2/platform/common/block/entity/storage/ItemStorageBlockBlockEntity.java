@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ItemStorageBlockBlockEntity extends StorageBlockBlockEntity<ItemResource> {
+public class ItemStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity<ItemResource> {
     private final ItemStorageType.Variant variant;
     private final Component displayName;
 

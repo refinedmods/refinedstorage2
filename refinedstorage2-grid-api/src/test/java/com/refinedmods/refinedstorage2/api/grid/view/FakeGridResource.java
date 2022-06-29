@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import java.util.Map;
 import java.util.Set;
 
-public class FakeGridResource extends GridResource<String> {
+public class FakeGridResource extends AbstractGridResource<String> {
     public FakeGridResource(String name, long amount) {
         this(new ResourceAmount<>(name, amount));
     }

@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SourceCapturingStorage<T> extends ProxyStorage<T> {
+public class SourceCapturingStorage<T> extends AbstractProxyStorage<T> {
     private final List<Source> sourcesUsed = new ArrayList<>();
 
     public SourceCapturingStorage(Storage<T> delegate) {

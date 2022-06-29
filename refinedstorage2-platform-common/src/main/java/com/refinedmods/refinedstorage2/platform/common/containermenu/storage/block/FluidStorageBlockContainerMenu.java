@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.fluid.FluidResourceType;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.AbstractStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 
 import java.util.Collections;
@@ -14,7 +14,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
-public class FluidStorageBlockContainerMenu extends StorageBlockContainerMenu {
+public class FluidStorageBlockContainerMenu extends AbstractStorageBlockContainerMenu {
     private static final Set<StorageTooltipHelper.TooltipOption> TOOLTIP_OPTIONS =
             Set.of(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
 
@@ -34,7 +34,7 @@ public class FluidStorageBlockContainerMenu extends StorageBlockContainerMenu {
     public FluidStorageBlockContainerMenu(final int syncId,
                                           final Player player,
                                           final ResourceFilterContainer resourceFilterContainer,
-                                          final StorageBlockBlockEntity<?> storageBlock) {
+                                          final AbstractStorageBlockBlockEntity<?> storageBlock) {
         super(
                 Menus.INSTANCE.getFluidStorage(),
                 syncId,

@@ -9,9 +9,9 @@ import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientComm
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 
-import javax.annotation.Nullable;
 import java.util.UUID;
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

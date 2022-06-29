@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.query.lexer;
 
-import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.annotation.Nullable;
 
 public class LexerTokenMappings {
     public static final LexerTokenMappings DEFAULT_MAPPINGS = new LexerTokenMappings()
@@ -33,17 +33,21 @@ public class LexerTokenMappings {
         return this;
     }
 
+    public boolean hasMapping(final LexerPosition position, final Source source) {
+        return findMapping(position, source) != null;
+    }
+
     @Nullable
     public TokenType findMapping(final LexerPosition position, final Source source) {
         for (final LexerTokenMapping mapping : mappings) {
             final String content = mapping.value();
             final int contentLength = mapping.value().length();
 
-            if ((position.getEndIndex() + contentLength <= source.content().length()) &&
-                    (content.equals(source.content().substring(
-                            position.getEndIndex(),
-                            position.getEndIndex() + contentLength
-                    )))) {
+            if ((position.getEndIndex() + contentLength <= source.content().length())
+                    && (content.equals(source.content().substring(
+                    position.getEndIndex(),
+                    position.getEndIndex() + contentLength
+            )))) {
                 position.advance(contentLength);
 
                 return mapping.type();

@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class FluidStorageBlockBlockEntity extends StorageBlockBlockEntity<FluidResource> {
+public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity<FluidResource> {
     private final FluidStorageType.Variant variant;
     private final Component displayName;
 

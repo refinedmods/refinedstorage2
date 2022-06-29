@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorag
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.item.StorageDiskItemImpl;
+import com.refinedmods.refinedstorage2.platform.api.item.AbstractStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
@@ -19,11 +19,11 @@ import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageC
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 
-import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -32,7 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-public class ItemStorageDiskItem extends StorageDiskItemImpl {
+public class ItemStorageDiskItem extends AbstractStorageDiskItem {
     private final ItemStorageType.Variant variant;
     private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions =
             EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);

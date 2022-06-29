@@ -14,7 +14,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.ClientItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
@@ -29,7 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> implements ItemGridEventHandler {
+public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResource> implements ItemGridEventHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final ItemGridEventHandler itemGridEventHandler;
@@ -41,7 +41,7 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
 
     public ItemGridContainerMenu(final int syncId,
                                  final Inventory playerInventory,
-                                 final GridBlockEntity<ItemResource> grid) {
+                                 final AbstractGridBlockEntity<ItemResource> grid) {
         super(Menus.INSTANCE.getGrid(), syncId, playerInventory, grid, createView());
         grid.addWatcher(this);
         final GridService<ItemResource> gridService = new GridServiceImpl<>(

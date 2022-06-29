@@ -2,13 +2,12 @@ package com.refinedmods.refinedstorage2.platform.forge.render.model.baked;
 
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
@@ -25,7 +24,7 @@ public final class QuadTransformer {
     public static List<BakedQuad> transformSideAndRotate(final Function<Direction, List<BakedQuad>> quadGetter,
                                                          final BiDirection direction,
                                                          @Nullable final Direction side) {
-        final Transformation transformation = new Transformation(null, createQuaternion(direction), null, null);
+        final Transformation transformation = new Transformation(null, direction.getQuaternion(), null, null);
 
         final ImmutableList.Builder<BakedQuad> rotated = ImmutableList.builder();
 
@@ -41,10 +40,6 @@ public final class QuadTransformer {
         }
 
         return rotated.build();
-    }
-
-    private static Quaternion createQuaternion(final BiDirection direction) {
-        return new Quaternion(direction.getVec().x(), direction.getVec().y(), direction.getVec().z(), true);
     }
 
     @Nullable

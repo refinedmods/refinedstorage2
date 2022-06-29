@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.render;
 
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.common.render.model.FluidRendererImpl;
+import com.refinedmods.refinedstorage2.platform.common.render.model.AbstractFluidRenderer;
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
 
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
 
-public class FluidVariantFluidRenderer extends FluidRendererImpl {
+public class FluidVariantFluidRenderer extends AbstractFluidRenderer {
     private final Map<FluidResource, FluidVariant> variantCache = new HashMap<>();
 
     private FluidVariant getFluidVariantFromCache(final FluidResource fluidResource) {

@@ -2,18 +2,18 @@ package com.refinedmods.refinedstorage2.platform.common.item.block;
 
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
-import com.refinedmods.refinedstorage2.platform.api.item.block.StorageBlockBlockItem;
+import com.refinedmods.refinedstorage2.platform.api.item.block.AbstractStorageBlockBlockItem;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.StorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.AbstractStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 
-import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -27,7 +27,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ItemStorageBlockBlockItem extends StorageBlockBlockItem {
+public class ItemStorageBlockBlockItem extends AbstractStorageBlockBlockItem {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final ItemStorageType.Variant variant;
@@ -80,7 +80,7 @@ public class ItemStorageBlockBlockItem extends StorageBlockBlockItem {
     protected void updateBlockEntityWithStorageId(final BlockPos pos,
                                                   @Nullable final BlockEntity blockEntity,
                                                   final UUID id) {
-        if (blockEntity instanceof StorageBlockBlockEntity<?> storageBlockEntity) {
+        if (blockEntity instanceof AbstractStorageBlockBlockEntity<?> storageBlockEntity) {
             LOGGER.info("Transferred storage {} to block at {}", id, pos);
             storageBlockEntity.modifyStorageIdAfterAlreadyInitialized(id);
         } else {

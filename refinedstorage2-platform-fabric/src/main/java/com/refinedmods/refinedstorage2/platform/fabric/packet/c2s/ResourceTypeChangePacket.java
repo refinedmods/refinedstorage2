@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceFilterableContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -20,7 +20,7 @@ public class ResourceTypeChangePacket implements ServerPlayNetworking.PlayChanne
         final ResourceLocation id = buf.readResourceLocation();
 
         server.execute(() -> {
-            if (player.containerMenu instanceof ResourceFilterableContainerMenu resourceFilterable) {
+            if (player.containerMenu instanceof AbstractResourceFilterContainerMenu resourceFilterable) {
                 resourceFilterable.setCurrentResourceType(id);
             }
         });

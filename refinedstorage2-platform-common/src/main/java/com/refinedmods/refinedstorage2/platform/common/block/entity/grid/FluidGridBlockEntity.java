@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class FluidGridBlockEntity extends GridBlockEntity<FluidResource> {
+public class FluidGridBlockEntity extends AbstractGridBlockEntity<FluidResource> {
     public FluidGridBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getFluidGrid(), pos, state, StorageChannelTypes.FLUID);
     }

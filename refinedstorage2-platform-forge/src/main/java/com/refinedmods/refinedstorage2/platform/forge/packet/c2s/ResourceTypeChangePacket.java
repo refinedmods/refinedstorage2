@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceFilterableContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
 
 import java.util.function.Supplier;
 
@@ -34,7 +34,7 @@ public class ResourceTypeChangePacket {
     }
 
     private static void handle(final ResourceTypeChangePacket packet, final Player player) {
-        if (player.containerMenu instanceof ResourceFilterableContainerMenu resourceFilterable) {
+        if (player.containerMenu instanceof AbstractResourceFilterContainerMenu resourceFilterable) {
             resourceFilterable.setCurrentResourceType(packet.id);
         }
     }

@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class FluidStorageBlock extends StorageBlock {
+public class FluidStorageBlock extends AbstractStorageBlock {
     private final FluidStorageType.Variant variant;
 
     public FluidStorageBlock(final FluidStorageType.Variant variant) {

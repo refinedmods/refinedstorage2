@@ -17,7 +17,7 @@ import net.minecraftforge.client.model.IModelConfiguration;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
-public class DiskDriveModelGeometry extends BasicModelGeometry<DiskDriveModelGeometry> {
+public class DiskDriveModelGeometry extends AbstractModelGeometry<DiskDriveModelGeometry> {
     private static final ResourceLocation BASE_MODEL = createIdentifier("block/disk_drive_base");
     private static final ResourceLocation DISK_DISCONNECTED_MODEL = createIdentifier("block/disk_disconnected");
     private static final ResourceLocation DISK_MODEL = createIdentifier("block/disk");

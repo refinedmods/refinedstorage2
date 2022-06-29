@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
@@ -107,12 +107,12 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public Function<ResourceAmount<ItemResource>, GridResource<ItemResource>> getItemGridResourceFactory() {
+    public Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> getItemGridResourceFactory() {
         return new ForgeItemGridResourceFactory();
     }
 
     @Override
-    public Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> getFluidGridResourceFactory() {
+    public Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> getFluidGridResourceFactory() {
         return new ForgeFluidGridResourceFactory();
     }
 

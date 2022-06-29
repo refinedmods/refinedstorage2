@@ -16,9 +16,9 @@ import net.minecraft.world.item.ItemStack;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ItemResourceType implements ResourceType {
-    private static final MutableComponent NAME = createTranslation("misc", "resource_type.item");
-
     public static final ItemResourceType INSTANCE = new ItemResourceType();
+
+    private static final MutableComponent NAME = createTranslation("misc", "resource_type.item");
 
     private ItemResourceType() {
     }

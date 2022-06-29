@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
 
 import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceFilterableContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -57,7 +57,7 @@ public class ResourceFilterSlotUpdatePacket {
             return;
         }
         final AbstractContainerMenu menu = player.containerMenu;
-        if (menu instanceof ResourceFilterableContainerMenu resourceFilterable) {
+        if (menu instanceof AbstractResourceFilterContainerMenu resourceFilterable) {
             resourceFilterable.readResourceFilterSlotUpdate(packet.slotIndex, Objects.requireNonNull(packet.buf));
         }
     }

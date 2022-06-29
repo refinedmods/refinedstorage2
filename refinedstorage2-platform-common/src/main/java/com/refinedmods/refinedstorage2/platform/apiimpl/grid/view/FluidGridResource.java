@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.apiimpl.grid.view;
 
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 
@@ -9,7 +9,7 @@ import java.util.Set;
 
 import net.minecraft.core.Registry;
 
-public class FluidGridResource extends GridResource<FluidResource> {
+public class FluidGridResource extends AbstractGridResource<FluidResource> {
     private final int id;
 
     public FluidGridResource(final ResourceAmount<FluidResource> resourceAmount,

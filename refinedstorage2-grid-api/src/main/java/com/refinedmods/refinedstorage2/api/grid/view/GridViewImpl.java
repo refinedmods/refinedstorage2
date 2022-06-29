@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,6 +15,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,15 +26,15 @@ public class GridViewImpl<T> implements GridView<T> {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final ResourceList<T> backingList;
-    private final Comparator<GridResource<?>> identitySort;
-    private final Function<ResourceAmount<T>, GridResource<T>> gridResourceFactory;
+    private final Comparator<AbstractGridResource<?>> identitySort;
+    private final Function<ResourceAmount<T>, AbstractGridResource<T>> gridResourceFactory;
     private final Map<T, TrackedResource> trackedResources = new HashMap<>();
-    private final Map<T, GridResource<T>> resourceIndex = new HashMap<>();
+    private final Map<T, AbstractGridResource<T>> resourceIndex = new HashMap<>();
 
-    private List<GridResource<T>> viewList = new ArrayList<>();
+    private List<AbstractGridResource<T>> viewList = new ArrayList<>();
     private GridSortingType sortingType = GridSortingType.QUANTITY;
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
-    private Predicate<GridResource<T>> filter = resource -> true;
+    private Predicate<AbstractGridResource<T>> filter = resource -> true;
     @Nullable
     private Runnable listener;
     private boolean preventSorting;
@@ -43,7 +43,7 @@ public class GridViewImpl<T> implements GridView<T> {
      * @param gridResourceFactory a factory that transforms a resource amount to a grid resource
      * @param backingList         the backing list
      */
-    public GridViewImpl(final Function<ResourceAmount<T>, GridResource<T>> gridResourceFactory,
+    public GridViewImpl(final Function<ResourceAmount<T>, AbstractGridResource<T>> gridResourceFactory,
                         final ResourceList<T> backingList) {
         this.gridResourceFactory = gridResourceFactory;
         this.identitySort = GridSortingType.NAME.getComparator().apply(this);
@@ -61,7 +61,7 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     @Override
-    public void setFilter(final Predicate<GridResource<T>> filter) {
+    public void setFilter(final Predicate<AbstractGridResource<T>> filter) {
         this.filter = filter;
     }
 
@@ -75,7 +75,7 @@ public class GridViewImpl<T> implements GridView<T> {
         this.preventSorting = preventSorting;
     }
 
-    private Comparator<GridResource<?>> getComparator() {
+    private Comparator<AbstractGridResource<?>> getComparator() {
         // An identity sort is necessary so the order of items is preserved in quantity sorting mode.
         // If two grid resources have the same quantity, their order would not be preserved.
         if (sortingDirection == GridSortingDirection.ASCENDING) {
@@ -125,7 +125,7 @@ public class GridViewImpl<T> implements GridView<T> {
 
         updateTrackedResource(resource, trackedResource);
 
-        final GridResource<T> gridResource = resourceIndex.get(resource);
+        final AbstractGridResource<T> gridResource = resourceIndex.get(resource);
         if (gridResource != null) {
             if (gridResource.isZeroed()) {
                 handleChangeForZeroedResource(resource, operationResult, gridResource);
@@ -154,7 +154,7 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     private void handleChangeForNewResource(final T resource, final ResourceListOperationResult<T> operationResult) {
-        final GridResource<T> gridResource = gridResourceFactory.apply(operationResult.resourceAmount());
+        final AbstractGridResource<T> gridResource = gridResourceFactory.apply(operationResult.resourceAmount());
         if (filter.test(gridResource)) {
             resourceIndex.put(resource, gridResource);
             addIntoView(gridResource);
@@ -164,7 +164,7 @@ public class GridViewImpl<T> implements GridView<T> {
 
     private void handleChangeForExistingResource(final T resource,
                                                  final ResourceListOperationResult<T> operationResult,
-                                                 final GridResource<T> gridResource) {
+                                                 final AbstractGridResource<T> gridResource) {
         if (!preventSorting) {
             if (!filter.test(gridResource) || !operationResult.available()) {
                 viewList.remove(gridResource);
@@ -182,8 +182,8 @@ public class GridViewImpl<T> implements GridView<T> {
 
     private void handleChangeForZeroedResource(final T resource,
                                                final ResourceListOperationResult<T> operationResult,
-                                               final GridResource<T> oldGridResource) {
-        final GridResource<T> newResource = gridResourceFactory.apply(operationResult.resourceAmount());
+                                               final AbstractGridResource<T> oldGridResource) {
+        final AbstractGridResource<T> newResource = gridResourceFactory.apply(operationResult.resourceAmount());
 
         resourceIndex.put(resource, newResource);
 
@@ -191,7 +191,7 @@ public class GridViewImpl<T> implements GridView<T> {
         viewList.set(index, newResource);
     }
 
-    private void addIntoView(final GridResource<T> resource) {
+    private void addIntoView(final AbstractGridResource<T> resource) {
         int pos = Collections.binarySearch(viewList, resource, getComparator());
         if (pos < 0) {
             pos = -pos - 1;
@@ -206,7 +206,7 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     @Override
-    public List<GridResource<T>> getAll() {
+    public List<AbstractGridResource<T>> getAll() {
         return viewList;
     }
 }

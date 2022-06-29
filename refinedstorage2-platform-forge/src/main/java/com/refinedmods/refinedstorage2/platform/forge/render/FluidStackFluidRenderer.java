@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.render;
 
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.common.render.model.FluidRendererImpl;
+import com.refinedmods.refinedstorage2.platform.common.render.model.AbstractFluidRenderer;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import net.minecraftforge.client.RenderProperties;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 
-public class FluidStackFluidRenderer extends FluidRendererImpl {
+public class FluidStackFluidRenderer extends AbstractFluidRenderer {
     private final Map<FluidResource, FluidStack> stackCache = new HashMap<>();
 
     private FluidStack getFluidStackFromCache(final FluidResource fluidResource) {

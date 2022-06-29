@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view;
 
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.view.FluidGridResourceFactory;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.view.AbstractFluidGridResourceFactory;
 
 import java.util.stream.Collectors;
 
@@ -14,7 +14,7 @@ import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toFluidVariant;
 
-public class FabricFluidGridResourceFactory extends FluidGridResourceFactory {
+public class FabricFluidGridResourceFactory extends AbstractFluidGridResourceFactory {
     @Override
     protected String getTooltip(final FluidResource resource) {
         return FluidVariantRendering

@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(ItemProperties.class)
 public interface ItemPropertiesAccessor {
     @Invoker("register")
-    public static void register(Item item, ResourceLocation id, ClampedItemPropertyFunction property) {
+    static void register(Item item, ResourceLocation id, ClampedItemPropertyFunction property) {
         throw new AssertionError();
     }
 }

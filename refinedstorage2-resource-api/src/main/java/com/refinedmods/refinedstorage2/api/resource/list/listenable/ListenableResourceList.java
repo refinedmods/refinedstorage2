@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.api.resource.list.listenable;
 
-import com.refinedmods.refinedstorage2.api.resource.list.ProxyResourceList;
+import com.refinedmods.refinedstorage2.api.resource.list.AbstractProxyResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 
@@ -19,7 +19,7 @@ import org.apiguardian.api.API;
  * @param <T> the resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public class ListenableResourceList<T> extends ProxyResourceList<T> {
+public class ListenableResourceList<T> extends AbstractProxyResourceList<T> {
     private final Set<ResourceListListener<T>> listeners = new HashSet<>();
 
     public ListenableResourceList(final ResourceList<T> delegate) {

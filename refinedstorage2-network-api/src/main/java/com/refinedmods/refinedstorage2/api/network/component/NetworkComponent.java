@@ -25,7 +25,7 @@ public interface NetworkComponent {
 
     }
 
-    default void onNetworkMergedWith(Network network) {
+    default void onNetworkMergedWith(Network newMainNetwork) {
 
     }
 }

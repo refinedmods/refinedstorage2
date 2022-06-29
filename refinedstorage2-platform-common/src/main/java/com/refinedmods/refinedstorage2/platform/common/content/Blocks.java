@@ -9,14 +9,13 @@ import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 
-import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 public final class Blocks {
     public static final Blocks INSTANCE = new Blocks();
@@ -28,15 +27,15 @@ public final class Blocks {
     @Nullable
     private Supplier<CableBlock> cable;
     @Nullable
-    private Supplier<QuartzEnrichedIronBlock> quartzEnrichedIronBlock;
+    private Supplier<SimpleBlock> quartzEnrichedIronBlock;
     @Nullable
     private Supplier<DiskDriveBlock> diskDrive;
     @Nullable
-    private Supplier<MachineCasingBlock> machineCasing;
-    private final Map<ItemStorageType.Variant, Supplier<ItemStorageBlock>> itemStorageBlocks
-            = new EnumMap<>(ItemStorageType.Variant.class);
-    private final Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> fluidStorageBlocks
-            = new EnumMap<>(FluidStorageType.Variant.class);
+    private Supplier<SimpleBlock> machineCasing;
+    private final Map<ItemStorageType.Variant, Supplier<ItemStorageBlock>> itemStorageBlocks =
+            new EnumMap<>(ItemStorageType.Variant.class);
+    private final Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> fluidStorageBlocks =
+            new EnumMap<>(FluidStorageType.Variant.class);
 
     private Blocks() {
     }
@@ -45,7 +44,7 @@ public final class Blocks {
         return Objects.requireNonNull(cable).get();
     }
 
-    public QuartzEnrichedIronBlock getQuartzEnrichedIronBlock() {
+    public SimpleBlock getQuartzEnrichedIronBlock() {
         return Objects.requireNonNull(quartzEnrichedIronBlock).get();
     }
 
@@ -53,7 +52,7 @@ public final class Blocks {
         return Objects.requireNonNull(diskDrive).get();
     }
 
-    public MachineCasingBlock getMachineCasing() {
+    public SimpleBlock getMachineCasing() {
         return Objects.requireNonNull(machineCasing).get();
     }
 
@@ -77,7 +76,7 @@ public final class Blocks {
         this.cable = cableSupplier;
     }
 
-    public void setQuartzEnrichedIronBlock(final Supplier<QuartzEnrichedIronBlock> quartzEnrichedIronBlockSupplier) {
+    public void setQuartzEnrichedIronBlock(final Supplier<SimpleBlock> quartzEnrichedIronBlockSupplier) {
         this.quartzEnrichedIronBlock = quartzEnrichedIronBlockSupplier;
     }
 
@@ -85,7 +84,7 @@ public final class Blocks {
         this.diskDrive = diskDriveSupplier;
     }
 
-    public void setMachineCasing(final Supplier<MachineCasingBlock> machineCasingSupplier) {
+    public void setMachineCasing(final Supplier<SimpleBlock> machineCasingSupplier) {
         this.machineCasing = machineCasingSupplier;
     }
 

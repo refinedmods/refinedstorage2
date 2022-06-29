@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
-import com.refinedmods.refinedstorage2.platform.common.screen.widget.SideButtonWidget;
+import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,12 +18,12 @@ import net.minecraft.resources.ResourceLocation;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class SynchronizationSideButtonWidget extends SideButtonWidget {
-    private final GridContainerMenu<?> menu;
+public class SynchronizationSideButtonWidget extends AbstractSideButtonWidget {
+    private final AbstractGridContainerMenu<?> menu;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSynchronizer, List<Component>> tooltips = new HashMap<>();
 
-    public SynchronizationSideButtonWidget(final GridContainerMenu<?> menu,
+    public SynchronizationSideButtonWidget(final AbstractGridContainerMenu<?> menu,
                                            final TooltipRenderer tooltipRenderer,
                                            final List<GridSynchronizer> synchronizers) {
         super(createPressAction(menu));
@@ -32,7 +32,7 @@ public class SynchronizationSideButtonWidget extends SideButtonWidget {
         synchronizers.forEach(synchronizer -> tooltips.put(synchronizer, calculateTooltip(synchronizer)));
     }
 
-    private static OnPress createPressAction(final GridContainerMenu<?> menu) {
+    private static OnPress createPressAction(final AbstractGridContainerMenu<?> menu) {
         return btn -> menu.toggleSynchronizer();
     }
 

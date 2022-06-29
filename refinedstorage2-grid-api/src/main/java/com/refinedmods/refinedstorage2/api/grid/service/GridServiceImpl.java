@@ -14,23 +14,23 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public class GridServiceImpl<T> implements GridService<T> {
     private final StorageChannel<T> storageChannel;
-    private final Source source;
+    private final Source actor;
     private final Function<T, Long> maxCountProvider;
     private final long singleAmount;
 
     /**
      * @param storageChannel   the storage channel to act on
-     * @param source           the source performing the grid interactions
+     * @param actor            the actor performing the grid interactions
      * @param maxCountProvider provider for the maximum amount of a given resource
      * @param singleAmount     amount that needs to be extracted when using
      *                         {@link GridInsertMode#SINGLE_RESOURCE} or {@link GridExtractMode#SINGLE_RESOURCE}
      */
     public GridServiceImpl(final StorageChannel<T> storageChannel,
-                           final Source source,
+                           final Source actor,
                            final Function<T, Long> maxCountProvider,
                            final long singleAmount) {
         this.storageChannel = storageChannel;
-        this.source = source;
+        this.actor = actor;
         this.maxCountProvider = maxCountProvider;
         this.singleAmount = singleAmount;
     }
@@ -41,7 +41,7 @@ public class GridServiceImpl<T> implements GridService<T> {
         if (amount == 0) {
             return;
         }
-        long extractedFromSource = storageChannel.extract(resource, amount, Action.SIMULATE, source);
+        long extractedFromSource = storageChannel.extract(resource, amount, Action.SIMULATE, actor);
         if (extractedFromSource == 0) {
             return;
         }
@@ -49,16 +49,16 @@ public class GridServiceImpl<T> implements GridService<T> {
                 resource,
                 extractedFromSource,
                 Action.SIMULATE,
-                source
+                actor
         );
         if (amountInsertedIntoDestination > 0) {
             extractedFromSource = storageChannel.extract(
                     resource,
                     amountInsertedIntoDestination,
                     Action.EXECUTE,
-                    source
+                    actor
             );
-            destination.insert(resource, extractedFromSource, Action.EXECUTE, source);
+            destination.insert(resource, extractedFromSource, Action.EXECUTE, actor);
         }
     }
 
@@ -83,7 +83,7 @@ public class GridServiceImpl<T> implements GridService<T> {
             case ENTIRE_RESOURCE -> maxCountProvider.apply(resource);
             case SINGLE_RESOURCE -> singleAmount;
         };
-        long extractedFromSource = source.extract(resource, amount, Action.SIMULATE, this.source);
+        long extractedFromSource = source.extract(resource, amount, Action.SIMULATE, this.actor);
         if (extractedFromSource == 0) {
             return;
         }
@@ -91,12 +91,12 @@ public class GridServiceImpl<T> implements GridService<T> {
                 resource,
                 extractedFromSource,
                 Action.SIMULATE,
-                this.source
+                this.actor
         );
         if (amountInsertedIntoDestination > 0) {
-            extractedFromSource = source.extract(resource, amountInsertedIntoDestination, Action.EXECUTE, this.source);
+            extractedFromSource = source.extract(resource, amountInsertedIntoDestination, Action.EXECUTE, this.actor);
             if (extractedFromSource > 0) {
-                storageChannel.insert(resource, extractedFromSource, Action.EXECUTE, this.source);
+                storageChannel.insert(resource, extractedFromSource, Action.EXECUTE, this.actor);
             }
         }
     }

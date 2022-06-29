@@ -17,9 +17,9 @@ import net.minecraft.world.item.ItemStack;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class FluidResourceType implements ResourceType {
-    private static final MutableComponent NAME = createTranslation("misc", "resource_type.fluid");
-
     public static final FluidResourceType INSTANCE = new FluidResourceType();
+
+    private static final MutableComponent NAME = createTranslation("misc", "resource_type.fluid");
 
     private FluidResourceType() {
     }

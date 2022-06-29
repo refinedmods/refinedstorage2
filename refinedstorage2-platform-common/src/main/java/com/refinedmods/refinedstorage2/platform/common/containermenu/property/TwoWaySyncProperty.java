@@ -2,10 +2,10 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.property;
 
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 import net.minecraft.world.inventory.DataSlot;
 
@@ -84,8 +84,8 @@ public class TwoWaySyncProperty<T> extends DataSlot {
     }
 
     @Override
-    public void set(final int value) {
-        final T deserializedValue = deserializer.apply(value);
+    public void set(final int newValue) {
+        final T deserializedValue = deserializer.apply(newValue);
         changed.accept(deserializedValue);
         this.value = deserializedValue;
     }

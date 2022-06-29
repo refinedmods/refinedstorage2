@@ -9,7 +9,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ItemGridBlock extends GridBlock implements ColorableBlock<ItemGridBlock> {
+public class ItemGridBlock extends AbstractGridBlock implements ColorableBlock<ItemGridBlock> {
     private final MutableComponent name;
 
     public ItemGridBlock(final MutableComponent name) {
