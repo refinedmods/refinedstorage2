@@ -41,6 +41,7 @@ subprojects {
     checkstyle {
         configFile rootProject.file("checkstyle.xml")
         toolVersion = project.checkstyleVersion
+        checkstyleTest.enabled = false
     }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
