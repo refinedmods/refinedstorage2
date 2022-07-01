@@ -10,10 +10,11 @@ public final class CoreValidations {
     private CoreValidations() {
     }
 
-    public static <T> void validateNotNull(@Nullable final T value, final String message) {
+    public static <T> T validateNotNull(@Nullable final T value, final String message) {
         if (value == null) {
             throw new NullPointerException(message);
         }
+        return value;
     }
 
     public static void validateNonNegative(final long value, final String message) {

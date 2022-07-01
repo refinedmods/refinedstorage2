@@ -2,11 +2,12 @@ package com.refinedmods.refinedstorage2.platform.forge.render.model.baked;
 
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import javax.annotation.Nullable;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
@@ -26,9 +27,10 @@ public final class QuadTransformer {
                                                          @Nullable final Direction side) {
         final Transformation transformation = new Transformation(null, direction.getQuaternion(), null, null);
 
-        final ImmutableList.Builder<BakedQuad> rotated = ImmutableList.builder();
+        final List<BakedQuad> quads = quadGetter.apply(transformSide(side, transformation.getMatrix()));
+        final List<BakedQuad> rotated = new ArrayList<>(quads.size());
 
-        for (final BakedQuad quad : quadGetter.apply(transformSide(side, transformation.getMatrix()))) {
+        for (final BakedQuad quad : quads) {
             final BakedQuadBuilder builder = new BakedQuadBuilder(quad.getSprite());
             final TRSRTransformer transformer = new TRSRTransformer(builder, transformation.blockCenterToCorner());
 
@@ -39,7 +41,7 @@ public final class QuadTransformer {
             rotated.add(builder.build());
         }
 
-        return rotated.build();
+        return Collections.unmodifiableList(rotated);
     }
 
     @Nullable
@@ -62,7 +64,7 @@ public final class QuadTransformer {
     public static List<BakedQuad> translate(final List<BakedQuad> quads, final Vector3f translation) {
         final Transformation transformation = new Transformation(translation, null, null, null);
 
-        final ImmutableList.Builder<BakedQuad> translated = ImmutableList.builder();
+        final List<BakedQuad> translated = new ArrayList<>(quads.size());
 
         for (final BakedQuad quad : quads) {
             final BakedQuadBuilder builder = new BakedQuadBuilder(quad.getSprite());
@@ -73,6 +75,6 @@ public final class QuadTransformer {
             translated.add(builder.build());
         }
 
-        return translated.build();
+        return Collections.unmodifiableList(translated);
     }
 }
