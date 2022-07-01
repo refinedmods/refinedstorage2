@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Source;
@@ -18,8 +19,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
-
-import com.google.common.base.Preconditions;
 
 class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwareChild<T> {
     private final StorageNetworkNode<T> networkNode;
@@ -42,9 +41,9 @@ class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwa
     @Override
     public long insert(final T resource, final long amount, final Action action, final Source source) {
         if (storage == null
-                || networkNode.getAccessMode() == AccessMode.EXTRACT
-                || !networkNode.isActive()
-                || !networkNode.isAllowed(resource)) {
+            || networkNode.getAccessMode() == AccessMode.EXTRACT
+            || !networkNode.isActive()
+            || !networkNode.isAllowed(resource)) {
             return 0;
         }
         return storage.insert(resource, amount, action, source);
@@ -54,8 +53,8 @@ class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwa
     public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
                                                                      final Class<? extends Source> sourceType) {
         return storage instanceof TrackedStorage<T> trackedStorage
-                ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType)
-                : Optional.empty();
+            ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType)
+            : Optional.empty();
     }
 
     @Override
@@ -88,13 +87,13 @@ class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwa
     }
 
     public void setSource(final Storage<T> source) {
-        Preconditions.checkNotNull(source);
+        CoreValidations.validateNotNull(source, "Source cannot be null");
         this.storage = source;
         parentComposites.forEach(parentComposite -> parentComposite.onSourceAddedToChild(storage));
     }
 
     public void removeSource() {
-        Preconditions.checkNotNull(this.storage);
+        CoreValidations.validateNotNull(this.storage, "Cannot remove source when no source was present");
         parentComposites.forEach(parentComposite -> parentComposite.onSourceRemovedFromChild(this.storage));
         this.storage = null;
     }

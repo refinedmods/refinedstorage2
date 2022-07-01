@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network;
 
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
@@ -11,8 +12,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
-
-import com.google.common.base.Preconditions;
 
 public class NetworkBuilder {
     private final NetworkFactory networkFactory;
@@ -26,7 +25,10 @@ public class NetworkBuilder {
             return false;
         }
         final Connections connections = connectionProvider.findConnections(container, Collections.emptySet());
-        Preconditions.checkArgument(connections.removedEntries().isEmpty(), "Cannot have removed entries");
+        CoreValidations.validateEmpty(
+            connections.removedEntries(),
+            "Cannot have removed entries when starting from empty existing connections"
+        );
         mergeNetworksOfNodes(connectionProvider, container, connections.foundEntries());
         return true;
     }
@@ -35,14 +37,14 @@ public class NetworkBuilder {
                                       final NetworkNodeContainer pivot,
                                       final Set<NetworkNodeContainer> foundEntries) {
         final Network pivotNetwork = findPivotNetworkForMerge(connectionProvider, pivot, foundEntries)
-                .orElseGet(() -> createNetwork(pivot));
+            .orElseGet(() -> createNetwork(pivot));
 
         final Set<Network> mergedNetworks = new HashSet<>();
 
         for (final NetworkNodeContainer entry : foundEntries) {
             final NetworkNode entryNode = entry.getNode();
             final boolean isNotInPivotNetwork = !pivotNetwork.getComponent(GraphNetworkComponent.class)
-                    .getContainers().contains(entry);
+                .getContainers().contains(entry);
             if (isNotInPivotNetwork) {
                 final Network mergedNetwork = mergeNetworkOfNode(pivotNetwork, entry, entryNode);
                 if (mergedNetwork != null) {
@@ -103,9 +105,10 @@ public class NetworkBuilder {
         }
 
         final Connections connections = connectionProvider.findConnections(pivot, containers);
-        Preconditions.checkState(
-                connections.removedEntries().contains(container),
-                "The removed container isn't present in the removed entries"
+        CoreValidations.validateContains(
+            connections.removedEntries(),
+            container,
+            "The removed container should be present in the removed entries, but isn't"
         );
         splitNetworks(connectionProvider, connections.removedEntries(), container);
     }
@@ -139,17 +142,17 @@ public class NetworkBuilder {
         });
 
         final Set<Network> networksResultingOfSplit = removedEntries
-                .stream()
-                .filter(e -> !e.equals(removedEntry))
-                .map(e -> {
-                    final boolean establishedNetwork = initialize(e, connectionProvider);
-                    if (establishedNetwork) {
-                        return e.getNode().getNetwork();
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+            .stream()
+            .filter(e -> !e.equals(removedEntry))
+            .map(e -> {
+                final boolean establishedNetwork = initialize(e, connectionProvider);
+                if (establishedNetwork) {
+                    return e.getNode().getNetwork();
+                }
+                return null;
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
 
         if (!networksResultingOfSplit.isEmpty()) {
             networkOfRemovedNode.split(networksResultingOfSplit);

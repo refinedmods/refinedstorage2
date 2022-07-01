@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.api.network.energy;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 
-import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
@@ -14,7 +14,7 @@ public class EnergyStorageImpl implements EnergyStorage {
      * @param capacity the capacity, must be larger than 0
      */
     public EnergyStorageImpl(final long capacity) {
-        Preconditions.checkArgument(capacity >= 0, "Capacity must be 0 or larger than 0");
+        CoreValidations.validateNonNegative(capacity, "Capacity must be non-negative");
         this.capacity = capacity;
     }
 

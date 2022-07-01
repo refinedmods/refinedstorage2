@@ -3,7 +3,6 @@ archivesBaseName = 'refinedstorage2-network-api'
 dependencies {
     implementation "org.apache.logging.log4j:log4j-api:${project.log4jVersion}"
     testImplementation "org.apache.logging.log4j:log4j-core:${project.log4jVersion}"
-    implementation "com.google.guava:guava:${project.guavaVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
     testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
     testImplementation "org.mockito:mockito-core:${project.mockitoVersion}"
@@ -13,6 +12,7 @@ dependencies {
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-storage-api')
     implementation project(':refinedstorage2-grid-api')
+    implementation "com.google.code.findbugs:jsr305:${project.jsr305Version}"
 }
 
 test {
