@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
-import java.util.Arrays;
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 
-import com.google.common.base.Preconditions;
+import java.util.Arrays;
 
 public class DiskDriveState {
     private final StorageDiskState[] states;
@@ -13,7 +13,7 @@ public class DiskDriveState {
     }
 
     public void setState(final int id, final StorageDiskState state) {
-        Preconditions.checkNotNull(state, "State cannot be null");
+        CoreValidations.validateNotNull(state, "State cannot be null");
         this.states[id] = state;
     }
 

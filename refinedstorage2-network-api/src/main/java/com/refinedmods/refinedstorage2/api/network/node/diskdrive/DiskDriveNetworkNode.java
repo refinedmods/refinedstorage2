@@ -17,10 +17,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
-import com.google.common.collect.ImmutableMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,9 +61,9 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
             final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry
     ) {
         return storageChannelTypeRegistry
-                .getAll()
-                .stream()
-                .collect(ImmutableMap.toImmutableMap(type -> type, this::createCompositeStorage));
+            .getAll()
+            .stream()
+            .collect(Collectors.toUnmodifiableMap(Function.identity(), this::createCompositeStorage));
     }
 
     private DiskDriveCompositeStorage<?> createCompositeStorage(final StorageChannelType<?> type) {
