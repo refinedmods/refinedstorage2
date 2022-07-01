@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
 import java.util.Collection;
 
-import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
 
 /**
@@ -21,7 +21,7 @@ public abstract class AbstractProxyStorage<T> implements Storage<T> {
      * @param delegate the storage to delegate operations to, may not be null
      */
     protected AbstractProxyStorage(final Storage<T> delegate) {
-        Preconditions.checkNotNull(delegate);
+        CoreValidations.validateNotNull(delegate, "Delegate must not be null");
         this.delegate = delegate;
     }
 

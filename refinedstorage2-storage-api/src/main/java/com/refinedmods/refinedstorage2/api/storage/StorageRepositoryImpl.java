@@ -1,12 +1,13 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
@@ -25,13 +26,11 @@ public class StorageRepositoryImpl implements StorageRepository {
 
     @Override
     public <T> void set(final UUID id, final Storage<T> storage) {
-        Preconditions.checkNotNull(id);
-        Preconditions.checkNotNull(storage);
-
+        CoreValidations.validateNotNull(id, "ID must not be null");
+        CoreValidations.validateNotNull(storage, "Storage must not be null");
         if (entries.containsKey(id)) {
             throw new IllegalArgumentException(id + " already exists");
         }
-
         entries.put(id, storage);
     }
 

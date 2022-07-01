@@ -1,13 +1,13 @@
 package com.refinedmods.refinedstorage2.api.storage.limited;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.storage.AbstractProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 
-import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
 
 /**
@@ -26,7 +26,7 @@ public class LimitedStorageImpl<T> extends AbstractProxyStorage<T> implements Li
      */
     public LimitedStorageImpl(final Storage<T> delegate, final long capacity) {
         super(delegate);
-        Preconditions.checkArgument(capacity >= 0, "Capacity must be 0 or larger than 0");
+        CoreValidations.validateNonNegative(capacity, "Capacity cannot be negative");
         this.capacity = capacity;
     }
 
@@ -41,7 +41,7 @@ public class LimitedStorageImpl<T> extends AbstractProxyStorage<T> implements Li
 
     @Override
     public long insert(final T resource, final long amount, final Action action, final Source source) {
-        Preconditions.checkArgument(amount > 0, "Amount must be larger than 0");
+        CoreValidations.validateLargerThanZero(amount, "Amount must be larger than 0");
         if (delegate.getStored() + amount > capacity) {
             return insertPartly(resource, action, source);
         } else {
