@@ -22,6 +22,12 @@ public final class CoreValidations {
         }
     }
 
+    public static void validateLargerThanZero(final long value, final String message) {
+        if (value <= 0) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
     public static <T> void validateEmpty(final Collection<T> collection, final String message) {
         if (!collection.isEmpty()) {
             throw new IllegalArgumentException(message);

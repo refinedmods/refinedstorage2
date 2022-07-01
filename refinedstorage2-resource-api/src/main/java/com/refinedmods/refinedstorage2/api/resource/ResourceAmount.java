@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.resource;
 
-import com.google.common.base.Preconditions;
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
+
 import org.apiguardian.api.API;
 
 /**
@@ -38,7 +39,7 @@ public final class ResourceAmount<T> {
      * @param amountToIncrement the amount to increment, must be larger than 0
      */
     public void increment(final long amountToIncrement) {
-        Preconditions.checkArgument(amountToIncrement > 0, "Amount to increment must be larger than 0");
+        CoreValidations.validateLargerThanZero(amountToIncrement, "Amount to increment must be larger than 0");
         this.amount += amountToIncrement;
     }
 
@@ -49,22 +50,24 @@ public final class ResourceAmount<T> {
      * @param amountToDecrement the amount to decrement, a positive number
      */
     public void decrement(final long amountToDecrement) {
-        Preconditions.checkArgument(amountToDecrement > 0, "Amount to decrement must be larger than 0");
-        final boolean willBeNegative = (this.amount - amountToDecrement) > 0;
-        Preconditions.checkArgument(willBeNegative, "Cannot decrement more than " + (amountToDecrement - 1));
+        CoreValidations.validateLargerThanZero(amountToDecrement, "Amount to decrement must be larger than 0");
+        CoreValidations.validateLargerThanZero(
+            amount - amountToDecrement,
+            "Cannot decrement, amount will be zero or negative"
+        );
         this.amount -= amountToDecrement;
     }
 
     @Override
     public String toString() {
         return "ResourceAmount{"
-                + "resource=" + resource
-                + ", amount=" + amount
-                + '}';
+            + "resource=" + resource
+            + ", amount=" + amount
+            + '}';
     }
 
     public static <T> void validate(final T resource, final long amount) {
-        Preconditions.checkArgument(amount > 0, "Amount must be larger than 0");
-        Preconditions.checkNotNull(resource, "Resource must not be null");
+        CoreValidations.validateLargerThanZero(amount, "Amount must be larger than 0");
+        CoreValidations.validateNotNull(resource, "Resource must not be null");
     }
 }
