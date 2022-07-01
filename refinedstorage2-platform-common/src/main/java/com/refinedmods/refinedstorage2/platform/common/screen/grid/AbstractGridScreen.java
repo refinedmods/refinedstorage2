@@ -25,7 +25,9 @@ import java.util.List;
 import java.util.Objects;
 import javax.annotation.Nullable;
 
-import com.google.common.collect.Lists;
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
@@ -39,9 +41,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<R>> extends AbstractBaseScreen<T> {
     private static final Logger LOGGER = LogManager.getLogger(AbstractGridScreen.class);
@@ -368,17 +367,20 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         final GridView<R> view = getMenu().getView();
         final AbstractGridResource<R> resource = view.getAll().get(gridSlotNumber);
 
-        final List<FormattedCharSequence> lines = Lists.transform(getTooltip(resource), Component::getVisualOrderText);
+        final List<FormattedCharSequence> lines = getTooltip(resource)
+            .stream()
+            .map(Component::getVisualOrderText)
+            .toList();
 
         if (!Platform.INSTANCE.getConfig().getGrid().isDetailedTooltip()) {
             renderTooltip(poseStack, lines, mouseX, mouseY);
         } else {
             final List<FormattedCharSequence> smallLines = new ArrayList<>();
             smallLines.add(createTranslation("misc", "total", getAmountInTooltip(resource))
-                    .withStyle(ChatFormatting.GRAY).getVisualOrderText());
+                .withStyle(ChatFormatting.GRAY).getVisualOrderText());
 
             view.getTrackedResource(resource.getResourceAmount().getResource()).ifPresent(entry -> smallLines.add(
-                    getLastModifiedText(entry).withStyle(ChatFormatting.GRAY).getVisualOrderText()
+                getLastModifiedText(entry).withStyle(ChatFormatting.GRAY).getVisualOrderText()
             ));
 
             SmallTextTooltipRenderer.INSTANCE.render(

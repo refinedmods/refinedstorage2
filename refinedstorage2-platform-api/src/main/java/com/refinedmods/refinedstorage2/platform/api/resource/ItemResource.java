@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.api.resource;
 
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Preconditions;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +19,7 @@ public record ItemResource(Item item, @Nullable CompoundTag tag) implements Fuzz
     private static final String TAG_AMOUNT = "amount";
 
     public ItemResource(final Item item, @Nullable final CompoundTag tag) {
-        this.item = Preconditions.checkNotNull(item);
+        this.item = CoreValidations.validateNotNull(item, "Item must not be null");
         this.tag = tag;
     }
 

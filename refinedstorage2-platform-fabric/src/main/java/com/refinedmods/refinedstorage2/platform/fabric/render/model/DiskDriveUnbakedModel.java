@@ -4,9 +4,11 @@ import com.refinedmods.refinedstorage2.platform.fabric.render.model.baked.DiskDr
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 
-import com.google.common.collect.ImmutableSet;
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
@@ -15,8 +17,6 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
-
 public class DiskDriveUnbakedModel implements BasicUnbakedModel {
     private static final ResourceLocation BASE_MODEL = createIdentifier("block/disk_drive_base");
     private static final ResourceLocation DISK_DISCONNECTED_MODEL = createIdentifier("block/disk_disconnected");
@@ -24,10 +24,7 @@ public class DiskDriveUnbakedModel implements BasicUnbakedModel {
 
     @Override
     public Collection<ResourceLocation> getDependencies() {
-        return new ImmutableSet.Builder<ResourceLocation>()
-                .add(BASE_MODEL)
-                .add(DISK_MODEL)
-                .build();
+        return Set.of(BASE_MODEL, DISK_MODEL);
     }
 
     @Override
@@ -37,9 +34,9 @@ public class DiskDriveUnbakedModel implements BasicUnbakedModel {
                            final ModelState rotationContainer,
                            final ResourceLocation modelId) {
         return new DiskDriveBakedModel(
-                Objects.requireNonNull(loader.bake(BASE_MODEL, rotationContainer)),
-                Objects.requireNonNull(loader.bake(DISK_MODEL, rotationContainer)),
-                Objects.requireNonNull(loader.bake(DISK_DISCONNECTED_MODEL, rotationContainer))
+            Objects.requireNonNull(loader.bake(BASE_MODEL, rotationContainer)),
+            Objects.requireNonNull(loader.bake(DISK_MODEL, rotationContainer)),
+            Objects.requireNonNull(loader.bake(DISK_DISCONNECTED_MODEL, rotationContainer))
         );
     }
 }

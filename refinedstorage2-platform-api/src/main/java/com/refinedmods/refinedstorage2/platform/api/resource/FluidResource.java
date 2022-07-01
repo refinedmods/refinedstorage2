@@ -1,11 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.api.resource;
 
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Preconditions;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +18,7 @@ public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements F
     private static final String TAG_AMOUNT = "amount";
 
     public FluidResource(final Fluid fluid, @Nullable final CompoundTag tag) {
-        this.fluid = Preconditions.checkNotNull(fluid);
+        this.fluid = CoreValidations.validateNotNull(fluid, "Fluid must not be null");
         this.tag = tag;
     }
 

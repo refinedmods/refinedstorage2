@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.apiimpl.storage;
 
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
@@ -10,7 +11,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.RateLimiter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,8 +23,10 @@ public class ClientStorageRepository implements PlatformStorageRepository {
     private final Consumer<UUID> storageInfoRequestAcceptor;
 
     public ClientStorageRepository(final Consumer<UUID> storageInfoRequestAcceptor) {
-        Preconditions.checkNotNull(storageInfoRequestAcceptor);
-        this.storageInfoRequestAcceptor = storageInfoRequestAcceptor;
+        this.storageInfoRequestAcceptor = CoreValidations.validateNotNull(
+            storageInfoRequestAcceptor,
+            "Storage info request acceptor cannot be null"
+        );
     }
 
     @Override
