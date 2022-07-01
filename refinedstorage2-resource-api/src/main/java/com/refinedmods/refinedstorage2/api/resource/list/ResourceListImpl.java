@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import org.apiguardian.api.API;
 
 /**
@@ -21,7 +19,8 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public class ResourceListImpl<T> implements ResourceList<T> {
     private final Map<T, ResourceAmount<T>> entries = new HashMap<>();
-    private final BiMap<UUID, ResourceAmount<T>> index = HashBiMap.create();
+    private final Map<UUID, ResourceAmount<T>> index = new HashMap<>();
+    private final Map<ResourceAmount<T>, UUID> inverseIndex = new HashMap<>();
 
     @Override
     public ResourceListOperationResult<T> add(final T resource, final long amount) {
@@ -38,7 +37,7 @@ public class ResourceListImpl<T> implements ResourceList<T> {
     private ResourceListOperationResult<T> addToExisting(final ResourceAmount<T> resourceAmount, final long amount) {
         resourceAmount.increment(amount);
 
-        return new ResourceListOperationResult<>(resourceAmount, amount, index.inverse().get(resourceAmount), true);
+        return new ResourceListOperationResult<>(resourceAmount, amount, inverseIndex.get(resourceAmount), true);
     }
 
     private ResourceListOperationResult<T> addNew(final T resource, final long amount) {
@@ -47,6 +46,7 @@ public class ResourceListImpl<T> implements ResourceList<T> {
         final UUID id = UUID.randomUUID();
 
         index.put(id, resourceAmount);
+        inverseIndex.put(resourceAmount, id);
         entries.put(resource, resourceAmount);
 
         return new ResourceListOperationResult<>(resourceAmount, amount, id, true);
@@ -58,7 +58,7 @@ public class ResourceListImpl<T> implements ResourceList<T> {
 
         final ResourceAmount<T> existing = entries.get(resource);
         if (existing != null) {
-            final UUID id = index.inverse().get(existing);
+            final UUID id = inverseIndex.get(existing);
 
             if (existing.getAmount() - amount <= 0) {
                 return removeCompletely(existing, id);
@@ -81,13 +81,14 @@ public class ResourceListImpl<T> implements ResourceList<T> {
     private Optional<ResourceListOperationResult<T>> removeCompletely(final ResourceAmount<T> resourceAmount,
                                                                       final UUID id) {
         index.remove(id);
+        inverseIndex.remove(resourceAmount);
         entries.remove(resourceAmount.getResource());
 
         return Optional.of(new ResourceListOperationResult<>(
-                resourceAmount,
-                -resourceAmount.getAmount(),
-                id,
-                false
+            resourceAmount,
+            -resourceAmount.getAmount(),
+            id,
+            false
         ));
     }
 

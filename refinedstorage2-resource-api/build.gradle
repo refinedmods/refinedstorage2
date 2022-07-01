@@ -4,8 +4,8 @@ dependencies {
     testImplementation project(':refinedstorage2-test')
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
     testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
-    implementation "com.google.guava:guava:${project.guavaVersion}"
     implementation project(":refinedstorage2-core-api")
+    implementation "com.google.code.findbugs:jsr305:${project.jsr305Version}"
 }
 
 test {
