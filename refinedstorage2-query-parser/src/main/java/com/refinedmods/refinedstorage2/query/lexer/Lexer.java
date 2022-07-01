@@ -29,7 +29,9 @@ public class Lexer {
             } else if (current == ' ') {
                 position.advanceAndReset();
             } else if (tokenMappings.hasMapping(position, source)) {
-                addToken(Objects.requireNonNull(tokenMappings.findMapping(position, source)));
+                final LexerTokenMapping mapping = Objects.requireNonNull(tokenMappings.findMapping(position, source));
+                position.advance(mapping.value().length());
+                addToken(mapping.type());
             } else if (Character.isDigit(current)) {
                 scanNumber();
             } else if (current == '"') {
@@ -110,7 +112,7 @@ public class Lexer {
 
     private void addToken(final TokenType type, final UnaryOperator<String> contentModifier) {
         final String tokenContent = contentModifier.apply(
-                source.content().substring(position.getStartIndex(), position.getEndIndex())
+            source.content().substring(position.getStartIndex(), position.getEndIndex())
         );
         final TokenPosition tokenPosition = new TokenPosition(source, position.createRange());
 
