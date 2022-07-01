@@ -25,9 +25,6 @@ import java.util.List;
 import java.util.Objects;
 import javax.annotation.Nullable;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
@@ -41,6 +38,9 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
+import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<R>> extends AbstractBaseScreen<T> {
     private static final Logger LOGGER = LogManager.getLogger(AbstractGridScreen.class);
@@ -91,18 +91,18 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
 
         if (searchField == null) {
             searchField = new GridSearchBoxWidget<>(
-                    font,
-                    leftPos + 80 + 1,
-                    topPos + 6 + 1,
-                    88 - 6,
-                    new SyntaxHighlighter(SyntaxHighlighterColors.DEFAULT_COLORS),
-                    menu.getView(),
-                    new GridQueryParserImpl<>(
-                            LexerTokenMappings.DEFAULT_MAPPINGS,
-                            ParserOperatorMappings.DEFAULT_MAPPINGS,
-                            GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING
-                    ),
-                    SEARCH_FIELD_HISTORY
+                font,
+                leftPos + 80 + 1,
+                topPos + 6 + 1,
+                88 - 6,
+                new SyntaxHighlighter(SyntaxHighlighterColors.DEFAULT_COLORS),
+                menu.getView(),
+                new GridQueryParserImpl<>(
+                    LexerTokenMappings.DEFAULT_MAPPINGS,
+                    ParserOperatorMappings.DEFAULT_MAPPINGS,
+                    GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING
+                ),
+                SEARCH_FIELD_HISTORY
             );
         } else {
             searchField.x = leftPos + 80 + 1;
@@ -127,12 +127,12 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         addSideButton(new AutoSelectedSideButtonWidget(getMenu(), this::renderComponentTooltip));
 
         final OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry =
-                PlatformApi.INSTANCE.getGridSynchronizerRegistry();
+            PlatformApi.INSTANCE.getGridSynchronizerRegistry();
         if (!synchronizerRegistry.isEmpty()) {
             addSideButton(new SynchronizationSideButtonWidget(
-                    getMenu(),
-                    this::renderComponentTooltip,
-                    synchronizerRegistry.getAll()
+                getMenu(),
+                this::renderComponentTooltip,
+                synchronizerRegistry.getAll()
             ));
             searchField.addListener(this::trySynchronizeFromGrid);
         }
@@ -167,8 +167,8 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         scrollbar.setEnabled(totalRows > visibleRows);
         final int rowsExcludingVisibleOnes = totalRows - visibleRows;
         final int maxOffset = scrollbar.isScrollAnimation()
-                ? (rowsExcludingVisibleOnes * 18)
-                : rowsExcludingVisibleOnes;
+            ? (rowsExcludingVisibleOnes * 18)
+            : rowsExcludingVisibleOnes;
         scrollbar.setMaxOffset(maxOffset);
     }
 
@@ -192,9 +192,9 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         final int relativeMouseX = mouseX - leftPos;
         final int relativeMouseY = mouseY - topPos;
         return relativeMouseX >= 7
-                && relativeMouseY >= TOP_HEIGHT
-                && relativeMouseX <= 168
-                && relativeMouseY <= TOP_HEIGHT + (visibleRows * 18);
+            && relativeMouseY >= TOP_HEIGHT
+            && relativeMouseX <= 168
+            && relativeMouseY <= TOP_HEIGHT + (visibleRows * 18);
     }
 
     @Override
@@ -288,9 +288,9 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         }
 
         final boolean inBounds = mouseX >= slotX
-                && mouseY >= slotY
-                && mouseX <= slotX + 16
-                && mouseY <= slotY + 16;
+            && mouseY >= slotY
+            && mouseX <= slotX + 16
+            && mouseY <= slotY + 16;
 
         if (!getMenu().isActive()) {
             renderDisabledSlot(poseStack, slotX, slotY);
@@ -316,8 +316,8 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
                               final AbstractGridResource<R> resource) {
         final String text = getAmount(resource);
         final int color = resource.isZeroed()
-                ? Objects.requireNonNullElse(ChatFormatting.RED.getColor(), 15)
-                : Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15);
+            ? Objects.requireNonNullElse(ChatFormatting.RED.getColor(), 15)
+            : Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15);
         renderAmount(poseStack, slotX, slotY, text, color);
     }
 
@@ -327,7 +327,7 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
                                 final String amount,
                                 final int color) {
         final boolean large = (minecraft != null && minecraft.isEnforceUnicode())
-                || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
+            || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
 
         poseStack.pushPose();
         poseStack.translate(x, y, 300);
@@ -384,15 +384,15 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
             ));
 
             SmallTextTooltipRenderer.INSTANCE.render(
-                    minecraft,
-                    font,
-                    poseStack,
-                    lines,
-                    smallLines,
-                    mouseX,
-                    mouseY,
-                    width,
-                    height
+                minecraft,
+                font,
+                poseStack,
+                lines,
+                smallLines,
+                mouseX,
+                mouseY,
+                width,
+                height
             );
         }
     }
@@ -412,16 +412,16 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         }
 
         return createTranslation(
-                "misc",
-                "last_modified." + translationKey,
-                lastModified.amount(),
-                trackedResource.getSourceName()
+            "misc",
+            "last_modified." + translationKey,
+            lastModified.amount(),
+            trackedResource.getSourceName()
         );
     }
 
     private boolean isModifiedJustNow(final LastModified lastModified) {
         return lastModified.type() == LastModified.Type.SECOND
-                && lastModified.amount() <= MODIFIED_JUST_NOW_MAX_SECONDS;
+            && lastModified.amount() <= MODIFIED_JUST_NOW_MAX_SECONDS;
     }
 
     @Override
@@ -453,7 +453,7 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         }
 
         if (isOverStorageArea((int) mouseX, (int) mouseY)
-                && !carriedStack.isEmpty() && (clickedButton == 0 || clickedButton == 1)) {
+            && !carriedStack.isEmpty() && (clickedButton == 0 || clickedButton == 1)) {
             mouseClickedInGrid(clickedButton);
             return true;
         }
@@ -510,13 +510,13 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
     @Override
     public boolean charTyped(final char unknown1, final int unknown2) {
         return (searchField != null && searchField.charTyped(unknown1, unknown2))
-                || super.charTyped(unknown1, unknown2);
+            || super.charTyped(unknown1, unknown2);
     }
 
     @Override
     public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
         if (searchField != null
-                && (searchField.keyPressed(key, scanCode, modifiers) || searchField.canConsumeInput())) {
+            && (searchField.keyPressed(key, scanCode, modifiers) || searchField.canConsumeInput())) {
             return true;
         }
 
