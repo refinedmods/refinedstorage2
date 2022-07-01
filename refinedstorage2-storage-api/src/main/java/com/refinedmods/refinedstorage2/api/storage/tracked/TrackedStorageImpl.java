@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.storage.tracked;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.storage.AbstractProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
@@ -8,7 +9,6 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import java.util.Optional;
 import java.util.function.LongSupplier;
 
-import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
@@ -41,7 +41,7 @@ public class TrackedStorageImpl<T> extends AbstractProxyStorage<T> implements Tr
 
     @Override
     public long insert(final T resource, final long amount, final Action action, final Source source) {
-        Preconditions.checkNotNull(source);
+        CoreValidations.validateNotNull(source, "Source must not be null");
         final long inserted = super.insert(resource, amount, action, source);
         if (inserted > 0 && action == Action.EXECUTE) {
             repository.update(resource, source, clock.getAsLong());
@@ -51,7 +51,7 @@ public class TrackedStorageImpl<T> extends AbstractProxyStorage<T> implements Tr
 
     @Override
     public long extract(final T resource, final long amount, final Action action, final Source source) {
-        Preconditions.checkNotNull(source);
+        CoreValidations.validateNotNull(source, "Source must not be null");
         final long extracted = super.extract(resource, amount, action, source);
         if (extracted > 0 && action == Action.EXECUTE) {
             repository.update(resource, source, clock.getAsLong());
