@@ -1,7 +1,5 @@
 package com.refinedmods.refinedstorage2.api.core;
 
-import com.refinedmods.refinedstorage2.test.Rs2Test;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,17 +7,19 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Rs2Test
 class HistoryTest {
-    @Test
-    void Test_older() {
-        // Arrange
-        List<String> items = new ArrayList<>();
+    private List<String> simpleItems() {
+        final List<String> items = new ArrayList<>();
         items.add("A");
         items.add("B");
         items.add("C");
+        return items;
+    }
 
-        History history = new History(items);
+    @Test
+    void shouldRetrieveOlderItems() {
+        // Arrange
+        final History history = new History(simpleItems());
 
         // Act & assert
         assertThat(history.older()).isEqualTo("C");
@@ -29,37 +29,27 @@ class HistoryTest {
     }
 
     @Test
-    void Test_older_with_no_items() {
+    void shouldNotRetrieveOlderItemIfThereIsNoHistory() {
         // Arrange
-        History history = new History(new ArrayList<>());
+        final History history = new History(new ArrayList<>());
 
         // Act & assert
         assertThat(history.older()).isEmpty();
     }
 
     @Test
-    void Test_newer_initially() {
+    void shouldNotRetrieveNewerItemIfAtTopOfHistory() {
         // Arrange
-        List<String> items = new ArrayList<>();
-        items.add("A");
-        items.add("B");
-        items.add("C");
-
-        History history = new History(items);
+        final History history = new History(simpleItems());
 
         // Act & assert
         assertThat(history.newer()).isEmpty();
     }
 
     @Test
-    void Test_older_and_newer() {
+    void shouldBeAbleToSwitchBetweenOlderAndNewer() {
         // Arrange
-        List<String> items = new ArrayList<>();
-        items.add("A");
-        items.add("B");
-        items.add("C");
-
-        History history = new History(items);
+        final History history = new History(simpleItems());
 
         // Act & assert
         assertThat(history.older()).isEqualTo("C");
@@ -84,18 +74,18 @@ class HistoryTest {
     }
 
     @Test
-    void Test_saving() {
+    void shouldBeAbleToSaveItem() {
         // Arrange
-        History history = new History(new ArrayList<>());
+        final History history = new History(new ArrayList<>());
 
         // Act & assert
         assertThat(history.save("Hello")).isTrue();
     }
 
     @Test
-    void Test_saving_duplicates() {
+    void shouldNotSaveDuplicateItems() {
         // Arrange
-        History history = new History(new ArrayList<>());
+        final History history = new History(new ArrayList<>());
 
         // Act & assert
         assertThat(history.save("Hello1")).isTrue();
@@ -109,9 +99,9 @@ class HistoryTest {
     }
 
     @Test
-    void Test_saving_empty_values() {
+    void shouldNotSaveEmptyItems() {
         // Arrange
-        History history = new History(new ArrayList<>());
+        final History history = new History(new ArrayList<>());
 
         // Act & assert
         assertThat(history.save("")).isFalse();

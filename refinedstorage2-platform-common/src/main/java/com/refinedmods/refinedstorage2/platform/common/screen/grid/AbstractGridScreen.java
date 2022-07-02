@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
+import com.refinedmods.refinedstorage2.api.core.History;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.core.util.LastModified;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
@@ -102,7 +103,7 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
                     ParserOperatorMappings.DEFAULT_MAPPINGS,
                     GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING
                 ),
-                SEARCH_FIELD_HISTORY
+                new History(SEARCH_FIELD_HISTORY)
             );
         } else {
             searchField.x = leftPos + 80 + 1;

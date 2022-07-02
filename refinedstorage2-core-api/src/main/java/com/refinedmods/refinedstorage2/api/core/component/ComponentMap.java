@@ -21,6 +21,9 @@ public class ComponentMap<C> implements ComponentAccessor<C> {
     @Override
     @SuppressWarnings("unchecked")
     public <I extends C> I getComponent(final Class<I> componentType) {
+        if (!map.containsKey(componentType)) {
+            throw new IllegalArgumentException("Component not present: " + componentType);
+        }
         return (I) map.get(componentType);
     }
 }

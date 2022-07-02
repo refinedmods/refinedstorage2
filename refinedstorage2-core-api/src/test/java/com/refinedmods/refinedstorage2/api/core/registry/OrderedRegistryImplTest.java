@@ -1,16 +1,13 @@
 package com.refinedmods.refinedstorage2.api.core.registry;
 
-import com.refinedmods.refinedstorage2.test.Rs2Test;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Rs2Test
 class OrderedRegistryImplTest {
     OrderedRegistry<String, Integer> sut;
 
@@ -20,7 +17,7 @@ class OrderedRegistryImplTest {
     }
 
     @Test
-    void Test_default() {
+    void testDefaults() {
         // Assert
         assertThat(sut.getDefault()).isEqualTo(10);
         assertThat(sut.getAll()).containsExactly(10);
@@ -34,16 +31,16 @@ class OrderedRegistryImplTest {
     }
 
     @Test
-    void Test_trying_to_modify_list() {
+    void shouldNotBeAbleToModifyUnderlyingRegistryList() {
         // Arrange
-        List<Integer> list = sut.getAll();
+        final List<Integer> list = sut.getAll();
 
         // Act & assert
         assertThrows(UnsupportedOperationException.class, () -> list.add(1));
     }
 
     @Test
-    void Test_registration() {
+    void shouldRegister() {
         // Act
         sut.register("B", 20);
 
@@ -60,7 +57,7 @@ class OrderedRegistryImplTest {
     }
 
     @Test
-    void Test_duplicate_id_registration() {
+    void shouldNotRegisterDuplicateId() {
         // Arrange
         sut.register("B", 20);
 
@@ -70,7 +67,7 @@ class OrderedRegistryImplTest {
     }
 
     @Test
-    void Test_duplicate_value_registration() {
+    void shouldNotRegisterDuplicateValue() {
         // Arrange
         sut.register("B", 20);
 
@@ -81,7 +78,7 @@ class OrderedRegistryImplTest {
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void Test_invalid_registration() {
+    void testInvalidRegistration() {
         // Act & assert
         assertThrows(NullPointerException.class, () -> sut.register(null, 20));
         assertThrows(NullPointerException.class, () -> sut.register("B", null));
@@ -90,7 +87,7 @@ class OrderedRegistryImplTest {
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void Test_invalid_default() {
+    void testInvalidDefaults() {
         // Act & assert
         assertThrows(NullPointerException.class, () -> new OrderedRegistryImpl<>(null, 20));
         assertThrows(NullPointerException.class, () -> new OrderedRegistryImpl<>("B", null));
@@ -99,13 +96,13 @@ class OrderedRegistryImplTest {
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void Test_invalid_next_value() {
+    void testInvalidNextValues() {
         assertThrows(NullPointerException.class, () -> sut.next(null));
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void Test_invalid_getting_id_and_value() {
+    void testInvalidRetrievals() {
         assertThrows(NullPointerException.class, () -> sut.get(null));
         assertThrows(NullPointerException.class, () -> sut.getId(null));
     }

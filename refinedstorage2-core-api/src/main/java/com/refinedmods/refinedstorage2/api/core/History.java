@@ -17,17 +17,14 @@ public class History {
         if (items.isEmpty()) {
             return "";
         }
-
         if (index == -1) {
             index = items.size() - 1;
             return items.get(index);
         } else {
             index--;
-
             if (index < 0) {
                 index = 0;
             }
-
             return items.get(index);
         }
     }
@@ -36,14 +33,11 @@ public class History {
         if (index == -1) {
             return "";
         }
-
         index++;
-
         if (index == items.size()) {
             index = -1;
             return "";
         }
-
         return items.get(index);
     }
 
@@ -51,11 +45,9 @@ public class History {
         if (value.trim().isEmpty()) {
             return false;
         }
-
         if (!items.isEmpty() && items.get(items.size() - 1).equals(value)) {
             return false;
         }
-
         items.add(value);
         return true;
     }
