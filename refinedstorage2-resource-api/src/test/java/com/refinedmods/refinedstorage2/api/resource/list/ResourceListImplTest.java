@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.api.resource.list;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.function.Executable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Rs2Test
 class ResourceListImplTest {
     private ResourceList<String> list;
 
@@ -25,9 +23,9 @@ class ResourceListImplTest {
     }
 
     @Test
-    void Test_adding_a_new_resource() {
+    void shouldAddNewResource() {
         // Act
-        ResourceListOperationResult<String> result = list.add("A", 10);
+        final ResourceListOperationResult<String> result = list.add("A", 10);
 
         // Assert
         assertThat(result.id()).isNotNull();
@@ -37,15 +35,15 @@ class ResourceListImplTest {
         assertThat(result.available()).isTrue();
 
         assertThat(list.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 10)
+            new ResourceAmount<>("A", 10)
         );
     }
 
     @Test
-    void Test_adding_multiple_with_same_resource() {
+    void shouldAddMultipleOfSameResource() {
         // Act
-        ResourceListOperationResult<String> result1 = list.add("A", 10);
-        ResourceListOperationResult<String> result2 = list.add("A", 5);
+        final ResourceListOperationResult<String> result1 = list.add("A", 10);
+        final ResourceListOperationResult<String> result2 = list.add("A", 5);
 
         // Assert
         assertThat(result1.id()).isNotNull();
@@ -61,16 +59,16 @@ class ResourceListImplTest {
         assertThat(result2.available()).isTrue();
 
         assertThat(list.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 15)
+            new ResourceAmount<>("A", 15)
         );
     }
 
     @Test
-    void Test_adding_multiple_with_different_resources() {
+    void shouldAddMultipleOfDifferentResources() {
         // Act
-        ResourceListOperationResult<String> result1 = list.add("A", 10);
-        ResourceListOperationResult<String> result2 = list.add("A", 5);
-        ResourceListOperationResult<String> result3 = list.add("B", 3);
+        final ResourceListOperationResult<String> result1 = list.add("A", 10);
+        final ResourceListOperationResult<String> result2 = list.add("A", 5);
+        final ResourceListOperationResult<String> result3 = list.add("B", 3);
 
         // Assert
         assertThat(result1.id()).isNotNull();
@@ -92,18 +90,18 @@ class ResourceListImplTest {
         assertThat(result3.available()).isTrue();
 
         assertThat(list.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-                new ResourceAmount<>("A", 15),
-                new ResourceAmount<>("B", 3)
+            new ResourceAmount<>("A", 15),
+            new ResourceAmount<>("B", 3)
         );
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void Test_adding_an_invalid_resource() {
+    void shouldNotAddInvalidResourceOrAmount() {
         // Act
-        Executable action1 = () -> list.add("A", 0);
-        Executable action2 = () -> list.add("A", -1);
-        Executable action3 = () -> list.add(null, 1);
+        final Executable action1 = () -> list.add("A", 0);
+        final Executable action2 = () -> list.add("A", -1);
+        final Executable action3 = () -> list.add(null, 1);
 
         // Assert
         assertThrows(IllegalArgumentException.class, action1);
@@ -112,20 +110,22 @@ class ResourceListImplTest {
     }
 
     @Test
-    void Test_removing_a_resource_when_resource_is_not_available() {
+    void shouldNotRemoveResourceWhenItIsNotAvailable() {
         // Act
-        Optional<ResourceListOperationResult<String>> result = list.remove("A", 10);
+        final Optional<ResourceListOperationResult<String>> result = list.remove("A", 10);
 
         // Assert
         assertThat(result).isEmpty();
     }
 
     @Test
-    void Test_removing_a_resource_partly() {
-        // Act
-        ResourceListOperationResult<String> result1 = list.add("A", 20);
+    void shouldRemoveResourcePartly() {
+        // Arrange
+        final ResourceListOperationResult<String> result1 = list.add("A", 20);
         list.add("B", 6);
-        Optional<ResourceListOperationResult<String>> result2 = list.remove("A", 5);
+
+        // Act
+        final Optional<ResourceListOperationResult<String>> result2 = list.remove("A", 5);
 
         // Assert
         assertThat(result2).isPresent();
@@ -136,17 +136,19 @@ class ResourceListImplTest {
         assertThat(result2.get().available()).isTrue();
 
         assertThat(list.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-                new ResourceAmount<>("A", 15),
-                new ResourceAmount<>("B", 6)
+            new ResourceAmount<>("A", 15),
+            new ResourceAmount<>("B", 6)
         );
     }
 
     @Test
-    void Test_removing_a_resource_completely() {
-        // Act
-        ResourceListOperationResult<String> result1 = list.add("A", 20);
+    void shouldRemoveResourceCompletely() {
+        // Arrange
+        final ResourceListOperationResult<String> result1 = list.add("A", 20);
         list.add("B", 6);
-        Optional<ResourceListOperationResult<String>> result2 = list.remove("A", 20);
+
+        // Act
+        final Optional<ResourceListOperationResult<String>> result2 = list.remove("A", 20);
 
         // Assert
         assertThat(result2).isPresent();
@@ -157,16 +159,18 @@ class ResourceListImplTest {
         assertThat(result2.get().available()).isFalse();
 
         assertThat(list.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-                new ResourceAmount<>("B", 6)
+            new ResourceAmount<>("B", 6)
         );
     }
 
     @Test
-    void Test_removing_a_resource_with_more_than_is_available() {
-        // Act
-        ResourceListOperationResult<String> result1 = list.add("A", 20);
+    void shouldNotRemoveResourceWithMoreThanIsAvailable() {
+        // Arrange
+        final ResourceListOperationResult<String> result1 = list.add("A", 20);
         list.add("B", 6);
-        Optional<ResourceListOperationResult<String>> result2 = list.remove("A", 21);
+
+        // Act
+        final Optional<ResourceListOperationResult<String>> result2 = list.remove("A", 21);
 
         // Assert
         assertThat(result2).isPresent();
@@ -177,17 +181,17 @@ class ResourceListImplTest {
         assertThat(result2.get().available()).isFalse();
 
         assertThat(list.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-                new ResourceAmount<>("B", 6)
+            new ResourceAmount<>("B", 6)
         );
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void Test_removing_an_invalid_resource() {
+    void shouldNotRemoveInvalidResourceOrAmount() {
         // Act
-        Executable action1 = () -> list.remove("A", 0);
-        Executable action2 = () -> list.remove("A", -1);
-        Executable action3 = () -> list.remove(null, 1);
+        final Executable action1 = () -> list.remove("A", 0);
+        final Executable action2 = () -> list.remove("A", -1);
+        final Executable action3 = () -> list.remove(null, 1);
 
         // Assert
         assertThrows(IllegalArgumentException.class, action1);
@@ -196,12 +200,12 @@ class ResourceListImplTest {
     }
 
     @Test
-    void Test_adding_a_resource_should_make_it_findable_by_resource() {
+    void shouldBeAbleToRetrieveByResourceAfterAdding() {
         // Arrange
         list.add("A", 6);
 
         // Act
-        Optional<ResourceAmount<String>> resourceAmount = list.get("A");
+        final Optional<ResourceAmount<String>> resourceAmount = list.get("A");
 
         // Assert
         assertThat(resourceAmount).isPresent();
@@ -210,12 +214,12 @@ class ResourceListImplTest {
     }
 
     @Test
-    void Test_adding_a_resource_should_make_it_findable_by_id() {
+    void shouldBeAbleToRetrieveByIdAfterAdding() {
         // Arrange
-        ResourceListOperationResult<String> result = list.add("A", 3);
+        final ResourceListOperationResult<String> result = list.add("A", 3);
 
         // Act
-        Optional<ResourceAmount<String>> resourceAmount = list.get(result.id());
+        final Optional<ResourceAmount<String>> resourceAmount = list.get(result.id());
 
         // Assert
         assertThat(resourceAmount).isPresent();
@@ -224,13 +228,13 @@ class ResourceListImplTest {
     }
 
     @Test
-    void Test_removing_a_resource_partly_should_keep_it_findable_by_id() {
+    void shouldStillBeAbleToRetrieveByIdWhenRemovingPartly() {
         // Arrange
-        ResourceListOperationResult<String> result = list.add("A", 10);
+        final ResourceListOperationResult<String> result = list.add("A", 10);
+        list.remove("A", 3);
 
         // Act
-        list.remove("A", 3);
-        Optional<ResourceAmount<String>> resourceAmount = list.get(result.id());
+        final Optional<ResourceAmount<String>> resourceAmount = list.get(result.id());
 
         // Assert
         assertThat(resourceAmount).isPresent();
@@ -239,13 +243,13 @@ class ResourceListImplTest {
     }
 
     @Test
-    void Test_removing_a_resource_partly_should_keep_it_findable_by_resource() {
+    void shouldStillBeAbleToRetrieveByResourceWhenRemovingPartly() {
         // Arrange
         list.add("A", 10);
+        list.remove("A", 3);
 
         // Act
-        list.remove("A", 3);
-        Optional<ResourceAmount<String>> resourceAmount = list.get("A");
+        final Optional<ResourceAmount<String>> resourceAmount = list.get("A");
 
         // Assert
         assertThat(resourceAmount).isPresent();
@@ -254,55 +258,55 @@ class ResourceListImplTest {
     }
 
     @Test
-    void Test_removing_a_resource_completely_should_not_make_it_findable_by_resource() {
+    void shouldNotBeAbleToRetrieveByResourceWhenRemovingCompletely() {
         // Arrange
         list.add("A", 10);
+        list.remove("A", 10);
 
         // Act
-        list.remove("A", 10);
-        Optional<ResourceAmount<String>> resourceAmount = list.get("A");
+        final Optional<ResourceAmount<String>> resourceAmount = list.get("A");
 
         // Assert
         assertThat(resourceAmount).isNotPresent();
     }
 
     @Test
-    void Test_removing_a_resource_completely_should_not_make_it_findable_by_id() {
+    void shouldNotBeAbleToRetrieveByIdWhenRemovingCompletely() {
         // Arrange
-        ResourceListOperationResult<String> result = list.add("A", 10);
+        final ResourceListOperationResult<String> result = list.add("A", 10);
+        list.remove("A", 10);
 
         // Act
-        list.remove("A", 10);
-        Optional<ResourceAmount<String>> resourceAmount = list.get(result.id());
+        final Optional<ResourceAmount<String>> resourceAmount = list.get(result.id());
 
         // Assert
         assertThat(resourceAmount).isNotPresent();
     }
 
     @Test
-    void Test_clearing_list() {
+    void shouldClearList() {
         // Arrange
-        UUID id1 = list.add("A", 10).id();
-        UUID id2 = list.add("B", 5).id();
+        final UUID id1 = list.add("A", 10).id();
+        final UUID id2 = list.add("B", 5).id();
 
-        Collection<ResourceAmount<String>> listContentsBeforeClear = new ArrayList<>(list.getAll());
-        Optional<ResourceAmount<String>> beforeClear1 = list.get(id1);
-        Optional<ResourceAmount<String>> beforeClear2 = list.get(id2);
+        final Collection<ResourceAmount<String>> contentsBeforeClear = new ArrayList<>(list.getAll());
+        final Optional<ResourceAmount<String>> aBeforeClear = list.get(id1);
+        final Optional<ResourceAmount<String>> bBeforeClear = list.get(id2);
 
         // Act
         list.clear();
 
-        Collection<ResourceAmount<String>> listContentsAfterClear = list.getAll();
-        Optional<ResourceAmount<String>> afterClear1 = list.get(id1);
-        Optional<ResourceAmount<String>> afterClear2 = list.get(id2);
-
         // Assert
-        assertThat(listContentsBeforeClear).hasSize(2);
-        assertThat(beforeClear1).isPresent();
-        assertThat(beforeClear2).isPresent();
+        final Collection<ResourceAmount<String>> contentsAfterClear = list.getAll();
+        final Optional<ResourceAmount<String>> aAfterClear = list.get(id1);
+        final Optional<ResourceAmount<String>> bAfterClear = list.get(id2);
 
-        assertThat(listContentsAfterClear).isEmpty();
-        assertThat(afterClear1).isEmpty();
-        assertThat(afterClear2).isEmpty();
+        assertThat(contentsBeforeClear).hasSize(2);
+        assertThat(aBeforeClear).isPresent();
+        assertThat(bBeforeClear).isPresent();
+
+        assertThat(contentsAfterClear).isEmpty();
+        assertThat(aAfterClear).isEmpty();
+        assertThat(bAfterClear).isEmpty();
     }
 }
