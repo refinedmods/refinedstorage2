@@ -37,8 +37,8 @@ public class GridSearchBoxWidget<T> extends SearchFieldWidget implements GridSea
                                final SyntaxHighlighter syntaxHighlighter,
                                final GridView<T> view,
                                final GridQueryParser<T> queryParser,
-                               final List<String> history) {
-        super(textRenderer, x, y, width, new History(history));
+                               final History history) {
+        super(textRenderer, x, y, width, history);
 
         setFormatter((text, firstCharacterIndex) -> {
             if (!valid) {
