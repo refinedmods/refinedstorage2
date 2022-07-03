@@ -1,7 +1,5 @@
 package com.refinedmods.refinedstorage2.query.lexer;
 
-import com.refinedmods.refinedstorage2.test.Rs2Test;
-
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -12,25 +10,24 @@ import static com.refinedmods.refinedstorage2.query.lexer.TokenAssertions.assert
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Rs2Test
 class LexerTest {
     private static final LexerTokenMappings TEST_TOKEN_MAPPINGS = new LexerTokenMappings()
-            .addMapping(new LexerTokenMapping("&&", TokenType.BIN_OP))
-            .addMapping(new LexerTokenMapping("(", TokenType.PAREN_OPEN))
-            .addMapping(new LexerTokenMapping(")", TokenType.PAREN_CLOSE))
-            .addMapping(new LexerTokenMapping("+", TokenType.BIN_OP))
-            .addMapping(new LexerTokenMapping("-", TokenType.BIN_OP))
-            .addMapping(new LexerTokenMapping("||", TokenType.BIN_OP))
-            .addMapping(new LexerTokenMapping("*", TokenType.BIN_OP))
-            .addMapping(new LexerTokenMapping("/", TokenType.BIN_OP))
-            .addMapping(new LexerTokenMapping("!", TokenType.UNARY_OP));
+        .addMapping(new LexerTokenMapping("&&", TokenType.BIN_OP))
+        .addMapping(new LexerTokenMapping("(", TokenType.PAREN_OPEN))
+        .addMapping(new LexerTokenMapping(")", TokenType.PAREN_CLOSE))
+        .addMapping(new LexerTokenMapping("+", TokenType.BIN_OP))
+        .addMapping(new LexerTokenMapping("-", TokenType.BIN_OP))
+        .addMapping(new LexerTokenMapping("||", TokenType.BIN_OP))
+        .addMapping(new LexerTokenMapping("*", TokenType.BIN_OP))
+        .addMapping(new LexerTokenMapping("/", TokenType.BIN_OP))
+        .addMapping(new LexerTokenMapping("!", TokenType.UNARY_OP));
 
     private static final String SOURCE_NAME = "<test>";
 
     @Test
-    void Test_invalid_character() {
+    void testInvalidCharacter() {
         // Act
-        LexerException e = assertThrows(LexerException.class, () -> getTokens("$hello"));
+        final LexerException e = assertThrows(LexerException.class, () -> getTokens("$hello"));
 
         // Assert
         assertThat(e.getMessage()).isEqualTo("Unexpected '$'");
@@ -38,90 +35,90 @@ class LexerTest {
     }
 
     @Test
-    void Test_single_identifier() {
+    void testSingleIdentifier() {
         // Act
-        List<Token> tokens = getTokens("hel1lo");
+        final List<Token> tokens = getTokens("hel1lo");
 
         // Assert
         assertThat(tokens).hasSize(1);
 
-        Token token = tokens.get(0);
+        final Token token = tokens.get(0);
         assertToken(token, "hel1lo", TokenType.IDENTIFIER);
         assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 6);
     }
 
     @Test
-    void Test_multiple_identifiers() {
+    void testMultipleIdentifiers() {
         // Act
-        List<Token> tokens = getTokens("hello wo1rld baz");
+        final List<Token> tokens = getTokens("hello wo1rld baz");
 
         // Assert
         assertThat(tokens).hasSize(3);
 
-        Token hello = tokens.get(0);
+        final Token hello = tokens.get(0);
         assertToken(hello, "hello", TokenType.IDENTIFIER);
         assertPosition(hello.position(), SOURCE_NAME, 1, 1, 1, 5);
 
-        Token world = tokens.get(1);
+        final Token world = tokens.get(1);
         assertToken(world, "wo1rld", TokenType.IDENTIFIER);
         assertPosition(world.position(), SOURCE_NAME, 1, 7, 1, 12);
 
-        Token baz = tokens.get(2);
+        final Token baz = tokens.get(2);
         assertToken(baz, "baz", TokenType.IDENTIFIER);
         assertPosition(baz.position(), SOURCE_NAME, 1, 14, 1, 16);
     }
 
     @Test
-    void Test_single_string_identifier() {
+    void testSingleStringIdentifier() {
         // Act
-        List<Token> tokens = getTokens("\"h_el1lo\"");
+        final List<Token> tokens = getTokens("\"h_el1lo\"");
 
         // Assert
         assertThat(tokens).hasSize(1);
 
-        Token token = tokens.get(0);
+        final Token token = tokens.get(0);
         assertToken(token, "h_el1lo", TokenType.IDENTIFIER);
         assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 9);
     }
 
     @Test
-    void Test_multiple_string_identifiers() {
+    void testMultipleStringIdentifiers() {
         // Act
-        List<Token> tokens = getTokens("\"hello\" \"_World\" \"baz\"");
+        final List<Token> tokens = getTokens("\"hello\" \"_World\" \"baz\"");
 
         // Assert
         assertThat(tokens).hasSize(3);
 
-        Token hello = tokens.get(0);
+        final Token hello = tokens.get(0);
         assertToken(hello, "hello", TokenType.IDENTIFIER);
         assertPosition(hello.position(), SOURCE_NAME, 1, 1, 1, 7);
 
-        Token world = tokens.get(1);
+        final Token world = tokens.get(1);
         assertToken(world, "_World", TokenType.IDENTIFIER);
         assertPosition(world.position(), SOURCE_NAME, 1, 9, 1, 16);
 
-        Token baz = tokens.get(2);
+        final Token baz = tokens.get(2);
         assertToken(baz, "baz", TokenType.IDENTIFIER);
         assertPosition(baz.position(), SOURCE_NAME, 1, 18, 1, 22);
     }
 
     @Test
-    void Test_empty_string_identifier() {
+    void testEmptyStirngIdentifier() {
         // Act
-        List<Token> tokens = getTokens("\"\"");
+        final List<Token> tokens = getTokens("\"\"");
 
         // Assert
         assertThat(tokens).hasSize(1);
 
-        Token text = tokens.get(0);
+        final Token text = tokens.get(0);
         assertToken(text, "", TokenType.IDENTIFIER);
         assertPosition(text.position(), SOURCE_NAME, 1, 1, 1, 2);
     }
 
     @Test
-    void Test_unfinished_string_identifier() {
+    void testUnexpectedEndOfString() {
         // Act
-        LexerException e = assertThrows(LexerException.class, () -> getTokens("\"hello"));
+        final LexerException e = assertThrows(LexerException.class, () -> getTokens("\"hello"));
 
         // Assert
         assertThat(e.getMessage()).isEqualTo("Unexpected end of string");
@@ -129,60 +126,60 @@ class LexerTest {
     }
 
     @Test
-    void Test_new_lines() {
+    void testNewLines() {
         // Act
-        List<Token> tokens = getTokens("hello world\r\r\nbaz\n\n123");
+        final List<Token> tokens = getTokens("hello world\r\r\nbaz\n\n123");
 
         // Assert
         assertThat(tokens).hasSize(4);
 
-        Token hello = tokens.get(0);
+        final Token hello = tokens.get(0);
         assertToken(hello, "hello", TokenType.IDENTIFIER);
         assertPosition(hello.position(), SOURCE_NAME, 1, 1, 1, 5);
 
-        Token world = tokens.get(1);
+        final Token world = tokens.get(1);
         assertToken(world, "world", TokenType.IDENTIFIER);
         assertPosition(world.position(), SOURCE_NAME, 1, 7, 1, 11);
 
-        Token baz = tokens.get(2);
+        final Token baz = tokens.get(2);
         assertToken(baz, "baz", TokenType.IDENTIFIER);
         assertPosition(baz.position(), SOURCE_NAME, 2, 1, 2, 3);
 
-        Token number = tokens.get(3);
+        final Token number = tokens.get(3);
         assertToken(number, "123", TokenType.INTEGER_NUMBER);
         assertPosition(number.position(), SOURCE_NAME, 4, 1, 4, 3);
     }
 
     @Test
-    void Test_integer_number() {
+    void testIntegerNumber() {
         // Act
-        List<Token> tokens = getTokens("123");
+        final List<Token> tokens = getTokens("123");
 
         // Assert
         assertThat(tokens).hasSize(1);
 
-        Token token = tokens.get(0);
+        final Token token = tokens.get(0);
         assertToken(token, "123", TokenType.INTEGER_NUMBER);
         assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 3);
     }
 
     @Test
-    void Test_floating_number() {
+    void testFloatingNumber() {
         // Act
-        List<Token> tokens = getTokens("123.45");
+        final List<Token> tokens = getTokens("123.45");
 
         // Assert
         assertThat(tokens).hasSize(1);
 
-        Token token = tokens.get(0);
+        final Token token = tokens.get(0);
         assertToken(token, "123.45", TokenType.FLOATING_NUMBER);
         assertPosition(token.position(), SOURCE_NAME, 1, 1, 1, 6);
     }
 
     @Test
-    void Test_floating_number_with_digits_after_point() {
+    void testUnexpectedEndOfFloatingNumber() {
         // Act
-        LexerException e = assertThrows(LexerException.class, () -> getTokens("123."));
+        final LexerException e = assertThrows(LexerException.class, () -> getTokens("123."));
 
         // Assert
         assertThat(e.getMessage()).isEqualTo("Unexpected end of number");
@@ -190,9 +187,9 @@ class LexerTest {
     }
 
     @Test
-    void Test_floating_number_without_digits_after_point() {
+    void testInvalidFloatingNumber() {
         // Act
-        LexerException e = assertThrows(LexerException.class, () -> getTokens("123.abc"));
+        final LexerException e = assertThrows(LexerException.class, () -> getTokens("123.abc"));
 
         // Assert
         assertThat(e.getMessage()).isEqualTo("Invalid floating point number");
@@ -200,15 +197,15 @@ class LexerTest {
     }
 
     @Test
-    void Test_token_mappings() {
+    void testTokenMappings() {
         // Arrange
-        Lexer lexer = createLexer("()+-/*!&&||");
+        final Lexer lexer = createLexer("()+-/*!&&||");
 
         // Act
         lexer.scan();
 
         // Assert
-        List<Token> tokens = lexer.getTokens();
+        final List<Token> tokens = lexer.getTokens();
 
         assertThat(tokens).hasSize(9);
 
@@ -233,12 +230,12 @@ class LexerTest {
         assertPosition(tokens.get(8).position(), SOURCE_NAME, 1, 10, 1, 11);
     }
 
-    private Lexer createLexer(String content) {
+    private Lexer createLexer(final String content) {
         return new Lexer(new Source(SOURCE_NAME, content), TEST_TOKEN_MAPPINGS);
     }
 
-    private List<Token> getTokens(String content) {
-        Lexer lexer = createLexer(content);
+    private List<Token> getTokens(final String content) {
+        final Lexer lexer = createLexer(content);
         lexer.scan();
         return lexer.getTokens();
     }
