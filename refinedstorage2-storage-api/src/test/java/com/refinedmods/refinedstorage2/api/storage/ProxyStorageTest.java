@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,8 +11,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Rs2Test
-class AbstractProxyStorageTest {
+class ProxyStorageTest {
     private SourceCapturingStorage<String> backed;
     private AbstractProxyStorage<String> sut;
     private final Source customSource = () -> "Custom source";
@@ -27,25 +25,25 @@ class AbstractProxyStorageTest {
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void Test_invalid_parent() {
+    void testInvalidParent() {
         // Act & assert
         assertThrows(NullPointerException.class, () -> new AbstractProxyStorage<String>(null) {
         });
     }
 
     @Test
-    void Test_getting_all() {
+    void shouldRetrieveAll() {
         // Arrange
         sut.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act & assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 10)
+            new ResourceAmount<>("A", 10)
         );
     }
 
     @Test
-    void Test_getting_stored_amount() {
+    void shouldRetrieveStoredAmount() {
         // Arrange
         sut.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
@@ -55,14 +53,14 @@ class AbstractProxyStorageTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_inserting(Action action) {
+    void shouldInsert(final Action action) {
         // Act
         sut.insert("A", 10, action, customSource);
 
         // Assert
         if (action == Action.EXECUTE) {
             assertThat(backed.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new ResourceAmount<>("A", 10)
+                new ResourceAmount<>("A", 10)
             );
         } else {
             assertThat(backed.getAll()).isEmpty();
@@ -72,12 +70,12 @@ class AbstractProxyStorageTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_extracting(Action action) {
+    void shouldExtract(final Action action) {
         // Arrange
         backed.insert("A", 10, Action.EXECUTE, customSource);
 
         // Act
-        long extracted = sut.extract("A", 3, action, customSource);
+        final long extracted = sut.extract("A", 3, action, customSource);
 
         // Assert
         assertThat(extracted).isEqualTo(3);

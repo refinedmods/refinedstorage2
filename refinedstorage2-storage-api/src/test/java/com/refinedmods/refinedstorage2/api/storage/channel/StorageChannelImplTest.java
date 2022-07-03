@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.composite.PrioritizedStorage;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;
 
@@ -26,7 +25,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-@Rs2Test
 class StorageChannelImplTest {
     private StorageChannel<String> sut;
 
@@ -36,30 +34,30 @@ class StorageChannelImplTest {
     }
 
     @Test
-    void Test_adding_source() {
+    void shouldAddSource() {
         // Arrange
-        Storage<String> storage = new LimitedStorageImpl<>(10);
+        final Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 8, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
         sut.addSource(storage);
 
-        long inserted = sut.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
+        final long inserted = sut.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-                new ResourceAmount<>("A", 10)
+            new ResourceAmount<>("A", 10)
         );
         assertThat(inserted).isEqualTo(2);
     }
 
     @Test
-    void Test_removing_source() {
+    void shouldRemoveSource() {
         // Arrange
-        Storage<String> storage = new LimitedStorageImpl<>(10);
+        final Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
 
-        Storage<String> removedStorage = new LimitedStorageImpl<>(10);
+        final Storage<String> removedStorage = new LimitedStorageImpl<>(10);
         removedStorage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
@@ -68,26 +66,26 @@ class StorageChannelImplTest {
         // Act
         sut.removeSource(removedStorage);
 
-        long extracted = sut.extract("A", 15, Action.SIMULATE, EmptySource.INSTANCE);
+        final long extracted = sut.extract("A", 15, Action.SIMULATE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-                new ResourceAmount<>("A", 5)
+            new ResourceAmount<>("A", 5)
         );
         assertThat(extracted).isEqualTo(5);
     }
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_listener_on_insertion(Action action) {
+    void shouldCallListenerOnInsertion(final Action action) {
         // Arrange
         sut.addSource(new LimitedStorageImpl<>(10));
         sut.insert("A", 2, Action.EXECUTE, EmptySource.INSTANCE);
 
-        ResourceListListener<String> listener = mock(ResourceListListener.class);
+        final ResourceListListener<String> listener = mock(ResourceListListener.class);
         sut.addListener(listener);
 
-        ArgumentCaptor<ResourceListOperationResult<String>> changedResource = ArgumentCaptor.forClass(ResourceListOperationResult.class);
+        final var changedResource = ArgumentCaptor.forClass(ResourceListOperationResult.class);
 
         // Act
         sut.insert("A", 8, action, EmptySource.INSTANCE);
@@ -98,7 +96,7 @@ class StorageChannelImplTest {
 
             assertThat(changedResource.getValue().change()).isEqualTo(8);
             assertThat(changedResource.getValue().resourceAmount()).usingRecursiveComparison().isEqualTo(
-                    new ResourceAmount<>("A", 10)
+                new ResourceAmount<>("A", 10)
             );
         } else {
             verify(listener, never()).onChanged(any());
@@ -107,18 +105,18 @@ class StorageChannelImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_listener_on_extraction(Action action) {
+    void shouldCallListenerOnExtraction(final Action action) {
         // Arrange
-        Storage<String> storage = new LimitedStorageImpl<>(10);
+        final Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
         sut.extract("A", 2, Action.EXECUTE, EmptySource.INSTANCE);
 
-        ResourceListListener<String> listener = mock(ResourceListListener.class);
+        final ResourceListListener<String> listener = mock(ResourceListListener.class);
         sut.addListener(listener);
 
-        ArgumentCaptor<ResourceListOperationResult<String>> changedResource = ArgumentCaptor.forClass(ResourceListOperationResult.class);
+        final var changedResource = ArgumentCaptor.forClass(ResourceListOperationResult.class);
 
         // Act
         sut.extract("A", 5, action, EmptySource.INSTANCE);
@@ -129,7 +127,7 @@ class StorageChannelImplTest {
 
             assertThat(changedResource.getValue().change()).isEqualTo(-5);
             assertThat(changedResource.getValue().resourceAmount()).usingRecursiveComparison().isEqualTo(
-                    new ResourceAmount<>("A", 3)
+                new ResourceAmount<>("A", 3)
             );
         } else {
             verify(listener, never()).onChanged(any());
@@ -137,12 +135,12 @@ class StorageChannelImplTest {
     }
 
     @Test
-    void Test_removing_listener() {
+    void shouldRemoveListener() {
         // Arrange
         sut.addSource(new LimitedStorageImpl<>(10));
         sut.insert("A", 2, Action.EXECUTE, EmptySource.INSTANCE);
 
-        ResourceListListener<String> listener = mock(ResourceListListener.class);
+        final ResourceListListener<String> listener = mock(ResourceListListener.class);
         sut.addListener(listener);
 
         // Act
@@ -154,18 +152,18 @@ class StorageChannelImplTest {
     }
 
     @Test
-    void Test_inserting() {
+    void shouldInsert() {
         // Arrange
         sut.addSource(new LimitedStorageImpl<>(10));
 
         // Act
-        long inserted1 = sut.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
-        long inserted2 = sut.insert("B", 4, Action.EXECUTE, EmptySource.INSTANCE);
+        final long inserted1 = sut.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        final long inserted2 = sut.insert("B", 4, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 5),
-                new ResourceAmount<>("B", 4)
+            new ResourceAmount<>("A", 5),
+            new ResourceAmount<>("B", 4)
         );
         assertThat(inserted1).isEqualTo(5);
         assertThat(inserted2).isEqualTo(4);
@@ -173,34 +171,34 @@ class StorageChannelImplTest {
     }
 
     @Test
-    void Test_extracting() {
+    void shouldExtract() {
         // Arrange
-        Storage<String> storage = new LimitedStorageImpl<>(100);
+        final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
 
         // Act
-        long extracted = sut.extract("A", 49, Action.EXECUTE, EmptySource.INSTANCE);
+        final long extracted = sut.extract("A", 49, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 1)
+            new ResourceAmount<>("A", 1)
         );
         assertThat(extracted).isEqualTo(49);
         assertThat(sut.getStored()).isEqualTo(1);
     }
 
     @Test
-    void Test_getting_resource() {
+    void shouldBeAbleToRetrieveResource() {
         // Arrange
-        Storage<String> storage = new LimitedStorageImpl<>(100);
+        final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
 
         sut.addSource(storage);
 
         // Act
-        Optional<ResourceAmount<String>> resource = sut.get("A");
+        final Optional<ResourceAmount<String>> resource = sut.get("A");
 
         // Assert
         assertThat(resource).isPresent();
@@ -208,23 +206,23 @@ class StorageChannelImplTest {
     }
 
     @Test
-    void Test_getting_non_existent_resource() {
+    void shouldNotBeAbleToRetrieveNonExistentResource() {
         // Arrange
         sut.addSource(new LimitedStorageImpl<>(100));
 
         // Act
-        Optional<ResourceAmount<String>> resource = sut.get("A");
+        final Optional<ResourceAmount<String>> resource = sut.get("A");
 
         // Assert
         assertThat(resource).isEmpty();
     }
 
     @RepeatedTest(100)
-    void Test_sorting_sources() {
+    void shouldSortSources() {
         // Arrange
-        PrioritizedStorage<String> storage1 = new PrioritizedStorage<>(0, new LimitedStorageImpl<>(10));
-        PrioritizedStorage<String> storage2 = new PrioritizedStorage<>(0, new LimitedStorageImpl<>(10));
-        PrioritizedStorage<String> storage3 = new PrioritizedStorage<>(0, new LimitedStorageImpl<>(10));
+        final PrioritizedStorage<String> storage1 = new PrioritizedStorage<>(0, new LimitedStorageImpl<>(10));
+        final PrioritizedStorage<String> storage2 = new PrioritizedStorage<>(0, new LimitedStorageImpl<>(10));
+        final PrioritizedStorage<String> storage3 = new PrioritizedStorage<>(0, new LimitedStorageImpl<>(10));
 
         sut.addSource(storage1);
         sut.addSource(storage2);
@@ -241,10 +239,10 @@ class StorageChannelImplTest {
 
         // Assert
         assertThat(storage2.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 10)
+            new ResourceAmount<>("A", 10)
         );
         assertThat(storage1.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new ResourceAmount<>("A", 5)
+            new ResourceAmount<>("A", 5)
         );
         assertThat(storage3.getAll()).isEmpty();
     }
