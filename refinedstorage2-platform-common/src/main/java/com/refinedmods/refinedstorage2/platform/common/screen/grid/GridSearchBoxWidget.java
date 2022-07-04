@@ -93,15 +93,13 @@ public class GridSearchBoxWidget<T> extends SearchFieldWidget implements GridSea
     }
 
     private boolean onTextChanged(final String text) {
-        boolean success = true;
         try {
-            view.setFilter(queryParser.parse(text));
+            view.setFilterAndSort(queryParser.parse(text));
+            return true;
         } catch (GridQueryParserException e) {
-            view.setFilter(resource -> false);
-            success = false;
+            view.setFilterAndSort(resource -> false);
+            return false;
         }
-        view.sort();
-        return success;
     }
 
     @Override

@@ -35,11 +35,9 @@ public interface GridView<T> {
     void setSortingType(GridSortingType sortingType);
 
     /**
-     * Changing the filter still requires a call to {@link #sort()}.
-     *
-     * @param filter the filter
+     * @param predicate the filter
      */
-    void setFilter(Predicate<AbstractGridResource<T>> filter);
+    void setFilterAndSort(Predicate<AbstractGridResource<T>> predicate);
 
     /**
      * @return whether the view is currently not sorting

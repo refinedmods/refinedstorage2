@@ -31,6 +31,21 @@ class CoreValidationsTest {
     }
 
     @Test
+    void shouldValidateNegative() {
+        // Act & assert
+        final Exception e1 =
+            assertThrows(IllegalArgumentException.class, () -> CoreValidations.validateNegative(0, "bla"));
+        assertThat(e1.getMessage()).isEqualTo("bla");
+
+        final Exception e2 =
+            assertThrows(IllegalArgumentException.class, () -> CoreValidations.validateNegative(1, "bla"));
+        assertThat(e2.getMessage()).isEqualTo("bla");
+
+        assertDoesNotThrow(() -> CoreValidations.validateNegative(-1, "bla"));
+        assertDoesNotThrow(() -> CoreValidations.validateNegative(-2, "bla"));
+    }
+
+    @Test
     void shouldValidateLargerThanZero() {
         // Act & assert
         final Exception e =
