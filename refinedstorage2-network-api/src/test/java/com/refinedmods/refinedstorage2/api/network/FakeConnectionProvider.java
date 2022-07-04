@@ -16,14 +16,14 @@ public class FakeConnectionProvider implements ConnectionProvider {
     private final Map<NetworkNodeContainer, List<NetworkNodeContainer>> connections = new HashMap<>();
     private final List<NetworkNodeContainer> allowed = new ArrayList<>();
 
-    public FakeConnectionProvider with(NetworkNodeContainer... containers) {
-        for (NetworkNodeContainer container : containers) {
+    public FakeConnectionProvider with(final NetworkNodeContainer... containers) {
+        for (final NetworkNodeContainer container : containers) {
             with(container);
         }
         return this;
     }
 
-    public FakeConnectionProvider with(NetworkNodeContainer container) {
+    public FakeConnectionProvider with(final NetworkNodeContainer container) {
         if (allowed.contains(container)) {
             throw new IllegalArgumentException();
         }
@@ -31,7 +31,7 @@ public class FakeConnectionProvider implements ConnectionProvider {
         return this;
     }
 
-    public FakeConnectionProvider connect(NetworkNodeContainer from, NetworkNodeContainer to) {
+    public FakeConnectionProvider connect(final NetworkNodeContainer from, final NetworkNodeContainer to) {
         if (!allowed.contains(from) || !allowed.contains(to)) {
             throw new IllegalArgumentException();
         }
@@ -40,40 +40,42 @@ public class FakeConnectionProvider implements ConnectionProvider {
         return this;
     }
 
-    private void doConnect(NetworkNodeContainer from, NetworkNodeContainer to) {
+    private void doConnect(final NetworkNodeContainer from, final NetworkNodeContainer to) {
         connections.computeIfAbsent(from, k -> new ArrayList<>()).add(to);
     }
 
     @Override
-    public Connections findConnections(NetworkNodeContainer pivot, Set<NetworkNodeContainer> existingConnections) {
+    public Connections findConnections(final NetworkNodeContainer pivot,
+                                       final Set<NetworkNodeContainer> existingConnections) {
         if (!allowed.contains(pivot)) {
             throw new IllegalArgumentException();
         }
 
-        Set<NetworkNodeContainer> foundEntries = new HashSet<>();
+        final Set<NetworkNodeContainer> foundEntries = new HashSet<>();
 
         depthScan(foundEntries, pivot);
 
         return new Connections(
-                foundEntries,
-                foundEntries.stream().filter(e -> !existingConnections.contains(e)).collect(Collectors.toSet()),
-                existingConnections.stream().filter(e -> !foundEntries.contains(e)).collect(Collectors.toSet())
+            foundEntries,
+            foundEntries.stream().filter(e -> !existingConnections.contains(e)).collect(Collectors.toSet()),
+            existingConnections.stream().filter(e -> !foundEntries.contains(e)).collect(Collectors.toSet())
         );
     }
 
-    private void depthScan(Set<NetworkNodeContainer> foundEntries, NetworkNodeContainer from) {
+    private void depthScan(final Set<NetworkNodeContainer> foundEntries, final NetworkNodeContainer from) {
         if (!foundEntries.add(from)) {
             return;
         }
-
-        connections.getOrDefault(from, Collections.emptyList()).forEach(container -> depthScan(foundEntries, container));
+        connections
+            .getOrDefault(from, Collections.emptyList())
+            .forEach(container -> depthScan(foundEntries, container));
     }
 
     @Override
-    public List<NetworkNodeContainer> sort(Set<NetworkNodeContainer> containers) {
+    public List<NetworkNodeContainer> sort(final Set<NetworkNodeContainer> containers) {
         return containers
-                .stream()
-                .sorted(Comparator.comparingInt(allowed::indexOf))
-                .collect(Collectors.toList());
+            .stream()
+            .sorted(Comparator.comparingInt(allowed::indexOf))
+            .collect(Collectors.toList());
     }
 }

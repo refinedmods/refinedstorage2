@@ -36,7 +36,7 @@ public class GridNetworkNode<T> extends AbstractNetworkNode {
         return network.getComponent(StorageNetworkComponent.class).getStorageChannel(type);
     }
 
-    public int getResourceCount() {
+    public int getResourceAmount() {
         return getStorageChannel().getAll().size();
     }
 

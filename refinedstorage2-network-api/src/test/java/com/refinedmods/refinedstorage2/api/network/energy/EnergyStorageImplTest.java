@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network.energy;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -11,12 +10,11 @@ import org.junit.jupiter.params.provider.EnumSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Rs2Test
 class EnergyStorageImplTest {
     @Test
-    void Test_invalid_capacity() {
+    void testInvalidCapacity() {
         // Act
-        Executable action = () -> new EnergyStorageImpl(-1);
+        final Executable action = () -> new EnergyStorageImpl(-1);
 
         // Assert
         assertThrows(Exception.class, action);
@@ -24,12 +22,12 @@ class EnergyStorageImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_receiving_energy_on_zero_capacity_storage(Action action) {
+    void shouldNotReceiveEnergyOnZeroCapacityStorage(final Action action) {
         // Arrange
-        EnergyStorage energyStorage = new EnergyStorageImpl(0);
+        final EnergyStorage energyStorage = new EnergyStorageImpl(0);
 
         // Act
-        long inserted = energyStorage.receive(1, action);
+        final long inserted = energyStorage.receive(1, action);
 
         // Assert
         assertThat(inserted).isZero();
@@ -38,12 +36,12 @@ class EnergyStorageImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_receiving_energy(Action action) {
+    void shouldReceiveEnergy(final Action action) {
         // Arrange
-        EnergyStorage energyStorage = new EnergyStorageImpl(100);
+        final EnergyStorage energyStorage = new EnergyStorageImpl(100);
 
         // Act
-        long inserted = energyStorage.receive(50, action);
+        final long inserted = energyStorage.receive(50, action);
 
         // Assert
         assertThat(inserted).isEqualTo(50);
@@ -57,12 +55,12 @@ class EnergyStorageImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_receiving_energy_and_reaching_capacity(Action action) {
+    void shouldReceiveEnergyAndReachCapacity(final Action action) {
         // Arrange
-        EnergyStorage energyStorage = new EnergyStorageImpl(100);
+        final EnergyStorage energyStorage = new EnergyStorageImpl(100);
 
         // Act
-        long inserted = energyStorage.receive(100, action);
+        final long inserted = energyStorage.receive(100, action);
 
         // Assert
         assertThat(inserted).isEqualTo(100);
@@ -76,12 +74,12 @@ class EnergyStorageImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_receiving_energy_and_exceeding_capacity(Action action) {
+    void shouldReceiveEnergyAndExceedCapacity(final Action action) {
         // Arrange
-        EnergyStorage energyStorage = new EnergyStorageImpl(100);
+        final EnergyStorage energyStorage = new EnergyStorageImpl(100);
 
         // Act
-        long inserted = energyStorage.receive(101, action);
+        final long inserted = energyStorage.receive(101, action);
 
         // Assert
         assertThat(inserted).isEqualTo(100);
@@ -95,13 +93,13 @@ class EnergyStorageImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_extracting_energy_partly(Action action) {
+    void shouldExtractEnergyPartly(final Action action) {
         // Arrange
-        EnergyStorage energyStorage = new EnergyStorageImpl(100);
+        final EnergyStorage energyStorage = new EnergyStorageImpl(100);
         energyStorage.receive(100, Action.EXECUTE);
 
         // Act
-        long extracted = energyStorage.extract(99, action);
+        final long extracted = energyStorage.extract(99, action);
 
         // Assert
         assertThat(extracted).isEqualTo(99);
@@ -115,13 +113,13 @@ class EnergyStorageImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_extracting_energy_completely(Action action) {
+    void shouldExtractEnergyCompletely(final Action action) {
         // Arrange
-        EnergyStorage energyStorage = new EnergyStorageImpl(100);
+        final EnergyStorage energyStorage = new EnergyStorageImpl(100);
         energyStorage.receive(50, Action.EXECUTE);
 
         // Act
-        long extracted = energyStorage.extract(51, action);
+        final long extracted = energyStorage.extract(51, action);
 
         // Assert
         assertThat(extracted).isEqualTo(50);

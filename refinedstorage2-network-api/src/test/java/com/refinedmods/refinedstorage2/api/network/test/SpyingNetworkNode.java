@@ -6,12 +6,12 @@ public final class SpyingNetworkNode extends AbstractNetworkNode {
     private final long energyUsage;
     private int activenessChanges;
 
-    public SpyingNetworkNode(long energyUsage) {
+    public SpyingNetworkNode(final long energyUsage) {
         this.energyUsage = energyUsage;
     }
 
     @Override
-    protected void onActiveChanged(boolean newActive) {
+    protected void onActiveChanged(final boolean newActive) {
         super.onActiveChanged(newActive);
         activenessChanges++;
     }
