@@ -46,17 +46,17 @@ public class GridServiceImpl<T> implements GridService<T> {
             return;
         }
         final long amountInsertedIntoDestination = destination.insert(
-                resource,
-                extractedFromSource,
-                Action.SIMULATE,
-                actor
+            resource,
+            extractedFromSource,
+            Action.SIMULATE,
+            actor
         );
         if (amountInsertedIntoDestination > 0) {
             extractedFromSource = storageChannel.extract(
-                    resource,
-                    amountInsertedIntoDestination,
-                    Action.EXECUTE,
-                    actor
+                resource,
+                amountInsertedIntoDestination,
+                Action.EXECUTE,
+                actor
             );
             destination.insert(resource, extractedFromSource, Action.EXECUTE, actor);
         }
@@ -88,10 +88,10 @@ public class GridServiceImpl<T> implements GridService<T> {
             return;
         }
         final long amountInsertedIntoDestination = storageChannel.insert(
-                resource,
-                extractedFromSource,
-                Action.SIMULATE,
-                this.actor
+            resource,
+            extractedFromSource,
+            Action.SIMULATE,
+            this.actor
         );
         if (amountInsertedIntoDestination > 0) {
             extractedFromSource = source.extract(resource, amountInsertedIntoDestination, Action.EXECUTE, this.actor);

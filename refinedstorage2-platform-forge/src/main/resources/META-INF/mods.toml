@@ -1,7 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "[41,)"
 issueTrackerURL = "https://github.com/refinedmods/refinedstorage2"
-license="MIT"
+license = "MIT"
 [[mods]]
 modId = "refinedstorage2"
 version = "${version}"

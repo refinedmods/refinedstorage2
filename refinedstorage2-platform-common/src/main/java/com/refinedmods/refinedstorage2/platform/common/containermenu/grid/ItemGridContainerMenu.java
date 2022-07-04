@@ -45,10 +45,10 @@ public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResourc
         super(Menus.INSTANCE.getGrid(), syncId, playerInventory, grid, createView());
         grid.addWatcher(this);
         final GridService<ItemResource> gridService = new GridServiceImpl<>(
-                Objects.requireNonNull(storageChannel),
-                new PlayerSource(playerInventory.player),
-                itemResource -> (long) itemResource.item().getMaxStackSize(),
-                1
+            Objects.requireNonNull(storageChannel),
+            new PlayerSource(playerInventory.player),
+            itemResource -> (long) itemResource.item().getMaxStackSize(),
+            1
         );
         this.itemGridEventHandler = Platform.INSTANCE.createItemGridEventHandler(this, gridService, playerInventory);
     }
@@ -77,11 +77,11 @@ public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResourc
         LOGGER.info("Received a change of {} for {}", change.change(), resource);
 
         Platform.INSTANCE.getServerToClientCommunications().sendGridItemUpdate(
-                (ServerPlayer) playerInventory.player,
-                resource,
-                change.change(),
-                Objects.requireNonNull(storageChannel)
-                        .findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
+            (ServerPlayer) playerInventory.player,
+            resource,
+            change.change(),
+            Objects.requireNonNull(storageChannel)
+                .findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
         );
     }
 

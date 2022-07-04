@@ -40,11 +40,11 @@ public class StorageNetworkNode<T> extends AbstractNetworkNode implements Storag
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void initializeExistingStorage(final StorageRepository storageRepository, final UUID storageId) {
         storageRepository.get(storageId).ifPresentOrElse(
-                existingStorage -> {
-                    LOGGER.info("Loaded existing storage {}", storageId);
-                    this.internalStorage = (Storage) existingStorage;
-                },
-                () -> LOGGER.warn("Storage {} was not found, ignoring", storageId)
+            existingStorage -> {
+                LOGGER.info("Loaded existing storage {}", storageId);
+                this.internalStorage = (Storage) existingStorage;
+            },
+            () -> LOGGER.warn("Storage {} was not found, ignoring", storageId)
         );
     }
 

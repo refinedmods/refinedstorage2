@@ -84,7 +84,7 @@ class LimitedStorageImplTest {
             assertThat(sut.getStored()).isEqualTo(100);
         } else {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new ResourceAmount<>("A", 60)
+                new ResourceAmount<>("A", 60)
             );
             assertThat(sut.getStored()).isEqualTo(60);
         }

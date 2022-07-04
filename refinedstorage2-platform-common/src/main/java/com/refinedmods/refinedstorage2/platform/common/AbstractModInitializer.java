@@ -24,37 +24,37 @@ public abstract class AbstractModInitializer {
 
     protected void registerAdditionalStorageTypes() {
         PlatformApi.INSTANCE.getStorageTypeRegistry().register(
-                createIdentifier(FLUID_REGISTRY_KEY),
-                FluidStorageType.INSTANCE
+            createIdentifier(FLUID_REGISTRY_KEY),
+            FluidStorageType.INSTANCE
         );
     }
 
     protected void registerAdditionalStorageChannelTypes() {
         PlatformApi.INSTANCE.getStorageChannelTypeRegistry().register(
-                createIdentifier(FLUID_REGISTRY_KEY),
-                StorageChannelTypes.FLUID
+            createIdentifier(FLUID_REGISTRY_KEY),
+            StorageChannelTypes.FLUID
         );
     }
 
     protected void registerNetworkComponents() {
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
-                EnergyNetworkComponent.class,
-                network -> new EnergyNetworkComponent()
+            EnergyNetworkComponent.class,
+            network -> new EnergyNetworkComponent()
         );
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
-                GraphNetworkComponent.class,
-                GraphNetworkComponent::new
+            GraphNetworkComponent.class,
+            GraphNetworkComponent::new
         );
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
-                StorageNetworkComponent.class,
-                network -> new StorageNetworkComponent(PlatformApi.INSTANCE.getStorageChannelTypeRegistry())
+            StorageNetworkComponent.class,
+            network -> new StorageNetworkComponent(PlatformApi.INSTANCE.getStorageChannelTypeRegistry())
         );
     }
 
     protected void registerAdditionalResourceTypes() {
         PlatformApi.INSTANCE.getResourceTypeRegistry().register(
-                createIdentifier(FLUID_REGISTRY_KEY),
-                FluidResourceType.INSTANCE
+            createIdentifier(FLUID_REGISTRY_KEY),
+            FluidResourceType.INSTANCE
         );
     }
 }

@@ -36,13 +36,13 @@ public class FluidStorageType implements StorageType<FluidResource> {
         final ListTag stacks = tag.getList(TAG_STACKS, Tag.TAG_COMPOUND);
         for (final Tag stackTag : stacks) {
             FluidResource
-                    .fromTagWithAmount((CompoundTag) stackTag)
-                    .ifPresent(resourceAmount -> storage.load(
-                            resourceAmount.getResource(),
-                            resourceAmount.getAmount(),
-                            ((CompoundTag) stackTag).getString(TAG_CHANGED_BY),
-                            ((CompoundTag) stackTag).getLong(TAG_CHANGED_AT)
-                    ));
+                .fromTagWithAmount((CompoundTag) stackTag)
+                .ifPresent(resourceAmount -> storage.load(
+                    resourceAmount.getResource(),
+                    resourceAmount.getAmount(),
+                    ((CompoundTag) stackTag).getString(TAG_CHANGED_BY),
+                    ((CompoundTag) stackTag).getLong(TAG_CHANGED_AT)
+                ));
         }
         return storage;
     }
@@ -51,25 +51,25 @@ public class FluidStorageType implements StorageType<FluidResource> {
         final TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (tag.contains(TAG_CAPACITY)) {
             final LimitedStorageImpl<FluidResource> delegate = new LimitedStorageImpl<>(
-                    new TrackedStorageImpl<>(
-                            new InMemoryStorageImpl<>(),
-                            trackingRepository,
-                            System::currentTimeMillis
-                    ),
-                    tag.getLong(TAG_CAPACITY)
+                new TrackedStorageImpl<>(
+                    new InMemoryStorageImpl<>(),
+                    trackingRepository,
+                    System::currentTimeMillis
+                ),
+                tag.getLong(TAG_CAPACITY)
             );
             return new LimitedPlatformStorage<>(
-                    delegate,
-                    FluidStorageType.INSTANCE,
-                    trackingRepository,
-                    listener
-            );
-        }
-        return new PlatformStorage<>(
-                new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+                delegate,
                 FluidStorageType.INSTANCE,
                 trackingRepository,
                 listener
+            );
+        }
+        return new PlatformStorage<>(
+            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+            FluidStorageType.INSTANCE,
+            trackingRepository,
+            listener
         );
     }
 
@@ -92,11 +92,11 @@ public class FluidStorageType implements StorageType<FluidResource> {
         final CompoundTag tag = FluidResource.toTagWithAmount(resourceAmount);
         if (storage instanceof TrackedStorage<FluidResource> trackedStorage) {
             trackedStorage
-                    .findTrackedResourceBySourceType(resourceAmount.getResource(), PlayerSource.class)
-                    .ifPresent(trackedResource -> {
-                        tag.putString(TAG_CHANGED_BY, trackedResource.getSourceName());
-                        tag.putLong(TAG_CHANGED_AT, trackedResource.getTime());
-                    });
+                .findTrackedResourceBySourceType(resourceAmount.getResource(), PlayerSource.class)
+                .ifPresent(trackedResource -> {
+                    tag.putString(TAG_CHANGED_BY, trackedResource.getSourceName());
+                    tag.putLong(TAG_CHANGED_AT, trackedResource.getTime());
+                });
         }
         return tag;
     }

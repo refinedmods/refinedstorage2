@@ -12,8 +12,8 @@ public class ForgeItemGridResourceFactory extends AbstractItemGridResourceFactor
     @Override
     public Optional<String> getModName(final String modId) {
         return ModList.get()
-                .getModContainerById(modId)
-                .map(container -> container.getModInfo().getDisplayName());
+            .getModContainerById(modId)
+            .map(container -> container.getModInfo().getDisplayName());
     }
 
     @Override

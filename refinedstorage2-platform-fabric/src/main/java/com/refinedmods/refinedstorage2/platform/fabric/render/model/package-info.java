@@ -1,4 +1,3 @@
-
 @ParametersAreNonnullByDefault
 @FieldsAndMethodsAreNonnullByDefault
 package com.refinedmods.refinedstorage2.platform.fabric.render.model;

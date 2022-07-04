@@ -63,10 +63,10 @@ public class ControllerBlockItem extends CreativeControllerBlockItem {
             final long stored = ControllerBlockEntity.getStored(data);
             final long capacity = ControllerBlockEntity.getCapacity(data);
             tooltip.add(createTranslation(
-                    "misc",
-                    "stored_with_capacity",
-                    QuantityFormatter.format(stored),
-                    QuantityFormatter.format(capacity)
+                "misc",
+                "stored_with_capacity",
+                QuantityFormatter.format(stored),
+                QuantityFormatter.format(capacity)
             ).withStyle(ChatFormatting.GRAY));
         }
     }

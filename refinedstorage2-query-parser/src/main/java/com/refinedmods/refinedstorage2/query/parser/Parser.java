@@ -36,12 +36,12 @@ public class Parser {
 
         Token cur = currentOrNull();
         while (cur != null
-                && cur.type() == TokenType.BIN_OP
-                && operatorMappings.getOperator(cur).level() >= minPrecedence) {
+            && cur.type() == TokenType.BIN_OP
+            && operatorMappings.getOperator(cur).level() >= minPrecedence) {
             final Operator currentOp = operatorMappings.getOperator(cur);
             final int nextMinPrecedence = currentOp.associativity() == Associativity.LEFT
-                    ? (currentOp.level() + 1)
-                    : currentOp.level();
+                ? (currentOp.level() + 1)
+                : currentOp.level();
 
             next();
             if (!isNotEof()) {
@@ -82,7 +82,7 @@ public class Parser {
                 }
 
                 if (currentAfterExpression.type() == TokenType.PAREN_CLOSE
-                        && ")".equals(currentAfterExpression.content())) {
+                    && ")".equals(currentAfterExpression.content())) {
                     next();
                     break;
                 }
@@ -112,8 +112,8 @@ public class Parser {
         final Token current = current();
 
         if (current.type() == TokenType.IDENTIFIER
-                || current.type() == TokenType.FLOATING_NUMBER
-                || current.type() == TokenType.INTEGER_NUMBER) {
+            || current.type() == TokenType.FLOATING_NUMBER
+            || current.type() == TokenType.INTEGER_NUMBER) {
             next();
             return new LiteralNode(current);
         } else {

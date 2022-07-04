@@ -29,7 +29,7 @@ public class DiskDriveInventory extends SimpleContainer implements StorageDiskPr
         super.setItem(slot, stack);
         // level will not yet be present
         final boolean isJustPlacedIntoLevelOrLoading = diskDrive.getLevel() == null
-                || diskDrive.getLevel().isClientSide();
+            || diskDrive.getLevel().isClientSide();
         // level will be present, but network not yet
         final boolean isPlacedThroughDismantlingMode = diskDrive.getNode().getNetwork() == null;
         if (isJustPlacedIntoLevelOrLoading || isPlacedThroughDismantlingMode) {

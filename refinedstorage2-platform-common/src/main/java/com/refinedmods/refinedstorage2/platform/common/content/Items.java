@@ -18,9 +18,9 @@ public final class Items {
     public static final Items INSTANCE = new Items();
 
     private final Map<ItemStorageType.Variant, Supplier<Item>> itemStorageParts
-            = new EnumMap<>(ItemStorageType.Variant.class);
+        = new EnumMap<>(ItemStorageType.Variant.class);
     private final Map<FluidStorageType.Variant, Supplier<Item>> fluidStorageParts
-            = new EnumMap<>(FluidStorageType.Variant.class);
+        = new EnumMap<>(FluidStorageType.Variant.class);
     private final List<Supplier<ControllerBlockItem>> controllers = new ArrayList<>();
     @Nullable
     private Supplier<Item> storageHousing;

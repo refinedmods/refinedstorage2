@@ -16,9 +16,9 @@ public enum GridSortingType {
     @SuppressWarnings({"unchecked", "rawtypes"})
     LAST_MODIFIED(view -> (a, b) -> {
         final Optional<TrackedResource> trackedA = ((GridView) view)
-                .getTrackedResource(a.getResourceAmount().getResource());
+            .getTrackedResource(a.getResourceAmount().getResource());
         final Optional<TrackedResource> trackedB = ((GridView) view)
-                .getTrackedResource(b.getResourceAmount().getResource());
+            .getTrackedResource(b.getResourceAmount().getResource());
 
         final long lastModifiedA = trackedA.map(TrackedResource::getTime).orElse(0L);
         final long lastModifiedB = trackedB.map(TrackedResource::getTime).orElse(0L);

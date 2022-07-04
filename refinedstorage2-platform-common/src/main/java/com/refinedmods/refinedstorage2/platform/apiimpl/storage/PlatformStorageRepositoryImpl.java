@@ -76,13 +76,13 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
         for (final Tag storageTag : storages) {
             final UUID id = ((CompoundTag) storageTag).getUUID(TAG_STORAGE_ID);
             final ResourceLocation typeId = new ResourceLocation(
-                    ((CompoundTag) storageTag).getString(TAG_STORAGE_TYPE)
+                ((CompoundTag) storageTag).getString(TAG_STORAGE_TYPE)
             );
             final CompoundTag data = ((CompoundTag) storageTag).getCompound(TAG_STORAGE_DATA);
 
             storageTypeRegistry.get(typeId).ifPresentOrElse(
-                    type -> setSilently(id, type.fromTag(data, this::markAsChanged)),
-                    () -> LOGGER.warn("Cannot find storage type {} for storage {}", typeId, id)
+                type -> setSilently(id, type.fromTag(data, this::markAsChanged)),
+                () -> LOGGER.warn("Cannot find storage type {} for storage {}", typeId, id)
             );
         }
     }
@@ -105,8 +105,8 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     private <T> Tag convertStorageToTag(final UUID id, final Storage<T> storage,
                                         final SerializableStorage<T> serializableStorage) {
         final ResourceLocation typeIdentifier = storageTypeRegistry
-                .getId(serializableStorage.getType())
-                .orElseThrow(() -> new RuntimeException("Storage type is not registered"));
+            .getId(serializableStorage.getType())
+            .orElseThrow(() -> new RuntimeException("Storage type is not registered"));
 
         final CompoundTag tag = new CompoundTag();
         tag.putUUID(TAG_STORAGE_ID, id);

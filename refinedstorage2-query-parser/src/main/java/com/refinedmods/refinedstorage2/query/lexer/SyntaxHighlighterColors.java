@@ -5,13 +5,13 @@ import java.util.Map;
 
 public class SyntaxHighlighterColors {
     public static final SyntaxHighlighterColors DEFAULT_COLORS = new SyntaxHighlighterColors("WHITE")
-            .setColor(TokenType.IDENTIFIER, "WHITE")
-            .setColor(TokenType.UNARY_OP, "AQUA")
-            .setColor(TokenType.BIN_OP, "AQUA")
-            .setColor(TokenType.PAREN_OPEN, "YELLOW")
-            .setColor(TokenType.PAREN_CLOSE, "YELLOW")
-            .setColor(TokenType.INTEGER_NUMBER, "GREEN")
-            .setColor(TokenType.FLOATING_NUMBER, "GREEN");
+        .setColor(TokenType.IDENTIFIER, "WHITE")
+        .setColor(TokenType.UNARY_OP, "AQUA")
+        .setColor(TokenType.BIN_OP, "AQUA")
+        .setColor(TokenType.PAREN_OPEN, "YELLOW")
+        .setColor(TokenType.PAREN_CLOSE, "YELLOW")
+        .setColor(TokenType.INTEGER_NUMBER, "GREEN")
+        .setColor(TokenType.FLOATING_NUMBER, "GREEN");
 
     private final Map<TokenType, String> colors = new EnumMap<>(TokenType.class);
     private final String defaultColor;

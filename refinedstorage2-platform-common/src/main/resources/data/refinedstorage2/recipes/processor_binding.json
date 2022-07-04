@@ -1,20 +1,20 @@
 {
-    "type": "minecraft:crafting_shaped",
-    "pattern": [
-        "   ",
-        "SLS",
-        "   "
-    ],
-    "key": {
-        "S": {
-            "item": "minecraft:string"
-        },
-        "L": {
-            "item": "minecraft:slime_ball"
-        }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "   ",
+    "SLS",
+    "   "
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:string"
     },
-    "result": {
-        "item": "refinedstorage2:processor_binding",
-        "count": 8
+    "L": {
+      "item": "minecraft:slime_ball"
     }
+  },
+  "result": {
+    "item": "refinedstorage2:processor_binding",
+    "count": 8
+  }
 }

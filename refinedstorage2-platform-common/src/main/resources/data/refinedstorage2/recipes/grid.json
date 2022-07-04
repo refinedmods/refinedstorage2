@@ -1,31 +1,31 @@
 {
-    "type": "minecraft:crafting_shaped",
-    "pattern": [
-        "PCG",
-        "EMG",
-        "PDG"
-    ],
-    "key": {
-        "P": {
-            "item": "refinedstorage2:improved_processor"
-        },
-        "C": {
-            "item": "refinedstorage2:construction_core"
-        },
-        "G": {
-            "item": "minecraft:glass"
-        },
-        "E": {
-            "item": "refinedstorage2:quartz_enriched_iron"
-        },
-        "M": {
-            "item": "refinedstorage2:machine_casing"
-        },
-        "D": {
-            "item": "refinedstorage2:destruction_core"
-        }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PCG",
+    "EMG",
+    "PDG"
+  ],
+  "key": {
+    "P": {
+      "item": "refinedstorage2:improved_processor"
     },
-    "result": {
-        "item": "refinedstorage2:grid"
+    "C": {
+      "item": "refinedstorage2:construction_core"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "E": {
+      "item": "refinedstorage2:quartz_enriched_iron"
+    },
+    "M": {
+      "item": "refinedstorage2:machine_casing"
+    },
+    "D": {
+      "item": "refinedstorage2:destruction_core"
     }
+  },
+  "result": {
+    "item": "refinedstorage2:grid"
+  }
 }

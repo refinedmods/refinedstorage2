@@ -18,8 +18,8 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 public class ControllerBlock extends AbstractNetworkNodeContainerBlock implements ColorableBlock<ControllerBlock> {
     public static final EnumProperty<ControllerEnergyType> ENERGY_TYPE = EnumProperty.create(
-            "energy_type",
-            ControllerEnergyType.class
+        "energy_type",
+        ControllerEnergyType.class
     );
 
     private final ControllerType type;
@@ -56,8 +56,8 @@ public class ControllerBlock extends AbstractNetworkNodeContainerBlock implement
                                                                   final BlockState state,
                                                                   final BlockEntityType<T> blockEntityType) {
         if ((blockEntityType == BlockEntities.INSTANCE.getController()
-                || blockEntityType == BlockEntities.INSTANCE.getCreativeController())
-                && !level.isClientSide) {
+            || blockEntityType == BlockEntities.INSTANCE.getCreativeController())
+            && !level.isClientSide) {
             return (l, p, s, be) -> ControllerBlockEntity.serverTick(s, (ControllerBlockEntity) be);
         }
         return null;
@@ -66,7 +66,7 @@ public class ControllerBlock extends AbstractNetworkNodeContainerBlock implement
     @Override
     public BlockColorMap<ControllerBlock> getBlockColorMap() {
         return type == ControllerType.CREATIVE
-                ? Blocks.INSTANCE.getCreativeController()
-                : Blocks.INSTANCE.getController();
+            ? Blocks.INSTANCE.getCreativeController()
+            : Blocks.INSTANCE.getController();
     }
 }

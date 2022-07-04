@@ -37,9 +37,9 @@ public class LevelConnectionProvider implements ConnectionProvider {
         depthScan(scanState, ((AbstractNetworkNodeContainerBlockEntity<?>) pivot).getBlockPos());
 
         return new Connections(
-                convertToContainers(scanState.foundEntries),
-                convertToContainers(scanState.newEntries),
-                convertToContainers(scanState.removedEntries)
+            convertToContainers(scanState.foundEntries),
+            convertToContainers(scanState.newEntries),
+            convertToContainers(scanState.removedEntries)
         );
     }
 
@@ -49,21 +49,21 @@ public class LevelConnectionProvider implements ConnectionProvider {
 
     private Set<ScanEntry> convertToScanEntries(final Set<NetworkNodeContainer> existingConnections) {
         return existingConnections
-                .stream()
-                .map(container -> new ScanEntry(
-                        container,
-                        Objects.requireNonNull(((BlockEntity) container).getLevel()),
-                        ((BlockEntity) container).getBlockPos()
-                ))
-                .collect(Collectors.toSet());
+            .stream()
+            .map(container -> new ScanEntry(
+                container,
+                Objects.requireNonNull(((BlockEntity) container).getLevel()),
+                ((BlockEntity) container).getBlockPos()
+            ))
+            .collect(Collectors.toSet());
     }
 
     @Override
     public List<NetworkNodeContainer> sort(final Set<NetworkNodeContainer> containers) {
         return containers
-                .stream()
-                .sorted(Comparator.comparing(container -> ((BlockEntity) container).getBlockPos()))
-                .toList();
+            .stream()
+            .sorted(Comparator.comparing(container -> ((BlockEntity) container).getBlockPos()))
+            .toList();
     }
 
     private void depthScan(final ScanState scanState, final BlockPos position) {
@@ -86,7 +86,7 @@ public class LevelConnectionProvider implements ConnectionProvider {
         scanState.removedEntries.remove(entry);
 
         final Set<NetworkNodeContainer> connections =
-                findConnectionsAt(((AbstractNetworkNodeContainerBlockEntity<?>) entry.getContainer()).getBlockPos());
+            findConnectionsAt(((AbstractNetworkNodeContainerBlockEntity<?>) entry.getContainer()).getBlockPos());
         for (final NetworkNodeContainer connection : connections) {
             depthScan(scanState, ((AbstractNetworkNodeContainerBlockEntity<?>) connection).getBlockPos());
         }

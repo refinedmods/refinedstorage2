@@ -34,13 +34,13 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
         this.imageHeight = 189;
 
         this.progressWidget = new ProgressWidget(
-                80,
-                20,
-                16,
-                70,
-                this::getPercentageFull,
-                this::renderComponentTooltip,
-                this::createTooltip
+            80,
+            20,
+            16,
+            70,
+            this::getPercentageFull,
+            this::renderComponentTooltip,
+            this::createTooltip
         );
         addRenderableWidget(progressWidget);
     }
@@ -57,10 +57,10 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
 
     private List<Component> createTooltip() {
         return Collections.singletonList(createTranslation(
-                "misc",
-                "stored_with_capacity",
-                QuantityFormatter.format(getMenu().getStored()),
-                QuantityFormatter.format(getMenu().getCapacity())
+            "misc",
+            "stored_with_capacity",
+            QuantityFormatter.format(getMenu().getStored()),
+            QuantityFormatter.format(getMenu().getCapacity())
         ));
     }
 

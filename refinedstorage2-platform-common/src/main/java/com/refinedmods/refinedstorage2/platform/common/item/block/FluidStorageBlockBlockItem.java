@@ -32,7 +32,7 @@ public class FluidStorageBlockBlockItem extends AbstractStorageBlockBlockItem {
 
     private final FluidStorageType.Variant variant;
     private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions =
-            EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
+        EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
     public FluidStorageBlockBlockItem(final Block block,
                                       final CreativeModeTab tab,
@@ -51,13 +51,13 @@ public class FluidStorageBlockBlockItem extends AbstractStorageBlockBlockItem {
                                 final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
         StorageItemHelper.appendToTooltip(
-                stack,
-                level,
-                tooltip,
-                context,
-                Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits,
-                Platform.INSTANCE.getBucketQuantityFormatter()::format,
-                tooltipOptions
+            stack,
+            level,
+            tooltip,
+            context,
+            Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits,
+            Platform.INSTANCE.getBucketQuantityFormatter()::format,
+            tooltipOptions
         );
     }
 

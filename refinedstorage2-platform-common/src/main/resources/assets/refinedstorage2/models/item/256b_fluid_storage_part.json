@@ -1,6 +1,6 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "refinedstorage2:item/256b_fluid_storage_part"
-    }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "refinedstorage2:item/256b_fluid_storage_part"
+  }
 }

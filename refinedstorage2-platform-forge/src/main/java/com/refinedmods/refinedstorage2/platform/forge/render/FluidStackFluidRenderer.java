@@ -25,8 +25,8 @@ public class FluidStackFluidRenderer extends AbstractFluidRenderer {
 
     private FluidStack getFluidStackFromCache(final FluidResource fluidResource) {
         return stackCache.computeIfAbsent(
-                fluidResource,
-                r -> new FluidStack(r.fluid(), FluidType.BUCKET_VOLUME, r.tag())
+            fluidResource,
+            r -> new FluidStack(r.fluid(), FluidType.BUCKET_VOLUME, r.tag())
         );
     }
 

@@ -1,7 +1,7 @@
 {
-    "variants": {
-        "": {
-            "model": "refinedstorage2:block/machine_casing"
-        }
+  "variants": {
+    "": {
+      "model": "refinedstorage2:block/machine_casing"
     }
+  }
 }

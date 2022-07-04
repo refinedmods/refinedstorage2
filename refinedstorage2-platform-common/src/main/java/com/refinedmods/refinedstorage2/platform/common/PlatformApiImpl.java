@@ -42,18 +42,18 @@ public class PlatformApiImpl implements PlatformApi {
     private static final String ITEM_REGISTRY_KEY = "item";
 
     private final PlatformStorageRepository clientStorageRepository =
-            new ClientStorageRepository(Platform.INSTANCE.getClientToServerCommunications()::sendStorageInfoRequest);
+        new ClientStorageRepository(Platform.INSTANCE.getClientToServerCommunications()::sendStorageInfoRequest);
     private final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry =
-            new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemResourceType.INSTANCE);
+        new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemResourceType.INSTANCE);
     private final ComponentMapFactory<NetworkComponent, Network> networkComponentMapFactory =
-            new ComponentMapFactory<>();
+        new ComponentMapFactory<>();
     private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentMapFactory));
     private final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry =
-            new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemStorageType.INSTANCE);
+        new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemStorageType.INSTANCE);
     private final OrderedRegistry<ResourceLocation, StorageChannelType<?>> storageChannelTypeRegistry =
-            new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageChannelTypes.ITEM);
+        new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageChannelTypes.ITEM);
     private final OrderedRegistry<ResourceLocation, GridSynchronizer> gridSynchronizerRegistry =
-            new OrderedRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
+        new OrderedRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
 
     @Override
     public OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry() {
@@ -67,12 +67,12 @@ public class PlatformApiImpl implements PlatformApi {
         }
         final ServerLevel serverLevel = Objects.requireNonNull(level.getServer().getLevel(Level.OVERWORLD));
         return serverLevel
-                .getDataStorage()
-                .computeIfAbsent(
-                        this::createStorageRepository,
-                        this::createStorageRepository,
-                        PlatformStorageRepositoryImpl.NAME
-                );
+            .getDataStorage()
+            .computeIfAbsent(
+                this::createStorageRepository,
+                this::createStorageRepository,
+                PlatformStorageRepositoryImpl.NAME
+            );
     }
 
     private PlatformStorageRepositoryImpl createStorageRepository(final CompoundTag tag) {

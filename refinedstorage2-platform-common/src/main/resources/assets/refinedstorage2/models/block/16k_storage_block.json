@@ -1,6 +1,6 @@
 {
-    "parent": "block/cube_all",
-    "textures": {
-        "all": "refinedstorage2:block/storage_block/16k_storage_block"
-    }
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "refinedstorage2:block/storage_block/16k_storage_block"
+  }
 }

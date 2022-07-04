@@ -149,18 +149,18 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             menu.setCarried(destination.getContainer());
         } else {
             final ItemStack remainder = ItemHandlerHelper.insertItem(
-                    playerInventoryStorage,
-                    destination.getContainer(),
-                    false
+                playerInventoryStorage,
+                destination.getContainer(),
+                false
             );
             if (!remainder.isEmpty()) {
                 // TODO: This isn't ideal, but dealing without transactions on the inventory doesn't make it easy.
                 Containers.dropItemStack(
-                        playerInventory.player.getCommandSenderWorld(),
-                        playerInventory.player.getX(),
-                        playerInventory.player.getY(),
-                        playerInventory.player.getZ(),
-                        destination.getContainer()
+                    playerInventory.player.getCommandSenderWorld(),
+                    playerInventory.player.getX(),
+                    playerInventory.player.getY(),
+                    playerInventory.player.getZ(),
+                    destination.getContainer()
                 );
             }
         }

@@ -73,10 +73,10 @@ public class ResourceFilterContainer {
 
     public ResourceType determineDefaultType() {
         final List<ResourceType> distinctTypes = Arrays.stream(items)
-                .filter(Objects::nonNull)
-                .map(FilteredResource::getType)
-                .distinct()
-                .toList();
+            .filter(Objects::nonNull)
+            .map(FilteredResource::getType)
+            .distinct()
+            .toList();
         if (distinctTypes.size() == 1) {
             return distinctTypes.get(0);
         }
@@ -85,7 +85,7 @@ public class ResourceFilterContainer {
 
     public void writeToUpdatePacket(final FriendlyByteBuf buf) {
         buf.writeResourceLocation(resourceTypeRegistry.getId(determineDefaultType())
-                .orElseThrow(() -> new IllegalStateException("Default resource type not registered")));
+            .orElseThrow(() -> new IllegalStateException("Default resource type not registered")));
         for (int index = 0; index < items.length; ++index) {
             writeToUpdatePacket(index, buf);
         }
@@ -98,12 +98,12 @@ public class ResourceFilterContainer {
             return;
         }
         resourceTypeRegistry.getId(item.getType()).ifPresentOrElse(
-                id -> {
-                    buf.writeBoolean(true);
-                    buf.writeResourceLocation(id);
-                    item.writeToPacket(buf);
-                },
-                () -> buf.writeBoolean(false)
+            id -> {
+                buf.writeBoolean(true);
+                buf.writeResourceLocation(id);
+                item.writeToPacket(buf);
+            },
+            () -> buf.writeBoolean(false)
         );
     }
 
@@ -115,8 +115,8 @@ public class ResourceFilterContainer {
         }
         final ResourceLocation id = buf.readResourceLocation();
         resourceTypeRegistry.get(id).ifPresentOrElse(
-                type -> setSilently(index, type.fromPacket(buf)),
-                () -> LOGGER.warn("Resource type {} is not registered on the client, cannot read from packet", id)
+            type -> setSilently(index, type.fromPacket(buf)),
+            () -> LOGGER.warn("Resource type {} is not registered on the client, cannot read from packet", id)
         );
     }
 
@@ -129,8 +129,8 @@ public class ResourceFilterContainer {
             }
             final int index = i;
             resourceTypeRegistry.getId(item.getType()).ifPresentOrElse(
-                    id -> addToTag(tag, index, item, id),
-                    () -> LOGGER.warn("Resource type {} is not registered, cannot serialize", item.getType())
+                id -> addToTag(tag, index, item, id),
+                () -> LOGGER.warn("Resource type {} is not registered, cannot serialize", item.getType())
             );
         }
         return tag;
@@ -160,8 +160,8 @@ public class ResourceFilterContainer {
     private void load(final int index, final CompoundTag item) {
         final ResourceLocation typeId = new ResourceLocation(item.getString("t"));
         resourceTypeRegistry.get(typeId).ifPresentOrElse(
-                type -> load(index, item, type),
-                () -> LOGGER.warn("Resource type {} is not registered, cannot deserialize", typeId)
+            type -> load(index, item, type),
+            () -> LOGGER.warn("Resource type {} is not registered, cannot deserialize", typeId)
         );
     }
 

@@ -1,7 +1,7 @@
 {
-    "variants": {
-        "": {
-            "model": "refinedstorage2:block/creative_storage_block"
-        }
+  "variants": {
+    "": {
+      "model": "refinedstorage2:block/creative_storage_block"
     }
+  }
 }

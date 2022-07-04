@@ -20,7 +20,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public abstract class AbstractResourceFilterContainerMenu extends AbstractBaseContainerMenu
-        implements ResourceTypeAccessor {
+    implements ResourceTypeAccessor {
     private final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry;
     private final List<ResourceFilterSlot> resourceFilterSlots = new ArrayList<>();
     @Nullable

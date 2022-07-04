@@ -15,21 +15,21 @@ import net.minecraft.world.entity.player.Player;
 
 public class ItemStorageBlockContainerMenu extends AbstractStorageBlockContainerMenu {
     private static final Set<StorageTooltipHelper.TooltipOption> TOOLTIP_OPTIONS = Set.of(
-            StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS,
-            StorageTooltipHelper.TooltipOption.STACK_INFO
+        StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS,
+        StorageTooltipHelper.TooltipOption.STACK_INFO
     );
     private static final Set<StorageTooltipHelper.TooltipOption> TOOLTIP_OPTIONS_WITH_ONLY_STACK_INFO = Set.of(
-            StorageTooltipHelper.TooltipOption.STACK_INFO
+        StorageTooltipHelper.TooltipOption.STACK_INFO
     );
 
     public ItemStorageBlockContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(
-                Menus.INSTANCE.getItemStorage(),
-                syncId,
-                PlatformApi.INSTANCE.getResourceTypeRegistry(),
-                playerInventory.player,
-                buf,
-                ItemResourceType.INSTANCE);
+            Menus.INSTANCE.getItemStorage(),
+            syncId,
+            PlatformApi.INSTANCE.getResourceTypeRegistry(),
+            playerInventory.player,
+            buf,
+            ItemResourceType.INSTANCE);
     }
 
     public ItemStorageBlockContainerMenu(final int syncId,
@@ -37,12 +37,12 @@ public class ItemStorageBlockContainerMenu extends AbstractStorageBlockContainer
                                          final ResourceFilterContainer resourceFilterContainer,
                                          final AbstractStorageBlockBlockEntity<?> storageBlock) {
         super(
-                Menus.INSTANCE.getItemStorage(),
-                syncId,
-                PlatformApi.INSTANCE.getResourceTypeRegistry(),
-                player,
-                resourceFilterContainer,
-                storageBlock
+            Menus.INSTANCE.getItemStorage(),
+            syncId,
+            PlatformApi.INSTANCE.getResourceTypeRegistry(),
+            player,
+            resourceFilterContainer,
+            storageBlock
         );
     }
 

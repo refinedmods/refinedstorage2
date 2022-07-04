@@ -19,10 +19,10 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
                              final Set<String> tags,
                              final String tooltip) {
         super(resourceAmount, name, Map.of(
-                GridResourceAttributeKeys.MOD_ID, Set.of(modId),
-                GridResourceAttributeKeys.MOD_NAME, Set.of(modName),
-                GridResourceAttributeKeys.TAGS, tags,
-                GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
+            GridResourceAttributeKeys.MOD_ID, Set.of(modId),
+            GridResourceAttributeKeys.MOD_NAME, Set.of(modName),
+            GridResourceAttributeKeys.TAGS, tags,
+            GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
         ));
         this.id = Registry.FLUID.getId(getResourceAmount().getResource().fluid());
     }

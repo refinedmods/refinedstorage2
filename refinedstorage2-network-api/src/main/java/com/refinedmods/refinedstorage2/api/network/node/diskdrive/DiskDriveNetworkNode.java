@@ -58,7 +58,7 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
     }
 
     private Map<StorageChannelType<?>, DiskDriveCompositeStorage<?>> createCompositeStorages(
-            final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry
+        final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry
     ) {
         return storageChannelTypeRegistry
             .getAll()
@@ -99,10 +99,10 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
         if (diskProvider != null && storageRepository != null) {
             diskProvider.getStorageChannelType(slot).ifPresentOrElse(type -> {
                 disks[slot] = diskProvider
-                        .getDiskId(slot)
-                        .flatMap(storageRepository::get)
-                        .map(storage -> new DiskDriveDiskStorage(storage, type, listener))
-                        .orElse(null);
+                    .getDiskId(slot)
+                    .flatMap(storageRepository::get)
+                    .map(storage -> new DiskDriveDiskStorage(storage, type, listener))
+                    .orElse(null);
 
                 if (disks[slot] != null) {
                     final StorageChannelType<?> addedStorageChannelType = disks[slot].getStorageChannelType();
@@ -222,8 +222,8 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
         this.priority = priority;
         if (network != null) {
             compositeStorages.keySet().forEach(type -> network.getComponent(StorageNetworkComponent.class)
-                    .getStorageChannel(type)
-                    .sortSources());
+                .getStorageChannel(type)
+                .sortSources());
         }
     }
 

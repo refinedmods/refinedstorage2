@@ -1,8 +1,8 @@
 {
-    "type": "minecraft:smelting",
-    "ingredient": {
-        "item": "minecraft:quartz"
-    },
-    "result": "refinedstorage2:silicon",
-    "experience": 0.5
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "minecraft:quartz"
+  },
+  "result": "refinedstorage2:silicon",
+  "experience": 0.5
 }

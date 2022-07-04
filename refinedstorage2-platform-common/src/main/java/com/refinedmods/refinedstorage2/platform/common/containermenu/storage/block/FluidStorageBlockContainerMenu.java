@@ -16,18 +16,18 @@ import net.minecraft.world.entity.player.Player;
 
 public class FluidStorageBlockContainerMenu extends AbstractStorageBlockContainerMenu {
     private static final Set<StorageTooltipHelper.TooltipOption> TOOLTIP_OPTIONS =
-            Set.of(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
+        Set.of(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
 
     public FluidStorageBlockContainerMenu(final int syncId,
                                           final Inventory playerInventory,
                                           final FriendlyByteBuf buf) {
         super(
-                Menus.INSTANCE.getFluidStorage(),
-                syncId,
-                PlatformApi.INSTANCE.getResourceTypeRegistry(),
-                playerInventory.player,
-                buf,
-                FluidResourceType.INSTANCE
+            Menus.INSTANCE.getFluidStorage(),
+            syncId,
+            PlatformApi.INSTANCE.getResourceTypeRegistry(),
+            playerInventory.player,
+            buf,
+            FluidResourceType.INSTANCE
         );
     }
 
@@ -36,12 +36,12 @@ public class FluidStorageBlockContainerMenu extends AbstractStorageBlockContaine
                                           final ResourceFilterContainer resourceFilterContainer,
                                           final AbstractStorageBlockBlockEntity<?> storageBlock) {
         super(
-                Menus.INSTANCE.getFluidStorage(),
-                syncId,
-                PlatformApi.INSTANCE.getResourceTypeRegistry(),
-                player,
-                resourceFilterContainer,
-                storageBlock
+            Menus.INSTANCE.getFluidStorage(),
+            syncId,
+            PlatformApi.INSTANCE.getResourceTypeRegistry(),
+            player,
+            resourceFilterContainer,
+            storageBlock
         );
     }
 

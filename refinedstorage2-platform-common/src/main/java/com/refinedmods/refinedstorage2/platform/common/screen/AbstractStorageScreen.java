@@ -22,7 +22,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public abstract class AbstractStorageScreen<T extends AbstractContainerMenu & StorageAccessor>
-        extends AbstractBaseScreen<T> {
+    extends AbstractBaseScreen<T> {
     private final ProgressWidget progressWidget;
     private final Inventory playerInventory;
 
@@ -41,13 +41,13 @@ public abstract class AbstractStorageScreen<T extends AbstractContainerMenu & St
         this.playerInventory = inventory;
 
         this.progressWidget = new ProgressWidget(
-                progressWidgetX,
-                54,
-                16,
-                70,
-                menu::getProgress,
-                this::renderComponentTooltip,
-                this::createTooltip
+            progressWidgetX,
+            54,
+            16,
+            70,
+            menu::getProgress,
+            this::renderComponentTooltip,
+            this::createTooltip
         );
         addRenderableWidget(progressWidget);
     }
@@ -63,9 +63,9 @@ public abstract class AbstractStorageScreen<T extends AbstractContainerMenu & St
         addSideButton(new AccessModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new PrioritySideButtonWidget(getMenu(), playerInventory, this, this::renderComponentTooltip));
         final ResourceFilterButtonWidget resourceFilterButton = new ResourceFilterButtonWidget(
-                leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7,
-                topPos + 4,
-                menu
+            leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7,
+            topPos + 4,
+            menu
         );
         resourceFilterButton.active = isResourceFilterButtonActive();
         addRenderableWidget(resourceFilterButton);
@@ -74,12 +74,12 @@ public abstract class AbstractStorageScreen<T extends AbstractContainerMenu & St
     private List<Component> createTooltip() {
         final List<Component> tooltip = new ArrayList<>();
         StorageTooltipHelper.appendToTooltip(
-                tooltip,
-                menu.getStored(),
-                menu.getCapacity(),
-                this::formatQuantity,
-                QuantityFormatter::format,
-                menu.getTooltipOptions()
+            tooltip,
+            menu.getStored(),
+            menu.getCapacity(),
+            this::formatQuantity,
+            QuantityFormatter::format,
+            menu.getTooltipOptions()
         );
         return tooltip;
     }

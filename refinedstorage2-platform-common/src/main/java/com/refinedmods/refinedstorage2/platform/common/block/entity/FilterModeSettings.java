@@ -27,12 +27,12 @@ public class FilterModeSettings {
 
     public static TwoWaySyncProperty<FilterMode> createClientSyncProperty(final int index) {
         return TwoWaySyncProperty.forClient(
-                index,
-                FilterModeSettings::getFilterMode,
-                FilterModeSettings::getFilterMode,
-                FilterMode.BLOCK,
-                filterMode -> {
-                }
+            index,
+            FilterModeSettings::getFilterMode,
+            FilterModeSettings::getFilterMode,
+            FilterMode.BLOCK,
+            filterMode -> {
+            }
         );
     }
 }

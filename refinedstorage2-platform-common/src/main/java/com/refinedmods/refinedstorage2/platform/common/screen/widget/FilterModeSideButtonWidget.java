@@ -38,8 +38,8 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
         final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "filter_mode"));
         lines.add(createTranslation(
-                "gui",
-                "filter_mode." + filterMode.toString().toLowerCase(Locale.ROOT)
+            "gui",
+            "filter_mode." + filterMode.toString().toLowerCase(Locale.ROOT)
         ).withStyle(ChatFormatting.GRAY));
         return lines;
     }
@@ -57,10 +57,10 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
     @Override
     public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
         tooltipRenderer.render(
-                poseStack,
-                filterModeAccessor.getFilterMode() == FilterMode.BLOCK ? blockModeTooltip : allowModeTooltip,
-                mouseX,
-                mouseY
+            poseStack,
+            filterModeAccessor.getFilterMode() == FilterMode.BLOCK ? blockModeTooltip : allowModeTooltip,
+            mouseX,
+            mouseY
         );
     }
 }

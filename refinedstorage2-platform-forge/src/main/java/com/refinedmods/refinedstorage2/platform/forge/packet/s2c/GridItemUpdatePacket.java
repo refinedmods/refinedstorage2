@@ -30,9 +30,9 @@ public class GridItemUpdatePacket {
 
     public static GridItemUpdatePacket decode(final FriendlyByteBuf buf) {
         return new GridItemUpdatePacket(
-                PacketUtil.readItemResource(buf),
-                buf.readLong(),
-                PacketUtil.readTrackedResource(buf)
+            PacketUtil.readItemResource(buf),
+            buf.readLong(),
+            PacketUtil.readTrackedResource(buf)
         );
     }
 

@@ -46,19 +46,19 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public final class PlatformImpl extends AbstractPlatform {
     private static final TagKey<Item> WRENCH_TAG = TagKey.create(
-            ForgeRegistries.ITEMS.getRegistryKey(),
-            new ResourceLocation("forge", "tools/wrench")
+        ForgeRegistries.ITEMS.getRegistryKey(),
+        new ResourceLocation("forge", "tools/wrench")
     );
 
     private final ConfigImpl config = new ConfigImpl();
 
     public PlatformImpl(final NetworkManager networkManager) {
         super(
-                new ServerToClientCommunicationsImpl(networkManager),
-                new ClientToServerCommunicationsImpl(networkManager),
-                new MenuOpenerImpl(),
-                new BucketQuantityFormatter(FluidType.BUCKET_VOLUME),
-                new FluidStackFluidRenderer()
+            new ServerToClientCommunicationsImpl(networkManager),
+            new ClientToServerCommunicationsImpl(networkManager),
+            new MenuOpenerImpl(),
+            new BucketQuantityFormatter(FluidType.BUCKET_VOLUME),
+            new FluidStackFluidRenderer()
         );
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getSpec());
     }
@@ -86,8 +86,8 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public boolean isKeyDown(final KeyMapping keyMapping) {
         return InputConstants.isKeyDown(
-                Minecraft.getInstance().getWindow().getWindow(),
-                keyMapping.getKey().getValue()
+            Minecraft.getInstance().getWindow().getWindow(),
+            keyMapping.getKey().getValue()
         );
     }
 
@@ -119,9 +119,9 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public Optional<FluidResource> convertToFluid(final ItemStack stack) {
         return stack
-                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
-                .map(handler -> handler.getFluidInTank(0))
-                .map(contents -> contents.isEmpty() ? null : new FluidResource(contents.getFluid(), contents.getTag()));
+            .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
+            .map(handler -> handler.getFluidInTank(0))
+            .map(contents -> contents.isEmpty() ? null : new FluidResource(contents.getFluid(), contents.getTag()));
     }
 
     @Override

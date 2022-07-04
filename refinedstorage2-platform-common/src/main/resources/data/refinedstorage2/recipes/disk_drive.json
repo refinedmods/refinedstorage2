@@ -1,25 +1,25 @@
 {
-    "type": "minecraft:crafting_shaped",
-    "pattern": [
-        "ECE",
-        "EME",
-        "EPE"
-    ],
-    "key": {
-        "E": {
-            "item": "refinedstorage2:quartz_enriched_iron"
-        },
-        "C": {
-            "item": "minecraft:chest"
-        },
-        "M": {
-            "item": "refinedstorage2:machine_casing"
-        },
-        "P": {
-            "item": "refinedstorage2:advanced_processor"
-        }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ECE",
+    "EME",
+    "EPE"
+  ],
+  "key": {
+    "E": {
+      "item": "refinedstorage2:quartz_enriched_iron"
     },
-    "result": {
-        "item": "refinedstorage2:disk_drive"
+    "C": {
+      "item": "minecraft:chest"
+    },
+    "M": {
+      "item": "refinedstorage2:machine_casing"
+    },
+    "P": {
+      "item": "refinedstorage2:advanced_processor"
     }
+  },
+  "result": {
+    "item": "refinedstorage2:disk_drive"
+  }
 }

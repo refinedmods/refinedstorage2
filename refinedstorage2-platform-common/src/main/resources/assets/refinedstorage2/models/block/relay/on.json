@@ -1,6 +1,6 @@
 {
-    "parent": "refinedstorage2:block/relay/off",
-    "textures": {
-        "relay": "refinedstorage2:block/relay/light_blue"
-    }
+  "parent": "refinedstorage2:block/relay/off",
+  "textures": {
+    "relay": "refinedstorage2:block/relay/light_blue"
+  }
 }

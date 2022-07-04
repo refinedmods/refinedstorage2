@@ -33,9 +33,9 @@ public final class Blocks {
     @Nullable
     private Supplier<SimpleBlock> machineCasing;
     private final Map<ItemStorageType.Variant, Supplier<ItemStorageBlock>> itemStorageBlocks =
-            new EnumMap<>(ItemStorageType.Variant.class);
+        new EnumMap<>(ItemStorageType.Variant.class);
     private final Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> fluidStorageBlocks =
-            new EnumMap<>(FluidStorageType.Variant.class);
+        new EnumMap<>(FluidStorageType.Variant.class);
 
     private Blocks() {
     }

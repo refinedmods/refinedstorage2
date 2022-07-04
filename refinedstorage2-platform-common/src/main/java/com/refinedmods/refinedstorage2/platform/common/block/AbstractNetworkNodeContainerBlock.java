@@ -45,8 +45,8 @@ public abstract class AbstractNetworkNodeContainerBlock extends AbstractBaseBloc
         }
         // TODO: Check block entity type.
         return (l, p, s, be) -> AbstractInternalNetworkNodeContainerBlockEntity.serverTick(
-                s,
-                (AbstractInternalNetworkNodeContainerBlockEntity<?>) be
+            s,
+            (AbstractInternalNetworkNodeContainerBlockEntity<?>) be
         );
     }
 }

@@ -45,8 +45,8 @@ public class ResourceFilterSlot extends Slot {
 
     public void change(final ItemStack carried, final ResourceType type) {
         type.translate(carried).ifPresentOrElse(
-                resource -> resourceFilterContainer.set(containerIndex, resource),
-                () -> resourceFilterContainer.remove(containerIndex)
+            resource -> resourceFilterContainer.set(containerIndex, resource),
+            () -> resourceFilterContainer.remove(containerIndex)
         );
     }
 
@@ -56,10 +56,10 @@ public class ResourceFilterSlot extends Slot {
             LOGGER.info("Resource filter slot {} has changed", containerIndex);
             this.cachedResource = currentResource;
             Platform.INSTANCE.getServerToClientCommunications().sendResourceFilterSlotUpdate(
-                    (ServerPlayer) player,
-                    resourceFilterContainer,
-                    index,
-                    containerIndex
+                (ServerPlayer) player,
+                resourceFilterContainer,
+                index,
+                containerIndex
             );
         }
     }

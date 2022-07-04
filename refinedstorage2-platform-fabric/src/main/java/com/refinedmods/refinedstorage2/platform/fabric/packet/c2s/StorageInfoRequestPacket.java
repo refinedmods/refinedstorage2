@@ -24,8 +24,8 @@ public class StorageInfoRequestPacket implements ServerPlayNetworking.PlayChanne
 
         server.execute(() -> {
             final StorageInfo info = PlatformApi.INSTANCE
-                    .getStorageRepository(player.getCommandSenderWorld())
-                    .getInfo(id);
+                .getStorageRepository(player.getCommandSenderWorld())
+                .getInfo(id);
 
             Platform.INSTANCE.getServerToClientCommunications().sendStorageInfoResponse(player, id, info);
         });

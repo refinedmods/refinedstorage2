@@ -35,7 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainerMenu
-        implements ResourceListListener<T>, RedstoneModeAccessor, GridWatcher {
+    implements ResourceListListener<T>, RedstoneModeAccessor, GridWatcher {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static String lastSearchQuery = "";
@@ -70,12 +70,12 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         this.playerInventory = playerInventory;
 
         this.redstoneModeProperty = TwoWaySyncProperty.forClient(
-                0,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneMode.IGNORE,
-                redstoneMode -> {
-                }
+            0,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneMode.IGNORE,
+            redstoneMode -> {
+            }
         );
 
         addDataSlot(redstoneModeProperty);
@@ -109,11 +109,11 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         this.view = view;
 
         this.redstoneModeProperty = TwoWaySyncProperty.forServer(
-                0,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneModeSettings::getRedstoneMode,
-                grid::getRedstoneMode,
-                grid::setRedstoneMode
+            0,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneModeSettings::getRedstoneMode,
+            grid::getRedstoneMode,
+            grid::setRedstoneMode
         );
 
         addDataSlot(redstoneModeProperty);
@@ -241,11 +241,11 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
 
     private GridSynchronizer loadSynchronizer() {
         return Platform.INSTANCE
-                .getConfig()
-                .getGrid()
-                .getSynchronizer()
-                .flatMap(id -> PlatformApi.INSTANCE.getGridSynchronizerRegistry().get(id))
-                .orElse(PlatformApi.INSTANCE.getGridSynchronizerRegistry().getDefault());
+            .getConfig()
+            .getGrid()
+            .getSynchronizer()
+            .flatMap(id -> PlatformApi.INSTANCE.getGridSynchronizerRegistry().get(id))
+            .orElse(PlatformApi.INSTANCE.getGridSynchronizerRegistry().getDefault());
     }
 
     public GridSynchronizer getSynchronizer() {
@@ -254,7 +254,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
 
     public void toggleSynchronizer() {
         final OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry =
-                PlatformApi.INSTANCE.getGridSynchronizerRegistry();
+            PlatformApi.INSTANCE.getGridSynchronizerRegistry();
         final Config.Grid config = Platform.INSTANCE.getConfig().getGrid();
 
         final GridSynchronizer newSynchronizer = synchronizerRegistry.next(getSynchronizer());

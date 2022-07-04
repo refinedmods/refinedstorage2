@@ -47,16 +47,16 @@ public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResou
         super(Menus.INSTANCE.getFluidGrid(), syncId, playerInventory, grid, createView());
         grid.addWatcher(this);
         final GridService<FluidResource> gridService = new GridServiceImpl<>(
-                Objects.requireNonNull(storageChannel),
-                new PlayerSource(playerInventory.player),
-                resource -> Long.MAX_VALUE,
-                Platform.INSTANCE.getBucketAmount()
+            Objects.requireNonNull(storageChannel),
+            new PlayerSource(playerInventory.player),
+            resource -> Long.MAX_VALUE,
+            Platform.INSTANCE.getBucketAmount()
         );
         this.fluidGridEventHandler = Platform.INSTANCE.createFluidGridEventHandler(
-                this,
-                gridService,
-                playerInventory,
-                bucketStorage
+            this,
+            gridService,
+            playerInventory,
+            bucketStorage
         );
     }
 
@@ -84,11 +84,11 @@ public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResou
         LOGGER.info("Received a change of {} for {}", change.change(), resource);
 
         Platform.INSTANCE.getServerToClientCommunications().sendGridFluidUpdate(
-                (ServerPlayer) playerInventory.player,
-                resource,
-                change.change(),
-                Objects.requireNonNull(storageChannel)
-                        .findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
+            (ServerPlayer) playerInventory.player,
+            resource,
+            change.change(),
+            Objects.requireNonNull(storageChannel)
+                .findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
         );
     }
 

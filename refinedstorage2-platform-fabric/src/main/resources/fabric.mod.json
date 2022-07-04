@@ -1,55 +1,55 @@
 {
-    "schemaVersion": 1,
-    "id": "refinedstorage2",
-    "version": "${version}",
-    "name": "Refined Storage 2",
-    "description": "Refined Storage is a mass storage mod for Minecraft that offers the player a network-based storage system, allowing them to store items and fluids on a massively expandable device network.",
-    "authors": [
-        "Refined Mods"
+  "schemaVersion": 1,
+  "id": "refinedstorage2",
+  "version": "${version}",
+  "name": "Refined Storage 2",
+  "description": "Refined Storage is a mass storage mod for Minecraft that offers the player a network-based storage system, allowing them to store items and fluids on a massively expandable device network.",
+  "authors": [
+    "Refined Mods"
+  ],
+  "contact": {
+    "sources": "https://github.com/refinedmods/refinedstorage2",
+    "issues": "https://github.com/refinedmods/refinedstorage2/issues"
+  },
+  "accessWidener": "refinedstorage2.accesswidener",
+  "icon": "assets/refinedstorage2/icon.png",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.refinedmods.refinedstorage2.platform.fabric.ModInitializerImpl"
     ],
-    "contact": {
-        "sources": "https://github.com/refinedmods/refinedstorage2",
-        "issues": "https://github.com/refinedmods/refinedstorage2/issues"
-    },
-    "accessWidener": "refinedstorage2.accesswidener",
-    "icon": "assets/refinedstorage2/icon.png",
-    "license": "MIT",
-    "environment": "*",
-    "entrypoints": {
-        "main": [
-            "com.refinedmods.refinedstorage2.platform.fabric.ModInitializerImpl"
-        ],
-        "client": [
-            "com.refinedmods.refinedstorage2.platform.fabric.ClientModInitializerImpl"
-        ],
-        "modmenu": [
-            "com.refinedmods.refinedstorage2.platform.fabric.integration.ModMenuIntegration"
-        ],
-        "jei_mod_plugin": [
-            "com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiPlugin"
-        ]
-    },
-    "custom": {
-        "modmenu": {
-            "links": {
-                "modmenu.discord": "https://discordapp.com/invite/VYzsydb"
-            }
-        }
-    },
-    "mixins": [
-        "refinedstorage2.mixins.json"
+    "client": [
+      "com.refinedmods.refinedstorage2.platform.fabric.ClientModInitializerImpl"
     ],
-    "depends": {
-        "fabricloader": ">=0.14.6",
-        "fabric": "*",
-        "minecraft": "~1.19",
-        "java": ">=17",
-        "cloth-config2": "*",
-        "team_reborn_energy": "*"
-    },
-    "suggests": {
-        "roughlyenoughitems": "*",
-        "jei": "*",
-        "modmenu": "*"
+    "modmenu": [
+      "com.refinedmods.refinedstorage2.platform.fabric.integration.ModMenuIntegration"
+    ],
+    "jei_mod_plugin": [
+      "com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiPlugin"
+    ]
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discordapp.com/invite/VYzsydb"
+      }
     }
+  },
+  "mixins": [
+    "refinedstorage2.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "fabric": "*",
+    "minecraft": "~1.19",
+    "java": ">=17",
+    "cloth-config2": "*",
+    "team_reborn_energy": "*"
+  },
+  "suggests": {
+    "roughlyenoughitems": "*",
+    "jei": "*",
+    "modmenu": "*"
+  }
 }

@@ -81,8 +81,8 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             return;
         }
         final Storage<FluidVariant> fluidSlotStorage = FluidStorage.ITEM.find(
-                itemSlotStorage.getResource().toStack(),
-                ContainerItemContext.ofPlayerSlot(player, itemSlotStorage)
+            itemSlotStorage.getResource().toStack(),
+            ContainerItemContext.ofPlayerSlot(player, itemSlotStorage)
         );
         if (fluidSlotStorage == null) {
             return;
@@ -107,8 +107,8 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     @Nullable
     private Storage<FluidVariant> getFluidCursorStorage() {
         return FluidStorage.ITEM.find(
-                menu.getCarried(),
-                ContainerItemContext.ofPlayerCursor(player, menu)
+            menu.getCarried(),
+            ContainerItemContext.ofPlayerCursor(player, menu)
         );
     }
 
@@ -128,8 +128,8 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
                                             final boolean cursor) {
         final FluidGridExtractionInterceptingStorage interceptingStorage = new FluidGridExtractionInterceptingStorage();
         final Storage<FluidVariant> destination = FluidStorage.ITEM.find(
-                interceptingStorage.getStack(),
-                ContainerItemContext.ofSingleSlot(interceptingStorage)
+            interceptingStorage.getStack(),
+            ContainerItemContext.ofSingleSlot(interceptingStorage)
         );
         if (destination == null) {
             return;
@@ -156,10 +156,10 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         try (Transaction tx = Transaction.openOuter()) {
             playerInventoryStorage.extract(BUCKET_ITEM_VARIANT, 1, tx);
             final FluidGridExtractionInterceptingStorage interceptingStorage
-                    = new FluidGridExtractionInterceptingStorage();
+                = new FluidGridExtractionInterceptingStorage();
             final Storage<FluidVariant> destination = FluidStorage.ITEM.find(
-                    interceptingStorage.getStack(),
-                    ContainerItemContext.ofSingleSlot(interceptingStorage)
+                interceptingStorage.getStack(),
+                ContainerItemContext.ofSingleSlot(interceptingStorage)
             );
             if (destination == null) {
                 return;
@@ -168,9 +168,9 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
                 try (Transaction innerTx = tx.openNested()) {
                     final long inserted = destination.insert(toFluidVariant(resource), amount, innerTx);
                     final boolean couldInsertBucket = insertResultingBucketIntoInventory(
-                            interceptingStorage,
-                            cursor,
-                            innerTx
+                        interceptingStorage,
+                        cursor,
+                        innerTx
                     );
                     if (!couldInsertBucket) {
                         return amount;

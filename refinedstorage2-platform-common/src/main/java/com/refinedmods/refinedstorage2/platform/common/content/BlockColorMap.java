@@ -69,8 +69,8 @@ public class BlockColorMap<T extends Block> extends ColorMap<T> {
     private BlockState transferNetworkNodeProperties(final BlockState oldState, final BlockState newState) {
         if (newState.hasProperty(AbstractNetworkNodeContainerBlock.ACTIVE)) {
             return newState.setValue(
-                    AbstractNetworkNodeContainerBlock.ACTIVE,
-                    oldState.getValue(AbstractNetworkNodeContainerBlock.ACTIVE)
+                AbstractNetworkNodeContainerBlock.ACTIVE,
+                oldState.getValue(AbstractNetworkNodeContainerBlock.ACTIVE)
             );
         }
         return newState;

@@ -14,10 +14,10 @@ public class FabricItemGridResourceFactory extends AbstractItemGridResourceFacto
     @Override
     public Optional<String> getModName(final String modId) {
         return FabricLoader
-                .getInstance()
-                .getModContainer(modId)
-                .map(ModContainer::getMetadata)
-                .map(ModMetadata::getName);
+            .getInstance()
+            .getModContainer(modId)
+            .map(ModContainer::getMetadata)
+            .map(ModMetadata::getName);
     }
 
     @Override

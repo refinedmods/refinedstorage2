@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractDiskDriveBlockEntityRenderer<T extends AbstractDiskDriveBlockEntity>
-        implements BlockEntityRenderer<T> {
+    implements BlockEntityRenderer<T> {
     private static final int LED_X1 = 10;
     private static final int LED_Y1 = 12;
     private static final int LED_Z1 = -1;
@@ -105,19 +105,19 @@ public abstract class AbstractDiskDriveBlockEntityRenderer<T extends AbstractDis
         final float y2 = LED_Y2 - (y * 3F);
 
         CubeBuilder.INSTANCE.putCube(
-                poseStack,
-                vertexConsumer,
-                x1 / 16F,
-                y1 / 16F,
-                LED_Z1 / 16F,
-                x2 / 16F,
-                y2 / 16F,
-                LED_Z2 / 16F,
-                state.getColor() >> 16 & 0xFF,
-                state.getColor() >> 8 & 0xFF,
-                state.getColor() & 0xFF,
-                255,
-                Direction.SOUTH
+            poseStack,
+            vertexConsumer,
+            x1 / 16F,
+            y1 / 16F,
+            LED_Z1 / 16F,
+            x2 / 16F,
+            y2 / 16F,
+            LED_Z2 / 16F,
+            state.getColor() >> 16 & 0xFF,
+            state.getColor() >> 8 & 0xFF,
+            state.getColor() & 0xFF,
+            255,
+            Direction.SOUTH
         );
     }
 }

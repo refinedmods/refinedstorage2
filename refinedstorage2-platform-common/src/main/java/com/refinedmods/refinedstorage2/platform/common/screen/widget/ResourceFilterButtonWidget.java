@@ -9,12 +9,12 @@ public class ResourceFilterButtonWidget extends Button {
 
     public ResourceFilterButtonWidget(final int x, final int y, final ResourceTypeAccessor resourceTypeAccessor) {
         super(
-                x,
-                y,
-                WIDTH,
-                15,
-                resourceTypeAccessor.getCurrentResourceTypeName(),
-                createPressAction(resourceTypeAccessor)
+            x,
+            y,
+            WIDTH,
+            15,
+            resourceTypeAccessor.getCurrentResourceTypeName(),
+            createPressAction(resourceTypeAccessor)
         );
     }
 

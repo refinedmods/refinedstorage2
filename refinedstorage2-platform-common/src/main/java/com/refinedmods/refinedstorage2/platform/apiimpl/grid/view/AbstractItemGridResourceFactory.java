@@ -1,4 +1,3 @@
-
 package com.refinedmods.refinedstorage2.platform.apiimpl.grid.view;
 
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
@@ -18,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
 public abstract class AbstractItemGridResourceFactory
-        implements Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> {
+    implements Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> {
     @Override
     public AbstractGridResource<ItemResource> apply(final ResourceAmount<ItemResource> resourceAmount) {
         final Item item = resourceAmount.getResource().item();
@@ -36,19 +35,19 @@ public abstract class AbstractItemGridResourceFactory
 
     private String getTooltip(final ItemStack itemStack) {
         return itemStack
-                .getTooltipLines(null, TooltipFlag.Default.ADVANCED)
-                .stream()
-                .map(Component::getString)
-                .collect(Collectors.joining("\n"));
+            .getTooltipLines(null, TooltipFlag.Default.ADVANCED)
+            .stream()
+            .map(Component::getString)
+            .collect(Collectors.joining("\n"));
     }
 
     private Set<String> getTags(final Item item) {
         return Registry.ITEM.getResourceKey(item)
-                .flatMap(Registry.ITEM::getHolder)
-                .stream()
-                .flatMap(Holder::tags)
-                .map(tagKey -> tagKey.location().getPath())
-                .collect(Collectors.toSet());
+            .flatMap(Registry.ITEM::getHolder)
+            .stream()
+            .flatMap(Holder::tags)
+            .map(tagKey -> tagKey.location().getPath())
+            .collect(Collectors.toSet());
     }
 
     public abstract String getModId(ItemStack itemStack);

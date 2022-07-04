@@ -32,7 +32,7 @@ public class ItemStorageBlockBlockItem extends AbstractStorageBlockBlockItem {
 
     private final ItemStorageType.Variant variant;
     private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions =
-            EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
+        EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
     public ItemStorageBlockBlockItem(final Block block,
                                      final CreativeModeTab tab,
@@ -52,13 +52,13 @@ public class ItemStorageBlockBlockItem extends AbstractStorageBlockBlockItem {
                                 final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
         StorageItemHelper.appendToTooltip(
-                stack,
-                level,
-                tooltip,
-                context,
-                QuantityFormatter::formatWithUnits,
-                QuantityFormatter::format,
-                tooltipOptions
+            stack,
+            level,
+            tooltip,
+            context,
+            QuantityFormatter::formatWithUnits,
+            QuantityFormatter::format,
+            tooltipOptions
         );
     }
 

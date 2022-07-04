@@ -26,9 +26,9 @@ public class GridScrollPacket {
 
     public static GridScrollPacket decode(final FriendlyByteBuf buf) {
         return new GridScrollPacket(
-                PacketUtil.readItemResource(buf),
-                GridScrollModeUtil.getMode(buf.readByte()),
-                buf.readInt()
+            PacketUtil.readItemResource(buf),
+            GridScrollModeUtil.getMode(buf.readByte()),
+            buf.readInt()
         );
     }
 

@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class ParserOperatorMappings {
     public static final ParserOperatorMappings DEFAULT_MAPPINGS = new ParserOperatorMappings()
-            .addBinaryOperator("||", new Operator(0, Associativity.LEFT))
-            .addBinaryOperator("&&", new Operator(1, Associativity.LEFT));
+        .addBinaryOperator("||", new Operator(0, Associativity.LEFT))
+        .addBinaryOperator("&&", new Operator(1, Associativity.LEFT));
 
     private final Map<String, Operator> binaryOperatorPrecedenceMap = new HashMap<>();
 

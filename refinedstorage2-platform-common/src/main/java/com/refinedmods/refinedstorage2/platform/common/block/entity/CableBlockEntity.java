@@ -10,10 +10,10 @@ import net.minecraft.world.level.block.state.BlockState;
 public class CableBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<CableNetworkNode> {
     public CableBlockEntity(final BlockPos pos, final BlockState state) {
         super(
-                BlockEntities.INSTANCE.getCable(),
-                pos,
-                state,
-                new CableNetworkNode(Platform.INSTANCE.getConfig().getCable().getEnergyUsage())
+            BlockEntities.INSTANCE.getCable(),
+            pos,
+            state,
+            new CableNetworkNode(Platform.INSTANCE.getConfig().getCable().getEnergyUsage())
         );
     }
 }

@@ -26,6 +26,6 @@ public class StorageInfoResponsePacket implements ClientPlayNetworking.PlayChann
         }
 
         client.execute(() -> ((ClientStorageRepository) PlatformApi.INSTANCE.getStorageRepository(client.level))
-                .setInfo(id, stored, capacity));
+            .setInfo(id, stored, capacity));
     }
 }
