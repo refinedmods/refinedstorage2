@@ -75,22 +75,21 @@ After that, a Discord and Twitter notification is sent.
 
 ## Modules
 
-Refined Storage 2 is modularized. That means that API is split up into various modules.
+Refined Storage 2 is modularized. That means that the API is split up into various modules.
 
 Important to note is that most modules aren't dependent on Minecraft or a mod loader. Only modules that start
 with `refinedstorage2-platform-*` have dependencies on Minecraft.
 
 | Name                              | Use in addons | Description                                                                    |
-|-----------------------------------|--------------|--------------------------------------------------------------------------------|
-| `refinedstorage2-core-api`        | ✔️           | Contains some utility classes and enums.                                       |
-| `refinedstorage2-grid-api`        | ✔️           | Contains Grid related functionality.                                           |
-| `refinedstorage2-network-api`     | ✔️           | Contains storage network related functionality.                                |
-| `refinedstorage2-query-parser`    | ✔️           | A query parser, contains a lexer and parser. Only used for Grid query parsing. |
-| `refinedstorage2-resource-api`    | ✔️           | Contains API for handling resources.                                           |
-| `refinedstorage2-storage-api`     | ✔️           | Contains storage related functionality.                                        |
-| `refinedstorage2-test`            | ✔️           | This module is used in tests to provide the `@Rs2Test` annotation.             |
-| `refinedstorage2-platform-api`    | ✔️           | Implements the various Refined Storage API modules for use in Minecraft.       |
-| `refinedstorage2-platform-fabric` | ❌            | The platform module for Fabric. This module contains Fabric specific code.     |
-| `refinedstorage2-platform-forge`  | ❌            | The platform module for Forge. This module contains Forge specific code.       |
-| `refinedstorage2-platform-common` | ❌            | Common mod code. Most gameplay code is in here.                                |
+|-----------------------------------|---------------|--------------------------------------------------------------------------------|
+| `refinedstorage2-core-api`        | ✔️            | Contains some utility classes and enums.                                       |
+| `refinedstorage2-grid-api`        | ✔️            | Contains Grid related functionality.                                           |
+| `refinedstorage2-network-api`     | ✔️            | Contains storage network related functionality.                                |
+| `refinedstorage2-query-parser`    | ✔️            | A query parser, contains a lexer and parser. Only used for Grid query parsing. |
+| `refinedstorage2-resource-api`    | ✔️            | Contains API for handling resources.                                           |
+| `refinedstorage2-storage-api`     | ✔️            | Contains storage related functionality.                                        |
+| `refinedstorage2-platform-api`    | ✔️            | Implements the various Refined Storage API modules for use in Minecraft.       |
+| `refinedstorage2-platform-fabric` | ❌             | The platform module for Fabric. This module contains Fabric specific code.     |
+| `refinedstorage2-platform-forge`  | ❌             | The platform module for Forge. This module contains Forge specific code.       |
+| `refinedstorage2-platform-common` | ❌             | Common mod code. Most gameplay code is in here.                                |
 | `refinedstorage2-platform-test`   | ❌             | This module is used in platform tests for various Minecraft related helpers.   |

@@ -23,7 +23,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = 'refinedstorage2'
-include 'refinedstorage2-test'
 include 'refinedstorage2-core-api'
 include 'refinedstorage2-resource-api'
 include 'refinedstorage2-storage-api'
