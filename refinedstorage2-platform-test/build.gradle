@@ -10,5 +10,5 @@ minecraft {
 }
 
 dependencies {
-    api "org.junit.jupiter:junit-jupiter-api:${project.junitVersion}"
+    implementation "org.junit.jupiter:junit-jupiter-api:${project.junitVersion}"
 }
