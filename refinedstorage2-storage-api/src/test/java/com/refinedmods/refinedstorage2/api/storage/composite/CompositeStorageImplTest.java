@@ -663,58 +663,6 @@ class CompositeStorageImplTest {
     }
 
     @Test
-    void testAddingSourceToSubCompositeShouldNotifyParent() {
-        // Arrange
-        final CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
-        final Storage<String> subStorage = new InMemoryStorageImpl<>();
-        subStorage.insert("B", 10, Action.EXECUTE, EmptySource.INSTANCE);
-
-        sut.addSource(subComposite);
-        sut.addSource(subStorage);
-
-        final Storage<String> subCompositeStorage = new InMemoryStorageImpl<>();
-        subCompositeStorage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
-
-        // Act
-        subComposite.addSource(subCompositeStorage);
-
-        // Assert
-        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 10),
-            new ResourceAmount<>("B", 10)
-        );
-
-        assertThat(subComposite.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 10)
-        );
-    }
-
-    @Test
-    void testRemovingSourceFromSubCompositeShouldNotifyParent() {
-        // Arrange
-        final CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
-        final Storage<String> subStorage = new InMemoryStorageImpl<>();
-        subStorage.insert("B", 10, Action.EXECUTE, EmptySource.INSTANCE);
-
-        sut.addSource(subComposite);
-        sut.addSource(subStorage);
-
-        final Storage<String> subCompositeStorage = new InMemoryStorageImpl<>();
-        subCompositeStorage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
-
-        subComposite.addSource(subCompositeStorage);
-
-        // Act
-        subComposite.removeSource(subCompositeStorage);
-
-        // Assert
-        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("B", 10)
-        );
-        assertThat(subComposite.getAll()).isEmpty();
-    }
-
-    @Test
     void shouldFindMostRecentChange() {
         // Arrange
         final AtomicLong clock = new AtomicLong(0L);
@@ -739,7 +687,6 @@ class CompositeStorageImplTest {
         // Act
         final var oneOne = sut.findTrackedResourceBySourceType("1", FakeSources.FakeSource1.class);
         final var oneTwo = sut.findTrackedResourceBySourceType("1", FakeSources.FakeSource2.class);
-
         final var twoOne = sut.findTrackedResourceBySourceType("2", FakeSources.FakeSource1.class);
         final var twoTwo = sut.findTrackedResourceBySourceType("2", FakeSources.FakeSource2.class);
 
