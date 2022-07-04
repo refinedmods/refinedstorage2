@@ -32,17 +32,17 @@ public abstract class AbstractFluidRenderer implements FluidRenderer {
         final BufferBuilder bufferBuilder = tesselator.getBuilder();
         bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         bufferBuilder.vertex(poseStack.last().pose(), x, slotYEnd, z)
-                .uv(sprite.getU0(), sprite.getV1())
-                .color(r, g, b, 255).endVertex();
+            .uv(sprite.getU0(), sprite.getV1())
+            .color(r, g, b, 255).endVertex();
         bufferBuilder.vertex(poseStack.last().pose(), slotXEnd, slotYEnd, z)
-                .uv(sprite.getU1(), sprite.getV1())
-                .color(r, g, b, 255).endVertex();
+            .uv(sprite.getU1(), sprite.getV1())
+            .color(r, g, b, 255).endVertex();
         bufferBuilder.vertex(poseStack.last().pose(), slotXEnd, y, z)
-                .uv(sprite.getU1(), sprite.getV0())
-                .color(r, g, b, 255).endVertex();
+            .uv(sprite.getU1(), sprite.getV0())
+            .color(r, g, b, 255).endVertex();
         bufferBuilder.vertex(poseStack.last().pose(), x, y, z)
-                .uv(sprite.getU0(), sprite.getV0())
-                .color(r, g, b, 255).endVertex();
+            .uv(sprite.getU0(), sprite.getV0())
+            .color(r, g, b, 255).endVertex();
         tesselator.end();
     }
 }

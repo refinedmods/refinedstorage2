@@ -36,10 +36,10 @@ public class ListenableResourceList<T> extends AbstractProxyResourceList<T> {
     @Override
     public Optional<ResourceListOperationResult<T>> remove(final T resource, final long amount) {
         return super.remove(resource, amount)
-                .map(result -> {
-                    listeners.forEach(listener -> listener.onChanged(result));
-                    return result;
-                });
+            .map(result -> {
+                listeners.forEach(listener -> listener.onChanged(result));
+                return result;
+            });
     }
 
     public void addListener(final ResourceListListener<T> listener) {

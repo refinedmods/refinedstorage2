@@ -18,20 +18,20 @@ public class FabricFluidGridResourceFactory extends AbstractFluidGridResourceFac
     @Override
     protected String getTooltip(final FluidResource resource) {
         return FluidVariantRendering
-                .getTooltip(toFluidVariant(resource))
-                .stream()
-                .map(Component::getString)
-                .collect(Collectors.joining("\n"));
+            .getTooltip(toFluidVariant(resource))
+            .stream()
+            .map(Component::getString)
+            .collect(Collectors.joining("\n"));
     }
 
     @Override
     protected String getModName(final String modId) {
         return FabricLoader
-                .getInstance()
-                .getModContainer(modId)
-                .map(ModContainer::getMetadata)
-                .map(ModMetadata::getName)
-                .orElse("");
+            .getInstance()
+            .getModContainer(modId)
+            .map(ModContainer::getMetadata)
+            .map(ModMetadata::getName)
+            .orElse("");
     }
 
     @Override

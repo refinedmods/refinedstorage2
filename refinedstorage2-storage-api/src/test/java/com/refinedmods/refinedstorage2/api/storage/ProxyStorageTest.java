@@ -81,11 +81,11 @@ class ProxyStorageTest {
         assertThat(extracted).isEqualTo(3);
         if (action == Action.EXECUTE) {
             assertThat(backed.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new ResourceAmount<>("A", 7)
+                new ResourceAmount<>("A", 7)
             );
         } else {
             assertThat(backed.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new ResourceAmount<>("A", 10)
+                new ResourceAmount<>("A", 10)
             );
         }
         assertThat(backed.getSourcesUsed()).containsExactly(customSource, customSource);

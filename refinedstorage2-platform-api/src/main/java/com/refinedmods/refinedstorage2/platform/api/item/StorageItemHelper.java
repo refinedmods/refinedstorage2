@@ -57,12 +57,12 @@ public final class StorageItemHelper {
                                        final LongFunction<String> stackInfoQuantityFormatter,
                                        final Set<StorageTooltipHelper.TooltipOption> options) {
         getInfo(level, stack).ifPresent(info -> StorageTooltipHelper.appendToTooltip(
-                tooltip,
-                info.stored(),
-                info.capacity(),
-                quantityFormatter,
-                stackInfoQuantityFormatter,
-                options
+            tooltip,
+            info.stored(),
+            info.capacity(),
+            quantityFormatter,
+            stackInfoQuantityFormatter,
+            options
         ));
         if (context.isAdvanced()) {
             getStorageId(stack).ifPresent(id -> {
@@ -87,9 +87,9 @@ public final class StorageItemHelper {
         }
 
         return storageId
-                .flatMap(id -> PlatformApi.INSTANCE.getStorageRepository(level).disassemble(id))
-                .map(disk -> returnByproducts(level, player, primaryByproduct, secondaryByproduct))
-                .orElseGet(() -> InteractionResultHolder.fail(stack));
+            .flatMap(id -> PlatformApi.INSTANCE.getStorageRepository(level).disassemble(id))
+            .map(disk -> returnByproducts(level, player, primaryByproduct, secondaryByproduct))
+            .orElseGet(() -> InteractionResultHolder.fail(stack));
     }
 
     private static InteractionResultHolder<ItemStack> returnByproducts(final Level level,

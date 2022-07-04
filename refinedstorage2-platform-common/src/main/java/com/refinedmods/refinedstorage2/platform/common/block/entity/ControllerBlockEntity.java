@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<ControllerNetworkNode>
-        implements ExtendedMenuProvider {
+    implements ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORED = "stored";
@@ -53,8 +53,8 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
 
     private static BlockEntityType<ControllerBlockEntity> getBlockEntityType(final ControllerType type) {
         return type == ControllerType.CREATIVE
-                ? BlockEntities.INSTANCE.getCreativeController()
-                : BlockEntities.INSTANCE.getController();
+            ? BlockEntities.INSTANCE.getCreativeController()
+            : BlockEntities.INSTANCE.getController();
     }
 
     public static long getStored(final CompoundTag tag) {
@@ -76,10 +76,10 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
 
         if (energyType != inLevelEnergyType && (lastTypeChanged == 0 || inTime)) {
             LOGGER.info(
-                    "Energy type state change for block at {}: {} -> {}",
-                    getBlockPos(),
-                    inLevelEnergyType,
-                    energyType
+                "Energy type state change for block at {}: {} -> {}",
+                getBlockPos(),
+                inLevelEnergyType,
+                energyType
             );
             this.lastTypeChanged = System.currentTimeMillis();
             updateEnergyTypeInLevel(state, energyType);
@@ -111,8 +111,8 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
     @Override
     public Component getDisplayName() {
         return createTranslation(
-                "block",
-                type == ControllerType.CREATIVE ? "creative_controller" : "controller"
+            "block",
+            type == ControllerType.CREATIVE ? "creative_controller" : "controller"
         );
     }
 

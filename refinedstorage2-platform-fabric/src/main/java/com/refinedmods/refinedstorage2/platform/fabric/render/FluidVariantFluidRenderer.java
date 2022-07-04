@@ -40,10 +40,10 @@ public class FluidVariantFluidRenderer extends AbstractFluidRenderer {
     @Override
     public List<Component> getTooltip(final FluidResource fluidResource) {
         return FluidVariantRendering.getTooltip(
-                getFluidVariantFromCache(fluidResource),
-                Minecraft.getInstance().options.advancedItemTooltips
-                        ? TooltipFlag.Default.ADVANCED
-                        : TooltipFlag.Default.NORMAL
+            getFluidVariantFromCache(fluidResource),
+            Minecraft.getInstance().options.advancedItemTooltips
+                ? TooltipFlag.Default.ADVANCED
+                : TooltipFlag.Default.NORMAL
         );
     }
 }

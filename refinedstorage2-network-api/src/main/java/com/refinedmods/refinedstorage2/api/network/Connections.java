@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.Set;
 
 public record Connections(
-        Set<NetworkNodeContainer> foundEntries,
-        Set<NetworkNodeContainer> newEntries,
-        Set<NetworkNodeContainer> removedEntries
+    Set<NetworkNodeContainer> foundEntries,
+    Set<NetworkNodeContainer> newEntries,
+    Set<NetworkNodeContainer> removedEntries
 ) {
     public Connections(final Set<NetworkNodeContainer> foundEntries,
                        final Set<NetworkNodeContainer> newEntries,

@@ -44,13 +44,13 @@ public class CableBlock extends AbstractNetworkNodeContainerBlock implements Sim
         super(BlockBehaviour.Properties.of(Material.GLASS).sound(SoundType.GLASS).strength(0.35F, 0.35F));
 
         registerDefaultState(getStateDefinition().any()
-                .setValue(NORTH, false)
-                .setValue(EAST, false)
-                .setValue(SOUTH, false)
-                .setValue(WEST, false)
-                .setValue(UP, false)
-                .setValue(DOWN, false)
-                .setValue(BlockStateProperties.WATERLOGGED, false));
+            .setValue(NORTH, false)
+            .setValue(EAST, false)
+            .setValue(SOUTH, false)
+            .setValue(WEST, false)
+            .setValue(UP, false)
+            .setValue(DOWN, false)
+            .setValue(BlockStateProperties.WATERLOGGED, false));
     }
 
     @Override
@@ -62,8 +62,8 @@ public class CableBlock extends AbstractNetworkNodeContainerBlock implements Sim
     @SuppressWarnings("deprecation")
     public FluidState getFluidState(final BlockState state) {
         return Boolean.TRUE.equals(state.getValue(BlockStateProperties.WATERLOGGED))
-                ? Fluids.WATER.getSource(false)
-                : super.getFluidState(state);
+            ? Fluids.WATER.getSource(false)
+            : super.getFluidState(state);
     }
 
     @Override
@@ -138,12 +138,12 @@ public class CableBlock extends AbstractNetworkNodeContainerBlock implements Sim
         final boolean down = hasConnection(world, pos.relative(Direction.DOWN));
 
         return currentState
-                .setValue(NORTH, north)
-                .setValue(EAST, east)
-                .setValue(SOUTH, south)
-                .setValue(WEST, west)
-                .setValue(UP, up)
-                .setValue(DOWN, down);
+            .setValue(NORTH, north)
+            .setValue(EAST, east)
+            .setValue(SOUTH, south)
+            .setValue(WEST, west)
+            .setValue(UP, up)
+            .setValue(DOWN, down);
     }
 
     @Override

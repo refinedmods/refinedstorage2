@@ -35,12 +35,12 @@ public class ControllerContainerMenu extends AbstractBaseContainerMenu implement
         this.playerEntity = playerInventory.player;
 
         this.redstoneModeProperty = TwoWaySyncProperty.forClient(
-                0,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneMode.IGNORE,
-                redstoneMode -> {
-                }
+            0,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneMode.IGNORE,
+            redstoneMode -> {
+            }
         );
 
         addDataSlot(redstoneModeProperty);
@@ -58,11 +58,11 @@ public class ControllerContainerMenu extends AbstractBaseContainerMenu implement
         addPlayerInventory(playerInventory, 8, 107);
 
         this.redstoneModeProperty = TwoWaySyncProperty.forServer(
-                0,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneModeSettings::getRedstoneMode,
-                controller::getRedstoneMode,
-                controller::setRedstoneMode
+            0,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneModeSettings::getRedstoneMode,
+            controller::getRedstoneMode,
+            controller::setRedstoneMode
         );
 
         addDataSlot(redstoneModeProperty);
@@ -75,14 +75,14 @@ public class ControllerContainerMenu extends AbstractBaseContainerMenu implement
             return;
         }
         final boolean changed = serverStored != controller.getActualStored()
-                || serverCapacity != controller.getActualCapacity();
+            || serverCapacity != controller.getActualCapacity();
         if (changed && energyUpdateRateLimiter.tryAcquire()) {
             serverStored = controller.getActualStored();
             serverCapacity = controller.getActualCapacity();
             Platform.INSTANCE.getServerToClientCommunications().sendControllerEnergy(
-                    (ServerPlayer) playerEntity,
-                    serverStored,
-                    serverCapacity
+                (ServerPlayer) playerEntity,
+                serverStored,
+                serverCapacity
             );
         }
     }

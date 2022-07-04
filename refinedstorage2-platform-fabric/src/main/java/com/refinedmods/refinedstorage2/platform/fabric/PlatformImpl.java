@@ -51,17 +51,17 @@ import net.minecraft.world.item.ItemStack;
 
 public final class PlatformImpl extends AbstractPlatform {
     private static final TagKey<Item> WRENCH_TAG = TagKey.create(
-            Registry.ITEM.key(),
-            new ResourceLocation("c", "wrenches")
+        Registry.ITEM.key(),
+        new ResourceLocation("c", "wrenches")
     );
 
     public PlatformImpl() {
         super(
-                new ServerToClientCommunicationsImpl(),
-                new ClientToServerCommunicationsImpl(),
-                new MenuOpenerImpl(),
-                new BucketQuantityFormatter(FluidConstants.BUCKET),
-                new FluidVariantFluidRenderer()
+            new ServerToClientCommunicationsImpl(),
+            new ClientToServerCommunicationsImpl(),
+            new MenuOpenerImpl(),
+            new BucketQuantityFormatter(FluidConstants.BUCKET),
+            new FluidVariantFluidRenderer()
         );
     }
 
@@ -88,8 +88,8 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public boolean isKeyDown(final KeyMapping keyMapping) {
         return InputConstants.isKeyDown(
-                Minecraft.getInstance().getWindow().getWindow(),
-                ((KeyMappingAccessor) keyMapping).getKey().getValue()
+            Minecraft.getInstance().getWindow().getWindow(),
+            ((KeyMappingAccessor) keyMapping).getKey().getValue()
         );
     }
 
@@ -143,11 +143,11 @@ public final class PlatformImpl extends AbstractPlatform {
 
     private Optional<FluidResource> convertNonEmptyToFluid(final ItemStack stack) {
         final Storage<FluidVariant> storage = FluidStorage.ITEM.find(
-                stack,
-                new InitialContentsContainerItemContext(ItemVariant.of(stack), 1)
+            stack,
+            new InitialContentsContainerItemContext(ItemVariant.of(stack), 1)
         );
         return Optional
-                .ofNullable(StorageUtil.findExtractableResource(storage, null))
-                .map(VariantUtil::ofFluidVariant);
+            .ofNullable(StorageUtil.findExtractableResource(storage, null))
+            .map(VariantUtil::ofFluidVariant);
     }
 }

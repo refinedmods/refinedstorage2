@@ -39,7 +39,7 @@ public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
         final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "redstone_mode"));
         lines.add(createTranslation("gui", "redstone_mode." + type.toString().toLowerCase(Locale.ROOT))
-                .withStyle(ChatFormatting.GRAY));
+            .withStyle(ChatFormatting.GRAY));
         return lines;
     }
 

@@ -33,16 +33,16 @@ public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntit
                                         final BlockState state,
                                         final FluidStorageType.Variant variant) {
         super(
-                BlockEntities.INSTANCE.getFluidStorageBlock(variant),
-                pos,
-                state,
-                new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.FLUID),
-                FluidResourceType.INSTANCE
+            BlockEntities.INSTANCE.getFluidStorageBlock(variant),
+            pos,
+            state,
+            new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.FLUID),
+            FluidResourceType.INSTANCE
         );
         this.variant = variant;
         this.displayName = createTranslation(
-                "block",
-                String.format("%s_fluid_storage_block", variant.getName())
+            "block",
+            String.format("%s_fluid_storage_block", variant.getName())
         );
     }
 
@@ -52,7 +52,7 @@ public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntit
             case TWO_HUNDRED_FIFTY_SIX_B -> Platform.INSTANCE.getConfig().getFluidStorageBlock().get256bEnergyUsage();
             case THOUSAND_TWENTY_FOUR_B -> Platform.INSTANCE.getConfig().getFluidStorageBlock().get1024bEnergyUsage();
             case FOUR_THOUSAND_NINETY_SIX_B ->
-                    Platform.INSTANCE.getConfig().getFluidStorageBlock().get4096bEnergyUsage();
+                Platform.INSTANCE.getConfig().getFluidStorageBlock().get4096bEnergyUsage();
             case CREATIVE -> Platform.INSTANCE.getConfig().getFluidStorageBlock().getCreativeEnergyUsage();
         };
     }
@@ -62,15 +62,15 @@ public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntit
         final TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
             final TrackedStorageImpl<FluidResource> delegate = new TrackedStorageImpl<>(
-                    new InMemoryStorageImpl<>(),
-                    trackingRepository,
-                    System::currentTimeMillis
+                new InMemoryStorageImpl<>(),
+                trackingRepository,
+                System::currentTimeMillis
             );
             return new PlatformStorage<>(delegate, FluidStorageType.INSTANCE, trackingRepository, listener);
         }
         final LimitedStorageImpl<FluidResource> delegate = new LimitedStorageImpl<>(
-                new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()
+            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+            variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()
         );
         return new LimitedPlatformStorage<>(delegate, FluidStorageType.INSTANCE, trackingRepository, listener);
     }
@@ -83,10 +83,10 @@ public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntit
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         return new FluidStorageBlockContainerMenu(
-                syncId,
-                player,
-                resourceFilterContainer,
-                this
+            syncId,
+            player,
+            resourceFilterContainer,
+            this
         );
     }
 }

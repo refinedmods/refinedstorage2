@@ -17,10 +17,10 @@ public class ForgeFluidGridResourceFactory extends AbstractFluidGridResourceFact
     @Override
     protected String getModName(final String modId) {
         return ModList
-                .get()
-                .getModContainerById(modId)
-                .map(container -> container.getModInfo().getDisplayName())
-                .orElse("");
+            .get()
+            .getModContainerById(modId)
+            .map(container -> container.getModInfo().getDisplayName())
+            .orElse("");
     }
 
     @Override

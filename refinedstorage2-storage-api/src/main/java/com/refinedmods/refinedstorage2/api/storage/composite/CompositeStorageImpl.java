@@ -134,11 +134,11 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
     public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
                                                                      final Class<? extends Source> sourceType) {
         return sources
-                .stream()
-                .filter(TrackedStorage.class::isInstance)
-                .map(storage -> (TrackedStorage<T>) storage)
-                .flatMap(storage -> storage.findTrackedResourceBySourceType(resource, sourceType).stream())
-                .max(Comparator.comparingLong(TrackedResource::getTime));
+            .stream()
+            .filter(TrackedStorage.class::isInstance)
+            .map(storage -> (TrackedStorage<T>) storage)
+            .flatMap(storage -> storage.findTrackedResourceBySourceType(resource, sourceType).stream())
+            .max(Comparator.comparingLong(TrackedResource::getTime));
     }
 
     @Override
@@ -167,8 +167,8 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
 
     private void removeContentOfSourceFromList(final Storage<T> source) {
         source.getAll().forEach(resourceAmount -> list.remove(
-                resourceAmount.getResource(),
-                resourceAmount.getAmount()
+            resourceAmount.getResource(),
+            resourceAmount.getAmount()
         ));
     }
 }

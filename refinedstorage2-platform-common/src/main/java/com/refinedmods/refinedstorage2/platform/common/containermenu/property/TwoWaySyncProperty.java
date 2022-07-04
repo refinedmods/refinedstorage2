@@ -42,23 +42,23 @@ public class TwoWaySyncProperty<T> extends DataSlot {
 
     public static TwoWaySyncProperty<Integer> integerForClient(final int index) {
         return TwoWaySyncProperty.forClient(
-                index,
-                value -> value,
-                value -> value,
-                0,
-                value -> {
-                }
+            index,
+            value -> value,
+            value -> value,
+            0,
+            value -> {
+            }
         );
     }
 
     public static TwoWaySyncProperty<Boolean> booleanForClient(final int index) {
         return TwoWaySyncProperty.forClient(
-                index,
-                value -> Boolean.TRUE.equals(value) ? 0 : 1,
-                value -> value == 0,
-                true,
-                value -> {
-                }
+            index,
+            value -> Boolean.TRUE.equals(value) ? 0 : 1,
+            value -> value == 0,
+            true,
+            value -> {
+            }
         );
     }
 

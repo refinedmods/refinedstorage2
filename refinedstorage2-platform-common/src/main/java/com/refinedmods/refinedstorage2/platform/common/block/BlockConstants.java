@@ -6,9 +6,9 @@ import net.minecraft.world.level.material.Material;
 
 public final class BlockConstants {
     public static final BlockBehaviour.Properties STONE_PROPERTIES = BlockBehaviour.Properties
-            .of(Material.STONE)
-            .strength(0.5F, 6.0F)
-            .sound(SoundType.STONE);
+        .of(Material.STONE)
+        .strength(0.5F, 6.0F)
+        .sound(SoundType.STONE);
 
     private BlockConstants() {
     }

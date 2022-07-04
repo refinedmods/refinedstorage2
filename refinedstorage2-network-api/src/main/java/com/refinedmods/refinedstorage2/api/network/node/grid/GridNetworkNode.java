@@ -44,8 +44,8 @@ public class GridNetworkNode<T> extends AbstractNetworkNode {
                                 final Class<? extends Source> sourceType) {
         final StorageChannel<T> storageChannel = getStorageChannel();
         storageChannel.getAll().forEach(resourceAmount -> consumer.accept(
-                resourceAmount,
-                storageChannel.findTrackedResourceBySourceType(resourceAmount.getResource(), sourceType)
+            resourceAmount,
+            storageChannel.findTrackedResourceBySourceType(resourceAmount.getResource(), sourceType)
         ));
     }
 

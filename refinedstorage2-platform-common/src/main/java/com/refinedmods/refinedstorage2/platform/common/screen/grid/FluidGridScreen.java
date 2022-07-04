@@ -40,11 +40,11 @@ public class FluidGridScreen extends AbstractGridScreen<FluidResource, FluidGrid
                                   final int slotY,
                                   final AbstractGridResource<FluidResource> resource) {
         Platform.INSTANCE.getFluidRenderer().render(
-                poseStack,
-                slotX,
-                slotY,
-                getBlitOffset(),
-                resource.getResourceAmount().getResource()
+            poseStack,
+            slotX,
+            slotY,
+            getBlitOffset(),
+            resource.getResourceAmount().getResource()
         );
     }
 
@@ -77,9 +77,9 @@ public class FluidGridScreen extends AbstractGridScreen<FluidResource, FluidGrid
     @Override
     protected void mouseClickedInGrid(final int clickedButton, final AbstractGridResource<FluidResource> resource) {
         getMenu().onExtract(
-                resource.getResourceAmount().getResource(),
-                getExtractMode(clickedButton),
-                shouldExtractToCursor()
+            resource.getResourceAmount().getResource(),
+            getExtractMode(clickedButton),
+            shouldExtractToCursor()
         );
     }
 

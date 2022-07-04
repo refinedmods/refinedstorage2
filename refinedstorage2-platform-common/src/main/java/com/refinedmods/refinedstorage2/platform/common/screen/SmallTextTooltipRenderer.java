@@ -59,23 +59,23 @@ public class SmallTextTooltipRenderer extends GuiComponent {
         bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         final Matrix4f matrix4f = poseStack.last().pose();
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 4,
-                tooltipX + tooltipWidth + 3, tooltipY - 3, 400, -267386864, -267386864);
+            tooltipX + tooltipWidth + 3, tooltipY - 3, 400, -267386864, -267386864);
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY + tooltipHeight + 3,
-                tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 4, 400, -267386864, -267386864);
+            tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 4, 400, -267386864, -267386864);
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3,
-                tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
+            tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
         fillGradient(matrix4f, bufferBuilder, tooltipX - 4, tooltipY - 3,
-                tooltipX - 3, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
+            tooltipX - 3, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
         fillGradient(matrix4f, bufferBuilder, tooltipX + tooltipWidth + 3, tooltipY - 3,
-                tooltipX + tooltipWidth + 4, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
+            tooltipX + tooltipWidth + 4, tooltipY + tooltipHeight + 3, 400, -267386864, -267386864);
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3 + 1,
-                tooltipX - 3 + 1, tooltipY + tooltipHeight + 3 - 1, 400, 1347420415, 1344798847);
+            tooltipX - 3 + 1, tooltipY + tooltipHeight + 3 - 1, 400, 1347420415, 1344798847);
         fillGradient(matrix4f, bufferBuilder, tooltipX + tooltipWidth + 2, tooltipY - 3 + 1,
-                tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3 - 1, 400, 1347420415, 1344798847);
+            tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3 - 1, 400, 1347420415, 1344798847);
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY - 3,
-                tooltipX + tooltipWidth + 3, tooltipY - 3 + 1, 400, 1347420415, 1347420415);
+            tooltipX + tooltipWidth + 3, tooltipY - 3 + 1, 400, 1347420415, 1347420415);
         fillGradient(matrix4f, bufferBuilder, tooltipX - 3, tooltipY + tooltipHeight + 2,
-                tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3, 400, 1344798847, 1344798847);
+            tooltipX + tooltipWidth + 3, tooltipY + tooltipHeight + 3, 400, 1344798847, 1344798847);
         RenderSystem.enableDepthTest();
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
@@ -84,7 +84,7 @@ public class SmallTextTooltipRenderer extends GuiComponent {
         RenderSystem.disableBlend();
         RenderSystem.enableTexture();
         final MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(
-                Tesselator.getInstance().getBuilder()
+            Tesselator.getInstance().getBuilder()
         );
         poseStack.translate(0.0D, 0.0D, 400.0D);
 

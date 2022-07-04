@@ -30,12 +30,12 @@ public class AccessModeSettings {
 
     public static TwoWaySyncProperty<AccessMode> createClientSyncProperty(final int index) {
         return TwoWaySyncProperty.forClient(
-                index,
-                AccessModeSettings::getAccessMode,
-                AccessModeSettings::getAccessMode,
-                AccessMode.INSERT_EXTRACT,
-                accessMode -> {
-                }
+            index,
+            AccessModeSettings::getAccessMode,
+            AccessModeSettings::getAccessMode,
+            AccessMode.INSERT_EXTRACT,
+            accessMode -> {
+            }
         );
     }
 }

@@ -13,7 +13,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.world.level.material.Fluid;
 
 public abstract class AbstractFluidGridResourceFactory
-        implements Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> {
+    implements Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> {
     @Override
     public AbstractGridResource<FluidResource> apply(final ResourceAmount<FluidResource> resourceAmount) {
         final String name = getName(resourceAmount.getResource());
@@ -28,11 +28,11 @@ public abstract class AbstractFluidGridResourceFactory
 
     private Set<String> getTags(final Fluid fluid) {
         return Registry.FLUID.getResourceKey(fluid)
-                .flatMap(Registry.FLUID::getHolder)
-                .stream()
-                .flatMap(Holder::tags)
-                .map(tagKey -> tagKey.location().getPath())
-                .collect(Collectors.toSet());
+            .flatMap(Registry.FLUID::getHolder)
+            .stream()
+            .flatMap(Holder::tags)
+            .map(tagKey -> tagKey.location().getPath())
+            .collect(Collectors.toSet());
     }
 
     private String getModId(final FluidResource fluid) {

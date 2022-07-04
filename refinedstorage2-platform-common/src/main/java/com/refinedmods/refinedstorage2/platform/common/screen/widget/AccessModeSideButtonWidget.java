@@ -29,7 +29,7 @@ public class AccessModeSideButtonWidget extends AbstractSideButtonWidget {
         this.accessModeAccessor = accessModeAccessor;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(AccessMode.values()).forEach(accessMode ->
-                tooltips.put(accessMode, calculateTooltip(accessMode)));
+            tooltips.put(accessMode, calculateTooltip(accessMode)));
     }
 
     private static OnPress createPressAction(final AccessModeAccessor accessModeAccessor) {
@@ -40,8 +40,8 @@ public class AccessModeSideButtonWidget extends AbstractSideButtonWidget {
         final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "access_mode"));
         lines.add(createTranslation(
-                "gui",
-                "access_mode." + accessMode.toString().toLowerCase(Locale.ROOT)
+            "gui",
+            "access_mode." + accessMode.toString().toLowerCase(Locale.ROOT)
         ).withStyle(ChatFormatting.GRAY));
         return lines;
     }

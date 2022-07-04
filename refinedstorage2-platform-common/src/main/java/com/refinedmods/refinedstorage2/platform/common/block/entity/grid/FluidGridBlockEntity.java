@@ -44,7 +44,7 @@ public class FluidGridBlockEntity extends AbstractGridBlockEntity<FluidResource>
 
     private ExtractableStorage<ItemResource> getBucketStorage() {
         return Objects.requireNonNull(getNode().getNetwork())
-                .getComponent(StorageNetworkComponent.class)
-                .getStorageChannel(StorageChannelTypes.ITEM);
+            .getComponent(StorageNetworkComponent.class)
+            .getStorageChannel(StorageChannelTypes.ITEM);
     }
 }

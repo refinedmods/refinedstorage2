@@ -59,10 +59,10 @@ public class DiskDriveItemBakedModel extends AbstractForwardingBakedModel {
     private List<BakedQuad> getDiskModel(@Nullable final Direction side,
                                          final RandomSource rand) {
         final List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(
-                null,
-                side,
-                rand,
-                EmptyModelData.INSTANCE
+            null,
+            side,
+            rand,
+            EmptyModelData.INSTANCE
         ));
         for (int i = 0; i < translators.length; ++i) {
             if ((disks & (1L << i)) != 0) {
@@ -76,10 +76,10 @@ public class DiskDriveItemBakedModel extends AbstractForwardingBakedModel {
                                          final RandomSource rand,
                                          final Vector3f translation) {
         final List<BakedQuad> diskQuads = diskDisconnectedModel.getQuads(
-                null,
-                side,
-                rand,
-                EmptyModelData.INSTANCE
+            null,
+            side,
+            rand,
+            EmptyModelData.INSTANCE
         );
         return QuadTransformer.translate(diskQuads, translation);
     }

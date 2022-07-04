@@ -30,9 +30,9 @@ public class GridFluidUpdatePacket {
 
     public static GridFluidUpdatePacket decode(final FriendlyByteBuf buf) {
         return new GridFluidUpdatePacket(
-                PacketUtil.readFluidResource(buf),
-                buf.readLong(),
-                PacketUtil.readTrackedResource(buf)
+            PacketUtil.readFluidResource(buf),
+            buf.readLong(),
+            PacketUtil.readTrackedResource(buf)
         );
     }
 

@@ -30,12 +30,12 @@ public class RedstoneModeSettings {
 
     public static TwoWaySyncProperty<RedstoneMode> createClientSyncProperty(final int index) {
         return TwoWaySyncProperty.forClient(
-                index,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneMode.IGNORE,
-                redstoneMode -> {
-                }
+            index,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneMode.IGNORE,
+            redstoneMode -> {
+            }
         );
     }
 }

@@ -39,8 +39,8 @@ public class SortingTypeSideButtonWidget extends AbstractSideButtonWidget {
         final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "grid.sorting.type"));
         lines.add(createTranslation(
-                "gui",
-                "grid.sorting.type." + type.toString().toLowerCase(Locale.ROOT)
+            "gui",
+            "grid.sorting.type." + type.toString().toLowerCase(Locale.ROOT)
         ).withStyle(ChatFormatting.GRAY));
         return lines;
     }

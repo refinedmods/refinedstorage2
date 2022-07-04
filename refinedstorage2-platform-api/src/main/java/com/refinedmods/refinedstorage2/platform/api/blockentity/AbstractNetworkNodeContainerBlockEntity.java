@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractNetworkNodeContainerBlockEntity<T extends NetworkNode> extends BlockEntity
-        implements NetworkNodeContainer {
+    implements NetworkNodeContainer {
     private final T node;
 
     protected AbstractNetworkNodeContainerBlockEntity(final BlockEntityType<?> type,
@@ -50,8 +50,8 @@ public abstract class AbstractNetworkNodeContainerBlockEntity<T extends NetworkN
     @Override
     public String toString() {
         return "NetworkNodeContainerBlockEntity{"
-                + "node=" + node
-                + ", worldPosition=" + worldPosition
-                + "}";
+            + "node=" + node
+            + ", worldPosition=" + worldPosition
+            + "}";
     }
 }

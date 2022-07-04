@@ -1,20 +1,20 @@
 {
-    "type": "minecraft:crafting_shapeless",
-    "ingredients": [
-        {
-            "item": "refinedstorage2:processor_binding"
-        },
-        {
-            "item": "minecraft:iron_ingot"
-        },
-        {
-            "item": "refinedstorage2:silicon"
-        },
-        {
-            "item": "minecraft:redstone"
-        }
-    ],
-    "result": {
-        "item": "refinedstorage2:raw_basic_processor"
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "refinedstorage2:processor_binding"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "refinedstorage2:silicon"
+    },
+    {
+      "item": "minecraft:redstone"
     }
+  ],
+  "result": {
+    "item": "refinedstorage2:raw_basic_processor"
+  }
 }

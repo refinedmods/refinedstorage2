@@ -51,8 +51,8 @@ import org.apache.logging.log4j.Logger;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public abstract class AbstractDiskDriveBlockEntity
-        extends AbstractInternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode>
-        implements BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider, StorageSettingsProvider {
+    extends AbstractInternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode>
+    implements BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider, StorageSettingsProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_PRIORITY = "pri";
@@ -70,9 +70,9 @@ public abstract class AbstractDiskDriveBlockEntity
 
     private final DiskDriveInventory diskInventory = new DiskDriveInventory(this);
     private final ResourceFilterContainer resourceFilterContainer = new ResourceFilterContainer(
-            PlatformApi.INSTANCE.getResourceTypeRegistry(),
-            9,
-            this::resourceFilterContainerChanged
+        PlatformApi.INSTANCE.getResourceTypeRegistry(),
+        9,
+        this::resourceFilterContainerChanged
     );
 
     private boolean syncRequested;
@@ -82,9 +82,9 @@ public abstract class AbstractDiskDriveBlockEntity
 
     protected AbstractDiskDriveBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new DiskDriveNetworkNode(
-                Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
-                Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
-                PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
+            Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
+            Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
         ));
         getNode().setDiskProvider(diskInventory);
         getNode().setListener(this);
@@ -98,7 +98,7 @@ public abstract class AbstractDiskDriveBlockEntity
 
     public static boolean hasDisk(final CompoundTag tag, final int slot) {
         return tag.contains(TAG_DISK_INVENTORY)
-                && ContainerUtil.hasItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), slot);
+            && ContainerUtil.hasItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), slot);
     }
 
     private void updateDiskStateIfNecessaryInLevel() {
@@ -335,12 +335,12 @@ public abstract class AbstractDiskDriveBlockEntity
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inv, final Player player) {
         return new DiskDriveContainerMenu(
-                syncId,
-                player,
-                diskInventory,
-                resourceFilterContainer,
-                this,
-                new EmptyStorageDiskInfoAccessor()
+            syncId,
+            player,
+            diskInventory,
+            resourceFilterContainer,
+            this,
+            new EmptyStorageDiskInfoAccessor()
         );
     }
 

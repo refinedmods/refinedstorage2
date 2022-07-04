@@ -107,15 +107,15 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
 
     private Predicate<AbstractGridResource<T>> parseAndBinOpNode(final BinOpNode node) throws GridQueryParserException {
         return and(Arrays.asList(
-                parseNode(node.left()),
-                parseNode(node.right())
+            parseNode(node.left()),
+            parseNode(node.right())
         ));
     }
 
     private Predicate<AbstractGridResource<T>> parseOrBinOpNode(final BinOpNode node) throws GridQueryParserException {
         return or(Arrays.asList(
-                parseNode(node.left()),
-                parseNode(node.right())
+            parseNode(node.left()),
+            parseNode(node.right())
         ));
     }
 
@@ -151,7 +151,7 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
 
     private static <T> Predicate<AbstractGridResource<T>> count(final Node node,
                                                                 final BiPredicate<Long, Long> predicate)
-            throws GridQueryParserException {
+        throws GridQueryParserException {
         if (!(node instanceof LiteralNode)) {
             throw new GridQueryParserException(node.getRange(), "Count filtering expects a literal", null);
         }
@@ -168,10 +168,10 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
     private static <T> Predicate<AbstractGridResource<T>> attributeMatch(final Set<GridResourceAttributeKey> keys,
                                                                          final String query) {
         return resource -> keys
-                .stream()
-                .map(resource::getAttribute)
-                .flatMap(Collection::stream)
-                .anyMatch(value -> normalize(value).contains(normalize(query)));
+            .stream()
+            .map(resource::getAttribute)
+            .flatMap(Collection::stream)
+            .anyMatch(value -> normalize(value).contains(normalize(query)));
     }
 
     private static String normalize(final String value) {

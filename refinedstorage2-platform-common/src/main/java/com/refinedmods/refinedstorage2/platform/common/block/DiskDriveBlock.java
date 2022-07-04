@@ -35,7 +35,7 @@ public class DiskDriveBlock extends AbstractNetworkNodeContainerBlock {
                                                                   final BlockState state,
                                                                   final BlockEntityType<T> type) {
         return type == BlockEntities.INSTANCE.getDiskDrive() && !level.isClientSide
-                ? (l, p, s, be) -> AbstractDiskDriveBlockEntity.serverTick(s, (AbstractDiskDriveBlockEntity) be)
-                : null;
+            ? (l, p, s, be) -> AbstractDiskDriveBlockEntity.serverTick(s, (AbstractDiskDriveBlockEntity) be)
+            : null;
     }
 }

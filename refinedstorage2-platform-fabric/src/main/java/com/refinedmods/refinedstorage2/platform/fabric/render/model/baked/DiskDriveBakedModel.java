@@ -33,9 +33,9 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 2; ++x) {
                 TRANSLATORS[i++] = new QuadTranslator(
-                        x == 0 ? -(2F / 16F) : -(9F / 16F),
-                        -((y * 3F) / 16F) - (2F / 16F),
-                        0
+                    x == 0 ? -(2F / 16F) : -(9F / 16F),
+                    -((y * 3F) / 16F) - (2F / 16F),
+                    0
                 );
             }
         }

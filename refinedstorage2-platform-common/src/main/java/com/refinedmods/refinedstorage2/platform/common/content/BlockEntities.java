@@ -34,9 +34,9 @@ public final class BlockEntities {
     @Nullable
     private Supplier<BlockEntityType<ControllerBlockEntity>> creativeController;
     private final Map<ItemStorageType.Variant, Supplier<BlockEntityType<ItemStorageBlockBlockEntity>>>
-            itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
+        itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
     private final Map<FluidStorageType.Variant, Supplier<BlockEntityType<FluidStorageBlockBlockEntity>>>
-            fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
+        fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
 
     private BlockEntities() {
     }

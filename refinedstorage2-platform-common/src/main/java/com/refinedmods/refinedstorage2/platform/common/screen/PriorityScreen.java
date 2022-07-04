@@ -71,34 +71,34 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
         super.init();
 
         addRenderableWidget(new Button(
-                leftPos + ACTION_BUTTON_X,
-                topPos + ACTION_BUTTON_Y, ACTION_BUTTON_WIDTH,
-                20,
-                RESET_TEXT,
-                btn -> reset()
+            leftPos + ACTION_BUTTON_X,
+            topPos + ACTION_BUTTON_Y, ACTION_BUTTON_WIDTH,
+            20,
+            RESET_TEXT,
+            btn -> reset()
         ));
         addRenderableWidget(new Button(
-                leftPos + ACTION_BUTTON_X,
-                topPos + ACTION_BUTTON_Y + 24, ACTION_BUTTON_WIDTH,
-                20,
-                SET_TEXT,
-                btn -> ok()
+            leftPos + ACTION_BUTTON_X,
+            topPos + ACTION_BUTTON_Y + 24, ACTION_BUTTON_WIDTH,
+            20,
+            SET_TEXT,
+            btn -> ok()
         ));
         addRenderableWidget(new Button(
-                leftPos + ACTION_BUTTON_X,
-                topPos + ACTION_BUTTON_Y + 48, ACTION_BUTTON_WIDTH,
-                20,
-                CANCEL_TEXT,
-                btn -> close()
+            leftPos + ACTION_BUTTON_X,
+            topPos + ACTION_BUTTON_Y + 48, ACTION_BUTTON_WIDTH,
+            20,
+            CANCEL_TEXT,
+            btn -> close()
         ));
 
         amountField = new EditBox(
-                font,
-                leftPos + AMOUNT_X,
-                topPos + AMOUNT_Y,
-                69 - 6,
-                font.lineHeight,
-                Component.empty()
+            font,
+            leftPos + AMOUNT_X,
+            topPos + AMOUNT_Y,
+            69 - 6,
+            font.lineHeight,
+            Component.empty()
         );
         amountField.setBordered(false);
         amountField.setValue(String.valueOf(priorityAccessor.getPriority()));
@@ -182,8 +182,8 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
             return true;
         }
         if (amountField != null
-                && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER)
-                && amountField.isFocused()) {
+            && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER)
+            && amountField.isFocused()) {
             ok();
             return true;
         }

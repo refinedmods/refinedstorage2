@@ -69,8 +69,8 @@ public abstract class AbstractBaseBlock extends Block {
         final BlockState state = defaultBlockState();
         if (hasBiDirection()) {
             return state.setValue(
-                    DIRECTION,
-                    getDirection(ctx.getHorizontalDirection(), ctx.getPlayer() != null ? ctx.getPlayer().getXRot() : 0)
+                DIRECTION,
+                getDirection(ctx.getHorizontalDirection(), ctx.getPlayer() != null ? ctx.getPlayer().getXRot() : 0)
             );
         }
         return state;
@@ -101,7 +101,7 @@ public abstract class AbstractBaseBlock extends Block {
                                  final InteractionHand hand,
                                  final BlockHitResult hit) {
         return tryOpenScreen(state, level, pos, player)
-                .orElseGet(() -> super.use(state, level, pos, player, hand, hit));
+            .orElseGet(() -> super.use(state, level, pos, player, hand, hit));
     }
 
     private Optional<InteractionResult> tryOpenScreen(final BlockState state,
@@ -133,7 +133,7 @@ public abstract class AbstractBaseBlock extends Block {
                          final BlockState newState,
                          final boolean moved) {
         if (state.getBlock() != newState.getBlock()
-                && !state.getBlock().getClass().equals(newState.getBlock().getClass())) {
+            && !state.getBlock().getClass().equals(newState.getBlock().getClass())) {
             final BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof BlockEntityWithDrops drops) {
                 Containers.dropContents(level, pos, drops.getDrops());
@@ -164,12 +164,12 @@ public abstract class AbstractBaseBlock extends Block {
             final boolean success = dismantleOrRotate(state, level, hitResult, player);
             if (success) {
                 level.playSound(
-                        null,
-                        hitResult.getBlockPos(),
-                        Sounds.INSTANCE.getWrench(),
-                        SoundSource.BLOCKS,
-                        1.0F,
-                        1.0F
+                    null,
+                    hitResult.getBlockPos(),
+                    Sounds.INSTANCE.getWrench(),
+                    SoundSource.BLOCKS,
+                    1.0F,
+                    1.0F
                 );
             }
         }
@@ -225,11 +225,11 @@ public abstract class AbstractBaseBlock extends Block {
         }
         level.setBlockAndUpdate(hitResult.getBlockPos(), Blocks.AIR.defaultBlockState());
         level.addFreshEntity(new ItemEntity(
-                level,
-                hitResult.getLocation().x,
-                hitResult.getLocation().y,
-                hitResult.getLocation().z,
-                stack
+            level,
+            hitResult.getLocation().x,
+            hitResult.getLocation().y,
+            hitResult.getLocation().z,
+            stack
         ));
     }
 }

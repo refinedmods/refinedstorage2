@@ -65,13 +65,13 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     private void setRenderLayers() {
         BlockRenderLayerMap.INSTANCE.putBlock(Blocks.INSTANCE.getCable(), RenderType.cutout());
         Blocks.INSTANCE.getGrid().values().forEach(block ->
-                BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
+            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
         Blocks.INSTANCE.getFluidGrid().values().forEach(block ->
-                BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
+            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
         Blocks.INSTANCE.getController().values().forEach(block ->
-                BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
+            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
         Blocks.INSTANCE.getCreativeController().values().forEach(block ->
-                BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
+            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
     }
 
     private void registerPackets() {
@@ -81,12 +81,12 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ACTIVE, new GridActivePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.CONTROLLER_ENERGY, new ControllerEnergyPacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.RESOURCE_FILTER_SLOT_UPDATE,
-                new ResourceFilterSlotUpdatePacket());
+            new ResourceFilterSlotUpdatePacket());
     }
 
     private void registerBlockEntityRenderers() {
         BlockEntityRendererRegistry.register(BlockEntities.INSTANCE.getDiskDrive(),
-                ctx -> new DiskDriveBlockEntityRendererImpl<>());
+            ctx -> new DiskDriveBlockEntityRendererImpl<>());
     }
 
     private void registerCustomModels() {
@@ -112,18 +112,18 @@ public class ClientModInitializerImpl implements ClientModInitializer {
 
     private void registerKeyBindings() {
         KeyMappings.INSTANCE.setFocusSearchBar(KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                createTranslationKey("key", "focus_search_bar"),
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_TAB,
-                createTranslationKey("category", "key_bindings")
+            createTranslationKey("key", "focus_search_bar"),
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_TAB,
+            createTranslationKey("category", "key_bindings")
         )));
     }
 
     private void registerModelPredicates() {
         Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemPropertiesAccessor.register(
-                controllerBlockItem.get(),
-                createIdentifier("stored_in_controller"),
-                new ControllerModelPredicateProvider()
+            controllerBlockItem.get(),
+            createIdentifier("stored_in_controller"),
+            new ControllerModelPredicateProvider()
         ));
     }
 
@@ -141,12 +141,12 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         LOGGER.info("Activating JEI grid synchronizers");
         final JeiProxy jeiProxy = new JeiProxy();
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
-                createIdentifier("jei"),
-                new JeiGridSynchronizer(jeiProxy, false)
+            createIdentifier("jei"),
+            new JeiGridSynchronizer(jeiProxy, false)
         );
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
-                createIdentifier("jei_two_way"),
-                new JeiGridSynchronizer(jeiProxy, true)
+            createIdentifier("jei_two_way"),
+            new JeiGridSynchronizer(jeiProxy, true)
         );
     }
 
@@ -154,12 +154,12 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         LOGGER.info("Activating REI grid synchronizers");
         final ReiProxy reiProxy = new ReiProxy();
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
-                createIdentifier("rei"),
-                new ReiGridSynchronizer(reiProxy, false)
+            createIdentifier("rei"),
+            new ReiGridSynchronizer(reiProxy, false)
         );
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
-                createIdentifier("rei_two_way"),
-                new ReiGridSynchronizer(reiProxy, true)
+            createIdentifier("rei_two_way"),
+            new ReiGridSynchronizer(reiProxy, true)
         );
     }
 }

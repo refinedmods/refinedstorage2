@@ -1,4 +1,3 @@
-
 package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
@@ -37,8 +36,8 @@ public class StorageInfoRequestPacket {
 
     private static void handle(final StorageInfoRequestPacket packet, final ServerPlayer player) {
         final StorageInfo info = PlatformApi.INSTANCE
-                .getStorageRepository(player.getCommandSenderWorld())
-                .getInfo(packet.id);
+            .getStorageRepository(player.getCommandSenderWorld())
+            .getInfo(packet.id);
 
         Platform.INSTANCE.getServerToClientCommunications().sendStorageInfoResponse(player, packet.id, info);
     }

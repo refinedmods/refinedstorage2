@@ -31,8 +31,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public abstract class AbstractStorageBlockBlockEntity<T>
-        extends AbstractInternalNetworkNodeContainerBlockEntity<StorageNetworkNode<T>>
-        implements ExtendedMenuProvider, StorageSettingsProvider {
+    extends AbstractInternalNetworkNodeContainerBlockEntity<StorageNetworkNode<T>>
+    implements ExtendedMenuProvider, StorageSettingsProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORAGE_ID = "sid";
@@ -56,10 +56,10 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         super(type, pos, state, node);
         node.setNormalizer(this::normalize);
         this.resourceFilterContainer = new FilteredResourceFilterContainer(
-                PlatformApi.INSTANCE.getResourceTypeRegistry(),
-                9,
-                this::resourceFilterContainerChanged,
-                resourceType
+            PlatformApi.INSTANCE.getResourceTypeRegistry(),
+            9,
+            this::resourceFilterContainerChanged,
+            resourceType
         );
     }
 
@@ -100,9 +100,9 @@ public abstract class AbstractStorageBlockBlockEntity<T>
             // In both cases listed above we need to clean up the storage we create here.
             storageId = UUID.randomUUID();
             getNode().initializeNewStorage(
-                    storageRepository,
-                    createStorage(storageRepository::markAsChanged),
-                    storageId
+                storageRepository,
+                createStorage(storageRepository::markAsChanged),
+                storageId
             );
         } else {
             // The existing block entity got loaded in the level (#load(CompoundTag) -> #setLevel(Level)).
@@ -112,9 +112,9 @@ public abstract class AbstractStorageBlockBlockEntity<T>
 
     public void modifyStorageIdAfterAlreadyInitialized(final UUID actualStorageId) {
         LOGGER.info(
-                "Storage {} got placed through nbt, replacing with actual storage {}",
-                storageId,
-                actualStorageId
+            "Storage {} got placed through nbt, replacing with actual storage {}",
+            storageId,
+            actualStorageId
         );
         cleanupUnneededInitialStorageAndReinitialize(actualStorageId);
         this.storageId = actualStorageId;
@@ -126,9 +126,9 @@ public abstract class AbstractStorageBlockBlockEntity<T>
             final UUID actualStorageId = tag.getUUID(TAG_STORAGE_ID);
             if (isPlacedThroughNbtPlacement(actualStorageId)) {
                 LOGGER.info(
-                        "Storage {} got placed through nbt, replacing with actual storage {}",
-                        storageId,
-                        actualStorageId
+                    "Storage {} got placed through nbt, replacing with actual storage {}",
+                    storageId,
+                    actualStorageId
                 );
                 cleanupUnneededInitialStorageAndReinitialize(actualStorageId);
             }
@@ -165,10 +165,10 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         // we got placed with an existing storage ID (#setLevel(Level) -> modifyStorageAfterAlreadyInitialized(UUID)).
         // Clean up the storage created earlier in #setLevel(Level).
         final PlatformStorageRepository storageRepository = PlatformApi.INSTANCE
-                .getStorageRepository(Objects.requireNonNull(level));
+            .getStorageRepository(Objects.requireNonNull(level));
         storageRepository.disassemble(Objects.requireNonNull(storageId)).ifPresentOrElse(
-                storage -> LOGGER.debug("Unneeded storage {} successfully removed", storageId),
-                () -> LOGGER.warn("Unneeded storage {} could not be removed", storageId)
+            storage -> LOGGER.debug("Unneeded storage {} successfully removed", storageId),
+            () -> LOGGER.warn("Unneeded storage {} could not be removed", storageId)
         );
         getNode().initializeExistingStorage(storageRepository, actualStorageId);
     }

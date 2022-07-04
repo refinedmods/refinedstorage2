@@ -39,7 +39,7 @@ public class SizeSideButtonWidget extends AbstractSideButtonWidget {
         final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "grid.size"));
         lines.add(createTranslation("gui", "grid.size." + size.toString().toLowerCase(Locale.ROOT))
-                .withStyle(ChatFormatting.GRAY));
+            .withStyle(ChatFormatting.GRAY));
         return lines;
     }
 

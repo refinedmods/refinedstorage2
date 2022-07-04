@@ -25,11 +25,11 @@ public abstract class AbstractStorageBlockBlockItem extends BlockItem {
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
         return StorageItemHelper.tryDisassembly(
-                level,
-                player,
-                stack,
-                createPrimaryDisassemblyByproduct(stack.getCount()),
-                createSecondaryDisassemblyByproduct(stack.getCount())
+            level,
+            player,
+            stack,
+            createPrimaryDisassemblyByproduct(stack.getCount()),
+            createSecondaryDisassemblyByproduct(stack.getCount())
         );
     }
 
@@ -49,7 +49,7 @@ public abstract class AbstractStorageBlockBlockItem extends BlockItem {
                                       final Level level,
                                       final ItemStack stack) {
         StorageItemHelper.getStorageId(stack).ifPresent(id ->
-                updateBlockEntityWithStorageId(pos, level.getBlockEntity(pos), id));
+            updateBlockEntityWithStorageId(pos, level.getBlockEntity(pos), id));
     }
 
     protected abstract ItemStack createPrimaryDisassemblyByproduct(int count);

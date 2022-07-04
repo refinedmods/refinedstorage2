@@ -45,9 +45,9 @@ public final class StorageTooltipHelper {
                                                        final long stored,
                                                        final LongFunction<String> quantityFormatter) {
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
-                "misc",
-                "stored",
-                Component.literal(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN)
+            "misc",
+            "stored",
+            Component.literal(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN)
         ).withStyle(ChatFormatting.GRAY));
     }
 
@@ -56,10 +56,10 @@ public final class StorageTooltipHelper {
                                                     final long capacity,
                                                     final LongFunction<String> quantityFormatter) {
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
-                "misc",
-                "stored_with_capacity",
-                Component.literal(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN),
-                Component.literal(quantityFormatter.apply(capacity)).withStyle(ChatFormatting.BLUE)
+            "misc",
+            "stored_with_capacity",
+            Component.literal(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN),
+            Component.literal(quantityFormatter.apply(capacity)).withStyle(ChatFormatting.BLUE)
         ).withStyle(ChatFormatting.GRAY));
     }
 
@@ -68,9 +68,9 @@ public final class StorageTooltipHelper {
                                                          final long stored) {
         final long stacks = stored / 64L;
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
-                "misc",
-                "stacks",
-                Component.literal(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN)
+            "misc",
+            "stacks",
+            Component.literal(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN)
         ).withStyle(ChatFormatting.GRAY));
     }
 
@@ -81,10 +81,10 @@ public final class StorageTooltipHelper {
         final long stacks = stored / 64L;
         final long maxStacks = capacity / 64L;
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
-                "misc",
-                "stacks_with_capacity",
-                Component.literal(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN),
-                Component.literal(quantityFormatter.apply(maxStacks)).withStyle(ChatFormatting.BLUE)
+            "misc",
+            "stacks_with_capacity",
+            Component.literal(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN),
+            Component.literal(quantityFormatter.apply(maxStacks)).withStyle(ChatFormatting.BLUE)
         ).withStyle(ChatFormatting.GRAY));
     }
 
@@ -93,9 +93,9 @@ public final class StorageTooltipHelper {
                                     final double capacity) {
         final double progress = stored / capacity;
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
-                "misc",
-                "full",
-                Component.literal("" + (int) (progress * 100D)).withStyle(ChatFormatting.AQUA)
+            "misc",
+            "full",
+            Component.literal("" + (int) (progress * 100D)).withStyle(ChatFormatting.AQUA)
         ).withStyle(ChatFormatting.GRAY));
     }
 }

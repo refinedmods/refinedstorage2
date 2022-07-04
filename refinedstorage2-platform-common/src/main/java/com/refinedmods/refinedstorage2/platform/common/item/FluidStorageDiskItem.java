@@ -35,7 +35,7 @@ import net.minecraft.world.level.Level;
 public class FluidStorageDiskItem extends AbstractStorageDiskItem {
     private final FluidStorageType.Variant variant;
     private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions =
-            EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
+        EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
     public FluidStorageDiskItem(final CreativeModeTab tab, final FluidStorageType.Variant variant) {
         super(new Item.Properties().tab(tab).stacksTo(1).fireResistant());
@@ -52,13 +52,13 @@ public class FluidStorageDiskItem extends AbstractStorageDiskItem {
                                 final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
         StorageItemHelper.appendToTooltip(
-                stack,
-                level,
-                tooltip,
-                context,
-                Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits,
-                Platform.INSTANCE.getBucketQuantityFormatter()::format,
-                tooltipOptions
+            stack,
+            level,
+            tooltip,
+            context,
+            Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits,
+            Platform.INSTANCE.getBucketQuantityFormatter()::format,
+            tooltipOptions
         );
     }
 
@@ -77,26 +77,26 @@ public class FluidStorageDiskItem extends AbstractStorageDiskItem {
         final TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
             final TrackedStorageImpl<FluidResource> delegate = new TrackedStorageImpl<>(
-                    new InMemoryStorageImpl<>(),
-                    trackingRepository,
-                    System::currentTimeMillis
+                new InMemoryStorageImpl<>(),
+                trackingRepository,
+                System::currentTimeMillis
             );
             return new PlatformStorage<>(
-                    delegate,
-                    FluidStorageType.INSTANCE,
-                    trackingRepository,
-                    PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
-            );
-        }
-        final LimitedStorageImpl<FluidResource> delegate = new LimitedStorageImpl<>(
-                new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()
-        );
-        return new LimitedPlatformStorage<>(
                 delegate,
                 FluidStorageType.INSTANCE,
                 trackingRepository,
                 PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
+            );
+        }
+        final LimitedStorageImpl<FluidResource> delegate = new LimitedStorageImpl<>(
+            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+            variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()
+        );
+        return new LimitedPlatformStorage<>(
+            delegate,
+            FluidStorageType.INSTANCE,
+            trackingRepository,
+            PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
         );
     }
 

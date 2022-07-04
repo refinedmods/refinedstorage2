@@ -15,7 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends AbstractNetworkNode>
-        extends AbstractNetworkNodeContainerBlockEntity<T> {
+    extends AbstractNetworkNodeContainerBlockEntity<T> {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final int ACTIVE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
@@ -36,8 +36,8 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
 
     private boolean isActive() {
         return level != null
-                && level.isLoaded(worldPosition)
-                && redstoneMode.isActive(level.hasNeighborSignal(worldPosition));
+            && level.isLoaded(worldPosition)
+            && redstoneMode.isActive(level.hasNeighborSignal(worldPosition));
     }
 
     @Override

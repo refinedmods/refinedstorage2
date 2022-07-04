@@ -1,23 +1,23 @@
 {
-    "type": "minecraft:crafting_shaped",
-    "pattern": [
-        "EEE",
-        "GRG",
-        "EEE"
-    ],
-    "key": {
-        "E": {
-            "item": "refinedstorage2:quartz_enriched_iron"
-        },
-        "G": {
-            "item": "minecraft:glass"
-        },
-        "R": {
-            "item": "minecraft:redstone"
-        }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "EEE",
+    "GRG",
+    "EEE"
+  ],
+  "key": {
+    "E": {
+      "item": "refinedstorage2:quartz_enriched_iron"
     },
-    "result": {
-        "item": "refinedstorage2:cable",
-        "count": 12
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "R": {
+      "item": "minecraft:redstone"
     }
+  },
+  "result": {
+    "item": "refinedstorage2:cable",
+    "count": 12
+  }
 }

@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 
 public abstract class AbstractStorageContainerMenu extends AbstractResourceFilterContainerMenu
-        implements StorageAccessor {
+    implements StorageAccessor {
     private final TwoWaySyncProperty<Integer> priorityProperty;
     private final TwoWaySyncProperty<FilterMode> filterModeProperty;
     private final TwoWaySyncProperty<Boolean> exactModeProperty;
@@ -51,39 +51,39 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceFilte
         super(type, syncId, resourceTypeRegistry, player, container);
 
         this.priorityProperty = TwoWaySyncProperty.forServer(
-                0,
-                priority -> priority,
-                priority -> priority,
-                storageSettingsProvider::getPriority,
-                storageSettingsProvider::setPriority
+            0,
+            priority -> priority,
+            priority -> priority,
+            storageSettingsProvider::getPriority,
+            storageSettingsProvider::setPriority
         );
         this.filterModeProperty = TwoWaySyncProperty.forServer(
-                1,
-                FilterModeSettings::getFilterMode,
-                FilterModeSettings::getFilterMode,
-                storageSettingsProvider::getFilterMode,
-                storageSettingsProvider::setFilterMode
+            1,
+            FilterModeSettings::getFilterMode,
+            FilterModeSettings::getFilterMode,
+            storageSettingsProvider::getFilterMode,
+            storageSettingsProvider::setFilterMode
         );
         this.exactModeProperty = TwoWaySyncProperty.forServer(
-                2,
-                value -> Boolean.TRUE.equals(value) ? 0 : 1,
-                value -> value == 0,
-                storageSettingsProvider::isExactMode,
-                storageSettingsProvider::setExactMode
+            2,
+            value -> Boolean.TRUE.equals(value) ? 0 : 1,
+            value -> value == 0,
+            storageSettingsProvider::isExactMode,
+            storageSettingsProvider::setExactMode
         );
         this.accessModeProperty = TwoWaySyncProperty.forServer(
-                3,
-                AccessModeSettings::getAccessMode,
-                AccessModeSettings::getAccessMode,
-                storageSettingsProvider::getAccessMode,
-                storageSettingsProvider::setAccessMode
+            3,
+            AccessModeSettings::getAccessMode,
+            AccessModeSettings::getAccessMode,
+            storageSettingsProvider::getAccessMode,
+            storageSettingsProvider::setAccessMode
         );
         this.redstoneModeProperty = TwoWaySyncProperty.forServer(
-                4,
-                RedstoneModeSettings::getRedstoneMode,
-                RedstoneModeSettings::getRedstoneMode,
-                storageSettingsProvider::getRedstoneMode,
-                storageSettingsProvider::setRedstoneMode
+            4,
+            RedstoneModeSettings::getRedstoneMode,
+            RedstoneModeSettings::getRedstoneMode,
+            storageSettingsProvider::getRedstoneMode,
+            storageSettingsProvider::setRedstoneMode
         );
 
         addDataSlot(priorityProperty);

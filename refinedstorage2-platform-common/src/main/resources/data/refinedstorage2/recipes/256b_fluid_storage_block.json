@@ -1,25 +1,25 @@
 {
-    "type": "minecraft:crafting_shaped",
-    "pattern": [
-        "EPE",
-        "EME",
-        "ERE"
-    ],
-    "key": {
-        "M": {
-            "item": "refinedstorage2:machine_casing"
-        },
-        "R": {
-            "item": "minecraft:redstone"
-        },
-        "P": {
-            "item": "refinedstorage2:256b_fluid_storage_part"
-        },
-        "E": {
-            "item": "refinedstorage2:quartz_enriched_iron"
-        }
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "EPE",
+    "EME",
+    "ERE"
+  ],
+  "key": {
+    "M": {
+      "item": "refinedstorage2:machine_casing"
     },
-    "result": {
-        "item": "refinedstorage2:256b_fluid_storage_block"
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "P": {
+      "item": "refinedstorage2:256b_fluid_storage_part"
+    },
+    "E": {
+      "item": "refinedstorage2:quartz_enriched_iron"
     }
+  },
+  "result": {
+    "item": "refinedstorage2:256b_fluid_storage_block"
+  }
 }

@@ -19,9 +19,9 @@ public abstract class AbstractModelGeometry<T extends IModelGeometry<T>> impleme
                                             final Function<ResourceLocation, UnbakedModel> modelGetter,
                                             final Set<Pair<String, String>> missingTextureErrors) {
         return getModels()
-                .stream()
-                .map(modelGetter)
-                .flatMap(unbakedModel -> unbakedModel.getMaterials(modelGetter, missingTextureErrors).stream())
-                .toList();
+            .stream()
+            .map(modelGetter)
+            .flatMap(unbakedModel -> unbakedModel.getMaterials(modelGetter, missingTextureErrors).stream())
+            .toList();
     }
 }

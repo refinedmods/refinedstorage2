@@ -52,8 +52,8 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
                                              final int slotIndex,
                                              final int containerIndex) {
         networkManager.send(
-                player,
-                new ResourceFilterSlotUpdatePacket(slotIndex, containerIndex, resourceFilterContainer)
+            player,
+            new ResourceFilterSlotUpdatePacket(slotIndex, containerIndex, resourceFilterContainer)
         );
     }
 

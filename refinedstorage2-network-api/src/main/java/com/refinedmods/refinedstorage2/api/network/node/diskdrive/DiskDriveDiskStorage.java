@@ -100,7 +100,7 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
                                                                      final Class<? extends Source> sourceType) {
         return delegate instanceof TrackedStorage<T> trackedStorage
-                ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType)
-                : Optional.empty();
+            ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType)
+            : Optional.empty();
     }
 }

@@ -110,9 +110,9 @@ public class ItemGridScreen extends AbstractGridScreen<ItemResource, ItemGridCon
     @Override
     protected void mouseClickedInGrid(final int clickedButton, final AbstractGridResource<ItemResource> resource) {
         getMenu().onExtract(
-                resource.getResourceAmount().getResource(),
-                getExtractMode(clickedButton),
-                shouldExtractToCursor()
+            resource.getResourceAmount().getResource(),
+            getExtractMode(clickedButton),
+            shouldExtractToCursor()
         );
     }
 

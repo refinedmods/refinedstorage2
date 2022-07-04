@@ -35,9 +35,9 @@ public class DiskDriveModelGeometry extends AbstractModelGeometry<DiskDriveModel
                            final ItemOverrides overrides,
                            final ResourceLocation modelLocation) {
         return new DiskDriveBakedModel(
-                Objects.requireNonNull(bakery.bake(BASE_MODEL, modelTransform, spriteGetter)),
-                Objects.requireNonNull(bakery.bake(DISK_MODEL, modelTransform, spriteGetter)),
-                Objects.requireNonNull(bakery.bake(DISK_DISCONNECTED_MODEL, modelTransform, spriteGetter))
+            Objects.requireNonNull(bakery.bake(BASE_MODEL, modelTransform, spriteGetter)),
+            Objects.requireNonNull(bakery.bake(DISK_MODEL, modelTransform, spriteGetter)),
+            Objects.requireNonNull(bakery.bake(DISK_DISCONNECTED_MODEL, modelTransform, spriteGetter))
         );
     }
 }

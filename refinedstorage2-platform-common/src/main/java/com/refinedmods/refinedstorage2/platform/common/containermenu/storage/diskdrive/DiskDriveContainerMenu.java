@@ -43,10 +43,10 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
         this.storageInfoAccessor = new StorageDiskInfoAccessorImpl(playerInventory.player.getCommandSenderWorld());
 
         addSlots(
-                playerInventory.player,
-                new SimpleContainer(DiskDriveNetworkNode.DISK_COUNT),
-                new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, () -> {
-                })
+            playerInventory.player,
+            new SimpleContainer(DiskDriveNetworkNode.DISK_COUNT),
+            new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, () -> {
+            })
         );
 
         initializeResourceFilterSlots(buf);
@@ -59,12 +59,12 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
                                   final AbstractDiskDriveBlockEntity diskDrive,
                                   final StorageDiskInfoAccessor storageInfoAccessor) {
         super(
-                Menus.INSTANCE.getDiskDrive(),
-                syncId,
-                PlatformApi.INSTANCE.getResourceTypeRegistry(),
-                player,
-                diskDrive,
-                resourceFilterContainer
+            Menus.INSTANCE.getDiskDrive(),
+            syncId,
+            PlatformApi.INSTANCE.getResourceTypeRegistry(),
+            player,
+            diskDrive,
+            resourceFilterContainer
         );
         this.storageInfoAccessor = storageInfoAccessor;
         addSlots(player, diskInventory, resourceFilterContainer);
@@ -108,7 +108,7 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
     @Override
     public Set<StorageTooltipHelper.TooltipOption> getTooltipOptions() {
         final Set<StorageTooltipHelper.TooltipOption> options =
-                EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
+            EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
         if (hasCapacity()) {
             options.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
         }
@@ -130,15 +130,15 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
 
     private Stream<ItemStack> getDiskStacks() {
         return diskSlots
-                .stream()
-                .map(Slot::getItem)
-                .filter(stack -> !stack.isEmpty());
+            .stream()
+            .map(Slot::getItem)
+            .filter(stack -> !stack.isEmpty());
     }
 
     private Stream<StorageInfo> getStorageDiskInfo() {
         return getDiskStacks()
-                .map(storageInfoAccessor::getInfo)
-                .flatMap(Optional::stream);
+            .map(storageInfoAccessor::getInfo)
+            .flatMap(Optional::stream);
     }
 
     @Override

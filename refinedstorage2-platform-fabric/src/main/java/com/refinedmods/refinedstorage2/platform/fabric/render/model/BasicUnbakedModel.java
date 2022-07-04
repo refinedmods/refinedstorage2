@@ -14,10 +14,10 @@ public interface BasicUnbakedModel extends UnbakedModel {
     default Collection<Material> getMaterials(final Function<ResourceLocation, UnbakedModel> unbakedModelGetter,
                                               final Set<Pair<String, String>> unresolvedTextureReferences) {
         return getDependencies()
-                .stream()
-                .map(unbakedModelGetter)
-                .flatMap(unbakedModel -> unbakedModel.getMaterials(unbakedModelGetter, unresolvedTextureReferences)
-                        .stream())
-                .toList();
+            .stream()
+            .map(unbakedModelGetter)
+            .flatMap(unbakedModel -> unbakedModel.getMaterials(unbakedModelGetter, unresolvedTextureReferences)
+                .stream())
+            .toList();
     }
 }
