@@ -17,8 +17,8 @@ class ComponentMapFactoryTest {
         final ComponentMap<TestComponent> map = sut.buildComponentMap("TEST");
 
         // Assert
-        assertThat(map.getComponent(TestComponent1.class).toString()).isEqualTo("C1 TEST");
-        assertThat(map.getComponent(TestComponent3.class).toString()).isEqualTo("C3 TEST");
+        assertThat(map.getComponent(TestComponent1.class)).hasToString("C1 TEST");
+        assertThat(map.getComponent(TestComponent3.class)).hasToString("C3 TEST");
         assertThat(map.getComponents()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new TestComponent1("TEST"),
             new TestComponent3("TEST")
