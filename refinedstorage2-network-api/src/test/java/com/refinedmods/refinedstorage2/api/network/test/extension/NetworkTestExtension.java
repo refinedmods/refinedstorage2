@@ -34,77 +34,83 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
     }
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) {
-        extensionContext.getTestInstances().ifPresent(testInstances -> testInstances.getAllInstances().forEach(this::processTestInstance));
+    public void beforeEach(final ExtensionContext extensionContext) {
+        extensionContext
+            .getTestInstances()
+            .ifPresent(testInstances -> testInstances.getAllInstances().forEach(this::processTestInstance));
     }
 
     @Override
-    public void afterEach(ExtensionContext extensionContext) {
+    public void afterEach(final ExtensionContext extensionContext) {
         networkMap.clear();
     }
 
-    private void processTestInstance(Object testInstance) {
+    private void processTestInstance(final Object testInstance) {
         setupNetworks(testInstance);
         injectNetworks(testInstance);
         addNetworkNodes(testInstance);
     }
 
-    private void setupNetworks(Object testInstance) {
-        SetupNetwork[] annotations = testInstance.getClass().getAnnotationsByType(SetupNetwork.class);
-        for (SetupNetwork annotation : annotations) {
-            Network network = new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY);
+    private void setupNetworks(final Object testInstance) {
+        final SetupNetwork[] annotations = testInstance.getClass().getAnnotationsByType(SetupNetwork.class);
+        for (final SetupNetwork annotation : annotations) {
+            final Network network = new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY);
             setupNetworkEnergy(annotation.energyCapacity(), annotation.energyStored(), network);
             networkMap.put(annotation.id(), network);
         }
     }
 
-    private void setupNetworkEnergy(long capacity, long stored, Network network) {
-        EnergyNetworkComponent component = network.getComponent(EnergyNetworkComponent.class);
-        EnergyStorage storage = new EnergyStorageImpl(capacity);
+    private void setupNetworkEnergy(final long capacity, final long stored, final Network network) {
+        final EnergyNetworkComponent component = network.getComponent(EnergyNetworkComponent.class);
+        final EnergyStorage storage = new EnergyStorageImpl(capacity);
         storage.receive(stored, Action.EXECUTE);
-        ControllerNetworkNode controller = new ControllerNetworkNode();
+        final ControllerNetworkNode controller = new ControllerNetworkNode();
         controller.setEnergyStorage(storage);
         component.onContainerAdded(() -> controller);
     }
 
-    private void injectNetworks(Object testInstance) {
-        Field[] fields = testInstance.getClass().getDeclaredFields();
-        for (Field field : fields) {
-            InjectNetwork annotation = field.getAnnotation(InjectNetwork.class);
+    private void injectNetworks(final Object testInstance) {
+        final Field[] fields = testInstance.getClass().getDeclaredFields();
+        for (final Field field : fields) {
+            final InjectNetwork annotation = field.getAnnotation(InjectNetwork.class);
             if (annotation != null) {
-                Network network = networkMap.get(annotation.value());
+                final Network network = networkMap.get(annotation.value());
                 setField(testInstance, field, network);
             }
         }
     }
 
-    private void addNetworkNodes(Object testInstance) {
-        Field[] fields = testInstance.getClass().getDeclaredFields();
-        for (Field field : fields) {
+    private void addNetworkNodes(final Object testInstance) {
+        final Field[] fields = testInstance.getClass().getDeclaredFields();
+        for (final Field field : fields) {
             tryAddSimpleNetworkNode(testInstance, field);
             tryAddDiskDrive(testInstance, field);
         }
     }
 
-    private void tryAddDiskDrive(Object testInstance, Field field) {
-        AddDiskDrive annotation = field.getAnnotation(AddDiskDrive.class);
+    private void tryAddDiskDrive(final Object testInstance, final Field field) {
+        final AddDiskDrive annotation = field.getAnnotation(AddDiskDrive.class);
         if (annotation != null) {
-            NetworkNode resolvedNode = new DiskDriveNetworkNode(annotation.baseEnergyUsage(), annotation.energyUsagePerDisk(), NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY);
-            Network network = networkMap.get(annotation.networkId());
+            final NetworkNode resolvedNode = new DiskDriveNetworkNode(
+                annotation.baseEnergyUsage(),
+                annotation.energyUsagePerDisk(),
+                NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY
+            );
+            final Network network = networkMap.get(annotation.networkId());
             registerNetworkNode(testInstance, field, resolvedNode, network);
         }
     }
 
-    private void tryAddSimpleNetworkNode(Object testInstance, Field field) {
-        AddNetworkNode annotation = field.getAnnotation(AddNetworkNode.class);
+    private void tryAddSimpleNetworkNode(final Object testInstance, final Field field) {
+        final AddNetworkNode annotation = field.getAnnotation(AddNetworkNode.class);
         if (annotation != null) {
-            NetworkNode resolvedNode = resolveSimpleNetworkNode(field.getType(), annotation.energyUsage());
-            Network network = networkMap.get(annotation.networkId());
+            final NetworkNode resolvedNode = resolveSimpleNetworkNode(field.getType(), annotation.energyUsage());
+            final Network network = networkMap.get(annotation.networkId());
             registerNetworkNode(testInstance, field, resolvedNode, network);
         }
     }
 
-    private NetworkNode resolveSimpleNetworkNode(Class<?> type, long energyUsage) {
+    private NetworkNode resolveSimpleNetworkNode(final Class<?> type, final long energyUsage) {
         if (type == StorageNetworkNode.class) {
             return new StorageNetworkNode<>(energyUsage, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
         } else if (type == SpyingNetworkNode.class) {
@@ -115,13 +121,16 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
         throw new RuntimeException(type.getName());
     }
 
-    private void registerNetworkNode(Object testInstance, Field field, NetworkNode networkNode, Network network) {
+    private void registerNetworkNode(final Object testInstance,
+                                     final Field field,
+                                     final NetworkNode networkNode,
+                                     final Network network) {
         networkNode.setNetwork(network);
         network.addContainer(() -> networkNode);
         setField(testInstance, field, networkNode);
     }
 
-    private void setField(Object instance, Field field, Object value) {
+    private void setField(final Object instance, final Field field, final Object value) {
         try {
             field.setAccessible(true);
             field.set(instance, value);
@@ -131,30 +140,34 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
     }
 
     @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return parameterContext.isAnnotated(InjectNetworkStorageChannel.class) ||
-                parameterContext.isAnnotated(InjectNetworkEnergyComponent.class);
+    public boolean supportsParameter(final ParameterContext parameterContext,
+                                     final ExtensionContext extensionContext) throws ParameterResolutionException {
+        return parameterContext.isAnnotated(InjectNetworkStorageChannel.class)
+            || parameterContext.isAnnotated(InjectNetworkEnergyComponent.class);
     }
 
     @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public Object resolveParameter(final ParameterContext parameterContext,
+                                   final ExtensionContext extensionContext) throws ParameterResolutionException {
         return parameterContext
-                .findAnnotation(InjectNetworkStorageChannel.class)
-                .map(annotation -> (Object) getNetworkStorageChannel(annotation.networkId()))
-                .or(() -> parameterContext.findAnnotation(InjectNetworkEnergyComponent.class).map(annotation -> (Object) getNetworkEnergy(annotation.networkId())))
-                .orElseThrow();
+            .findAnnotation(InjectNetworkStorageChannel.class)
+            .map(annotation -> (Object) getNetworkStorageChannel(annotation.networkId()))
+            .or(() -> parameterContext
+                .findAnnotation(InjectNetworkEnergyComponent.class)
+                .map(annotation -> (Object) getNetworkEnergy(annotation.networkId())))
+            .orElseThrow();
     }
 
-    private StorageChannel<String> getNetworkStorageChannel(String networkId) {
+    private StorageChannel<String> getNetworkStorageChannel(final String networkId) {
         return networkMap
-                .get(networkId)
-                .getComponent(StorageNetworkComponent.class)
-                .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+            .get(networkId)
+            .getComponent(StorageNetworkComponent.class)
+            .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
     }
 
-    private EnergyNetworkComponent getNetworkEnergy(String networkId) {
+    private EnergyNetworkComponent getNetworkEnergy(final String networkId) {
         return networkMap
-                .get(networkId)
-                .getComponent(EnergyNetworkComponent.class);
+            .get(networkId)
+            .getComponent(EnergyNetworkComponent.class);
     }
 }

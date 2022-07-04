@@ -41,7 +41,7 @@ public abstract class AbstractGridBlockEntity<T>
     public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
         buf.writeBoolean(getNode().isActive());
 
-        buf.writeInt(getNode().getResourceCount());
+        buf.writeInt(getNode().getResourceAmount());
         getNode().forEachResource((stack, trackedResource) -> {
             writeResourceAmount(buf, stack);
             PacketUtil.writeTrackedResource(buf, trackedResource.orElse(null));

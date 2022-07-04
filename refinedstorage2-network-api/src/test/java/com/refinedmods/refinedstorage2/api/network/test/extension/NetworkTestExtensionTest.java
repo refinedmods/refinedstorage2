@@ -9,7 +9,6 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetwo
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Rs2Test
 @ExtendWith({NetworkTestExtension.class})
 @SetupNetwork(id = "a", energyCapacity = 100, energyStored = 50)
 @SetupNetwork(id = "b")
@@ -35,7 +33,7 @@ class NetworkTestExtensionTest {
     DiskDriveNetworkNode storageInB;
 
     @Test
-    void Test_should_inject_network() {
+    void shouldInjectNetwork() {
         // Assert
         assertThat(a).isNotNull();
         assertThat(b).isNotNull();
@@ -43,9 +41,9 @@ class NetworkTestExtensionTest {
     }
 
     @Test
-    void Test_should_set_energy() {
+    void shouldSetEnergyComponent() {
         // Arrange
-        EnergyNetworkComponent energy = a.getComponent(EnergyNetworkComponent.class);
+        final EnergyNetworkComponent energy = a.getComponent(EnergyNetworkComponent.class);
 
         // Assert
         assertThat(energy.getCapacity()).isEqualTo(100L);
@@ -53,39 +51,42 @@ class NetworkTestExtensionTest {
     }
 
     @Test
-    void Test_should_set_network_node() {
+    void shouldLoadNetworkNode() {
         // Assert
         assertThat(storageInA).isNotNull();
         assertThat(storageInB).isNotNull();
     }
 
     @Test
-    void Test_should_add_network_node_to_graph() {
+    void shouldAddNetworkNodeToGraph() {
         // Assert
         assertThat(a.getComponent(GraphNetworkComponent.class).getContainers())
-                .extracting(NetworkNodeContainer::getNode)
-                .containsExactly(storageInA);
+            .extracting(NetworkNodeContainer::getNode)
+            .containsExactly(storageInA);
 
         assertThat(b.getComponent(GraphNetworkComponent.class).getContainers())
-                .extracting(NetworkNodeContainer::getNode)
-                .containsExactly(storageInB);
+            .extracting(NetworkNodeContainer::getNode)
+            .containsExactly(storageInB);
     }
 
     @Test
-    void Test_should_inject_storage_channel(@InjectNetworkStorageChannel(networkId = "a") StorageChannel<String> storageChannelA,
-                                            @InjectNetworkStorageChannel(networkId = "b") StorageChannel<String> storageChannelB) {
+    void shouldInjectStorageChannel(
+        @InjectNetworkStorageChannel(networkId = "a") final StorageChannel<String> storageChannelA,
+        @InjectNetworkStorageChannel(networkId = "b") final StorageChannel<String> storageChannelB) {
         // Assert
-        assertThat(storageChannelA).isSameAs(a.getComponent(StorageNetworkComponent.class).getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
-        assertThat(storageChannelB).isSameAs(b.getComponent(StorageNetworkComponent.class).getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        assertThat(storageChannelA).isSameAs(
+            a.getComponent(StorageNetworkComponent.class).getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+        assertThat(storageChannelB).isSameAs(
+            b.getComponent(StorageNetworkComponent.class).getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
     }
 
     @Test
-    void Test_should_inject_network_energy_component(@InjectNetworkEnergyComponent(networkId = "a") EnergyNetworkComponent networkEnergyA,
-                                                     @InjectNetworkEnergyComponent(networkId = "b") EnergyNetworkComponent networkEnergyB) {
+    void shouldInjectNetworkEnergyComponent(
+        @InjectNetworkEnergyComponent(networkId = "a") final EnergyNetworkComponent networkEnergyA,
+        @InjectNetworkEnergyComponent(networkId = "b") final EnergyNetworkComponent networkEnergyB) {
         // Assert
         assertThat(networkEnergyA).isSameAs(a.getComponent(EnergyNetworkComponent.class));
         assertThat(networkEnergyB).isSameAs(b.getComponent(EnergyNetworkComponent.class));
-
     }
 
     @Nested
@@ -98,12 +99,12 @@ class NetworkTestExtensionTest {
         StorageNetworkNode<String> nodeInA;
 
         @Test
-        void Test_nested_network_and_node() {
+        void testNestedNetworkAndNestedNetworkNode() {
             assertThat(nestedNetwork).isNotNull();
             assertThat(nodeInA).isNotNull();
             assertThat(a.getComponent(GraphNetworkComponent.class).getContainers())
-                    .extracting(NetworkNodeContainer::getNode)
-                    .containsExactlyInAnyOrder(storageInA, nodeInA);
+                .extracting(NetworkNodeContainer::getNode)
+                .containsExactlyInAnyOrder(storageInA, nodeInA);
         }
     }
 }

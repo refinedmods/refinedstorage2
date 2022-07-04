@@ -13,13 +13,16 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 public final class NetworkTestFixtures {
     public static final StorageChannelType<String> STORAGE_CHANNEL_TYPE = StorageChannelImpl::new;
-    public static final OrderedRegistry<String, StorageChannelType<?>> STORAGE_CHANNEL_TYPE_REGISTRY = new OrderedRegistryImpl<>("default", STORAGE_CHANNEL_TYPE);
-    public static final ComponentMapFactory<NetworkComponent, Network> NETWORK_COMPONENT_MAP_FACTORY = new ComponentMapFactory<>();
+    public static final OrderedRegistry<String, StorageChannelType<?>> STORAGE_CHANNEL_TYPE_REGISTRY =
+        new OrderedRegistryImpl<>("default", STORAGE_CHANNEL_TYPE);
+    public static final ComponentMapFactory<NetworkComponent, Network> NETWORK_COMPONENT_MAP_FACTORY =
+        new ComponentMapFactory<>();
 
     static {
         NETWORK_COMPONENT_MAP_FACTORY.addFactory(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
         NETWORK_COMPONENT_MAP_FACTORY.addFactory(GraphNetworkComponent.class, GraphNetworkComponent::new);
-        NETWORK_COMPONENT_MAP_FACTORY.addFactory(StorageNetworkComponent.class, network -> new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY));
+        NETWORK_COMPONENT_MAP_FACTORY.addFactory(StorageNetworkComponent.class,
+            network -> new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY));
     }
 
     private NetworkTestFixtures() {
