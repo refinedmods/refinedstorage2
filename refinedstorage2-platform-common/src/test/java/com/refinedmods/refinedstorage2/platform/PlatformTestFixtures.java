@@ -11,8 +11,10 @@ import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorage
 import net.minecraft.resources.ResourceLocation;
 
 public final class PlatformTestFixtures {
-    public static final OrderedRegistry<ResourceLocation, ResourceType> RESOURCE_TYPE_REGISTRY = new OrderedRegistryImpl<>(new ResourceLocation("item"), ItemResourceType.INSTANCE);
-    public static final OrderedRegistry<ResourceLocation, StorageType<?>> STORAGE_TYPE_REGISTRY = new OrderedRegistryImpl<>(new ResourceLocation("item"), ItemStorageType.INSTANCE);
+    public static final OrderedRegistry<ResourceLocation, ResourceType> RESOURCE_TYPE_REGISTRY =
+        new OrderedRegistryImpl<>(new ResourceLocation("item"), ItemResourceType.INSTANCE);
+    public static final OrderedRegistry<ResourceLocation, StorageType<?>> STORAGE_TYPE_REGISTRY =
+        new OrderedRegistryImpl<>(new ResourceLocation("item"), ItemStorageType.INSTANCE);
 
     static {
         RESOURCE_TYPE_REGISTRY.register(new ResourceLocation("fluid"), FluidResourceType.INSTANCE);
