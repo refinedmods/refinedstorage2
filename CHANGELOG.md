@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.0] - 2022-07-05
+
 Device inventories and disks created in v2.0.0-milestone.1.4 will be lost.
 
 ### Changed
