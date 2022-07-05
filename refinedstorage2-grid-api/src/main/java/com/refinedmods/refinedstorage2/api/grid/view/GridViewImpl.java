@@ -151,7 +151,10 @@ public class GridViewImpl<T> implements GridView<T> {
                                                     final AbstractGridResource<T> oldGridResource) {
         final AbstractGridResource<T> newResource = gridResourceFactory.apply(operationResult.resourceAmount());
         viewListIndex.put(resource, newResource);
-        final int index = viewList.indexOf(oldGridResource);
+        final int index = CoreValidations.validateNotNegative(
+            viewList.indexOf(oldGridResource),
+            "Cannot reinsert previously zeroed resource, it was not found"
+        );
         viewList.set(index, newResource);
     }
 

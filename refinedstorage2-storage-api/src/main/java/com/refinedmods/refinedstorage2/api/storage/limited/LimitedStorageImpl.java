@@ -26,8 +26,7 @@ public class LimitedStorageImpl<T> extends AbstractProxyStorage<T> implements Li
      */
     public LimitedStorageImpl(final Storage<T> delegate, final long capacity) {
         super(delegate);
-        CoreValidations.validateNonNegative(capacity, "Capacity cannot be negative");
-        this.capacity = capacity;
+        this.capacity = CoreValidations.validateNotNegative(capacity, "Capacity cannot be negative");
     }
 
     /**

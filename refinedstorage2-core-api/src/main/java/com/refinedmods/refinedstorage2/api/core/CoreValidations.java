@@ -23,10 +23,18 @@ public final class CoreValidations {
         }
     }
 
-    public static void validateNonNegative(final long value, final String message) {
+    public static int validateNotNegative(final int value, final String message) {
         if (value < 0) {
             throw new IllegalArgumentException(message);
         }
+        return value;
+    }
+
+    public static long validateNotNegative(final long value, final String message) {
+        if (value < 0) {
+            throw new IllegalArgumentException(message);
+        }
+        return value;
     }
 
     public static void validateLargerThanZero(final long value, final String message) {

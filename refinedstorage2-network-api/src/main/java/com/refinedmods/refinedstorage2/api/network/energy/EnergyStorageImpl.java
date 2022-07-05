@@ -14,7 +14,7 @@ public class EnergyStorageImpl implements EnergyStorage {
      * @param capacity the capacity, must be larger than 0
      */
     public EnergyStorageImpl(final long capacity) {
-        CoreValidations.validateNonNegative(capacity, "Capacity must be non-negative");
+        CoreValidations.validateNotNegative(capacity, "Capacity must be non-negative");
         this.capacity = capacity;
     }
 

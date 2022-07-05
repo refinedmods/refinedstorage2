@@ -17,17 +17,21 @@ class CoreValidationsTest {
         assertThat(e.getMessage()).isEqualTo("bla");
 
         assertDoesNotThrow(() -> CoreValidations.validateNotNull("not null", "bla"));
+
+        assertThat(CoreValidations.validateNotNull("not null", "bla")).isEqualTo("not null");
     }
 
     @Test
-    void shouldValidateNonNegative() {
+    void shouldValidateNotNegative() {
         // Act & assert
         final Exception e =
-            assertThrows(IllegalArgumentException.class, () -> CoreValidations.validateNonNegative(-1, "bla"));
+            assertThrows(IllegalArgumentException.class, () -> CoreValidations.validateNotNegative(-1, "bla"));
         assertThat(e.getMessage()).isEqualTo("bla");
 
-        assertDoesNotThrow(() -> CoreValidations.validateNonNegative(0, "bla"));
-        assertDoesNotThrow(() -> CoreValidations.validateNonNegative(1, "bla"));
+        assertDoesNotThrow(() -> CoreValidations.validateNotNegative(0, "bla"));
+        assertDoesNotThrow(() -> CoreValidations.validateNotNegative(1, "bla"));
+
+        assertThat(CoreValidations.validateNotNegative(0, "test")).isEqualTo(0);
     }
 
     @Test
