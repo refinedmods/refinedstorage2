@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -43,15 +42,11 @@ public class GridFluidUpdatePacket {
     }
 
     public static void handle(final GridFluidUpdatePacket packet, final Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> handle(packet));
+        ctx.get().enqueueWork(() -> ClientProxy.getPlayer().ifPresent(player -> handle(player, packet)));
         ctx.get().setPacketHandled(true);
     }
 
-    private static void handle(final GridFluidUpdatePacket packet) {
-        final Player player = Minecraft.getInstance().player;
-        if (player == null) {
-            return;
-        }
+    private static void handle(final Player player, final GridFluidUpdatePacket packet) {
         final AbstractContainerMenu menu = player.containerMenu;
         if (menu instanceof FluidGridContainerMenu fluidGrid) {
             fluidGrid.onResourceUpdate(packet.resource, packet.amount, packet.trackedResource);

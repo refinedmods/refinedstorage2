@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerC
 
 import java.util.function.Supplier;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -29,15 +28,11 @@ public class ControllerEnergyPacket {
     }
 
     public static void handle(final ControllerEnergyPacket packet, final Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> handle(packet));
+        ctx.get().enqueueWork(() -> ClientProxy.getPlayer().ifPresent(player -> handle(player, packet)));
         ctx.get().setPacketHandled(true);
     }
 
-    private static void handle(final ControllerEnergyPacket packet) {
-        final Player player = Minecraft.getInstance().player;
-        if (player == null) {
-            return;
-        }
+    private static void handle(final Player player, final ControllerEnergyPacket packet) {
         final AbstractContainerMenu menu = player.containerMenu;
         if (menu instanceof ControllerContainerMenu controller) {
             controller.setEnergy(packet.stored, packet.capacity);

@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -47,15 +46,11 @@ public class ResourceFilterSlotUpdatePacket {
     }
 
     public static void handle(final ResourceFilterSlotUpdatePacket packet, final Supplier<NetworkEvent.Context> ctx) {
-        handle(packet);
+        ClientProxy.getPlayer().ifPresent(player -> handle(player, packet));
         ctx.get().setPacketHandled(true);
     }
 
-    private static void handle(final ResourceFilterSlotUpdatePacket packet) {
-        final Player player = Minecraft.getInstance().player;
-        if (player == null) {
-            return;
-        }
+    private static void handle(final Player player, final ResourceFilterSlotUpdatePacket packet) {
         final AbstractContainerMenu menu = player.containerMenu;
         if (menu instanceof AbstractResourceFilterContainerMenu resourceFilterable) {
             resourceFilterable.readResourceFilterSlotUpdate(packet.slotIndex, Objects.requireNonNull(packet.buf));
