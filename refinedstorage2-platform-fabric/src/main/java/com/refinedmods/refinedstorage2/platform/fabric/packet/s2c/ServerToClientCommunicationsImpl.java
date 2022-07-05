@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 
 import java.util.UUID;
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -20,7 +21,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class ServerToClientCommunicationsImpl implements ServerToClientCommunications {
     @Override
-    public void sendControllerEnergy(ServerPlayer player, long stored, long capacity) {
+    public void sendControllerEnergy(final ServerPlayer player, final long stored, final long capacity) {
         sendToPlayer(player, PacketIds.CONTROLLER_ENERGY, buf -> {
             buf.writeLong(stored);
             buf.writeLong(capacity);
@@ -28,12 +29,15 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public void sendGridActiveness(ServerPlayer player, boolean active) {
+    public void sendGridActiveness(final ServerPlayer player, final boolean active) {
         sendToPlayer(player, PacketIds.GRID_ACTIVE, buf -> buf.writeBoolean(active));
     }
 
     @Override
-    public void sendGridFluidUpdate(ServerPlayer player, FluidResource fluidResource, long change, TrackedResource trackerEntry) {
+    public void sendGridFluidUpdate(final ServerPlayer player,
+                                    final FluidResource fluidResource,
+                                    final long change,
+                                    @Nullable final TrackedResource trackerEntry) {
         sendToPlayer(player, PacketIds.GRID_FLUID_UPDATE, buf -> {
             PacketUtil.writeFluidResource(buf, fluidResource);
             buf.writeLong(change);
@@ -42,7 +46,10 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public void sendGridItemUpdate(ServerPlayer player, ItemResource itemResource, long change, TrackedResource trackerEntry) {
+    public void sendGridItemUpdate(final ServerPlayer player,
+                                   final ItemResource itemResource,
+                                   final long change,
+                                   @Nullable final TrackedResource trackerEntry) {
         sendToPlayer(player, PacketIds.GRID_ITEM_UPDATE, buf -> {
             PacketUtil.writeItemResource(buf, itemResource);
             buf.writeLong(change);
@@ -51,15 +58,18 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public void sendResourceFilterSlotUpdate(ServerPlayer player, ResourceFilterContainer resourceFilterContainer, int slotIndex) {
+    public void sendResourceFilterSlotUpdate(final ServerPlayer player,
+                                             final ResourceFilterContainer resourceFilterContainer,
+                                             final int slotIndex,
+                                             final int containerIndex) {
         sendToPlayer(player, PacketIds.RESOURCE_FILTER_SLOT_UPDATE, buf -> {
             buf.writeInt(slotIndex);
-            resourceFilterContainer.writeToUpdatePacket(slotIndex, buf);
+            resourceFilterContainer.writeToUpdatePacket(containerIndex, buf);
         });
     }
 
     @Override
-    public void sendStorageInfoResponse(ServerPlayer player, UUID id, StorageInfo storageInfo) {
+    public void sendStorageInfoResponse(final ServerPlayer player, final UUID id, final StorageInfo storageInfo) {
         sendToPlayer(player, PacketIds.STORAGE_INFO_RESPONSE, bufToSend -> {
             bufToSend.writeUUID(id);
             bufToSend.writeLong(storageInfo.stored());
@@ -67,8 +77,10 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
         });
     }
 
-    private static void sendToPlayer(ServerPlayer playerEntity, ResourceLocation id, Consumer<FriendlyByteBuf> bufConsumer) {
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+    private static void sendToPlayer(final ServerPlayer playerEntity,
+                                     final ResourceLocation id,
+                                     final Consumer<FriendlyByteBuf> bufConsumer) {
+        final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         bufConsumer.accept(buf);
         ServerPlayNetworking.send(playerEntity, id, buf);
     }

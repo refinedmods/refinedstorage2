@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network.energy;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,16 +8,15 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Rs2Test
 class CompositeEnergyStorageTest {
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_filling_when_no_sources_are_present(Action action) {
+    void shouldNotReceiveEnergyWhenNoSourcesArePresent(final Action action) {
         // Arrange
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
 
         // Act
-        long inserted = sut.receive(3, action);
+        final long inserted = sut.receive(3, action);
 
         // Assert
         assertThat(inserted).isZero();
@@ -28,17 +26,17 @@ class CompositeEnergyStorageTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_filling_single_source_partially_when_receiving(Action action) {
+    void shouldReceiveSingleSourcePartially(final Action action) {
         // Arrange
-        EnergyStorage a = new EnergyStorageImpl(10);
-        EnergyStorage b = new EnergyStorageImpl(5);
+        final EnergyStorage a = new EnergyStorageImpl(10);
+        final EnergyStorage b = new EnergyStorageImpl(5);
 
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
         sut.addSource(a);
         sut.addSource(b);
 
         // Act
-        long inserted = sut.receive(3, action);
+        final long inserted = sut.receive(3, action);
 
         // Assert
         assertThat(inserted).isEqualTo(3);
@@ -57,17 +55,17 @@ class CompositeEnergyStorageTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_filling_single_source_completely_when_receiving(Action action) {
+    void shouldReceiveSingleSourceCompletely(final Action action) {
         // Arrange
-        EnergyStorage a = new EnergyStorageImpl(10);
-        EnergyStorage b = new EnergyStorageImpl(5);
+        final EnergyStorage a = new EnergyStorageImpl(10);
+        final EnergyStorage b = new EnergyStorageImpl(5);
 
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
         sut.addSource(a);
         sut.addSource(b);
 
         // Act
-        long inserted = sut.receive(10, action);
+        final long inserted = sut.receive(10, action);
 
         // Assert
         if (action == Action.EXECUTE) {
@@ -85,17 +83,17 @@ class CompositeEnergyStorageTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_filling_multiple_sources_partially_when_receiving(Action action) {
+    void shouldReceiveIntoMultipleSourcesPartially(final Action action) {
         // Arrange
-        EnergyStorage a = new EnergyStorageImpl(10);
-        EnergyStorage b = new EnergyStorageImpl(5);
+        final EnergyStorage a = new EnergyStorageImpl(10);
+        final EnergyStorage b = new EnergyStorageImpl(5);
 
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
         sut.addSource(a);
         sut.addSource(b);
 
         // Act
-        long inserted = sut.receive(13, action);
+        final long inserted = sut.receive(13, action);
 
         // Assert
         assertThat(inserted).isEqualTo(13);
@@ -115,17 +113,17 @@ class CompositeEnergyStorageTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_filling_multiple_sources_completely_when_receiving(Action action) {
+    void shouldReceiveIntoMultipleSourcesCompletely(final Action action) {
         // Arrange
-        EnergyStorage a = new EnergyStorageImpl(10);
-        EnergyStorage b = new EnergyStorageImpl(5);
+        final EnergyStorage a = new EnergyStorageImpl(10);
+        final EnergyStorage b = new EnergyStorageImpl(5);
 
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
         sut.addSource(a);
         sut.addSource(b);
 
         // Act
-        long inserted = sut.receive(15, action);
+        final long inserted = sut.receive(15, action);
 
         // Assert
         assertThat(inserted).isEqualTo(15);
@@ -145,17 +143,17 @@ class CompositeEnergyStorageTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_filling_multiple_sources_completely_when_receiving_with_overflow(Action action) {
+    void shouldReceiveIntoMultipleSourcesCompletelyWithRemainder(final Action action) {
         // Arrange
-        EnergyStorage a = new EnergyStorageImpl(10);
-        EnergyStorage b = new EnergyStorageImpl(5);
+        final EnergyStorage a = new EnergyStorageImpl(10);
+        final EnergyStorage b = new EnergyStorageImpl(5);
 
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
         sut.addSource(a);
         sut.addSource(b);
 
         // Act
-        long inserted = sut.receive(16, action);
+        final long inserted = sut.receive(16, action);
 
         // Assert
         assertThat(inserted).isEqualTo(15);
@@ -175,12 +173,12 @@ class CompositeEnergyStorageTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_extracting_when_no_sources_are_available(Action action) {
+    void shouldNotExtractAnythingWhenNoSourcesAreAvailable(final Action action) {
         // Arrange
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
 
         // Act
-        long extracted = sut.extract(3, action);
+        final long extracted = sut.extract(3, action);
 
         // Assert
         assertThat(extracted).isZero();
@@ -190,20 +188,20 @@ class CompositeEnergyStorageTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_extracting_on_single_source_partially(Action action) {
+    void shouldExtractFromSingleSourcePartly(final Action action) {
         // Arrange
-        EnergyStorage a = new EnergyStorageImpl(10);
-        EnergyStorage b = new EnergyStorageImpl(5);
+        final EnergyStorage a = new EnergyStorageImpl(10);
+        final EnergyStorage b = new EnergyStorageImpl(5);
 
         a.receive(10, Action.EXECUTE);
         b.receive(3, Action.EXECUTE);
 
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
         sut.addSource(a);
         sut.addSource(b);
 
         // Act
-        long extracted = sut.extract(3, action);
+        final long extracted = sut.extract(3, action);
 
         // Assert
         assertThat(extracted).isEqualTo(3);
@@ -221,20 +219,20 @@ class CompositeEnergyStorageTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_extracting_on_single_source_completely(Action action) {
+    void shouldExtractFromSingleSourceCompletely(final Action action) {
         // Arrange
-        EnergyStorage a = new EnergyStorageImpl(10);
-        EnergyStorage b = new EnergyStorageImpl(5);
+        final EnergyStorage a = new EnergyStorageImpl(10);
+        final EnergyStorage b = new EnergyStorageImpl(5);
 
         a.receive(10, Action.EXECUTE);
         b.receive(3, Action.EXECUTE);
 
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
         sut.addSource(a);
         sut.addSource(b);
 
         // Act
-        long extracted = sut.extract(10, action);
+        final long extracted = sut.extract(10, action);
 
         // Assert
         assertThat(extracted).isEqualTo(10);
@@ -252,20 +250,20 @@ class CompositeEnergyStorageTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_extracting_on_multiple_sources_partially(Action action) {
+    void shouldExtractFromMultipleSourcesPartly(final Action action) {
         // Arrange
-        EnergyStorage a = new EnergyStorageImpl(10);
-        EnergyStorage b = new EnergyStorageImpl(5);
+        final EnergyStorage a = new EnergyStorageImpl(10);
+        final EnergyStorage b = new EnergyStorageImpl(5);
 
         a.receive(10, Action.EXECUTE);
         b.receive(3, Action.EXECUTE);
 
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
         sut.addSource(a);
         sut.addSource(b);
 
         // Act
-        long extracted = sut.extract(11, action);
+        final long extracted = sut.extract(11, action);
 
         // Assert
         assertThat(extracted).isEqualTo(11);
@@ -283,20 +281,20 @@ class CompositeEnergyStorageTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_extracting_on_multiple_sources_completely(Action action) {
+    void shouldExtractFromMultipleSourcesCompletely(final Action action) {
         // Arrange
-        EnergyStorage a = new EnergyStorageImpl(10);
-        EnergyStorage b = new EnergyStorageImpl(5);
+        final EnergyStorage a = new EnergyStorageImpl(10);
+        final EnergyStorage b = new EnergyStorageImpl(5);
 
         a.receive(10, Action.EXECUTE);
         b.receive(3, Action.EXECUTE);
 
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
         sut.addSource(a);
         sut.addSource(b);
 
         // Act
-        long extracted = sut.extract(13, action);
+        final long extracted = sut.extract(13, action);
 
         // Assert
         assertThat(extracted).isEqualTo(13);
@@ -314,20 +312,20 @@ class CompositeEnergyStorageTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_extracting_on_multiple_sources_completely_more_than_is_available(Action action) {
+    void shouldExtractFromMultipleSourcesCompletelyMoreThanIsAvailable(final Action action) {
         // Arrange
-        EnergyStorage a = new EnergyStorageImpl(10);
-        EnergyStorage b = new EnergyStorageImpl(5);
+        final EnergyStorage a = new EnergyStorageImpl(10);
+        final EnergyStorage b = new EnergyStorageImpl(5);
 
         a.receive(10, Action.EXECUTE);
         b.receive(3, Action.EXECUTE);
 
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
         sut.addSource(a);
         sut.addSource(b);
 
         // Act
-        long extracted = sut.extract(14, action);
+        final long extracted = sut.extract(14, action);
 
         // Assert
         assertThat(extracted).isEqualTo(13);
@@ -344,18 +342,18 @@ class CompositeEnergyStorageTest {
     }
 
     @Test
-    void Test_energy_stored_and_capacity_on_composite_with_infinite_energy_storages() {
+    void shouldNotOverflowStoredAndCapacityCountOnInfiniteEnergyStoragesStoredInComposite() {
         // Arrange
-        EnergyStorage a = new InfiniteEnergyStorage();
-        EnergyStorage b = new InfiniteEnergyStorage();
+        final EnergyStorage a = new InfiniteEnergyStorage();
+        final EnergyStorage b = new InfiniteEnergyStorage();
 
-        CompositeEnergyStorage sut = new CompositeEnergyStorage();
+        final CompositeEnergyStorage sut = new CompositeEnergyStorage();
         sut.addSource(a);
         sut.addSource(b);
 
         // Act
-        long stored = sut.getStored();
-        long capacity = sut.getCapacity();
+        final long stored = sut.getStored();
+        final long capacity = sut.getCapacity();
 
         // Assert
         assertThat(stored).isEqualTo(Long.MAX_VALUE);

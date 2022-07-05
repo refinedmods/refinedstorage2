@@ -1,10 +1,10 @@
 archivesBaseName = 'refinedstorage2-resource-api'
 
 dependencies {
-    testImplementation project(':refinedstorage2-test')
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${project.junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
     testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
-    implementation "com.google.guava:guava:${project.guavaVersion}"
+    implementation project(":refinedstorage2-core-api")
 }
 
 test {

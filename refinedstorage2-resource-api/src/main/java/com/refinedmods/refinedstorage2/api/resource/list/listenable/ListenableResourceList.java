@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.api.resource.list.listenable;
 
-import com.refinedmods.refinedstorage2.api.resource.list.ProxyResourceList;
+import com.refinedmods.refinedstorage2.api.resource.list.AbstractProxyResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 
@@ -19,34 +19,34 @@ import org.apiguardian.api.API;
  * @param <T> the resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public class ListenableResourceList<T> extends ProxyResourceList<T> {
+public class ListenableResourceList<T> extends AbstractProxyResourceList<T> {
     private final Set<ResourceListListener<T>> listeners = new HashSet<>();
 
-    public ListenableResourceList(ResourceList<T> delegate) {
+    public ListenableResourceList(final ResourceList<T> delegate) {
         super(delegate);
     }
 
     @Override
-    public ResourceListOperationResult<T> add(T resource, long amount) {
-        ResourceListOperationResult<T> result = super.add(resource, amount);
+    public ResourceListOperationResult<T> add(final T resource, final long amount) {
+        final ResourceListOperationResult<T> result = super.add(resource, amount);
         listeners.forEach(listener -> listener.onChanged(result));
         return result;
     }
 
     @Override
-    public Optional<ResourceListOperationResult<T>> remove(T resource, long amount) {
+    public Optional<ResourceListOperationResult<T>> remove(final T resource, final long amount) {
         return super.remove(resource, amount)
-                .map(result -> {
-                    listeners.forEach(listener -> listener.onChanged(result));
-                    return result;
-                });
+            .map(result -> {
+                listeners.forEach(listener -> listener.onChanged(result));
+                return result;
+            });
     }
 
-    public void addListener(ResourceListListener<T> listener) {
+    public void addListener(final ResourceListListener<T> listener) {
         listeners.add(listener);
     }
 
-    public void removeListener(ResourceListListener<T> listener) {
+    public void removeListener(final ResourceListListener<T> listener) {
         listeners.remove(listener);
     }
 }

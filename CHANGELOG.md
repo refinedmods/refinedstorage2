@@ -7,6 +7,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+Device inventories and disks created in v2.0.0-milestone.1.4 will be lost.
+
+### Changed
+
+- Ported to Minecraft 1.19.
+
+### Added
+
+- Added JEI support to Fabric.
+- Added REI support to Forge.
+
+### Fixed
+
+- Fixed resource filter container updates not arriving properly on Forge.
+
+## [2.0.0-milestone.1.4] - 2022-06-22
+
 All device inventories (most notably the Disk Drive inventory) will be empty after upgrading. Make sure to move all
 disks, etc. to intermediate storage like a chest.
 

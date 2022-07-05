@@ -16,12 +16,12 @@ public class FakeStorageProviderRepository implements StorageDiskProvider, Stora
     private final Map<UUID, Storage<?>> storages = new HashMap<>();
 
     @Override
-    public Optional<UUID> getDiskId(int slot) {
+    public Optional<UUID> getDiskId(final int slot) {
         return Optional.ofNullable(slots.get(slot));
     }
 
     @Override
-    public Optional<StorageChannelType<?>> getStorageChannelType(int slot) {
+    public Optional<StorageChannelType<?>> getStorageChannelType(final int slot) {
         if (slots.containsKey(slot)) {
             return Optional.of(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
         }
@@ -29,37 +29,38 @@ public class FakeStorageProviderRepository implements StorageDiskProvider, Stora
     }
 
     @Override
-    public <T> Optional<Storage<T>> get(UUID id) {
-        Storage<?> disk = storages.get(id);
+    @SuppressWarnings("unchecked")
+    public <T> Optional<Storage<T>> get(final UUID id) {
+        final Storage<?> disk = storages.get(id);
         return Optional.ofNullable(disk == null ? null : (Storage<T>) disk);
     }
 
-    public <T> void setInSlot(int slot, Storage<T> storage) {
-        UUID id = UUID.randomUUID();
+    public <T> void setInSlot(final int slot, final Storage<T> storage) {
+        final UUID id = UUID.randomUUID();
         storages.put(id, storage);
         setInSlot(slot, id);
     }
 
-    public void setInSlot(int slot, UUID id) {
+    public void setInSlot(final int slot, final UUID id) {
         slots.put(slot, id);
     }
 
-    public void removeInSlot(int slot) {
+    public void removeInSlot(final int slot) {
         slots.remove(slot);
     }
 
     @Override
-    public <T> void set(UUID id, Storage<T> storage) {
+    public <T> void set(final UUID id, final Storage<T> storage) {
         storages.put(id, storage);
     }
 
     @Override
-    public <T> Optional<Storage<T>> disassemble(UUID id) {
+    public <T> Optional<Storage<T>> disassemble(final UUID id) {
         return Optional.empty();
     }
 
     @Override
-    public StorageInfo getInfo(UUID id) {
-        return null;
+    public StorageInfo getInfo(final UUID id) {
+        return StorageInfo.UNKNOWN;
     }
 }

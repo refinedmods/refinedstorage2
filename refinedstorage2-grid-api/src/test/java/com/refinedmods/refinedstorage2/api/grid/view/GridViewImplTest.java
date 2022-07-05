@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.api.grid.view;
 
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;
 
@@ -19,63 +18,17 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@Rs2Test
 class GridViewImplTest {
     private GridView<String> view;
 
     @BeforeEach
     void setUp() {
         view = new GridViewImpl<>(FakeGridResource::new, new ResourceListImpl<>());
-
         view.setSortingType(GridSortingType.QUANTITY);
     }
 
-    @Test
-    void Test_sorting_ascending_with_identity_sort() {
-        // Arrange
-        view.setSortingType(null);
-        view.setSortingDirection(GridSortingDirection.ASCENDING);
-
-        view.loadResource("A", 10, null);
-        view.loadResource("A", 5, null);
-        view.loadResource("C", 1, null);
-        view.loadResource("B", 2, null);
-
-        // Act
-        view.sort();
-
-        // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("A", 15),
-                new FakeGridResource("B", 2),
-                new FakeGridResource("C", 1)
-        );
-    }
-
-    @Test
-    void Test_sorting_descending_with_identity_sorting() {
-        // Arrange
-        view.setSortingType(null);
-        view.setSortingDirection(GridSortingDirection.DESCENDING);
-
-        view.loadResource("A", 10, null);
-        view.loadResource("A", 5, null);
-        view.loadResource("B", 1, null);
-        view.loadResource("C", 2, null);
-
-        // Act
-        view.sort();
-
-        // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("C", 2),
-                new FakeGridResource("B", 1),
-                new FakeGridResource("A", 15)
-        );
-    }
-
     @RepeatedTest(100)
-    void Test_sorting_when_both_resources_match_should_preserve_order() {
+    void shouldPreserveOrderWhenSortingAndTwoResourcesHaveTheSameQuantity() {
         // Arrange
         view.setSortingDirection(GridSortingDirection.DESCENDING);
 
@@ -86,9 +39,9 @@ class GridViewImplTest {
         view.onChange("C", 2, null);
 
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("B", 15),
-                new FakeGridResource("A", 15),
-                new FakeGridResource("C", 2)
+            new FakeGridResource("B", 15),
+            new FakeGridResource("A", 15),
+            new FakeGridResource("C", 2)
         );
 
         view.onChange("A", -15, null);
@@ -98,15 +51,15 @@ class GridViewImplTest {
         view.onChange("B", 15, null);
 
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("B", 15),
-                new FakeGridResource("A", 15),
-                new FakeGridResource("C", 2)
+            new FakeGridResource("B", 15),
+            new FakeGridResource("A", 15),
+            new FakeGridResource("C", 2)
         );
     }
 
     @ParameterizedTest
     @EnumSource(GridSortingType.class)
-    void Test_sorting_ascending(GridSortingType sortingType) {
+    void testSortingAscending(final GridSortingType sortingType) {
         // Arrange
         view.setSortingType(sortingType);
         view.setSortingDirection(GridSortingDirection.ASCENDING);
@@ -122,32 +75,33 @@ class GridViewImplTest {
         // Assert
         switch (sortingType) {
             case QUANTITY -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridResource("B", 1),
-                    new FakeGridResource("C", 2),
-                    new FakeGridResource("A", 15)
+                new FakeGridResource("B", 1),
+                new FakeGridResource("C", 2),
+                new FakeGridResource("A", 15)
             );
             case NAME -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridResource("A", 15),
-                    new FakeGridResource("B", 1),
-                    new FakeGridResource("C", 2)
+                new FakeGridResource("A", 15),
+                new FakeGridResource("B", 1),
+                new FakeGridResource("C", 2)
             );
             case ID -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridResource("A", 15),
-                    new FakeGridResource("B", 1),
-                    new FakeGridResource("C", 2)
+                new FakeGridResource("A", 15),
+                new FakeGridResource("B", 1),
+                new FakeGridResource("C", 2)
             );
-            case LAST_MODIFIED -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            case LAST_MODIFIED ->
+                assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new FakeGridResource("C", 2),
                     new FakeGridResource("B", 1),
                     new FakeGridResource("A", 15)
-            );
+                );
             default -> fail();
         }
     }
 
     @ParameterizedTest
     @EnumSource(GridSortingType.class)
-    void Test_sorting_descending(GridSortingType sortingType) {
+    void testSortingDescending(final GridSortingType sortingType) {
         // Arrange
         view.setSortingType(sortingType);
         view.setSortingDirection(GridSortingDirection.DESCENDING);
@@ -163,31 +117,32 @@ class GridViewImplTest {
         // Assert
         switch (sortingType) {
             case QUANTITY -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridResource("A", 15),
-                    new FakeGridResource("C", 2),
-                    new FakeGridResource("B", 1)
+                new FakeGridResource("A", 15),
+                new FakeGridResource("C", 2),
+                new FakeGridResource("B", 1)
             );
             case NAME -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridResource("C", 2),
-                    new FakeGridResource("B", 1),
-                    new FakeGridResource("A", 15)
+                new FakeGridResource("C", 2),
+                new FakeGridResource("B", 1),
+                new FakeGridResource("A", 15)
             );
             case ID -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new FakeGridResource("C", 2),
-                    new FakeGridResource("B", 1),
-                    new FakeGridResource("A", 15)
+                new FakeGridResource("C", 2),
+                new FakeGridResource("B", 1),
+                new FakeGridResource("A", 15)
             );
-            case LAST_MODIFIED -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            case LAST_MODIFIED ->
+                assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                     new FakeGridResource("A", 15),
                     new FakeGridResource("B", 1),
                     new FakeGridResource("C", 2)
-            );
+                );
             default -> fail();
         }
     }
 
     @Test
-    void Test_loading_resource_with_storage_tracked_resource() {
+    void shouldLoadResourcesAndRetrieveTrackedResourcesProperly() {
         // Act
         view.loadResource("A", 1, new TrackedResource("Raoul", 1));
         view.loadResource("A", 1, new TrackedResource("RaoulA", 2));
@@ -198,9 +153,9 @@ class GridViewImplTest {
         view.loadResource("D", 1, null);
 
         // Assert
-        Optional<TrackedResource> a = view.getTrackedResource("A");
-        Optional<TrackedResource> b = view.getTrackedResource("B");
-        Optional<TrackedResource> d = view.getTrackedResource("D");
+        final Optional<TrackedResource> a = view.getTrackedResource("A");
+        final Optional<TrackedResource> b = view.getTrackedResource("B");
+        final Optional<TrackedResource> d = view.getTrackedResource("D");
 
         assertThat(a).get().usingRecursiveComparison().isEqualTo(new TrackedResource("RaoulA", 2));
         assertThat(b).isEmpty();
@@ -208,13 +163,13 @@ class GridViewImplTest {
     }
 
     @Test
-    void Test_sending_addition_for_new_resource() {
+    void shouldInsertNewResource() {
         // Arrange
         view.loadResource("B", 15, null);
         view.loadResource("D", 10, null);
         view.sort();
 
-        Runnable listener = mock(Runnable.class);
+        final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
 
         // Act
@@ -222,67 +177,43 @@ class GridViewImplTest {
 
         // Assert
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 12),
-                new FakeGridResource("B", 15)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 12),
+            new FakeGridResource("B", 15)
         );
         verify(listener, times(1)).run();
     }
 
     @Test
-    void Test_sending_addition_for_new_resource_when_filtering() {
+    void shouldNotInsertNewResourceWhenFilteringProhibitsIt() {
         // Arrange
         view.loadResource("B", 15, null);
         view.loadResource("D", 10, null);
-        view.sort();
+        view.setFilterAndSort(resource -> !resource.getResourceAmount().getResource().equals("A"));
 
-        Runnable listener = mock(Runnable.class);
+        final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
-        view.setFilter(resource -> !resource.getResourceAmount().getResource().equals("A"));
 
         // Act
         view.onChange("A", 12, null);
 
         // Assert
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("B", 15)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("B", 15)
         );
         verify(listener, never()).run();
     }
 
     @Test
-    void Test_sending_addition_for_new_resource_when_preventing_sort() {
-        // Arrange
-        view.loadResource("B", 15, null);
-        view.loadResource("D", 10, null);
-        view.sort();
-
-        Runnable listener = mock(Runnable.class);
-        view.setListener(listener);
-        view.setPreventSorting(true);
-
-        // Act
-        view.onChange("A", 12, null);
-
-        // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 12),
-                new FakeGridResource("B", 15)
-        );
-        verify(listener, times(1)).run();
-    }
-
-    @Test
-    void Test_sending_addition_for_existing_resource() {
+    void shouldUpdateExistingResource() {
         // Arrange
         view.loadResource("B", 6, null);
         view.loadResource("A", 15, null);
         view.loadResource("D", 10, null);
         view.sort();
 
-        Runnable listener = mock(Runnable.class);
+        final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
 
         // Act
@@ -290,46 +221,22 @@ class GridViewImplTest {
 
         // Assert
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("B", 11),
-                new FakeGridResource("A", 15)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("B", 11),
+            new FakeGridResource("A", 15)
         );
         verify(listener, times(1)).run();
     }
 
     @Test
-    void Test_sending_addition_for_existing_resource_when_filtering() {
+    void shouldNotUpdateExistingResourceWhenFilteringProhibitsIt() {
         // Arrange
         view.loadResource("B", 6, null);
         view.loadResource("A", 15, null);
         view.loadResource("D", 10, null);
-        view.sort();
+        view.setFilterAndSort(resource -> !resource.getResourceAmount().getResource().equals("B"));
 
-        Runnable listener = mock(Runnable.class);
-        view.setListener(listener);
-        view.setFilter(resource -> !resource.getResourceAmount().getResource().equals("B"));
-
-        // Act
-        view.onChange("B", 5, null);
-
-        // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15)
-        );
-        verify(listener, times(1)).run();
-    }
-
-    @Test
-    void Test_sending_addition_for_existing_but_hidden_resource_when_filtering() {
-        // Arrange
-        view.loadResource("B", 6, null);
-        view.loadResource("A", 15, null);
-        view.loadResource("D", 10, null);
-        view.setFilter(resource -> !resource.getResourceAmount().getResource().equals("B"));
-        view.sort();
-
-        Runnable listener = mock(Runnable.class);
+        final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
 
         // Act
@@ -337,28 +244,28 @@ class GridViewImplTest {
 
         // Assert
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15)
         );
         verify(listener, never()).run();
     }
 
     @Test
-    void Test_sending_addition_for_existing_resource_when_preventing_sort() {
+    void shouldNotReorderExistingResourceWhenPreventingSorting() {
         // Arrange
         view.loadResource("B", 6, null);
         view.loadResource("A", 15, null);
         view.loadResource("D", 10, null);
         view.sort();
 
-        Runnable listener = mock(Runnable.class);
+        final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
 
         // Act & assert
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("B", 6),
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15)
+            new FakeGridResource("B", 6),
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15)
         );
 
         view.setPreventSorting(true);
@@ -367,23 +274,23 @@ class GridViewImplTest {
         verify(listener, never()).run();
 
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("B", 11),
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15)
+            new FakeGridResource("B", 11),
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15)
         );
 
         view.setPreventSorting(false);
         view.sort();
 
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("B", 11),
-                new FakeGridResource("A", 15)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("B", 11),
+            new FakeGridResource("A", 15)
         );
     }
 
     @Test
-    void Test_sending_change_should_set_storage_tracked_resource() {
+    void shouldUpdateTrackedResourceAfterReceivingChange() {
         // Act
         view.onChange("A", 1, new TrackedResource("Raoul", 1));
         view.onChange("A", 1, new TrackedResource("RaoulA", 2));
@@ -394,9 +301,9 @@ class GridViewImplTest {
         view.onChange("D", 1, null);
 
         // Assert
-        Optional<TrackedResource> a = view.getTrackedResource("A");
-        Optional<TrackedResource> b = view.getTrackedResource("B");
-        Optional<TrackedResource> c = view.getTrackedResource("D");
+        final Optional<TrackedResource> a = view.getTrackedResource("A");
+        final Optional<TrackedResource> b = view.getTrackedResource("B");
+        final Optional<TrackedResource> c = view.getTrackedResource("D");
 
         assertThat(a).get().usingRecursiveComparison().isEqualTo(new TrackedResource("RaoulA", 2));
         assertThat(b).isEmpty();
@@ -404,14 +311,14 @@ class GridViewImplTest {
     }
 
     @Test
-    void Test_sending_removal() {
+    void shouldUpdateExistingResourceWhenPerformingPartialRemoval() {
         // Arrange
         view.loadResource("B", 20, null);
         view.loadResource("A", 15, null);
         view.loadResource("D", 10, null);
         view.sort();
 
-        Runnable listener = mock(Runnable.class);
+        final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
 
         // Act
@@ -419,46 +326,22 @@ class GridViewImplTest {
 
         // Assert
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("B", 13),
-                new FakeGridResource("A", 15)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("B", 13),
+            new FakeGridResource("A", 15)
         );
         verify(listener, times(1)).run();
     }
 
     @Test
-    void Test_sending_removal_when_filtering() {
+    void shouldNotUpdateExistingResourceWhenPerformingPartialRemovalAndFilteringProhibitsIt() {
         // Arrange
         view.loadResource("B", 20, null);
         view.loadResource("A", 15, null);
         view.loadResource("D", 10, null);
-        view.sort();
+        view.setFilterAndSort(resource -> !resource.getResourceAmount().getResource().equals("B"));
 
-        Runnable listener = mock(Runnable.class);
-        view.setListener(listener);
-        view.setFilter(resource -> !resource.getResourceAmount().getResource().equals("B"));
-
-        // Act
-        view.onChange("B", -7, null);
-
-        // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15)
-        );
-        verify(listener, times(1)).run();
-    }
-
-    @Test
-    void Test_sending_removal_for_hidden_resource_when_filtering() {
-        // Arrange
-        view.loadResource("B", 20, null);
-        view.loadResource("A", 15, null);
-        view.loadResource("D", 10, null);
-        view.setFilter(resource -> !resource.getResourceAmount().getResource().equals("B"));
-        view.sort();
-
-        Runnable listener = mock(Runnable.class);
+        final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
 
         // Act
@@ -466,28 +349,28 @@ class GridViewImplTest {
 
         // Assert
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15)
         );
         verify(listener, never()).run();
     }
 
     @Test
-    void Test_sending_removal_when_preventing_sort() {
+    void shouldNotReorderExistingResourceWhenPerformingPartialRemovalAndPreventingSorting() {
         // Arrange
         view.loadResource("B", 20, null);
         view.loadResource("A", 15, null);
         view.loadResource("D", 10, null);
         view.sort();
 
-        Runnable listener = mock(Runnable.class);
+        final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
 
         // Act & assert
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15),
-                new FakeGridResource("B", 20)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15),
+            new FakeGridResource("B", 20)
         );
 
         view.setPreventSorting(true);
@@ -496,30 +379,30 @@ class GridViewImplTest {
         verify(listener, never()).run();
 
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15),
-                new FakeGridResource("B", 13)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15),
+            new FakeGridResource("B", 13)
         );
 
         view.setPreventSorting(false);
         view.sort();
 
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("B", 13),
-                new FakeGridResource("A", 15)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("B", 13),
+            new FakeGridResource("A", 15)
         );
     }
 
     @Test
-    void Test_sending_complete_removal() {
+    void shouldRemoveExistingResourceCompletely() {
         // Arrange
         view.loadResource("B", 20, null);
         view.loadResource("A", 15, null);
         view.loadResource("D", 10, null);
         view.sort();
 
-        Runnable listener = mock(Runnable.class);
+        final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
 
         // Act
@@ -527,28 +410,28 @@ class GridViewImplTest {
 
         // Assert
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15)
         );
         verify(listener, times(1)).run();
     }
 
     @Test
-    void Test_sending_complete_removal_when_preventing_sort() {
+    void shouldNotReorderWhenRemovingExistingResourceCompletelyAndPreventingSorting() {
         // Arrange
         view.loadResource("A", 15, null);
         view.loadResource("B", 20, null);
         view.loadResource("D", 10, null);
         view.sort();
 
-        Runnable listener = mock(Runnable.class);
+        final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
 
         // Act & assert
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15),
-                new FakeGridResource("B", 20)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15),
+            new FakeGridResource("B", 20)
         );
 
         view.setPreventSorting(true);
@@ -556,36 +439,36 @@ class GridViewImplTest {
         verify(listener, never()).run();
 
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15),
-                new FakeGridResource("B", 20).zeroed()
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15),
+            new FakeGridResource("B", 20).zeroed()
         );
 
         view.setPreventSorting(false);
         view.sort();
 
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15)
         );
     }
 
     @Test
-    void Test_sending_complete_removal_and_reinserting_resource_should_reuse_same_resource_when_preventing_sort() {
+    void shouldReuseExistingResourceWhenPreventingSortingAndRemovingExistingResourceCompletelyAndThenReinserting() {
         // Arrange
         view.loadResource("A", 15, null);
         view.loadResource("B", 20, null);
         view.loadResource("D", 10, null);
         view.sort();
 
-        Runnable listener = mock(Runnable.class);
+        final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
 
         // Act & assert
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15),
-                new FakeGridResource("B", 20)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15),
+            new FakeGridResource("B", 20)
         );
 
         // Delete the item
@@ -594,9 +477,9 @@ class GridViewImplTest {
         verify(listener, never()).run();
 
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15),
-                new FakeGridResource("B", 20).zeroed()
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15),
+            new FakeGridResource("B", 20).zeroed()
         );
 
         // Re-insert the item
@@ -604,9 +487,9 @@ class GridViewImplTest {
         verify(listener, never()).run();
 
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15),
-                new FakeGridResource("B", 5)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15),
+            new FakeGridResource("B", 5)
         );
 
         // Re-insert the item again
@@ -614,9 +497,9 @@ class GridViewImplTest {
         verify(listener, never()).run();
 
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new FakeGridResource("D", 10),
-                new FakeGridResource("A", 15),
-                new FakeGridResource("B", 8)
+            new FakeGridResource("D", 10),
+            new FakeGridResource("A", 15),
+            new FakeGridResource("B", 8)
         );
     }
 }

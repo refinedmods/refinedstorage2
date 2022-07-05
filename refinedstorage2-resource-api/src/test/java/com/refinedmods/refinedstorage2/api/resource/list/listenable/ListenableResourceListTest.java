@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.api.resource.list.listenable;
 
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Rs2Test
-public class ListenableResourceListTest {
+class ListenableResourceListTest {
     private FakeResourceListListener<String> listener;
     private ResourceListImpl<String> list;
     private ListenableResourceList<String> sut;
@@ -26,7 +24,7 @@ public class ListenableResourceListTest {
     }
 
     @Test
-    void Test_should_call_listener_when_adding() {
+    void shouldCallListenerWhenAdding() {
         // Arrange
         sut.addListener(listener);
 
@@ -38,7 +36,7 @@ public class ListenableResourceListTest {
     }
 
     @Test
-    void Test_should_not_call_listener_when_adding_without_listener() {
+    void shouldNotCallListenerWhenAddingWithoutListener() {
         // Act
         sut.add("A", 10);
 
@@ -47,7 +45,7 @@ public class ListenableResourceListTest {
     }
 
     @Test
-    void Test_should_call_listener_when_removing() {
+    void shouldCallListenerWhenRemoving() {
         // Arrange
         sut.addListener(listener);
         sut.add("A", 10);
@@ -60,7 +58,7 @@ public class ListenableResourceListTest {
     }
 
     @Test
-    void Test_should_not_call_listener_when_removing_without_listener() {
+    void shouldNotCallListenerWhenRemovingWithoutListener() {
         // Arrange
         sut.add("A", 10);
 
@@ -72,7 +70,7 @@ public class ListenableResourceListTest {
     }
 
     @Test
-    void Test_should_not_call_listener_when_removing_with_no_result() {
+    void shouldNotCallListenerWhenRemovingWithoutResult() {
         // Arrange
         sut.addListener(listener);
         sut.add("A", 10);
@@ -85,9 +83,11 @@ public class ListenableResourceListTest {
     }
 
     @Test
-    void Test_should_not_call_listener_when_calling_list_directly() {
-        // Act
+    void shouldNotCallListenerWhenModifyingListDirectly() {
+        // Arrange
         sut.addListener(listener);
+
+        // Act
         list.add("A", 10);
 
         // Assert
@@ -95,10 +95,12 @@ public class ListenableResourceListTest {
     }
 
     @Test
-    void Test_should_be_able_to_remove_listener() {
-        // Act
+    void shouldBeAbleToRemoveListener() {
+        // Arrange
         sut.addListener(listener);
         sut.add("A", 10);
+
+        // Act
         sut.removeListener(listener);
         sut.add("A", 10);
 
@@ -110,7 +112,7 @@ public class ListenableResourceListTest {
         private final List<ResourceListOperationResult<R>> changes = new ArrayList<>();
 
         @Override
-        public void onChanged(ResourceListOperationResult<R> change) {
+        public void onChanged(final ResourceListOperationResult<R> change) {
             changes.add(change);
         }
     }

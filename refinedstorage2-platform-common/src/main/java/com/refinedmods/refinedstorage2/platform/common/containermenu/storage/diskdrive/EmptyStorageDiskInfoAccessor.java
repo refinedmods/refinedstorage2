@@ -8,12 +8,12 @@ import net.minecraft.world.item.ItemStack;
 
 public class EmptyStorageDiskInfoAccessor implements StorageDiskInfoAccessor {
     @Override
-    public Optional<StorageInfo> getInfo(ItemStack stack) {
+    public Optional<StorageInfo> getInfo(final ItemStack stack) {
         return Optional.empty();
     }
 
     @Override
-    public boolean hasStacking(ItemStack stack) {
+    public boolean hasStacking(final ItemStack stack) {
         return false;
     }
 }

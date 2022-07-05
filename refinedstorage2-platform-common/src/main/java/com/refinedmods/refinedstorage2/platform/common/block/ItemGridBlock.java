@@ -9,10 +9,10 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ItemGridBlock extends GridBlock {
+public class ItemGridBlock extends AbstractGridBlock implements ColorableBlock<ItemGridBlock> {
     private final MutableComponent name;
 
-    public ItemGridBlock(MutableComponent name) {
+    public ItemGridBlock(final MutableComponent name) {
         super(BlockConstants.STONE_PROPERTIES);
         this.name = name;
     }
@@ -23,12 +23,12 @@ public class ItemGridBlock extends GridBlock {
     }
 
     @Override
-    public BlockColorMap<?> getBlockColorMap() {
+    public BlockColorMap<ItemGridBlock> getBlockColorMap() {
         return Blocks.INSTANCE.getGrid();
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
         return new ItemGridBlockEntity(pos, state);
     }
 }

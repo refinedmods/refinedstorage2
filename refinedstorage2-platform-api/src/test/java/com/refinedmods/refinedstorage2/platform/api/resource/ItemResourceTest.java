@@ -2,7 +2,8 @@ package com.refinedmods.refinedstorage2.platform.api.resource;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
+
+import java.util.Optional;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
@@ -13,31 +14,29 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.Optional;
-
 import static com.refinedmods.refinedstorage2.platform.test.TagHelper.createDummyTag;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Rs2Test
 @SetupMinecraft
 class ItemResourceTest {
     @Test
-    void Test_invalid_item() {
+    @SuppressWarnings("ConstantConditions")
+    void testInvalidItem() {
         // Assert
         assertThrows(NullPointerException.class, () -> new ItemResource(null, null));
     }
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void Test_to_and_from_tag(boolean hasTag) {
+    void testSerialization(final boolean hasTag) {
         // Arrange
-        CompoundTag itemTag = hasTag ? createDummyTag() : null;
-        ItemResource itemResource = new ItemResource(Items.DIRT, itemTag);
+        final CompoundTag itemTag = hasTag ? createDummyTag() : null;
+        final ItemResource itemResource = new ItemResource(Items.DIRT, itemTag);
 
         // Act
-        CompoundTag serialized = ItemResource.toTag(itemResource);
-        Optional<ItemResource> deserialized = ItemResource.fromTag(serialized);
+        final CompoundTag serialized = ItemResource.toTag(itemResource);
+        final Optional<ItemResource> deserialized = ItemResource.fromTag(serialized);
 
         // Assert
         assertThat(deserialized).isPresent().contains(itemResource);
@@ -45,15 +44,15 @@ class ItemResourceTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void Test_to_and_from_tag_with_amount(boolean hasTag) {
+    void testSerializationWithAmount(final boolean hasTag) {
         // Arrange
-        CompoundTag itemTag = hasTag ? createDummyTag() : null;
-        ItemResource itemResource = new ItemResource(Items.DIRT, itemTag);
-        ResourceAmount<ItemResource> resourceAmount = new ResourceAmount<>(itemResource, 10);
+        final CompoundTag itemTag = hasTag ? createDummyTag() : null;
+        final ItemResource itemResource = new ItemResource(Items.DIRT, itemTag);
+        final ResourceAmount<ItemResource> resourceAmount = new ResourceAmount<>(itemResource, 10);
 
         // Act
-        CompoundTag serialized = ItemResource.toTagWithAmount(resourceAmount);
-        Optional<ResourceAmount<ItemResource>> deserialized = ItemResource.fromTagWithAmount(serialized);
+        final CompoundTag serialized = ItemResource.toTagWithAmount(resourceAmount);
+        final Optional<ResourceAmount<ItemResource>> deserialized = ItemResource.fromTagWithAmount(serialized);
 
         // Assert
         assertThat(deserialized).isPresent();
@@ -61,14 +60,14 @@ class ItemResourceTest {
     }
 
     @Test
-    void Test_from_tag_invalid_item() {
+    void testDeserializationWithInvalidItem() {
         // Arrange
-        ItemResource itemResource = new ItemResource(Items.DIRT, null);
-        CompoundTag serialized = ItemResource.toTag(itemResource);
+        final ItemResource itemResource = new ItemResource(Items.DIRT, null);
+        final CompoundTag serialized = ItemResource.toTag(itemResource);
         serialized.putString("id", "minecraft:non_existent");
 
         // Act
-        Optional<ItemResource> deserialized = ItemResource.fromTag(serialized);
+        final Optional<ItemResource> deserialized = ItemResource.fromTag(serialized);
 
         // Assert
         assertThat(deserialized).isEmpty();
@@ -76,13 +75,13 @@ class ItemResourceTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void Test_to_stack(boolean hasTag) {
+    void testToPlatformStack(final boolean hasTag) {
         // Arrange
-        CompoundTag itemTag = hasTag ? createDummyTag() : null;
-        ItemResource itemResource = new ItemResource(Items.DIRT, itemTag);
+        final CompoundTag itemTag = hasTag ? createDummyTag() : null;
+        final ItemResource itemResource = new ItemResource(Items.DIRT, itemTag);
 
         // Act
-        ItemStack stack = itemResource.toItemStack();
+        final ItemStack stack = itemResource.toItemStack();
 
         // Assert
         assertThat(stack.getItem()).isEqualTo(Items.DIRT);
@@ -92,24 +91,25 @@ class ItemResourceTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void Test_normalization(boolean hasTag) {
+    void testNormalization(final boolean hasTag) {
         // Arrange
-        CompoundTag itemTag = hasTag ? createDummyTag() : null;
-        ItemResource itemResource = new ItemResource(Items.DIRT, itemTag);
+        final CompoundTag itemTag = hasTag ? createDummyTag() : null;
+        final ItemResource itemResource = new ItemResource(Items.DIRT, itemTag);
 
         // Act
-        ItemResource normalized = itemResource.normalize();
+        final ItemResource normalized = itemResource.normalize();
 
         // Assert
-        assertThat(normalized.getItem()).isEqualTo(Items.DIRT);
-        assertThat(normalized.getTag()).isNull();
+        assertThat(normalized.item()).isEqualTo(Items.DIRT);
+        assertThat(normalized.tag()).isNull();
     }
 
     @Test
-    void Test_equals_hashcode() {
+    void testEqualsHashcode() {
         // Assert
         EqualsVerifier.forClass(ItemResource.class)
-                .withPrefabValues(Item.class, Items.DIRT, Items.GLASS)
-                .verify();
+            .withPrefabValues(Item.class, Items.DIRT, Items.GLASS)
+            .withNonnullFields("item")
+            .verify();
     }
 }

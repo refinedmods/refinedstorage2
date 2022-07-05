@@ -13,13 +13,13 @@ import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ExactModeSideButtonWidget extends SideButtonWidget {
+public class ExactModeSideButtonWidget extends AbstractSideButtonWidget {
     private final ExactModeAccessor exactModeAccessor;
     private final TooltipRenderer tooltipRenderer;
     private final List<Component> tooltipWhenOn;
     private final List<Component> tooltipWhenOff;
 
-    public ExactModeSideButtonWidget(ExactModeAccessor exactModeAccessor, TooltipRenderer tooltipRenderer) {
+    public ExactModeSideButtonWidget(final ExactModeAccessor exactModeAccessor, final TooltipRenderer tooltipRenderer) {
         super(createPressAction(exactModeAccessor));
         this.exactModeAccessor = exactModeAccessor;
         this.tooltipRenderer = tooltipRenderer;
@@ -27,12 +27,12 @@ public class ExactModeSideButtonWidget extends SideButtonWidget {
         this.tooltipWhenOff = calculateTooltip(false);
     }
 
-    private static OnPress createPressAction(ExactModeAccessor exactModeAccessor) {
+    private static OnPress createPressAction(final ExactModeAccessor exactModeAccessor) {
         return btn -> exactModeAccessor.setExactMode(!exactModeAccessor.isExactMode());
     }
 
-    private List<Component> calculateTooltip(boolean exactMode) {
-        List<Component> lines = new ArrayList<>();
+    private List<Component> calculateTooltip(final boolean exactMode) {
+        final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "exact_mode"));
         lines.add(createTranslation("gui", "exact_mode." + (exactMode ? "on" : "off")).withStyle(ChatFormatting.GRAY));
         return lines;
@@ -49,7 +49,12 @@ public class ExactModeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(poseStack, exactModeAccessor.isExactMode() ? tooltipWhenOn : tooltipWhenOff, mouseX, mouseY);
+    public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
+        tooltipRenderer.render(
+            poseStack,
+            exactModeAccessor.isExactMode() ? tooltipWhenOn : tooltipWhenOff,
+            mouseX,
+            mouseY
+        );
     }
 }

@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorag
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.FluidResourceType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.fluid.FluidResourceType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageChannelTypes;
@@ -25,53 +25,54 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class FluidStorageBlockBlockEntity extends StorageBlockBlockEntity<FluidResource> {
+public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity<FluidResource> {
     private final FluidStorageType.Variant variant;
     private final Component displayName;
 
-    public FluidStorageBlockBlockEntity(BlockPos pos, BlockState state, FluidStorageType.Variant variant) {
+    public FluidStorageBlockBlockEntity(final BlockPos pos,
+                                        final BlockState state,
+                                        final FluidStorageType.Variant variant) {
         super(
-                BlockEntities.INSTANCE.getFluidStorageBlock(variant),
-                pos,
-                state,
-                new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.FLUID),
-                FluidResourceType.INSTANCE
+            BlockEntities.INSTANCE.getFluidStorageBlock(variant),
+            pos,
+            state,
+            new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.FLUID),
+            FluidResourceType.INSTANCE
         );
         this.variant = variant;
-        this.displayName = createTranslation("block", String.format("%s_fluid_storage_block", variant.getName()));
+        this.displayName = createTranslation(
+            "block",
+            String.format("%s_fluid_storage_block", variant.getName())
+        );
     }
 
-    private static long getEnergyUsage(FluidStorageType.Variant variant) {
+    private static long getEnergyUsage(final FluidStorageType.Variant variant) {
         return switch (variant) {
             case SIXTY_FOUR_B -> Platform.INSTANCE.getConfig().getFluidStorageBlock().get64bEnergyUsage();
             case TWO_HUNDRED_FIFTY_SIX_B -> Platform.INSTANCE.getConfig().getFluidStorageBlock().get256bEnergyUsage();
             case THOUSAND_TWENTY_FOUR_B -> Platform.INSTANCE.getConfig().getFluidStorageBlock().get1024bEnergyUsage();
             case FOUR_THOUSAND_NINETY_SIX_B ->
-                    Platform.INSTANCE.getConfig().getFluidStorageBlock().get4096bEnergyUsage();
+                Platform.INSTANCE.getConfig().getFluidStorageBlock().get4096bEnergyUsage();
             case CREATIVE -> Platform.INSTANCE.getConfig().getFluidStorageBlock().getCreativeEnergyUsage();
         };
     }
 
     @Override
-    protected PlatformStorage<FluidResource> createStorage(Runnable listener) {
-        TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
+    protected PlatformStorage<FluidResource> createStorage(final Runnable listener) {
+        final TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
-            return new PlatformStorage<>(
-                    new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                    FluidStorageType.INSTANCE,
-                    trackingRepository,
-                    listener
-            );
-        }
-        return new LimitedPlatformStorage<>(
-                new LimitedStorageImpl<>(
-                        new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                        variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()
-                ),
-                FluidStorageType.INSTANCE,
+            final TrackedStorageImpl<FluidResource> delegate = new TrackedStorageImpl<>(
+                new InMemoryStorageImpl<>(),
                 trackingRepository,
-                listener
+                System::currentTimeMillis
+            );
+            return new PlatformStorage<>(delegate, FluidStorageType.INSTANCE, trackingRepository, listener);
+        }
+        final LimitedStorageImpl<FluidResource> delegate = new LimitedStorageImpl<>(
+            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+            variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()
         );
+        return new LimitedPlatformStorage<>(delegate, FluidStorageType.INSTANCE, trackingRepository, listener);
     }
 
     @Override
@@ -80,12 +81,12 @@ public class FluidStorageBlockBlockEntity extends StorageBlockBlockEntity<FluidR
     }
 
     @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inventory, Player player) {
+    public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         return new FluidStorageBlockContainerMenu(
-                syncId,
-                player,
-                resourceFilterContainer,
-                this
+            syncId,
+            player,
+            resourceFilterContainer,
+            this
         );
     }
 }

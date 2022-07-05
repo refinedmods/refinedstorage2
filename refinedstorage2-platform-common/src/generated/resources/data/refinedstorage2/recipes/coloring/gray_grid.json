@@ -1,14 +1,14 @@
 {
-    "type": "minecraft:crafting_shapeless",
-    "ingredients": [
-        {
-            "tag": "refinedstorage2:grids"
-        },
-        {
-            "item": "minecraft:gray_dye"
-        }
-    ],
-    "result": {
-        "item": "refinedstorage2:gray_grid"
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "tag": "refinedstorage2:grids"
+    },
+    {
+      "item": "minecraft:gray_dye"
     }
+  ],
+  "result": {
+    "item": "refinedstorage2:gray_grid"
+  }
 }

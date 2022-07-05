@@ -1,175 +1,175 @@
 {
-    "multipart": [
-        {
-            "when": {
-                "direction": "north",
-                "active": false
-            },
-            "apply": {
-                "model": "refinedstorage2:block/relay/off"
-            }
-        },
-        {
-            "when": {
-                "direction": "east",
-                "active": false
-            },
-            "apply": {
-                "model": "refinedstorage2:block/relay/off",
-                "y": 90
-            }
-        },
-        {
-            "when": {
-                "direction": "south",
-                "active": false
-            },
-            "apply": {
-                "model": "refinedstorage2:block/relay/off",
-                "x": 180
-            }
-        },
-        {
-            "when": {
-                "direction": "west",
-                "active": false
-            },
-            "apply": {
-                "model": "refinedstorage2:block/relay/off",
-                "y": 270
-            }
-        },
-        {
-            "when": {
-                "direction": "up",
-                "active": false
-            },
-            "apply": {
-                "model": "refinedstorage2:block/relay/off",
-                "x": 270
-            }
-        },
-        {
-            "when": {
-                "direction": "down",
-                "active": false
-            },
-            "apply": {
-                "model": "refinedstorage2:block/relay/off",
-                "x": 90
-            }
-        },
-        {
-            "when": {
-                "direction": "north",
-                "active": true
-            },
-            "apply": {
-                "model": "refinedstorage2:block/relay/on"
-            }
-        },
-        {
-            "when": {
-                "direction": "east",
-                "active": true
-            },
-            "apply": {
-                "model": "refinedstorage2:block/relay/on",
-                "y": 90
-            }
-        },
-        {
-            "when": {
-                "direction": "south",
-                "active": true
-            },
-            "apply": {
-                "model": "refinedstorage2:block/relay/on",
-                "x": 180
-            }
-        },
-        {
-            "when": {
-                "direction": "west",
-                "active": true
-            },
-            "apply": {
-                "model": "refinedstorage2:block/relay/on",
-                "y": 270
-            }
-        },
-        {
-            "when": {
-                "direction": "up",
-                "active": true
-            },
-            "apply": {
-                "model": "refinedstorage2:block/relay/on",
-                "x": 270
-            }
-        },
-        {
-            "when": {
-                "direction": "down",
-                "active": true
-            },
-            "apply": {
-                "model": "refinedstorage2:block/relay/on",
-                "x": 90
-            }
-        },
-        {
-            "when": {
-                "north": true
-            },
-            "apply": {
-                "model": "refinedstorage2:block/cable_extension"
-            }
-        },
-        {
-            "when": {
-                "east": true
-            },
-            "apply": {
-                "model": "refinedstorage2:block/cable_extension",
-                "y": 90
-            }
-        },
-        {
-            "when": {
-                "south": true
-            },
-            "apply": {
-                "model": "refinedstorage2:block/cable_extension",
-                "x": 180
-            }
-        },
-        {
-            "when": {
-                "west": true
-            },
-            "apply": {
-                "model": "refinedstorage2:block/cable_extension",
-                "y": 270
-            }
-        },
-        {
-            "when": {
-                "up": true
-            },
-            "apply": {
-                "model": "refinedstorage2:block/cable_extension",
-                "x": 270
-            }
-        },
-        {
-            "when": {
-                "down": true
-            },
-            "apply": {
-                "model": "refinedstorage2:block/cable_extension",
-                "x": 90
-            }
-        }
-    ]
+  "multipart": [
+    {
+      "when": {
+        "direction": "north",
+        "active": false
+      },
+      "apply": {
+        "model": "refinedstorage2:block/relay/off"
+      }
+    },
+    {
+      "when": {
+        "direction": "east",
+        "active": false
+      },
+      "apply": {
+        "model": "refinedstorage2:block/relay/off",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "direction": "south",
+        "active": false
+      },
+      "apply": {
+        "model": "refinedstorage2:block/relay/off",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "direction": "west",
+        "active": false
+      },
+      "apply": {
+        "model": "refinedstorage2:block/relay/off",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "direction": "up",
+        "active": false
+      },
+      "apply": {
+        "model": "refinedstorage2:block/relay/off",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "direction": "down",
+        "active": false
+      },
+      "apply": {
+        "model": "refinedstorage2:block/relay/off",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "direction": "north",
+        "active": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/relay/on"
+      }
+    },
+    {
+      "when": {
+        "direction": "east",
+        "active": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/relay/on",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "direction": "south",
+        "active": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/relay/on",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "direction": "west",
+        "active": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/relay/on",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "direction": "up",
+        "active": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/relay/on",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "direction": "down",
+        "active": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/relay/on",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "north": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/cable_extension"
+      }
+    },
+    {
+      "when": {
+        "east": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/cable_extension",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/cable_extension",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "west": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/cable_extension",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/cable_extension",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/cable_extension",
+        "x": 90
+      }
+    }
+  ]
 }

@@ -12,11 +12,11 @@ public enum ControllerEnergyType implements StringRepresentable {
 
     private final String name;
 
-    ControllerEnergyType(String name) {
+    ControllerEnergyType(final String name) {
         this.name = name;
     }
 
-    public static ControllerEnergyType ofState(ControllerEnergyState state) {
+    public static ControllerEnergyType ofState(final ControllerEnergyState state) {
         return switch (state) {
             case OFF -> OFF;
             case NEARLY_ON -> NEARLY_ON;

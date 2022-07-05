@@ -1,18 +1,16 @@
 package com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel;
 
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-
-import com.google.common.base.Preconditions;
 
 public class NamedStorageChannelType<T> implements StorageChannelType<T> {
     private final String name;
     private final StorageChannelType<T> delegate;
 
-    public NamedStorageChannelType(String name, StorageChannelType<T> delegate) {
-        Preconditions.checkNotNull(delegate);
+    public NamedStorageChannelType(final String name, final StorageChannelType<T> delegate) {
         this.name = name;
-        this.delegate = delegate;
+        this.delegate = CoreValidations.validateNotNull(delegate, "Delegate cannot be null");
     }
 
     @Override
@@ -22,8 +20,8 @@ public class NamedStorageChannelType<T> implements StorageChannelType<T> {
 
     @Override
     public String toString() {
-        return "NamedStorageChannelType{" +
-                "name='" + name + '\'' +
-                '}';
+        return "NamedStorageChannelType{"
+            + "name='" + name + '\''
+            + '}';
     }
 }

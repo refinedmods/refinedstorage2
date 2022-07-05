@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.api.storage;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Rs2Test
 class LimitedStorageImplTest {
     private SourceCapturingStorage<String> backed;
     private LimitedStorageImpl<String> sut;
@@ -27,22 +25,18 @@ class LimitedStorageImplTest {
     }
 
     @Test
-    void Test_negative_capacity() {
-        // Arrange
-        Storage<String> backed = new InMemoryStorageImpl<>();
-
+    void testNegativeCapacity() {
         // Act & assert
         assertThrows(IllegalArgumentException.class, () -> new LimitedStorageImpl<>(backed, -1));
     }
 
     @Test
-    void Test_zero_capacity() {
+    void testZeroCapacity() {
         // Arrange
-        SourceCapturingStorage<String> backed = new SourceCapturingStorage<>(new InMemoryStorageImpl<>());
-        Storage<String> sut = new LimitedStorageImpl<>(backed, 0);
+        sut = new LimitedStorageImpl<>(backed, 0);
 
         // Act
-        long inserted = sut.insert("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
+        final long inserted = sut.insert("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(inserted).isZero();
@@ -51,16 +45,16 @@ class LimitedStorageImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_adding_a_resource(Action action) {
+    void shouldInsertResourceCompletely(final Action action) {
         // Act
-        long inserted = sut.insert("A", 100, action, customSource);
+        final long inserted = sut.insert("A", 100, action, customSource);
 
         // Assert
         assertThat(inserted).isEqualTo(100);
 
         if (action == Action.EXECUTE) {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-                    new ResourceAmount<>("A", 100)
+                new ResourceAmount<>("A", 100)
             );
             assertThat(sut.getStored()).isEqualTo(100);
         } else {
@@ -73,10 +67,10 @@ class LimitedStorageImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_adding_a_resource_and_exceeding_capacity(Action action) {
+    void shouldInsertResourcePartly(final Action action) {
         // Act
-        long inserted1 = sut.insert("A", 60, Action.EXECUTE, customSource);
-        long inserted2 = sut.insert("B", 45, action, customSource);
+        final long inserted1 = sut.insert("A", 60, Action.EXECUTE, customSource);
+        final long inserted2 = sut.insert("B", 45, action, customSource);
 
         // Assert
         assertThat(inserted1).isEqualTo(60);
@@ -84,13 +78,13 @@ class LimitedStorageImplTest {
 
         if (action == Action.EXECUTE) {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-                    new ResourceAmount<>("A", 60),
-                    new ResourceAmount<>("B", 40)
+                new ResourceAmount<>("A", 60),
+                new ResourceAmount<>("B", 40)
             );
             assertThat(sut.getStored()).isEqualTo(100);
         } else {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new ResourceAmount<>("A", 60)
+                new ResourceAmount<>("A", 60)
             );
             assertThat(sut.getStored()).isEqualTo(60);
         }
@@ -100,10 +94,10 @@ class LimitedStorageImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void Test_adding_resource_to_an_already_full_storage_and_exceeding_capacity(Action action) {
+    void shouldNotInsertResourceWhenStorageAlreadyReachedCapacity(final Action action) {
         // Act
-        long inserted1 = sut.insert("A", 100, Action.EXECUTE, customSource);
-        long inserted2 = sut.insert("A", 101, action, customSource);
+        final long inserted1 = sut.insert("A", 100, Action.EXECUTE, customSource);
+        final long inserted2 = sut.insert("A", 101, action, customSource);
 
         // Assert
         assertThat(inserted1).isEqualTo(100);
@@ -115,11 +109,12 @@ class LimitedStorageImplTest {
     }
 
     @Test
-    void Test_adding_invalid_resource() {
+    @SuppressWarnings("ConstantConditions")
+    void shouldNotInsertInvalidResourceOrAmount() {
         // Act
-        Executable action1 = () -> sut.insert("A", 0, Action.EXECUTE, EmptySource.INSTANCE);
-        Executable action2 = () -> sut.insert("A", -1, Action.EXECUTE, EmptySource.INSTANCE);
-        Executable action3 = () -> sut.insert(null, 1, Action.EXECUTE, EmptySource.INSTANCE);
+        final Executable action1 = () -> sut.insert("A", 0, Action.EXECUTE, EmptySource.INSTANCE);
+        final Executable action2 = () -> sut.insert("A", -1, Action.EXECUTE, EmptySource.INSTANCE);
+        final Executable action3 = () -> sut.insert(null, 1, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThrows(IllegalArgumentException.class, action1);
@@ -128,12 +123,12 @@ class LimitedStorageImplTest {
     }
 
     @Test
-    void Test_extracting_resource() {
+    void shouldExtractResource() {
         // Arrange
         sut.insert("A", 100, Action.EXECUTE, customSource);
 
         // Act
-        long extracted = sut.extract("A", 101, Action.EXECUTE, customSource);
+        final long extracted = sut.extract("A", 101, Action.EXECUTE, customSource);
 
         // Assert
         assertThat(extracted).isEqualTo(100);

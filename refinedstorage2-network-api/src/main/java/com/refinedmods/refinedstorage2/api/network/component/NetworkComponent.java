@@ -5,6 +5,9 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 
 import java.util.Set;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.1")
 public interface NetworkComponent {
     default void onContainerAdded(NetworkNodeContainer container) {
 
@@ -22,7 +25,7 @@ public interface NetworkComponent {
 
     }
 
-    default void onNetworkMergedWith(Network network) {
+    default void onNetworkMergedWith(Network newMainNetwork) {
 
     }
 }

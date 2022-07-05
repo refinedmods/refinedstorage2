@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.query.lexer;
 public class LexerException extends RuntimeException {
     private final transient TokenRange range;
 
-    public LexerException(TokenRange range, String message) {
+    public LexerException(final TokenRange range, final String message) {
         super(message);
 
         this.range = range;

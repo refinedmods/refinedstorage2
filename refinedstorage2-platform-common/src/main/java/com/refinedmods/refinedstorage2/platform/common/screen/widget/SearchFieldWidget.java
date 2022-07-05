@@ -6,14 +6,18 @@ import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
 public class SearchFieldWidget extends EditBox {
     private final History history;
 
-    public SearchFieldWidget(Font textRenderer, int x, int y, int width, History history) {
-        super(textRenderer, x, y, width, textRenderer.lineHeight, new TextComponent(""));
+    public SearchFieldWidget(final Font textRenderer,
+                             final int x,
+                             final int y,
+                             final int width,
+                             final History history) {
+        super(textRenderer, x, y, width, textRenderer.lineHeight, Component.empty());
 
         this.history = history;
         this.setBordered(false);
@@ -21,10 +25,10 @@ public class SearchFieldWidget extends EditBox {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        boolean wasFocused = isFocused();
-        boolean result = super.mouseClicked(mouseX, mouseY, mouseButton);
-        boolean clickedWidget = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
+    public boolean mouseClicked(final double mouseX, final double mouseY, final int mouseButton) {
+        final boolean wasFocused = isFocused();
+        final boolean result = super.mouseClicked(mouseX, mouseY, mouseButton);
+        final boolean clickedWidget = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
 
         if (clickedWidget && mouseButton == 1) {
             setValue("");
@@ -37,46 +41,42 @@ public class SearchFieldWidget extends EditBox {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifier) {
-        boolean result = super.keyPressed(keyCode, scanCode, modifier);
-
-        boolean canLoseFocus = Platform.INSTANCE.canEditBoxLoseFocus(this);
-
-        if (isFocused()) {
-            if (keyCode == GLFW.GLFW_KEY_UP) {
-                setValue(history.older());
-                result = true;
-            } else if (keyCode == GLFW.GLFW_KEY_DOWN) {
-                setValue(history.newer());
-                result = true;
-            } else if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
-                saveHistory();
-
-                if (canLoseFocus) {
-                    setFocused(false);
-                }
-
-                result = true;
-            } else if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-                saveHistory();
-
-                setFocused(false);
-
-                if (canLoseFocus) {
-                    result = true;
-                } else {
-                    result = false;
-                }
-            }
+    public boolean keyPressed(final int keyCode, final int scanCode, final int modifier) {
+        final boolean canLoseFocus = Platform.INSTANCE.canEditBoxLoseFocus(this);
+        if (isFocused() && handleKeyCode(keyCode, canLoseFocus)) {
+            return true;
         }
-
         if (Platform.INSTANCE.isKeyDown(KeyMappings.INSTANCE.getFocusSearchBar()) && canLoseFocus) {
-            setFocused(!isFocused());
-            saveHistory();
-            result = true;
+            return handleFocusToggle();
         }
+        return super.keyPressed(keyCode, scanCode, modifier);
+    }
 
-        return result;
+    private boolean handleKeyCode(final int keyCode,
+                                  final boolean canLoseFocus) {
+        if (keyCode == GLFW.GLFW_KEY_UP || keyCode == GLFW.GLFW_KEY_DOWN) {
+            final String newValue = keyCode == GLFW.GLFW_KEY_UP ? history.older() : history.newer();
+            setValue(newValue);
+            return true;
+        } else if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+            saveHistory();
+            if (canLoseFocus) {
+                setFocused(false);
+            }
+            return true;
+        } else if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            saveHistory();
+            setFocused(false);
+            // If we can't lose focus, "fail" and let bubble it up so that the screen can be closed.
+            return canLoseFocus;
+        }
+        return false;
+    }
+
+    private boolean handleFocusToggle() {
+        setFocused(!isFocused());
+        saveHistory();
+        return true;
     }
 
     private void saveHistory() {

@@ -13,22 +13,26 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class PrioritySideButtonWidget extends SideButtonWidget {
+public class PrioritySideButtonWidget extends AbstractSideButtonWidget {
     private final PriorityAccessor priorityAccessor;
     private final TooltipRenderer tooltipRenderer;
 
-    public PrioritySideButtonWidget(PriorityAccessor priorityAccessor, Inventory playerInventory, Screen parent, TooltipRenderer tooltipRenderer) {
+    public PrioritySideButtonWidget(final PriorityAccessor priorityAccessor,
+                                    final Inventory playerInventory,
+                                    final Screen parent,
+                                    final TooltipRenderer tooltipRenderer) {
         super(createPressAction(priorityAccessor, playerInventory, parent));
         this.priorityAccessor = priorityAccessor;
         this.tooltipRenderer = tooltipRenderer;
     }
 
-    private static OnPress createPressAction(PriorityAccessor priorityAccessor, Inventory playerInventory, Screen parent) {
+    private static OnPress createPressAction(final PriorityAccessor priorityAccessor,
+                                             final Inventory playerInventory,
+                                             final Screen parent) {
         return btn -> Minecraft.getInstance().setScreen(new PriorityScreen(priorityAccessor, parent, playerInventory));
     }
 
@@ -43,10 +47,10 @@ public class PrioritySideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
-        List<Component> lines = new ArrayList<>();
+    public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
+        final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "priority"));
-        lines.add(new TextComponent(String.valueOf(priorityAccessor.getPriority())).withStyle(ChatFormatting.GRAY));
+        lines.add(Component.literal(String.valueOf(priorityAccessor.getPriority())).withStyle(ChatFormatting.GRAY));
         tooltipRenderer.render(poseStack, lines, mouseX, mouseY);
     }
 }

@@ -7,20 +7,23 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 
 import java.util.Set;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class NetworkImpl implements Network {
     private final ComponentMap<NetworkComponent> componentMap;
 
-    public NetworkImpl(ComponentMapFactory<NetworkComponent, Network> componentMapFactory) {
+    public NetworkImpl(final ComponentMapFactory<NetworkComponent, Network> componentMapFactory) {
         this.componentMap = componentMapFactory.buildComponentMap(this);
     }
 
     @Override
-    public void addContainer(NetworkNodeContainer container) {
+    public void addContainer(final NetworkNodeContainer container) {
         componentMap.getComponents().forEach(c -> c.onContainerAdded(container));
     }
 
     @Override
-    public void removeContainer(NetworkNodeContainer container) {
+    public void removeContainer(final NetworkNodeContainer container) {
         componentMap.getComponents().forEach(c -> c.onContainerRemoved(container));
     }
 
@@ -30,17 +33,17 @@ public class NetworkImpl implements Network {
     }
 
     @Override
-    public void split(Set<Network> networks) {
+    public void split(final Set<Network> networks) {
         componentMap.getComponents().forEach(c -> c.onNetworkSplit(networks));
     }
 
     @Override
-    public void merge(Network network) {
+    public void merge(final Network network) {
         componentMap.getComponents().forEach(c -> c.onNetworkMergedWith(network));
     }
 
     @Override
-    public <I extends NetworkComponent> I getComponent(Class<I> componentType) {
+    public <I extends NetworkComponent> I getComponent(final Class<I> componentType) {
         return componentMap.getComponent(componentType);
     }
 }

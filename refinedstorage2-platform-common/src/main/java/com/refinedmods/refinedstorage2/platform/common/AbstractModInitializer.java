@@ -5,15 +5,16 @@ import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkCompone
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.FluidResourceType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.fluid.FluidResourceType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public abstract class AbstractModInitializer {
-    protected void initializePlatform(Platform platform) {
+    private static final String FLUID_REGISTRY_KEY = "fluid";
+
+    protected void initializePlatform(final Platform platform) {
         ((PlatformProxy) Platform.INSTANCE).setPlatform(platform);
     }
 
@@ -21,23 +22,39 @@ public abstract class AbstractModInitializer {
         ((PlatformApiProxy) PlatformApi.INSTANCE).setDelegate(new PlatformApiImpl());
     }
 
-    protected void registerDiskTypes() {
-        PlatformApi.INSTANCE.getStorageTypeRegistry().addType(createIdentifier("item_disk"), ItemStorageType.INSTANCE);
-        PlatformApi.INSTANCE.getStorageTypeRegistry().addType(createIdentifier("fluid_disk"), FluidStorageType.INSTANCE);
+    protected void registerAdditionalStorageTypes() {
+        PlatformApi.INSTANCE.getStorageTypeRegistry().register(
+            createIdentifier(FLUID_REGISTRY_KEY),
+            FluidStorageType.INSTANCE
+        );
     }
 
-    protected void registerStorageChannelTypes() {
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().addType(StorageChannelTypes.ITEM);
-        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().addType(StorageChannelTypes.FLUID);
+    protected void registerAdditionalStorageChannelTypes() {
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().register(
+            createIdentifier(FLUID_REGISTRY_KEY),
+            StorageChannelTypes.FLUID
+        );
     }
 
     protected void registerNetworkComponents() {
-        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
-        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(GraphNetworkComponent.class, GraphNetworkComponent::new);
-        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(StorageNetworkComponent.class, network -> new StorageNetworkComponent(PlatformApi.INSTANCE.getStorageChannelTypeRegistry()));
+        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
+            EnergyNetworkComponent.class,
+            network -> new EnergyNetworkComponent()
+        );
+        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
+            GraphNetworkComponent.class,
+            GraphNetworkComponent::new
+        );
+        PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
+            StorageNetworkComponent.class,
+            network -> new StorageNetworkComponent(PlatformApi.INSTANCE.getStorageChannelTypeRegistry())
+        );
     }
 
     protected void registerAdditionalResourceTypes() {
-        PlatformApi.INSTANCE.getResourceTypeRegistry().register(FluidResourceType.INSTANCE);
+        PlatformApi.INSTANCE.getResourceTypeRegistry().register(
+            createIdentifier(FLUID_REGISTRY_KEY),
+            FluidResourceType.INSTANCE
+        );
     }
 }

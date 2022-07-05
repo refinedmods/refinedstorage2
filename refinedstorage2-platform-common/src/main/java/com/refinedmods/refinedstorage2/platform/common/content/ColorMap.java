@@ -8,8 +8,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 
@@ -18,32 +18,32 @@ public class ColorMap<T> {
 
     private final Map<DyeColor, Supplier<T>> map = new EnumMap<>(DyeColor.class);
 
-    public void putAll(Function<DyeColor, Supplier<T>> factory) {
-        for (DyeColor color : DyeColor.values()) {
+    public void putAll(final Function<DyeColor, Supplier<T>> factory) {
+        for (final DyeColor color : DyeColor.values()) {
             map.put(color, factory.apply(color));
         }
     }
 
-    public ResourceLocation getId(DyeColor color, ResourceLocation id) {
+    public ResourceLocation getId(final DyeColor color, final ResourceLocation id) {
         if (color == NORMAL_COLOR) {
             return id;
         }
         return new ResourceLocation(id.getNamespace(), color.getSerializedName() + "_" + id.getPath());
     }
 
-    public MutableComponent getName(DyeColor color, MutableComponent name) {
+    public MutableComponent getName(final DyeColor color, final MutableComponent name) {
         if (color != NORMAL_COLOR) {
-            return new TranslatableComponent("color.minecraft." + color.getName()).append(" ").append(name);
+            return Component.translatable("color.minecraft." + color.getName()).append(" ").append(name);
         } else {
             return name;
         }
     }
 
-    public void forEach(BiConsumer<DyeColor, Supplier<T>> consumer) {
+    public void forEach(final BiConsumer<DyeColor, Supplier<T>> consumer) {
         map.forEach(consumer);
     }
 
-    public T get(DyeColor color) {
+    public T get(final DyeColor color) {
         return map.get(color).get();
     }
 

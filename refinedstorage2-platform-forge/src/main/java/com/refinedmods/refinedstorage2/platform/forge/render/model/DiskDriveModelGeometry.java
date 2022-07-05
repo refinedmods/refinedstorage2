@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge.render.model;
 
 import com.refinedmods.refinedstorage2.platform.forge.render.model.baked.DiskDriveBakedModel;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -16,7 +17,7 @@ import net.minecraftforge.client.model.IModelConfiguration;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
-public class DiskDriveModelGeometry extends BasicModelGeometry<DiskDriveModelGeometry> {
+public class DiskDriveModelGeometry extends AbstractModelGeometry<DiskDriveModelGeometry> {
     private static final ResourceLocation BASE_MODEL = createIdentifier("block/disk_drive_base");
     private static final ResourceLocation DISK_DISCONNECTED_MODEL = createIdentifier("block/disk_disconnected");
     private static final ResourceLocation DISK_MODEL = createIdentifier("block/disk");
@@ -27,11 +28,16 @@ public class DiskDriveModelGeometry extends BasicModelGeometry<DiskDriveModelGeo
     }
 
     @Override
-    public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
+    public BakedModel bake(final IModelConfiguration owner,
+                           final ModelBakery bakery,
+                           final Function<Material, TextureAtlasSprite> spriteGetter,
+                           final ModelState modelTransform,
+                           final ItemOverrides overrides,
+                           final ResourceLocation modelLocation) {
         return new DiskDriveBakedModel(
-                bakery.bake(BASE_MODEL, modelTransform, spriteGetter),
-                bakery.bake(DISK_MODEL, modelTransform, spriteGetter),
-                bakery.bake(DISK_DISCONNECTED_MODEL, modelTransform, spriteGetter)
+            Objects.requireNonNull(bakery.bake(BASE_MODEL, modelTransform, spriteGetter)),
+            Objects.requireNonNull(bakery.bake(DISK_MODEL, modelTransform, spriteGetter)),
+            Objects.requireNonNull(bakery.bake(DISK_DISCONNECTED_MODEL, modelTransform, spriteGetter))
         );
     }
 }

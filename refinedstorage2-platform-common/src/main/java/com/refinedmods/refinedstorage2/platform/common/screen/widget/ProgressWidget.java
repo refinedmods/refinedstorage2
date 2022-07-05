@@ -30,7 +30,13 @@ public class ProgressWidget extends GuiComponent implements Widget, GuiEventList
     private final TooltipRenderer tooltipRenderer;
     private final Supplier<List<Component>> tooltipSupplier;
 
-    public ProgressWidget(int x, int y, int width, int height, DoubleSupplier progressSupplier, TooltipRenderer tooltipRenderer, Supplier<List<Component>> tooltipSupplier) {
+    public ProgressWidget(final int x,
+                          final int y,
+                          final int width,
+                          final int height,
+                          final DoubleSupplier progressSupplier,
+                          final TooltipRenderer tooltipRenderer,
+                          final Supplier<List<Component>> tooltipSupplier) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -41,24 +47,27 @@ public class ProgressWidget extends GuiComponent implements Widget, GuiEventList
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
-        int correctedHeight = (int) (progressSupplier.getAsDouble() * height);
+    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float delta) {
+        final int correctedHeight = (int) (progressSupplier.getAsDouble() * height);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
         RenderSystem.enableDepthTest();
-        int zOffset = getBlitOffset();
+        final int zOffset = getBlitOffset();
         setBlitOffset(200);
         blit(poseStack, x, y + height - correctedHeight, 179, height - correctedHeight, width, correctedHeight);
         setBlitOffset(zOffset);
         RenderSystem.disableDepthTest();
 
-        boolean hovered = mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
-        if (hovered) {
+        if (isHovered(mouseX, mouseY)) {
             tooltipRenderer.render(poseStack, tooltipSupplier.get(), mouseX, mouseY);
         }
+    }
+
+    private boolean isHovered(final int mouseX, final int mouseY) {
+        return mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
     }
 
     @Override
@@ -67,7 +76,7 @@ public class ProgressWidget extends GuiComponent implements Widget, GuiEventList
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput builder) {
+    public void updateNarration(final NarrationElementOutput builder) {
         // intentionally empty
     }
 }

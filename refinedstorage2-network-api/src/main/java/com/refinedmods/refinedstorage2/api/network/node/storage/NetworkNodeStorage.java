@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Source;
@@ -17,20 +18,20 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-
-import com.google.common.base.Preconditions;
+import javax.annotation.Nullable;
 
 class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwareChild<T> {
     private final StorageNetworkNode<T> networkNode;
     private final Set<ParentComposite<T>> parentComposites = new HashSet<>();
+    @Nullable
     private Storage<T> storage;
 
-    public NetworkNodeStorage(StorageNetworkNode<T> networkNode) {
+    NetworkNodeStorage(final StorageNetworkNode<T> networkNode) {
         this.networkNode = networkNode;
     }
 
     @Override
-    public long extract(T resource, long amount, Action action, Source source) {
+    public long extract(final T resource, final long amount, final Action action, final Source source) {
         if (storage == null || networkNode.getAccessMode() == AccessMode.INSERT || !networkNode.isActive()) {
             return 0;
         }
@@ -38,18 +39,22 @@ class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwa
     }
 
     @Override
-    public long insert(T resource, long amount, Action action, Source source) {
-        if (storage == null || networkNode.getAccessMode() == AccessMode.EXTRACT || !networkNode.isActive() || !networkNode.isAllowed(resource)) {
+    public long insert(final T resource, final long amount, final Action action, final Source source) {
+        if (storage == null
+            || networkNode.getAccessMode() == AccessMode.EXTRACT
+            || !networkNode.isActive()
+            || !networkNode.isAllowed(resource)) {
             return 0;
         }
         return storage.insert(resource, amount, action, source);
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType) {
+    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
+                                                                     final Class<? extends Source> sourceType) {
         return storage instanceof TrackedStorage<T> trackedStorage
-                ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType)
-                : Optional.empty();
+            ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType)
+            : Optional.empty();
     }
 
     @Override
@@ -58,12 +63,12 @@ class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwa
     }
 
     @Override
-    public void onAddedIntoComposite(ParentComposite<T> parentComposite) {
+    public void onAddedIntoComposite(final ParentComposite<T> parentComposite) {
         parentComposites.add(parentComposite);
     }
 
     @Override
-    public void onRemovedFromComposite(ParentComposite<T> parentComposite) {
+    public void onRemovedFromComposite(final ParentComposite<T> parentComposite) {
         parentComposites.remove(parentComposite);
     }
 
@@ -81,14 +86,14 @@ class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwa
         return storage instanceof LimitedStorage<?> limitedStorage ? limitedStorage.getCapacity() : 0L;
     }
 
-    public void setSource(Storage<T> source) {
-        Preconditions.checkNotNull(source);
+    public void setSource(final Storage<T> source) {
+        CoreValidations.validateNotNull(source, "Source cannot be null");
         this.storage = source;
         parentComposites.forEach(parentComposite -> parentComposite.onSourceAddedToChild(storage));
     }
 
     public void removeSource() {
-        Preconditions.checkNotNull(this.storage);
+        CoreValidations.validateNotNull(this.storage, "Cannot remove source when no source was present");
         parentComposites.forEach(parentComposite -> parentComposite.onSourceRemovedFromChild(this.storage));
         this.storage = null;
     }

@@ -2,12 +2,13 @@ package com.refinedmods.refinedstorage2.platform.forge.render.model.baked;
 
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
@@ -21,14 +22,17 @@ public final class QuadTransformer {
     private QuadTransformer() {
     }
 
-    public static List<BakedQuad> transformSideAndRotate(Function<Direction, List<BakedQuad>> quadGetter, BiDirection direction, Direction side) {
-        Transformation transformation = new Transformation(null, createQuaternion(direction), null, null);
+    public static List<BakedQuad> transformSideAndRotate(final Function<Direction, List<BakedQuad>> quadGetter,
+                                                         final BiDirection direction,
+                                                         @Nullable final Direction side) {
+        final Transformation transformation = new Transformation(null, direction.getQuaternion(), null, null);
 
-        ImmutableList.Builder<BakedQuad> rotated = ImmutableList.builder();
+        final List<BakedQuad> quads = quadGetter.apply(transformSide(side, transformation.getMatrix()));
+        final List<BakedQuad> rotated = new ArrayList<>(quads.size());
 
-        for (BakedQuad quad : quadGetter.apply(transformSide(side, transformation.getMatrix()))) {
-            BakedQuadBuilder builder = new BakedQuadBuilder(quad.getSprite());
-            TRSRTransformer transformer = new TRSRTransformer(builder, transformation.blockCenterToCorner());
+        for (final BakedQuad quad : quads) {
+            final BakedQuadBuilder builder = new BakedQuadBuilder(quad.getSprite());
+            final TRSRTransformer transformer = new TRSRTransformer(builder, transformation.blockCenterToCorner());
 
             quad.pipe(transformer);
 
@@ -37,15 +41,12 @@ public final class QuadTransformer {
             rotated.add(builder.build());
         }
 
-        return rotated.build();
+        return Collections.unmodifiableList(rotated);
     }
 
-    private static Quaternion createQuaternion(BiDirection direction) {
-        return new Quaternion(direction.getVec().x(), direction.getVec().y(), direction.getVec().z(), true);
-    }
-
-    private static Direction transformSide(Direction facing, Matrix4f mat) {
-        for (Direction face : Direction.values()) {
+    @Nullable
+    private static Direction transformSide(@Nullable final Direction facing, final Matrix4f mat) {
+        for (final Direction face : Direction.values()) {
             if (rotate(face, mat) == facing) {
                 return face;
             }
@@ -53,27 +54,27 @@ public final class QuadTransformer {
         return null;
     }
 
-    private static Direction rotate(Direction facing, Matrix4f mat) {
-        Vec3i dir = facing.getNormal();
-        Vector4f vec = new Vector4f(dir.getX(), dir.getY(), dir.getZ(), 1);
+    private static Direction rotate(final Direction facing, final Matrix4f mat) {
+        final Vec3i dir = facing.getNormal();
+        final Vector4f vec = new Vector4f(dir.getX(), dir.getY(), dir.getZ(), 1);
         vec.transform(mat);
         return Direction.getNearest(vec.x(), vec.y(), vec.z());
     }
 
-    public static List<BakedQuad> translate(List<BakedQuad> quads, Vector3f translation) {
-        Transformation transformation = new Transformation(translation, null, null, null);
+    public static List<BakedQuad> translate(final List<BakedQuad> quads, final Vector3f translation) {
+        final Transformation transformation = new Transformation(translation, null, null, null);
 
-        ImmutableList.Builder<BakedQuad> translated = ImmutableList.builder();
+        final List<BakedQuad> translated = new ArrayList<>(quads.size());
 
-        for (BakedQuad quad : quads) {
-            BakedQuadBuilder builder = new BakedQuadBuilder(quad.getSprite());
-            TRSRTransformer transformer = new TRSRTransformer(builder, transformation.blockCenterToCorner());
+        for (final BakedQuad quad : quads) {
+            final BakedQuadBuilder builder = new BakedQuadBuilder(quad.getSprite());
+            final TRSRTransformer transformer = new TRSRTransformer(builder, transformation.blockCenterToCorner());
 
             quad.pipe(transformer);
 
             translated.add(builder.build());
         }
 
-        return translated.build();
+        return Collections.unmodifiableList(translated);
     }
 }

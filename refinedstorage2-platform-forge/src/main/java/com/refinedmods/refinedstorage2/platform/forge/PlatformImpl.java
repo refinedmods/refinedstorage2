@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
@@ -32,31 +32,40 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public final class PlatformImpl extends AbstractPlatform {
-    private static final TagKey<Item> WRENCH_TAG = TagKey.create(Registry.ITEM.key(), new ResourceLocation("forge", "tools/wrench"));
+    private static final TagKey<Item> WRENCH_TAG = TagKey.create(
+        ForgeRegistries.ITEMS.getRegistryKey(),
+        new ResourceLocation("forge", "tools/wrench")
+    );
 
     private final ConfigImpl config = new ConfigImpl();
 
-    public PlatformImpl(NetworkManager networkManager) {
-        super(new ServerToClientCommunicationsImpl(networkManager), new ClientToServerCommunicationsImpl(networkManager), new MenuOpenerImpl(), new BucketQuantityFormatter(FluidAttributes.BUCKET_VOLUME), new FluidStackFluidRenderer());
+    public PlatformImpl(final NetworkManager networkManager) {
+        super(
+            new ServerToClientCommunicationsImpl(networkManager),
+            new ClientToServerCommunicationsImpl(networkManager),
+            new MenuOpenerImpl(),
+            new BucketQuantityFormatter(FluidType.BUCKET_VOLUME),
+            new FluidStackFluidRenderer()
+        );
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getSpec());
     }
 
     @Override
     public long getBucketAmount() {
-        return FluidAttributes.BUCKET_VOLUME;
+        return FluidType.BUCKET_VOLUME;
     }
 
     @Override
@@ -70,42 +79,53 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public boolean canEditBoxLoseFocus(EditBox editBox) {
+    public boolean canEditBoxLoseFocus(final EditBox editBox) {
         return editBox.canLoseFocus;
     }
 
     @Override
-    public boolean isKeyDown(KeyMapping keyMapping) {
-        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), keyMapping.getKey().getValue());
+    public boolean isKeyDown(final KeyMapping keyMapping) {
+        return InputConstants.isKeyDown(
+            Minecraft.getInstance().getWindow().getWindow(),
+            keyMapping.getKey().getValue()
+        );
     }
 
     @Override
-    public ItemGridEventHandler createItemGridEventHandler(AbstractContainerMenu containerMenu, GridService<ItemResource> gridService, Inventory playerInventory) {
+    public ItemGridEventHandler createItemGridEventHandler(final AbstractContainerMenu containerMenu,
+                                                           final GridService<ItemResource> gridService,
+                                                           final Inventory playerInventory) {
         return new ItemGridEventHandlerImpl(containerMenu, gridService, playerInventory);
     }
 
     @Override
-    public FluidGridEventHandler createFluidGridEventHandler(AbstractContainerMenu containerMenu, GridService<FluidResource> gridService, Inventory playerInventory, ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu,
+                                                             final GridService<FluidResource> gridService,
+                                                             final Inventory playerInventory,
+                                                             final ExtractableStorage<ItemResource> bucketStorage) {
         return new FluidGridEventHandlerImpl(containerMenu, playerInventory, gridService, bucketStorage);
     }
 
     @Override
-    public Function<ResourceAmount<ItemResource>, GridResource<ItemResource>> getItemGridResourceFactory() {
+    public Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> getItemGridResourceFactory() {
         return new ForgeItemGridResourceFactory();
     }
 
     @Override
-    public Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> getFluidGridResourceFactory() {
+    public Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> getFluidGridResourceFactory() {
         return new ForgeFluidGridResourceFactory();
     }
 
     @Override
-    public Optional<FluidResource> convertToFluid(ItemStack stack) {
-        return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).map(handler -> handler.getFluidInTank(0)).map(contents -> contents.isEmpty() ? null : new FluidResource(contents.getFluid(), contents.getTag()));
+    public Optional<FluidResource> convertToFluid(final ItemStack stack) {
+        return stack
+            .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
+            .map(handler -> handler.getFluidInTank(0))
+            .map(contents -> contents.isEmpty() ? null : new FluidResource(contents.getFluid(), contents.getTag()));
     }
 
     @Override
-    public EnergyStorage createEnergyStorage(ControllerType controllerType, Runnable listener) {
+    public EnergyStorage createEnergyStorage(final ControllerType controllerType, final Runnable listener) {
         return switch (controllerType) {
             case NORMAL -> new ControllerForgeEnergy(listener);
             case CREATIVE -> new InfiniteEnergyStorage();
@@ -113,7 +133,7 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public void setEnergy(EnergyStorage energyStorage, long stored) {
+    public void setEnergy(final EnergyStorage energyStorage, final long stored) {
         if (energyStorage instanceof ControllerForgeEnergy controllerForgeEnergy) {
             controllerForgeEnergy.setSilently(stored);
         }

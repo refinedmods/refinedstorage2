@@ -39,7 +39,10 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     private final Storage<ItemVariant> playerCursorStorage;
     private final ExtractableStorage<ItemResource> bucketStorage;
 
-    public FluidGridEventHandlerImpl(AbstractContainerMenu menu, GridService<FluidResource> gridService, Inventory playerInventory, ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridEventHandlerImpl(final AbstractContainerMenu menu,
+                                     final GridService<FluidResource> gridService,
+                                     final Inventory playerInventory,
+                                     final ExtractableStorage<ItemResource> bucketStorage) {
         this.menu = menu;
         this.player = playerInventory.player;
         this.gridService = gridService;
@@ -49,20 +52,20 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     }
 
     @Override
-    public void onInsert(GridInsertMode insertMode) {
-        Storage<FluidVariant> cursorStorage = getFluidCursorStorage();
+    public void onInsert(final GridInsertMode insertMode) {
+        final Storage<FluidVariant> cursorStorage = getFluidCursorStorage();
         if (cursorStorage == null) {
             return;
         }
-        FluidVariant extractableResource = StorageUtil.findExtractableResource(cursorStorage, null);
+        final FluidVariant extractableResource = StorageUtil.findExtractableResource(cursorStorage, null);
         if (extractableResource == null) {
             return;
         }
-        FluidResource fluidResource = ofFluidVariant(extractableResource);
+        final FluidResource fluidResource = ofFluidVariant(extractableResource);
         gridService.insert(fluidResource, insertMode, (resource, amount, action, source) -> {
-            FluidVariant fluidVariant = toFluidVariant(resource);
+            final FluidVariant fluidVariant = toFluidVariant(resource);
             try (Transaction tx = Transaction.openOuter()) {
-                long extracted = cursorStorage.extract(fluidVariant, amount, tx);
+                final long extracted = cursorStorage.extract(fluidVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
                 }
@@ -72,24 +75,27 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     }
 
     @Override
-    public void onTransfer(int slotIndex) {
-        SingleSlotStorage<ItemVariant> itemSlotStorage = playerInventoryStorage.getSlot(slotIndex);
+    public void onTransfer(final int slotIndex) {
+        final SingleSlotStorage<ItemVariant> itemSlotStorage = playerInventoryStorage.getSlot(slotIndex);
         if (itemSlotStorage == null) {
             return;
         }
-        Storage<FluidVariant> fluidSlotStorage = FluidStorage.ITEM.find(itemSlotStorage.getResource().toStack(), ContainerItemContext.ofPlayerSlot(player, itemSlotStorage));
+        final Storage<FluidVariant> fluidSlotStorage = FluidStorage.ITEM.find(
+            itemSlotStorage.getResource().toStack(),
+            ContainerItemContext.ofPlayerSlot(player, itemSlotStorage)
+        );
         if (fluidSlotStorage == null) {
             return;
         }
-        FluidVariant extractableResource = StorageUtil.findExtractableResource(fluidSlotStorage, null);
+        final FluidVariant extractableResource = StorageUtil.findExtractableResource(fluidSlotStorage, null);
         if (extractableResource == null) {
             return;
         }
-        FluidResource fluidResource = ofFluidVariant(extractableResource);
+        final FluidResource fluidResource = ofFluidVariant(extractableResource);
         gridService.insert(fluidResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
-            FluidVariant fluidVariant = toFluidVariant(resource);
+            final FluidVariant fluidVariant = toFluidVariant(resource);
             try (Transaction tx = Transaction.openOuter()) {
-                long extracted = fluidSlotStorage.extract(fluidVariant, amount, tx);
+                final long extracted = fluidSlotStorage.extract(fluidVariant, amount, tx);
                 if (action == Action.EXECUTE) {
                     tx.commit();
                 }
@@ -101,15 +107,15 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     @Nullable
     private Storage<FluidVariant> getFluidCursorStorage() {
         return FluidStorage.ITEM.find(
-                menu.getCarried(),
-                ContainerItemContext.ofPlayerCursor(player, menu)
+            menu.getCarried(),
+            ContainerItemContext.ofPlayerCursor(player, menu)
         );
     }
 
     @Override
-    public void onExtract(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
-        boolean bucketInInventory = hasBucketInInventory();
-        boolean bucketInStorageChannel = hasBucketInStorage();
+    public void onExtract(final FluidResource fluidResource, final GridExtractMode mode, final boolean cursor) {
+        final boolean bucketInInventory = hasBucketInInventory();
+        final boolean bucketInStorageChannel = hasBucketInStorage();
         if (bucketInInventory) {
             extractWithBucketInInventory(fluidResource, mode, cursor);
         } else if (bucketInStorageChannel) {
@@ -117,19 +123,21 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         }
     }
 
-    private void extractWithBucketInStorage(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
-        FluidGridExtractionInterceptingStorage interceptingStorage = new FluidGridExtractionInterceptingStorage();
-        Storage<FluidVariant> destination = FluidStorage.ITEM.find(
-                interceptingStorage.getStack(),
-                ContainerItemContext.ofSingleSlot(interceptingStorage)
+    private void extractWithBucketInStorage(final FluidResource fluidResource,
+                                            final GridExtractMode mode,
+                                            final boolean cursor) {
+        final FluidGridExtractionInterceptingStorage interceptingStorage = new FluidGridExtractionInterceptingStorage();
+        final Storage<FluidVariant> destination = FluidStorage.ITEM.find(
+            interceptingStorage.getStack(),
+            ContainerItemContext.ofSingleSlot(interceptingStorage)
         );
         if (destination == null) {
             return;
         }
         gridService.extract(fluidResource, mode, (resource, amount, action, source) -> {
             try (Transaction tx = Transaction.openOuter()) {
-                long inserted = destination.insert(toFluidVariant(resource), amount, tx);
-                boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, tx);
+                final long inserted = destination.insert(toFluidVariant(resource), amount, tx);
+                final boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, tx);
                 if (!couldInsertBucket) {
                     return amount;
                 }
@@ -142,21 +150,28 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         });
     }
 
-    private void extractWithBucketInInventory(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
+    private void extractWithBucketInInventory(final FluidResource fluidResource,
+                                              final GridExtractMode mode,
+                                              final boolean cursor) {
         try (Transaction tx = Transaction.openOuter()) {
             playerInventoryStorage.extract(BUCKET_ITEM_VARIANT, 1, tx);
-            FluidGridExtractionInterceptingStorage interceptingStorage = new FluidGridExtractionInterceptingStorage();
-            Storage<FluidVariant> destination = FluidStorage.ITEM.find(
-                    interceptingStorage.getStack(),
-                    ContainerItemContext.ofSingleSlot(interceptingStorage)
+            final FluidGridExtractionInterceptingStorage interceptingStorage
+                = new FluidGridExtractionInterceptingStorage();
+            final Storage<FluidVariant> destination = FluidStorage.ITEM.find(
+                interceptingStorage.getStack(),
+                ContainerItemContext.ofSingleSlot(interceptingStorage)
             );
             if (destination == null) {
                 return;
             }
             gridService.extract(fluidResource, mode, (resource, amount, action, source) -> {
                 try (Transaction innerTx = tx.openNested()) {
-                    long inserted = destination.insert(toFluidVariant(resource), amount, innerTx);
-                    boolean couldInsertBucket = insertResultingBucketIntoInventory(interceptingStorage, cursor, innerTx);
+                    final long inserted = destination.insert(toFluidVariant(resource), amount, innerTx);
+                    final boolean couldInsertBucket = insertResultingBucketIntoInventory(
+                        interceptingStorage,
+                        cursor,
+                        innerTx
+                    );
                     if (!couldInsertBucket) {
                         return amount;
                     }
@@ -170,9 +185,11 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         }
     }
 
-    private boolean insertResultingBucketIntoInventory(FluidGridExtractionInterceptingStorage interceptingStorage, boolean cursor, Transaction innerTx) {
-        Storage<ItemVariant> relevantStorage = cursor ? playerCursorStorage : playerInventoryStorage;
-        ItemVariant itemVariant = ItemVariant.of(interceptingStorage.getStack());
+    private boolean insertResultingBucketIntoInventory(final FluidGridExtractionInterceptingStorage interceptingStorage,
+                                                       final boolean cursor,
+                                                       final Transaction innerTx) {
+        final Storage<ItemVariant> relevantStorage = cursor ? playerCursorStorage : playerInventoryStorage;
+        final ItemVariant itemVariant = ItemVariant.of(interceptingStorage.getStack());
         return relevantStorage.insert(itemVariant, 1, innerTx) != 0;
     }
 

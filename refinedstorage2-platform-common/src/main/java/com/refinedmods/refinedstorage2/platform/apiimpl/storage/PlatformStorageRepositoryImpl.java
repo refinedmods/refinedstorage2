@@ -1,11 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.apiimpl.storage;
 
+import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.SerializableStorage;
-import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageTypeRegistry;
+import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 
 import java.util.Map;
 import java.util.Optional;
@@ -30,25 +31,26 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     private static final String TAG_STORAGE_DATA = "data";
 
     private final StorageRepositoryImpl delegate;
-    private final StorageTypeRegistry storageTypeRegistry;
+    private final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry;
 
-    public PlatformStorageRepositoryImpl(StorageRepositoryImpl delegate, StorageTypeRegistry storageTypeRegistry) {
+    public PlatformStorageRepositoryImpl(final StorageRepositoryImpl delegate,
+                                         final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry) {
         this.delegate = delegate;
         this.storageTypeRegistry = storageTypeRegistry;
     }
 
     @Override
-    public <T> Optional<Storage<T>> get(UUID id) {
+    public <T> Optional<Storage<T>> get(final UUID id) {
         return delegate.get(id);
     }
 
     @Override
-    public <T> void set(UUID id, Storage<T> storage) {
+    public <T> void set(final UUID id, final Storage<T> storage) {
         setSilently(id, storage);
         setDirty();
     }
 
-    private <T> void setSilently(UUID id, Storage<T> storage) {
+    private <T> void setSilently(final UUID id, final Storage<T> storage) {
         if (!(storage instanceof SerializableStorage<?>)) {
             throw new IllegalArgumentException("Storage is not serializable");
         }
@@ -57,7 +59,7 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> Optional<Storage<T>> disassemble(UUID id) {
+    public <T> Optional<Storage<T>> disassemble(final UUID id) {
         return delegate.disassemble(id).map(storage -> {
             setDirty();
             return (Storage<T>) storage;
@@ -65,28 +67,31 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
     }
 
     @Override
-    public StorageInfo getInfo(UUID id) {
+    public StorageInfo getInfo(final UUID id) {
         return delegate.getInfo(id);
     }
 
-    public void read(CompoundTag tag) {
-        ListTag storages = tag.getList(TAG_STORAGES, Tag.TAG_COMPOUND);
-        for (Tag storageTag : storages) {
-            UUID id = ((CompoundTag) storageTag).getUUID(TAG_STORAGE_ID);
-            ResourceLocation typeIdentifier = new ResourceLocation(((CompoundTag) storageTag).getString(TAG_STORAGE_TYPE));
-            CompoundTag data = ((CompoundTag) storageTag).getCompound(TAG_STORAGE_DATA);
+    public void read(final CompoundTag tag) {
+        final ListTag storages = tag.getList(TAG_STORAGES, Tag.TAG_COMPOUND);
+        for (final Tag storageTag : storages) {
+            final UUID id = ((CompoundTag) storageTag).getUUID(TAG_STORAGE_ID);
+            final ResourceLocation typeId = new ResourceLocation(
+                ((CompoundTag) storageTag).getString(TAG_STORAGE_TYPE)
+            );
+            final CompoundTag data = ((CompoundTag) storageTag).getCompound(TAG_STORAGE_DATA);
 
-            storageTypeRegistry.getType(typeIdentifier).ifPresentOrElse(
-                    type -> setSilently(id, type.fromTag(data, this::markAsChanged)),
-                    () -> LOGGER.warn("Cannot find storage type {} for storage {}", typeIdentifier, id)
+            storageTypeRegistry.get(typeId).ifPresentOrElse(
+                type -> setSilently(id, type.fromTag(data, this::markAsChanged)),
+                () -> LOGGER.warn("Cannot find storage type {} for storage {}", typeId, id)
             );
         }
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
-        ListTag storageList = new ListTag();
-        for (Map.Entry<UUID, Storage<?>> entry : delegate.getAll()) {
+    @SuppressWarnings("unchecked")
+    public CompoundTag save(final CompoundTag tag) {
+        final ListTag storageList = new ListTag();
+        for (final Map.Entry<UUID, Storage<?>> entry : delegate.getAll()) {
             if (entry.getValue() instanceof SerializableStorage serializableStorage) {
                 storageList.add(convertStorageToTag(entry.getKey(), entry.getValue(), serializableStorage));
             } else {
@@ -97,13 +102,13 @@ public class PlatformStorageRepositoryImpl extends SavedData implements Platform
         return tag;
     }
 
-    @SuppressWarnings("unchecked")
-    private Tag convertStorageToTag(UUID id, Storage<?> storage, SerializableStorage serializableStorage) {
-        ResourceLocation typeIdentifier = storageTypeRegistry
-                .getIdentifier(serializableStorage.getType())
-                .orElseThrow(() -> new RuntimeException("Storage type is not registered"));
+    private <T> Tag convertStorageToTag(final UUID id, final Storage<T> storage,
+                                        final SerializableStorage<T> serializableStorage) {
+        final ResourceLocation typeIdentifier = storageTypeRegistry
+            .getId(serializableStorage.getType())
+            .orElseThrow(() -> new RuntimeException("Storage type is not registered"));
 
-        CompoundTag tag = new CompoundTag();
+        final CompoundTag tag = new CompoundTag();
         tag.putUUID(TAG_STORAGE_ID, id);
         tag.put(TAG_STORAGE_DATA, serializableStorage.getType().toTag(storage));
         tag.putString(TAG_STORAGE_TYPE, typeIdentifier.toString());

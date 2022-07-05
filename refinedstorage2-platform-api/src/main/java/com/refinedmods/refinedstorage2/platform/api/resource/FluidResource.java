@@ -1,65 +1,25 @@
 package com.refinedmods.refinedstorage2.platform.api.resource;
 
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
-import java.util.Objects;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
-import com.google.common.base.Preconditions;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
-public final class FluidResource implements FuzzyModeNormalizer<FluidResource> {
+public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements FuzzyModeNormalizer<FluidResource> {
     private static final String TAG_TAG = "tag";
     private static final String TAG_ID = "id";
     private static final String TAG_AMOUNT = "amount";
 
-    private final Fluid fluid;
-    private final CompoundTag tag;
-
-    public FluidResource(Fluid fluid, CompoundTag tag) {
-        this.fluid = Preconditions.checkNotNull(fluid);
+    public FluidResource(final Fluid fluid, @Nullable final CompoundTag tag) {
+        this.fluid = CoreValidations.validateNotNull(fluid, "Fluid must not be null");
         this.tag = tag;
-    }
-
-    public static CompoundTag toTag(FluidResource fluidResource) {
-        CompoundTag tag = new CompoundTag();
-        if (fluidResource.getTag() != null) {
-            tag.put(TAG_TAG, fluidResource.getTag());
-        }
-        tag.putString(TAG_ID, Registry.FLUID.getKey(fluidResource.getFluid()).toString());
-        return tag;
-    }
-
-    public static CompoundTag toTagWithAmount(ResourceAmount<FluidResource> resourceAmount) {
-        CompoundTag tag = toTag(resourceAmount.getResource());
-        tag.putLong(TAG_AMOUNT, resourceAmount.getAmount());
-        return tag;
-    }
-
-    public static Optional<FluidResource> fromTag(CompoundTag tag) {
-        ResourceLocation id = new ResourceLocation(tag.getString(TAG_ID));
-        Fluid fluid = Registry.FLUID.get(id);
-        if (fluid == Fluids.EMPTY) {
-            return Optional.empty();
-        }
-        CompoundTag itemTag = tag.contains(TAG_TAG) ? tag.getCompound(TAG_TAG) : null;
-        return Optional.of(new FluidResource(fluid, itemTag));
-    }
-
-    public static Optional<ResourceAmount<FluidResource>> fromTagWithAmount(CompoundTag tag) {
-        return fromTag(tag).map(fluidResource -> new ResourceAmount<>(fluidResource, tag.getLong(TAG_AMOUNT)));
-    }
-
-    public Fluid getFluid() {
-        return fluid;
-    }
-
-    public CompoundTag getTag() {
-        return tag;
     }
 
     @Override
@@ -67,24 +27,32 @@ public final class FluidResource implements FuzzyModeNormalizer<FluidResource> {
         return new FluidResource(fluid, null);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FluidResource that = (FluidResource) o;
-        return Objects.equals(fluid, that.fluid) && Objects.equals(tag, that.tag);
+    public static CompoundTag toTag(final FluidResource fluidResource) {
+        final CompoundTag tag = new CompoundTag();
+        if (fluidResource.tag() != null) {
+            tag.put(TAG_TAG, fluidResource.tag());
+        }
+        tag.putString(TAG_ID, Registry.FLUID.getKey(fluidResource.fluid()).toString());
+        return tag;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(fluid, tag);
+    public static CompoundTag toTagWithAmount(final ResourceAmount<FluidResource> resourceAmount) {
+        final CompoundTag tag = toTag(resourceAmount.getResource());
+        tag.putLong(TAG_AMOUNT, resourceAmount.getAmount());
+        return tag;
     }
 
-    @Override
-    public String toString() {
-        return "FluidResource{" +
-                "fluid=" + fluid +
-                ", tag=" + tag +
-                '}';
+    public static Optional<FluidResource> fromTag(final CompoundTag tag) {
+        final ResourceLocation id = new ResourceLocation(tag.getString(TAG_ID));
+        final Fluid fluid = Registry.FLUID.get(id);
+        if (fluid == Fluids.EMPTY) {
+            return Optional.empty();
+        }
+        final CompoundTag itemTag = tag.contains(TAG_TAG) ? tag.getCompound(TAG_TAG) : null;
+        return Optional.of(new FluidResource(fluid, itemTag));
+    }
+
+    public static Optional<ResourceAmount<FluidResource>> fromTagWithAmount(final CompoundTag tag) {
+        return fromTag(tag).map(fluidResource -> new ResourceAmount<>(fluidResource, tag.getLong(TAG_AMOUNT)));
     }
 }

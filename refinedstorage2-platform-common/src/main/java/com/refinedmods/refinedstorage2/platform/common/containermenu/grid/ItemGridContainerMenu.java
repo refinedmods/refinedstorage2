@@ -14,9 +14,11 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.ClientItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
+
+import java.util.Objects;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,23 +29,36 @@ import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> implements ItemGridEventHandler {
+public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResource> implements ItemGridEventHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final GridService<ItemResource> gridService;
     private final ItemGridEventHandler itemGridEventHandler;
 
-    public ItemGridContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
+    public ItemGridContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getGrid(), syncId, playerInventory, buf, createView());
-        this.gridService = null;
         this.itemGridEventHandler = new ClientItemGridEventHandler();
     }
 
-    public ItemGridContainerMenu(int syncId, Inventory playerInventory, GridBlockEntity<ItemResource> grid) {
+    public ItemGridContainerMenu(final int syncId,
+                                 final Inventory playerInventory,
+                                 final AbstractGridBlockEntity<ItemResource> grid) {
         super(Menus.INSTANCE.getGrid(), syncId, playerInventory, grid, createView());
-        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), itemResource -> (long) itemResource.getItem().getMaxStackSize(), 1);
-        this.grid.addWatcher(this);
+        grid.addWatcher(this);
+        final GridService<ItemResource> gridService = new GridServiceImpl<>(
+            Objects.requireNonNull(storageChannel),
+            new PlayerSource(playerInventory.player),
+            itemResource -> (long) itemResource.item().getMaxStackSize(),
+            1
+        );
         this.itemGridEventHandler = Platform.INSTANCE.createItemGridEventHandler(this, gridService, playerInventory);
+    }
+
+    @Override
+    public void removed(final Player playerEntity) {
+        super.removed(playerEntity);
+        if (grid != null) {
+            grid.removeWatcher(this);
+        }
     }
 
     private static GridViewImpl<ItemResource> createView() {
@@ -51,36 +66,29 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
     }
 
     @Override
-    protected ResourceAmount<ItemResource> readResourceAmount(FriendlyByteBuf buf) {
+    protected ResourceAmount<ItemResource> readResourceAmount(final FriendlyByteBuf buf) {
         return PacketUtil.readItemResourceAmount(buf);
     }
 
     @Override
-    public void removed(Player playerEntity) {
-        super.removed(playerEntity);
-        if (grid != null) {
-            grid.removeWatcher(this);
-        }
-    }
-
-    @Override
-    public void onChanged(ResourceListOperationResult<ItemResource> change) {
-        ItemResource resource = change.resourceAmount().getResource();
+    public void onChanged(final ResourceListOperationResult<ItemResource> change) {
+        final ItemResource resource = change.resourceAmount().getResource();
 
         LOGGER.info("Received a change of {} for {}", change.change(), resource);
 
         Platform.INSTANCE.getServerToClientCommunications().sendGridItemUpdate(
-                (ServerPlayer) playerInventory.player,
-                resource,
-                change.change(),
-                storageChannel.findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
+            (ServerPlayer) playerInventory.player,
+            resource,
+            change.change(),
+            Objects.requireNonNull(storageChannel)
+                .findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
         );
     }
 
     @Override
-    public ItemStack quickMoveStack(Player playerEntity, int slotIndex) {
+    public ItemStack quickMoveStack(final Player playerEntity, final int slotIndex) {
         if (!playerEntity.level.isClientSide()) {
-            Slot slot = getSlot(slotIndex);
+            final Slot slot = getSlot(slotIndex);
             if (slot.hasItem()) {
                 itemGridEventHandler.onTransfer(slot.getContainerSlot());
             }
@@ -89,22 +97,22 @@ public class ItemGridContainerMenu extends GridContainerMenu<ItemResource> imple
     }
 
     @Override
-    public void onInsert(GridInsertMode insertMode) {
+    public void onInsert(final GridInsertMode insertMode) {
         itemGridEventHandler.onInsert(insertMode);
     }
 
     @Override
-    public void onTransfer(int slotIndex) {
+    public void onTransfer(final int slotIndex) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
+    public void onExtract(final ItemResource itemResource, final GridExtractMode mode, final boolean cursor) {
         itemGridEventHandler.onExtract(itemResource, mode, cursor);
     }
 
     @Override
-    public void onScroll(ItemResource itemResource, GridScrollMode mode, int slot) {
-        itemGridEventHandler.onScroll(itemResource, mode, slot);
+    public void onScroll(final ItemResource itemResource, final GridScrollMode mode, final int slotIndex) {
+        itemGridEventHandler.onScroll(itemResource, mode, slotIndex);
     }
 }

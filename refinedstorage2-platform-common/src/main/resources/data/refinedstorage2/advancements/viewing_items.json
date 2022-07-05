@@ -1,26 +1,26 @@
 {
-    "display": {
-        "icon": {
-            "item": "refinedstorage2:grid"
-        },
-        "title": {
-            "translate": "advancements.refinedstorage2.viewing_items"
-        },
-        "description": {
-            "translate": "advancements.refinedstorage2.viewing_items.description"
-        }
+  "display": {
+    "icon": {
+      "item": "refinedstorage2:grid"
     },
-    "parent": "refinedstorage2:storing_items",
-    "criteria": {
-        "grid_in_inventory": {
-            "trigger": "minecraft:inventory_changed",
-            "conditions": {
-                "items": [
-                    {
-                        "tag": "refinedstorage2:grids"
-                    }
-                ]
-            }
-        }
+    "title": {
+      "translate": "advancements.refinedstorage2.viewing_items"
+    },
+    "description": {
+      "translate": "advancements.refinedstorage2.viewing_items.description"
     }
+  },
+  "parent": "refinedstorage2:storing_items",
+  "criteria": {
+    "grid_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "refinedstorage2:grids"
+          }
+        ]
+      }
+    }
+  }
 }

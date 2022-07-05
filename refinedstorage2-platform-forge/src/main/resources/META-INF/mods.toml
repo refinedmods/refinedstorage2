@@ -1,7 +1,7 @@
 modLoader = "javafml"
-loaderVersion = "[40,)"
+loaderVersion = "[41,)"
 issueTrackerURL = "https://github.com/refinedmods/refinedstorage2"
-license="MIT"
+license = "MIT"
 [[mods]]
 modId = "refinedstorage2"
 version = "${version}"
@@ -12,9 +12,3 @@ authors = "Refined Mods"
 description = '''
 Refined Storage is a mass storage mod for Minecraft that offers the player a network-based storage system, allowing them to store items and fluids on a massively expandable device network.
 '''
-[[dependencies.refinedstorage2]]
-modId = "forge"
-mandatory = true
-versionRange = "[40.1,)"
-ordering = "NONE"
-side = "BOTH"

@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view;
 
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.view.ItemGridResourceFactory;
+import com.refinedmods.refinedstorage2.platform.apiimpl.grid.view.AbstractItemGridResourceFactory;
 
 import java.util.Optional;
 
@@ -10,18 +10,18 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.core.Registry;
 import net.minecraft.world.item.ItemStack;
 
-public class FabricItemGridResourceFactory extends ItemGridResourceFactory {
+public class FabricItemGridResourceFactory extends AbstractItemGridResourceFactory {
     @Override
-    public Optional<String> getModName(String modId) {
+    public Optional<String> getModName(final String modId) {
         return FabricLoader
-                .getInstance()
-                .getModContainer(modId)
-                .map(ModContainer::getMetadata)
-                .map(ModMetadata::getName);
+            .getInstance()
+            .getModContainer(modId)
+            .map(ModContainer::getMetadata)
+            .map(ModMetadata::getName);
     }
 
     @Override
-    public String getModId(ItemStack itemStack) {
+    public String getModId(final ItemStack itemStack) {
         return Registry.ITEM.getKey(itemStack.getItem()).getNamespace();
     }
 }

@@ -15,13 +15,14 @@ import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class FilterModeSideButtonWidget extends SideButtonWidget {
+public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
     private final FilterModeAccessor filterModeAccessor;
     private final TooltipRenderer tooltipRenderer;
     private final List<Component> blockModeTooltip;
     private final List<Component> allowModeTooltip;
 
-    public FilterModeSideButtonWidget(FilterModeAccessor filterModeAccessor, TooltipRenderer tooltipRenderer) {
+    public FilterModeSideButtonWidget(final FilterModeAccessor filterModeAccessor,
+                                      final TooltipRenderer tooltipRenderer) {
         super(createPressAction(filterModeAccessor));
         this.filterModeAccessor = filterModeAccessor;
         this.tooltipRenderer = tooltipRenderer;
@@ -29,14 +30,17 @@ public class FilterModeSideButtonWidget extends SideButtonWidget {
         this.allowModeTooltip = calculateTooltip(FilterMode.ALLOW);
     }
 
-    private static OnPress createPressAction(FilterModeAccessor filterModeAccessor) {
+    private static OnPress createPressAction(final FilterModeAccessor filterModeAccessor) {
         return btn -> filterModeAccessor.setFilterMode(filterModeAccessor.getFilterMode().toggle());
     }
 
-    private List<Component> calculateTooltip(FilterMode filterMode) {
-        List<Component> lines = new ArrayList<>();
+    private List<Component> calculateTooltip(final FilterMode filterMode) {
+        final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "filter_mode"));
-        lines.add(createTranslation("gui", "filter_mode." + filterMode.toString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
+        lines.add(createTranslation(
+            "gui",
+            "filter_mode." + filterMode.toString().toLowerCase(Locale.ROOT)
+        ).withStyle(ChatFormatting.GRAY));
         return lines;
     }
 
@@ -51,7 +55,12 @@ public class FilterModeSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button button, PoseStack poseStack, int mouseX, int mouseY) {
-        tooltipRenderer.render(poseStack, filterModeAccessor.getFilterMode() == FilterMode.BLOCK ? blockModeTooltip : allowModeTooltip, mouseX, mouseY);
+    public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
+        tooltipRenderer.render(
+            poseStack,
+            filterModeAccessor.getFilterMode() == FilterMode.BLOCK ? blockModeTooltip : allowModeTooltip,
+            mouseX,
+            mouseY
+        );
     }
 }

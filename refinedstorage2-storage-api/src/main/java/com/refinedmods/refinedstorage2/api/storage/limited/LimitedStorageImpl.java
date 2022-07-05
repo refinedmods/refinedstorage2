@@ -1,13 +1,13 @@
 package com.refinedmods.refinedstorage2.api.storage.limited;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
+import com.refinedmods.refinedstorage2.api.storage.AbstractProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
-import com.refinedmods.refinedstorage2.api.storage.ProxyStorage;
 import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 
-import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
 
 /**
@@ -17,17 +17,16 @@ import org.apiguardian.api.API;
  * @param <T> the type of resource
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public class LimitedStorageImpl<T> extends ProxyStorage<T> implements LimitedStorage<T> {
+public class LimitedStorageImpl<T> extends AbstractProxyStorage<T> implements LimitedStorage<T> {
     private final long capacity;
 
     /**
      * @param delegate the storage that is being decorated
      * @param capacity the capacity, must be 0 or larger than 0
      */
-    public LimitedStorageImpl(Storage<T> delegate, long capacity) {
+    public LimitedStorageImpl(final Storage<T> delegate, final long capacity) {
         super(delegate);
-        Preconditions.checkArgument(capacity >= 0, "Capacity must be 0 or larger than 0");
-        this.capacity = capacity;
+        this.capacity = CoreValidations.validateNotNegative(capacity, "Capacity cannot be negative");
     }
 
     /**
@@ -35,13 +34,13 @@ public class LimitedStorageImpl<T> extends ProxyStorage<T> implements LimitedSto
      *
      * @param capacity the capacity, must be 0 or larger than 0
      */
-    public LimitedStorageImpl(long capacity) {
+    public LimitedStorageImpl(final long capacity) {
         this(new InMemoryStorageImpl<>(), capacity);
     }
 
     @Override
-    public long insert(T resource, long amount, Action action, Source source) {
-        Preconditions.checkArgument(amount > 0, "Amount must be larger than 0");
+    public long insert(final T resource, final long amount, final Action action, final Source source) {
+        CoreValidations.validateLargerThanZero(amount, "Amount must be larger than 0");
         if (delegate.getStored() + amount > capacity) {
             return insertPartly(resource, action, source);
         } else {
@@ -49,8 +48,8 @@ public class LimitedStorageImpl<T> extends ProxyStorage<T> implements LimitedSto
         }
     }
 
-    private long insertPartly(T resource, Action action, Source source) {
-        long spaceRemainingInStorage = capacity - delegate.getStored();
+    private long insertPartly(final T resource, final Action action, final Source source) {
+        final long spaceRemainingInStorage = capacity - delegate.getStored();
         if (spaceRemainingInStorage == 0) {
             return 0;
         }

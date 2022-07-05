@@ -10,21 +10,42 @@ public class CubeBuilder {
     private CubeBuilder() {
     }
 
-    public void putCube(PoseStack poseStack, VertexConsumer builder, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b, int a) {
-        putCube(poseStack, builder, x1, y1, z1, x2, y2, z2, r, g, b, a, null);
-    }
-
-    public void putCube(PoseStack poseStack, VertexConsumer builder, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b, int a, Direction exclude) {
+    public void putCube(final PoseStack poseStack,
+                        final VertexConsumer builder,
+                        final float x1,
+                        final float y1,
+                        final float z1,
+                        final float x2,
+                        final float y2,
+                        final float z2,
+                        final int r,
+                        final int g,
+                        final int b,
+                        final int a,
+                        final Direction exclude) {
         poseStack.pushPose();
-        for (Direction face : Direction.values()) {
-            if (face != exclude) {
-                putFace(poseStack, builder, x1, y1, z1, x2, y2, z2, r, g, b, a, face);
+        for (final Direction face : Direction.values()) {
+            if (face == exclude) {
+                continue;
             }
+            putFace(poseStack, builder, x1, y1, z1, x2, y2, z2, r, g, b, a, face);
         }
         poseStack.popPose();
     }
 
-    public void putFace(PoseStack poseStack, VertexConsumer builder, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b, int a, Direction face) {
+    public void putFace(final PoseStack poseStack,
+                        final VertexConsumer builder,
+                        final float x1,
+                        final float y1,
+                        final float z1,
+                        final float x2,
+                        final float y2,
+                        final float z2,
+                        final int r,
+                        final int g,
+                        final int b,
+                        final int a,
+                        final Direction face) {
         switch (face) {
             case DOWN -> {
                 this.putVertex(builder, poseStack, r, g, b, a, x2, y1, z1);
@@ -65,7 +86,15 @@ public class CubeBuilder {
         }
     }
 
-    private void putVertex(VertexConsumer builder, PoseStack poseStack, int r, int g, int b, int a, float x, float y, float z) {
+    private void putVertex(final VertexConsumer builder,
+                           final PoseStack poseStack,
+                           final int r,
+                           final int g,
+                           final int b,
+                           final int a,
+                           final float x,
+                           final float y,
+                           final float z) {
         builder.vertex(poseStack.last().pose(), x, y, z).color(r, g, b, a).endVertex();
     }
 }

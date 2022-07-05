@@ -16,39 +16,39 @@ import net.minecraftforge.network.NetworkEvent;
 public class GridScrollPacket {
     private final ItemResource itemResource;
     private final GridScrollMode mode;
-    private final int slot;
+    private final int slotIndex;
 
-    public GridScrollPacket(ItemResource itemResource, GridScrollMode mode, int slot) {
+    public GridScrollPacket(final ItemResource itemResource, final GridScrollMode mode, final int slotIndex) {
         this.itemResource = itemResource;
         this.mode = mode;
-        this.slot = slot;
+        this.slotIndex = slotIndex;
     }
 
-    public static GridScrollPacket decode(FriendlyByteBuf buf) {
+    public static GridScrollPacket decode(final FriendlyByteBuf buf) {
         return new GridScrollPacket(
-                PacketUtil.readItemResource(buf),
-                GridScrollModeUtil.getMode(buf.readByte()),
-                buf.readInt()
+            PacketUtil.readItemResource(buf),
+            GridScrollModeUtil.getMode(buf.readByte()),
+            buf.readInt()
         );
     }
 
-    public static void encode(GridScrollPacket packet, FriendlyByteBuf buf) {
+    public static void encode(final GridScrollPacket packet, final FriendlyByteBuf buf) {
         PacketUtil.writeItemResource(buf, packet.itemResource);
         GridScrollModeUtil.writeMode(buf, packet.mode);
-        buf.writeInt(packet.slot);
+        buf.writeInt(packet.slotIndex);
     }
 
-    public static void handle(GridScrollPacket packet, Supplier<NetworkEvent.Context> ctx) {
-        ServerPlayer player = ctx.get().getSender();
+    public static void handle(final GridScrollPacket packet, final Supplier<NetworkEvent.Context> ctx) {
+        final ServerPlayer player = ctx.get().getSender();
         if (player != null) {
             ctx.get().enqueueWork(() -> handle(packet, player));
         }
         ctx.get().setPacketHandled(true);
     }
 
-    private static void handle(GridScrollPacket packet, Player player) {
+    private static void handle(final GridScrollPacket packet, final Player player) {
         if (player.containerMenu instanceof ItemGridEventHandler gridEventHandler) {
-            gridEventHandler.onScroll(packet.itemResource, packet.mode, packet.slot);
+            gridEventHandler.onScroll(packet.itemResource, packet.mode, packet.slotIndex);
         }
     }
 }

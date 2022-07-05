@@ -6,9 +6,8 @@ import com.refinedmods.refinedstorage2.platform.apiimpl.storage.ClientStorageRep
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
 public class StorageInfoResponsePacket {
@@ -16,29 +15,30 @@ public class StorageInfoResponsePacket {
     private final long stored;
     private final long capacity;
 
-    public StorageInfoResponsePacket(UUID id, long stored, long capacity) {
+    public StorageInfoResponsePacket(final UUID id, final long stored, final long capacity) {
         this.id = id;
         this.stored = stored;
         this.capacity = capacity;
     }
 
-    public static StorageInfoResponsePacket decode(FriendlyByteBuf buf) {
+    public static StorageInfoResponsePacket decode(final FriendlyByteBuf buf) {
         return new StorageInfoResponsePacket(buf.readUUID(), buf.readLong(), buf.readLong());
     }
 
-    public static void encode(StorageInfoResponsePacket packet, FriendlyByteBuf buf) {
+    public static void encode(final StorageInfoResponsePacket packet, final FriendlyByteBuf buf) {
         buf.writeUUID(packet.id);
         buf.writeLong(packet.stored);
         buf.writeLong(packet.capacity);
     }
 
-    public static void handle(StorageInfoResponsePacket packet, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> handle(packet));
+    public static void handle(final StorageInfoResponsePacket packet, final Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> ClientProxy.getPlayer().ifPresent(player -> handle(player, packet)));
         ctx.get().setPacketHandled(true);
     }
 
-    private static void handle(StorageInfoResponsePacket packet) {
-        Level level = Minecraft.getInstance().player.level;
-        ((ClientStorageRepository) PlatformApi.INSTANCE.getStorageRepository(level)).setInfo(packet.id, packet.stored, packet.capacity);
+    private static void handle(final Player player, final StorageInfoResponsePacket packet) {
+        final ClientStorageRepository storageRepository =
+            (ClientStorageRepository) PlatformApi.INSTANCE.getStorageRepository(player.level);
+        storageRepository.setInfo(packet.id, packet.stored, packet.capacity);
     }
 }

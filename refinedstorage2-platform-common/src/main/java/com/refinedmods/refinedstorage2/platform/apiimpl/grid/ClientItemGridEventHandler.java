@@ -9,22 +9,22 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 public class ClientItemGridEventHandler implements ItemGridEventHandler {
     @Override
-    public void onInsert(GridInsertMode insertMode) {
+    public void onInsert(final GridInsertMode insertMode) {
         Platform.INSTANCE.getClientToServerCommunications().sendGridInsert(insertMode);
     }
 
     @Override
-    public void onTransfer(int slotIndex) {
+    public void onTransfer(final int slotIndex) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void onExtract(ItemResource itemResource, GridExtractMode mode, boolean cursor) {
+    public void onExtract(final ItemResource itemResource, final GridExtractMode mode, final boolean cursor) {
         Platform.INSTANCE.getClientToServerCommunications().sendGridItemExtract(itemResource, mode, cursor);
     }
 
     @Override
-    public void onScroll(ItemResource itemResource, GridScrollMode mode, int slot) {
-        Platform.INSTANCE.getClientToServerCommunications().sendGridScroll(itemResource, mode, slot);
+    public void onScroll(final ItemResource itemResource, final GridScrollMode mode, final int slotIndex) {
+        Platform.INSTANCE.getClientToServerCommunications().sendGridScroll(itemResource, mode, slotIndex);
     }
 }

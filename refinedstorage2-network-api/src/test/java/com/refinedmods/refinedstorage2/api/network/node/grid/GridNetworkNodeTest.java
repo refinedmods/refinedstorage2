@@ -12,7 +12,6 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,34 +23,33 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Rs2Test
 @ExtendWith(NetworkTestExtension.class)
 @SetupNetwork
-public class GridNetworkNodeTest {
+class GridNetworkNodeTest {
     @AddNetworkNode
     GridNetworkNode<String> sut;
 
     @BeforeEach
-    void setUp(@InjectNetworkStorageChannel StorageChannel<String> networkStorage) {
+    void setUp(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         networkStorage.addSource(new TrackedStorageImpl<>(new LimitedStorageImpl<>(1000), () -> 0L));
         networkStorage.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
         networkStorage.insert("B", 200, Action.EXECUTE, EmptySource.INSTANCE);
     }
 
     @Test
-    void Test_resource_count() {
+    void testResourceAmount() {
         // Act
-        long count = sut.getResourceCount();
+        final long count = sut.getResourceAmount();
 
         // Assert
         assertThat(count).isEqualTo(2);
     }
 
     @Test
-    void Test_iterating_through_resources() {
+    void testIteratingThroughResources() {
         // Arrange
-        List<ResourceAmount<String>> resourceAmounts = new ArrayList<>();
-        List<Optional<TrackedResource>> trackedResources = new ArrayList<>();
+        final List<ResourceAmount<String>> resourceAmounts = new ArrayList<>();
+        final List<Optional<TrackedResource>> trackedResources = new ArrayList<>();
 
         // Act
         sut.forEachResource((resourceAmount, trackedResource) -> {
@@ -61,19 +59,19 @@ public class GridNetworkNodeTest {
 
         // Assert
         assertThat(resourceAmounts).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-                new ResourceAmount<>("A", 100),
-                new ResourceAmount<>("B", 200)
+            new ResourceAmount<>("A", 100),
+            new ResourceAmount<>("B", 200)
         );
         assertThat(trackedResources).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-                Optional.of(new TrackedResource(EmptySource.INSTANCE.getName(), 0L)),
-                Optional.of(new TrackedResource(EmptySource.INSTANCE.getName(), 0L))
+            Optional.of(new TrackedResource(EmptySource.INSTANCE.getName(), 0L)),
+            Optional.of(new TrackedResource(EmptySource.INSTANCE.getName(), 0L))
         );
     }
 
     @Test
-    void Test_should_notify_watchers() {
+    void shouldNotifyWatchers() {
         // Arrange
-        FakeGridWatcher watcher = new FakeGridWatcher();
+        final FakeGridWatcher watcher = new FakeGridWatcher();
 
         // Act
         sut.addWatcher(watcher);
@@ -91,8 +89,8 @@ public class GridNetworkNodeTest {
         private final List<Boolean> changes = new ArrayList<>();
 
         @Override
-        public void onActiveChanged(boolean active) {
-            changes.add(active);
+        public void onActiveChanged(final boolean newActive) {
+            changes.add(newActive);
         }
     }
 }

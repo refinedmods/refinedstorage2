@@ -28,34 +28,34 @@ public final class ContentIds {
     public static final ResourceLocation FLUID_STORAGE_BLOCK = createIdentifier("fluid_storage_block");
     public static final ResourceLocation STORAGE_BLOCK = createIdentifier("storage_block");
 
-    public static ResourceLocation forItemStoragePart(ItemStorageType.Variant variant) {
+    private ContentIds() {
+    }
+
+    public static ResourceLocation forItemStoragePart(final ItemStorageType.Variant variant) {
         return createIdentifier(variant.getName() + "_storage_part");
     }
 
-    public static ResourceLocation forItemStorageBlock(ItemStorageType.Variant variant) {
+    public static ResourceLocation forItemStorageBlock(final ItemStorageType.Variant variant) {
         return createIdentifier(variant.getName() + "_storage_block");
     }
 
-    public static ResourceLocation forFluidStoragePart(FluidStorageType.Variant variant) {
+    public static ResourceLocation forFluidStoragePart(final FluidStorageType.Variant variant) {
         return createIdentifier(variant.getName() + "_fluid_storage_part");
     }
 
-    public static ResourceLocation forFluidStorageBlock(FluidStorageType.Variant variant) {
+    public static ResourceLocation forFluidStorageBlock(final FluidStorageType.Variant variant) {
         return createIdentifier(variant.getName() + "_fluid_storage_block");
     }
 
-    public static ResourceLocation forProcessor(ProcessorItem.Type type) {
+    public static ResourceLocation forProcessor(final ProcessorItem.Type type) {
         return createIdentifier(type.getName() + "_processor");
     }
 
-    public static ResourceLocation forStorageDisk(ItemStorageType.Variant variant) {
+    public static ResourceLocation forStorageDisk(final ItemStorageType.Variant variant) {
         return createIdentifier(variant.getName() + "_storage_disk");
     }
 
-    public static ResourceLocation forFluidStorageDisk(FluidStorageType.Variant variant) {
+    public static ResourceLocation forFluidStorageDisk(final FluidStorageType.Variant variant) {
         return createIdentifier(variant.getName() + "_fluid_storage_disk");
-    }
-
-    private ContentIds() {
     }
 }

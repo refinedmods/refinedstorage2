@@ -9,12 +9,13 @@ import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.MachineCasingBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.QuartzEnrichedIronBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 public final class Blocks {
     public static final Blocks INSTANCE = new Blocks();
@@ -23,30 +24,36 @@ public final class Blocks {
     private final BlockColorMap<FluidGridBlock> fluidGrid = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
+    @Nullable
     private Supplier<CableBlock> cable;
-    private Supplier<QuartzEnrichedIronBlock> quartzEnrichedIronBlock;
+    @Nullable
+    private Supplier<SimpleBlock> quartzEnrichedIronBlock;
+    @Nullable
     private Supplier<DiskDriveBlock> diskDrive;
-    private Supplier<MachineCasingBlock> machineCasing;
-    private final Map<ItemStorageType.Variant, Supplier<ItemStorageBlock>> itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
-    private final Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
+    @Nullable
+    private Supplier<SimpleBlock> machineCasing;
+    private final Map<ItemStorageType.Variant, Supplier<ItemStorageBlock>> itemStorageBlocks =
+        new EnumMap<>(ItemStorageType.Variant.class);
+    private final Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> fluidStorageBlocks =
+        new EnumMap<>(FluidStorageType.Variant.class);
 
     private Blocks() {
     }
 
     public CableBlock getCable() {
-        return cable.get();
+        return Objects.requireNonNull(cable).get();
     }
 
-    public QuartzEnrichedIronBlock getQuartzEnrichedIronBlock() {
-        return quartzEnrichedIronBlock.get();
+    public SimpleBlock getQuartzEnrichedIronBlock() {
+        return Objects.requireNonNull(quartzEnrichedIronBlock).get();
     }
 
     public DiskDriveBlock getDiskDrive() {
-        return diskDrive.get();
+        return Objects.requireNonNull(diskDrive).get();
     }
 
-    public MachineCasingBlock getMachineCasing() {
-        return machineCasing.get();
+    public SimpleBlock getMachineCasing() {
+        return Objects.requireNonNull(machineCasing).get();
     }
 
     public BlockColorMap<ItemGridBlock> getGrid() {
@@ -65,35 +72,36 @@ public final class Blocks {
         return creativeController;
     }
 
-    public void setCable(Supplier<CableBlock> cableSupplier) {
+    public void setCable(final Supplier<CableBlock> cableSupplier) {
         this.cable = cableSupplier;
     }
 
-    public void setQuartzEnrichedIronBlock(Supplier<QuartzEnrichedIronBlock> quartzEnrichedIronBlockSupplier) {
+    public void setQuartzEnrichedIronBlock(final Supplier<SimpleBlock> quartzEnrichedIronBlockSupplier) {
         this.quartzEnrichedIronBlock = quartzEnrichedIronBlockSupplier;
     }
 
-    public void setDiskDrive(Supplier<DiskDriveBlock> diskDriveSupplier) {
+    public void setDiskDrive(final Supplier<DiskDriveBlock> diskDriveSupplier) {
         this.diskDrive = diskDriveSupplier;
     }
 
-    public void setMachineCasing(Supplier<MachineCasingBlock> machineCasingSupplier) {
+    public void setMachineCasing(final Supplier<SimpleBlock> machineCasingSupplier) {
         this.machineCasing = machineCasingSupplier;
     }
 
-    public void setItemStorageBlock(ItemStorageType.Variant variant, Supplier<ItemStorageBlock> itemStorageBlockSupplier) {
-        itemStorageBlocks.put(variant, itemStorageBlockSupplier);
+    public void setItemStorageBlock(final ItemStorageType.Variant variant, final Supplier<ItemStorageBlock> supplier) {
+        itemStorageBlocks.put(variant, supplier);
     }
 
-    public ItemStorageBlock getItemStorageBlock(ItemStorageType.Variant variant) {
+    public ItemStorageBlock getItemStorageBlock(final ItemStorageType.Variant variant) {
         return itemStorageBlocks.get(variant).get();
     }
 
-    public void setFluidStorageBlock(FluidStorageType.Variant variant, Supplier<FluidStorageBlock> fluidStorageBlockSupplier) {
-        fluidStorageBlocks.put(variant, fluidStorageBlockSupplier);
+    public void setFluidStorageBlock(final FluidStorageType.Variant variant,
+                                     final Supplier<FluidStorageBlock> supplier) {
+        fluidStorageBlocks.put(variant, supplier);
     }
 
-    public FluidStorageBlock getFluidStorageBlock(FluidStorageType.Variant variant) {
+    public FluidStorageBlock getFluidStorageBlock(final FluidStorageType.Variant variant) {
         return fluidStorageBlocks.get(variant).get();
     }
 }

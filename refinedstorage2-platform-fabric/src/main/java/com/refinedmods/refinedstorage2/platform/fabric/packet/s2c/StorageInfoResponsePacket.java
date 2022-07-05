@@ -13,11 +13,19 @@ import net.minecraft.network.FriendlyByteBuf;
 
 public class StorageInfoResponsePacket implements ClientPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        UUID id = buf.readUUID();
-        long stored = buf.readLong();
-        long capacity = buf.readLong();
+    public void receive(final Minecraft client,
+                        final ClientPacketListener handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
+        final UUID id = buf.readUUID();
+        final long stored = buf.readLong();
+        final long capacity = buf.readLong();
 
-        client.execute(() -> ((ClientStorageRepository) PlatformApi.INSTANCE.getStorageRepository(client.level)).setInfo(id, stored, capacity));
+        if (client.level == null) {
+            return;
+        }
+
+        client.execute(() -> ((ClientStorageRepository) PlatformApi.INSTANCE.getStorageRepository(client.level))
+            .setInfo(id, stored, capacity));
     }
 }

@@ -2,20 +2,27 @@ package com.refinedmods.refinedstorage2.api.network.node.controller;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeImpl;
+import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 
-public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStorage {
+import javax.annotation.Nullable;
+
+public class ControllerNetworkNode extends AbstractNetworkNode implements EnergyStorage {
+    @Nullable
     private EnergyStorage energyStorage;
 
-    public void setEnergyStorage(EnergyStorage energyStorage) {
+    public void setEnergyStorage(@Nullable final EnergyStorage energyStorage) {
         this.energyStorage = energyStorage;
     }
 
     public ControllerEnergyState getState() {
-        if (!isActive()) {
+        if (!isActive() || energyStorage == null) {
             return ControllerEnergyState.OFF;
         }
-        double pct = (double) energyStorage.getStored() / (double) energyStorage.getCapacity();
+        final double pct = (double) energyStorage.getStored() / (double) energyStorage.getCapacity();
+        return getState(pct);
+    }
+
+    private ControllerEnergyState getState(final double pct) {
         if (pct >= 0.4) {
             return ControllerEnergyState.ON;
         }
@@ -42,7 +49,7 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
     }
 
     public long getActualStored() {
-        return energyStorage.getStored();
+        return energyStorage == null ? 0L : energyStorage.getStored();
     }
 
     @Override
@@ -54,16 +61,22 @@ public class ControllerNetworkNode extends NetworkNodeImpl implements EnergyStor
     }
 
     public long getActualCapacity() {
-        return energyStorage.getCapacity();
+        return energyStorage == null ? 0L : energyStorage.getCapacity();
     }
 
     @Override
-    public long receive(long amount, Action action) {
+    public long receive(final long amount, final Action action) {
+        if (energyStorage == null) {
+            return 0L;
+        }
         return energyStorage.receive(amount, action);
     }
 
     @Override
-    public long extract(long amount, Action action) {
+    public long extract(final long amount, final Action action) {
+        if (energyStorage == null) {
+            return 0L;
+        }
         return energyStorage.extract(amount, action);
     }
 

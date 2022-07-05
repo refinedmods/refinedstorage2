@@ -35,7 +35,7 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
     private double animationTickCounter;
     private int animationSpeed;
 
-    public ScrollbarWidget(int x, int y, int width, int height) {
+    public ScrollbarWidget(final int x, final int y, final int width, final int height) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -46,16 +46,16 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
         return scrollAnimation;
     }
 
-    public void setScrollAnimation(boolean scrollAnimation) {
+    public void setScrollAnimation(final boolean scrollAnimation) {
         this.scrollAnimation = scrollAnimation;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float partialTicks) {
         if (isAnimatingScroll()) {
             updateScrollingAnimation(partialTicks);
         }
@@ -64,8 +64,8 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
-        int enabledU = clicked ? 220 : 232;
-        int u = enabled ? enabledU : 244;
+        final int enabledU = clicked ? 220 : 232;
+        final int u = enabled ? enabledU : 244;
 
         blit(poseStack, x, y + (int) ((float) offset / (float) maxOffset * (height - SCROLLER_HEIGHT)), u, 0, 12, 15);
     }
@@ -74,12 +74,13 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
         return animationScrollDirection != 0;
     }
 
-    private void updateScrollingAnimation(float partialTicks) {
-        double absoluteAnimationProgress = animationTickCounter / ANIMATION_SCROLL_DURATION_IN_TICKS;
-        double relativeAnimationProgress = easeOutQuint(absoluteAnimationProgress);
+    private void updateScrollingAnimation(final float partialTicks) {
+        final double absoluteAnimationProgress = animationTickCounter / ANIMATION_SCROLL_DURATION_IN_TICKS;
+        final double relativeAnimationProgress = easeOutQuint(absoluteAnimationProgress);
 
-        double scrollHeight = ANIMATION_SCROLL_HEIGHT_IN_PIXELS + ((animationSpeed + 1) * 4D);
-        double newOffset = animationStartOffset + (relativeAnimationProgress * scrollHeight * animationScrollDirection);
+        final double scrollHeight = ANIMATION_SCROLL_HEIGHT_IN_PIXELS + ((animationSpeed + 1) * 4D);
+        final double newOffset = animationStartOffset
+            + (relativeAnimationProgress * scrollHeight * animationScrollDirection);
         setOffset(newOffset);
 
         animationTickCounter += partialTicks;
@@ -92,20 +93,22 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
         }
     }
 
-    private double easeOutQuint(double absoluteProgress) {
+    private static double easeOutQuint(final double absoluteProgress) {
         return 1D - Math.pow(1D - absoluteProgress, 5D);
     }
 
     @Override
-    public void mouseMoved(double mouseX, double mouseY) {
-        if (clicked && mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height) {
+    public void mouseMoved(final double mouseX, final double mouseY) {
+        final boolean inBounds = mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
+        if (clicked && inBounds) {
             updateOffset(mouseY);
         }
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height) {
+    public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
+        final boolean inBounds = mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
+        if (button == 0 && inBounds) {
             updateOffset(mouseY);
             clicked = true;
             return true;
@@ -114,7 +117,7 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(final double mouseX, final double mouseY, final int button) {
         if (clicked) {
             clicked = false;
             return true;
@@ -123,9 +126,9 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollDelta) {
+    public boolean mouseScrolled(final double mouseX, final double mouseY, final double scrollDelta) {
         if (enabled) {
-            int scrollDirection = Math.max(Math.min(-(int) scrollDelta, 1), -1);
+            final int scrollDirection = Math.max(Math.min(-(int) scrollDelta, 1), -1);
             if (scrollAnimation) {
                 startScrollAnimation(scrollDirection);
             } else {
@@ -136,7 +139,7 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
         return false;
     }
 
-    private void startScrollAnimation(int scrollDirection) {
+    private void startScrollAnimation(final int scrollDirection) {
         if (isAnimatingScroll()) {
             animationSpeed++;
         } else {
@@ -147,7 +150,7 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
         animationTickCounter = 0;
     }
 
-    public void setMaxOffset(double maxOffset) {
+    public void setMaxOffset(final double maxOffset) {
         this.maxOffset = Math.max(0, maxOffset);
         if (this.offset > this.maxOffset) {
             this.offset = this.maxOffset;
@@ -158,11 +161,11 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
         return offset;
     }
 
-    public void setOffset(double offset) {
+    public void setOffset(final double offset) {
         this.offset = Math.min(Math.max(0, offset), maxOffset);
     }
 
-    private void updateOffset(double mouseY) {
+    private void updateOffset(final double mouseY) {
         setOffset(Math.floor((mouseY - y) / (height - SCROLLER_HEIGHT) * maxOffset));
     }
 
@@ -172,7 +175,7 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput builder) {
+    public void updateNarration(final NarrationElementOutput builder) {
         // intentionally empty
     }
 }

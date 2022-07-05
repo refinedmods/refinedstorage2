@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorag
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.ItemResourceType;
+import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.item.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageChannelTypes;
@@ -25,23 +25,25 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ItemStorageBlockBlockEntity extends StorageBlockBlockEntity<ItemResource> {
+public class ItemStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity<ItemResource> {
     private final ItemStorageType.Variant variant;
     private final Component displayName;
 
-    public ItemStorageBlockBlockEntity(BlockPos pos, BlockState state, ItemStorageType.Variant variant) {
+    public ItemStorageBlockBlockEntity(final BlockPos pos,
+                                       final BlockState state,
+                                       final ItemStorageType.Variant variant) {
         super(
-                BlockEntities.INSTANCE.getItemStorageBlock(variant),
-                pos,
-                state,
-                new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.ITEM),
-                ItemResourceType.INSTANCE
+            BlockEntities.INSTANCE.getItemStorageBlock(variant),
+            pos,
+            state,
+            new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.ITEM),
+            ItemResourceType.INSTANCE
         );
         this.variant = variant;
         this.displayName = createTranslation("block", String.format("%s_storage_block", variant.getName()));
     }
 
-    private static long getEnergyUsage(ItemStorageType.Variant variant) {
+    private static long getEnergyUsage(final ItemStorageType.Variant variant) {
         return switch (variant) {
             case ONE_K -> Platform.INSTANCE.getConfig().getStorageBlock().get1kEnergyUsage();
             case FOUR_K -> Platform.INSTANCE.getConfig().getStorageBlock().get4kEnergyUsage();
@@ -52,24 +54,30 @@ public class ItemStorageBlockBlockEntity extends StorageBlockBlockEntity<ItemRes
     }
 
     @Override
-    protected PlatformStorage<ItemResource> createStorage(Runnable listener) {
-        TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
+    protected PlatformStorage<ItemResource> createStorage(final Runnable listener) {
+        final TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
-            return new PlatformStorage<>(
-                    new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                    ItemStorageType.INSTANCE,
-                    trackingRepository,
-                    listener
+            final TrackedStorageImpl<ItemResource> delegate = new TrackedStorageImpl<>(
+                new InMemoryStorageImpl<>(),
+                trackingRepository,
+                System::currentTimeMillis
             );
-        }
-        return new LimitedPlatformStorage<>(
-                new LimitedStorageImpl<>(
-                        new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                        variant.getCapacity()
-                ),
+            return new PlatformStorage<>(
+                delegate,
                 ItemStorageType.INSTANCE,
                 trackingRepository,
                 listener
+            );
+        }
+        final LimitedStorageImpl<ItemResource> delegate = new LimitedStorageImpl<>(
+            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+            variant.getCapacity()
+        );
+        return new LimitedPlatformStorage<>(
+            delegate,
+            ItemStorageType.INSTANCE,
+            trackingRepository,
+            listener
         );
     }
 
@@ -79,12 +87,12 @@ public class ItemStorageBlockBlockEntity extends StorageBlockBlockEntity<ItemRes
     }
 
     @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inventory, Player player) {
+    public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
         return new ItemStorageBlockContainerMenu(
-                syncId,
-                player,
-                resourceFilterContainer,
-                this
+            syncId,
+            player,
+            resourceFilterContainer,
+            this
         );
     }
 }

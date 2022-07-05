@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.query.lexer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.UnaryOperator;
 
 public class Lexer {
@@ -10,16 +11,15 @@ public class Lexer {
     private final LexerPosition position = new LexerPosition();
     private final LexerTokenMappings tokenMappings;
 
-    public Lexer(Source source, LexerTokenMappings tokenMappings) {
+    public Lexer(final Source source, final LexerTokenMappings tokenMappings) {
         this.source = source;
         this.tokenMappings = tokenMappings;
     }
 
     public void scan() {
         while (isNotEof()) {
-            char current = current();
+            final char current = current();
 
-            TokenType mapping;
             if (current == '\r') {
                 position.advanceAndReset();
             } else if (current == '\n') {
@@ -28,8 +28,10 @@ public class Lexer {
                 position.reset();
             } else if (current == ' ') {
                 position.advanceAndReset();
-            } else if ((mapping = tokenMappings.findMapping(position, source)) != null) {
-                addToken(mapping);
+            } else if (tokenMappings.hasMapping(position, source)) {
+                final LexerTokenMapping mapping = Objects.requireNonNull(tokenMappings.findMapping(position, source));
+                position.advance(mapping.value().length());
+                addToken(mapping.type());
             } else if (Character.isDigit(current)) {
                 scanNumber();
             } else if (current == '"') {
@@ -43,7 +45,7 @@ public class Lexer {
         }
     }
 
-    private boolean isValidIdentifier(char c) {
+    private boolean isValidIdentifier(final char c) {
         return Character.isLetterOrDigit(c);
     }
 
@@ -104,15 +106,15 @@ public class Lexer {
         return source.content().charAt(position.getEndIndex());
     }
 
-    private void addToken(TokenType type) {
+    private void addToken(final TokenType type) {
         addToken(type, content -> content);
     }
 
-    private void addToken(TokenType type, UnaryOperator<String> contentModifier) {
-        String tokenContent = source.content().substring(position.getStartIndex(), position.getEndIndex());
-        tokenContent = contentModifier.apply(tokenContent);
-
-        TokenPosition tokenPosition = new TokenPosition(source, position.createRange());
+    private void addToken(final TokenType type, final UnaryOperator<String> contentModifier) {
+        final String tokenContent = contentModifier.apply(
+            source.content().substring(position.getStartIndex(), position.getEndIndex())
+        );
+        final TokenPosition tokenPosition = new TokenPosition(source, position.createRange());
 
         tokens.add(new Token(tokenContent, type, tokenPosition));
 

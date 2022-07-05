@@ -8,7 +8,6 @@ import java.util.function.LongFunction;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 
 public final class StorageTooltipHelper {
     private StorageTooltipHelper() {
@@ -19,7 +18,12 @@ public final class StorageTooltipHelper {
         STACK_INFO
     }
 
-    public static void appendToTooltip(List<Component> tooltip, long stored, long capacity, LongFunction<String> quantityFormatter, LongFunction<String> stackInfoQuantityFormatter, Set<TooltipOption> options) {
+    public static void appendToTooltip(final List<Component> tooltip,
+                                       final long stored,
+                                       final long capacity,
+                                       final LongFunction<String> quantityFormatter,
+                                       final LongFunction<String> stackInfoQuantityFormatter,
+                                       final Set<TooltipOption> options) {
         if (!options.contains(TooltipOption.CAPACITY_AND_PROGRESS)) {
             addAmountStoredWithoutCapacity(tooltip, stored, quantityFormatter);
         } else {
@@ -37,49 +41,61 @@ public final class StorageTooltipHelper {
         }
     }
 
-    private static void addAmountStoredWithoutCapacity(List<Component> tooltip, long stored, LongFunction<String> quantityFormatter) {
+    private static void addAmountStoredWithoutCapacity(final List<Component> tooltip,
+                                                       final long stored,
+                                                       final LongFunction<String> quantityFormatter) {
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
-                "misc",
-                "stored",
-                new TextComponent(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN)
+            "misc",
+            "stored",
+            Component.literal(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN)
         ).withStyle(ChatFormatting.GRAY));
     }
 
-    private static void addAmountStoredWithCapacity(List<Component> tooltip, long stored, long capacity, LongFunction<String> quantityFormatter) {
+    private static void addAmountStoredWithCapacity(final List<Component> tooltip,
+                                                    final long stored,
+                                                    final long capacity,
+                                                    final LongFunction<String> quantityFormatter) {
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
-                "misc",
-                "stored_with_capacity",
-                new TextComponent(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN),
-                new TextComponent(quantityFormatter.apply(capacity)).withStyle(ChatFormatting.BLUE)
+            "misc",
+            "stored_with_capacity",
+            Component.literal(quantityFormatter.apply(stored)).withStyle(ChatFormatting.GREEN),
+            Component.literal(quantityFormatter.apply(capacity)).withStyle(ChatFormatting.BLUE)
         ).withStyle(ChatFormatting.GRAY));
     }
 
-    private static void addAmountOfStacksWithoutCapacity(List<Component> tooltip, LongFunction<String> quantityFormatter, long stored) {
-        long stacks = stored / 64L;
+    private static void addAmountOfStacksWithoutCapacity(final List<Component> tooltip,
+                                                         final LongFunction<String> quantityFormatter,
+                                                         final long stored) {
+        final long stacks = stored / 64L;
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
-                "misc",
-                "stacks",
-                new TextComponent(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN)
+            "misc",
+            "stacks",
+            Component.literal(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN)
         ).withStyle(ChatFormatting.GRAY));
     }
 
-    private static void addAmountOfStacksWithCapacity(List<Component> tooltip, LongFunction<String> quantityFormatter, long stored, long capacity) {
-        long stacks = stored / 64L;
-        long maxStacks = capacity / 64L;
+    private static void addAmountOfStacksWithCapacity(final List<Component> tooltip,
+                                                      final LongFunction<String> quantityFormatter,
+                                                      final long stored,
+                                                      final long capacity) {
+        final long stacks = stored / 64L;
+        final long maxStacks = capacity / 64L;
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
-                "misc",
-                "stacks_with_capacity",
-                new TextComponent(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN),
-                new TextComponent(quantityFormatter.apply(maxStacks)).withStyle(ChatFormatting.BLUE)
+            "misc",
+            "stacks_with_capacity",
+            Component.literal(quantityFormatter.apply(stacks)).withStyle(ChatFormatting.GREEN),
+            Component.literal(quantityFormatter.apply(maxStacks)).withStyle(ChatFormatting.BLUE)
         ).withStyle(ChatFormatting.GRAY));
     }
 
-    private static void addProgress(List<Component> tooltip, double stored, double capacity) {
-        double progress = stored / capacity;
+    private static void addProgress(final List<Component> tooltip,
+                                    final double stored,
+                                    final double capacity) {
+        final double progress = stored / capacity;
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
-                "misc",
-                "full",
-                new TextComponent("" + (int) (progress * 100D)).withStyle(ChatFormatting.AQUA)
+            "misc",
+            "full",
+            Component.literal("" + (int) (progress * 100D)).withStyle(ChatFormatting.AQUA)
         ).withStyle(ChatFormatting.GRAY));
     }
 }

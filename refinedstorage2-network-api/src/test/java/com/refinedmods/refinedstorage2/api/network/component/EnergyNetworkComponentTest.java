@@ -4,18 +4,16 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Rs2Test
 class EnergyNetworkComponentTest {
     @Test
-    void Test_initial_state() {
+    void testInitialState() {
         // Arrange
-        EnergyNetworkComponent sut = new EnergyNetworkComponent();
+        final EnergyNetworkComponent sut = new EnergyNetworkComponent();
 
         // Assert
         assertThat(sut.getStored()).isZero();
@@ -23,23 +21,23 @@ class EnergyNetworkComponentTest {
     }
 
     @Test
-    void Test_adding_node_should_update_energy_storage() {
+    void shouldUpdateEnergyStorageAfterAddingNode() {
         // Arrange
-        EnergyNetworkComponent sut = new EnergyNetworkComponent();
+        final EnergyNetworkComponent sut = new EnergyNetworkComponent();
 
-        ControllerNetworkNode controller = new ControllerNetworkNode();
+        final ControllerNetworkNode controller = new ControllerNetworkNode();
         controller.setEnergyStorage(new EnergyStorageImpl(1000));
         controller.receive(100, Action.EXECUTE);
-        NetworkNodeContainer container = () -> controller;
+        final NetworkNodeContainer container = () -> controller;
 
-        long capacityBefore = sut.getCapacity();
-        long storedBefore = sut.getStored();
+        final long capacityBefore = sut.getCapacity();
+        final long storedBefore = sut.getStored();
 
         // Act
         sut.onContainerAdded(container);
 
-        long capacityAfter = sut.getCapacity();
-        long storedAfter = sut.getStored();
+        final long capacityAfter = sut.getCapacity();
+        final long storedAfter = sut.getStored();
 
         // Assert
         assertThat(capacityBefore).isZero();
@@ -50,25 +48,25 @@ class EnergyNetworkComponentTest {
     }
 
     @Test
-    void Test_removing_node_should_update_energy_storage() {
+    void shouldUpdateEnergyStorageAfterRemovingNode() {
         // Arrange
-        EnergyNetworkComponent sut = new EnergyNetworkComponent();
+        final EnergyNetworkComponent sut = new EnergyNetworkComponent();
 
-        ControllerNetworkNode controller = new ControllerNetworkNode();
+        final ControllerNetworkNode controller = new ControllerNetworkNode();
         controller.setEnergyStorage(new EnergyStorageImpl(1000));
         controller.receive(100, Action.EXECUTE);
-        NetworkNodeContainer container = () -> controller;
+        final NetworkNodeContainer container = () -> controller;
 
         sut.onContainerAdded(container);
 
-        long capacityBefore = sut.getCapacity();
-        long storedBefore = sut.getStored();
+        final long capacityBefore = sut.getCapacity();
+        final long storedBefore = sut.getStored();
 
         // Act
         sut.onContainerRemoved(container);
 
-        long capacityAfter = sut.getCapacity();
-        long storedAfter = sut.getStored();
+        final long capacityAfter = sut.getCapacity();
+        final long storedAfter = sut.getStored();
 
         // Assert
         assertThat(capacityBefore).isEqualTo(1000);

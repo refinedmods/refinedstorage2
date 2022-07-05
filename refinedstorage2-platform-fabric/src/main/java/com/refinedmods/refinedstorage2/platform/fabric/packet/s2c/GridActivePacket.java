@@ -10,8 +10,11 @@ import net.minecraft.network.FriendlyByteBuf;
 
 public class GridActivePacket implements ClientPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        boolean active = buf.readBoolean();
+    public void receive(final Minecraft client,
+                        final ClientPacketListener handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
+        final boolean active = buf.readBoolean();
 
         client.execute(() -> {
             if (client.player.containerMenu instanceof GridWatcher gridWatcher) {

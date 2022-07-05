@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.query.parser.node.UnaryOpNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 public class Parser {
     private final List<Token> tokens;
@@ -18,33 +19,36 @@ public class Parser {
 
     private int position = 0;
 
-    public Parser(List<Token> tokens, ParserOperatorMappings operatorMappings) {
+    public Parser(final List<Token> tokens, final ParserOperatorMappings operatorMappings) {
         this.tokens = tokens;
         this.operatorMappings = operatorMappings;
     }
 
     public void parse() {
         while (isNotEof()) {
-            Node node = parseExpression(0);
+            final Node node = parseExpression(0);
             nodes.add(node);
         }
     }
 
-    private Node parseExpression(int minPrecedence) {
+    private Node parseExpression(final int minPrecedence) {
         Node lhs = parseAtom();
 
         Token cur = currentOrNull();
-        while (cur != null && cur.type() == TokenType.BIN_OP && operatorMappings.getOperator(cur).level() >= minPrecedence) {
-            Operator currentOp = operatorMappings.getOperator(cur);
-            int nextMinPrecedence = currentOp.associativity() == Associativity.LEFT ? (currentOp.level() + 1) : currentOp.level();
+        while (cur != null
+            && cur.type() == TokenType.BIN_OP
+            && operatorMappings.getOperator(cur).level() >= minPrecedence) {
+            final Operator currentOp = operatorMappings.getOperator(cur);
+            final int nextMinPrecedence = currentOp.associativity() == Associativity.LEFT
+                ? (currentOp.level() + 1)
+                : currentOp.level();
 
             next();
             if (!isNotEof()) {
                 throw new ParserException("Unfinished binary operator expression", cur);
             }
 
-            Node rhs = parseExpression(nextMinPrecedence);
-
+            final Node rhs = parseExpression(nextMinPrecedence);
             lhs = new BinOpNode(lhs, rhs, cur);
 
             cur = currentOrNull();
@@ -58,7 +62,7 @@ public class Parser {
     }
 
     private Node parseParen() {
-        Token current = current();
+        final Token current = current();
 
         if (current.type() == TokenType.PAREN_OPEN) {
             next();
@@ -66,18 +70,19 @@ public class Parser {
                 throw new ParserException("Unclosed parenthesis", current);
             }
 
-            List<Node> nodesInParen = new ArrayList<>();
+            final List<Node> nodesInParen = new ArrayList<>();
 
             while (true) {
-                Node node = parseExpression(0);
+                final Node node = parseExpression(0);
                 nodesInParen.add(node);
 
-                Token currentAfterExpression = currentOrNull();
+                final Token currentAfterExpression = currentOrNull();
                 if (currentAfterExpression == null) {
                     throw new ParserException("Expected ')'", tokens.get(tokens.size() - 1));
                 }
 
-                if (currentAfterExpression.type() == TokenType.PAREN_CLOSE && ")".equals(currentAfterExpression.content())) {
+                if (currentAfterExpression.type() == TokenType.PAREN_CLOSE
+                    && ")".equals(currentAfterExpression.content())) {
                     next();
                     break;
                 }
@@ -90,7 +95,7 @@ public class Parser {
     }
 
     private Node parseUnaryOp() {
-        Token maybeUnaryOp = current();
+        final Token maybeUnaryOp = current();
         if (maybeUnaryOp.type() == TokenType.UNARY_OP) {
             next();
             if (!isNotEof()) {
@@ -104,11 +109,11 @@ public class Parser {
     }
 
     private Node parseLiteral() {
-        Token current = current();
+        final Token current = current();
 
-        if (current.type() == TokenType.IDENTIFIER ||
-                current.type() == TokenType.FLOATING_NUMBER ||
-                current.type() == TokenType.INTEGER_NUMBER) {
+        if (current.type() == TokenType.IDENTIFIER
+            || current.type() == TokenType.FLOATING_NUMBER
+            || current.type() == TokenType.INTEGER_NUMBER) {
             next();
             return new LiteralNode(current);
         } else {
@@ -128,6 +133,7 @@ public class Parser {
         return tokens.get(position);
     }
 
+    @Nullable
     private Token currentOrNull() {
         return isNotEof() ? current() : null;
     }

@@ -6,7 +6,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 public final class SimpleBlockItem extends BlockItem {
-    public SimpleBlockItem(Block block, CreativeModeTab tab) {
+    public SimpleBlockItem(final Block block, final CreativeModeTab tab) {
         super(block, new Item.Properties().tab(tab));
     }
 }

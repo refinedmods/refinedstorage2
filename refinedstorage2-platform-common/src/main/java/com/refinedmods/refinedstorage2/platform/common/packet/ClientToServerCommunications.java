@@ -16,11 +16,11 @@ public interface ClientToServerCommunications {
 
     void sendGridInsert(GridInsertMode mode);
 
-    void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slot);
+    void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slotIndex);
 
     void sendPropertyChange(int id, int value);
 
-    void sendResourceTypeChange(ResourceType<?> type);
+    void sendResourceTypeChange(ResourceType type);
 
     void sendStorageInfoRequest(UUID storageId);
 }

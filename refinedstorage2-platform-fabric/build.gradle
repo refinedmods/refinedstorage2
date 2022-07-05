@@ -1,16 +1,20 @@
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'fabric-loom' version '0.12-SNAPSHOT'
 }
 
 archivesBaseName = 'refinedstorage2-platform-fabric'
 
 repositories {
     maven {
-        name = 'REI'
+        name = 'JEI'
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        name = 'ModMenu'
         url 'https://maven.terraformersmc.com/'
     }
     maven {
-        name = 'Cloth Config'
+        name = 'Cloth Config, REI'
         url 'https://maven.shedaniel.me/'
     }
     maven {
@@ -27,7 +31,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraftVersion}"
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${project.minecraftVersion}:${project.parchmentVersion}@zip")
+/* TODO        parchment("org.parchmentmc.data:parchment-${project.minecraftVersion}:${project.parchmentVersion}@zip")*/
     }
     modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricApiVersion}"
@@ -53,7 +57,13 @@ dependencies {
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${project.reiVersion}") {
         exclude(group: 'me.shedaniel.cloth')
     }
+    // We test with REI on Fabric.
     modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}")
+
+    modCompileOnlyApi "mezz.jei:jei-${project.minecraftVersion}-common-api:${project.jeiVersion}"
+    modCompileOnlyApi "mezz.jei:jei-${project.minecraftVersion}-fabric-api:${project.jeiVersion}"
+    // modRuntimeOnly "mezz.jei:jei-${project.minecraftVersion}-fabric:${project.jeiVersion}"
+
     modImplementation "com.terraformersmc:modmenu:${project.modMenuVersion}"
 
     modRuntimeOnly("mcp.mobius.waila:wthit:fabric-${project.wthitVersion}")

@@ -14,12 +14,16 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class GridInsertPacket implements ServerPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        boolean single = buf.readBoolean();
+    public void receive(final MinecraftServer server,
+                        final ServerPlayer player,
+                        final ServerGamePacketListenerImpl handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
+        final boolean single = buf.readBoolean();
 
         server.execute(() -> {
-            AbstractContainerMenu menu = player.containerMenu;
-            GridInsertMode mode = single ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
+            final AbstractContainerMenu menu = player.containerMenu;
+            final GridInsertMode mode = single ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
             if (menu instanceof ItemGridEventHandler itemGridEventHandler) {
                 itemGridEventHandler.onInsert(mode);
             } else if (menu instanceof FluidGridEventHandler fluidGridEventHandler) {

@@ -11,7 +11,8 @@ import org.apiguardian.api.API;
 
 /**
  * A storage channel is the entry-point for various storage operations for a given resource type.
- * It acts as a storage, and is usually backed by a {@link com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage}.
+ * It acts as a storage, and is usually backed by a
+ * {@link com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage}.
  *
  * @param <T> the type of resource
  */
@@ -47,12 +48,12 @@ public interface StorageChannel<T> extends Storage<T>, TrackedStorage<T> {
      *
      * @param source the source
      */
-    void addSource(Storage<?> source);
+    void addSource(Storage<T> source);
 
     /**
      * Removes a source from the channel.
      *
      * @param source the source
      */
-    void removeSource(Storage<?> source);
+    void removeSource(Storage<T> source);
 }

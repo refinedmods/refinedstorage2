@@ -1,6 +1,7 @@
 plugins {
-    id("maven-publish")
-    id "org.sonarqube" version "3.3"
+    id 'maven-publish'
+    id 'org.sonarqube' version "3.3"
+    id 'checkstyle'
 }
 
 allprojects {
@@ -9,7 +10,7 @@ allprojects {
 
 subprojects {
     group = 'com.refinedmods.refinedstorage2'
-    version = '2.0.0-milestone.1.4'
+    version = '2.0.0-milestone.2.0'
 
     if (System.getenv('GITHUB_SHA') != null) {
         version += '+' + System.getenv('GITHUB_SHA').substring(0, 7)
@@ -35,6 +36,12 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
+
+    checkstyle {
+        configFile rootProject.file("checkstyle.xml")
+        toolVersion = project.checkstyleVersion
+    }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -80,6 +87,7 @@ subprojects {
 
     dependencies {
         implementation "org.apiguardian:apiguardian-api:${project.apiGuardianVersion}"
+        implementation "com.google.code.findbugs:jsr305:${project.jsr305Version}"
     }
 }
 
@@ -114,5 +122,7 @@ sonarqube {
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
         property "sonar.coverage.exclusions", "refinedstorage2-platform-forge/**/*,refinedstorage2-platform-fabric/**/*,refinedstorage2-platform-common/**/*,refinedstorage2-platform-api/**/*"
+        // JEI/REI code is duplicated as reusing it in a common module isn't possible/too difficult.
+        property "sonar.cpd.exclusions", "refinedstorage2-platform-forge/src/main/java/com/refinedmods/refinedstorage2/platform/forge/integration/jei/*,refinedstorage2-platform-forge/src/main/java/com/refinedmods/refinedstorage2/platform/forge/integration/rei/*,refinedstorage2-platform-fabric/src/main/java/com/refinedmods/refinedstorage2/platform/fabric/integration/jei/*,refinedstorage2-platform-fabric/src/main/java/com/refinedmods/refinedstorage2/platform/fabric/integration/rei/*"
     }
 }

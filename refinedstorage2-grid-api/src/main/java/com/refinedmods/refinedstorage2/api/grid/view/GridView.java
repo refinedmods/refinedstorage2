@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
 
@@ -12,8 +13,8 @@ import org.apiguardian.api.API;
  * Represents a grid view.
  * The grid view internally has a backing list and a view list.
  * The backing list is the logical view of the grid without any filtering or sorting applied. It's the source of truth.
- * The view list has filtering and sorting rules applied and is semi in sync with the backing list (depending if the view
- * is in "prevent sorting" mode).
+ * The view list has filtering and sorting rules applied and is semi in sync with the backing list (depending if the
+ * view is in "prevent sorting" mode).
  *
  * @param <T> the resource type
  */
@@ -22,14 +23,9 @@ public interface GridView<T> {
     /**
      * Sets a listener that is called when the grid view changes.
      *
-     * @param listener the listener
+     * @param listener the listener, can be null
      */
-    void setListener(Runnable listener);
-
-    /**
-     * @return the sorting type
-     */
-    GridSortingType getSortingType();
+    void setListener(@Nullable Runnable listener);
 
     /**
      * Changing the sorting type still requires a call to {@link #sort()}.
@@ -39,11 +35,9 @@ public interface GridView<T> {
     void setSortingType(GridSortingType sortingType);
 
     /**
-     * Changing the filter still requires a call to {@link #sort()}.
-     *
-     * @param filter the filter
+     * @param predicate the filter
      */
-    void setFilter(Predicate<GridResource<T>> filter);
+    void setFilterAndSort(Predicate<AbstractGridResource<T>> predicate);
 
     /**
      * @return whether the view is currently not sorting
@@ -61,11 +55,6 @@ public interface GridView<T> {
     void setPreventSorting(boolean preventSorting);
 
     /**
-     * @return the sorting direction
-     */
-    GridSortingDirection getSortingDirection();
-
-    /**
      * Changing the sorting direction still requires a call to {@link #sort()}.
      *
      * @param sortingDirection the sorting direction
@@ -80,7 +69,7 @@ public interface GridView<T> {
      * @param amount          the amount
      * @param trackedResource the tracked resource, can be null
      */
-    void loadResource(T resource, long amount, TrackedResource trackedResource);
+    void loadResource(T resource, long amount, @Nullable TrackedResource trackedResource);
 
     /**
      * @param resource the resource
@@ -102,10 +91,10 @@ public interface GridView<T> {
      * @param amount          the amount, can be negative or positive
      * @param trackedResource the tracked resource, can be null
      */
-    void onChange(T resource, long amount, TrackedResource trackedResource);
+    void onChange(T resource, long amount, @Nullable TrackedResource trackedResource);
 
     /**
      * @return the view list
      */
-    List<GridResource<T>> getAll();
+    List<AbstractGridResource<T>> getAll();
 }

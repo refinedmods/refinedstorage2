@@ -5,35 +5,39 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import java.util.Map;
 import java.util.Set;
 
-public class FakeGridResource extends GridResource<String> {
-    public FakeGridResource(String name, long amount) {
+public class FakeGridResource extends AbstractGridResource<String> {
+    public FakeGridResource(final String name, final long amount) {
         this(new ResourceAmount<>(name, amount));
     }
 
-    public FakeGridResource(String name) {
+    public FakeGridResource(final String name) {
         this(new ResourceAmount<>(name, 1));
     }
 
-    public FakeGridResource(ResourceAmount<String> resourceAmount) {
+    public FakeGridResource(final ResourceAmount<String> resourceAmount) {
         super(
-                resourceAmount,
-                resourceAmount.getResource(),
-                Map.of(
-                        FakeGridResourceAttributeKeys.MOD_ID, Set.of(resourceAmount.getResource()),
-                        FakeGridResourceAttributeKeys.MOD_NAME, Set.of(resourceAmount.getResource())
-                )
+            resourceAmount,
+            resourceAmount.getResource(),
+            Map.of(
+                FakeGridResourceAttributeKeys.MOD_ID, Set.of(resourceAmount.getResource()),
+                FakeGridResourceAttributeKeys.MOD_NAME, Set.of(resourceAmount.getResource())
+            )
         );
     }
 
-    public FakeGridResource(String name, long amount, String modId, String modName, Set<String> tags) {
+    public FakeGridResource(final String name,
+                            final long amount,
+                            final String modId,
+                            final String modName,
+                            final Set<String> tags) {
         super(
-                new ResourceAmount<>(name, amount),
-                name,
-                Map.of(
-                        FakeGridResourceAttributeKeys.MOD_ID, Set.of(modId),
-                        FakeGridResourceAttributeKeys.MOD_NAME, Set.of(modName),
-                        FakeGridResourceAttributeKeys.TAGS, tags
-                )
+            new ResourceAmount<>(name, amount),
+            name,
+            Map.of(
+                FakeGridResourceAttributeKeys.MOD_ID, Set.of(modId),
+                FakeGridResourceAttributeKeys.MOD_NAME, Set.of(modName),
+                FakeGridResourceAttributeKeys.TAGS, tags
+            )
         );
     }
 

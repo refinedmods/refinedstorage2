@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceFilterableContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -12,11 +12,15 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 public class ResourceTypeChangePacket implements ServerPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        ResourceLocation id = buf.readResourceLocation();
+    public void receive(final MinecraftServer server,
+                        final ServerPlayer player,
+                        final ServerGamePacketListenerImpl handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
+        final ResourceLocation id = buf.readResourceLocation();
 
         server.execute(() -> {
-            if (player.containerMenu instanceof ResourceFilterableContainerMenu resourceFilterable) {
+            if (player.containerMenu instanceof AbstractResourceFilterContainerMenu resourceFilterable) {
                 resourceFilterable.setCurrentResourceType(id);
             }
         });

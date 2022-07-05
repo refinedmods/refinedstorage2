@@ -12,19 +12,17 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptySource;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-@Rs2Test
 class StorageNetworkComponentTest {
     private StorageNetworkComponent sut;
 
@@ -38,7 +36,7 @@ class StorageNetworkComponentTest {
     void setUp() {
         sut = new StorageNetworkComponent(NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY);
 
-        FakeStorageProviderRepository storageProviderRepository = new FakeStorageProviderRepository();
+        final FakeStorageProviderRepository storageProviderRepository = new FakeStorageProviderRepository();
         storageProviderRepository.setInSlot(0, new LimitedStorageImpl<>(100));
         diskDrive = new DiskDriveNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY);
         diskDrive.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
@@ -56,25 +54,25 @@ class StorageNetworkComponentTest {
     }
 
     @Test
-    void Test_initial_state() {
+    void testInitialState() {
         // Act
-        Collection<ResourceAmount<String>> resources = sut
-                .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
-                .getAll();
+        final Collection<ResourceAmount<String>> resources = sut
+            .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE)
+            .getAll();
 
         // Assert
         assertThat(resources).isEmpty();
     }
 
     @Test
-    void Test_adding_storage_source_container() {
+    void shouldAddStorageSourceContainer() {
         // Arrange
-        StorageChannel<String> storageChannel = sut.getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        final StorageChannel<String> storageChannel = sut.getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
 
         // Act
-        long insertedPre = storageChannel.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        final long insertedPre = storageChannel.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
         sut.onContainerAdded(diskDriveContainer);
-        long insertedPost = storageChannel.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        final long insertedPost = storageChannel.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Assert
         assertThat(insertedPre).isZero();
@@ -83,9 +81,9 @@ class StorageNetworkComponentTest {
     }
 
     @Test
-    void Test_removing_storage_source_container() {
+    void shouldRemoveStorageSourceContainer() {
         // Arrange
-        StorageChannel<String> storageChannel = sut.getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        final StorageChannel<String> storageChannel = sut.getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
 
         sut.onContainerAdded(diskDriveContainer);
         sut.onContainerAdded(storageContainer);
@@ -94,10 +92,10 @@ class StorageNetworkComponentTest {
         storageChannel.insert("A", 200, Action.EXECUTE, EmptySource.INSTANCE);
 
         // Act
-        Collection<ResourceAmount<String>> resourcesPre = new HashSet<>(storageChannel.getAll());
+        final Collection<ResourceAmount<String>> resourcesPre = new HashSet<>(storageChannel.getAll());
         sut.onContainerRemoved(diskDriveContainer);
         sut.onContainerRemoved(storageContainer);
-        Collection<ResourceAmount<String>> resourcesPost = storageChannel.getAll();
+        final Collection<ResourceAmount<String>> resourcesPost = storageChannel.getAll();
 
         // Assert
         assertThat(resourcesPre).isNotEmpty();

@@ -1,15 +1,13 @@
 package com.refinedmods.refinedstorage2.api.core;
 
-import com.refinedmods.refinedstorage2.test.Rs2Test;
-
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Rs2Test
 class QuantityFormatterTest {
     @Test
-    void Test_formatting_with_units_for_small_number() {
+    void shouldFormatWithUnitsForSmallNumber() {
+        // Act & assert
         assertThat(QuantityFormatter.formatWithUnits(0)).isEqualTo("0");
         assertThat(QuantityFormatter.formatWithUnits(1)).isEqualTo("1");
         assertThat(QuantityFormatter.formatWithUnits(10)).isEqualTo("10");
@@ -17,7 +15,8 @@ class QuantityFormatterTest {
     }
 
     @Test
-    void Test_formatting_with_units_for_number_in_the_thousands() {
+    void shouldFormatWithUnitsForLargerNumber() {
+        // Act & assert
         assertThat(QuantityFormatter.formatWithUnits(1000)).isEqualTo("1K");
         assertThat(QuantityFormatter.formatWithUnits(1510)).isEqualTo("1.5K");
 
@@ -34,7 +33,8 @@ class QuantityFormatterTest {
     }
 
     @Test
-    void Test_formatting_with_units_for_number_in_the_millions() {
+    void shouldFormatWithUnitsForMillions() {
+        // Act & assert
         assertThat(QuantityFormatter.formatWithUnits(1_000_000)).isEqualTo("1M");
         assertThat(QuantityFormatter.formatWithUnits(1_510_000)).isEqualTo("1.5M");
 
@@ -51,7 +51,8 @@ class QuantityFormatterTest {
     }
 
     @Test
-    void Test_formatting_with_units_for_number_in_the_billions() {
+    void shouldFormatWithUnitsForBillions() {
+        // Act & assert
         assertThat(QuantityFormatter.formatWithUnits(1_000_000_000)).isEqualTo("1B");
         assertThat(QuantityFormatter.formatWithUnits(1_010_000_000)).isEqualTo("1B");
         assertThat(QuantityFormatter.formatWithUnits(1_100_001_000)).isEqualTo("1.1B");
@@ -59,7 +60,8 @@ class QuantityFormatterTest {
     }
 
     @Test
-    void Test_formatting() {
+    void shouldFormatWithoutUnits() {
+        // Act & assert
         assertThat(QuantityFormatter.format(0)).isEqualTo("0");
         assertThat(QuantityFormatter.format(1)).isEqualTo("1");
         assertThat(QuantityFormatter.format(10)).isEqualTo("10");

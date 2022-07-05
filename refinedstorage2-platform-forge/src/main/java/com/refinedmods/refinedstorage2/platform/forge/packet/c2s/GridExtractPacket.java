@@ -7,7 +7,9 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
+import java.util.Objects;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,11 +19,14 @@ import net.minecraftforge.network.NetworkEvent;
 public class GridExtractPacket {
     private final GridExtractMode mode;
     private final boolean cursor;
+    @Nullable
     private final ItemResource itemResource;
+    @Nullable
     private final FluidResource fluidResource;
+    @Nullable
     private final FriendlyByteBuf buf;
 
-    public GridExtractPacket(GridExtractMode mode, boolean cursor, FriendlyByteBuf buf) {
+    public GridExtractPacket(final GridExtractMode mode, final boolean cursor, final FriendlyByteBuf buf) {
         this.mode = mode;
         this.cursor = cursor;
         this.itemResource = null;
@@ -29,7 +34,7 @@ public class GridExtractPacket {
         this.buf = buf;
     }
 
-    public GridExtractPacket(GridExtractMode mode, boolean cursor, ItemResource itemResource) {
+    public GridExtractPacket(final GridExtractMode mode, final boolean cursor, final ItemResource itemResource) {
         this.mode = mode;
         this.cursor = cursor;
         this.itemResource = itemResource;
@@ -37,7 +42,7 @@ public class GridExtractPacket {
         this.buf = null;
     }
 
-    public GridExtractPacket(GridExtractMode mode, boolean cursor, FluidResource fluidResource) {
+    public GridExtractPacket(final GridExtractMode mode, final boolean cursor, final FluidResource fluidResource) {
         this.mode = mode;
         this.cursor = cursor;
         this.itemResource = null;
@@ -45,11 +50,11 @@ public class GridExtractPacket {
         this.buf = null;
     }
 
-    public static GridExtractPacket decode(FriendlyByteBuf buf) {
+    public static GridExtractPacket decode(final FriendlyByteBuf buf) {
         return new GridExtractPacket(getMode(buf.readByte()), buf.readBoolean(), buf);
     }
 
-    public static void encode(GridExtractPacket packet, FriendlyByteBuf buf) {
+    public static void encode(final GridExtractPacket packet, final FriendlyByteBuf buf) {
         writeMode(buf, packet.mode);
         buf.writeBoolean(packet.cursor);
         if (packet.itemResource != null) {
@@ -59,29 +64,29 @@ public class GridExtractPacket {
         }
     }
 
-    public static void handle(GridExtractPacket packet, Supplier<NetworkEvent.Context> ctx) {
-        ServerPlayer player = ctx.get().getSender();
+    public static void handle(final GridExtractPacket packet, final Supplier<NetworkEvent.Context> ctx) {
+        final ServerPlayer player = ctx.get().getSender();
         if (player != null) {
-            AbstractContainerMenu menu = player.containerMenu;
+            final AbstractContainerMenu menu = player.containerMenu;
             if (menu instanceof ItemGridEventHandler itemGridEventHandler) {
-                ItemResource itemResource = PacketUtil.readItemResource(packet.buf);
+                final ItemResource itemResource = PacketUtil.readItemResource(Objects.requireNonNull(packet.buf));
                 ctx.get().enqueueWork(() -> itemGridEventHandler.onExtract(itemResource, packet.mode, packet.cursor));
             } else if (menu instanceof FluidGridEventHandler fluidGridEventHandler) {
-                FluidResource fluidResource = PacketUtil.readFluidResource(packet.buf);
+                final FluidResource fluidResource = PacketUtil.readFluidResource(Objects.requireNonNull(packet.buf));
                 ctx.get().enqueueWork(() -> fluidGridEventHandler.onExtract(fluidResource, packet.mode, packet.cursor));
             }
         }
         ctx.get().setPacketHandled(true);
     }
 
-    private static GridExtractMode getMode(byte mode) {
+    private static GridExtractMode getMode(final byte mode) {
         if (mode == 0) {
             return GridExtractMode.ENTIRE_RESOURCE;
         }
         return GridExtractMode.HALF_RESOURCE;
     }
 
-    public static void writeMode(FriendlyByteBuf buf, GridExtractMode mode) {
+    public static void writeMode(final FriendlyByteBuf buf, final GridExtractMode mode) {
         if (mode == GridExtractMode.ENTIRE_RESOURCE) {
             buf.writeByte(0);
         } else {

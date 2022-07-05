@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorag
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.item.StorageDiskItemImpl;
+import com.refinedmods.refinedstorage2.platform.api.item.AbstractStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
@@ -23,6 +23,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -31,11 +32,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-public class FluidStorageDiskItem extends StorageDiskItemImpl {
+public class FluidStorageDiskItem extends AbstractStorageDiskItem {
     private final FluidStorageType.Variant variant;
-    private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions = EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
+    private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions =
+        EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
-    public FluidStorageDiskItem(CreativeModeTab tab, FluidStorageType.Variant variant) {
+    public FluidStorageDiskItem(final CreativeModeTab tab, final FluidStorageType.Variant variant) {
         super(new Item.Properties().tab(tab).stacksTo(1).fireResistant());
         this.variant = variant;
         if (variant != FluidStorageType.Variant.CREATIVE) {
@@ -44,21 +46,24 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag context) {
+    public void appendHoverText(final ItemStack stack,
+                                @Nullable final Level level,
+                                final List<Component> tooltip,
+                                final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
         StorageItemHelper.appendToTooltip(
-                stack,
-                level,
-                tooltip,
-                context,
-                Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits,
-                Platform.INSTANCE.getBucketQuantityFormatter()::format,
-                tooltipOptions
+            stack,
+            level,
+            tooltip,
+            context,
+            Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits,
+            Platform.INSTANCE.getBucketQuantityFormatter()::format,
+            tooltipOptions
         );
     }
 
     @Override
-    public Optional<StorageChannelType<?>> getType(ItemStack stack) {
+    public Optional<StorageChannelType<?>> getType(final ItemStack stack) {
         return Optional.of(StorageChannelTypes.FLUID);
     }
 
@@ -68,34 +73,41 @@ public class FluidStorageDiskItem extends StorageDiskItemImpl {
     }
 
     @Override
-    protected Storage<?> createStorage(Level level) {
-        TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
+    protected Storage<?> createStorage(final Level level) {
+        final TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
-            return new PlatformStorage<>(
-                    new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                    FluidStorageType.INSTANCE,
-                    trackingRepository,
-                    PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
+            final TrackedStorageImpl<FluidResource> delegate = new TrackedStorageImpl<>(
+                new InMemoryStorageImpl<>(),
+                trackingRepository,
+                System::currentTimeMillis
             );
-        }
-        return new LimitedPlatformStorage<>(
-                new LimitedStorageImpl<>(
-                        new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                        variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()
-                ),
+            return new PlatformStorage<>(
+                delegate,
                 FluidStorageType.INSTANCE,
                 trackingRepository,
                 PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
+            );
+        }
+        final LimitedStorageImpl<FluidResource> delegate = new LimitedStorageImpl<>(
+            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+            variant.getCapacityInBuckets() * Platform.INSTANCE.getBucketAmount()
+        );
+        return new LimitedPlatformStorage<>(
+            delegate,
+            FluidStorageType.INSTANCE,
+            trackingRepository,
+            PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
         );
     }
 
     @Override
-    protected ItemStack createPrimaryDisassemblyByproduct(int count) {
+    protected ItemStack createPrimaryDisassemblyByproduct(final int count) {
         return new ItemStack(Items.INSTANCE.getStorageHousing(), count);
     }
 
     @Override
-    protected ItemStack createSecondaryDisassemblyByproduct(int count) {
+    @Nullable
+    protected ItemStack createSecondaryDisassemblyByproduct(final int count) {
         if (variant == FluidStorageType.Variant.CREATIVE) {
             return null;
         }

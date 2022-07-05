@@ -9,43 +9,58 @@ import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientComm
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import net.minecraft.server.level.ServerPlayer;
 
 public class ServerToClientCommunicationsImpl implements ServerToClientCommunications {
     private final NetworkManager networkManager;
 
-    public ServerToClientCommunicationsImpl(NetworkManager networkManager) {
+    public ServerToClientCommunicationsImpl(final NetworkManager networkManager) {
         this.networkManager = networkManager;
     }
 
     @Override
-    public void sendControllerEnergy(ServerPlayer player, long stored, long capacity) {
+    public void sendControllerEnergy(final ServerPlayer player, final long stored, final long capacity) {
         networkManager.send(player, new ControllerEnergyPacket(stored, capacity));
     }
 
     @Override
-    public void sendGridActiveness(ServerPlayer player, boolean active) {
+    public void sendGridActiveness(final ServerPlayer player, final boolean active) {
         networkManager.send(player, new GridActivePacket(active));
     }
 
     @Override
-    public void sendGridFluidUpdate(ServerPlayer player, FluidResource fluidResource, long change, TrackedResource trackedResource) {
+    public void sendGridFluidUpdate(final ServerPlayer player,
+                                    final FluidResource fluidResource,
+                                    final long change,
+                                    @Nullable final TrackedResource trackedResource) {
         networkManager.send(player, new GridFluidUpdatePacket(fluidResource, change, trackedResource));
     }
 
     @Override
-    public void sendGridItemUpdate(ServerPlayer player, ItemResource itemResource, long change, TrackedResource trackedResource) {
+    public void sendGridItemUpdate(final ServerPlayer player,
+                                   final ItemResource itemResource,
+                                   final long change,
+                                   @Nullable final TrackedResource trackedResource) {
         networkManager.send(player, new GridItemUpdatePacket(itemResource, change, trackedResource));
     }
 
     @Override
-    public void sendResourceFilterSlotUpdate(ServerPlayer player, ResourceFilterContainer resourceFilterContainer, int slotIndex) {
-        networkManager.send(player, new ResourceFilterSlotUpdatePacket(slotIndex));
+    public void sendResourceFilterSlotUpdate(final ServerPlayer player,
+                                             final ResourceFilterContainer resourceFilterContainer,
+                                             final int slotIndex,
+                                             final int containerIndex) {
+        networkManager.send(
+            player,
+            new ResourceFilterSlotUpdatePacket(slotIndex, containerIndex, resourceFilterContainer)
+        );
     }
 
     @Override
-    public void sendStorageInfoResponse(ServerPlayer player, UUID id, StorageInfo storageInfo) {
+    public void sendStorageInfoResponse(final ServerPlayer player,
+                                        final UUID id,
+                                        final StorageInfo storageInfo) {
         networkManager.send(player, new StorageInfoResponsePacket(id, storageInfo.stored(), storageInfo.capacity()));
     }
 }

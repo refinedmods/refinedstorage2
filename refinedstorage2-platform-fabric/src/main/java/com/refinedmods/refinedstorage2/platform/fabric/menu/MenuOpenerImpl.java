@@ -8,10 +8,11 @@ import net.minecraft.world.MenuProvider;
 
 public class MenuOpenerImpl implements MenuOpener {
     @Override
-    public void openMenu(ServerPlayer player, MenuProvider menuProvider) {
+    public void openMenu(final ServerPlayer player, final MenuProvider menuProvider) {
         if (menuProvider instanceof ExtendedMenuProvider extendedMenuProvider) {
-            menuProvider = new FabricExtendedMenuProviderAdapter(extendedMenuProvider);
+            player.openMenu(new FabricExtendedMenuProviderAdapter(extendedMenuProvider));
+        } else {
+            player.openMenu(menuProvider);
         }
-        player.openMenu(menuProvider);
     }
 }

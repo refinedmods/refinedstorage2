@@ -9,10 +9,10 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class FluidGridBlock extends GridBlock {
+public class FluidGridBlock extends AbstractGridBlock implements ColorableBlock<FluidGridBlock> {
     private final MutableComponent name;
 
-    public FluidGridBlock(MutableComponent name) {
+    public FluidGridBlock(final MutableComponent name) {
         super(BlockConstants.STONE_PROPERTIES);
         this.name = name;
     }
@@ -23,12 +23,12 @@ public class FluidGridBlock extends GridBlock {
     }
 
     @Override
-    public BlockColorMap<?> getBlockColorMap() {
+    public BlockColorMap<FluidGridBlock> getBlockColorMap() {
         return Blocks.INSTANCE.getFluidGrid();
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
         return new FluidGridBlockEntity(pos, state);
     }
 }

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
@@ -48,13 +48,18 @@ public interface Platform {
 
     boolean isKeyDown(KeyMapping keyMapping);
 
-    ItemGridEventHandler createItemGridEventHandler(AbstractContainerMenu containerMenu, GridService<ItemResource> gridService, Inventory playerInventory);
+    ItemGridEventHandler createItemGridEventHandler(AbstractContainerMenu containerMenu,
+                                                    GridService<ItemResource> gridService,
+                                                    Inventory playerInventory);
 
-    FluidGridEventHandler createFluidGridEventHandler(AbstractContainerMenu containerMenu, GridService<FluidResource> gridService, Inventory playerInventory, ExtractableStorage<ItemResource> bucketStorage);
+    FluidGridEventHandler createFluidGridEventHandler(AbstractContainerMenu containerMenu,
+                                                      GridService<FluidResource> gridService,
+                                                      Inventory playerInventory,
+                                                      ExtractableStorage<ItemResource> bucketStorage);
 
-    Function<ResourceAmount<ItemResource>, GridResource<ItemResource>> getItemGridResourceFactory();
+    Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> getItemGridResourceFactory();
 
-    Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> getFluidGridResourceFactory();
+    Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> getFluidGridResourceFactory();
 
     FluidRenderer getFluidRenderer();
 

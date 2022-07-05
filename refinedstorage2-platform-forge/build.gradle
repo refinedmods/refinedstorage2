@@ -10,9 +10,13 @@ buildscript {
 }
 
 repositories {
-    // JEI
     maven {
+        name = 'JEI'
         url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        name = 'REI'
+        url 'https://maven.shedaniel.me/'
     }
 }
 
@@ -65,14 +69,20 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 
 dependencies {
     minecraft "net.minecraftforge:forge:${project.minecraftVersion}-${project.forgeVersion}"
+
     project.ext.apis.collect {
         implementation project(it)
     }
     project.ext.compileApis.collect {
         implementation project(it)
     }
-    compileOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jeiVersion}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jeiVersion}")
+
+    compileOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}-common-api:${project.jeiVersion}")
+    compileOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}-forge-api:${project.jeiVersion}")
+    // We test with JEI on Forge.
+    runtimeOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}-forge:${project.jeiVersion}")
+
+    compileOnly fg.deobf("me.shedaniel:RoughlyEnoughItems-forge:${project.reiVersion}")
 }
 
 processResources {

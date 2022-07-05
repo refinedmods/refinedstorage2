@@ -12,13 +12,17 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
     private final Runnable listener;
     private final LimitingEnergyStorage exposedStorage;
 
-    public ControllerTeamRebornEnergy(Runnable listener) {
-        super(Platform.INSTANCE.getConfig().getController().getEnergyCapacity(), Platform.INSTANCE.getConfig().getController().getEnergyCapacity(), Platform.INSTANCE.getConfig().getController().getEnergyCapacity());
+    public ControllerTeamRebornEnergy(final Runnable listener) {
+        super(
+            Platform.INSTANCE.getConfig().getController().getEnergyCapacity(),
+            Platform.INSTANCE.getConfig().getController().getEnergyCapacity(),
+            Platform.INSTANCE.getConfig().getController().getEnergyCapacity()
+        );
         this.listener = listener;
         this.exposedStorage = new LimitingEnergyStorage(
-                this,
-                maxInsert,
-                0
+            this,
+            maxInsert,
+            0
         );
     }
 
@@ -26,7 +30,7 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
         return exposedStorage;
     }
 
-    public void setStoredSilently(long stored) {
+    public void setStoredSilently(final long stored) {
         this.amount = stored;
     }
 
@@ -42,9 +46,9 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
     }
 
     @Override
-    public long receive(long amount, Action action) {
+    public long receive(final long amount, final Action action) {
         try (Transaction tx = Transaction.openOuter()) {
-            long received = this.insert(amount, tx);
+            final long received = this.insert(amount, tx);
             if (received > 0 && action == Action.EXECUTE) {
                 tx.commit();
             }
@@ -53,9 +57,9 @@ public class ControllerTeamRebornEnergy extends SimpleEnergyStorage implements E
     }
 
     @Override
-    public long extract(long amount, Action action) {
+    public long extract(final long amount, final Action action) {
         try (Transaction tx = Transaction.openOuter()) {
-            long extracted = this.extract(amount, tx);
+            final long extracted = this.extract(amount, tx);
             if (extracted > 0 && action == Action.EXECUTE) {
                 tx.commit();
             }

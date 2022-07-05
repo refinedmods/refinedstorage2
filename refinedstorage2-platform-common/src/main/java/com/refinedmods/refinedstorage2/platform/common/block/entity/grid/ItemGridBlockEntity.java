@@ -14,18 +14,18 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ItemGridBlockEntity extends GridBlockEntity<ItemResource> {
-    public ItemGridBlockEntity(BlockPos pos, BlockState state) {
+public class ItemGridBlockEntity extends AbstractGridBlockEntity<ItemResource> {
+    public ItemGridBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getGrid(), pos, state, StorageChannelTypes.ITEM);
     }
 
     @Override
-    protected void writeResourceAmount(FriendlyByteBuf buf, ResourceAmount<ItemResource> stack) {
+    protected void writeResourceAmount(final FriendlyByteBuf buf, final ResourceAmount<ItemResource> stack) {
         PacketUtil.writeItemResourceAmount(buf, stack);
     }
 
     @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+    public AbstractContainerMenu createMenu(final int syncId, final Inventory inv, final Player player) {
         return new ItemGridContainerMenu(syncId, inv, this);
     }
 }

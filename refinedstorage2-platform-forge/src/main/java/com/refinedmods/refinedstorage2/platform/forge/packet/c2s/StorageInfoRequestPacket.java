@@ -1,4 +1,3 @@
-
 package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
@@ -15,30 +14,30 @@ import net.minecraftforge.network.NetworkEvent;
 public class StorageInfoRequestPacket {
     private final UUID id;
 
-    public StorageInfoRequestPacket(UUID id) {
+    public StorageInfoRequestPacket(final UUID id) {
         this.id = id;
     }
 
-    public static StorageInfoRequestPacket decode(FriendlyByteBuf buf) {
+    public static StorageInfoRequestPacket decode(final FriendlyByteBuf buf) {
         return new StorageInfoRequestPacket(buf.readUUID());
     }
 
-    public static void encode(StorageInfoRequestPacket packet, FriendlyByteBuf buf) {
+    public static void encode(final StorageInfoRequestPacket packet, final FriendlyByteBuf buf) {
         buf.writeUUID(packet.id);
     }
 
-    public static void handle(StorageInfoRequestPacket packet, Supplier<NetworkEvent.Context> ctx) {
-        ServerPlayer player = ctx.get().getSender();
+    public static void handle(final StorageInfoRequestPacket packet, final Supplier<NetworkEvent.Context> ctx) {
+        final ServerPlayer player = ctx.get().getSender();
         if (player != null) {
             ctx.get().enqueueWork(() -> handle(packet, player));
         }
         ctx.get().setPacketHandled(true);
     }
 
-    private static void handle(StorageInfoRequestPacket packet, ServerPlayer player) {
-        StorageInfo info = PlatformApi.INSTANCE
-                .getStorageRepository(player.getCommandSenderWorld())
-                .getInfo(packet.id);
+    private static void handle(final StorageInfoRequestPacket packet, final ServerPlayer player) {
+        final StorageInfo info = PlatformApi.INSTANCE
+            .getStorageRepository(player.getCommandSenderWorld())
+            .getInfo(packet.id);
 
         Platform.INSTANCE.getServerToClientCommunications().sendStorageInfoResponse(player, packet.id, info);
     }

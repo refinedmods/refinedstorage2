@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 public class SetupMinecraftCallback implements BeforeAllCallback {
     @Override
-    public void beforeAll(ExtensionContext context) {
+    public void beforeAll(final ExtensionContext context) {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
     }

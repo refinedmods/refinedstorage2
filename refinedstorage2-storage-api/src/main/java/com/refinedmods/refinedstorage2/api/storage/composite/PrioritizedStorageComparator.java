@@ -7,7 +7,7 @@ import java.util.Comparator;
 class PrioritizedStorageComparator implements Comparator<Storage<?>> {
     static final Comparator<Storage<?>> INSTANCE = new PrioritizedStorageComparator();
 
-    private static int getPriority(Storage<?> storage) {
+    private static int getPriority(final Storage<?> storage) {
         if (storage instanceof Priority priority) {
             return priority.getPriority();
         }
@@ -15,7 +15,7 @@ class PrioritizedStorageComparator implements Comparator<Storage<?>> {
     }
 
     @Override
-    public int compare(Storage<?> o1, Storage<?> o2) {
-        return Integer.compare(getPriority(o2), getPriority(o1));
+    public int compare(final Storage<?> a, final Storage<?> b) {
+        return Integer.compare(getPriority(b), getPriority(a));
     }
 }

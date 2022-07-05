@@ -19,6 +19,8 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGr
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
+import java.util.Objects;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -28,23 +30,42 @@ import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> implements FluidGridEventHandler {
+public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResource> implements FluidGridEventHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final GridService<FluidResource> gridService;
     private final FluidGridEventHandler fluidGridEventHandler;
 
-    public FluidGridContainerMenu(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {
+    public FluidGridContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getFluidGrid(), syncId, playerInventory, buf, createView());
-        this.gridService = null;
         this.fluidGridEventHandler = new ClientFluidGridEventHandler();
     }
 
-    public FluidGridContainerMenu(int syncId, Inventory playerInventory, FluidGridBlockEntity grid, ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridContainerMenu(final int syncId,
+                                  final Inventory playerInventory,
+                                  final FluidGridBlockEntity grid,
+                                  final ExtractableStorage<ItemResource> bucketStorage) {
         super(Menus.INSTANCE.getFluidGrid(), syncId, playerInventory, grid, createView());
-        this.gridService = new GridServiceImpl<>(storageChannel, new PlayerSource(playerInventory.player), resource -> Long.MAX_VALUE, Platform.INSTANCE.getBucketAmount());
-        this.grid.addWatcher(this);
-        this.fluidGridEventHandler = Platform.INSTANCE.createFluidGridEventHandler(this, gridService, playerInventory, bucketStorage);
+        grid.addWatcher(this);
+        final GridService<FluidResource> gridService = new GridServiceImpl<>(
+            Objects.requireNonNull(storageChannel),
+            new PlayerSource(playerInventory.player),
+            resource -> Long.MAX_VALUE,
+            Platform.INSTANCE.getBucketAmount()
+        );
+        this.fluidGridEventHandler = Platform.INSTANCE.createFluidGridEventHandler(
+            this,
+            gridService,
+            playerInventory,
+            bucketStorage
+        );
+    }
+
+    @Override
+    public void removed(final Player playerEntity) {
+        super.removed(playerEntity);
+        if (grid != null) {
+            grid.removeWatcher(this);
+        }
     }
 
     private static GridViewImpl<FluidResource> createView() {
@@ -52,36 +73,29 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
     }
 
     @Override
-    protected ResourceAmount<FluidResource> readResourceAmount(FriendlyByteBuf buf) {
+    protected ResourceAmount<FluidResource> readResourceAmount(final FriendlyByteBuf buf) {
         return PacketUtil.readFluidResourceAmount(buf);
     }
 
     @Override
-    public void removed(Player playerEntity) {
-        super.removed(playerEntity);
-        if (grid != null) {
-            grid.removeWatcher(this);
-        }
-    }
-
-    @Override
-    public void onChanged(ResourceListOperationResult<FluidResource> change) {
-        FluidResource resource = change.resourceAmount().getResource();
+    public void onChanged(final ResourceListOperationResult<FluidResource> change) {
+        final FluidResource resource = change.resourceAmount().getResource();
 
         LOGGER.info("Received a change of {} for {}", change.change(), resource);
 
         Platform.INSTANCE.getServerToClientCommunications().sendGridFluidUpdate(
-                (ServerPlayer) playerInventory.player,
-                resource,
-                change.change(),
-                storageChannel.findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
+            (ServerPlayer) playerInventory.player,
+            resource,
+            change.change(),
+            Objects.requireNonNull(storageChannel)
+                .findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
         );
     }
 
     @Override
-    public ItemStack quickMoveStack(Player playerEntity, int slotIndex) {
+    public ItemStack quickMoveStack(final Player playerEntity, final int slotIndex) {
         if (!playerEntity.level.isClientSide()) {
-            Slot slot = getSlot(slotIndex);
+            final Slot slot = getSlot(slotIndex);
             if (slot.hasItem()) {
                 fluidGridEventHandler.onTransfer(slot.getContainerSlot());
             }
@@ -90,17 +104,17 @@ public class FluidGridContainerMenu extends GridContainerMenu<FluidResource> imp
     }
 
     @Override
-    public void onInsert(GridInsertMode insertMode) {
+    public void onInsert(final GridInsertMode insertMode) {
         fluidGridEventHandler.onInsert(insertMode);
     }
 
     @Override
-    public void onTransfer(int slotIndex) {
+    public void onTransfer(final int slotIndex) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void onExtract(FluidResource fluidResource, GridExtractMode mode, boolean cursor) {
+    public void onExtract(final FluidResource fluidResource, final GridExtractMode mode, final boolean cursor) {
         fluidGridEventHandler.onExtract(fluidResource, mode, cursor);
     }
 }

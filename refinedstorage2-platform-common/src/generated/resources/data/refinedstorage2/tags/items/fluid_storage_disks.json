@@ -1,9 +1,9 @@
 {
-    "replace": false,
-    "values": [
-        "refinedstorage2:64b_fluid_storage_disk",
-        "refinedstorage2:256b_fluid_storage_disk",
-        "refinedstorage2:1024b_fluid_storage_disk",
-        "refinedstorage2:4096b_fluid_storage_disk"
-    ]
+  "replace": false,
+  "values": [
+    "refinedstorage2:64b_fluid_storage_disk",
+    "refinedstorage2:256b_fluid_storage_disk",
+    "refinedstorage2:1024b_fluid_storage_disk",
+    "refinedstorage2:4096b_fluid_storage_disk"
+  ]
 }

@@ -17,31 +17,36 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class GridExtractPacket implements ServerPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        GridExtractMode mode = getMode(buf.readByte());
-        boolean cursor = buf.readBoolean();
+    public void receive(final MinecraftServer server,
+                        final ServerPlayer player,
+                        final ServerGamePacketListenerImpl handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
+        final GridExtractMode mode = getMode(buf.readByte());
+        final boolean cursor = buf.readBoolean();
 
-        AbstractContainerMenu menu = player.containerMenu;
+        final AbstractContainerMenu menu = player.containerMenu;
         if (menu instanceof ItemGridEventHandler itemGridEventHandler) {
-            ItemResource itemResource = PacketUtil.readItemResource(buf);
+            final ItemResource itemResource = PacketUtil.readItemResource(buf);
             server.execute(() -> itemGridEventHandler.onExtract(itemResource, mode, cursor));
         } else if (menu instanceof FluidGridEventHandler fluidGridEventHandler) {
-            FluidResource fluidResource = PacketUtil.readFluidResource(buf);
+            final FluidResource fluidResource = PacketUtil.readFluidResource(buf);
             server.execute(() -> fluidGridEventHandler.onExtract(fluidResource, mode, cursor));
         }
     }
 
-    private GridExtractMode getMode(byte mode) {
+    private static GridExtractMode getMode(final byte mode) {
         if (mode == 0) {
             return GridExtractMode.ENTIRE_RESOURCE;
         }
         return GridExtractMode.HALF_RESOURCE;
     }
 
-    public static void writeMode(FriendlyByteBuf buf, GridExtractMode mode) {
-        switch (mode) {
-            case ENTIRE_RESOURCE -> buf.writeByte(0);
-            case HALF_RESOURCE -> buf.writeByte(1);
+    public static void writeMode(final FriendlyByteBuf buf, final GridExtractMode mode) {
+        if (mode == GridExtractMode.ENTIRE_RESOURCE) {
+            buf.writeByte(0);
+        } else if (mode == GridExtractMode.HALF_RESOURCE) {
+            buf.writeByte(1);
         }
     }
 }

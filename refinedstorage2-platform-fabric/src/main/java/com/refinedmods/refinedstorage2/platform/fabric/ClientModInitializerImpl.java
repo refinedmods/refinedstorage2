@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -11,10 +12,10 @@ import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiGridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiIntegration;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
@@ -34,16 +35,21 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslationKey;
 
 public class ClientModInitializerImpl implements ClientModInitializer {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @Override
     public void onInitializeClient() {
         setRenderLayers();
@@ -53,15 +59,19 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         registerScreens();
         registerKeyBindings();
         registerModelPredicates();
-        registerGridSynchronizer();
+        registerGridSynchronizers();
     }
 
     private void setRenderLayers() {
         BlockRenderLayerMap.INSTANCE.putBlock(Blocks.INSTANCE.getCable(), RenderType.cutout());
-        Blocks.INSTANCE.getGrid().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
-        Blocks.INSTANCE.getFluidGrid().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
-        Blocks.INSTANCE.getController().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
-        Blocks.INSTANCE.getCreativeController().values().forEach(block -> BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
+        Blocks.INSTANCE.getGrid().values().forEach(block ->
+            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
+        Blocks.INSTANCE.getFluidGrid().values().forEach(block ->
+            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
+        Blocks.INSTANCE.getController().values().forEach(block ->
+            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
+        Blocks.INSTANCE.getCreativeController().values().forEach(block ->
+            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
     }
 
     private void registerPackets() {
@@ -70,21 +80,21 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_FLUID_UPDATE, new GridFluidUpdatePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ACTIVE, new GridActivePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.CONTROLLER_ENERGY, new ControllerEnergyPacket());
-        ClientPlayNetworking.registerGlobalReceiver(PacketIds.RESOURCE_FILTER_SLOT_UPDATE, new ResourceFilterSlotUpdatePacket());
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.RESOURCE_FILTER_SLOT_UPDATE,
+            new ResourceFilterSlotUpdatePacket());
     }
 
     private void registerBlockEntityRenderers() {
-        BlockEntityRendererRegistry.register(BlockEntities.INSTANCE.getDiskDrive(), ctx -> new DiskDriveBlockEntityRendererImpl<>());
+        BlockEntityRendererRegistry.register(BlockEntities.INSTANCE.getDiskDrive(),
+            ctx -> new DiskDriveBlockEntityRendererImpl<>());
     }
 
     private void registerCustomModels() {
-        ResourceLocation diskDriveIdentifier = createIdentifier("block/disk_drive");
-        ResourceLocation diskDriveIdentifierItem = createIdentifier("item/disk_drive");
+        final ResourceLocation diskDriveIdentifier = createIdentifier("block/disk_drive");
+        final ResourceLocation diskDriveIdentifierItem = createIdentifier("item/disk_drive");
 
-        ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (identifier, modelProviderContext) -> {
-            if (identifier.equals(diskDriveIdentifier)) {
-                return new DiskDriveUnbakedModel();
-            } else if (identifier.equals(diskDriveIdentifierItem)) {
+        ModelLoadingRegistry.INSTANCE.registerResourceProvider(resourceManager -> (identifier, ctx) -> {
+            if (identifier.equals(diskDriveIdentifier) || identifier.equals(diskDriveIdentifierItem)) {
                 return new DiskDriveUnbakedModel();
             }
             return null;
@@ -102,24 +112,54 @@ public class ClientModInitializerImpl implements ClientModInitializer {
 
     private void registerKeyBindings() {
         KeyMappings.INSTANCE.setFocusSearchBar(KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                createTranslationKey("key", "focus_search_bar"),
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_TAB,
-                createTranslationKey("category", "key_bindings")
+            createTranslationKey("key", "focus_search_bar"),
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_TAB,
+            createTranslationKey("category", "key_bindings")
         )));
     }
 
     private void registerModelPredicates() {
         Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemPropertiesAccessor.register(
-                controllerBlockItem.get(),
-                createIdentifier("stored_in_controller"),
-                new ControllerModelPredicateProvider()
+            controllerBlockItem.get(),
+            createIdentifier("stored_in_controller"),
+            new ControllerModelPredicateProvider()
         ));
     }
 
-    private void registerGridSynchronizer() {
-        if (ReiIntegration.isLoaded()) {
-            GridScreen.setSynchronizer(new ReiGridSynchronizer(new ReiProxy()));
+    private void registerGridSynchronizers() {
+        final FabricLoader loader = FabricLoader.getInstance();
+        if (loader.isModLoaded("jei")) {
+            registerJeiGridSynchronizers();
         }
+        if (loader.isModLoaded("roughlyenoughitems")) {
+            registerReiGridSynchronizers();
+        }
+    }
+
+    private void registerJeiGridSynchronizers() {
+        LOGGER.info("Activating JEI grid synchronizers");
+        final JeiProxy jeiProxy = new JeiProxy();
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
+            createIdentifier("jei"),
+            new JeiGridSynchronizer(jeiProxy, false)
+        );
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
+            createIdentifier("jei_two_way"),
+            new JeiGridSynchronizer(jeiProxy, true)
+        );
+    }
+
+    private void registerReiGridSynchronizers() {
+        LOGGER.info("Activating REI grid synchronizers");
+        final ReiProxy reiProxy = new ReiProxy();
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
+            createIdentifier("rei"),
+            new ReiGridSynchronizer(reiProxy, false)
+        );
+        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
+            createIdentifier("rei_two_way"),
+            new ReiGridSynchronizer(reiProxy, true)
+        );
     }
 }

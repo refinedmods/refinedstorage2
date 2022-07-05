@@ -10,6 +10,8 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerC
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,7 +20,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
@@ -26,7 +27,8 @@ import org.apache.logging.log4j.Logger;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEntity<ControllerNetworkNode> implements ExtendedMenuProvider {
+public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<ControllerNetworkNode>
+    implements ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORED = "stored";
@@ -37,55 +39,61 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
     private final EnergyStorage energyStorage;
     private long lastTypeChanged;
 
-    public ControllerBlockEntity(ControllerType type, BlockPos pos, BlockState state) {
+    public ControllerBlockEntity(final ControllerType type, final BlockPos pos, final BlockState state) {
         super(getBlockEntityType(type), pos, state, new ControllerNetworkNode());
         this.type = type;
         this.energyStorage = Platform.INSTANCE.createEnergyStorage(type, this::setChanged);
         this.getNode().setEnergyStorage(energyStorage);
     }
 
-    public static void serverTick(Level level, BlockState state, ControllerBlockEntity blockEntity) {
-        InternalNetworkNodeContainerBlockEntity.serverTick(level, state, blockEntity);
+    public static void serverTick(final BlockState state, final ControllerBlockEntity blockEntity) {
+        AbstractInternalNetworkNodeContainerBlockEntity.serverTick(state, blockEntity);
         blockEntity.updateEnergyTypeInLevel(state);
     }
 
-    private static BlockEntityType<ControllerBlockEntity> getBlockEntityType(ControllerType type) {
+    private static BlockEntityType<ControllerBlockEntity> getBlockEntityType(final ControllerType type) {
         return type == ControllerType.CREATIVE
-                ? BlockEntities.INSTANCE.getCreativeController()
-                : BlockEntities.INSTANCE.getController();
+            ? BlockEntities.INSTANCE.getCreativeController()
+            : BlockEntities.INSTANCE.getController();
     }
 
-    public static long getStored(CompoundTag tag) {
+    public static long getStored(final CompoundTag tag) {
         return tag.contains(TAG_STORED) ? tag.getLong(TAG_STORED) : 0;
     }
 
-    public static long getCapacity(CompoundTag tag) {
+    public static long getCapacity(final CompoundTag tag) {
         return tag.contains(TAG_CAPACITY) ? tag.getLong(TAG_CAPACITY) : 0;
     }
 
-    public static boolean hasEnergy(CompoundTag tag) {
+    public static boolean hasEnergy(@Nullable final CompoundTag tag) {
         return tag != null && tag.contains(TAG_STORED) && tag.contains(TAG_CAPACITY);
     }
 
-    public void updateEnergyTypeInLevel(BlockState state) {
-        ControllerEnergyType energyType = ControllerEnergyType.ofState(getNode().getState());
-        ControllerEnergyType inLevelEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
+    public void updateEnergyTypeInLevel(final BlockState state) {
+        final ControllerEnergyType energyType = ControllerEnergyType.ofState(getNode().getState());
+        final ControllerEnergyType inLevelEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
+        final boolean inTime = System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS;
 
-        if (energyType != inLevelEnergyType && (lastTypeChanged == 0 || System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS)) {
-            LOGGER.info("Energy type state change for block at {}: {} -> {}", getBlockPos(), inLevelEnergyType, energyType);
-
+        if (energyType != inLevelEnergyType && (lastTypeChanged == 0 || inTime)) {
+            LOGGER.info(
+                "Energy type state change for block at {}: {} -> {}",
+                getBlockPos(),
+                inLevelEnergyType,
+                energyType
+            );
             this.lastTypeChanged = System.currentTimeMillis();
-
             updateEnergyTypeInLevel(state, energyType);
         }
     }
 
-    private void updateEnergyTypeInLevel(BlockState state, ControllerEnergyType type) {
-        level.setBlockAndUpdate(getBlockPos(), state.setValue(ControllerBlock.ENERGY_TYPE, type));
+    private void updateEnergyTypeInLevel(final BlockState state, final ControllerEnergyType energyType) {
+        if (level != null) {
+            level.setBlockAndUpdate(getBlockPos(), state.setValue(ControllerBlock.ENERGY_TYPE, energyType));
+        }
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
+    public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putLong(TAG_STORED, getNode().getActualStored());
         // this is not deserialized on purpose and is only here for rendering purposes
@@ -93,7 +101,7 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
     }
 
     @Override
-    public void load(CompoundTag tag) {
+    public void load(final CompoundTag tag) {
         super.load(tag);
         if (tag.contains(TAG_STORED)) {
             Platform.INSTANCE.setEnergy(energyStorage, tag.getLong(TAG_STORED));
@@ -102,16 +110,19 @@ public class ControllerBlockEntity extends InternalNetworkNodeContainerBlockEnti
 
     @Override
     public Component getDisplayName() {
-        return createTranslation("block", type == ControllerType.CREATIVE ? "creative_controller" : "controller");
+        return createTranslation(
+            "block",
+            type == ControllerType.CREATIVE ? "creative_controller" : "controller"
+        );
     }
 
     @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+    public AbstractContainerMenu createMenu(final int syncId, final Inventory inv, final Player player) {
         return new ControllerContainerMenu(syncId, inv, this, player);
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+    public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
         buf.writeLong(getActualStored());
         buf.writeLong(getActualCapacity());
     }

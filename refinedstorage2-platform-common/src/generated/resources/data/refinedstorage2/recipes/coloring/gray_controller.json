@@ -1,14 +1,14 @@
 {
-    "type": "minecraft:crafting_shapeless",
-    "ingredients": [
-        {
-            "tag": "refinedstorage2:controllers"
-        },
-        {
-            "item": "minecraft:gray_dye"
-        }
-    ],
-    "result": {
-        "item": "refinedstorage2:gray_controller"
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "tag": "refinedstorage2:controllers"
+    },
+    {
+      "item": "minecraft:gray_dye"
     }
+  ],
+  "result": {
+    "item": "refinedstorage2:gray_controller"
+  }
 }

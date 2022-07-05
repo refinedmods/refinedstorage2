@@ -10,7 +10,7 @@ public class FilterModeSettings {
     private FilterModeSettings() {
     }
 
-    public static FilterMode getFilterMode(int filterMode) {
+    public static FilterMode getFilterMode(final int filterMode) {
         return switch (filterMode) {
             case BLOCK -> FilterMode.BLOCK;
             case ALLOW -> FilterMode.ALLOW;
@@ -18,21 +18,21 @@ public class FilterModeSettings {
         };
     }
 
-    public static int getFilterMode(FilterMode filterMode) {
+    public static int getFilterMode(final FilterMode filterMode) {
         return switch (filterMode) {
             case BLOCK -> BLOCK;
             case ALLOW -> ALLOW;
         };
     }
 
-    public static TwoWaySyncProperty<FilterMode> createClientSyncProperty(int index) {
+    public static TwoWaySyncProperty<FilterMode> createClientSyncProperty(final int index) {
         return TwoWaySyncProperty.forClient(
-                index,
-                FilterModeSettings::getFilterMode,
-                FilterModeSettings::getFilterMode,
-                FilterMode.BLOCK,
-                filterMode -> {
-                }
+            index,
+            FilterModeSettings::getFilterMode,
+            FilterModeSettings::getFilterMode,
+            FilterMode.BLOCK,
+            filterMode -> {
+            }
         );
     }
 }

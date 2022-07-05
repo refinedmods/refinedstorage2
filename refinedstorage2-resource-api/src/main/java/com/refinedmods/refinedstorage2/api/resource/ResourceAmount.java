@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.resource;
 
-import com.google.common.base.Preconditions;
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
+
 import org.apiguardian.api.API;
 
 /**
@@ -14,16 +15,11 @@ public final class ResourceAmount<T> {
     private final T resource;
     private long amount;
 
-    public static <T> void validate(T resource, long amount) {
-        Preconditions.checkArgument(amount > 0, "Amount must be larger than 0");
-        Preconditions.checkNotNull(resource, "Resource must not be null");
-    }
-
     /**
      * @param resource the resource, must be non-null
      * @param amount   the amount, must be larger than 0
      */
-    public ResourceAmount(T resource, long amount) {
+    public ResourceAmount(final T resource, final long amount) {
         validate(resource, amount);
         this.resource = resource;
         this.amount = amount;
@@ -40,30 +36,38 @@ public final class ResourceAmount<T> {
     /**
      * Increments with the given amount.
      *
-     * @param amount the amount to increment, must be larger than 0
+     * @param amountToIncrement the amount to increment, must be larger than 0
      */
-    public void increment(long amount) {
-        Preconditions.checkArgument(amount > 0, "Amount to increment must be larger than 0");
-        this.amount += amount;
+    public void increment(final long amountToIncrement) {
+        CoreValidations.validateLargerThanZero(amountToIncrement, "Amount to increment must be larger than 0");
+        this.amount += amountToIncrement;
     }
 
     /**
      * Decrements with the given amount.
      * The amount, after performing this decrement, may not be 0 or less than 0.
      *
-     * @param amount the amount to decrement, a positive number
+     * @param amountToDecrement the amount to decrement, a positive number
      */
-    public void decrement(long amount) {
-        Preconditions.checkArgument(amount > 0, "Amount to decrement must be larger than 0");
-        Preconditions.checkArgument((this.amount - amount) > 0, "Cannot decrement more than " + (amount - 1));
-        this.amount -= amount;
+    public void decrement(final long amountToDecrement) {
+        CoreValidations.validateLargerThanZero(amountToDecrement, "Amount to decrement must be larger than 0");
+        CoreValidations.validateLargerThanZero(
+            amount - amountToDecrement,
+            "Cannot decrement, amount will be zero or negative"
+        );
+        this.amount -= amountToDecrement;
     }
 
     @Override
     public String toString() {
-        return "ResourceAmount{" +
-                "resource=" + resource +
-                ", amount=" + amount +
-                '}';
+        return "ResourceAmount{"
+            + "resource=" + resource
+            + ", amount=" + amount
+            + '}';
+    }
+
+    public static <T> void validate(final T resource, final long amount) {
+        CoreValidations.validateLargerThanZero(amount, "Amount must be larger than 0");
+        CoreValidations.validateNotNull(resource, "Resource must not be null");
     }
 }

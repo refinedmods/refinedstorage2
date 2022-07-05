@@ -12,25 +12,26 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
 public class DiskDriveInventory extends SimpleContainer implements StorageDiskProvider {
-    private final DiskDriveBlockEntity diskDrive;
+    private final AbstractDiskDriveBlockEntity diskDrive;
 
-    public DiskDriveInventory(DiskDriveBlockEntity diskDrive) {
+    public DiskDriveInventory(final AbstractDiskDriveBlockEntity diskDrive) {
         super(DiskDriveNetworkNode.DISK_COUNT);
         this.diskDrive = diskDrive;
     }
 
     @Override
-    public boolean canPlaceItem(int slot, ItemStack stack) {
+    public boolean canPlaceItem(final int slot, final ItemStack stack) {
         return stack.getItem() instanceof StorageDiskItem;
     }
 
     @Override
-    public void setItem(int slot, ItemStack stack) {
+    public void setItem(final int slot, final ItemStack stack) {
         super.setItem(slot, stack);
         // level will not yet be present
-        boolean isJustPlacedIntoLevelOrLoading = diskDrive.getLevel() == null || diskDrive.getLevel().isClientSide();
+        final boolean isJustPlacedIntoLevelOrLoading = diskDrive.getLevel() == null
+            || diskDrive.getLevel().isClientSide();
         // level will be present, but network not yet
-        boolean isPlacedThroughDismantlingMode = diskDrive.getNode().getNetwork() == null;
+        final boolean isPlacedThroughDismantlingMode = diskDrive.getNode().getNetwork() == null;
         if (isJustPlacedIntoLevelOrLoading || isPlacedThroughDismantlingMode) {
             return;
         }
@@ -38,17 +39,17 @@ public class DiskDriveInventory extends SimpleContainer implements StorageDiskPr
     }
 
     @Override
-    public Optional<UUID> getDiskId(int slot) {
+    public Optional<UUID> getDiskId(final int slot) {
         return validateAndGetStack(slot).flatMap(stack -> ((StorageDiskItem) stack.getItem()).getDiskId(stack));
     }
 
     @Override
-    public Optional<StorageChannelType<?>> getStorageChannelType(int slot) {
+    public Optional<StorageChannelType<?>> getStorageChannelType(final int slot) {
         return validateAndGetStack(slot).flatMap(stack -> ((StorageDiskItem) stack.getItem()).getType(stack));
     }
 
-    private Optional<ItemStack> validateAndGetStack(int slot) {
-        ItemStack stack = getItem(slot);
+    private Optional<ItemStack> validateAndGetStack(final int slot) {
+        final ItemStack stack = getItem(slot);
         if (stack.isEmpty() || !(stack.getItem() instanceof StorageDiskItem)) {
             return Optional.empty();
         }

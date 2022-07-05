@@ -7,13 +7,14 @@ public final class TrackedResource {
     private String sourceName;
     private long time;
 
-    public TrackedResource(String sourceName, long time) {
-        update(sourceName, time);
+    public TrackedResource(final String sourceName, final long time) {
+        this.sourceName = sourceName;
+        this.update(sourceName, time);
     }
 
-    public void update(String sourceName, long time) {
-        this.sourceName = sourceName;
-        this.time = time;
+    public void update(final String newSourceName, final long newTime) {
+        this.sourceName = newSourceName;
+        this.time = newTime;
     }
 
     public String getSourceName() {

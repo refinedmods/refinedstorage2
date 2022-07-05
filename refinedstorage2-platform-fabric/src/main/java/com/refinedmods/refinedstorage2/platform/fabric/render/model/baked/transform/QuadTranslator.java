@@ -9,21 +9,19 @@ public class QuadTranslator implements RenderContext.QuadTransform {
     private final float y;
     private final float z;
 
-    public QuadTranslator(float x, float y, float z) {
+    public QuadTranslator(final float x, final float y, final float z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public boolean transform(MutableQuadView quad) {
-        Vector3f target = new Vector3f();
-
+    public boolean transform(final MutableQuadView quad) {
+        final Vector3f target = new Vector3f();
         for (int i = 0; i < 4; ++i) {
             quad.copyPos(i, target);
             target.add(this.x, this.y, this.z);
             quad.pos(i, target);
         }
-
         return true;
     }
 }

@@ -18,12 +18,12 @@ import net.minecraft.world.entity.player.Inventory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ControllerScreen extends BaseScreen<ControllerContainerMenu> {
+public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu> {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/controller.png");
 
     private final ProgressWidget progressWidget;
 
-    public ControllerScreen(ControllerContainerMenu menu, Inventory playerInventory, Component text) {
+    public ControllerScreen(final ControllerContainerMenu menu, final Inventory playerInventory, final Component text) {
         super(menu, playerInventory, text);
 
         this.titleLabelX = 7;
@@ -33,7 +33,15 @@ public class ControllerScreen extends BaseScreen<ControllerContainerMenu> {
         this.imageWidth = 176;
         this.imageHeight = 189;
 
-        this.progressWidget = new ProgressWidget(80, 20, 16, 70, this::getPercentageFull, this::renderComponentTooltip, this::createTooltip);
+        this.progressWidget = new ProgressWidget(
+            80,
+            20,
+            16,
+            70,
+            this::getPercentageFull,
+            this::renderComponentTooltip,
+            this::createTooltip
+        );
         addRenderableWidget(progressWidget);
     }
 
@@ -49,33 +57,33 @@ public class ControllerScreen extends BaseScreen<ControllerContainerMenu> {
 
     private List<Component> createTooltip() {
         return Collections.singletonList(createTranslation(
-                "misc",
-                "stored_with_capacity",
-                QuantityFormatter.format(getMenu().getStored()),
-                QuantityFormatter.format(getMenu().getCapacity())
+            "misc",
+            "stored_with_capacity",
+            QuantityFormatter.format(getMenu().getStored()),
+            QuantityFormatter.format(getMenu().getCapacity())
         ));
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float delta, int mouseX, int mouseY) {
+    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
 
-        int x = (width - imageWidth) / 2;
-        int y = (height - imageHeight) / 2;
+        final int x = (width - imageWidth) / 2;
+        final int y = (height - imageHeight) / 2;
 
         blit(poseStack, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+    protected void renderLabels(final PoseStack poseStack, final int mouseX, final int mouseY) {
         super.renderLabels(poseStack, mouseX, mouseY);
         progressWidget.render(poseStack, mouseX - leftPos, mouseY - topPos, 0);
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float delta) {
         renderBackground(poseStack);
         super.render(poseStack, mouseX, mouseY, delta);
         renderTooltip(poseStack, mouseX, mouseY);

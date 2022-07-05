@@ -8,10 +8,10 @@ import org.apiguardian.api.API;
 public record StorageInfo(long stored, long capacity) {
     public static final StorageInfo UNKNOWN = new StorageInfo(0, 0);
 
-    public static StorageInfo of(Storage<?> storage) {
+    public static StorageInfo of(final Storage<?> storage) {
         return new StorageInfo(
-                storage.getStored(),
-                storage instanceof LimitedStorage limitedStorage ? limitedStorage.getCapacity() : 0L
+            storage.getStored(),
+            storage instanceof LimitedStorage<?> limitedStorage ? limitedStorage.getCapacity() : 0L
         );
     }
 }

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
@@ -50,10 +50,19 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public final class PlatformImpl extends AbstractPlatform {
-    private static final TagKey<Item> WRENCH_TAG = TagKey.create(Registry.ITEM.key(), new ResourceLocation("c", "wrenches"));
+    private static final TagKey<Item> WRENCH_TAG = TagKey.create(
+        Registry.ITEM.key(),
+        new ResourceLocation("c", "wrenches")
+    );
 
     public PlatformImpl() {
-        super(new ServerToClientCommunicationsImpl(), new ClientToServerCommunicationsImpl(), new MenuOpenerImpl(), new BucketQuantityFormatter(FluidConstants.BUCKET), new FluidVariantFluidRenderer());
+        super(
+            new ServerToClientCommunicationsImpl(),
+            new ClientToServerCommunicationsImpl(),
+            new MenuOpenerImpl(),
+            new BucketQuantityFormatter(FluidConstants.BUCKET),
+            new FluidVariantFluidRenderer()
+        );
     }
 
     @Override
@@ -72,37 +81,45 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public boolean canEditBoxLoseFocus(EditBox editBox) {
+    public boolean canEditBoxLoseFocus(final EditBox editBox) {
         return ((EditBoxAccessor) editBox).getCanLoseFocus();
     }
 
     @Override
-    public boolean isKeyDown(KeyMapping keyMapping) {
-        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), ((KeyMappingAccessor) keyMapping).getKey().getValue());
+    public boolean isKeyDown(final KeyMapping keyMapping) {
+        return InputConstants.isKeyDown(
+            Minecraft.getInstance().getWindow().getWindow(),
+            ((KeyMappingAccessor) keyMapping).getKey().getValue()
+        );
     }
 
     @Override
-    public ItemGridEventHandler createItemGridEventHandler(AbstractContainerMenu containerMenu, GridService<ItemResource> gridService, Inventory playerInventory) {
+    public ItemGridEventHandler createItemGridEventHandler(final AbstractContainerMenu containerMenu,
+                                                           final GridService<ItemResource> gridService,
+                                                           final Inventory playerInventory) {
         return new ItemGridEventHandlerImpl(containerMenu, gridService, playerInventory);
     }
 
     @Override
-    public FluidGridEventHandler createFluidGridEventHandler(AbstractContainerMenu containerMenu, GridService<FluidResource> gridService, Inventory playerInventory, ExtractableStorage<ItemResource> bucketStorage) {
+    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu,
+                                                             final GridService<FluidResource> gridService,
+                                                             final Inventory playerInventory,
+                                                             final ExtractableStorage<ItemResource> bucketStorage) {
         return new FluidGridEventHandlerImpl(containerMenu, gridService, playerInventory, bucketStorage);
     }
 
     @Override
-    public Function<ResourceAmount<ItemResource>, GridResource<ItemResource>> getItemGridResourceFactory() {
+    public Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> getItemGridResourceFactory() {
         return new FabricItemGridResourceFactory();
     }
 
     @Override
-    public Function<ResourceAmount<FluidResource>, GridResource<FluidResource>> getFluidGridResourceFactory() {
+    public Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> getFluidGridResourceFactory() {
         return new FabricFluidGridResourceFactory();
     }
 
     @Override
-    public Optional<FluidResource> convertToFluid(ItemStack stack) {
+    public Optional<FluidResource> convertToFluid(final ItemStack stack) {
         if (stack.isEmpty()) {
             return Optional.empty();
         }
@@ -110,7 +127,7 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public EnergyStorage createEnergyStorage(ControllerType controllerType, Runnable listener) {
+    public EnergyStorage createEnergyStorage(final ControllerType controllerType, final Runnable listener) {
         return switch (controllerType) {
             case NORMAL -> new ControllerTeamRebornEnergy(listener);
             case CREATIVE -> new InfiniteEnergyStorage();
@@ -118,19 +135,19 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public void setEnergy(EnergyStorage energyStorage, long stored) {
+    public void setEnergy(final EnergyStorage energyStorage, final long stored) {
         if (energyStorage instanceof ControllerTeamRebornEnergy controllerTeamRebornEnergy) {
             controllerTeamRebornEnergy.setStoredSilently(stored);
         }
     }
 
-    private Optional<FluidResource> convertNonEmptyToFluid(ItemStack stack) {
-        Storage<FluidVariant> storage = FluidStorage.ITEM.find(
-                stack,
-                new InitialContentsContainerItemContext(ItemVariant.of(stack), 1)
+    private Optional<FluidResource> convertNonEmptyToFluid(final ItemStack stack) {
+        final Storage<FluidVariant> storage = FluidStorage.ITEM.find(
+            stack,
+            new InitialContentsContainerItemContext(ItemVariant.of(stack), 1)
         );
         return Optional
-                .ofNullable(StorageUtil.findExtractableResource(storage, null))
-                .map(VariantUtil::ofFluidVariant);
+            .ofNullable(StorageUtil.findExtractableResource(storage, null))
+            .map(VariantUtil::ofFluidVariant);
     }
 }

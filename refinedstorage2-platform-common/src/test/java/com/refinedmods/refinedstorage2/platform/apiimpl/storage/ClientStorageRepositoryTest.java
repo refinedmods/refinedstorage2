@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.apiimpl.storage;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +11,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Rs2Test
 class ClientStorageRepositoryTest {
-
-    List<UUID> uuidsRequested;
-    ClientStorageRepository sut;
+    private List<UUID> uuidsRequested;
+    private ClientStorageRepository sut;
 
     @BeforeEach
     void setup() {
@@ -25,36 +22,36 @@ class ClientStorageRepositoryTest {
     }
 
     @Test
-    void Test_sending_request() {
+    void shouldSendRequestWhenRetrievingInfo() {
         // Arrange
-        UUID a = UUID.randomUUID();
-        UUID b = UUID.randomUUID();
+        final UUID a = UUID.randomUUID();
+        final UUID b = UUID.randomUUID();
 
         // Act
-        StorageInfo aInfo = sut.getInfo(a);
-        StorageInfo bInfo = sut.getInfo(b);
+        final StorageInfo aInfo = sut.getInfo(a);
+        final StorageInfo bInfo = sut.getInfo(b);
 
         // Assert
         assertThat(uuidsRequested).containsExactly(a);
-        assertThat(aInfo).usingRecursiveComparison().isEqualTo(new StorageInfo(0, 0));
-        assertThat(bInfo).usingRecursiveComparison().isEqualTo(new StorageInfo(0, 0));
+        assertThat(aInfo).usingRecursiveComparison().isEqualTo(StorageInfo.UNKNOWN);
+        assertThat(bInfo).usingRecursiveComparison().isEqualTo(StorageInfo.UNKNOWN);
     }
 
     @Test
-    void Test_retrieving_storage_info() {
+    void shouldRetrieveInfo() {
         // Arrange
-        UUID a = UUID.randomUUID();
+        final UUID a = UUID.randomUUID();
         sut.setInfo(a, 10, 100);
 
-        UUID b = UUID.randomUUID();
+        final UUID b = UUID.randomUUID();
 
         // Act
-        StorageInfo aInfo = sut.getInfo(a);
-        StorageInfo bInfo = sut.getInfo(b);
+        final StorageInfo aInfo = sut.getInfo(a);
+        final StorageInfo bInfo = sut.getInfo(b);
 
         // Assert
         assertThat(uuidsRequested).containsExactly(a);
         assertThat(aInfo).usingRecursiveComparison().isEqualTo(new StorageInfo(10, 100));
-        assertThat(bInfo).usingRecursiveComparison().isEqualTo(new StorageInfo(0, 0));
+        assertThat(bInfo).usingRecursiveComparison().isEqualTo(StorageInfo.UNKNOWN);
     }
 }

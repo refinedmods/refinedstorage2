@@ -31,66 +31,72 @@ public class FluidStorageType implements StorageType<FluidResource> {
     }
 
     @Override
-    public Storage<FluidResource> fromTag(CompoundTag tag, Runnable listener) {
-        PlatformStorage<FluidResource> storage = createStorage(tag, listener);
-        ListTag stacks = tag.getList(TAG_STACKS, Tag.TAG_COMPOUND);
-        for (Tag stackTag : stacks) {
+    public Storage<FluidResource> fromTag(final CompoundTag tag, final Runnable listener) {
+        final PlatformStorage<FluidResource> storage = createStorage(tag, listener);
+        final ListTag stacks = tag.getList(TAG_STACKS, Tag.TAG_COMPOUND);
+        for (final Tag stackTag : stacks) {
             FluidResource
-                    .fromTagWithAmount((CompoundTag) stackTag)
-                    .ifPresent(resourceAmount -> storage.load(
-                            resourceAmount.getResource(),
-                            resourceAmount.getAmount(),
-                            ((CompoundTag) stackTag).getString(TAG_CHANGED_BY),
-                            ((CompoundTag) stackTag).getLong(TAG_CHANGED_AT)
-                    ));
+                .fromTagWithAmount((CompoundTag) stackTag)
+                .ifPresent(resourceAmount -> storage.load(
+                    resourceAmount.getResource(),
+                    resourceAmount.getAmount(),
+                    ((CompoundTag) stackTag).getString(TAG_CHANGED_BY),
+                    ((CompoundTag) stackTag).getLong(TAG_CHANGED_AT)
+                ));
         }
         return storage;
     }
 
-    private PlatformStorage<FluidResource> createStorage(CompoundTag tag, Runnable listener) {
-        TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
+    private PlatformStorage<FluidResource> createStorage(final CompoundTag tag, final Runnable listener) {
+        final TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (tag.contains(TAG_CAPACITY)) {
-            return new LimitedPlatformStorage<>(
-                    new LimitedStorageImpl<>(
-                            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                            tag.getLong(TAG_CAPACITY)
-                    ),
-                    FluidStorageType.INSTANCE,
+            final LimitedStorageImpl<FluidResource> delegate = new LimitedStorageImpl<>(
+                new TrackedStorageImpl<>(
+                    new InMemoryStorageImpl<>(),
                     trackingRepository,
-                    listener
+                    System::currentTimeMillis
+                ),
+                tag.getLong(TAG_CAPACITY)
             );
-        }
-        return new PlatformStorage<>(
-                new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+            return new LimitedPlatformStorage<>(
+                delegate,
                 FluidStorageType.INSTANCE,
                 trackingRepository,
                 listener
+            );
+        }
+        return new PlatformStorage<>(
+            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+            FluidStorageType.INSTANCE,
+            trackingRepository,
+            listener
         );
     }
 
     @Override
-    public CompoundTag toTag(Storage<FluidResource> storage) {
-        CompoundTag tag = new CompoundTag();
-        if (storage instanceof LimitedStorage limitedStorage) {
+    public CompoundTag toTag(final Storage<FluidResource> storage) {
+        final CompoundTag tag = new CompoundTag();
+        if (storage instanceof LimitedStorage<?> limitedStorage) {
             tag.putLong(TAG_CAPACITY, limitedStorage.getCapacity());
         }
-        ListTag stacks = new ListTag();
-        for (ResourceAmount<FluidResource> resourceAmount : storage.getAll()) {
+        final ListTag stacks = new ListTag();
+        for (final ResourceAmount<FluidResource> resourceAmount : storage.getAll()) {
             stacks.add(toTag(storage, resourceAmount));
         }
         tag.put(TAG_STACKS, stacks);
         return tag;
     }
 
-    private CompoundTag toTag(Storage<FluidResource> storage, ResourceAmount<FluidResource> resourceAmount) {
-        CompoundTag tag = FluidResource.toTagWithAmount(resourceAmount);
+    private CompoundTag toTag(final Storage<FluidResource> storage,
+                              final ResourceAmount<FluidResource> resourceAmount) {
+        final CompoundTag tag = FluidResource.toTagWithAmount(resourceAmount);
         if (storage instanceof TrackedStorage<FluidResource> trackedStorage) {
             trackedStorage
-                    .findTrackedResourceBySourceType(resourceAmount.getResource(), PlayerSource.class)
-                    .ifPresent(trackedResource -> {
-                        tag.putString(TAG_CHANGED_BY, trackedResource.getSourceName());
-                        tag.putLong(TAG_CHANGED_AT, trackedResource.getTime());
-                    });
+                .findTrackedResourceBySourceType(resourceAmount.getResource(), PlayerSource.class)
+                .ifPresent(trackedResource -> {
+                    tag.putString(TAG_CHANGED_BY, trackedResource.getSourceName());
+                    tag.putLong(TAG_CHANGED_AT, trackedResource.getTime());
+                });
         }
         return tag;
     }
@@ -105,7 +111,7 @@ public class FluidStorageType implements StorageType<FluidResource> {
         private final String name;
         private final long capacityInBuckets;
 
-        Variant(String name, long capacityInBuckets) {
+        Variant(final String name, final long capacityInBuckets) {
             this.name = name;
             this.capacityInBuckets = capacityInBuckets;
         }

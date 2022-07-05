@@ -11,25 +11,28 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public enum GridSortingType {
     QUANTITY(view -> Comparator.comparingLong(a -> a.getResourceAmount().getAmount())),
-    NAME(view -> Comparator.comparing((GridResource<?> a) -> a.getName())),
-    ID(view -> Comparator.comparingInt(GridResource::getId)),
+    NAME(view -> Comparator.comparing((AbstractGridResource<?> a) -> a.getName())),
+    ID(view -> Comparator.comparingInt(AbstractGridResource::getId)),
+    @SuppressWarnings({"unchecked", "rawtypes"})
     LAST_MODIFIED(view -> (a, b) -> {
-        Optional<TrackedResource> trackedA = ((GridView) view).getTrackedResource(a.getResourceAmount().getResource());
-        Optional<TrackedResource> trackedB = ((GridView) view).getTrackedResource(b.getResourceAmount().getResource());
+        final Optional<TrackedResource> trackedA = ((GridView) view)
+            .getTrackedResource(a.getResourceAmount().getResource());
+        final Optional<TrackedResource> trackedB = ((GridView) view)
+            .getTrackedResource(b.getResourceAmount().getResource());
 
-        long lastModifiedA = trackedA.map(TrackedResource::getTime).orElse(0L);
-        long lastModifiedB = trackedB.map(TrackedResource::getTime).orElse(0L);
+        final long lastModifiedA = trackedA.map(TrackedResource::getTime).orElse(0L);
+        final long lastModifiedB = trackedB.map(TrackedResource::getTime).orElse(0L);
 
         return Long.compare(lastModifiedA, lastModifiedB);
     });
 
-    private final Function<GridView<?>, Comparator<GridResource<?>>> comparator;
+    private final Function<GridView<?>, Comparator<AbstractGridResource<?>>> comparator;
 
-    GridSortingType(Function<GridView<?>, Comparator<GridResource<?>>> comparator) {
+    GridSortingType(final Function<GridView<?>, Comparator<AbstractGridResource<?>>> comparator) {
         this.comparator = comparator;
     }
 
-    public Function<GridView<?>, Comparator<GridResource<?>>> getComparator() {
+    public Function<GridView<?>, Comparator<AbstractGridResource<?>>> getComparator() {
         return comparator;
     }
 

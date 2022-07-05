@@ -3,13 +3,15 @@ package com.refinedmods.refinedstorage2.platform.fabric;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSize;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSynchronizationType;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
+
+import java.util.Optional;
 
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import net.minecraft.resources.ResourceLocation;
 
 @Config(name = IdentifierUtil.MOD_ID)
 public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.platform.common.Config {
@@ -83,7 +85,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         private boolean autoSelected = false;
 
-        private GridSynchronizationType synchronizationType = GridSynchronizationType.OFF;
+        private String synchronizer = "";
 
         private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
 
@@ -132,19 +134,28 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
 
         @Override
-        public void setAutoSelected(boolean autoSelected) {
+        public void setAutoSelected(final boolean autoSelected) {
             this.autoSelected = autoSelected;
             save();
         }
 
         @Override
-        public GridSynchronizationType getSynchronizationType() {
-            return synchronizationType;
+        public Optional<ResourceLocation> getSynchronizer() {
+            if (synchronizer == null || synchronizer.trim().isBlank()) {
+                return Optional.empty();
+            }
+            return Optional.of(synchronizer).map(ResourceLocation::new);
         }
 
         @Override
-        public void setSynchronizationType(GridSynchronizationType synchronizationType) {
-            this.synchronizationType = synchronizationType;
+        public void setSynchronizer(final ResourceLocation synchronizerId) {
+            this.synchronizer = synchronizerId.toString();
+            save();
+        }
+
+        @Override
+        public void clearSynchronizer() {
+            this.synchronizer = "";
             save();
         }
 
@@ -154,7 +165,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
 
         @Override
-        public void setSortingDirection(GridSortingDirection sortingDirection) {
+        public void setSortingDirection(final GridSortingDirection sortingDirection) {
             this.sortingDirection = sortingDirection;
             save();
         }
@@ -165,7 +176,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
 
         @Override
-        public void setSortingType(GridSortingType sortingType) {
+        public void setSortingType(final GridSortingType sortingType) {
             this.sortingType = sortingType;
             save();
         }
@@ -176,9 +187,13 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
 
         @Override
-        public void setSize(GridSize size) {
+        public void setSize(final GridSize size) {
             this.size = size;
             save();
+        }
+
+        private static void save() {
+            AutoConfig.getConfigHolder(ConfigImpl.class).save();
         }
     }
 
@@ -279,9 +294,5 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         public long getCreativeEnergyUsage() {
             return creativeEnergyUsage;
         }
-    }
-
-    private static void save() {
-        AutoConfig.getConfigHolder(ConfigImpl.class).save();
     }
 }

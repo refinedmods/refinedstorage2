@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.util;
 
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 public final class IdentifierUtil {
@@ -9,15 +10,15 @@ public final class IdentifierUtil {
     private IdentifierUtil() {
     }
 
-    public static ResourceLocation createIdentifier(String value) {
+    public static ResourceLocation createIdentifier(final String value) {
         return new ResourceLocation(MOD_ID, value);
     }
 
-    public static String createTranslationKey(String category, String value) {
+    public static String createTranslationKey(final String category, final String value) {
         return String.format("%s.%s.%s", category, MOD_ID, value);
     }
 
-    public static TranslatableComponent createTranslation(String category, String value, Object... args) {
-        return new TranslatableComponent(createTranslationKey(category, value), args);
+    public static MutableComponent createTranslation(final String category, final String value, final Object... args) {
+        return Component.translatable(createTranslationKey(category, value), args);
     }
 }

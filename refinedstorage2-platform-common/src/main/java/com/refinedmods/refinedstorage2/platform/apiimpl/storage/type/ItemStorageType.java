@@ -31,66 +31,71 @@ public class ItemStorageType implements StorageType<ItemResource> {
     }
 
     @Override
-    public Storage<ItemResource> fromTag(CompoundTag tag, Runnable listener) {
-        PlatformStorage<ItemResource> storage = createStorage(tag, listener);
-        ListTag stacks = tag.getList(TAG_STACKS, Tag.TAG_COMPOUND);
-        for (Tag stackTag : stacks) {
+    public Storage<ItemResource> fromTag(final CompoundTag tag, final Runnable listener) {
+        final PlatformStorage<ItemResource> storage = createStorage(tag, listener);
+        final ListTag stacks = tag.getList(TAG_STACKS, Tag.TAG_COMPOUND);
+        for (final Tag stackTag : stacks) {
             ItemResource
-                    .fromTagWithAmount((CompoundTag) stackTag)
-                    .ifPresent(resourceAmount -> storage.load(
-                            resourceAmount.getResource(),
-                            resourceAmount.getAmount(),
-                            ((CompoundTag) stackTag).getString(TAG_CHANGED_BY),
-                            ((CompoundTag) stackTag).getLong(TAG_CHANGED_AT)
-                    ));
+                .fromTagWithAmount((CompoundTag) stackTag)
+                .ifPresent(resourceAmount -> storage.load(
+                    resourceAmount.getResource(),
+                    resourceAmount.getAmount(),
+                    ((CompoundTag) stackTag).getString(TAG_CHANGED_BY),
+                    ((CompoundTag) stackTag).getLong(TAG_CHANGED_AT)
+                ));
         }
         return storage;
     }
 
-    private PlatformStorage<ItemResource> createStorage(CompoundTag tag, Runnable listener) {
-        TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
+    private PlatformStorage<ItemResource> createStorage(final CompoundTag tag, final Runnable listener) {
+        final TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (tag.contains(TAG_CAPACITY)) {
-            return new LimitedPlatformStorage<>(
-                    new LimitedStorageImpl<>(
-                            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
-                            tag.getLong(TAG_CAPACITY)
-                    ),
-                    ItemStorageType.INSTANCE,
+            final LimitedStorageImpl<ItemResource> delegate = new LimitedStorageImpl<>(
+                new TrackedStorageImpl<>(
+                    new InMemoryStorageImpl<>(),
                     trackingRepository,
-                    listener
+                    System::currentTimeMillis
+                ),
+                tag.getLong(TAG_CAPACITY)
             );
-        }
-        return new PlatformStorage<>(
-                new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+            return new LimitedPlatformStorage<>(
+                delegate,
                 ItemStorageType.INSTANCE,
                 trackingRepository,
                 listener
+            );
+        }
+        return new PlatformStorage<>(
+            new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), trackingRepository, System::currentTimeMillis),
+            ItemStorageType.INSTANCE,
+            trackingRepository,
+            listener
         );
     }
 
     @Override
-    public CompoundTag toTag(Storage<ItemResource> storage) {
-        CompoundTag tag = new CompoundTag();
-        if (storage instanceof LimitedStorage limitedStorage) {
+    public CompoundTag toTag(final Storage<ItemResource> storage) {
+        final CompoundTag tag = new CompoundTag();
+        if (storage instanceof LimitedStorage<?> limitedStorage) {
             tag.putLong(TAG_CAPACITY, limitedStorage.getCapacity());
         }
-        ListTag stacks = new ListTag();
-        for (ResourceAmount<ItemResource> resourceAmount : storage.getAll()) {
+        final ListTag stacks = new ListTag();
+        for (final ResourceAmount<ItemResource> resourceAmount : storage.getAll()) {
             stacks.add(toTag(storage, resourceAmount));
         }
         tag.put(TAG_STACKS, stacks);
         return tag;
     }
 
-    private CompoundTag toTag(Storage<ItemResource> storage, ResourceAmount<ItemResource> resourceAmount) {
-        CompoundTag tag = ItemResource.toTagWithAmount(resourceAmount);
+    private CompoundTag toTag(final Storage<ItemResource> storage, final ResourceAmount<ItemResource> resourceAmount) {
+        final CompoundTag tag = ItemResource.toTagWithAmount(resourceAmount);
         if (storage instanceof TrackedStorage<ItemResource> trackedStorage) {
             trackedStorage
-                    .findTrackedResourceBySourceType(resourceAmount.getResource(), PlayerSource.class)
-                    .ifPresent(trackedResource -> {
-                        tag.putString(TAG_CHANGED_BY, trackedResource.getSourceName());
-                        tag.putLong(TAG_CHANGED_AT, trackedResource.getTime());
-                    });
+                .findTrackedResourceBySourceType(resourceAmount.getResource(), PlayerSource.class)
+                .ifPresent(trackedResource -> {
+                    tag.putString(TAG_CHANGED_BY, trackedResource.getSourceName());
+                    tag.putLong(TAG_CHANGED_AT, trackedResource.getTime());
+                });
         }
         return tag;
     }
@@ -105,7 +110,7 @@ public class ItemStorageType implements StorageType<ItemResource> {
         private final String name;
         private final int capacity;
 
-        Variant(String name, int capacity) {
+        Variant(final String name, final int capacity) {
             this.name = name;
             this.capacity = capacity;
         }

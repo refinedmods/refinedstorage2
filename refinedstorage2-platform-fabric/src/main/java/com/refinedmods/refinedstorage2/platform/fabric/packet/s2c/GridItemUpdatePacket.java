@@ -13,10 +13,13 @@ import net.minecraft.network.FriendlyByteBuf;
 
 public class GridItemUpdatePacket implements ClientPlayNetworking.PlayChannelHandler {
     @Override
-    public void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        ItemResource resource = PacketUtil.readItemResource(buf);
-        long amount = buf.readLong();
-        TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
+    public void receive(final Minecraft client,
+                        final ClientPacketListener handler,
+                        final FriendlyByteBuf buf,
+                        final PacketSender responseSender) {
+        final ItemResource resource = PacketUtil.readItemResource(buf);
+        final long amount = buf.readLong();
+        final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
 
         client.execute(() -> {
             if (client.player.containerMenu instanceof ItemGridContainerMenu itemGrid) {

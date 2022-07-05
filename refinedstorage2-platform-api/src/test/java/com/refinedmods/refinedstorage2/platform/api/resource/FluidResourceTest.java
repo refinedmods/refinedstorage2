@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.platform.api.resource;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
-import com.refinedmods.refinedstorage2.test.Rs2Test;
 
 import java.util.Optional;
 
@@ -17,25 +16,25 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Rs2Test
 @SetupMinecraft
 class FluidResourceTest {
+    @SuppressWarnings("ConstantConditions")
     @Test
-    void Test_invalid_fluid() {
+    void testInvalidFluid() {
         // Assert
         assertThrows(NullPointerException.class, () -> new FluidResource(null, null));
     }
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void Test_to_and_from_tag(boolean hasTag) {
+    void testSerialization(final boolean hasTag) {
         // Arrange
-        CompoundTag fluidTag = hasTag ? createDummyTag() : null;
-        FluidResource fluidResource = new FluidResource(Fluids.WATER, fluidTag);
+        final CompoundTag fluidTag = hasTag ? createDummyTag() : null;
+        final FluidResource fluidResource = new FluidResource(Fluids.WATER, fluidTag);
 
         // Act
-        CompoundTag serialized = FluidResource.toTag(fluidResource);
-        Optional<FluidResource> deserialized = FluidResource.fromTag(serialized);
+        final CompoundTag serialized = FluidResource.toTag(fluidResource);
+        final Optional<FluidResource> deserialized = FluidResource.fromTag(serialized);
 
         // Assert
         assertThat(deserialized).isPresent().contains(fluidResource);
@@ -43,15 +42,15 @@ class FluidResourceTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void Test_to_and_from_tag_with_amount(boolean hasTag) {
+    void testSerializationWithAmount(final boolean hasTag) {
         // Arrange
-        CompoundTag fluidTag = hasTag ? createDummyTag() : null;
-        FluidResource fluidResource = new FluidResource(Fluids.WATER, fluidTag);
-        ResourceAmount<FluidResource> resourceAmount = new ResourceAmount<>(fluidResource, 10);
+        final CompoundTag fluidTag = hasTag ? createDummyTag() : null;
+        final FluidResource fluidResource = new FluidResource(Fluids.WATER, fluidTag);
+        final ResourceAmount<FluidResource> resourceAmount = new ResourceAmount<>(fluidResource, 10);
 
         // Act
-        CompoundTag serialized = FluidResource.toTagWithAmount(resourceAmount);
-        Optional<ResourceAmount<FluidResource>> deserialized = FluidResource.fromTagWithAmount(serialized);
+        final CompoundTag serialized = FluidResource.toTagWithAmount(resourceAmount);
+        final Optional<ResourceAmount<FluidResource>> deserialized = FluidResource.fromTagWithAmount(serialized);
 
         // Assert
         assertThat(deserialized).isPresent();
@@ -59,14 +58,14 @@ class FluidResourceTest {
     }
 
     @Test
-    void Test_from_tag_invalid_fluid() {
+    void testDeserializationWithInvalidFluid() {
         // Arrange
-        FluidResource fluidResource = new FluidResource(Fluids.WATER, null);
-        CompoundTag serialized = FluidResource.toTag(fluidResource);
+        final FluidResource fluidResource = new FluidResource(Fluids.WATER, null);
+        final CompoundTag serialized = FluidResource.toTag(fluidResource);
         serialized.putString("id", "minecraft:non_existent");
 
         // Act
-        Optional<FluidResource> deserialized = FluidResource.fromTag(serialized);
+        final Optional<FluidResource> deserialized = FluidResource.fromTag(serialized);
 
         // Assert
         assertThat(deserialized).isEmpty();
@@ -74,29 +73,30 @@ class FluidResourceTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void Test_normalization(boolean hasTag) {
+    void testNormalization(final boolean hasTag) {
         // Arrange
-        CompoundTag fluidTag = hasTag ? createDummyTag() : null;
-        FluidResource fluidResource = new FluidResource(Fluids.WATER, fluidTag);
+        final CompoundTag fluidTag = hasTag ? createDummyTag() : null;
+        final FluidResource fluidResource = new FluidResource(Fluids.WATER, fluidTag);
 
         // Act
-        FluidResource normalized = fluidResource.normalize();
+        final FluidResource normalized = fluidResource.normalize();
 
         // Assert
-        assertThat(normalized.getFluid()).isEqualTo(Fluids.WATER);
-        assertThat(normalized.getTag()).isNull();
+        assertThat(normalized.fluid()).isEqualTo(Fluids.WATER);
+        assertThat(normalized.tag()).isNull();
     }
 
     @Test
-    void Test_equals_hashcode() {
+    void testEqualsHashcode() {
         // Assert
         EqualsVerifier.forClass(FluidResource.class)
-                .withPrefabValues(Fluid.class, Fluids.WATER, Fluids.LAVA)
-                .verify();
+            .withPrefabValues(Fluid.class, Fluids.WATER, Fluids.LAVA)
+            .withNonnullFields("fluid")
+            .verify();
     }
 
     private CompoundTag createDummyTag() {
-        CompoundTag fluidTag = new CompoundTag();
+        final CompoundTag fluidTag = new CompoundTag();
         fluidTag.putString("dummy", "test");
         return fluidTag;
     }

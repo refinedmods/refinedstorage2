@@ -7,16 +7,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ItemStorageBlock extends StorageBlock {
+public class ItemStorageBlock extends AbstractStorageBlock {
     private final ItemStorageType.Variant variant;
 
-    public ItemStorageBlock(ItemStorageType.Variant variant) {
+    public ItemStorageBlock(final ItemStorageType.Variant variant) {
         super(BlockConstants.STONE_PROPERTIES);
         this.variant = variant;
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
         return new ItemStorageBlockBlockEntity(pos, state, variant);
     }
 }

@@ -3,9 +3,11 @@ package com.refinedmods.refinedstorage2.platform.forge;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSize;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSynchronizationType;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 
+import java.util.Optional;
+
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ConfigImpl implements Config {
@@ -70,7 +72,8 @@ public class ConfigImpl implements Config {
 
         private CableImpl() {
             builder.push("cable");
-            energyUsage = builder.comment("The energy used by the Cable").defineInRange(ENERGY_USAGE, 0, 0L, Long.MAX_VALUE);
+            energyUsage = builder.comment("The energy used by the Cable")
+                .defineInRange(ENERGY_USAGE, 0, 0L, Long.MAX_VALUE);
             builder.pop();
         }
 
@@ -85,7 +88,8 @@ public class ConfigImpl implements Config {
 
         private ControllerImpl() {
             builder.push("controller");
-            energyCapacity = builder.comment("The energy capacity of the Controller").defineInRange("energyCapacity", 1000, 0, Integer.MAX_VALUE);
+            energyCapacity = builder.comment("The energy capacity of the Controller")
+                .defineInRange("energyCapacity", 1000, 0, Integer.MAX_VALUE);
             builder.pop();
         }
 
@@ -101,8 +105,10 @@ public class ConfigImpl implements Config {
 
         private DiskDriveImpl() {
             builder.push("diskDrive");
-            energyUsage = builder.comment("The energy used by the Disk Drive").defineInRange(ENERGY_USAGE, 10, 0, Integer.MAX_VALUE);
-            energyUsagePerDisk = builder.comment("The energy used per disk").defineInRange("energyUsagePerDisk", 5, 0, Integer.MAX_VALUE);
+            energyUsage = builder.comment("The energy used by the Disk Drive")
+                .defineInRange(ENERGY_USAGE, 10, 0, Integer.MAX_VALUE);
+            energyUsagePerDisk = builder.comment("The energy used per disk")
+                .defineInRange("energyUsagePerDisk", 5, 0, Integer.MAX_VALUE);
             builder.pop();
         }
 
@@ -126,25 +132,49 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.IntValue energyUsage;
         private final ForgeConfigSpec.BooleanValue smoothScrolling;
         private final ForgeConfigSpec.BooleanValue autoSelected;
-        private final ForgeConfigSpec.EnumValue<GridSynchronizationType> synchronizationType;
+        private final ForgeConfigSpec.ConfigValue<String> synchronizer;
         private final ForgeConfigSpec.EnumValue<GridSortingDirection> sortingDirection;
         private final ForgeConfigSpec.EnumValue<GridSortingType> sortingType;
         private final ForgeConfigSpec.EnumValue<GridSize> size;
 
-        public GridImpl() {
+        GridImpl() {
             builder.push("grid");
-            largeFont = builder.comment("Whether the Grid should use a large font for quantities").define("largeFont", false);
-            maxRowsStretch = builder.comment("The maximum amount of rows that can be displayed when the Grid is in stretch view mode").defineInRange("maxRowsStretch", 256, 3, 256);
-            preventSortingWhileShiftIsDown = builder.comment("Whether the Grid should avoid sorting when shift is held down").define("preventSortingWhileShiftIsDown", true);
-            detailedTooltip = builder.comment("Whether the Grid should show a detailed tooltip").define("detailedTooltip", true);
-            rememberSearchQuery = builder.comment("Whether the search query should persist when closing and re-opening the Grid").define("rememberSearchQuery", false);
-            energyUsage = builder.comment("The energy used by the Grid").defineInRange(ENERGY_USAGE, 10, 0, Integer.MAX_VALUE);
-            smoothScrolling = builder.comment("Whether the Grid should use smooth scrolling").define("smoothScrolling", true);
-            autoSelected = builder.comment("Whether the Grid search box is auto selected").define("autoSelected", false);
-            synchronizationType = builder.comment("The synchronization type of the Grid search box").defineEnum("synchronizationType", GridSynchronizationType.OFF);
-            sortingDirection = builder.comment("The sorting direction").defineEnum("sortingDirection", GridSortingDirection.ASCENDING);
-            sortingType = builder.comment("The sorting type").defineEnum("sortingType", GridSortingType.QUANTITY);
-            size = builder.comment("The size").defineEnum("size", GridSize.STRETCH);
+            largeFont = builder
+                .comment("Whether the Grid should use a large font for quantities")
+                .define("largeFont", false);
+            maxRowsStretch = builder
+                .comment("The maximum amount of rows that can be displayed when the Grid is in stretch view mode")
+                .defineInRange("maxRowsStretch", 256, 3, 256);
+            preventSortingWhileShiftIsDown = builder
+                .comment("Whether the Grid should avoid sorting when shift is held down")
+                .define("preventSortingWhileShiftIsDown", true);
+            detailedTooltip = builder
+                .comment("Whether the Grid should show a detailed tooltip")
+                .define("detailedTooltip", true);
+            rememberSearchQuery = builder
+                .comment("Whether the search query should persist when closing and re-opening the Grid")
+                .define("rememberSearchQuery", false);
+            energyUsage = builder
+                .comment("The energy used by the Grid")
+                .defineInRange(ENERGY_USAGE, 10, 0, Integer.MAX_VALUE);
+            smoothScrolling = builder
+                .comment("Whether the Grid should use smooth scrolling")
+                .define("smoothScrolling", true);
+            autoSelected = builder
+                .comment("Whether the Grid search box is auto selected")
+                .define("autoSelected", false);
+            synchronizer = builder
+                .comment("The synchronization type of the Grid search box")
+                .define("synchronizer", "");
+            sortingDirection = builder
+                .comment("The sorting direction")
+                .defineEnum("sortingDirection", GridSortingDirection.ASCENDING);
+            sortingType = builder
+                .comment("The sorting type")
+                .defineEnum("sortingType", GridSortingType.QUANTITY);
+            size = builder
+                .comment("The size")
+                .defineEnum("size", GridSize.STRETCH);
             builder.pop();
         }
 
@@ -189,18 +219,26 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public void setAutoSelected(boolean autoSelected) {
+        public void setAutoSelected(final boolean autoSelected) {
             this.autoSelected.set(autoSelected);
         }
 
         @Override
-        public GridSynchronizationType getSynchronizationType() {
-            return synchronizationType.get();
+        public Optional<ResourceLocation> getSynchronizer() {
+            if (synchronizer == null || synchronizer.get().trim().isBlank()) {
+                return Optional.empty();
+            }
+            return Optional.of(synchronizer.get()).map(ResourceLocation::new);
         }
 
         @Override
-        public void setSynchronizationType(GridSynchronizationType type) {
-            this.synchronizationType.set(type);
+        public void setSynchronizer(final ResourceLocation synchronizerId) {
+            this.synchronizer.set(synchronizerId.toString());
+        }
+
+        @Override
+        public void clearSynchronizer() {
+            this.synchronizer.set("");
         }
 
         @Override
@@ -209,7 +247,7 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public void setSortingDirection(GridSortingDirection sortingDirection) {
+        public void setSortingDirection(final GridSortingDirection sortingDirection) {
             this.sortingDirection.set(sortingDirection);
         }
 
@@ -219,7 +257,7 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public void setSortingType(GridSortingType sortingType) {
+        public void setSortingType(final GridSortingType sortingType) {
             this.sortingType.set(sortingType);
         }
 
@@ -229,7 +267,7 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public void setSize(GridSize size) {
+        public void setSize(final GridSize size) {
             this.size.set(size);
         }
     }
@@ -241,13 +279,23 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.LongValue sixtyFourKEnergyUsage;
         private final ForgeConfigSpec.LongValue creativeUsage;
 
-        public StorageBlockImpl() {
+        StorageBlockImpl() {
             builder.push("storageBlock");
-            oneKEnergyUsage = builder.comment("The energy used by the 1K Storage Block").defineInRange("1kEnergyUsage", 2, 0, Long.MAX_VALUE);
-            fourKEnergyUsage = builder.comment("The energy used by the 4K Storage Block").defineInRange("4kEnergyUsage", 4, 0, Long.MAX_VALUE);
-            sixteenKEnergyUsage = builder.comment("The energy used by the 16K Storage Block").defineInRange("16kEnergyUsage", 6, 0, Long.MAX_VALUE);
-            sixtyFourKEnergyUsage = builder.comment("The energy used by the 64K Storage Block").defineInRange("64kEnergyUsage", 8, 0, Long.MAX_VALUE);
-            creativeUsage = builder.comment("The energy used by the Creative Storage Block").defineInRange("creativeEnergyUsage", 16, 0, Long.MAX_VALUE);
+            oneKEnergyUsage = builder
+                .comment("The energy used by the 1K Storage Block")
+                .defineInRange("1kEnergyUsage", 2, 0, Long.MAX_VALUE);
+            fourKEnergyUsage = builder
+                .comment("The energy used by the 4K Storage Block")
+                .defineInRange("4kEnergyUsage", 4, 0, Long.MAX_VALUE);
+            sixteenKEnergyUsage = builder
+                .comment("The energy used by the 16K Storage Block")
+                .defineInRange("16kEnergyUsage", 6, 0, Long.MAX_VALUE);
+            sixtyFourKEnergyUsage = builder
+                .comment("The energy used by the 64K Storage Block")
+                .defineInRange("64kEnergyUsage", 8, 0, Long.MAX_VALUE);
+            creativeUsage = builder
+                .comment("The energy used by the Creative Storage Block")
+                .defineInRange("creativeEnergyUsage", 16, 0, Long.MAX_VALUE);
             builder.pop();
         }
 
@@ -284,13 +332,23 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.LongValue fourThousandNinetySixBEnergyUsage;
         private final ForgeConfigSpec.LongValue creativeUsage;
 
-        public FluidStorageBlockImpl() {
+        FluidStorageBlockImpl() {
             builder.push("fluidStorageBlock");
-            sixtyFourBEnergyUsage = builder.comment("The energy used by the 64B Fluid Storage Block").defineInRange("64bEnergyUsage", 2, 0, Long.MAX_VALUE);
-            twoHundredFiftySixBEnergyUsage = builder.comment("The energy used by the 256B Fluid Storage Block").defineInRange("256bEnergyUsage", 4, 0, Long.MAX_VALUE);
-            thousandTwentyFourBEnergyUsage = builder.comment("The energy used by the 1024B Fluid Storage Block").defineInRange("1024bEnergyUsage", 6, 0, Long.MAX_VALUE);
-            fourThousandNinetySixBEnergyUsage = builder.comment("The energy used by the 4096B Fluid Storage Block").defineInRange("4096bEnergyUsage", 8, 0, Long.MAX_VALUE);
-            creativeUsage = builder.comment("The energy used by the Creative Fluid Storage Block").defineInRange("creativeEnergyUsage", 16, 0, Long.MAX_VALUE);
+            sixtyFourBEnergyUsage = builder
+                .comment("The energy used by the 64B Fluid Storage Block")
+                .defineInRange("64bEnergyUsage", 2, 0, Long.MAX_VALUE);
+            twoHundredFiftySixBEnergyUsage = builder
+                .comment("The energy used by the 256B Fluid Storage Block")
+                .defineInRange("256bEnergyUsage", 4, 0, Long.MAX_VALUE);
+            thousandTwentyFourBEnergyUsage = builder
+                .comment("The energy used by the 1024B Fluid Storage Block")
+                .defineInRange("1024bEnergyUsage", 6, 0, Long.MAX_VALUE);
+            fourThousandNinetySixBEnergyUsage = builder
+                .comment("The energy used by the 4096B Fluid Storage Block")
+                .defineInRange("4096bEnergyUsage", 8, 0, Long.MAX_VALUE);
+            creativeUsage = builder
+                .comment("The energy used by the Creative Fluid Storage Block")
+                .defineInRange("creativeEnergyUsage", 16, 0, Long.MAX_VALUE);
             builder.pop();
         }
 

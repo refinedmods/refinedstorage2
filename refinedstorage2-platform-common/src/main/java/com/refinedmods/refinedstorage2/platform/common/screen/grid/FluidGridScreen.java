@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
@@ -14,16 +14,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContainerMenu> {
-    public FluidGridScreen(FluidGridContainerMenu menu, Inventory inventory, Component title) {
+public class FluidGridScreen extends AbstractGridScreen<FluidResource, FluidGridContainerMenu> {
+    public FluidGridScreen(final FluidGridContainerMenu menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title);
     }
 
-    private static GridInsertMode getInsertMode(int clickedButton) {
+    private static GridInsertMode getInsertMode(final int clickedButton) {
         return clickedButton == 1 ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
     }
 
-    private static GridExtractMode getExtractMode(int clickedButton) {
+    private static GridExtractMode getExtractMode(final int clickedButton) {
         if (clickedButton == 1) {
             return GridExtractMode.HALF_RESOURCE;
         }
@@ -35,12 +35,21 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
     }
 
     @Override
-    protected void renderResource(PoseStack poseStack, int slotX, int slotY, GridResource<FluidResource> resource) {
-        Platform.INSTANCE.getFluidRenderer().render(poseStack, slotX, slotY, getBlitOffset(), resource.getResourceAmount().getResource());
+    protected void renderResource(final PoseStack poseStack,
+                                  final int slotX,
+                                  final int slotY,
+                                  final AbstractGridResource<FluidResource> resource) {
+        Platform.INSTANCE.getFluidRenderer().render(
+            poseStack,
+            slotX,
+            slotY,
+            getBlitOffset(),
+            resource.getResourceAmount().getResource()
+        );
     }
 
     @Override
-    protected String getAmount(GridResource<FluidResource> resource) {
+    protected String getAmount(final AbstractGridResource<FluidResource> resource) {
         if (resource.isZeroed()) {
             return "0";
         }
@@ -48,7 +57,7 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
     }
 
     @Override
-    protected String getAmountInTooltip(GridResource<FluidResource> resource) {
+    protected String getAmountInTooltip(final AbstractGridResource<FluidResource> resource) {
         if (resource.isZeroed()) {
             return "0";
         }
@@ -56,27 +65,31 @@ public class FluidGridScreen extends GridScreen<FluidResource, FluidGridContaine
     }
 
     @Override
-    protected List<Component> getTooltip(GridResource<FluidResource> resource) {
+    protected List<Component> getTooltip(final AbstractGridResource<FluidResource> resource) {
         return Platform.INSTANCE.getFluidRenderer().getTooltip(resource.getResourceAmount().getResource());
     }
 
     @Override
-    protected void mouseClickedInGrid(int clickedButton) {
+    protected void mouseClickedInGrid(final int clickedButton) {
         getMenu().onInsert(getInsertMode(clickedButton));
     }
 
     @Override
-    protected void mouseClickedInGrid(int clickedButton, GridResource<FluidResource> resource) {
-        getMenu().onExtract(resource.getResourceAmount().getResource(), getExtractMode(clickedButton), shouldExtractToCursor());
+    protected void mouseClickedInGrid(final int clickedButton, final AbstractGridResource<FluidResource> resource) {
+        getMenu().onExtract(
+            resource.getResourceAmount().getResource(),
+            getExtractMode(clickedButton),
+            shouldExtractToCursor()
+        );
     }
 
     @Override
-    protected void mouseScrolledInInventory(boolean up, ItemStack stack, int slotIndex) {
+    protected void mouseScrolledInInventory(final boolean up, final ItemStack stack, final int slotIndex) {
         // no op
     }
 
     @Override
-    protected void mouseScrolledInGrid(boolean up, GridResource<FluidResource> resource) {
+    protected void mouseScrolledInGrid(final boolean up, final AbstractGridResource<FluidResource> resource) {
         // no op
     }
 }

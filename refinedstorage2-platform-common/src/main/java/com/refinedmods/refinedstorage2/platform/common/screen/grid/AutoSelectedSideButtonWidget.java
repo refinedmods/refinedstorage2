@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
-import com.refinedmods.refinedstorage2.platform.common.screen.widget.SideButtonWidget;
+import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,17 +11,17 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class AutoSelectedSideButtonWidget extends SideButtonWidget {
-    private final GridContainerMenu<?> menu;
+public class AutoSelectedSideButtonWidget extends AbstractSideButtonWidget {
+    private final AbstractGridContainerMenu<?> menu;
     private final TooltipRenderer tooltipRenderer;
     private final List<Component> yes;
     private final List<Component> no;
 
-    public AutoSelectedSideButtonWidget(GridContainerMenu<?> menu, TooltipRenderer tooltipRenderer) {
+    public AutoSelectedSideButtonWidget(final AbstractGridContainerMenu<?> menu,
+                                        final TooltipRenderer tooltipRenderer) {
         super(createPressAction(menu));
         this.menu = menu;
         this.tooltipRenderer = tooltipRenderer;
@@ -29,14 +29,14 @@ public class AutoSelectedSideButtonWidget extends SideButtonWidget {
         this.no = calculateTooltip(false);
     }
 
-    private static OnPress createPressAction(GridContainerMenu<?> menu) {
+    private static OnPress createPressAction(final AbstractGridContainerMenu<?> menu) {
         return btn -> menu.setAutoSelected(!menu.isAutoSelected());
     }
 
-    private List<Component> calculateTooltip(boolean autoSelected) {
-        List<Component> lines = new ArrayList<>();
+    private List<Component> calculateTooltip(final boolean autoSelected) {
+        final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "grid.auto_selected"));
-        lines.add(new TranslatableComponent("gui." + (autoSelected ? "yes" : "no")).withStyle(ChatFormatting.GRAY));
+        lines.add(Component.translatable("gui." + (autoSelected ? "yes" : "no")).withStyle(ChatFormatting.GRAY));
         return lines;
     }
 
@@ -51,7 +51,7 @@ public class AutoSelectedSideButtonWidget extends SideButtonWidget {
     }
 
     @Override
-    public void onTooltip(Button buttonWidget, PoseStack poseStack, int mouseX, int mouseY) {
+    public void onTooltip(final Button buttonWidget, final PoseStack poseStack, final int mouseX, final int mouseY) {
         tooltipRenderer.render(poseStack, menu.isAutoSelected() ? yes : no, mouseX, mouseY);
     }
 }
