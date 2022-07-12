@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.api.network.test.SpyingNetworkNode;
@@ -117,6 +118,8 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
             return new SpyingNetworkNode(energyUsage);
         } else if (type == GridNetworkNode.class) {
             return new GridNetworkNode<>(energyUsage, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        } else if (type == ImporterNetworkNode.class) {
+            return new ImporterNetworkNode(energyUsage);
         }
         throw new RuntimeException(type.getName());
     }
