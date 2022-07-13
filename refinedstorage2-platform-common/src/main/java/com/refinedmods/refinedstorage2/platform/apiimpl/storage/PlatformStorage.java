@@ -2,13 +2,13 @@ package com.refinedmods.refinedstorage2.platform.apiimpl.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.storage.AbstractProxyStorage;
-import com.refinedmods.refinedstorage2.api.storage.EmptySource;
-import com.refinedmods.refinedstorage2.api.storage.Source;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
+import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 
@@ -31,15 +31,15 @@ public class PlatformStorage<T> extends AbstractProxyStorage<T> implements Seria
     }
 
     public void load(final T resource, final long amount, @Nullable final String changedBy, final long changedAt) {
-        super.insert(resource, amount, Action.EXECUTE, EmptySource.INSTANCE);
+        super.insert(resource, amount, Action.EXECUTE, EmptyActor.INSTANCE);
         if (changedBy != null && !changedBy.isBlank()) {
-            trackingRepository.update(resource, new PlayerSource(changedBy), changedAt);
+            trackingRepository.update(resource, new PlayerActor(changedBy), changedAt);
         }
     }
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Source source) {
-        final long extracted = super.extract(resource, amount, action, source);
+    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
+        final long extracted = super.extract(resource, amount, action, actor);
         if (extracted > 0 && action == Action.EXECUTE) {
             listener.run();
         }
@@ -47,8 +47,8 @@ public class PlatformStorage<T> extends AbstractProxyStorage<T> implements Seria
     }
 
     @Override
-    public long insert(final T resource, final long amount, final Action action, final Source source) {
-        final long inserted = super.insert(resource, amount, action, source);
+    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
+        final long inserted = super.insert(resource, amount, action, actor);
         if (inserted > 0 && action == Action.EXECUTE) {
             listener.run();
         }
@@ -62,7 +62,7 @@ public class PlatformStorage<T> extends AbstractProxyStorage<T> implements Seria
 
     @Override
     public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
-                                                                     final Class<? extends Source> sourceType) {
-        return trackingRepository.findTrackedResourceBySourceType(resource, sourceType);
+                                                                     final Class<? extends Actor> actorType) {
+        return trackingRepository.findTrackedResourceBySourceType(resource, actorType);
     }
 }

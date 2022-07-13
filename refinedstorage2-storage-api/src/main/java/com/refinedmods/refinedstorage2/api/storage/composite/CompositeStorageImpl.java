@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.api.storage.composite;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
-import com.refinedmods.refinedstorage2.api.storage.Source;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
@@ -70,8 +70,8 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
     }
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Source source) {
-        final long extracted = extractFromStorages(resource, amount, action, source);
+    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
+        final long extracted = extractFromStorages(resource, amount, action, actor);
         if (action == Action.EXECUTE && extracted > 0) {
             list.remove(resource, extracted);
         }
@@ -81,10 +81,10 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
     private long extractFromStorages(final T template,
                                      final long amount,
                                      final Action action,
-                                     final Source actionSource) {
+                                     final Actor actor) {
         long remaining = amount;
         for (final Storage<T> source : sources) {
-            final long extracted = source.extract(template, remaining, action, actionSource);
+            final long extracted = source.extract(template, remaining, action, actor);
             remaining -= extracted;
             if (remaining == 0) {
                 break;
@@ -98,8 +98,8 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
     public long insert(final T resource,
                        final long amount,
                        final Action action,
-                       final Source source) {
-        final long inserted = insertIntoStorages(resource, amount, action, source);
+                       final Actor actor) {
+        final long inserted = insertIntoStorages(resource, amount, action, actor);
         if (action == Action.EXECUTE && inserted > 0) {
             list.add(resource, inserted);
         }
@@ -109,7 +109,7 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
     private long insertIntoStorages(final T template,
                                     final long amount,
                                     final Action action,
-                                    final Source actionSource) {
+                                    final Actor actionSource) {
         long inserted = 0;
         for (final Storage<T> source : sources) {
             inserted += source.insert(template, amount - inserted, action, actionSource);
@@ -132,12 +132,12 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
 
     @Override
     public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
-                                                                     final Class<? extends Source> sourceType) {
+                                                                     final Class<? extends Actor> actorType) {
         return sources
             .stream()
             .filter(TrackedStorage.class::isInstance)
             .map(storage -> (TrackedStorage<T>) storage)
-            .flatMap(storage -> storage.findTrackedResourceBySourceType(resource, sourceType).stream())
+            .flatMap(storage -> storage.findTrackedResourceBySourceType(resource, actorType).stream())
             .max(Comparator.comparingLong(TrackedResource::getTime));
     }
 

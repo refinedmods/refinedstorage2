@@ -9,7 +9,7 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.FakeStoragePro
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 
@@ -70,9 +70,9 @@ class StorageNetworkComponentTest {
         final StorageChannel<String> storageChannel = sut.getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
 
         // Act
-        final long insertedPre = storageChannel.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        final long insertedPre = storageChannel.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
         sut.onContainerAdded(diskDriveContainer);
-        final long insertedPost = storageChannel.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        final long insertedPost = storageChannel.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(insertedPre).isZero();
@@ -89,7 +89,7 @@ class StorageNetworkComponentTest {
         sut.onContainerAdded(storageContainer);
 
         // Ensure that we fill our 2 containers.
-        storageChannel.insert("A", 200, Action.EXECUTE, EmptySource.INSTANCE);
+        storageChannel.insert("A", 200, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         final Collection<ResourceAmount<String>> resourcesPre = new HashSet<>(storageChannel.getAll());

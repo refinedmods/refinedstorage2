@@ -11,7 +11,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.SimpleListener;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 
@@ -61,14 +61,14 @@ class PlatformStorageTest {
             new ResourceAmount<>(new ItemResource(Items.GLASS, null), 20),
             new ResourceAmount<>(new ItemResource(Items.STONE, null), 30)
         );
-        assertThat(sut.findTrackedResourceBySourceType(new ItemResource(Items.DIRT, null), PlayerSource.class))
+        assertThat(sut.findTrackedResourceBySourceType(new ItemResource(Items.DIRT, null), PlayerActor.class))
             .get()
             .usingRecursiveComparison()
             .isEqualTo(new TrackedResource("A", 100));
         assertThat(
-            sut.findTrackedResourceBySourceType(new ItemResource(Items.GLASS, null), PlayerSource.class)).isEmpty();
+            sut.findTrackedResourceBySourceType(new ItemResource(Items.GLASS, null), PlayerActor.class)).isEmpty();
         assertThat(
-            sut.findTrackedResourceBySourceType(new ItemResource(Items.STONE, null), PlayerSource.class)).isEmpty();
+            sut.findTrackedResourceBySourceType(new ItemResource(Items.STONE, null), PlayerActor.class)).isEmpty();
         assertThat(listener.getChanges()).isZero();
     }
 
@@ -76,9 +76,9 @@ class PlatformStorageTest {
     @EnumSource(Action.class)
     void shouldInsert(final Action action) {
         // Act
-        sut.insert(new ItemResource(Items.DIRT, null), 10, action, new PlayerSource("A"));
-        sut.insert(new ItemResource(Items.DIRT, null), 95, action, new PlayerSource("A"));
-        sut.insert(new ItemResource(Items.DIRT, null), 1, action, new PlayerSource("A"));
+        sut.insert(new ItemResource(Items.DIRT, null), 10, action, new PlayerActor("A"));
+        sut.insert(new ItemResource(Items.DIRT, null), 95, action, new PlayerActor("A"));
+        sut.insert(new ItemResource(Items.DIRT, null), 1, action, new PlayerActor("A"));
 
         // Assert
         if (action == Action.EXECUTE) {
@@ -86,7 +86,7 @@ class PlatformStorageTest {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>(new ItemResource(Items.DIRT, null), 100)
             );
-            assertThat(sut.findTrackedResourceBySourceType(new ItemResource(Items.DIRT, null), PlayerSource.class))
+            assertThat(sut.findTrackedResourceBySourceType(new ItemResource(Items.DIRT, null), PlayerActor.class))
                 .get()
                 .usingRecursiveComparison()
                 .isEqualTo(new TrackedResource("A", 0));
@@ -94,7 +94,7 @@ class PlatformStorageTest {
             assertThat(listener.getChanges()).isZero();
             assertThat(sut.getAll()).isEmpty();
             assertThat(
-                sut.findTrackedResourceBySourceType(new ItemResource(Items.DIRT, null), PlayerSource.class)).isEmpty();
+                sut.findTrackedResourceBySourceType(new ItemResource(Items.DIRT, null), PlayerActor.class)).isEmpty();
         }
     }
 }

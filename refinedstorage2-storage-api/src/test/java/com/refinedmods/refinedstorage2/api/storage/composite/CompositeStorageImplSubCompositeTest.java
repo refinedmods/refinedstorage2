@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.api.storage.composite;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
-import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 
@@ -25,13 +25,13 @@ class CompositeStorageImplSubCompositeTest {
         // Arrange
         final CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
         final Storage<String> subStorage = new InMemoryStorageImpl<>();
-        subStorage.insert("B", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        subStorage.insert("B", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         sut.addSource(subComposite);
         sut.addSource(subStorage);
 
         final Storage<String> subCompositeStorage = new InMemoryStorageImpl<>();
-        subCompositeStorage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        subCompositeStorage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         subComposite.addSource(subCompositeStorage);
@@ -52,13 +52,13 @@ class CompositeStorageImplSubCompositeTest {
         // Arrange
         final CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
         final Storage<String> subStorage = new InMemoryStorageImpl<>();
-        subStorage.insert("B", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        subStorage.insert("B", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         sut.addSource(subComposite);
         sut.addSource(subStorage);
 
         final Storage<String> subCompositeStorage = new InMemoryStorageImpl<>();
-        subCompositeStorage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        subCompositeStorage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         subComposite.addSource(subCompositeStorage);
 

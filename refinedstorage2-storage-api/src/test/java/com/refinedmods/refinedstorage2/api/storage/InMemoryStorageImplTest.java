@@ -18,7 +18,7 @@ class InMemoryStorageImplTest {
     @EnumSource(Action.class)
     void shouldInsertResource(final Action action) {
         // Act
-        final long inserted = sut.insert("A", 64, action, EmptySource.INSTANCE);
+        final long inserted = sut.insert("A", 64, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted).isEqualTo(64);
@@ -38,9 +38,9 @@ class InMemoryStorageImplTest {
     @SuppressWarnings("ConstantConditions")
     void shouldNotInsertInvalidResourceOrAmount() {
         // Act
-        final Executable action1 = () -> sut.insert("A", 0, Action.EXECUTE, EmptySource.INSTANCE);
-        final Executable action2 = () -> sut.insert("A", -1, Action.EXECUTE, EmptySource.INSTANCE);
-        final Executable action3 = () -> sut.insert(null, 1, Action.EXECUTE, EmptySource.INSTANCE);
+        final Executable action1 = () -> sut.insert("A", 0, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Executable action2 = () -> sut.insert("A", -1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Executable action3 = () -> sut.insert(null, 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThrows(IllegalArgumentException.class, action1);
@@ -51,7 +51,7 @@ class InMemoryStorageImplTest {
     @Test
     void shouldNotExtractNonexistentResource() {
         // Act
-        final long extracted = sut.extract("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
+        final long extracted = sut.extract("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isZero();
@@ -62,10 +62,10 @@ class InMemoryStorageImplTest {
     @EnumSource(Action.class)
     void shouldExtractResourcePartly(final Action action) {
         // Arrange
-        sut.insert("A", 32, Action.EXECUTE, EmptySource.INSTANCE);
+        sut.insert("A", 32, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
-        final long extracted = sut.extract("A", 2, action, EmptySource.INSTANCE);
+        final long extracted = sut.extract("A", 2, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(2);
@@ -87,10 +87,10 @@ class InMemoryStorageImplTest {
     @EnumSource(Action.class)
     void shouldExtractResourceCompletely(final Action action) {
         // Arrange
-        sut.insert("A", 32, Action.EXECUTE, EmptySource.INSTANCE);
+        sut.insert("A", 32, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
-        final long extracted = sut.extract("A", 32, action, EmptySource.INSTANCE);
+        final long extracted = sut.extract("A", 32, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(32);
@@ -110,10 +110,10 @@ class InMemoryStorageImplTest {
     @EnumSource(Action.class)
     void shouldNotExtractMoreThanIsAvailable(final Action action) {
         // Arrange
-        sut.insert("A", 32, Action.EXECUTE, EmptySource.INSTANCE);
+        sut.insert("A", 32, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
-        final long extracted = sut.extract("A", 33, action, EmptySource.INSTANCE);
+        final long extracted = sut.extract("A", 33, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(32);
@@ -133,9 +133,9 @@ class InMemoryStorageImplTest {
     @Test
     void shouldNotExtractInvalidResourceOrAmount() {
         // Act
-        final Executable action1 = () -> sut.extract("A", 0, Action.EXECUTE, EmptySource.INSTANCE);
-        final Executable action2 = () -> sut.extract("A", -1, Action.EXECUTE, EmptySource.INSTANCE);
-        final Executable action3 = () -> sut.extract(null, 1, Action.EXECUTE, EmptySource.INSTANCE);
+        final Executable action1 = () -> sut.extract("A", 0, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Executable action2 = () -> sut.extract("A", -1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Executable action3 = () -> sut.extract(null, 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThrows(IllegalArgumentException.class, action1);

@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkS
 import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
 import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
@@ -32,8 +32,8 @@ class GridNetworkNodeTest {
     @BeforeEach
     void setUp(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         networkStorage.addSource(new TrackedStorageImpl<>(new LimitedStorageImpl<>(1000), () -> 0L));
-        networkStorage.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
-        networkStorage.insert("B", 200, Action.EXECUTE, EmptySource.INSTANCE);
+        networkStorage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+        networkStorage.insert("B", 200, Action.EXECUTE, EmptyActor.INSTANCE);
     }
 
     @Test
@@ -55,7 +55,7 @@ class GridNetworkNodeTest {
         sut.forEachResource((resourceAmount, trackedResource) -> {
             resourceAmounts.add(resourceAmount);
             trackedResources.add(trackedResource);
-        }, EmptySource.class);
+        }, EmptyActor.class);
 
         // Assert
         assertThat(resourceAmounts).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -63,8 +63,8 @@ class GridNetworkNodeTest {
             new ResourceAmount<>("B", 200)
         );
         assertThat(trackedResources).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            Optional.of(new TrackedResource(EmptySource.INSTANCE.getName(), 0L)),
-            Optional.of(new TrackedResource(EmptySource.INSTANCE.getName(), 0L))
+            Optional.of(new TrackedResource(EmptyActor.INSTANCE.getName(), 0L)),
+            Optional.of(new TrackedResource(EmptyActor.INSTANCE.getName(), 0L))
         );
     }
 

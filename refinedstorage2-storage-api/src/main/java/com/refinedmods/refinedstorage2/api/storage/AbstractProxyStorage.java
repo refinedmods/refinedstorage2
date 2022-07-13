@@ -26,13 +26,13 @@ public abstract class AbstractProxyStorage<T> implements Storage<T> {
     }
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Source source) {
-        return delegate.extract(resource, amount, action, source);
+    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
+        return delegate.extract(resource, amount, action, actor);
     }
 
     @Override
-    public long insert(final T resource, final long amount, final Action action, final Source source) {
-        return delegate.insert(resource, amount, action, source);
+    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
+        return delegate.insert(resource, amount, action, actor);
     }
 
     @Override

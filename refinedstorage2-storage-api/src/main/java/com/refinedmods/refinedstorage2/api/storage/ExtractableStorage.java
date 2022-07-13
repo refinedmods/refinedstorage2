@@ -17,8 +17,8 @@ public interface ExtractableStorage<T> {
      * @param resource the resource, may not be null
      * @param amount   the amount, must be larger than 0
      * @param action   the mode of extraction
-     * @param source   the source
+     * @param actor    the source
      * @return the amount extracted
      */
-    long extract(T resource, long amount, Action action, Source source);
+    long extract(T resource, long amount, Action action, Actor actor);
 }

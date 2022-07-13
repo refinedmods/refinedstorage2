@@ -20,7 +20,7 @@ public class InMemoryStorageImpl<T> implements Storage<T> {
     private long stored;
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Source source) {
+    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
         ResourceAmount.validate(resource, amount);
 
         return list.get(resource).map(resourceAmount -> {
@@ -51,7 +51,7 @@ public class InMemoryStorageImpl<T> implements Storage<T> {
     }
 
     @Override
-    public long insert(final T resource, final long amount, final Action action, final Source source) {
+    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
         ResourceAmount.validate(resource, amount);
         insertCompletely(resource, amount, action);
         return amount;
