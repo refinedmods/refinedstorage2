@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Named.named;
 
 class TransferHelperTest {
@@ -138,6 +139,29 @@ class TransferHelperTest {
             new ResourceAmount<>("A", 100)
         );
         assertThat(destination.getAll()).isEmpty();
+    }
+
+    @Test
+    void shouldThrowExceptionWhenEventualExecutedInsertToDestinationFailed() {
+        // Arrange
+        final Storage<String> source = new LimitedStorageImpl<>(100);
+        final Storage<String> destination = new LimitedStorageImpl<>(100) {
+            @Override
+            public long insert(final String resource, final long amount, final Action action, final Actor actor) {
+                if (action == Action.EXECUTE) {
+                    return 0L;
+                }
+                return super.insert(resource, amount, action, actor);
+            }
+        };
+
+        source.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // Act & assert
+        assertThrows(
+            IllegalStateException.class,
+            () -> TransferHelper.transfer("A", 50, EmptyActor.INSTANCE, source, destination)
+        );
     }
 
     record Transfer(@Nullable ResourceAmount<String> amountInSource,
