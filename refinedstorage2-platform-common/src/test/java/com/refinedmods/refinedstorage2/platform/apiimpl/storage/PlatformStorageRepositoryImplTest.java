@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.apiimpl.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
@@ -14,7 +14,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.platform.PlatformTestFixtures;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 
@@ -58,7 +58,7 @@ class PlatformStorageRepositoryImplTest {
             () -> {
             }
         );
-        storage.insert(new ItemResource(Items.DIRT, null), 10, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert(new ItemResource(Items.DIRT, null), 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         sut.set(id, storage);
@@ -102,7 +102,7 @@ class PlatformStorageRepositoryImplTest {
             () -> {
             }
         );
-        storage.insert(new ItemResource(Items.DIRT, null), 10, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert(new ItemResource(Items.DIRT, null), 10, Action.EXECUTE, EmptyActor.INSTANCE);
         sut.set(id, storage);
         sut.setDirty(false);
 
@@ -159,8 +159,8 @@ class PlatformStorageRepositoryImplTest {
         sut.set(bId, b);
         delegate.set(cId, c); // Set through delegate to bypass serializable checks
 
-        a.insert(new ItemResource(Items.DIRT, createDummyTag()), 10, Action.EXECUTE, new PlayerSource("A"));
-        b.insert(new ItemResource(Items.GLASS, null), 20, Action.EXECUTE, EmptySource.INSTANCE);
+        a.insert(new ItemResource(Items.DIRT, createDummyTag()), 10, Action.EXECUTE, new PlayerActor("A"));
+        b.insert(new ItemResource(Items.GLASS, null), 20, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         final CompoundTag serialized = sut.save(new CompoundTag());
@@ -179,7 +179,7 @@ class PlatformStorageRepositoryImplTest {
             new ResourceAmount<>(new ItemResource(Items.DIRT, createDummyTag()), 10)
         );
         assertThat(((TrackedStorage) sut.get(aId).get()).findTrackedResourceBySourceType(
-            new ItemResource(Items.DIRT, createDummyTag()), PlayerSource.class))
+            new ItemResource(Items.DIRT, createDummyTag()), PlayerActor.class))
             .get()
             .usingRecursiveComparison()
             .isEqualTo(new TrackedResource("A", 123L));

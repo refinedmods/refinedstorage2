@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.apiimpl.storage.type;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
@@ -13,7 +13,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.platform.SimpleListener;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
@@ -48,8 +48,8 @@ class FluidStorageTypeTest {
             }
         );
 
-        storage.insert(new FluidResource(Fluids.WATER, createDummyTag()), 10, Action.EXECUTE, new PlayerSource("A"));
-        storage.insert(new FluidResource(Fluids.LAVA, null), 15, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert(new FluidResource(Fluids.WATER, createDummyTag()), 10, Action.EXECUTE, new PlayerActor("A"));
+        storage.insert(new FluidResource(Fluids.LAVA, null), 15, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         final CompoundTag serialized = sut.toTag(storage);
@@ -64,11 +64,11 @@ class FluidStorageTypeTest {
         );
         assertThat(((TrackedStorage<FluidResource>) deserialized).findTrackedResourceBySourceType(
             new FluidResource(Fluids.WATER, createDummyTag()),
-            PlayerSource.class
+            PlayerActor.class
         )).get().usingRecursiveComparison().isEqualTo(new TrackedResource("A", 123));
         assertThat(((TrackedStorage<FluidResource>) deserialized).findTrackedResourceBySourceType(
             new FluidResource(Fluids.LAVA, null),
-            PlayerSource.class
+            PlayerActor.class
         )).isEmpty();
     }
 
@@ -83,14 +83,14 @@ class FluidStorageTypeTest {
             () -> {
             }
         );
-        storage.insert(new FluidResource(Fluids.WATER, null), 15, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert(new FluidResource(Fluids.WATER, null), 15, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final CompoundTag serialized = sut.toTag(storage);
         final Storage<FluidResource> deserialized = sut.fromTag(serialized, listener);
 
         // Act
         final boolean preInsert = listener.isChanged();
-        deserialized.insert(new FluidResource(Fluids.WATER, null), 15, Action.EXECUTE, EmptySource.INSTANCE);
+        deserialized.insert(new FluidResource(Fluids.WATER, null), 15, Action.EXECUTE, EmptyActor.INSTANCE);
         final boolean postInsert = listener.isChanged();
 
         // Assert
@@ -113,8 +113,8 @@ class FluidStorageTypeTest {
             }
         );
 
-        storage.insert(new FluidResource(Fluids.WATER, createDummyTag()), 10, Action.EXECUTE, new PlayerSource("A"));
-        storage.insert(new FluidResource(Fluids.LAVA, null), 15, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert(new FluidResource(Fluids.WATER, createDummyTag()), 10, Action.EXECUTE, new PlayerActor("A"));
+        storage.insert(new FluidResource(Fluids.LAVA, null), 15, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         final CompoundTag serialized = sut.toTag(storage);
@@ -130,11 +130,11 @@ class FluidStorageTypeTest {
         );
         assertThat(((TrackedStorage<FluidResource>) deserialized).findTrackedResourceBySourceType(
             new FluidResource(Fluids.WATER, createDummyTag()),
-            PlayerSource.class
+            PlayerActor.class
         )).get().usingRecursiveComparison().isEqualTo(new TrackedResource("A", 123));
         assertThat(((TrackedStorage<FluidResource>) deserialized).findTrackedResourceBySourceType(
             new FluidResource(Fluids.LAVA, null),
-            PlayerSource.class
+            PlayerActor.class
         )).isEmpty();
     }
 }

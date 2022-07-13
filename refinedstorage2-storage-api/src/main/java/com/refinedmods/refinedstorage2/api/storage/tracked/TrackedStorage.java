@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.api.storage.tracked;
 
-import com.refinedmods.refinedstorage2.api.storage.Source;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 
 import java.util.Optional;
@@ -15,9 +15,9 @@ public interface TrackedStorage<T> extends Storage<T> {
     /**
      * Finds the tracked resource by source type.
      *
-     * @param resource   the resource
-     * @param sourceType the source type
+     * @param resource  the resource
+     * @param actorType the actor type
      * @return the tracked resource, if present
      */
-    Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Source> sourceType);
+    Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Actor> actorType);
 }

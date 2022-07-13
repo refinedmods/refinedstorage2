@@ -2,9 +2,9 @@ package com.refinedmods.refinedstorage2.api.grid.service;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
-import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
 import java.util.function.Function;
@@ -14,7 +14,7 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public class GridServiceImpl<T> implements GridService<T> {
     private final StorageChannel<T> storageChannel;
-    private final Source actor;
+    private final Actor actor;
     private final Function<T, Long> maxCountProvider;
     private final long singleAmount;
 
@@ -26,7 +26,7 @@ public class GridServiceImpl<T> implements GridService<T> {
      *                         {@link GridInsertMode#SINGLE_RESOURCE} or {@link GridExtractMode#SINGLE_RESOURCE}
      */
     public GridServiceImpl(final StorageChannel<T> storageChannel,
-                           final Source actor,
+                           final Actor actor,
                            final Function<T, Long> maxCountProvider,
                            final long singleAmount) {
         this.storageChannel = storageChannel;
@@ -83,7 +83,7 @@ public class GridServiceImpl<T> implements GridService<T> {
             case ENTIRE_RESOURCE -> maxCountProvider.apply(resource);
             case SINGLE_RESOURCE -> singleAmount;
         };
-        long extractedFromSource = source.extract(resource, amount, Action.SIMULATE, this.actor);
+        long extractedFromSource = source.extract(resource, amount, Action.SIMULATE, actor);
         if (extractedFromSource == 0) {
             return;
         }
@@ -94,9 +94,9 @@ public class GridServiceImpl<T> implements GridService<T> {
             this.actor
         );
         if (amountInsertedIntoDestination > 0) {
-            extractedFromSource = source.extract(resource, amountInsertedIntoDestination, Action.EXECUTE, this.actor);
+            extractedFromSource = source.extract(resource, amountInsertedIntoDestination, Action.EXECUTE, actor);
             if (extractedFromSource > 0) {
-                storageChannel.insert(resource, extractedFromSource, Action.EXECUTE, this.actor);
+                storageChannel.insert(resource, extractedFromSource, Action.EXECUTE, actor);
             }
         }
     }

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.apiimpl.storage.type;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
@@ -13,7 +13,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.platform.SimpleListener;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
@@ -48,8 +48,8 @@ class ItemStorageTypeTest {
             }
         );
 
-        storage.insert(new ItemResource(Items.DIRT, createDummyTag()), 10, Action.EXECUTE, new PlayerSource("A"));
-        storage.insert(new ItemResource(Items.GLASS, null), 15, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert(new ItemResource(Items.DIRT, createDummyTag()), 10, Action.EXECUTE, new PlayerActor("A"));
+        storage.insert(new ItemResource(Items.GLASS, null), 15, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         final CompoundTag serialized = sut.toTag(storage);
@@ -64,11 +64,11 @@ class ItemStorageTypeTest {
         );
         assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceBySourceType(
             new ItemResource(Items.DIRT, createDummyTag()),
-            PlayerSource.class
+            PlayerActor.class
         )).get().usingRecursiveComparison().isEqualTo(new TrackedResource("A", 123));
         assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceBySourceType(
             new ItemResource(Items.GLASS, null),
-            PlayerSource.class
+            PlayerActor.class
         )).isEmpty();
     }
 
@@ -83,14 +83,14 @@ class ItemStorageTypeTest {
             () -> {
             }
         );
-        storage.insert(new ItemResource(Items.GLASS, null), 15, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert(new ItemResource(Items.GLASS, null), 15, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final CompoundTag serialized = sut.toTag(storage);
         final Storage<ItemResource> deserialized = sut.fromTag(serialized, listener);
 
         // Act
         final boolean preInsert = listener.isChanged();
-        deserialized.insert(new ItemResource(Items.GLASS, null), 15, Action.EXECUTE, EmptySource.INSTANCE);
+        deserialized.insert(new ItemResource(Items.GLASS, null), 15, Action.EXECUTE, EmptyActor.INSTANCE);
         final boolean postInsert = listener.isChanged();
 
         // Assert
@@ -110,8 +110,8 @@ class ItemStorageTypeTest {
             }
         );
 
-        storage.insert(new ItemResource(Items.DIRT, createDummyTag()), 10, Action.EXECUTE, new PlayerSource("A"));
-        storage.insert(new ItemResource(Items.GLASS, null), 15, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert(new ItemResource(Items.DIRT, createDummyTag()), 10, Action.EXECUTE, new PlayerActor("A"));
+        storage.insert(new ItemResource(Items.GLASS, null), 15, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         final CompoundTag serialized = sut.toTag(storage);
@@ -127,11 +127,11 @@ class ItemStorageTypeTest {
         );
         assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceBySourceType(
             new ItemResource(Items.DIRT, createDummyTag()),
-            PlayerSource.class
+            PlayerActor.class
         )).get().usingRecursiveComparison().isEqualTo(new TrackedResource("A", 123));
         assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceBySourceType(
             new ItemResource(Items.GLASS, null),
-            PlayerSource.class
+            PlayerActor.class
         )).isEmpty();
     }
 }

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.Source;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
@@ -69,8 +69,8 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     }
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Source source) {
-        final long extracted = delegate.extract(resource, amount, action, source);
+    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
+        final long extracted = delegate.extract(resource, amount, action, actor);
         if (extracted > 0 && action == Action.EXECUTE) {
             checkStateChanged();
         }
@@ -78,8 +78,8 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
     }
 
     @Override
-    public long insert(final T resource, final long amount, final Action action, final Source source) {
-        final long inserted = delegate.insert(resource, amount, action, source);
+    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
+        final long inserted = delegate.insert(resource, amount, action, actor);
         if (inserted > 0 && action == Action.EXECUTE) {
             checkStateChanged();
         }
@@ -98,9 +98,9 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
 
     @Override
     public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
-                                                                     final Class<? extends Source> sourceType) {
+                                                                     final Class<? extends Actor> actorType) {
         return delegate instanceof TrackedStorage<T> trackedStorage
-            ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType)
+            ? trackedStorage.findTrackedResourceBySourceType(resource, actorType)
             : Optional.empty();
     }
 }

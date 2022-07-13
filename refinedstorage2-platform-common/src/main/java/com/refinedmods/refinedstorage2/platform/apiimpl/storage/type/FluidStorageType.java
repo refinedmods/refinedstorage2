@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
@@ -92,7 +92,7 @@ public class FluidStorageType implements StorageType<FluidResource> {
         final CompoundTag tag = FluidResource.toTagWithAmount(resourceAmount);
         if (storage instanceof TrackedStorage<FluidResource> trackedStorage) {
             trackedStorage
-                .findTrackedResourceBySourceType(resourceAmount.getResource(), PlayerSource.class)
+                .findTrackedResourceBySourceType(resourceAmount.getResource(), PlayerActor.class)
                 .ifPresent(trackedResource -> {
                     tag.putString(TAG_CHANGED_BY, trackedResource.getSourceName());
                     tag.putLong(TAG_CHANGED_AT, trackedResource.getTime());

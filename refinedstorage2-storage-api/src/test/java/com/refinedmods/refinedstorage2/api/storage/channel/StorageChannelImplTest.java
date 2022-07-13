@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
-import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.composite.PrioritizedStorage;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
@@ -37,12 +37,12 @@ class StorageChannelImplTest {
     void shouldAddSource() {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(10);
-        storage.insert("A", 8, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 8, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         sut.addSource(storage);
 
-        final long inserted = sut.insert("A", 3, Action.EXECUTE, EmptySource.INSTANCE);
+        final long inserted = sut.insert("A", 3, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -55,10 +55,10 @@ class StorageChannelImplTest {
     void shouldRemoveSource() {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(10);
-        storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> removedStorage = new LimitedStorageImpl<>(10);
-        removedStorage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        removedStorage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         sut.addSource(storage);
         sut.addSource(removedStorage);
@@ -66,7 +66,7 @@ class StorageChannelImplTest {
         // Act
         sut.removeSource(removedStorage);
 
-        final long extracted = sut.extract("A", 15, Action.SIMULATE, EmptySource.INSTANCE);
+        final long extracted = sut.extract("A", 15, Action.SIMULATE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -80,7 +80,7 @@ class StorageChannelImplTest {
     void shouldCallListenerOnInsertion(final Action action) {
         // Arrange
         sut.addSource(new LimitedStorageImpl<>(10));
-        sut.insert("A", 2, Action.EXECUTE, EmptySource.INSTANCE);
+        sut.insert("A", 2, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final ResourceListListener<String> listener = mock(ResourceListListener.class);
         sut.addListener(listener);
@@ -88,7 +88,7 @@ class StorageChannelImplTest {
         final var changedResource = ArgumentCaptor.forClass(ResourceListOperationResult.class);
 
         // Act
-        sut.insert("A", 8, action, EmptySource.INSTANCE);
+        sut.insert("A", 8, action, EmptyActor.INSTANCE);
 
         // Assert
         if (action == Action.EXECUTE) {
@@ -108,10 +108,10 @@ class StorageChannelImplTest {
     void shouldCallListenerOnExtraction(final Action action) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(10);
-        storage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         sut.addSource(storage);
-        sut.extract("A", 2, Action.EXECUTE, EmptySource.INSTANCE);
+        sut.extract("A", 2, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final ResourceListListener<String> listener = mock(ResourceListListener.class);
         sut.addListener(listener);
@@ -119,7 +119,7 @@ class StorageChannelImplTest {
         final var changedResource = ArgumentCaptor.forClass(ResourceListOperationResult.class);
 
         // Act
-        sut.extract("A", 5, action, EmptySource.INSTANCE);
+        sut.extract("A", 5, action, EmptyActor.INSTANCE);
 
         // Assert
         if (action == Action.EXECUTE) {
@@ -138,14 +138,14 @@ class StorageChannelImplTest {
     void shouldRemoveListener() {
         // Arrange
         sut.addSource(new LimitedStorageImpl<>(10));
-        sut.insert("A", 2, Action.EXECUTE, EmptySource.INSTANCE);
+        sut.insert("A", 2, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final ResourceListListener<String> listener = mock(ResourceListListener.class);
         sut.addListener(listener);
 
         // Act
         sut.removeListener(listener);
-        sut.insert("A", 8, Action.EXECUTE, EmptySource.INSTANCE);
+        sut.insert("A", 8, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         verify(listener, never()).onChanged(any());
@@ -157,8 +157,8 @@ class StorageChannelImplTest {
         sut.addSource(new LimitedStorageImpl<>(10));
 
         // Act
-        final long inserted1 = sut.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
-        final long inserted2 = sut.insert("B", 4, Action.EXECUTE, EmptySource.INSTANCE);
+        final long inserted1 = sut.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = sut.insert("B", 4, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -174,12 +174,12 @@ class StorageChannelImplTest {
     void shouldExtract() {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
 
         sut.addSource(storage);
 
         // Act
-        final long extracted = sut.extract("A", 49, Action.EXECUTE, EmptySource.INSTANCE);
+        final long extracted = sut.extract("A", 49, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -193,7 +193,7 @@ class StorageChannelImplTest {
     void shouldBeAbleToRetrieveResource() {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
 
         sut.addSource(storage);
 
@@ -235,7 +235,7 @@ class StorageChannelImplTest {
         // Act
         sut.sortSources();
 
-        sut.insert("A", 15, Action.EXECUTE, EmptySource.INSTANCE);
+        sut.insert("A", 15, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(storage2.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(

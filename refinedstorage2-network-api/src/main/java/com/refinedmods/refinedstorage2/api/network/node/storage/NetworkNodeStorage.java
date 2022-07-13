@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.Source;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeAwareChild;
 import com.refinedmods.refinedstorage2.api.storage.composite.ParentComposite;
@@ -31,29 +31,29 @@ class NetworkNodeStorage<T> implements TrackedStorage<T>, Priority, CompositeAwa
     }
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Source source) {
+    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
         if (storage == null || networkNode.getAccessMode() == AccessMode.INSERT || !networkNode.isActive()) {
             return 0;
         }
-        return storage.extract(resource, amount, action, source);
+        return storage.extract(resource, amount, action, actor);
     }
 
     @Override
-    public long insert(final T resource, final long amount, final Action action, final Source source) {
+    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
         if (storage == null
             || networkNode.getAccessMode() == AccessMode.EXTRACT
             || !networkNode.isActive()
             || !networkNode.isAllowed(resource)) {
             return 0;
         }
-        return storage.insert(resource, amount, action, source);
+        return storage.insert(resource, amount, action, actor);
     }
 
     @Override
     public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
-                                                                     final Class<? extends Source> sourceType) {
+                                                                     final Class<? extends Actor> actorType) {
         return storage instanceof TrackedStorage<T> trackedStorage
-            ? trackedStorage.findTrackedResourceBySourceType(resource, sourceType)
+            ? trackedStorage.findTrackedResourceBySourceType(resource, actorType)
             : Optional.empty();
     }
 
