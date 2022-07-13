@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 
 import org.apiguardian.api.API;
 
@@ -39,6 +40,12 @@ public final class TransferHelper {
         if (extracted == 0) {
             return 0;
         }
-        return destination.insert(resource, extracted, Action.EXECUTE, actor);
+        final long inserted = destination.insert(resource, extracted, Action.EXECUTE, actor);
+        CoreValidations.validateEquals(
+            extracted,
+            inserted,
+            "Destination storage did not accept resource from source storage, even after simulating"
+        );
+        return inserted;
     }
 }
