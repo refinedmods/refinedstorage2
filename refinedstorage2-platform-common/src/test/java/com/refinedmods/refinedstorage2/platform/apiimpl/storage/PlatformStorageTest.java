@@ -61,14 +61,14 @@ class PlatformStorageTest {
             new ResourceAmount<>(new ItemResource(Items.GLASS, null), 20),
             new ResourceAmount<>(new ItemResource(Items.STONE, null), 30)
         );
-        assertThat(sut.findTrackedResourceBySourceType(new ItemResource(Items.DIRT, null), PlayerActor.class))
+        assertThat(sut.findTrackedResourceByActorType(new ItemResource(Items.DIRT, null), PlayerActor.class))
             .get()
             .usingRecursiveComparison()
             .isEqualTo(new TrackedResource("A", 100));
         assertThat(
-            sut.findTrackedResourceBySourceType(new ItemResource(Items.GLASS, null), PlayerActor.class)).isEmpty();
+            sut.findTrackedResourceByActorType(new ItemResource(Items.GLASS, null), PlayerActor.class)).isEmpty();
         assertThat(
-            sut.findTrackedResourceBySourceType(new ItemResource(Items.STONE, null), PlayerActor.class)).isEmpty();
+            sut.findTrackedResourceByActorType(new ItemResource(Items.STONE, null), PlayerActor.class)).isEmpty();
         assertThat(listener.getChanges()).isZero();
     }
 
@@ -86,7 +86,7 @@ class PlatformStorageTest {
             assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>(new ItemResource(Items.DIRT, null), 100)
             );
-            assertThat(sut.findTrackedResourceBySourceType(new ItemResource(Items.DIRT, null), PlayerActor.class))
+            assertThat(sut.findTrackedResourceByActorType(new ItemResource(Items.DIRT, null), PlayerActor.class))
                 .get()
                 .usingRecursiveComparison()
                 .isEqualTo(new TrackedResource("A", 0));
@@ -94,7 +94,7 @@ class PlatformStorageTest {
             assertThat(listener.getChanges()).isZero();
             assertThat(sut.getAll()).isEmpty();
             assertThat(
-                sut.findTrackedResourceBySourceType(new ItemResource(Items.DIRT, null), PlayerActor.class)).isEmpty();
+                sut.findTrackedResourceByActorType(new ItemResource(Items.DIRT, null), PlayerActor.class)).isEmpty();
         }
     }
 }

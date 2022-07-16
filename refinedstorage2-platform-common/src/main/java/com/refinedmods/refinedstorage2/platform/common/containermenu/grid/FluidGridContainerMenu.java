@@ -88,7 +88,7 @@ public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResou
             resource,
             change.change(),
             Objects.requireNonNull(storageChannel)
-                .findTrackedResourceBySourceType(resource, PlayerActor.class).orElse(null)
+                .findTrackedResourceByActorType(resource, PlayerActor.class).orElse(null)
         );
     }
 

@@ -92,7 +92,7 @@ public class FluidStorageType implements StorageType<FluidResource> {
         final CompoundTag tag = FluidResource.toTagWithAmount(resourceAmount);
         if (storage instanceof TrackedStorage<FluidResource> trackedStorage) {
             trackedStorage
-                .findTrackedResourceBySourceType(resourceAmount.getResource(), PlayerActor.class)
+                .findTrackedResourceByActorType(resourceAmount.getResource(), PlayerActor.class)
                 .ifPresent(trackedResource -> {
                     tag.putString(TAG_CHANGED_BY, trackedResource.getSourceName());
                     tag.putLong(TAG_CHANGED_AT, trackedResource.getTime());

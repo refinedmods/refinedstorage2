@@ -58,7 +58,7 @@ class GridServiceImplTest {
             assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", (MAX_COUNT * 3) - expectedAmount)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridActor.class))
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class))
                 .get()
                 .usingRecursiveComparison()
                 .isEqualTo(new TrackedResource(GridActor.NAME, 0));
@@ -79,7 +79,7 @@ class GridServiceImplTest {
             // Assert
             assertThat(storageChannel.getAll()).isEmpty();
             assertThat(source.getAll()).isEmpty();
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridActor.class)).isEmpty();
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class)).isEmpty();
         }
 
         @ParameterizedTest
@@ -103,7 +103,7 @@ class GridServiceImplTest {
             assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 100)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridActor.class)).isEmpty();
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class)).isEmpty();
         }
     }
 
@@ -129,7 +129,7 @@ class GridServiceImplTest {
             assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 1)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridActor.class))
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class))
                 .get()
                 .usingRecursiveComparison()
                 .isEqualTo(new TrackedResource(GridActor.NAME, 0));
@@ -172,7 +172,7 @@ class GridServiceImplTest {
             assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", MAX_COUNT)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridActor.class)).isEmpty();
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class)).isEmpty();
         }
     }
 
@@ -204,7 +204,7 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", expectedExtracted)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridActor.class))
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class))
                 .get()
                 .usingRecursiveComparison()
                 .isEqualTo(new TrackedResource(GridActor.NAME, 0));
@@ -225,7 +225,7 @@ class GridServiceImplTest {
             // Assert
             assertThat(storageChannel.getAll()).isEmpty();
             assertThat(destination.getAll()).isEmpty();
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridActor.class)).isNotPresent();
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class)).isNotPresent();
         }
 
         @ParameterizedTest
@@ -249,7 +249,7 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("B", 100)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridActor.class)).isEmpty();
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class)).isEmpty();
         }
     }
 
@@ -272,7 +272,7 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", MAX_COUNT - 1)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridActor.class))
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class))
                 .get()
                 .usingRecursiveComparison()
                 .isEqualTo(new TrackedResource(GridActor.NAME, 0));
@@ -297,7 +297,7 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", MAX_COUNT - 1)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridActor.class))
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class))
                 .get()
                 .usingRecursiveComparison()
                 .isEqualTo(new TrackedResource(GridActor.NAME, 0));
@@ -323,7 +323,7 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 1)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridActor.class))
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class))
                 .get()
                 .usingRecursiveComparison()
                 .isEqualTo(new TrackedResource(GridActor.NAME, 0));

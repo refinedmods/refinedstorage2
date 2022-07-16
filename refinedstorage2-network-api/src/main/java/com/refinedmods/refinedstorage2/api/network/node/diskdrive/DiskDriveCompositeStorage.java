@@ -80,9 +80,9 @@ class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, CompositeAwar
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
-                                                                     final Class<? extends Actor> actorType) {
-        return disks.findTrackedResourceBySourceType(resource, actorType);
+    public Optional<TrackedResource> findTrackedResourceByActorType(final T resource,
+                                                                    final Class<? extends Actor> actorType) {
+        return disks.findTrackedResourceByActorType(resource, actorType);
     }
 
     @Override

@@ -131,13 +131,13 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
-                                                                     final Class<? extends Actor> actorType) {
+    public Optional<TrackedResource> findTrackedResourceByActorType(final T resource,
+                                                                    final Class<? extends Actor> actorType) {
         return sources
             .stream()
             .filter(TrackedStorage.class::isInstance)
             .map(storage -> (TrackedStorage<T>) storage)
-            .flatMap(storage -> storage.findTrackedResourceBySourceType(resource, actorType).stream())
+            .flatMap(storage -> storage.findTrackedResourceByActorType(resource, actorType).stream())
             .max(Comparator.comparingLong(TrackedResource::getTime));
     }
 

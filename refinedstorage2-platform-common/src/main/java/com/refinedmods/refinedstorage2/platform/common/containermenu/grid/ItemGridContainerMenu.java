@@ -81,7 +81,7 @@ public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResourc
             resource,
             change.change(),
             Objects.requireNonNull(storageChannel)
-                .findTrackedResourceBySourceType(resource, PlayerActor.class).orElse(null)
+                .findTrackedResourceByActorType(resource, PlayerActor.class).orElse(null)
         );
     }
 

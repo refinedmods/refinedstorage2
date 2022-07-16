@@ -62,11 +62,11 @@ class ItemStorageTypeTest {
             new ResourceAmount<>(new ItemResource(Items.DIRT, createDummyTag()), 10),
             new ResourceAmount<>(new ItemResource(Items.GLASS, null), 15)
         );
-        assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceBySourceType(
+        assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceByActorType(
             new ItemResource(Items.DIRT, createDummyTag()),
             PlayerActor.class
         )).get().usingRecursiveComparison().isEqualTo(new TrackedResource("A", 123));
-        assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceBySourceType(
+        assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceByActorType(
             new ItemResource(Items.GLASS, null),
             PlayerActor.class
         )).isEmpty();
@@ -125,11 +125,11 @@ class ItemStorageTypeTest {
             new ResourceAmount<>(new ItemResource(Items.DIRT, createDummyTag()), 10),
             new ResourceAmount<>(new ItemResource(Items.GLASS, null), 15)
         );
-        assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceBySourceType(
+        assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceByActorType(
             new ItemResource(Items.DIRT, createDummyTag()),
             PlayerActor.class
         )).get().usingRecursiveComparison().isEqualTo(new TrackedResource("A", 123));
-        assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceBySourceType(
+        assertThat(((TrackedStorage<ItemResource>) deserialized).findTrackedResourceByActorType(
             new ItemResource(Items.GLASS, null),
             PlayerActor.class
         )).isEmpty();

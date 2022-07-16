@@ -13,11 +13,11 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
 public interface TrackedStorage<T> extends Storage<T> {
     /**
-     * Finds the tracked resource by source type.
+     * Finds the tracked resource by actor type.
      *
      * @param resource  the resource
      * @param actorType the actor type
-     * @return the tracked resource, if present
+     * @return the tracked resource modified by the given actor type, if present
      */
-    Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Actor> actorType);
+    Optional<TrackedResource> findTrackedResourceByActorType(T resource, Class<? extends Actor> actorType);
 }

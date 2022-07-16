@@ -178,7 +178,7 @@ class PlatformStorageRepositoryImplTest {
         assertThat(sut.get(aId).get().getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>(new ItemResource(Items.DIRT, createDummyTag()), 10)
         );
-        assertThat(((TrackedStorage) sut.get(aId).get()).findTrackedResourceBySourceType(
+        assertThat(((TrackedStorage) sut.get(aId).get()).findTrackedResourceByActorType(
             new ItemResource(Items.DIRT, createDummyTag()), PlayerActor.class))
             .get()
             .usingRecursiveComparison()

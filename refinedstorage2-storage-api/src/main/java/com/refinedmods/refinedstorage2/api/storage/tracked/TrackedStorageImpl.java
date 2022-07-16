@@ -60,8 +60,8 @@ public class TrackedStorageImpl<T> extends AbstractProxyStorage<T> implements Tr
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
-                                                                     final Class<? extends Actor> actorType) {
+    public Optional<TrackedResource> findTrackedResourceByActorType(final T resource,
+                                                                    final Class<? extends Actor> actorType) {
         return repository.findTrackedResourceBySourceType(resource, actorType);
     }
 }
