@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
-public final class FakeSources {
-    private FakeSources() {
+public final class FakeActors {
+    private FakeActors() {
     }
 
     public static final class FakeActor1 implements Actor {
