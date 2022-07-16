@@ -62,11 +62,11 @@ class FluidStorageTypeTest {
             new ResourceAmount<>(new FluidResource(Fluids.WATER, createDummyTag()), 10),
             new ResourceAmount<>(new FluidResource(Fluids.LAVA, null), 15)
         );
-        assertThat(((TrackedStorage<FluidResource>) deserialized).findTrackedResourceBySourceType(
+        assertThat(((TrackedStorage<FluidResource>) deserialized).findTrackedResourceByActorType(
             new FluidResource(Fluids.WATER, createDummyTag()),
             PlayerActor.class
         )).get().usingRecursiveComparison().isEqualTo(new TrackedResource("A", 123));
-        assertThat(((TrackedStorage<FluidResource>) deserialized).findTrackedResourceBySourceType(
+        assertThat(((TrackedStorage<FluidResource>) deserialized).findTrackedResourceByActorType(
             new FluidResource(Fluids.LAVA, null),
             PlayerActor.class
         )).isEmpty();
@@ -128,11 +128,11 @@ class FluidStorageTypeTest {
             new ResourceAmount<>(new FluidResource(Fluids.WATER, createDummyTag()), 10),
             new ResourceAmount<>(new FluidResource(Fluids.LAVA, null), 15)
         );
-        assertThat(((TrackedStorage<FluidResource>) deserialized).findTrackedResourceBySourceType(
+        assertThat(((TrackedStorage<FluidResource>) deserialized).findTrackedResourceByActorType(
             new FluidResource(Fluids.WATER, createDummyTag()),
             PlayerActor.class
         )).get().usingRecursiveComparison().isEqualTo(new TrackedResource("A", 123));
-        assertThat(((TrackedStorage<FluidResource>) deserialized).findTrackedResourceBySourceType(
+        assertThat(((TrackedStorage<FluidResource>) deserialized).findTrackedResourceByActorType(
             new FluidResource(Fluids.LAVA, null),
             PlayerActor.class
         )).isEmpty();

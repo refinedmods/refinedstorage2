@@ -91,7 +91,7 @@ public class ItemStorageType implements StorageType<ItemResource> {
         final CompoundTag tag = ItemResource.toTagWithAmount(resourceAmount);
         if (storage instanceof TrackedStorage<ItemResource> trackedStorage) {
             trackedStorage
-                .findTrackedResourceBySourceType(resourceAmount.getResource(), PlayerActor.class)
+                .findTrackedResourceByActorType(resourceAmount.getResource(), PlayerActor.class)
                 .ifPresent(trackedResource -> {
                     tag.putString(TAG_CHANGED_BY, trackedResource.getSourceName());
                     tag.putLong(TAG_CHANGED_AT, trackedResource.getTime());

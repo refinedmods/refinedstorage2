@@ -642,7 +642,7 @@ class DiskDriveNetworkNodeTest {
 
         // Assert
         assertThat(inserted).isEqualTo(10);
-        assertThat(networkStorage.findTrackedResourceBySourceType("A", FakeActor.class)).isNotEmpty();
+        assertThat(networkStorage.findTrackedResourceByActorType("A", FakeActor.class)).isNotEmpty();
     }
 
     private void initializeDiskDriveAndActivate() {

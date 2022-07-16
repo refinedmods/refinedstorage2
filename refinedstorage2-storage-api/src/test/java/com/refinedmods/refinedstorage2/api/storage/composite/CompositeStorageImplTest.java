@@ -685,10 +685,10 @@ class CompositeStorageImplTest {
         sut.addSource(b);
 
         // Act
-        final var oneOne = sut.findTrackedResourceBySourceType("1", FakeSources.FakeActor1.class);
-        final var oneTwo = sut.findTrackedResourceBySourceType("1", FakeSources.FakeActor2.class);
-        final var twoOne = sut.findTrackedResourceBySourceType("2", FakeSources.FakeActor1.class);
-        final var twoTwo = sut.findTrackedResourceBySourceType("2", FakeSources.FakeActor2.class);
+        final var oneOne = sut.findTrackedResourceByActorType("1", FakeSources.FakeActor1.class);
+        final var oneTwo = sut.findTrackedResourceByActorType("1", FakeSources.FakeActor2.class);
+        final var twoOne = sut.findTrackedResourceByActorType("2", FakeSources.FakeActor1.class);
+        final var twoTwo = sut.findTrackedResourceByActorType("2", FakeSources.FakeActor2.class);
 
         // Assert
         assertThat(oneOne).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Source1", 1L));
