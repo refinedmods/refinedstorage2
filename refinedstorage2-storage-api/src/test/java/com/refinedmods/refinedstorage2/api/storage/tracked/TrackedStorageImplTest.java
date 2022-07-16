@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.api.storage.tracked;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
-import com.refinedmods.refinedstorage2.api.storage.FakeSources;
+import com.refinedmods.refinedstorage2.api.storage.FakeActors;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 
 import java.util.Optional;
@@ -71,15 +71,15 @@ class TrackedStorageImplTest {
         @Test
         void shouldNotFindUntrackedResource() {
             // Act
-            sut.insert("B", 100, Action.EXECUTE, FakeSources.FakeActor1.INSTANCE);
+            sut.insert("B", 100, Action.EXECUTE, FakeActors.FakeActor1.INSTANCE);
 
             // Assert
             final Optional<TrackedResource> resourceA1 = sut.findTrackedResourceByActorType("A", EmptyActor.class);
             final Optional<TrackedResource> resourceA2 =
-                sut.findTrackedResourceByActorType("A", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("A", FakeActors.FakeActor1.class);
             final Optional<TrackedResource> resourceB1 = sut.findTrackedResourceByActorType("B", EmptyActor.class);
             final Optional<TrackedResource> resourceB2 =
-                sut.findTrackedResourceByActorType("B", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("B", FakeActors.FakeActor1.class);
 
             assertThat(resourceA1).isEmpty();
             assertThat(resourceA2).isEmpty();
@@ -91,13 +91,13 @@ class TrackedStorageImplTest {
         @EnumSource(Action.class)
         void shouldTrackResourceByInserting(final Action action) {
             // Act
-            final long inserted = sut.insert("A", 100, action, FakeSources.FakeActor1.INSTANCE);
+            final long inserted = sut.insert("A", 100, action, FakeActors.FakeActor1.INSTANCE);
 
             // Assert
             assertThat(inserted).isEqualTo(100);
 
             final Optional<TrackedResource> trackedResource =
-                sut.findTrackedResourceByActorType("A", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("A", FakeActors.FakeActor1.class);
 
             if (action == Action.EXECUTE) {
                 assertThat(trackedResource).get().usingRecursiveComparison()
@@ -114,13 +114,13 @@ class TrackedStorageImplTest {
             backed.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
-            final long inserted = sut.insert("A", 1, action, FakeSources.FakeActor1.INSTANCE);
+            final long inserted = sut.insert("A", 1, action, FakeActors.FakeActor1.INSTANCE);
 
             // Assert
             assertThat(inserted).isZero();
 
             final Optional<TrackedResource> resource =
-                sut.findTrackedResourceByActorType("A", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("A", FakeActors.FakeActor1.class);
             assertThat(resource).isEmpty();
         }
 
@@ -131,13 +131,13 @@ class TrackedStorageImplTest {
             backed.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
-            final long extracted = sut.extract("A", 10, action, FakeSources.FakeActor1.INSTANCE);
+            final long extracted = sut.extract("A", 10, action, FakeActors.FakeActor1.INSTANCE);
 
             // Assert
             assertThat(extracted).isEqualTo(10);
 
             final Optional<TrackedResource> trackedResource =
-                sut.findTrackedResourceByActorType("A", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("A", FakeActors.FakeActor1.class);
 
             if (action == Action.EXECUTE) {
                 assertThat(trackedResource).get().usingRecursiveComparison()
@@ -151,28 +151,28 @@ class TrackedStorageImplTest {
         @EnumSource(Action.class)
         void shouldNotTrackResourceByExtractingNothing(final Action action) {
             // Act
-            final long extracted = sut.extract("A", 1, action, FakeSources.FakeActor1.INSTANCE);
+            final long extracted = sut.extract("A", 1, action, FakeActors.FakeActor1.INSTANCE);
 
             // Assert
             assertThat(extracted).isZero();
 
             final Optional<TrackedResource> trackedResource =
-                sut.findTrackedResourceByActorType("A", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("A", FakeActors.FakeActor1.class);
             assertThat(trackedResource).isEmpty();
         }
 
         @Test
         void shouldTrackMultipleResources() {
             // Act
-            sut.insert("A", 1, Action.EXECUTE, FakeSources.FakeActor1.INSTANCE);
+            sut.insert("A", 1, Action.EXECUTE, FakeActors.FakeActor1.INSTANCE);
             clock.set(1);
-            sut.insert("B", 1, Action.EXECUTE, FakeSources.FakeActor1.INSTANCE);
+            sut.insert("B", 1, Action.EXECUTE, FakeActors.FakeActor1.INSTANCE);
 
             // Assert
             final Optional<TrackedResource> resourceA =
-                sut.findTrackedResourceByActorType("A", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("A", FakeActors.FakeActor1.class);
             final Optional<TrackedResource> resourceB =
-                sut.findTrackedResourceByActorType("B", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("B", FakeActors.FakeActor1.class);
 
             assertThat(resourceA).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Source1", 0));
             assertThat(resourceB).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Source1", 1));
@@ -185,13 +185,13 @@ class TrackedStorageImplTest {
         @EnumSource(Action.class)
         void shouldUpdateTrackedResourceByInserting(final Action action) {
             // Act
-            sut.insert("A", 50, Action.EXECUTE, FakeSources.FakeActor1.INSTANCE);
+            sut.insert("A", 50, Action.EXECUTE, FakeActors.FakeActor1.INSTANCE);
             clock.set(10);
-            sut.insert("A", 60, action, FakeSources.FakeActor1.INSTANCE);
+            sut.insert("A", 60, action, FakeActors.FakeActor1.INSTANCE);
 
             // Assert
             final Optional<TrackedResource> trackedResource =
-                sut.findTrackedResourceByActorType("A", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("A", FakeActors.FakeActor1.class);
 
             if (action == Action.EXECUTE) {
                 assertThat(trackedResource).get().usingRecursiveComparison()
@@ -206,13 +206,13 @@ class TrackedStorageImplTest {
         @EnumSource(Action.class)
         void shouldNotUpdateTrackedResourceByInsertingToAnAlreadyFullStorage(final Action action) {
             // Act
-            sut.insert("A", 100, Action.EXECUTE, FakeSources.FakeActor1.INSTANCE);
+            sut.insert("A", 100, Action.EXECUTE, FakeActors.FakeActor1.INSTANCE);
             clock.set(10);
-            sut.insert("A", 1, action, FakeSources.FakeActor1.INSTANCE);
+            sut.insert("A", 1, action, FakeActors.FakeActor1.INSTANCE);
 
             // Assert
             final Optional<TrackedResource> trackedResource =
-                sut.findTrackedResourceByActorType("A", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("A", FakeActors.FakeActor1.class);
             assertThat(trackedResource).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Source1", 0));
         }
 
@@ -223,13 +223,13 @@ class TrackedStorageImplTest {
             backed.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
-            sut.extract("A", 50, Action.EXECUTE, FakeSources.FakeActor1.INSTANCE);
+            sut.extract("A", 50, Action.EXECUTE, FakeActors.FakeActor1.INSTANCE);
             clock.set(10);
-            sut.extract("A", 60, action, FakeSources.FakeActor1.INSTANCE);
+            sut.extract("A", 60, action, FakeActors.FakeActor1.INSTANCE);
 
             // Assert
             final Optional<TrackedResource> trackedResource =
-                sut.findTrackedResourceByActorType("A", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("A", FakeActors.FakeActor1.class);
 
             if (action == Action.EXECUTE) {
                 assertThat(trackedResource).get().usingRecursiveComparison()
@@ -247,39 +247,39 @@ class TrackedStorageImplTest {
             backed.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
-            sut.extract("A", 100, Action.EXECUTE, FakeSources.FakeActor1.INSTANCE);
+            sut.extract("A", 100, Action.EXECUTE, FakeActors.FakeActor1.INSTANCE);
             clock.set(10);
-            sut.extract("A", 1, action, FakeSources.FakeActor1.INSTANCE);
+            sut.extract("A", 1, action, FakeActors.FakeActor1.INSTANCE);
 
             // Assert
             final Optional<TrackedResource> trackedResource =
-                sut.findTrackedResourceByActorType("A", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("A", FakeActors.FakeActor1.class);
             assertThat(trackedResource).get().usingRecursiveComparison().isEqualTo(new TrackedResource("Source1", 0));
         }
 
         @Test
         void shouldBeAbleToUpdateMultipleTrackedResources() {
             // Act
-            sut.insert("A", 1, Action.EXECUTE, FakeSources.FakeActor1.INSTANCE);
+            sut.insert("A", 1, Action.EXECUTE, FakeActors.FakeActor1.INSTANCE);
 
             clock.set(1);
-            sut.insert("B", 1, Action.EXECUTE, FakeSources.FakeActor1.INSTANCE);
+            sut.insert("B", 1, Action.EXECUTE, FakeActors.FakeActor1.INSTANCE);
 
             clock.set(2);
-            sut.insert("A", 1, Action.EXECUTE, FakeSources.FakeActor1.INSTANCE);
+            sut.insert("A", 1, Action.EXECUTE, FakeActors.FakeActor1.INSTANCE);
 
             clock.set(3);
-            sut.insert("B", 1, Action.EXECUTE, FakeSources.FakeActor2.INSTANCE);
+            sut.insert("B", 1, Action.EXECUTE, FakeActors.FakeActor2.INSTANCE);
 
             // Assert
             final Optional<TrackedResource> resourceAWithSource1 =
-                sut.findTrackedResourceByActorType("A", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("A", FakeActors.FakeActor1.class);
             final Optional<TrackedResource> resourceAWithSource2 =
-                sut.findTrackedResourceByActorType("A", FakeSources.FakeActor2.class);
+                sut.findTrackedResourceByActorType("A", FakeActors.FakeActor2.class);
             final Optional<TrackedResource> resourceBWithSource1 =
-                sut.findTrackedResourceByActorType("B", FakeSources.FakeActor1.class);
+                sut.findTrackedResourceByActorType("B", FakeActors.FakeActor1.class);
             final Optional<TrackedResource> resourceBWithSource2 =
-                sut.findTrackedResourceByActorType("B", FakeSources.FakeActor2.class);
+                sut.findTrackedResourceByActorType("B", FakeActors.FakeActor2.class);
 
             assertThat(resourceAWithSource1).get().usingRecursiveComparison()
                 .isEqualTo(new TrackedResource("Source1", 2));
