@@ -33,6 +33,9 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @ConfigEntry.Gui.CollapsibleObject
     private FluidStorageBlockImpl fluidStorageBlock = new FluidStorageBlockImpl();
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private ImporterImpl importer = new ImporterImpl();
+
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
@@ -65,6 +68,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public FluidStorageBlock getFluidStorageBlock() {
         return fluidStorageBlock;
+    }
+
+    @Override
+    public Importer getImporter() {
+        return importer;
     }
 
     private static class GridImpl implements Grid {
@@ -293,6 +301,15 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public long getCreativeEnergyUsage() {
             return creativeEnergyUsage;
+        }
+    }
+
+    private static class ImporterImpl implements Importer {
+        private long energyUsage = 2;
+
+        @Override
+        public long getEnergyUsage() {
+            return energyUsage;
         }
     }
 }

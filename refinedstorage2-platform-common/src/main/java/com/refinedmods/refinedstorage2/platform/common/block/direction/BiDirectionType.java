@@ -24,7 +24,9 @@ public class BiDirectionType implements DirectionType<BiDirection> {
     }
 
     @Override
-    public BiDirection getDirection(final Direction playerFacing, final float playerPitch) {
+    public BiDirection getDirection(final Direction clickedFace,
+                                    final Direction playerFacing,
+                                    final float playerPitch) {
         if (playerPitch > 65) {
             return BiDirection.forUp(playerFacing);
         } else if (playerPitch < -65) {

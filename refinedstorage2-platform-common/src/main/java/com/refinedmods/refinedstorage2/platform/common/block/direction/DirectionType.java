@@ -9,7 +9,7 @@ public interface DirectionType<T extends Enum<T> & StringRepresentable> {
 
     T getDefault();
 
-    T getDirection(Direction playerFacing, float playerPitch);
+    T getDirection(Direction clickedFace, Direction playerFacing, float playerPitch);
 
     T rotate(T direction);
 }

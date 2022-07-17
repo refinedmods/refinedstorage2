@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
 import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
+import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
@@ -25,8 +26,13 @@ public abstract class AbstractGridBlock<T extends AbstractGridBlockEntity<?>>
     private final AbstractBlockEntityTicker<T> ticker;
 
     protected AbstractGridBlock(final Properties properties, final AbstractBlockEntityTicker<T> ticker) {
-        super(properties, BiDirectionType.INSTANCE);
+        super(properties);
         this.ticker = ticker;
+    }
+
+    @Override
+    protected DirectionType<BiDirection> getDirectionType() {
+        return BiDirectionType.INSTANCE;
     }
 
     @Override

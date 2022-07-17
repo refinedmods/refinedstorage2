@@ -13,29 +13,29 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 public abstract class AbstractDirectionalBlock<T extends Enum<T> & StringRepresentable> extends AbstractBaseBlock {
-    private final DirectionType<T> directionType;
-
-    protected AbstractDirectionalBlock(final Properties properties, final DirectionType<T> directionType) {
+    protected AbstractDirectionalBlock(final Properties properties) {
         super(properties);
-        this.directionType = directionType;
     }
 
+    protected abstract DirectionType<T> getDirectionType();
+
     protected BlockState getDefaultState() {
-        return super.getDefaultState().setValue(directionType.getProperty(), directionType.getDefault());
+        return super.getDefaultState().setValue(getDirectionType().getProperty(), getDirectionType().getDefault());
     }
 
     @Override
     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(directionType.getProperty());
+        builder.add(getDirectionType().getProperty());
     }
 
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext ctx) {
         final BlockState state = defaultBlockState();
         return state.setValue(
-            directionType.getProperty(),
-            directionType.getDirection(
+            getDirectionType().getProperty(),
+            getDirectionType().getDirection(
+                ctx.getClickedFace(),
                 ctx.getHorizontalDirection(),
                 ctx.getPlayer() != null ? ctx.getPlayer().getXRot() : 0
             )
@@ -45,15 +45,16 @@ public abstract class AbstractDirectionalBlock<T extends Enum<T> & StringReprese
     @Override
     @SuppressWarnings("deprecation")
     public BlockState rotate(final BlockState state, final Rotation rotation) {
-        final EnumProperty<T> directionProperty = directionType.getProperty();
+        final EnumProperty<T> directionProperty = getDirectionType().getProperty();
         final T currentDirection = state.getValue(directionProperty);
-        return state.setValue(directionProperty, directionType.rotate(currentDirection));
+        return state.setValue(directionProperty, getDirectionType().rotate(currentDirection));
     }
 
     @Nullable
     public T getDirection(@Nullable final BlockState state) {
-        return state != null && state.hasProperty(directionType.getProperty())
-            ? state.getValue(directionType.getProperty())
+        final EnumProperty<T> directionProperty = getDirectionType().getProperty();
+        return state != null && state.hasProperty(directionProperty)
+            ? state.getValue(directionProperty)
             : null;
     }
 }

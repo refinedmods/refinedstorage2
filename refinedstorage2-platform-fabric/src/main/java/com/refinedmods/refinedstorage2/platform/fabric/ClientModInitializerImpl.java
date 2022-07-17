@@ -64,6 +64,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
 
     private void setRenderLayers() {
         BlockRenderLayerMap.INSTANCE.putBlock(Blocks.INSTANCE.getCable(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(Blocks.INSTANCE.getImporter(), RenderType.cutout());
         Blocks.INSTANCE.getGrid().values().forEach(block ->
             BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
         Blocks.INSTANCE.getFluidGrid().values().forEach(block ->

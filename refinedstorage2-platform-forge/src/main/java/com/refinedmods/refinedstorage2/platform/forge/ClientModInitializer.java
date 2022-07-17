@@ -59,6 +59,7 @@ public final class ClientModInitializer {
 
     private static void setRenderLayers() {
         ItemBlockRenderTypes.setRenderLayer(Blocks.INSTANCE.getCable(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(Blocks.INSTANCE.getImporter(), RenderType.cutout());
         Blocks.INSTANCE.getGrid().values().forEach(block ->
             ItemBlockRenderTypes.setRenderLayer(block, RenderType.cutout()));
         Blocks.INSTANCE.getFluidGrid().values().forEach(block ->

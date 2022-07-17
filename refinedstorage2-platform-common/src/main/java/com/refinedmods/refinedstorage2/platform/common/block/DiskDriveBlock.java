@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
 import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
+import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.DiskDriveBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
@@ -21,8 +22,13 @@ public class DiskDriveBlock extends AbstractDirectionalBlock<BiDirection> implem
     private final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> blockEntityFactory;
 
     public DiskDriveBlock(final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> blockEntityFactory) {
-        super(BlockConstants.PROPERTIES, BiDirectionType.INSTANCE);
+        super(BlockConstants.PROPERTIES);
         this.blockEntityFactory = blockEntityFactory;
+    }
+
+    @Override
+    protected DirectionType<BiDirection> getDirectionType() {
+        return BiDirectionType.INSTANCE;
     }
 
     @Override
