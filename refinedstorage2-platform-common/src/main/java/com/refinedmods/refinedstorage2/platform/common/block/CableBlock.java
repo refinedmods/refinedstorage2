@@ -1,16 +1,26 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
+import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.ticker.AbstractBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -24,7 +34,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class CableBlock extends AbstractNetworkNodeContainerBlock implements SimpleWaterloggedBlock {
+public class CableBlock extends AbstractBaseBlock implements SimpleWaterloggedBlock, EntityBlock {
     private static final BooleanProperty NORTH = BooleanProperty.create("north");
     private static final BooleanProperty EAST = BooleanProperty.create("east");
     private static final BooleanProperty SOUTH = BooleanProperty.create("south");
@@ -39,6 +49,9 @@ public class CableBlock extends AbstractNetworkNodeContainerBlock implements Sim
     private static final VoxelShape SHAPE_WEST = box(0, 6, 6, 6, 10, 10);
     private static final VoxelShape SHAPE_UP = box(6, 10, 6, 10, 16, 10);
     private static final VoxelShape SHAPE_DOWN = box(6, 0, 6, 10, 6, 10);
+
+    private static final AbstractBlockEntityTicker<CableBlockEntity> TICKER =
+        new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getCable);
 
     public CableBlock() {
         super(BlockBehaviour.Properties.of(Material.GLASS).sound(SoundType.GLASS).strength(0.35F, 0.35F));
@@ -126,7 +139,7 @@ public class CableBlock extends AbstractNetworkNodeContainerBlock implements Sim
     }
 
     private boolean hasConnection(final LevelAccessor world, final BlockPos pos) {
-        return world.getBlockState(pos).getBlock() instanceof AbstractNetworkNodeContainerBlock;
+        return world.getBlockEntity(pos) instanceof NetworkNodeContainer;
     }
 
     private BlockState getState(final BlockState currentState, final LevelAccessor world, final BlockPos pos) {
@@ -149,5 +162,13 @@ public class CableBlock extends AbstractNetworkNodeContainerBlock implements Sim
     @Override
     public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
         return new CableBlockEntity(pos, state);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level,
+                                                                  final BlockState blockState,
+                                                                  final BlockEntityType<T> type) {
+        return TICKER.get(level, type);
     }
 }
