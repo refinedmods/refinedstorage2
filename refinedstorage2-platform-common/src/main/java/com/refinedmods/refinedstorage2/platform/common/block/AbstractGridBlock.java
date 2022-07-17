@@ -23,8 +23,12 @@ public abstract class AbstractGridBlock<T extends AbstractGridBlockEntity<?>> ex
 
     protected AbstractGridBlock(final Properties properties, final AbstractBlockEntityTicker<T> ticker) {
         super(properties);
-        registerDefaultState(getStateDefinition().any().setValue(ACTIVE, false));
         this.ticker = ticker;
+    }
+
+    @Override
+    protected BlockState getDefaultState() {
+        return super.getDefaultState().setValue(ACTIVE, false);
     }
 
     @Override

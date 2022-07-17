@@ -34,7 +34,11 @@ public class ControllerBlock extends AbstractBaseBlock implements ColorableBlock
         this.type = type;
         this.name = name;
         this.ticker = ticker;
-        registerDefaultState(getStateDefinition().any().setValue(ENERGY_TYPE, ControllerEnergyType.OFF));
+    }
+
+    @Override
+    protected BlockState getDefaultState() {
+        return super.getDefaultState().setValue(ENERGY_TYPE, ControllerEnergyType.OFF);
     }
 
     @Override
