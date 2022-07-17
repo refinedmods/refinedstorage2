@@ -55,15 +55,18 @@ public class CableBlock extends AbstractBaseBlock implements SimpleWaterloggedBl
 
     public CableBlock() {
         super(BlockBehaviour.Properties.of(Material.GLASS).sound(SoundType.GLASS).strength(0.35F, 0.35F));
+    }
 
-        registerDefaultState(getStateDefinition().any()
+    @Override
+    protected BlockState getDefaultState() {
+        return super.getDefaultState()
             .setValue(NORTH, false)
             .setValue(EAST, false)
             .setValue(SOUTH, false)
             .setValue(WEST, false)
             .setValue(UP, false)
             .setValue(DOWN, false)
-            .setValue(BlockStateProperties.WATERLOGGED, false));
+            .setValue(BlockStateProperties.WATERLOGGED, false);
     }
 
     @Override

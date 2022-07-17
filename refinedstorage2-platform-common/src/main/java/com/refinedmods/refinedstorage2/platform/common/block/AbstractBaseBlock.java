@@ -35,10 +35,14 @@ public abstract class AbstractBaseBlock extends Block {
 
     protected AbstractBaseBlock(final Properties properties) {
         super(properties);
+        registerDefaultState(getDefaultState());
+    }
 
+    protected BlockState getDefaultState() {
         if (hasBiDirection()) {
             registerDefaultState(getStateDefinition().any().setValue(DIRECTION, BiDirection.NORTH));
         }
+        return getStateDefinition().any();
     }
 
     protected boolean hasBiDirection() {
