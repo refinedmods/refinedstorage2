@@ -16,7 +16,7 @@ public class ItemGridBlock extends AbstractGridBlock<ItemGridBlockEntity> implem
 
     public ItemGridBlock(final MutableComponent name) {
         super(
-            BlockConstants.STONE_PROPERTIES,
+            BlockConstants.PROPERTIES,
             new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getGrid, ACTIVE)
         );
         this.name = name;

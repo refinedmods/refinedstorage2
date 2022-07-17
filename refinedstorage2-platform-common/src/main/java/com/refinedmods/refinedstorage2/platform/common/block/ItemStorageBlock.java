@@ -14,7 +14,7 @@ public class ItemStorageBlock extends AbstractStorageBlock<ItemStorageBlockBlock
 
     public ItemStorageBlock(final ItemStorageType.Variant variant) {
         super(
-            BlockConstants.STONE_PROPERTIES,
+            BlockConstants.PROPERTIES,
             new NetworkNodeBlockEntityTicker<>(() -> BlockEntities.INSTANCE.getItemStorageBlock(variant))
         );
         this.variant = variant;

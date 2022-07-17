@@ -16,7 +16,7 @@ public class FluidGridBlock extends AbstractGridBlock<FluidGridBlockEntity> impl
 
     public FluidGridBlock(final MutableComponent name) {
         super(
-            BlockConstants.STONE_PROPERTIES,
+            BlockConstants.PROPERTIES,
             new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getFluidGrid, ACTIVE)
         );
         this.name = name;

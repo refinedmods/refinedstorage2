@@ -19,7 +19,7 @@ public class DiskDriveBlock extends AbstractBaseBlock implements EntityBlock {
     private final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> blockEntityFactory;
 
     public DiskDriveBlock(final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> blockEntityFactory) {
-        super(BlockConstants.STONE_PROPERTIES);
+        super(BlockConstants.PROPERTIES);
         this.blockEntityFactory = blockEntityFactory;
     }
 
