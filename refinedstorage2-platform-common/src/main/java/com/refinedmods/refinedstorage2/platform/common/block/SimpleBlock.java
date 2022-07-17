@@ -4,6 +4,6 @@ import net.minecraft.world.level.block.Block;
 
 public final class SimpleBlock extends Block {
     public SimpleBlock() {
-        super(BlockConstants.STONE_PROPERTIES);
+        super(BlockConstants.PROPERTIES);
     }
 }

@@ -14,7 +14,7 @@ public class FluidStorageBlock extends AbstractStorageBlock<FluidStorageBlockBlo
 
     public FluidStorageBlock(final FluidStorageType.Variant variant) {
         super(
-            BlockConstants.STONE_PROPERTIES,
+            BlockConstants.PROPERTIES,
             new NetworkNodeBlockEntityTicker<>(() -> BlockEntities.INSTANCE.getFluidStorageBlock(variant))
         );
         this.variant = variant;

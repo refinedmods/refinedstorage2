@@ -30,7 +30,7 @@ public class ControllerBlock extends AbstractBaseBlock implements ColorableBlock
     public ControllerBlock(final ControllerType type,
                            final MutableComponent name,
                            final ControllerBlockEntityTicker ticker) {
-        super(BlockConstants.STONE_PROPERTIES);
+        super(BlockConstants.PROPERTIES);
         this.type = type;
         this.name = name;
         this.ticker = ticker;
