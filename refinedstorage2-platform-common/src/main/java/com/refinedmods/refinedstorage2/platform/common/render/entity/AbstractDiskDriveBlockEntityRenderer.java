@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.render.entity;
 
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
-import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.render.CubeBuilder;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractDiskDriveBlockEntityRenderer<T extends AbstractDiskDriveBlockEntity>
     implements BlockEntityRenderer<T> {
@@ -50,9 +49,9 @@ public abstract class AbstractDiskDriveBlockEntityRenderer<T extends AbstractDis
         }
 
         // Always sanity check the block state first, these may not always be correct and can cause crashes (see #20).
-        final BlockState blockState = level.getBlockState(entity.getBlockPos());
-        if (blockState.hasProperty(AbstractBaseBlock.DIRECTION)) {
-            render(entity, poseStack, vertexConsumers, blockState.getValue(AbstractBaseBlock.DIRECTION));
+        final BiDirection direction = AbstractDirectionalBlock.getDirection(level.getBlockState(entity.getBlockPos()));
+        if (direction != null) {
+            render(entity, poseStack, vertexConsumers, direction);
         }
     }
 

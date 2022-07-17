@@ -4,12 +4,10 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
-import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
 import java.util.Optional;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
@@ -19,75 +17,22 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 public abstract class AbstractBaseBlock extends Block {
-    public static final EnumProperty<BiDirection> DIRECTION = EnumProperty.create("direction", BiDirection.class);
-
     protected AbstractBaseBlock(final Properties properties) {
         super(properties);
         registerDefaultState(getDefaultState());
     }
 
     protected BlockState getDefaultState() {
-        if (hasBiDirection()) {
-            registerDefaultState(getStateDefinition().any().setValue(DIRECTION, BiDirection.NORTH));
-        }
         return getStateDefinition().any();
-    }
-
-    protected boolean hasBiDirection() {
-        return false;
-    }
-
-    @Override
-    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder);
-
-        if (hasBiDirection()) {
-            builder.add(DIRECTION);
-        }
-    }
-
-    private BiDirection getDirection(final Direction playerFacing, final float playerPitch) {
-        if (playerPitch > 65) {
-            return BiDirection.forUp(playerFacing);
-        } else if (playerPitch < -65) {
-            return BiDirection.forDown(playerFacing.getOpposite());
-        } else {
-            return BiDirection.forHorizontal(playerFacing.getOpposite());
-        }
-    }
-
-    @Override
-    public BlockState getStateForPlacement(final BlockPlaceContext ctx) {
-        final BlockState state = defaultBlockState();
-        if (hasBiDirection()) {
-            return state.setValue(
-                DIRECTION,
-                getDirection(ctx.getHorizontalDirection(), ctx.getPlayer() != null ? ctx.getPlayer().getXRot() : 0)
-            );
-        }
-        return state;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public BlockState rotate(final BlockState state, final Rotation rotation) {
-        if (!hasBiDirection()) {
-            return state;
-        }
-        final BiDirection currentDirection = state.getValue(DIRECTION);
-        return state.setValue(DIRECTION, currentDirection.rotate());
     }
 
     private static boolean rotate(final BlockState state, final Level level, final BlockPos pos) {

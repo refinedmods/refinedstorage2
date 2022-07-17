@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked;
 
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
-import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.baked.transform.QuadRotator;
@@ -86,7 +86,12 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
                                final BlockPos pos,
                                final Supplier<RandomSource> randomSupplier,
                                final RenderContext context) {
-        final QuadRotator rotator = ROTATORS.get(state.getValue(AbstractBaseBlock.DIRECTION));
+        final BiDirection direction = AbstractDirectionalBlock.getDirection(state);
+        if (direction == null) {
+            return;
+        }
+
+        final QuadRotator rotator = ROTATORS.get(direction);
         context.pushTransform(rotator);
 
         super.emitBlockQuads(blockView, state, pos, randomSupplier, context);

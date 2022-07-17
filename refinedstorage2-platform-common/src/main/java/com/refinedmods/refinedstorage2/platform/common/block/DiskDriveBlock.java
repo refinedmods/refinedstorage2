@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class DiskDriveBlock extends AbstractBaseBlock implements EntityBlock {
+public class DiskDriveBlock extends AbstractDirectionalBlock implements EntityBlock {
     private static final DiskDriveBlockEntityTicker TICKER = new DiskDriveBlockEntityTicker();
 
     private final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> blockEntityFactory;
@@ -21,11 +21,6 @@ public class DiskDriveBlock extends AbstractBaseBlock implements EntityBlock {
     public DiskDriveBlock(final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> blockEntityFactory) {
         super(BlockConstants.PROPERTIES);
         this.blockEntityFactory = blockEntityFactory;
-    }
-
-    @Override
-    protected boolean hasBiDirection() {
-        return true;
     }
 
     @Override
