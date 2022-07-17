@@ -2,14 +2,13 @@ package com.refinedmods.refinedstorage2.platform.forge.render.model.baked;
 
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
-import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectionalBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +77,10 @@ public class DiskDriveBakedModel extends AbstractForwardingBakedModel {
                                     @Nullable final Direction side,
                                     @NotNull final RandomSource rand,
                                     @NotNull final IModelData extraData) {
-        final BiDirection direction = AbstractDirectionalBlock.getDirection(state);
+        if (state == null || !(state.getBlock() instanceof DiskDriveBlock diskDriveBlock)) {
+            return super.getQuads(state, side, rand);
+        }
+        final BiDirection direction = diskDriveBlock.getDirection(state);
         if (direction == null) {
             return super.getQuads(state, side, rand);
         }
@@ -157,9 +159,12 @@ public class DiskDriveBakedModel extends AbstractForwardingBakedModel {
     private class DiskDriveCacheLoader extends CacheLoader<DiskDriveStateCacheKey, List<BakedQuad>> {
         @Override
         public List<BakedQuad> load(final DiskDriveStateCacheKey key) {
-            final BiDirection direction = AbstractDirectionalBlock.getDirection(key.state);
+            if (!(key.state.getBlock() instanceof DiskDriveBlock diskDriveBlock)) {
+                return getBaseQuads(key.state, key.random, key.side);
+            }
+            final BiDirection direction = diskDriveBlock.getDirection(key.state);
             if (direction == null) {
-                return Collections.emptyList();
+                return getBaseQuads(key.state, key.random, key.side);
             }
             return QuadTransformer.transformSideAndRotate(resultingSide -> getQuads(
                 key.state,
@@ -174,12 +179,7 @@ public class DiskDriveBakedModel extends AbstractForwardingBakedModel {
                                          @NotNull final RandomSource rand,
                                          final StorageDiskState[] diskStates,
                                          @Nullable final Direction side) {
-            final List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(
-                state,
-                side,
-                rand,
-                EmptyModelData.INSTANCE
-            ));
+            final List<BakedQuad> quads = new ArrayList<>(getBaseQuads(state, rand, side));
             for (int i = 0; i < TRANSLATORS.length; ++i) {
                 final StorageDiskState diskState = diskStates[i];
                 if (diskState != StorageDiskState.NONE) {
@@ -187,6 +187,17 @@ public class DiskDriveBakedModel extends AbstractForwardingBakedModel {
                 }
             }
             return quads;
+        }
+
+        private List<BakedQuad> getBaseQuads(final BlockState state,
+                                             final RandomSource rand,
+                                             @Nullable final Direction side) {
+            return baseModel.getQuads(
+                state,
+                side,
+                rand,
+                EmptyModelData.INSTANCE
+            );
         }
 
         private List<BakedQuad> getDiskModel(final BlockState state,
