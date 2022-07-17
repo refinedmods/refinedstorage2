@@ -1,7 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
+import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.DiskDriveBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
 import java.util.function.BiFunction;
 
@@ -13,13 +15,13 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class DiskDriveBlock extends AbstractDirectionalBlock implements EntityBlock {
+public class DiskDriveBlock extends AbstractDirectionalBlock<BiDirection> implements EntityBlock {
     private static final DiskDriveBlockEntityTicker TICKER = new DiskDriveBlockEntityTicker();
 
     private final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> blockEntityFactory;
 
     public DiskDriveBlock(final BiFunction<BlockPos, BlockState, AbstractDiskDriveBlockEntity> blockEntityFactory) {
-        super(BlockConstants.PROPERTIES);
+        super(BlockConstants.PROPERTIES, BiDirectionType.INSTANCE);
         this.blockEntityFactory = blockEntityFactory;
     }
 

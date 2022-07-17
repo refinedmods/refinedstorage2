@@ -1,7 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
+import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.AbstractBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
 import javax.annotation.Nullable;
 
@@ -15,14 +17,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-public abstract class AbstractGridBlock<T extends AbstractGridBlockEntity<?>> extends AbstractDirectionalBlock
+public abstract class AbstractGridBlock<T extends AbstractGridBlockEntity<?>>
+    extends AbstractDirectionalBlock<BiDirection>
     implements EntityBlock {
     protected static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
     private final AbstractBlockEntityTicker<T> ticker;
 
     protected AbstractGridBlock(final Properties properties, final AbstractBlockEntityTicker<T> ticker) {
-        super(properties);
+        super(properties, BiDirectionType.INSTANCE);
         this.ticker = ticker;
     }
 
