@@ -2,13 +2,14 @@ package com.refinedmods.refinedstorage2.platform.forge.render.model.baked;
 
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
-import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +78,8 @@ public class DiskDriveBakedModel extends AbstractForwardingBakedModel {
                                     @Nullable final Direction side,
                                     @NotNull final RandomSource rand,
                                     @NotNull final IModelData extraData) {
-        if (state == null || !state.hasProperty(AbstractBaseBlock.DIRECTION)) {
+        final BiDirection direction = AbstractDirectionalBlock.getDirection(state);
+        if (direction == null) {
             return super.getQuads(state, side, rand);
         }
         final DiskDriveState driveState = extraData.getData(ForgeDiskDriveBlockEntity.STATE_PROPERTY);
@@ -155,7 +157,10 @@ public class DiskDriveBakedModel extends AbstractForwardingBakedModel {
     private class DiskDriveCacheLoader extends CacheLoader<DiskDriveStateCacheKey, List<BakedQuad>> {
         @Override
         public List<BakedQuad> load(final DiskDriveStateCacheKey key) {
-            final BiDirection direction = key.state.getValue(AbstractBaseBlock.DIRECTION);
+            final BiDirection direction = AbstractDirectionalBlock.getDirection(key.state);
+            if (direction == null) {
+                return Collections.emptyList();
+            }
             return QuadTransformer.transformSideAndRotate(resultingSide -> getQuads(
                 key.state,
                 key.random,

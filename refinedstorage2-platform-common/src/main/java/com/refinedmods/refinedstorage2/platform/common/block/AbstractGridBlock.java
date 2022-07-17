@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-public abstract class AbstractGridBlock<T extends AbstractGridBlockEntity<?>> extends AbstractBaseBlock
+public abstract class AbstractGridBlock<T extends AbstractGridBlockEntity<?>> extends AbstractDirectionalBlock
     implements EntityBlock {
     protected static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
@@ -35,11 +35,6 @@ public abstract class AbstractGridBlock<T extends AbstractGridBlockEntity<?>> ex
     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(ACTIVE);
-    }
-
-    @Override
-    protected boolean hasBiDirection() {
-        return true;
     }
 
     @Nullable
