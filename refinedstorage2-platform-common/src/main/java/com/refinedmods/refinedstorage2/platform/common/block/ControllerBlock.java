@@ -49,7 +49,6 @@ public class ControllerBlock extends AbstractBaseBlock implements ColorableBlock
     @Override
     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-
         builder.add(ENERGY_TYPE);
     }
 

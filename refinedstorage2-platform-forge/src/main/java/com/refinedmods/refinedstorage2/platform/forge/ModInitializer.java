@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
@@ -90,6 +91,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.GRID;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.IMPORTER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.ITEM_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.MACHINE_CASING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
@@ -224,6 +226,8 @@ public class ModInitializer extends AbstractModInitializer {
                 () -> new FluidStorageBlock(variant)
             ));
         }
+
+        Blocks.INSTANCE.setImporter(blockRegistry.register(IMPORTER.getPath(), ImporterBlock::new));
 
         blockRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -369,6 +373,11 @@ public class ModInitializer extends AbstractModInitializer {
                 )
             );
         }
+
+        itemRegistry.register(
+            IMPORTER.getPath(),
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getImporter(), CREATIVE_MODE_TAB)
+        );
 
         itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
         itemRegistry.register(DESTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));

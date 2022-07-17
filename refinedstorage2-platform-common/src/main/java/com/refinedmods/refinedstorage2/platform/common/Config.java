@@ -21,6 +21,8 @@ public interface Config {
 
     FluidStorageBlock getFluidStorageBlock();
 
+    Importer getImporter();
+
     interface Grid {
         boolean isLargeFont();
 
@@ -95,5 +97,9 @@ public interface Config {
         long get4096bEnergyUsage();
 
         long getCreativeEnergyUsage();
+    }
+
+    interface Importer {
+        long getEnergyUsage();
     }
 }

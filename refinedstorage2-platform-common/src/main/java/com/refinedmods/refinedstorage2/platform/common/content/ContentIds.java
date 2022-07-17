@@ -27,6 +27,7 @@ public final class ContentIds {
     public static final ResourceLocation ITEM_STORAGE_BLOCK = createIdentifier("item_storage_block");
     public static final ResourceLocation FLUID_STORAGE_BLOCK = createIdentifier("fluid_storage_block");
     public static final ResourceLocation STORAGE_BLOCK = createIdentifier("storage_block");
+    public static final ResourceLocation IMPORTER = createIdentifier("importer");
 
     private ContentIds() {
     }

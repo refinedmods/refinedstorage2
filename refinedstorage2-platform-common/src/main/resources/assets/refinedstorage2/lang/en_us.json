@@ -18,6 +18,7 @@
   "block.refinedstorage2.1024b_fluid_storage_block": "1024B Fluid Storage Block",
   "block.refinedstorage2.4096b_fluid_storage_block": "4096B Fluid Storage Block",
   "block.refinedstorage2.creative_fluid_storage_block": "Creative Fluid Storage Block",
+  "block.refinedstorage2.importer": "Importer",
   "gui.refinedstorage2.disk_drive.disks": "Disks",
   "gui.refinedstorage2.grid.sorting.direction": "Sorting direction",
   "gui.refinedstorage2.grid.sorting.direction.ascending": "Ascending",
@@ -147,5 +148,7 @@
   "advancements.refinedstorage2.storing_fluids": "Storing fluids",
   "advancements.refinedstorage2.storing_fluids.description": "Craft a Fluid Storage Disk and put it in your Disk Drive",
   "advancements.refinedstorage2.viewing_fluids": "Viewing fluids",
-  "advancements.refinedstorage2.viewing_fluids.description": "Craft a Fluid Grid to interact with your fluid storage"
+  "advancements.refinedstorage2.viewing_fluids.description": "Craft a Fluid Grid to interact with your fluid storage",
+  "advancements.refinedstorage2.importing": "Importing",
+  "advancements.refinedstorage2.importing.description": "Get resources into the storage network with an Importer"
 }
