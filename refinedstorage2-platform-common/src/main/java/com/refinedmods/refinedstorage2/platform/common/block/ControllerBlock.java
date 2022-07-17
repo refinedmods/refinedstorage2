@@ -1,14 +1,15 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
-import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -16,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
-public class ControllerBlock extends AbstractNetworkNodeContainerBlock implements ColorableBlock<ControllerBlock> {
+public class ControllerBlock extends AbstractBaseBlock implements ColorableBlock<ControllerBlock>, EntityBlock {
     public static final EnumProperty<ControllerEnergyType> ENERGY_TYPE = EnumProperty.create(
         "energy_type",
         ControllerEnergyType.class
@@ -24,13 +25,15 @@ public class ControllerBlock extends AbstractNetworkNodeContainerBlock implement
 
     private final ControllerType type;
     private final MutableComponent name;
+    private final ControllerBlockEntityTicker ticker;
 
-    public ControllerBlock(final ControllerType type, final MutableComponent name) {
+    public ControllerBlock(final ControllerType type,
+                           final MutableComponent name,
+                           final ControllerBlockEntityTicker ticker) {
         super(BlockConstants.STONE_PROPERTIES);
-
         this.type = type;
         this.name = name;
-
+        this.ticker = ticker;
         registerDefaultState(getStateDefinition().any().setValue(ENERGY_TYPE, ControllerEnergyType.OFF));
     }
 
@@ -55,12 +58,7 @@ public class ControllerBlock extends AbstractNetworkNodeContainerBlock implement
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level,
                                                                   final BlockState state,
                                                                   final BlockEntityType<T> blockEntityType) {
-        if ((blockEntityType == BlockEntities.INSTANCE.getController()
-            || blockEntityType == BlockEntities.INSTANCE.getCreativeController())
-            && !level.isClientSide) {
-            return (l, p, s, be) -> ControllerBlockEntity.serverTick(s, (ControllerBlockEntity) be);
-        }
-        return null;
+        return ticker.get(level, blockEntityType);
     }
 
     @Override

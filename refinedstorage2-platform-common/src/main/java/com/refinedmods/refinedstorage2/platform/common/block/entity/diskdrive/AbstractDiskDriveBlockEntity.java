@@ -91,17 +91,12 @@ public abstract class AbstractDiskDriveBlockEntity
         getNode().setNormalizer(this::normalize);
     }
 
-    public static void serverTick(final BlockState state, final AbstractDiskDriveBlockEntity blockEntity) {
-        AbstractInternalNetworkNodeContainerBlockEntity.serverTick(state, blockEntity);
-        blockEntity.updateDiskStateIfNecessaryInLevel();
-    }
-
     public static boolean hasDisk(final CompoundTag tag, final int slot) {
         return tag.contains(TAG_DISK_INVENTORY)
             && ContainerUtil.hasItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), slot);
     }
 
-    private void updateDiskStateIfNecessaryInLevel() {
+    public void updateDiskStateIfNecessaryInLevel() {
         if (!syncRequested) {
             return;
         }

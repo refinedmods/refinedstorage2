@@ -21,6 +21,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGr
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
@@ -202,18 +203,26 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.getController().putAll(color -> register(
             Registry.BLOCK,
             Blocks.INSTANCE.getController().getId(color, CONTROLLER),
-            new ControllerBlock(ControllerType.NORMAL, Blocks.INSTANCE.getController().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")
-            ))
+            new ControllerBlock(
+                ControllerType.NORMAL,
+                Blocks.INSTANCE.getController().getName(
+                    color,
+                    createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")
+                ),
+                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getController)
+            )
         ));
         Blocks.INSTANCE.getCreativeController().putAll(color -> register(
             Registry.BLOCK,
             Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER),
-            new ControllerBlock(ControllerType.CREATIVE, Blocks.INSTANCE.getCreativeController().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")
-            ))
+            new ControllerBlock(
+                ControllerType.CREATIVE,
+                Blocks.INSTANCE.getCreativeController().getName(
+                    color,
+                    createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")
+                ),
+                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getCreativeController)
+            )
         ));
 
         for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {

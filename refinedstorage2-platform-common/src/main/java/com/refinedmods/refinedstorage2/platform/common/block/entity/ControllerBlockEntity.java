@@ -46,11 +46,6 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
         this.getNode().setEnergyStorage(energyStorage);
     }
 
-    public static void serverTick(final BlockState state, final ControllerBlockEntity blockEntity) {
-        AbstractInternalNetworkNodeContainerBlockEntity.serverTick(state, blockEntity);
-        blockEntity.updateEnergyTypeInLevel(state);
-    }
-
     private static BlockEntityType<ControllerBlockEntity> getBlockEntityType(final ControllerType type) {
         return type == ControllerType.CREATIVE
             ? BlockEntities.INSTANCE.getCreativeController()
