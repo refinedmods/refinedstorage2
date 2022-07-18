@@ -33,12 +33,26 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
         );
     }
 
+    // used to handle rotations
+    @Override
+    @SuppressWarnings("deprecation")
+    public void setBlockState(final BlockState newBlockState) {
+        super.setBlockState(newBlockState);
+        if (level instanceof ServerLevel serverLevel) {
+            updateTransferStrategy(serverLevel);
+        }
+    }
+
     @Override
     public void setLevel(final Level level) {
         super.setLevel(level);
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
+        updateTransferStrategy(serverLevel);
+    }
+
+    private void updateTransferStrategy(final ServerLevel serverLevel) {
         final Direction direction = getMyDirection();
         if (direction == null) {
             LOGGER.warn(
@@ -56,7 +70,6 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
     private CompositeImporterTransferStrategy createStrategy(final ServerLevel serverLevel,
                                                              final Direction direction) {
         final Direction incomingDirection = direction.getOpposite();
-        // TODO: does this need to be invalidated?
         final BlockPos sourcePosition = worldPosition.offset(direction.getNormal());
         final List<ImporterTransferStrategyFactory> factories =
             PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().getAll();
