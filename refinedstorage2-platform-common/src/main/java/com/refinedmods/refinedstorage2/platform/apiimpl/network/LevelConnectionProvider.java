@@ -86,18 +86,22 @@ public class LevelConnectionProvider implements ConnectionProvider {
         scanState.removedEntries.remove(entry);
 
         final Set<NetworkNodeContainer> connections =
-            findConnectionsAt(((AbstractNetworkNodeContainerBlockEntity<?>) entry.getContainer()).getBlockPos());
+            findConnectionsAt((AbstractNetworkNodeContainerBlockEntity<?>) entry.getContainer());
         for (final NetworkNodeContainer connection : connections) {
             depthScan(scanState, ((AbstractNetworkNodeContainerBlockEntity<?>) connection).getBlockPos());
         }
     }
 
-    private Set<NetworkNodeContainer> findConnectionsAt(final BlockPos pos) {
+    private Set<NetworkNodeContainer> findConnectionsAt(final AbstractNetworkNodeContainerBlockEntity<?> container) {
         final Set<NetworkNodeContainer> containers = new HashSet<>();
         for (final Direction direction : Direction.values()) {
-            final BlockPos offsetPos = pos.relative(direction);
-            if (getBlockEntity(offsetPos) instanceof AbstractNetworkNodeContainerBlockEntity<?> containerBlockEntity) {
-                containers.add(containerBlockEntity);
+            if (!container.canAcceptOutgoingConnection(direction)) {
+                continue;
+            }
+            final BlockPos offsetPos = container.getBlockPos().relative(direction);
+            if (getBlockEntity(offsetPos) instanceof AbstractNetworkNodeContainerBlockEntity<?> neighborContainer
+                && neighborContainer.canAcceptIncomingConnection(direction.getOpposite())) {
+                containers.add(neighborContainer);
             }
         }
         return containers;

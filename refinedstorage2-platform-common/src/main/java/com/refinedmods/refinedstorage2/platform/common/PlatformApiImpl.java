@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.api.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;

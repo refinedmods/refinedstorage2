@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategyImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 
 import java.util.function.Function;
 
