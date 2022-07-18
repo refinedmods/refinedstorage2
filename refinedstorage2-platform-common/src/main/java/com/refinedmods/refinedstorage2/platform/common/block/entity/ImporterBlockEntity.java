@@ -4,12 +4,13 @@ import com.refinedmods.refinedstorage2.api.network.node.importer.CompositeImport
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 
 import java.util.List;
+import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,12 +39,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
-        final Block block = getBlockState().getBlock();
-        if (!(block instanceof ImporterBlock importerBlock)) {
-            LOGGER.warn("Could not find importer block at {}, found {} instead", worldPosition, block);
-            return;
-        }
-        final Direction direction = importerBlock.getDirection(getBlockState());
+        final Direction direction = getMyDirection();
         if (direction == null) {
             LOGGER.warn(
                 "Could not extract direction from importer block at {}, state is {}",
@@ -69,5 +65,24 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
             .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, getNode()))
             .toList();
         return new CompositeImporterTransferStrategy(strategies);
+    }
+
+    @Override
+    public boolean canAcceptOutgoingConnection(final Direction direction) {
+        return getMyDirection() != direction;
+    }
+
+    @Override
+    public boolean canAcceptIncomingConnection(final Direction direction) {
+        return getMyDirection() != direction;
+    }
+
+    @Nullable
+    private Direction getMyDirection() {
+        final Block block = getBlockState().getBlock();
+        if (!(block instanceof ImporterBlock importerBlock)) {
+            return null;
+        }
+        return importerBlock.getDirection(getBlockState());
     }
 }

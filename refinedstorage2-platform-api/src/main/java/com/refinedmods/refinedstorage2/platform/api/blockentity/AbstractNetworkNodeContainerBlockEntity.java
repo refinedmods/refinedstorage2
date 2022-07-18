@@ -1,16 +1,17 @@
 package com.refinedmods.refinedstorage2.platform.api.blockentity;
 
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractNetworkNodeContainerBlockEntity<T extends NetworkNode> extends BlockEntity
-    implements NetworkNodeContainer {
+    implements PlatformNetworkNodeContainer {
     private final T node;
 
     protected AbstractNetworkNodeContainerBlockEntity(final BlockEntityType<?> type,
@@ -45,6 +46,16 @@ public abstract class AbstractNetworkNodeContainerBlockEntity<T extends NetworkN
     @Override
     public T getNode() {
         return node;
+    }
+
+    @Override
+    public boolean canAcceptOutgoingConnection(final Direction direction) {
+        return true;
+    }
+
+    @Override
+    public boolean canAcceptIncomingConnection(final Direction direction) {
+        return true;
     }
 
     @Override
