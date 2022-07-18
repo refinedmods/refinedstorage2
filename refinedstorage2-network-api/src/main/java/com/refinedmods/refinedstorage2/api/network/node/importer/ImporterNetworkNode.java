@@ -10,6 +10,10 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 // TODO: tick speed.
+// TODO: forge source impl.
+// TODO: fabric fluids impl. (test it)
+// TODO: no disk drive import?!
+// TODO: gui config etc.
 public class ImporterNetworkNode extends AbstractNetworkNode {
     private final long energyUsage;
     private final Filter filter = new Filter();

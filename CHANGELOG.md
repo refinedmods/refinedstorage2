@@ -18,11 +18,15 @@ Device inventories and disks created in v2.0.0-milestone.1.4 will be lost.
 ### Changed
 
 - Ported to Minecraft 1.19.
+- The Importer will now extract as much of 1 resource type as possible, according to the per tick transfer quota, at
+  once for all the inventory slots.
+- The Importer no longer transmits a network signal.
 
 ### Added
 
 - Added JEI support to Fabric.
 - Added REI support to Forge.
+- Importer.
 
 ### Fixed
 

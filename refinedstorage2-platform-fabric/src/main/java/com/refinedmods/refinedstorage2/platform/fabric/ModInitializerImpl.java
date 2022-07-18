@@ -73,6 +73,8 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.core.Registry;
@@ -164,6 +166,16 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 VariantUtil::ofItemVariant,
                 VariantUtil::toItemVariant,
                 1
+            )
+        );
+        PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().register(
+            createIdentifier("fluid"),
+            new StorageImporterTransferStrategyFactory<>(
+                FluidStorage.SIDED,
+                StorageChannelTypes.FLUID,
+                VariantUtil::ofFluidVariant,
+                VariantUtil::toFluidVariant,
+                FluidConstants.BUCKET
             )
         );
     }
