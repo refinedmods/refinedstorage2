@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.level.block.Block.box;
 
@@ -72,13 +73,16 @@ final class CableBlockSupport {
         return shape;
     }
 
-    static BlockState getState(final BlockState currentState, final LevelAccessor world, final BlockPos pos) {
-        final boolean north = hasConnection(world, pos.relative(Direction.NORTH));
-        final boolean east = hasConnection(world, pos.relative(Direction.EAST));
-        final boolean south = hasConnection(world, pos.relative(Direction.SOUTH));
-        final boolean west = hasConnection(world, pos.relative(Direction.WEST));
-        final boolean up = hasConnection(world, pos.relative(Direction.UP));
-        final boolean down = hasConnection(world, pos.relative(Direction.DOWN));
+    static BlockState getState(final BlockState currentState,
+                               final LevelAccessor world,
+                               final BlockPos pos,
+                               @Nullable final Direction blacklistedDirection) {
+        final boolean north = hasConnection(world, pos, Direction.NORTH, blacklistedDirection);
+        final boolean east = hasConnection(world, pos, Direction.EAST, blacklistedDirection);
+        final boolean south = hasConnection(world, pos, Direction.SOUTH, blacklistedDirection);
+        final boolean west = hasConnection(world, pos, Direction.WEST, blacklistedDirection);
+        final boolean up = hasConnection(world, pos, Direction.UP, blacklistedDirection);
+        final boolean down = hasConnection(world, pos, Direction.DOWN, blacklistedDirection);
 
         return currentState
             .setValue(NORTH, north)
@@ -89,7 +93,14 @@ final class CableBlockSupport {
             .setValue(DOWN, down);
     }
 
-    private static boolean hasConnection(final LevelAccessor world, final BlockPos pos) {
-        return world.getBlockEntity(pos) instanceof NetworkNodeContainer;
+    private static boolean hasConnection(final LevelAccessor world,
+                                         final BlockPos pos,
+                                         final Direction direction,
+                                         @Nullable final Direction blacklistedDirection) {
+        if (direction == blacklistedDirection) {
+            return false;
+        }
+        final BlockPos offsetPos = pos.offset(direction.getNormal());
+        return world.getBlockEntity(offsetPos) instanceof NetworkNodeContainer;
     }
 }

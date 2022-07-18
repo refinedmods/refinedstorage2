@@ -62,7 +62,7 @@ public class CableBlock extends AbstractBaseBlock implements SimpleWaterloggedBl
                                   final LevelAccessor level,
                                   final BlockPos pos,
                                   final BlockPos posFrom) {
-        return CableBlockSupport.getState(state, level, pos);
+        return CableBlockSupport.getState(state, level, pos, null);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class CableBlock extends AbstractBaseBlock implements SimpleWaterloggedBl
 
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext ctx) {
-        return CableBlockSupport.getState(defaultBlockState(), ctx.getLevel(), ctx.getClickedPos());
+        return CableBlockSupport.getState(defaultBlockState(), ctx.getLevel(), ctx.getClickedPos(), null);
     }
 
     @Override

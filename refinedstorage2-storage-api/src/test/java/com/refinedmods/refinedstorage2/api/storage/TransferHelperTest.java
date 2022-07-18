@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -162,6 +163,42 @@ class TransferHelperTest {
             IllegalStateException.class,
             () -> TransferHelper.transfer("A", 50, EmptyActor.INSTANCE, source, destination)
         );
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void shouldNotTransferInvalidAmount() {
+        // Arrange
+        final Storage<String> source = new LimitedStorageImpl<>(100);
+        final Storage<String> destination = new LimitedStorageImpl<>(100);
+
+        // Act
+        final Executable action1 = () -> TransferHelper.transfer(
+            "A",
+            0,
+            EmptyActor.INSTANCE,
+            source,
+            destination
+        );
+        final Executable action2 = () -> TransferHelper.transfer(
+            "A",
+            -1,
+            EmptyActor.INSTANCE,
+            source,
+            destination
+        );
+        final Executable action3 = () -> TransferHelper.transfer(
+            null,
+            1,
+            EmptyActor.INSTANCE,
+            source,
+            destination
+        );
+
+        // Assert
+        assertThrows(IllegalArgumentException.class, action1);
+        assertThrows(IllegalArgumentException.class, action2);
+        assertThrows(NullPointerException.class, action3);
     }
 
     record Transfer(@Nullable ResourceAmount<String> amountInSource,
