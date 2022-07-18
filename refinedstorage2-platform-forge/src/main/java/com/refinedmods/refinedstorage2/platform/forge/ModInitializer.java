@@ -17,6 +17,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
@@ -445,6 +446,11 @@ public class ModInitializer extends AbstractModInitializer {
                 ).build(null)
             ));
         }
+
+        BlockEntities.INSTANCE.setImporter(blockEntityTypeRegistry.register(
+            IMPORTER.getPath(),
+            () -> BlockEntityType.Builder.of(ImporterBlockEntity::new, Blocks.INSTANCE.getImporter()).build(null)
+        ));
 
         blockEntityTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }

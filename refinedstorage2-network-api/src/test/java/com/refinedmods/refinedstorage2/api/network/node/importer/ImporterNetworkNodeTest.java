@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node.importer;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.api.network.test.extension.AddNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
@@ -34,16 +35,16 @@ class ImporterNetworkNodeTest {
         // Arrange
         storageChannel.addSource(new InMemoryStorageImpl<>());
 
-        final FakeSlottedImporterSource<String> source = new FakeSlottedImporterSource<>(10);
-        final ImporterTransferStrategy strategy = new SlottedImporterTransferStrategy<>(
+        final FakeImporterSource source = new FakeImporterSource("A", "B")
+            .add("A", 100)
+            .add("B", 100);
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl<>(
             source,
-            storageChannel,
+            sut,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             1
         );
         sut.setTransferStrategy(strategy);
-
-        source.setSlot(0, "A", 100);
-        source.setSlot(1, "B", 100);
 
         // Act
         sut.update();
@@ -52,8 +53,10 @@ class ImporterNetworkNodeTest {
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("A", 1)
         );
-        assertThat(source.getResourceAmount(0)).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 99));
-        assertThat(source.getResourceAmount(1)).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("B", 100));
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 99),
+            new ResourceAmount<>("B", 100)
+        );
     }
 
     @Test
@@ -63,16 +66,16 @@ class ImporterNetworkNodeTest {
         storageChannel.addSource(new LimitedStorageImpl<>(100));
         storageChannel.insert("C", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
-        final FakeSlottedImporterSource<String> source = new FakeSlottedImporterSource<>(10);
-        final ImporterTransferStrategy strategy = new SlottedImporterTransferStrategy<>(
+        final FakeImporterSource source = new FakeImporterSource("A", "B")
+            .add("A", 100)
+            .add("B", 100);
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl<>(
             source,
-            storageChannel,
+            sut,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             1
         );
         sut.setTransferStrategy(strategy);
-
-        source.setSlot(0, "A", 100);
-        source.setSlot(1, "B", 100);
 
         // Act
         sut.update();
@@ -81,28 +84,28 @@ class ImporterNetworkNodeTest {
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("C", 100)
         );
-        assertThat(source.getResourceAmount(0)).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 100));
-        assertThat(source.getResourceAmount(1)).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("B", 100));
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 100),
+            new ResourceAmount<>("B", 100)
+        );
     }
 
     @Test
-    void testTransferOverMultipleSlots(
+    void testCompleteTransferOverMultipleSlots(
         @InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
         // Arrange
         storageChannel.addSource(new InMemoryStorageImpl<>());
 
-        final FakeSlottedImporterSource<String> source = new FakeSlottedImporterSource<>(10);
-        final ImporterTransferStrategy strategy = new SlottedImporterTransferStrategy<>(
+        final FakeImporterSource source = new FakeImporterSource("A", "B", "A", "B")
+            .add("A", 10)
+            .add("B", 6);
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl<>(
             source,
-            storageChannel,
+            sut,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             10
         );
         sut.setTransferStrategy(strategy);
-
-        source.setSlot(0, "A", 8);
-        source.setSlot(1, "B", 1);
-        source.setSlot(2, "A", 4);
-        source.setSlot(3, "B", 5);
 
         // Act
         sut.update();
@@ -111,10 +114,39 @@ class ImporterNetworkNodeTest {
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("A", 10)
         );
-        assertThat(source.getResourceAmount(0)).isNull();
-        assertThat(source.getResourceAmount(1)).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("B", 1));
-        assertThat(source.getResourceAmount(2)).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 2));
-        assertThat(source.getResourceAmount(3)).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("B", 5));
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("B", 6)
+        );
+    }
+
+    @Test
+    void testTransferOverMultipleSlots(
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+        // Arrange
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+
+        final FakeImporterSource source = new FakeImporterSource("A", "B", "A", "B")
+            .add("A", 12)
+            .add("B", 6);
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl<>(
+            source,
+            sut,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
+            10
+        );
+        sut.setTransferStrategy(strategy);
+
+        // Act
+        sut.update();
+
+        // Assert
+        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("A", 10)
+        );
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 2),
+            new ResourceAmount<>("B", 6)
+        );
     }
 
     @Test
@@ -131,18 +163,16 @@ class ImporterNetworkNodeTest {
             }
         });
 
-        final FakeSlottedImporterSource<String> source = new FakeSlottedImporterSource<>(10);
-        final ImporterTransferStrategy strategy = new SlottedImporterTransferStrategy<>(
+        final FakeImporterSource source = new FakeImporterSource("A", "B", "B", "B")
+            .add("A", 8)
+            .add("B", 11);
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl<>(
             source,
-            storageChannel,
+            sut,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             10
         );
         sut.setTransferStrategy(strategy);
-
-        source.setSlot(0, "A", 8);
-        source.setSlot(1, "B", 5);
-        source.setSlot(2, "B", 5);
-        source.setSlot(3, "B", 1);
 
         // Act
         sut.update();
@@ -151,9 +181,9 @@ class ImporterNetworkNodeTest {
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("B", 10)
         );
-        assertThat(source.getResourceAmount(0)).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 8));
-        assertThat(source.getResourceAmount(1)).isNull();
-        assertThat(source.getResourceAmount(2)).isNull();
-        assertThat(source.getResourceAmount(3)).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("B", 1));
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 8),
+            new ResourceAmount<>("B", 1)
+        );
     }
 }

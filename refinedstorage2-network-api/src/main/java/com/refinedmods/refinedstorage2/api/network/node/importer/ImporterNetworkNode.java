@@ -9,6 +9,8 @@ import com.refinedmods.refinedstorage2.api.storage.Actor;
 import java.util.Set;
 import javax.annotation.Nullable;
 
+// TODO: must not transfer network signal in dir.
+// TODO: tick speed.
 public class ImporterNetworkNode extends AbstractNetworkNode {
     private final long energyUsage;
     private final Filter filter = new Filter();
@@ -21,7 +23,7 @@ public class ImporterNetworkNode extends AbstractNetworkNode {
         this.energyUsage = energyUsage;
     }
 
-    public <T> void setTransferStrategy(@Nullable final ImporterTransferStrategy transferStrategy) {
+    public void setTransferStrategy(@Nullable final ImporterTransferStrategy transferStrategy) {
         this.transferStrategy = transferStrategy;
     }
 

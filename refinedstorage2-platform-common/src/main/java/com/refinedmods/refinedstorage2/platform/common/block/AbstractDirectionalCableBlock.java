@@ -1,10 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
+import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionType;
+import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionTypeImpl;
+
 import java.util.Objects;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
@@ -19,12 +21,17 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public abstract class AbstractDirectionalCableBlock<T extends Enum<T> & StringRepresentable>
-    extends AbstractDirectionalBlock<T>
+public abstract class AbstractDirectionalCableBlock
+    extends AbstractDirectionalBlock<Direction>
     implements SimpleWaterloggedBlock {
 
     public AbstractDirectionalCableBlock(final Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected DirectionType<Direction> getDirectionType() {
+        return DirectionTypeImpl.INSTANCE;
     }
 
     @Override
@@ -53,7 +60,7 @@ public abstract class AbstractDirectionalCableBlock<T extends Enum<T> & StringRe
                                   final LevelAccessor level,
                                   final BlockPos pos,
                                   final BlockPos posFrom) {
-        return CableBlockSupport.getState(state, level, pos);
+        return CableBlockSupport.getState(state, level, pos, getDirection(state));
     }
 
     @Override
@@ -67,10 +74,13 @@ public abstract class AbstractDirectionalCableBlock<T extends Enum<T> & StringRe
 
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext ctx) {
+        final BlockState stateWithDirection = Objects.requireNonNull(super.getStateForPlacement(ctx));
+        final Direction direction = getDirection(stateWithDirection);
         return CableBlockSupport.getState(
-            Objects.requireNonNull(super.getStateForPlacement(ctx)),
+            stateWithDirection,
             ctx.getLevel(),
-            ctx.getClickedPos()
+            ctx.getClickedPos(),
+            direction
         );
     }
 

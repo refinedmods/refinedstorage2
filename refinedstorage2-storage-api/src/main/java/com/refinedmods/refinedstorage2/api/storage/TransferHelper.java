@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
 import org.apiguardian.api.API;
 
@@ -28,6 +29,7 @@ public final class TransferHelper {
                                     final Actor actor,
                                     final ExtractableStorage<T> source,
                                     final InsertableStorage<T> destination) {
+        ResourceAmount.validate(resource, amount);
         final long extractedSimulated = source.extract(resource, amount, Action.SIMULATE, actor);
         if (extractedSimulated == 0) {
             return 0;
