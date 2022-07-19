@@ -75,7 +75,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
             PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().getAll();
         final List<ImporterTransferStrategy> strategies = factories
             .stream()
-            .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, getNode()))
+            .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection))
             .toList();
         return new CompositeImporterTransferStrategy(strategies);
     }
