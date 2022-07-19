@@ -29,7 +29,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
             BlockEntities.INSTANCE.getImporter(),
             pos,
             state,
-            new ImporterNetworkNode(Platform.INSTANCE.getConfig().getImporter().getEnergyUsage())
+            new ImporterNetworkNode(Platform.INSTANCE.getConfig().getImporter().getEnergyUsage(), 8)
         );
     }
 

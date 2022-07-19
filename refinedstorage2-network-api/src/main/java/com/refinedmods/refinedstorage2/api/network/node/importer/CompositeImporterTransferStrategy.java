@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node.importer;
 
 import com.refinedmods.refinedstorage2.api.core.filter.Filter;
+import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 
 import java.util.Collections;
@@ -14,9 +15,9 @@ public class CompositeImporterTransferStrategy implements ImporterTransferStrate
     }
 
     @Override
-    public boolean transfer(final Filter filter, final Actor actor) {
+    public boolean transfer(final Filter filter, final Actor actor, final Network network) {
         for (final ImporterTransferStrategy strategy : strategies) {
-            if (strategy.transfer(filter, actor)) {
+            if (strategy.transfer(filter, actor, network)) {
                 return true;
             }
         }
