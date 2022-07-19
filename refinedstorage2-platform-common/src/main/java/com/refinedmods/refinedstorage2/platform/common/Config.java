@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
 
 import java.util.Optional;
 

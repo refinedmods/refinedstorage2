@@ -7,14 +7,14 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorag
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.fluid.FluidResourceType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.LimitedPlatformStorage;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid.FluidResourceType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.LimitedPlatformStorage;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nullable;
 
-// TODO: pkg structure of common / platform-api / fabric.
 // TODO: forge source impl.
 // TODO: fabric fluids impl. (test it)
 // TODO: no disk drive import?!
