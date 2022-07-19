@@ -31,7 +31,8 @@ public class FakeImporterSource implements ImporterSource<String> {
 
     @Override
     public long extract(final String resource, final long amount, final Action action, final Actor actor) {
-        return storage.extract(resource, amount, action, actor);
+        // extract a maximum of 5 to ensure that we try to extract multiple times from different slots.
+        return storage.extract(resource, Math.min(amount, 5), action, actor);
     }
 
     public Collection<ResourceAmount<String>> getAll() {

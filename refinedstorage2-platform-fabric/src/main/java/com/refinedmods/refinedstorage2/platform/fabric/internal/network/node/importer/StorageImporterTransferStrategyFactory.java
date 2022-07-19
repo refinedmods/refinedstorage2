@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.importer;
 
-import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategyImpl;
@@ -37,8 +36,7 @@ public class StorageImporterTransferStrategyFactory<T, P> implements ImporterTra
     @Override
     public ImporterTransferStrategy create(final ServerLevel level,
                                            final BlockPos pos,
-                                           final Direction direction,
-                                           final ImporterNetworkNode networkNode) {
+                                           final Direction direction) {
         final ImporterSource<T> source = new StorageImporterSource<>(
             lookup,
             fromPlatformMapper,
@@ -49,7 +47,6 @@ public class StorageImporterTransferStrategyFactory<T, P> implements ImporterTra
         );
         return new ImporterTransferStrategyImpl<>(
             source,
-            networkNode,
             storageChannelType,
             transferQuota
         );

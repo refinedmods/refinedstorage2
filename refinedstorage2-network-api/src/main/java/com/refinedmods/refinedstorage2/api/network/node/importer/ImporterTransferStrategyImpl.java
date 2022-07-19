@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.api.network.node.importer;
 import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.TransferHelper;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
@@ -14,26 +13,19 @@ import java.util.Objects;
 
 public class ImporterTransferStrategyImpl<T> implements ImporterTransferStrategy {
     private final ImporterSource<T> source;
-    private final NetworkNode networkNode;
     private final StorageChannelType<T> storageChannelType;
     private final long transferQuota;
 
     public ImporterTransferStrategyImpl(final ImporterSource<T> source,
-                                        final NetworkNode networkNode,
                                         final StorageChannelType<T> storageChannelType,
                                         final long transferQuota) {
         this.source = source;
-        this.networkNode = networkNode;
         this.storageChannelType = storageChannelType;
         this.transferQuota = transferQuota;
     }
 
     @Override
-    public boolean transfer(final Filter filter, final Actor actor) {
-        final Network network = networkNode.getNetwork();
-        if (network == null) {
-            return false;
-        }
+    public boolean transfer(final Filter filter, final Actor actor, final Network network) {
         final StorageChannel<T> storageChannel = network
             .getComponent(StorageNetworkComponent.class)
             .getStorageChannel(storageChannelType);
