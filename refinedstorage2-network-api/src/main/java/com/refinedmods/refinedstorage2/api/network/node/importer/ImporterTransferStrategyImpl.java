@@ -55,9 +55,9 @@ public class ImporterTransferStrategyImpl<T> implements ImporterTransferStrategy
                                  final Actor actor,
                                  final long totalTransferred,
                                  final T workingResource,
-                                 final T resourceInSlot) {
-        if (Objects.equals(workingResource, resourceInSlot)) {
-            return performTransfer(storageChannel, actor, totalTransferred, resourceInSlot);
+                                 final T resource) {
+        if (Objects.equals(workingResource, resource)) {
+            return performTransfer(storageChannel, actor, totalTransferred, resource);
         }
         return 0L;
     }
@@ -65,9 +65,9 @@ public class ImporterTransferStrategyImpl<T> implements ImporterTransferStrategy
     private long performTransfer(final StorageChannel<T> storageChannel,
                                  final Actor actor,
                                  final long totalTransferred,
-                                 final T resourceInSlot) {
+                                 final T resource) {
         return TransferHelper.transfer(
-            resourceInSlot,
+            resource,
             transferQuota - totalTransferred,
             actor,
             source,

@@ -81,7 +81,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
     }
 
     @Override
-    public boolean canAcceptOutgoingConnection(final Direction direction) {
+    public boolean canPerformOutgoingConnection(final Direction direction) {
         return getMyDirection() != direction;
     }
 

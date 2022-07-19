@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.internal.grid.view;
 
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.view.AbstractItemGridResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.AbstractItemGridResourceFactory;
 
 import java.util.Objects;
 import java.util.Optional;
