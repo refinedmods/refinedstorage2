@@ -10,8 +10,6 @@ import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nullable;
 
-// TODO: forge source impl.
-// TODO: fabric fluids impl. (test it)
 // TODO: Write a gametest.
 // TODO: gui config etc.
 public class ImporterNetworkNode extends AbstractNetworkNode {

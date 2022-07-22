@@ -50,6 +50,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockIte
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.FluidHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.ItemHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
@@ -162,6 +163,10 @@ public class ModInitializer extends AbstractModInitializer {
         PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().register(
             createIdentifier("item"),
             new ItemHandlerImporterTransferStrategyFactory()
+        );
+        PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().register(
+            createIdentifier("fluid"),
+            new FluidHandlerImporterTransferStrategyFactory()
         );
     }
 

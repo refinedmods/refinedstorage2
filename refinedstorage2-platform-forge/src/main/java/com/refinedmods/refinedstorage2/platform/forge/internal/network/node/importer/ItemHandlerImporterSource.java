@@ -86,8 +86,8 @@ public class ItemHandlerImporterSource implements ImporterSource<ItemResource> {
 
     @Override
     public long insert(final ItemResource resource, final long amount, final Action action, final Actor actor) {
-        final ItemStack stack = toItemStack(resource, amount);
         return getItemHandler().map(itemHandler -> {
+            final ItemStack stack = toItemStack(resource, amount);
             final ItemStack remainder = ItemHandlerHelper.insertItem(
                 itemHandler,
                 stack,
