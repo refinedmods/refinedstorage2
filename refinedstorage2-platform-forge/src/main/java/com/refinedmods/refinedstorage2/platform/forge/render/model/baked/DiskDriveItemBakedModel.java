@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
@@ -13,26 +14,28 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.BakedModelWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskDriveItemBakedModel extends AbstractForwardingBakedModel {
-    private final BakedModel diskDisconnectedModel;
+public class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
+    private final BakedModel baseModel;
+    private final Function<Vector3f, BakedModel> diskBakery;
     private final Vector3f[] translators;
     private final long disks;
-    private final Map<Direction, List<BakedQuad>> quadCache = new EnumMap<>(Direction.class);
+    private final Map<Direction, List<BakedQuad>> cache = new EnumMap<>(Direction.class);
     @Nullable
-    private List<BakedQuad> cachedQuadsForNoSide;
+    private List<BakedQuad> noSideCache;
 
     public DiskDriveItemBakedModel(final BakedModel baseModel,
-                                   final BakedModel diskDisconnectedModel,
+                                   final Function<Vector3f, BakedModel> diskBakery,
                                    final Vector3f[] translators,
                                    final long disks) {
         super(baseModel);
-        this.diskDisconnectedModel = diskDisconnectedModel;
+        this.baseModel = baseModel;
+        this.diskBakery = diskBakery;
         this.translators = translators;
         this.disks = disks;
     }
@@ -42,51 +45,45 @@ public class DiskDriveItemBakedModel extends AbstractForwardingBakedModel {
         return ItemOverrides.EMPTY;
     }
 
-    @NotNull
     @Override
-    public List<BakedQuad> getQuads(@Nullable final BlockState state,
-                                    @Nullable final Direction side,
-                                    @NotNull final RandomSource rand) {
+    public @NotNull List<BakedQuad> getQuads(@Nullable final BlockState state,
+                                             @Nullable final Direction side,
+                                             @NotNull final RandomSource rand) {
         if (side == null) {
-            if (cachedQuadsForNoSide == null) {
-                cachedQuadsForNoSide = getDiskModel(null, rand);
+            if (noSideCache == null) {
+                noSideCache = createQuads(state, null, rand);
             }
-            return cachedQuadsForNoSide;
+            return noSideCache;
         }
-        return quadCache.computeIfAbsent(side, key -> getDiskModel(key, rand));
+        return cache.computeIfAbsent(side, key -> createQuads(state, side, rand));
     }
 
-    private List<BakedQuad> getDiskModel(@Nullable final Direction side,
-                                         final RandomSource rand) {
-        final List<BakedQuad> quads = new ArrayList<>(baseModel.getQuads(
-            null,
+    private List<BakedQuad> createQuads(@Nullable final BlockState state,
+                                        @Nullable final Direction side,
+                                        @NotNull final RandomSource rand) {
+        final List<BakedQuad> quads = new ArrayList<>(super.getQuads(
+            state,
             side,
-            rand,
-            EmptyModelData.INSTANCE
+            rand
         ));
         for (int i = 0; i < translators.length; ++i) {
             if ((disks & (1L << i)) != 0) {
-                quads.addAll(getDiskModel(side, rand, translators[i]));
+                quads.addAll(diskBakery.apply(translators[i]).getQuads(state, side, rand));
             }
         }
         return quads;
     }
 
-    private List<BakedQuad> getDiskModel(@Nullable final Direction side,
-                                         final RandomSource rand,
-                                         final Vector3f translation) {
-        final List<BakedQuad> diskQuads = diskDisconnectedModel.getQuads(
-            null,
-            side,
-            rand,
-            EmptyModelData.INSTANCE
-        );
-        return QuadTransformer.translate(diskQuads, translation);
+    @Override
+    public List<BakedModel> getRenderPasses(final ItemStack itemStack, final boolean fabulous) {
+        return List.of(this);
     }
 
     @Override
-    public BakedModel handlePerspective(final ItemTransforms.TransformType cameraTransformType,
-                                        final PoseStack poseStack) {
-        return ForgeHooksClient.handlePerspective(this, cameraTransformType, poseStack);
+    public BakedModel applyTransform(final ItemTransforms.TransformType cameraTransformType,
+                                     final PoseStack poseStack,
+                                     final boolean applyLeftHandTransform) {
+        baseModel.getTransforms().getTransform(cameraTransformType).apply(applyLeftHandTransform, poseStack);
+        return this;
     }
 }

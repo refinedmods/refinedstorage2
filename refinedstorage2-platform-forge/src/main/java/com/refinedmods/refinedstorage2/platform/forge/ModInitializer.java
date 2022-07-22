@@ -130,11 +130,11 @@ public class ModInitializer extends AbstractModInitializer {
     private final DeferredRegister<Item> itemRegistry =
         DeferredRegister.create(ForgeRegistries.ITEMS, IdentifierUtil.MOD_ID);
     private final DeferredRegister<BlockEntityType<?>> blockEntityTypeRegistry =
-        DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, IdentifierUtil.MOD_ID);
+        DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, IdentifierUtil.MOD_ID);
     private final DeferredRegister<LootItemFunctionType> lootFunctionTypeRegistry =
         DeferredRegister.create(Registry.LOOT_FUNCTION_REGISTRY, IdentifierUtil.MOD_ID);
     private final DeferredRegister<MenuType<?>> menuTypeRegistry =
-        DeferredRegister.create(ForgeRegistries.CONTAINERS, IdentifierUtil.MOD_ID);
+        DeferredRegister.create(ForgeRegistries.MENU_TYPES, IdentifierUtil.MOD_ID);
     private final DeferredRegister<SoundEvent> soundEventRegistry =
         DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, IdentifierUtil.MOD_ID);
 
@@ -152,7 +152,8 @@ public class ModInitializer extends AbstractModInitializer {
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onClientSetup);
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterModels);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterModelGeometry);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterKeyMappings);
         });
 
         MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);
@@ -534,14 +535,14 @@ public class ModInitializer extends AbstractModInitializer {
 
     @SubscribeEvent
     public void onRightClickBlock(final PlayerInteractEvent.RightClickBlock e) {
-        final BlockState state = e.getWorld().getBlockState(e.getHitVec().getBlockPos());
+        final BlockState state = e.getLevel().getBlockState(e.getHitVec().getBlockPos());
 
-        AbstractBaseBlock.tryUseWrench(state, e.getWorld(), e.getHitVec(), e.getPlayer(), e.getHand())
+        AbstractBaseBlock.tryUseWrench(state, e.getLevel(), e.getHitVec(), e.getEntity(), e.getHand())
             .or(() -> AbstractBaseBlock.tryUpdateColor(
                 state,
-                e.getWorld(),
+                e.getLevel(),
                 e.getHitVec().getBlockPos(),
-                e.getPlayer(),
+                e.getEntity(),
                 e.getHand()
             ))
             .ifPresent(result -> {
