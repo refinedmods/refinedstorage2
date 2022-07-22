@@ -5,8 +5,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.Ab
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +24,7 @@ public class ForgeDiskDriveBlockEntity extends AbstractDiskDriveBlockEntity {
 
     @NotNull
     @Override
-    public IModelData getModelData() {
-        return new ModelDataMap.Builder().withInitial(STATE_PROPERTY, driveState).build();
+    public ModelData getModelData() {
+        return ModelData.builder().with(STATE_PROPERTY, driveState).build();
     }
 }

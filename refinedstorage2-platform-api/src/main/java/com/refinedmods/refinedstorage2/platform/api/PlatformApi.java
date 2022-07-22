@@ -8,8 +8,6 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
@@ -28,10 +26,6 @@ public interface PlatformApi {
     OrderedRegistry<ResourceLocation, StorageChannelType<?>> getStorageChannelTypeRegistry();
 
     OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> getImporterTransferStrategyRegistry();
-
-    StorageType<ItemResource> getItemStorageType();
-
-    StorageType<FluidResource> getFluidStorageType();
 
     MutableComponent createTranslation(String category, String value, Object... args);
 

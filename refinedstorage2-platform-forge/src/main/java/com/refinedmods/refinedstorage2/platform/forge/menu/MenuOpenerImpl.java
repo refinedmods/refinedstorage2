@@ -11,7 +11,11 @@ public class MenuOpenerImpl implements MenuOpener {
     @Override
     public void openMenu(final ServerPlayer player, final MenuProvider menuProvider) {
         if (menuProvider instanceof ExtendedMenuProvider extendedMenuProvider) {
-            NetworkHooks.openGui(player, menuProvider, buf -> extendedMenuProvider.writeScreenOpeningData(player, buf));
+            NetworkHooks.openScreen(
+                player,
+                menuProvider,
+                buf -> extendedMenuProvider.writeScreenOpeningData(player, buf)
+            );
         } else {
             player.openMenu(menuProvider);
         }
