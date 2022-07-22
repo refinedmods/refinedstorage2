@@ -94,7 +94,8 @@ class TransferHelperTest {
             transfer.amountToTransfer.getAmount(),
             EmptyActor.INSTANCE,
             source,
-            destination
+            destination,
+            null
         );
 
         // Assert
@@ -132,7 +133,7 @@ class TransferHelperTest {
         source.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
-        final long transferred = TransferHelper.transfer("A", 50, EmptyActor.INSTANCE, source, destination);
+        final long transferred = TransferHelper.transfer("A", 50, EmptyActor.INSTANCE, source, destination, null);
 
         // Assert
         assertThat(transferred).isZero();
@@ -161,7 +162,73 @@ class TransferHelperTest {
         // Act & assert
         assertThrows(
             IllegalStateException.class,
-            () -> TransferHelper.transfer("A", 50, EmptyActor.INSTANCE, source, destination)
+            () -> TransferHelper.transfer("A", 50, EmptyActor.INSTANCE, source, destination, null)
+        );
+    }
+
+    @Test
+    void shouldRefundLeftoversToFallbackWhenEventualExecutedInsertToDestinationFailed() {
+        // Arrange
+        final Storage<String> source = new LimitedStorageImpl<>(100);
+        final Storage<String> destination = new LimitedStorageImpl<>(100) {
+            @Override
+            public long insert(final String resource, final long amount, final Action action, final Actor actor) {
+                if (action == Action.EXECUTE) {
+                    return super.insert(resource, Math.min(amount, 25), action, actor);
+                }
+                return super.insert(resource, amount, action, actor);
+            }
+        };
+
+        source.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // Act
+        TransferHelper.transfer("A", 50, EmptyActor.INSTANCE, source, destination, source);
+
+        // Assert
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("A", 75)
+        );
+        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("A", 25)
+        );
+    }
+
+    @Test
+    void shouldRefundLeftoversToFallbackWhenEventualExecutedInsertToDestinationFailedEvenIfFallbackDoesNotAcceptAll() {
+        // Arrange
+        final InMemoryStorageImpl<String> underlyingSource = new InMemoryStorageImpl<>();
+        final Storage<String> source = new LimitedStorageImpl<>(underlyingSource, 100) {
+            @Override
+            public long insert(final String resource, final long amount, final Action action, final Actor actor) {
+                if (action == Action.EXECUTE) {
+                    // we'll try to reinsert 25, but only accept 10.
+                    return super.insert(resource, Math.min(amount, 10), action, actor);
+                }
+                return super.insert(resource, amount, action, actor);
+            }
+        };
+        final Storage<String> destination = new LimitedStorageImpl<>(100) {
+            @Override
+            public long insert(final String resource, final long amount, final Action action, final Actor actor) {
+                if (action == Action.EXECUTE) {
+                    return super.insert(resource, Math.min(amount, 25), action, actor);
+                }
+                return super.insert(resource, amount, action, actor);
+            }
+        };
+
+        underlyingSource.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // Act
+        TransferHelper.transfer("A", 50, EmptyActor.INSTANCE, source, destination, source);
+
+        // Assert
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("A", 60)
+        );
+        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("A", 25)
         );
     }
 
@@ -178,21 +245,24 @@ class TransferHelperTest {
             0,
             EmptyActor.INSTANCE,
             source,
-            destination
+            destination,
+            null
         );
         final Executable action2 = () -> TransferHelper.transfer(
             "A",
             -1,
             EmptyActor.INSTANCE,
             source,
-            destination
+            destination,
+            null
         );
         final Executable action3 = () -> TransferHelper.transfer(
             null,
             1,
             EmptyActor.INSTANCE,
             source,
-            destination
+            destination,
+            null
         );
 
         // Assert

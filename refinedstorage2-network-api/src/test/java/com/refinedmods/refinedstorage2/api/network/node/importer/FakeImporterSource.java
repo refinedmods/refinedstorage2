@@ -38,4 +38,9 @@ public class FakeImporterSource implements ImporterSource<String> {
     public Collection<ResourceAmount<String>> getAll() {
         return storage.getAll();
     }
+
+    @Override
+    public long insert(final String resource, final long amount, final Action action, final Actor actor) {
+        return storage.insert(resource, amount, action, actor);
+    }
 }

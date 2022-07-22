@@ -65,4 +65,19 @@ public class StorageImporterSource<T, P> implements ImporterSource<T> {
             return extracted;
         }
     }
+
+    @Override
+    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
+        final Storage<P> storage = cache.find(direction);
+        if (storage == null) {
+            return 0L;
+        }
+        try (Transaction tx = Transaction.openOuter()) {
+            final long extracted = storage.insert(toPlatformMapper.apply(resource), amount, tx);
+            if (action == Action.EXECUTE) {
+                tx.commit();
+            }
+            return extracted;
+        }
+    }
 }

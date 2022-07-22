@@ -1,6 +1,7 @@
 archivesBaseName = 'refinedstorage2-storage-api'
 
 dependencies {
+    implementation "org.apache.logging.log4j:log4j-api:${project.log4jVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${project.junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
     testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
