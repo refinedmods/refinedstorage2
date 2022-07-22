@@ -19,6 +19,7 @@ public abstract class AbstractDirectionalBlock<T extends Enum<T> & StringReprese
 
     protected abstract DirectionType<T> getDirectionType();
 
+    @Override
     protected BlockState getDefaultState() {
         return super.getDefaultState().setValue(getDirectionType().getProperty(), getDirectionType().getDefault());
     }

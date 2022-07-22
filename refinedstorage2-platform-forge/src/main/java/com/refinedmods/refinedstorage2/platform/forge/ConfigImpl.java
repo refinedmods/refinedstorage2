@@ -392,7 +392,7 @@ public class ConfigImpl implements Config {
             builder.push("importer");
             energyUsage = builder
                 .comment("The energy used by the Importer")
-                .defineInRange("energyUsage", 2, 0, Long.MAX_VALUE);
+                .defineInRange(ENERGY_USAGE, 2, 0, Long.MAX_VALUE);
             builder.pop();
         }
 

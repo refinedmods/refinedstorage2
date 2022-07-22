@@ -25,7 +25,7 @@ public abstract class AbstractDirectionalCableBlock
     extends AbstractDirectionalBlock<Direction>
     implements SimpleWaterloggedBlock {
 
-    public AbstractDirectionalCableBlock(final Properties properties) {
+    protected AbstractDirectionalCableBlock(final Properties properties) {
         super(properties);
     }
 
