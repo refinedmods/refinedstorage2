@@ -7,9 +7,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- The Importer will now extract as much of 1 resource type as possible, according to the per tick transfer quota, at
+  once for all the inventory slots.
+- The Importer no longer transmits a network signal on the direction it's facing.
+- The Importer can now import from the Disk Drive.
+
 ### Fixed
 
 - Fixed Grid stack zeroing not working correctly when Auto-selected mode is on.
+
+### Added
+
+- Importer.
 
 ## [2.0.0-milestone.2.0] - 2022-07-05
 
@@ -18,15 +29,11 @@ Device inventories and disks created in v2.0.0-milestone.1.4 will be lost.
 ### Changed
 
 - Ported to Minecraft 1.19.
-- The Importer will now extract as much of 1 resource type as possible, according to the per tick transfer quota, at
-  once for all the inventory slots.
-- The Importer no longer transmits a network signal.
 
 ### Added
 
 - Added JEI support to Fabric.
 - Added REI support to Forge.
-- Importer.
 
 ### Fixed
 
