@@ -282,6 +282,13 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerItems() {
+        registerSimpleItems();
+        registerGridItems();
+        registerControllerItems();
+        registerStorageItems();
+    }
+
+    private void registerSimpleItems() {
         register(
             Registry.ITEM,
             CABLE,
@@ -328,6 +335,21 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing(), CREATIVE_MODE_TAB)
         );
 
+        register(Registry.ITEM, IMPORTER, new SimpleBlockItem(Blocks.INSTANCE.getImporter(), CREATIVE_MODE_TAB));
+
+        register(Registry.ITEM, CONSTRUCTION_CORE, new SimpleItem(CREATIVE_MODE_TAB));
+        register(Registry.ITEM, DESTRUCTION_CORE, new SimpleItem(CREATIVE_MODE_TAB));
+
+        for (final ProcessorItem.Type type : ProcessorItem.Type.values()) {
+            register(
+                Registry.ITEM,
+                forProcessor(type),
+                new ProcessorItem(CREATIVE_MODE_TAB)
+            );
+        }
+    }
+
+    private void registerGridItems() {
         Blocks.INSTANCE.getGrid().forEach((color, block) -> register(
             Registry.ITEM,
             Blocks.INSTANCE.getGrid().getId(color, GRID),
@@ -344,6 +366,9 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")
             ))
         ));
+    }
+
+    private void registerControllerItems() {
         Blocks.INSTANCE.getController().forEach((color, block) -> Items.INSTANCE.getControllers().add(register(
             Registry.ITEM,
             Blocks.INSTANCE.getController().getId(color, CONTROLLER),
@@ -364,15 +389,9 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 )
             )
         ));
+    }
 
-        for (final ProcessorItem.Type type : ProcessorItem.Type.values()) {
-            register(
-                Registry.ITEM,
-                forProcessor(type),
-                new ProcessorItem(CREATIVE_MODE_TAB)
-            );
-        }
-
+    private void registerStorageItems() {
         for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
             if (variant != ItemStorageType.Variant.CREATIVE) {
                 Items.INSTANCE.setItemStoragePart(variant, register(
@@ -424,11 +443,6 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlock(v), CREATIVE_MODE_TAB, v)
             );
         }
-
-        register(Registry.ITEM, IMPORTER, new SimpleBlockItem(Blocks.INSTANCE.getImporter(), CREATIVE_MODE_TAB));
-
-        register(Registry.ITEM, CONSTRUCTION_CORE, new SimpleItem(CREATIVE_MODE_TAB));
-        register(Registry.ITEM, DESTRUCTION_CORE, new SimpleItem(CREATIVE_MODE_TAB));
     }
 
     private void registerBlockEntities() {
