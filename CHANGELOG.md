@@ -13,6 +13,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   once for all the inventory slots.
 - The Importer no longer transmits a network signal on the direction it's facing.
 - The Importer can now import from the Disk Drive.
+- The Importer no longer has a dedicated item/fluid mode. It will import what it's connected to, 1 resource type per
+  tick is possible.
 
 ### Fixed
 
