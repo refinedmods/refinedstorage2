@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBlock;
@@ -49,6 +50,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockIte
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.ItemHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
 import net.minecraft.core.Direction;
@@ -141,6 +143,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerAdditionalStorageTypes();
         registerAdditionalStorageChannelTypes();
         registerNetworkComponents();
+        registerImporterTransferStrategyFactories();
         registerContent();
         registerSounds();
         registerAdditionalResourceTypes();
@@ -153,6 +156,13 @@ public class ModInitializer extends AbstractModInitializer {
 
         MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerCapabilities);
+    }
+
+    private void registerImporterTransferStrategyFactories() {
+        PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().register(
+            createIdentifier("item"),
+            new ItemHandlerImporterTransferStrategyFactory()
+        );
     }
 
     private void registerContent() {
@@ -234,6 +244,15 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerItems() {
+        registerSimpleItems();
+        registerGridItems();
+        registerControllerItems();
+        registerStorageItems();
+
+        itemRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
+    }
+
+    private void registerSimpleItems() {
         itemRegistry.register(
             CABLE.getPath(),
             () -> new SimpleBlockItem(Blocks.INSTANCE.getCable(), CREATIVE_MODE_TAB)
@@ -272,6 +291,20 @@ public class ModInitializer extends AbstractModInitializer {
             () -> new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing(), CREATIVE_MODE_TAB)
         );
 
+        for (final ProcessorItem.Type type : ProcessorItem.Type.values()) {
+            itemRegistry.register(forProcessor(type).getPath(), () -> new ProcessorItem(CREATIVE_MODE_TAB));
+        }
+
+        itemRegistry.register(
+            IMPORTER.getPath(),
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getImporter(), CREATIVE_MODE_TAB)
+        );
+
+        itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
+        itemRegistry.register(DESTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
+    }
+
+    private void registerGridItems() {
         Blocks.INSTANCE.getGrid().forEach((color, block) -> itemRegistry.register(
             Blocks.INSTANCE.getGrid().getId(color, GRID).getPath(),
             () -> new GridBlockItem(
@@ -294,6 +327,9 @@ public class ModInitializer extends AbstractModInitializer {
                 ))
             )
         ));
+    }
+
+    private void registerControllerItems() {
         Blocks.INSTANCE.getController().forEach((c, block) -> Items.INSTANCE.getControllers().add(itemRegistry.register(
             Blocks.INSTANCE.getController().getId(c, CONTROLLER).getPath(),
             () -> new ControllerBlockItem(
@@ -316,11 +352,9 @@ public class ModInitializer extends AbstractModInitializer {
                 ))
             )
         ));
+    }
 
-        for (final ProcessorItem.Type type : ProcessorItem.Type.values()) {
-            itemRegistry.register(forProcessor(type).getPath(), () -> new ProcessorItem(CREATIVE_MODE_TAB));
-        }
-
+    private void registerStorageItems() {
         for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
             if (variant != ItemStorageType.Variant.CREATIVE) {
                 Items.INSTANCE.setItemStoragePart(variant, itemRegistry.register(
@@ -374,16 +408,6 @@ public class ModInitializer extends AbstractModInitializer {
                 )
             );
         }
-
-        itemRegistry.register(
-            IMPORTER.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getImporter(), CREATIVE_MODE_TAB)
-        );
-
-        itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
-        itemRegistry.register(DESTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
-
-        itemRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void registerBlockEntities() {
