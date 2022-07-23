@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
+import com.refinedmods.refinedstorage2.platform.common.content.ColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
@@ -13,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockS
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
+import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiGridSynchronizer;
@@ -27,6 +29,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ResourceFilter
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.StorageInfoResponsePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.render.entity.DiskDriveBlockEntityRendererImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.render.model.DiskDriveUnbakedModel;
+import com.refinedmods.refinedstorage2.platform.fabric.render.model.EmissiveModelRegistry;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
@@ -40,6 +43,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -53,6 +57,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         setRenderLayers();
+        registerEmissiveModels();
         registerPackets();
         registerBlockEntityRenderers();
         registerCustomModels();
@@ -73,6 +78,51 @@ public class ClientModInitializerImpl implements ClientModInitializer {
             BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
         Blocks.INSTANCE.getCreativeController().values().forEach(block ->
             BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
+    }
+
+    private void registerEmissiveModels() {
+        for (final DyeColor color : DyeColor.values()) {
+            registerEmissiveControllerModels(color);
+            registerEmissiveGridModels(color);
+            registerEmissiveFluidGridModels(color);
+        }
+    }
+
+    private void registerEmissiveControllerModels(final DyeColor color) {
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/controller/" + color.getName()),
+            createIdentifier("block/controller/cutouts/" + color.getName())
+        );
+        EmissiveModelRegistry.INSTANCE.register(
+            ColorMap.generateId(color, IdentifierUtil.MOD_ID, "controller"),
+            createIdentifier("block/controller/cutouts/" + color.getName())
+        );
+        EmissiveModelRegistry.INSTANCE.register(
+            ColorMap.generateId(color, IdentifierUtil.MOD_ID, "creative_controller"),
+            createIdentifier("block/controller/cutouts/" + color.getName())
+        );
+    }
+
+    private void registerEmissiveGridModels(final DyeColor color) {
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/grid/" + color.getName()),
+            createIdentifier("block/grid/cutouts/" + color.getName())
+        );
+        EmissiveModelRegistry.INSTANCE.register(
+            ColorMap.generateId(color, IdentifierUtil.MOD_ID, "grid"),
+            createIdentifier("block/grid/cutouts/" + color.getName())
+        );
+    }
+
+    private void registerEmissiveFluidGridModels(final DyeColor color) {
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/fluid_grid/" + color.getName()),
+            createIdentifier("block/fluid_grid/cutouts/" + color.getName())
+        );
+        EmissiveModelRegistry.INSTANCE.register(
+            ColorMap.generateId(color, IdentifierUtil.MOD_ID, "fluid_grid"),
+            createIdentifier("block/fluid_grid/cutouts/" + color.getName())
+        );
     }
 
     private void registerPackets() {

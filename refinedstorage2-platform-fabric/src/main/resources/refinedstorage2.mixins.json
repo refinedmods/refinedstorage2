@@ -6,7 +6,8 @@
   "client": [
     "EditBoxAccessor",
     "ItemPropertiesAccessor",
-    "KeyMappingAccessor"
+    "KeyMappingAccessor",
+    "ModelBakeryMixin"
   ],
   "injectors": {
     "defaultRequire": 1
