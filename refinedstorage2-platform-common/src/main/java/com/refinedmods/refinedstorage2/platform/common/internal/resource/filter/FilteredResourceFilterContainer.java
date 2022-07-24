@@ -11,6 +11,13 @@ public class FilteredResourceFilterContainer extends ResourceFilterContainer {
 
     public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                            final int size,
+                                           final ResourceType allowedType) {
+        this(resourceTypeRegistry, size, () -> {
+        }, allowedType);
+    }
+
+    public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                           final int size,
                                            final Runnable listener,
                                            final ResourceType allowedType) {
         super(resourceTypeRegistry, size, listener);

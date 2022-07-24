@@ -36,7 +36,7 @@ public final class PropertyTypes {
 
     public static final PropertyType<Boolean> EXACT_MODE = new PropertyType<>(
         createIdentifier("exact_mode"),
-        value -> value ? 1 : 0,
+        value -> Boolean.TRUE.equals(value) ? 1 : 0,
         value -> value == 1
     );
 
