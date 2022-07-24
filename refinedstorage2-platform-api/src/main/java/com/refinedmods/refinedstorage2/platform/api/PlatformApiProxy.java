@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.importer.Import
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
 import javax.annotation.Nullable;
 
@@ -67,6 +68,11 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public OrderedRegistry<ResourceLocation, GridSynchronizer> getGridSynchronizerRegistry() {
         return ensureLoaded().getGridSynchronizerRegistry();
+    }
+
+    @Override
+    public UpgradeRegistry getUpgradeRegistry() {
+        return ensureLoaded().getUpgradeRegistry();
     }
 
     @Override

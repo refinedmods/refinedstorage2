@@ -41,6 +41,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem
 import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
+import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
@@ -54,6 +55,8 @@ import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriv
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.FluidHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.ItemHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
+
+import java.util.function.Supplier;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -103,8 +106,10 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SILICON;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SPEED_UPGRADE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_HOUSING;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.UPGRADE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageBlock;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageDisk;
@@ -255,6 +260,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerGridItems();
         registerControllerItems();
         registerStorageItems();
+        registerUpgrades();
 
         itemRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -415,6 +421,18 @@ public class ModInitializer extends AbstractModInitializer {
                 )
             );
         }
+    }
+
+    private void registerUpgrades() {
+        itemRegistry.register(
+            UPGRADE.getPath(),
+            () -> new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+        );
+        final Supplier<Item> speedUpgrade = itemRegistry.register(
+            SPEED_UPGRADE.getPath(),
+            () -> new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+        );
+        addApplicableUpgrades(speedUpgrade);
     }
 
     private void registerBlockEntities() {

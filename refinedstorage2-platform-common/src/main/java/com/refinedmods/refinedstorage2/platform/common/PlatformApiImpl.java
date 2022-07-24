@@ -17,6 +17,7 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.importer.Import
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemResourceType;
@@ -24,6 +25,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientSt
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
@@ -57,6 +59,7 @@ public class PlatformApiImpl implements PlatformApi {
     private final OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> importerTransferStrategyRegistry =
         new OrderedRegistryImpl<>(createIdentifier("noop"),
             (level, pos, direction) -> (filter, actor, network) -> false);
+    private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
 
     @Override
     public OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry() {
@@ -116,6 +119,11 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public OrderedRegistry<ResourceLocation, GridSynchronizer> getGridSynchronizerRegistry() {
         return gridSynchronizerRegistry;
+    }
+
+    @Override
+    public UpgradeRegistry getUpgradeRegistry() {
+        return upgradeRegistry;
     }
 
     @Override
