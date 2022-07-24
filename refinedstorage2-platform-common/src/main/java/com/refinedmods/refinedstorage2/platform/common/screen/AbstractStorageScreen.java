@@ -2,6 +2,8 @@ package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBaseContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AccessModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ExactModeSideButtonWidget;
@@ -19,9 +21,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 
-public abstract class AbstractStorageScreen<T extends AbstractContainerMenu & StorageAccessor>
+public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu & StorageAccessor>
     extends AbstractBaseScreen<T> {
     private final ProgressWidget progressWidget;
     private final Inventory playerInventory;
@@ -57,11 +58,30 @@ public abstract class AbstractStorageScreen<T extends AbstractContainerMenu & St
     @Override
     protected void init() {
         super.init();
-        addSideButton(new RedstoneModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
-        addSideButton(new FilterModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
-        addSideButton(new ExactModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
-        addSideButton(new AccessModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
-        addSideButton(new PrioritySideButtonWidget(getMenu(), playerInventory, this, this::renderComponentTooltip));
+
+        addSideButton(new RedstoneModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
+            this::renderComponentTooltip
+        ));
+        addSideButton(new FilterModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.FILTER_MODE),
+            this::renderComponentTooltip
+        ));
+        addSideButton(new ExactModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.EXACT_MODE),
+            this::renderComponentTooltip
+        ));
+        addSideButton(new AccessModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.ACCESS_MODE),
+            this::renderComponentTooltip
+        ));
+        addSideButton(new PrioritySideButtonWidget(
+            getMenu().getProperty(PropertyTypes.PRIORITY),
+            playerInventory,
+            this,
+            this::renderComponentTooltip
+        ));
+
         final ResourceFilterButtonWidget resourceFilterButton = new ResourceFilterButtonWidget(
             leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7,
             topPos + 4,

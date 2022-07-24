@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ExactModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.FilterModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
@@ -32,9 +33,19 @@ public class ImporterScreen extends AbstractBaseScreen<ImporterContainerMenu> {
     @Override
     protected void init() {
         super.init();
-        addSideButton(new RedstoneModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
-        addSideButton(new FilterModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
-        addSideButton(new ExactModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
+
+        addSideButton(new RedstoneModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
+            this::renderComponentTooltip
+        ));
+        addSideButton(new FilterModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.FILTER_MODE),
+            this::renderComponentTooltip
+        ));
+        addSideButton(new ExactModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.EXACT_MODE),
+            this::renderComponentTooltip
+        ));
 
         final ResourceFilterButtonWidget resourceFilterButton = new ResourceFilterButtonWidget(
             leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7,

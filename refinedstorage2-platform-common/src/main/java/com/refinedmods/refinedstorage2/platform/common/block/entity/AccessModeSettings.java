@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.property.TwoWaySyncProperty;
 
 public class AccessModeSettings {
     private static final int INSERT_EXTRACT = 0;
@@ -26,16 +25,5 @@ public class AccessModeSettings {
             case INSERT -> INSERT;
             case EXTRACT -> EXTRACT;
         };
-    }
-
-    public static TwoWaySyncProperty<AccessMode> createClientSyncProperty(final int index) {
-        return TwoWaySyncProperty.forClient(
-            index,
-            AccessModeSettings::getAccessMode,
-            AccessModeSettings::getAccessMode,
-            AccessMode.INSERT_EXTRACT,
-            accessMode -> {
-            }
-        );
     }
 }

@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 import net.minecraft.server.level.ServerPlayer;
 
 public interface ServerToClientCommunications {
-    void sendControllerEnergy(ServerPlayer player, long stored, long capacity);
+    void sendControllerEnergyInfo(ServerPlayer player, long stored, long capacity);
 
     void sendGridActiveness(ServerPlayer player, boolean active);
 

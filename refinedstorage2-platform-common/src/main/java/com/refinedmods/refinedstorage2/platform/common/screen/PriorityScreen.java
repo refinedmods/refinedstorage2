@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.PriorityAccessor;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 
 import javax.annotation.Nullable;
 
@@ -47,18 +47,18 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
     private static final int INCREMENT_BUTTON_BOTTOM_Y = 64;
 
     private final Screen parent;
-    private final PriorityAccessor priorityAccessor;
+    private final ClientProperty<Integer> property;
 
     @Nullable
     private EditBox amountField;
 
-    public PriorityScreen(final PriorityAccessor priorityAccessor,
+    public PriorityScreen(final ClientProperty<Integer> property,
                           final Screen parent,
                           final Inventory playerInventory) {
         super(new DummyContainerMenu(), playerInventory, PriorityScreen.PRIORITY_TEXT);
 
         this.parent = parent;
-        this.priorityAccessor = priorityAccessor;
+        this.property = property;
 
         this.titleLabelX = 7;
         this.titleLabelY = 7;
@@ -101,7 +101,7 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
             Component.empty()
         );
         amountField.setBordered(false);
-        amountField.setValue(String.valueOf(priorityAccessor.getPriority()));
+        amountField.setValue(String.valueOf(property.getValue()));
         amountField.setVisible(true);
         amountField.setCanLoseFocus(false);
         amountField.setFocus(true);
@@ -201,7 +201,7 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
     }
 
     private void ok() {
-        priorityAccessor.setPriority(getAmount());
+        property.setValue(getAmount());
         close();
     }
 

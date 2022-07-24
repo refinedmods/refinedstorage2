@@ -24,6 +24,13 @@ public class ResourceFilterContainer {
     private final FilteredResource[] items;
     private final Runnable listener;
 
+
+    public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                   final int size) {
+        this(resourceTypeRegistry, size, () -> {
+        });
+    }
+
     public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                    final int size,
                                    final Runnable listener) {

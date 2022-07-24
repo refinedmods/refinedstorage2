@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.RedstoneModeAccessor;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
@@ -21,18 +21,18 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
     private final Map<RedstoneMode, List<Component>> tooltips = new EnumMap<>(RedstoneMode.class);
     private final TooltipRenderer tooltipRenderer;
-    private final RedstoneModeAccessor redstoneModeAccessor;
+    private final ClientProperty<RedstoneMode> property;
 
-    public RedstoneModeSideButtonWidget(final RedstoneModeAccessor redstoneModeAccessor,
+    public RedstoneModeSideButtonWidget(final ClientProperty<RedstoneMode> property,
                                         final TooltipRenderer tooltipRenderer) {
-        super(createPressAction(redstoneModeAccessor));
+        super(createPressAction(property));
         this.tooltipRenderer = tooltipRenderer;
-        this.redstoneModeAccessor = redstoneModeAccessor;
+        this.property = property;
         Arrays.stream(RedstoneMode.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private static OnPress createPressAction(final RedstoneModeAccessor redstoneModeAccessor) {
-        return btn -> redstoneModeAccessor.setRedstoneMode(redstoneModeAccessor.getRedstoneMode().toggle());
+    private static OnPress createPressAction(final ClientProperty<RedstoneMode> property) {
+        return btn -> property.setValue(property.getValue().toggle());
     }
 
     private List<Component> calculateTooltip(final RedstoneMode type) {
@@ -45,7 +45,7 @@ public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        return switch (redstoneModeAccessor.getRedstoneMode()) {
+        return switch (property.getValue()) {
             case IGNORE -> 0;
             case HIGH -> 16;
             case LOW -> 32;
@@ -59,6 +59,6 @@ public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
-        tooltipRenderer.render(poseStack, tooltips.get(redstoneModeAccessor.getRedstoneMode()), mouseX, mouseY);
+        tooltipRenderer.render(poseStack, tooltips.get(property.getValue()), mouseX, mouseY);
     }
 }

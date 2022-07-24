@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class ControllerEnergyPacket implements ClientPlayNetworking.PlayChannelHandler {
+public class ControllerEnergyInfoPacket implements ClientPlayNetworking.PlayChannelHandler {
     @Override
     public void receive(final Minecraft client,
                         final ClientPacketListener handler,
@@ -19,7 +19,7 @@ public class ControllerEnergyPacket implements ClientPlayNetworking.PlayChannelH
 
         client.execute(() -> {
             if (client.player.containerMenu instanceof ControllerContainerMenu controller) {
-                controller.setEnergy(stored, capacity);
+                controller.setEnergyInfo(stored, capacity);
             }
         });
     }
