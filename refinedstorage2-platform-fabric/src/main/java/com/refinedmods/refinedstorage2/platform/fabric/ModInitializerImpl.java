@@ -32,6 +32,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.blo
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
+import com.refinedmods.refinedstorage2.platform.common.content.ContentIds;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
@@ -43,6 +44,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem
 import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
+import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
@@ -83,6 +85,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -287,6 +290,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerGridItems();
         registerControllerItems();
         registerStorageItems();
+        registerUpgrades();
     }
 
     private void registerSimpleItems() {
@@ -444,6 +448,20 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlock(v), CREATIVE_MODE_TAB, v)
             );
         }
+    }
+
+    private void registerUpgrades() {
+        register(
+            Registry.ITEM,
+            ContentIds.UPGRADE,
+            new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+        );
+        final Supplier<Item> speedUpgrade = register(
+            Registry.ITEM,
+            ContentIds.SPEED_UPGRADE,
+            new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+        );
+        addApplicableUpgrades(speedUpgrade);
     }
 
     private void registerBlockEntities() {

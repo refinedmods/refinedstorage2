@@ -26,7 +26,7 @@ public class ImporterScreen extends AbstractBaseScreen<ImporterContainerMenu> {
         this.titleLabelY = 7;
         this.inventoryLabelX = 7;
         this.inventoryLabelY = 42;
-        this.imageWidth = 176;
+        this.imageWidth = 210;
         this.imageHeight = 137;
     }
 
@@ -48,7 +48,7 @@ public class ImporterScreen extends AbstractBaseScreen<ImporterContainerMenu> {
         ));
 
         final ResourceFilterButtonWidget resourceFilterButton = new ResourceFilterButtonWidget(
-            leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7,
+            leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7 - 34,
             topPos + 4,
             menu
         );

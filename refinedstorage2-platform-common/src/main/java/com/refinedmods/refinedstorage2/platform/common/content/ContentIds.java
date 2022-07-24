@@ -28,6 +28,8 @@ public final class ContentIds {
     public static final ResourceLocation FLUID_STORAGE_BLOCK = createIdentifier("fluid_storage_block");
     public static final ResourceLocation STORAGE_BLOCK = createIdentifier("storage_block");
     public static final ResourceLocation IMPORTER = createIdentifier("importer");
+    public static final ResourceLocation UPGRADE = createIdentifier("upgrade");
+    public static final ResourceLocation SPEED_UPGRADE = createIdentifier("speed_upgrade");
 
     private ContentIds() {
     }

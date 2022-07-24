@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -40,8 +42,10 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
     private static final String TAG_FILTER_MODE = "fim";
     private static final String TAG_EXACT_MODE = "em";
     private static final String TAG_RESOURCE_FILTER = "rf";
+    private static final String TAG_UPGRADES = "u";
 
     private final ResourceFilterContainer resourceFilterContainer;
+    private final UpgradeContainer upgradeContainer;
     private boolean exactMode;
 
     public ImporterBlockEntity(final BlockPos pos, final BlockState state) {
@@ -56,6 +60,11 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
             PlatformApi.INSTANCE.getResourceTypeRegistry(),
             9,
             this::resourceFilterContainerChanged
+        );
+        this.upgradeContainer = new UpgradeContainer(
+            UpgradeDestinations.IMPORTER,
+            PlatformApi.INSTANCE.getUpgradeRegistry(),
+            this::setChanged
         );
     }
 
@@ -120,6 +129,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
         tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
+        tag.put(TAG_UPGRADES, upgradeContainer.createTag());
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
         tag.putBoolean(TAG_EXACT_MODE, exactMode);
     }
@@ -136,6 +146,10 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
 
         if (tag.contains(TAG_RESOURCE_FILTER)) {
             resourceFilterContainer.load(tag.getCompound(TAG_RESOURCE_FILTER));
+        }
+
+        if (tag.contains(TAG_UPGRADES)) {
+            upgradeContainer.fromTag(tag.getList(TAG_UPGRADES, Tag.TAG_COMPOUND));
         }
 
         initializeResourceFilter();
@@ -184,6 +198,6 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
-        return new ImporterContainerMenu(syncId, player, this, resourceFilterContainer);
+        return new ImporterContainerMenu(syncId, player, this, resourceFilterContainer, upgradeContainer);
     }
 }
