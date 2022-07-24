@@ -80,6 +80,12 @@ public class ImporterBlock extends AbstractDirectionalCableBlock implements Enti
         return Shapes.or(super.getShape(state, world, pos, ctx), getLineShape(state));
     }
 
+    @Override
+    @Nullable
+    protected VoxelShape getScreenOpenableShape(final BlockState state) {
+        return getLineShape(state);
+    }
+
     private VoxelShape getLineShape(final BlockState state) {
         final Direction direction = getDirection(state);
         if (direction == null) {

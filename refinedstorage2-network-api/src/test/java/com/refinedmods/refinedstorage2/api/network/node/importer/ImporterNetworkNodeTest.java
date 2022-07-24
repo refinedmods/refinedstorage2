@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node.importer;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.api.network.test.extension.AddImporter;
 import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkStorageChannel;
@@ -12,6 +13,8 @@ import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
+
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -271,6 +274,192 @@ class ImporterNetworkNodeTest {
         assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount<>("A", 3),
             new ResourceAmount<>("B", 5)
+        );
+    }
+
+    @Test
+    void shouldRespectAllowlist(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+        // Arrange
+        sut.setFilterMode(FilterMode.ALLOW);
+        sut.setFilterTemplates(Set.of("A"));
+
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+
+        final FakeImporterSource source = new FakeImporterSource("B", "A")
+            .add("B", 10)
+            .add("A", 10);
+
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl<>(
+            source,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
+            1
+        );
+        sut.setTransferStrategy(strategy);
+
+        // Act
+        sut.update();
+
+        // Assert
+        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("A", 1)
+        );
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("B", 10),
+            new ResourceAmount<>("A", 9)
+        );
+    }
+
+    @Test
+    void shouldRespectAllowlistWithoutAlternative(
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+    ) {
+        // Arrange
+        sut.setFilterMode(FilterMode.ALLOW);
+        sut.setFilterTemplates(Set.of("A"));
+
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+
+        final FakeImporterSource source = new FakeImporterSource("B")
+            .add("B", 10);
+
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl<>(
+            source,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
+            1
+        );
+        sut.setTransferStrategy(strategy);
+
+        // Act
+        sut.update();
+
+        // Assert
+        assertThat(storageChannel.getAll()).isEmpty();
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("B", 10)
+        );
+    }
+
+    @Test
+    void shouldRespectEmptyAllowlist(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+        // Arrange
+        sut.setFilterMode(FilterMode.ALLOW);
+        sut.setFilterTemplates(Set.of());
+
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+
+        final FakeImporterSource source = new FakeImporterSource("B", "A")
+            .add("B", 10)
+            .add("A", 10);
+
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl<>(
+            source,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
+            1
+        );
+        sut.setTransferStrategy(strategy);
+
+        // Act
+        sut.update();
+
+        // Assert
+        assertThat(storageChannel.getAll()).isEmpty();
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("B", 10),
+            new ResourceAmount<>("A", 10)
+        );
+    }
+
+    @Test
+    void shouldRespectBlocklist(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+        // Arrange
+        sut.setFilterMode(FilterMode.BLOCK);
+        sut.setFilterTemplates(Set.of("A"));
+
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+
+        final FakeImporterSource source = new FakeImporterSource("A", "B")
+            .add("A", 10)
+            .add("B", 10);
+
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl<>(
+            source,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
+            1
+        );
+        sut.setTransferStrategy(strategy);
+
+        // Act
+        sut.update();
+
+        // Assert
+        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("B", 1)
+        );
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 10),
+            new ResourceAmount<>("B", 9)
+        );
+    }
+
+    @Test
+    void shouldRespectBlocklistWithoutAlternative(
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+    ) {
+        // Arrange
+        sut.setFilterMode(FilterMode.BLOCK);
+        sut.setFilterTemplates(Set.of("A"));
+
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+
+        final FakeImporterSource source = new FakeImporterSource("A")
+            .add("A", 10);
+
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl<>(
+            source,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
+            1
+        );
+        sut.setTransferStrategy(strategy);
+
+        // Act
+        sut.update();
+
+        // Assert
+        assertThat(storageChannel.getAll()).isEmpty();
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("A", 10)
+        );
+    }
+
+    @Test
+    void shouldRespectEmptyBlocklist(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+        // Arrange
+        sut.setFilterMode(FilterMode.BLOCK);
+        sut.setFilterTemplates(Set.of());
+
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+
+        final FakeImporterSource source = new FakeImporterSource("A", "B")
+            .add("A", 10)
+            .add("B", 10);
+
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl<>(
+            source,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
+            1
+        );
+        sut.setTransferStrategy(strategy);
+
+        // Act
+        sut.update();
+
+        // Assert
+        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("A", 1)
+        );
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 9),
+            new ResourceAmount<>("B", 10)
         );
     }
 }

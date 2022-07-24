@@ -8,10 +8,10 @@ import com.refinedmods.refinedstorage2.api.storage.Actor;
 
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 import javax.annotation.Nullable;
 
 // TODO: Write a gametest.
-// TODO: gui config etc.
 public class ImporterNetworkNode extends AbstractNetworkNode {
     private final long energyUsage;
     private final Filter filter = new Filter();
@@ -53,6 +53,10 @@ public class ImporterNetworkNode extends AbstractNetworkNode {
 
     public void setFilterMode(final FilterMode mode) {
         filter.setMode(mode);
+    }
+
+    public void setNormalizer(final UnaryOperator<Object> normalizer) {
+        filter.setNormalizer(normalizer);
     }
 
     public void setFilterTemplates(final Set<Object> templates) {
