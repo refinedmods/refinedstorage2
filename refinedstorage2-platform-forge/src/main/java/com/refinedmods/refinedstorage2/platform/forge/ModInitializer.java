@@ -23,6 +23,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.Flui
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
@@ -509,6 +510,10 @@ public class ModInitializer extends AbstractModInitializer {
         Menus.INSTANCE.setFluidStorage(menuTypeRegistry.register(
             FLUID_STORAGE_BLOCK.getPath(),
             () -> IForgeMenuType.create(FluidStorageBlockContainerMenu::new)
+        ));
+        Menus.INSTANCE.setImporter(menuTypeRegistry.register(
+            IMPORTER.getPath(),
+            () -> IForgeMenuType.create(ImporterContainerMenu::new)
         ));
 
         menuTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());

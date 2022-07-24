@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
 
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,7 +24,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public abstract class AbstractBaseBlock extends Block {
     protected AbstractBaseBlock(final Properties properties) {
@@ -49,14 +53,31 @@ public abstract class AbstractBaseBlock extends Block {
                                  final Player player,
                                  final InteractionHand hand,
                                  final BlockHitResult hit) {
-        return tryOpenScreen(state, level, pos, player)
+        return tryOpenScreen(state, level, pos, player, hit.getLocation())
             .orElseGet(() -> super.use(state, level, pos, player, hand, hit));
+    }
+
+    @Nullable
+    protected VoxelShape getScreenOpenableShape(final BlockState state) {
+        return null;
     }
 
     private Optional<InteractionResult> tryOpenScreen(final BlockState state,
                                                       final Level level,
                                                       final BlockPos pos,
-                                                      final Player player) {
+                                                      final Player player,
+                                                      final Vec3 hit) {
+        final VoxelShape screenOpenableShape = getScreenOpenableShape(state);
+        if (screenOpenableShape != null) {
+            final AABB aabb = screenOpenableShape.bounds().move(pos);
+            final boolean inBoundsX = hit.x >= aabb.minX && hit.x <= aabb.maxX;
+            final boolean inBoundsY = hit.y >= aabb.minY && hit.y <= aabb.maxY;
+            final boolean inBoundsZ = hit.z >= aabb.minZ && hit.z <= aabb.maxZ;
+            final boolean inBounds = inBoundsX && inBoundsY && inBoundsZ;
+            if (!inBounds) {
+                return Optional.empty();
+            }
+        }
         final MenuProvider menuProvider = state.getMenuProvider(level, pos);
         if (menuProvider != null) {
             if (player instanceof ServerPlayer serverPlayer) {

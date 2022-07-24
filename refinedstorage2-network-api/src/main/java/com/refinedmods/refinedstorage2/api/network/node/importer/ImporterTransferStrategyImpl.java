@@ -29,10 +29,10 @@ public class ImporterTransferStrategyImpl<T> implements ImporterTransferStrategy
         final StorageChannel<T> storageChannel = network
             .getComponent(StorageNetworkComponent.class)
             .getStorageChannel(storageChannelType);
-        return transfer(actor, storageChannel);
+        return transfer(filter, actor, storageChannel);
     }
 
-    private boolean transfer(final Actor actor, final StorageChannel<T> storageChannel) {
+    private boolean transfer(final Filter filter, final Actor actor, final StorageChannel<T> storageChannel) {
         long totalTransferred = 0;
         T workingResource = null;
         final Iterator<T> iterator = source.getResources();
@@ -40,7 +40,7 @@ public class ImporterTransferStrategyImpl<T> implements ImporterTransferStrategy
             final T resource = iterator.next();
             if (workingResource != null) {
                 totalTransferred += performTransfer(storageChannel, actor, totalTransferred, workingResource, resource);
-            } else {
+            } else if (filter.isAllowed(resource)) {
                 final long transferred = performTransfer(storageChannel, actor, totalTransferred, resource);
                 if (transferred > 0) {
                     workingResource = resource;
