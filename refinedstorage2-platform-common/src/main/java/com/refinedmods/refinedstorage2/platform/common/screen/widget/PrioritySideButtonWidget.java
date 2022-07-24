@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.PriorityAccessor;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.screen.PriorityScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 
@@ -18,22 +18,22 @@ import net.minecraft.world.entity.player.Inventory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class PrioritySideButtonWidget extends AbstractSideButtonWidget {
-    private final PriorityAccessor priorityAccessor;
+    private final ClientProperty<Integer> property;
     private final TooltipRenderer tooltipRenderer;
 
-    public PrioritySideButtonWidget(final PriorityAccessor priorityAccessor,
+    public PrioritySideButtonWidget(final ClientProperty<Integer> property,
                                     final Inventory playerInventory,
                                     final Screen parent,
                                     final TooltipRenderer tooltipRenderer) {
-        super(createPressAction(priorityAccessor, playerInventory, parent));
-        this.priorityAccessor = priorityAccessor;
+        super(createPressAction(property, playerInventory, parent));
+        this.property = property;
         this.tooltipRenderer = tooltipRenderer;
     }
 
-    private static OnPress createPressAction(final PriorityAccessor priorityAccessor,
+    private static OnPress createPressAction(final ClientProperty<Integer> property,
                                              final Inventory playerInventory,
                                              final Screen parent) {
-        return btn -> Minecraft.getInstance().setScreen(new PriorityScreen(priorityAccessor, parent, playerInventory));
+        return btn -> Minecraft.getInstance().setScreen(new PriorityScreen(property, parent, playerInventory));
     }
 
     @Override
@@ -50,7 +50,7 @@ public class PrioritySideButtonWidget extends AbstractSideButtonWidget {
     public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
         final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "priority"));
-        lines.add(Component.literal(String.valueOf(priorityAccessor.getPriority())).withStyle(ChatFormatting.GRAY));
+        lines.add(Component.literal(String.valueOf(property.getValue())).withStyle(ChatFormatting.GRAY));
         tooltipRenderer.render(poseStack, lines, mouseX, mouseY);
     }
 }

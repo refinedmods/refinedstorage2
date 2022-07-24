@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.GridScrollPacke
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.PropertyChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.ResourceTypeChangePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.c2s.StorageInfoRequestPacket;
-import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ControllerEnergyPacket;
+import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ControllerEnergyInfoPacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridFluidUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.GridItemUpdatePacket;
@@ -36,10 +36,10 @@ public class NetworkManager {
         int id = 0;
         handler.registerMessage(
             id++,
-            ControllerEnergyPacket.class,
-            ControllerEnergyPacket::encode,
-            ControllerEnergyPacket::decode,
-            ControllerEnergyPacket::handle
+            ControllerEnergyInfoPacket.class,
+            ControllerEnergyInfoPacket::encode,
+            ControllerEnergyInfoPacket::decode,
+            ControllerEnergyInfoPacket::handle
         );
         handler.registerMessage(
             id++,

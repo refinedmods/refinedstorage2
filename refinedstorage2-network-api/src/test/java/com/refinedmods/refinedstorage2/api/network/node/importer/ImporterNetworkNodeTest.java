@@ -31,6 +31,7 @@ class ImporterNetworkNodeTest {
     void testInitialState() {
         // Assert
         assertThat(sut.getEnergyUsage()).isEqualTo(5);
+        assertThat(sut.getFilterMode()).isEqualTo(FilterMode.BLOCK);
     }
 
     @Test

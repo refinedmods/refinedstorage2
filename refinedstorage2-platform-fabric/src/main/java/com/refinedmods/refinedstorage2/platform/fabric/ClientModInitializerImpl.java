@@ -22,7 +22,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiGridSy
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEnergyPacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEnergyInfoPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridActivePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridFluidUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridItemUpdatePacket;
@@ -131,7 +131,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ITEM_UPDATE, new GridItemUpdatePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_FLUID_UPDATE, new GridFluidUpdatePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ACTIVE, new GridActivePacket());
-        ClientPlayNetworking.registerGlobalReceiver(PacketIds.CONTROLLER_ENERGY, new ControllerEnergyPacket());
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.CONTROLLER_ENERGY_INFO, new ControllerEnergyInfoPacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.RESOURCE_FILTER_SLOT_UPDATE,
             new ResourceFilterSlotUpdatePacket());
     }

@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.FilterModeAccessor;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 
 import java.util.ArrayList;
@@ -16,22 +16,22 @@ import net.minecraft.network.chat.Component;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
-    private final FilterModeAccessor filterModeAccessor;
+    private final ClientProperty<FilterMode> property;
     private final TooltipRenderer tooltipRenderer;
     private final List<Component> blockModeTooltip;
     private final List<Component> allowModeTooltip;
 
-    public FilterModeSideButtonWidget(final FilterModeAccessor filterModeAccessor,
+    public FilterModeSideButtonWidget(final ClientProperty<FilterMode> property,
                                       final TooltipRenderer tooltipRenderer) {
-        super(createPressAction(filterModeAccessor));
-        this.filterModeAccessor = filterModeAccessor;
+        super(createPressAction(property));
+        this.property = property;
         this.tooltipRenderer = tooltipRenderer;
         this.blockModeTooltip = calculateTooltip(FilterMode.BLOCK);
         this.allowModeTooltip = calculateTooltip(FilterMode.ALLOW);
     }
 
-    private static OnPress createPressAction(final FilterModeAccessor filterModeAccessor) {
-        return btn -> filterModeAccessor.setFilterMode(filterModeAccessor.getFilterMode().toggle());
+    private static OnPress createPressAction(final ClientProperty<FilterMode> property) {
+        return btn -> property.setValue(property.getValue().toggle());
     }
 
     private List<Component> calculateTooltip(final FilterMode filterMode) {
@@ -46,7 +46,7 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        return filterModeAccessor.getFilterMode() == FilterMode.BLOCK ? 16 : 0;
+        return property.getValue() == FilterMode.BLOCK ? 16 : 0;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
     public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
         tooltipRenderer.render(
             poseStack,
-            filterModeAccessor.getFilterMode() == FilterMode.BLOCK ? blockModeTooltip : allowModeTooltip,
+            property.getValue() == FilterMode.BLOCK ? blockModeTooltip : allowModeTooltip,
             mouseX,
             mouseY
         );

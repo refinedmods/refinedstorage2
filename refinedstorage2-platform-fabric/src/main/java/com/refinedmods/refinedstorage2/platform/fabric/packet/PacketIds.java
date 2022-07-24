@@ -7,7 +7,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public final class PacketIds {
     public static final ResourceLocation STORAGE_INFO_RESPONSE = createIdentifier("storage_info_response");
     public static final ResourceLocation STORAGE_INFO_REQUEST = createIdentifier("storage_info_request");
-    public static final ResourceLocation CONTROLLER_ENERGY = createIdentifier("controller_energy");
+    public static final ResourceLocation CONTROLLER_ENERGY_INFO = createIdentifier("controller_energy");
     public static final ResourceLocation GRID_ACTIVE = createIdentifier("grid_active");
     public static final ResourceLocation GRID_ITEM_UPDATE = createIdentifier("grid_item_update");
     public static final ResourceLocation GRID_FLUID_UPDATE = createIdentifier("grid_fluid_update");

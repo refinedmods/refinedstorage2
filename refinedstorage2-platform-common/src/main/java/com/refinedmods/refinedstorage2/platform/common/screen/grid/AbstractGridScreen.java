@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.SmallTextTooltipRenderer;
@@ -121,7 +122,10 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         addWidget(scrollbar);
         addWidget(searchField);
 
-        addSideButton(new RedstoneModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
+        addSideButton(new RedstoneModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
+            this::renderComponentTooltip
+        ));
         addSideButton(new SortingDirectionSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new SortingTypeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new SizeSideButtonWidget(getMenu(), this::renderComponentTooltip));
