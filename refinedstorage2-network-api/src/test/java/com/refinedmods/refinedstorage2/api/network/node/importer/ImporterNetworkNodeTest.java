@@ -311,6 +311,48 @@ class ImporterNetworkNodeTest {
     }
 
     @Test
+    void shouldRespectAllowlistWithNormalizer(
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+    ) {
+        // Arrange
+        sut.setFilterMode(FilterMode.ALLOW);
+        sut.setFilterTemplates(Set.of("A"));
+        sut.setNormalizer(value -> value instanceof String str && str.startsWith("A") ? "A" : value);
+
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+
+        final FakeImporterSource source = new FakeImporterSource("B", "A1", "A2")
+            .add("B", 10)
+            .add("A1", 1)
+            .add("A2", 1);
+
+        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl<>(
+            source,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
+            10
+        );
+        sut.setTransferStrategy(strategy);
+
+        // Act
+        sut.update();
+        // cooldown
+        sut.update();
+        sut.update();
+        sut.update();
+        // Act 2
+        sut.update();
+
+        // Assert
+        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A1", 1),
+            new ResourceAmount<>("A2", 1)
+        );
+        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("B", 10)
+        );
+    }
+
+    @Test
     void shouldRespectAllowlistWithoutAlternative(
         @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
     ) {

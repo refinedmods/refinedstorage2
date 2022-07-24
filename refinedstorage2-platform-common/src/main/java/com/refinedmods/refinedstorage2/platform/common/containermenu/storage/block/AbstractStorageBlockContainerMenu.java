@@ -33,9 +33,10 @@ public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageC
         this.stored = buf.readLong();
         this.capacity = buf.readLong();
 
-        addSlots(player, new FilteredResourceFilterContainer(
-            PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, () -> {
-        }, resourceType));
+        addSlots(
+            player,
+            new FilteredResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, resourceType)
+        );
 
         initializeResourceFilterSlots(buf);
     }

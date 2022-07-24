@@ -29,10 +29,13 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
     }
 
     public void receivePropertyChangeFromClient(final ResourceLocation id, final int newValue) {
-        for (final PropertyType<?> type : propertyMap.keySet()) {
-            if (type.id().equals(id)) {
-                ((ServerProperty<?>) propertyMap.get(type)).set(newValue);
+        for (final Map.Entry<PropertyType<?>, Property<?>> entry : propertyMap.entrySet()) {
+            final PropertyType<?> type = entry.getKey();
+            if (!type.id().equals(id)) {
+                continue;
             }
+            final Property<?> property = entry.getValue();
+            ((ServerProperty<?>) property).set(newValue);
         }
     }
 

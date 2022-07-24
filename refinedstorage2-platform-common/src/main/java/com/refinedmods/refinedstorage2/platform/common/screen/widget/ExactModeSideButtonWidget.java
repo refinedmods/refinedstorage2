@@ -40,7 +40,7 @@ public class ExactModeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        return property.getValue() ? 0 : 16;
+        return Boolean.TRUE.equals(property.getValue()) ? 0 : 16;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ExactModeSideButtonWidget extends AbstractSideButtonWidget {
     public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
         tooltipRenderer.render(
             poseStack,
-            property.getValue() ? tooltipWhenOn : tooltipWhenOff,
+            Boolean.TRUE.equals(property.getValue()) ? tooltipWhenOn : tooltipWhenOff,
             mouseX,
             mouseY
         );
