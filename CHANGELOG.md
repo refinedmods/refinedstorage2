@@ -24,6 +24,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Importer.
+- Emissive rendering.
 
 ## [2.0.0-milestone.2.0] - 2022-07-05
 
@@ -196,7 +197,7 @@ upgrading to a later version.
 - The Grid search bar now has much more powerful searching, supporting expressions. Consult the Patchouli documentation.
 - A single item in storage can now be larger than 2,147,483,647.
 - You can now place directional blocks facing up/down.
-- Fullbright rendering isn't implemented yet.
+- Emissive rendering isn't implemented yet.
 - You can now add multiple controllers to a network to meet the energy requirements of your network.
 - The Priority screen now has a "Reset" button.
 - The Grid can now use smooth scrolling.
