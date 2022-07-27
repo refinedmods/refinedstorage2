@@ -55,7 +55,7 @@
         "north": {
           "texture": "#cutout",
           "cullface": "north",
-          "fullbright": true
+          "emissivity": 15
         }
       }
     }

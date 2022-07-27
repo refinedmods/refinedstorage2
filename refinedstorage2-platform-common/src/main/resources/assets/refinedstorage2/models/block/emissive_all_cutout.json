@@ -55,32 +55,32 @@
         "down": {
           "texture": "#cutout",
           "cullface": "down",
-          "fullbright": true
+          "emissivity": 15
         },
         "up": {
           "texture": "#cutout",
           "cullface": "up",
-          "fullbright": true
+          "emissivity": 15
         },
         "north": {
           "texture": "#cutout",
           "cullface": "north",
-          "fullbright": true
+          "emissivity": 15
         },
         "south": {
           "texture": "#cutout",
           "cullface": "south",
-          "fullbright": true
+          "emissivity": 15
         },
         "west": {
           "texture": "#cutout",
           "cullface": "west",
-          "fullbright": true
+          "emissivity": 15
         },
         "east": {
           "texture": "#cutout",
           "cullface": "east",
-          "fullbright": true
+          "emissivity": 15
         }
       }
     }
