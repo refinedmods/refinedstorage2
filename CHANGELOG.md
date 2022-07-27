@@ -52,6 +52,7 @@ disks, etc. to intermediate storage like a chest.
 - The Wrench now dismantles devices when crouching.
     - The Disk Drive in item form now supports rendering of disks that were dismantled.
     - In order to retain Controller energy, the Controller must now be dismantled.
+    - All config and upgrades are transferred to the item.
 - You can now use any Wrench from other mods in order to rotate or dismantle.
 - Item and fluid storage blocks.
 - Initial advancements.
@@ -110,6 +111,7 @@ before updating.
 - Prevent loading unloaded chunks.
 - Fix various bugs related to networks and chunk loading/unloading.
 - Fix not being able to move network devices with mods like Carrier.
+- Fix CTRL + CLICK in creative mode not retaining block data.
 - Fix item quantity not being formatted in the Grid.
 - Fix amount in detailed Grid tooltip being formatted with units.
 
