@@ -131,6 +131,7 @@ before updating.
 - Made block breaking faster.
 - Refined Storage now uses the bundled AutoConfig with ClothConfig and bundles ClothConfig.
 - Item quantity of "1" is now always being rendered in the Grid.
+- Exact mode is now off by default.
 
 ### Removed
 
