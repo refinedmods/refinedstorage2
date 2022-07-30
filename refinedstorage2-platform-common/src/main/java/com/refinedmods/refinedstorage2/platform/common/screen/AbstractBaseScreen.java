@@ -5,13 +5,13 @@ import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSid
 
 import java.util.List;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import org.lwjgl.opengl.GL11;
 
 public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     private int sideButtonY;
@@ -58,13 +58,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         final int sy = (int) ((minecraft.getWindow().getGuiScaledHeight() - (y + h)) * scale);
         final int sw = (int) (w * scale);
         final int sh = (int) (h * scale);
-
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor(sx, sy, sw, sh);
-    }
-
-    protected void disableScissor() {
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        RenderSystem.enableScissor(sx, sy, sw, sh);
     }
 
     @Override

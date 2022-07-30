@@ -16,6 +16,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The Importer no longer has a dedicated item/fluid mode. It will import what it's connected to, 1 resource type per
   tick is possible.
 - Updated to the latest Forge version.
+- Ported to Minecraft 1.19.1.
 
 ### Fixed
 
