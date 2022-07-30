@@ -44,6 +44,16 @@ public abstract class AbstractNetworkNodeContainerBlockEntity<T extends NetworkN
     }
 
     @Override
+    @SuppressWarnings("deprecation")
+    public void setBlockState(final BlockState newBlockState) {
+        super.setBlockState(newBlockState);
+        if (level == null || level.isClientSide || node.getNetwork() == null) {
+            return;
+        }
+        PlatformApi.INSTANCE.requestNetworkNodeUpdate(this, level);
+    }
+
+    @Override
     public T getNode() {
         return node;
     }
