@@ -81,6 +81,11 @@ public class PlatformApiProxy implements PlatformApi {
         ensureLoaded().requestNetworkNodeRemoval(container, level);
     }
 
+    @Override
+    public void requestNetworkNodeUpdate(final NetworkNodeContainer container, final Level level) {
+        ensureLoaded().requestNetworkNodeUpdate(container, level);
+    }
+
     private PlatformApi ensureLoaded() {
         if (delegate == null) {
             throw new IllegalStateException("Platform API not loaded yet");

@@ -24,6 +24,18 @@ public class BiDirectionType implements DirectionType<BiDirection> {
     }
 
     @Override
+    public Direction extractDirection(final BiDirection direction) {
+        return switch (direction) {
+            case NORTH -> Direction.NORTH;
+            case EAST -> Direction.EAST;
+            case SOUTH -> Direction.SOUTH;
+            case WEST -> Direction.WEST;
+            case UP_NORTH, UP_EAST, UP_SOUTH, UP_WEST -> Direction.UP;
+            case DOWN_NORTH, DOWN_EAST, DOWN_SOUTH, DOWN_WEST -> Direction.DOWN;
+        };
+    }
+
+    @Override
     public BiDirection getDirection(final Direction clickedFace,
                                     final Direction playerFacing,
                                     final float playerPitch) {

@@ -1,12 +1,15 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.AbstractNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,7 +17,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// TODO: this should just block everything outgoing if directional, should also work when wrenching.
 public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends AbstractNetworkNode>
     extends AbstractNetworkNodeContainerBlockEntity<T> {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -104,5 +106,40 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
     public void setRedstoneMode(final RedstoneMode redstoneMode) {
         this.redstoneMode = redstoneMode;
         setChanged();
+    }
+
+    @Override
+    public boolean canPerformOutgoingConnection(final Direction direction) {
+        final Direction myDirection = getDirection();
+        if (myDirection == null) {
+            return true;
+        }
+        return myDirection != direction;
+    }
+
+    @Override
+    public boolean canAcceptIncomingConnection(final Direction direction) {
+        final Direction myDirection = getDirection();
+        if (myDirection == null) {
+            return true;
+        }
+        return myDirection != direction;
+    }
+
+    @Override
+    public void setBlockState(final BlockState newBlockState) {
+        super.setBlockState(newBlockState);
+        if (getNode().getNetwork() != null && level != null && !level.isClientSide()) {
+            PlatformApi.INSTANCE.requestNetworkNodeUpdate(this, level);
+        }
+    }
+
+    @Nullable
+    protected final Direction getDirection() {
+        final BlockState blockState = getBlockState();
+        if (!(blockState.getBlock() instanceof AbstractDirectionalBlock<?> directionalBlock)) {
+            return null;
+        }
+        return directionalBlock.extractDirection(blockState);
     }
 }

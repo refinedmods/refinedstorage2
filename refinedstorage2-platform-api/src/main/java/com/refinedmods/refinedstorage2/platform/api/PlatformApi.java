@@ -38,4 +38,6 @@ public interface PlatformApi {
     void requestNetworkNodeInitialization(NetworkNodeContainer container, Level level, Runnable callback);
 
     void requestNetworkNodeRemoval(NetworkNodeContainer container, Level level);
+
+    void requestNetworkNodeUpdate(NetworkNodeContainer container, Level level);
 }
