@@ -7,6 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- All directional blocks no longer transmit a network signal out of the direction.
+- All directional blocks no longer accept a network signal from the facing direction.
+
+### Fixed
+
+- Fixed network connection state not rebuilding after using Wrench on a directional block.
+
 ## [2.0.0-milestone.2.1] - 2022-07-30
 
 ### Changed

@@ -132,4 +132,10 @@ public class PlatformApiImpl implements PlatformApi {
         final LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
         networkBuilder.remove(container, connectionProvider);
     }
+
+    @Override
+    public void requestNetworkNodeUpdate(final NetworkNodeContainer container, final Level level) {
+        final LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
+        networkBuilder.update(container, connectionProvider);
+    }
 }

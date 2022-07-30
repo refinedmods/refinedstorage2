@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
@@ -28,7 +27,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,7 +89,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
     }
 
     private void updateTransferStrategy(final ServerLevel serverLevel) {
-        final Direction direction = getMyDirection();
+        final Direction direction = getDirection();
         if (direction == null) {
             LOGGER.warn(
                 "Could not extract direction from importer block at {}, state is {}",
@@ -116,25 +114,6 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
             .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection))
             .toList();
         return new CompositeImporterTransferStrategy(strategies);
-    }
-
-    @Override
-    public boolean canPerformOutgoingConnection(final Direction direction) {
-        return getMyDirection() != direction;
-    }
-
-    @Override
-    public boolean canAcceptIncomingConnection(final Direction direction) {
-        return getMyDirection() != direction;
-    }
-
-    @Nullable
-    private Direction getMyDirection() {
-        final Block block = getBlockState().getBlock();
-        if (!(block instanceof ImporterBlock importerBlock)) {
-            return null;
-        }
-        return importerBlock.getDirection(getBlockState());
     }
 
     @Override

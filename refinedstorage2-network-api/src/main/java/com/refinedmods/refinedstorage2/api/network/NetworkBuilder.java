@@ -29,15 +29,17 @@ public class NetworkBuilder {
             connections.removedEntries(),
             "Cannot have removed entries when starting from empty existing connections"
         );
-        mergeNetworksOfNodes(connectionProvider, container, connections.foundEntries());
+        mergeNetworksOfNodes(connectionProvider, container, connections.foundEntries(), false);
         return true;
     }
 
     private void mergeNetworksOfNodes(final ConnectionProvider connectionProvider,
                                       final NetworkNodeContainer pivot,
-                                      final Set<NetworkNodeContainer> foundEntries) {
-        final Network pivotNetwork = findPivotNetworkForMerge(connectionProvider, pivot, foundEntries)
-            .orElseGet(() -> createNetwork(pivot));
+                                      final Set<NetworkNodeContainer> foundEntries,
+                                      final boolean pivotAlreadyHasNetwork) {
+        final Network pivotNetwork = pivotAlreadyHasNetwork
+            ? CoreValidations.validateNotNull(pivot.getNode().getNetwork(), "Pivot must have network")
+            : findPivotNetworkForMerge(connectionProvider, pivot, foundEntries).orElseGet(() -> createNetwork(pivot));
 
         final Set<Network> mergedNetworks = new HashSet<>();
 
@@ -111,6 +113,19 @@ public class NetworkBuilder {
             "The removed container should be present in the removed entries, but isn't"
         );
         splitNetworks(connectionProvider, connections.removedEntries(), container);
+    }
+
+    public void update(final NetworkNodeContainer container, final ConnectionProvider connectionProvider) {
+        final Network network = container.getNode().getNetwork();
+        if (network == null) {
+            throw new IllegalStateException("Cannot update node that has no network yet");
+        }
+
+        final Set<NetworkNodeContainer> containers = network.getComponent(GraphNetworkComponent.class).getContainers();
+
+        final Connections connections = connectionProvider.findConnections(container, containers);
+        splitNetworks(connectionProvider, connections.removedEntries(), container);
+        mergeNetworksOfNodes(connectionProvider, container, connections.foundEntries(), true);
     }
 
     @Nullable

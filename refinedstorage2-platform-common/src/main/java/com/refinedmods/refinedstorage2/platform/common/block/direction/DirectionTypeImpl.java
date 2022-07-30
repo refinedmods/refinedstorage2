@@ -22,6 +22,11 @@ public class DirectionTypeImpl implements DirectionType<Direction> {
     }
 
     @Override
+    public Direction extractDirection(final Direction direction) {
+        return direction;
+    }
+
+    @Override
     public Direction getDirection(final Direction clickedFace, final Direction playerFacing, final float playerPitch) {
         return clickedFace.getOpposite();
     }

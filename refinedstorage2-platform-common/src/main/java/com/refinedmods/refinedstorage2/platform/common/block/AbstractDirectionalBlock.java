@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.direction.Direction
 
 import javax.annotation.Nullable;
 
+import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
@@ -57,5 +58,14 @@ public abstract class AbstractDirectionalBlock<T extends Enum<T> & StringReprese
         return state != null && state.hasProperty(directionProperty)
             ? state.getValue(directionProperty)
             : null;
+    }
+
+    @Nullable
+    public Direction extractDirection(@Nullable final BlockState state) {
+        final T direction = getDirection(state);
+        if (direction == null) {
+            return null;
+        }
+        return getDirectionType().extractDirection(direction);
     }
 }
