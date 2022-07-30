@@ -104,6 +104,6 @@ final class CableBlockSupport {
         if (!(world.getBlockEntity(offsetPos) instanceof PlatformNetworkNodeContainer container)) {
             return false;
         }
-        return container.canAcceptIncomingConnection(direction.getOpposite());
+        return container.canAcceptIncomingConnection(direction);
     }
 }

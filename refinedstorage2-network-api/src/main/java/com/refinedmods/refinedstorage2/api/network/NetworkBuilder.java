@@ -4,10 +4,14 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 
 import org.apiguardian.api.API;
 
+/**
+ * Manages the network state of a {@link com.refinedmods.refinedstorage2.api.network.node.NetworkNode}.
+ * Performs merge, split and remove operations as necessary.
+ */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public interface NetworkBuilder {
     /**
-     * Initialized a not yet connected network node container.
+     * Initializes a not yet connected network node container.
      * If the network node already has an associated {@link Network}, calling this will do nothing.
      * This will perform a merge operation.
      *
@@ -30,7 +34,7 @@ public interface NetworkBuilder {
     /**
      * Updates the network associated with the given container. Makes the network state adapt to connection changes
      * of an already connected container.
-     * Will perform split and/or merge operations.
+     * Will perform a split and/or a merge operation.
      *
      * @param container          the container
      * @param connectionProvider the connection provider

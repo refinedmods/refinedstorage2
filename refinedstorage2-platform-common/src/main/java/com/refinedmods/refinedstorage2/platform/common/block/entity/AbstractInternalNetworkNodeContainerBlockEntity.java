@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
-import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.AbstractNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
@@ -123,15 +122,7 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
         if (myDirection == null) {
             return true;
         }
-        return myDirection != direction;
-    }
-
-    @Override
-    public void setBlockState(final BlockState newBlockState) {
-        super.setBlockState(newBlockState);
-        if (getNode().getNetwork() != null && level != null && !level.isClientSide()) {
-            PlatformApi.INSTANCE.requestNetworkNodeUpdate(this, level);
-        }
+        return myDirection != direction.getOpposite();
     }
 
     @Nullable
