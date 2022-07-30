@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.1] - 2022-07-30
+
 ### Changed
 
 - The Importer will now extract as much of 1 resource type as possible, according to the per tick transfer quota, at
