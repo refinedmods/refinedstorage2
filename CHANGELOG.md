@@ -21,6 +21,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Fixed Grid stack zeroing not working correctly when Auto-selected mode is on.
+- Fixed transferring items into Grid with NBT tag on Forge not working correctly.
 
 ### Added
 
