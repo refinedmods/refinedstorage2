@@ -10,6 +10,25 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CoreValidationsTest {
     @Test
+    void shouldValidateEquals() {
+        // Act & assert
+        final Exception e1 =
+            assertThrows(IllegalStateException.class, () -> CoreValidations.validateEquals(1, 2, "bla"));
+        assertThat(e1.getMessage()).isEqualTo("bla");
+
+        final Exception e2 =
+            assertThrows(IllegalStateException.class, () -> CoreValidations.validateEquals(null, 2, "bla"));
+        assertThat(e2.getMessage()).isEqualTo("bla");
+
+        final Exception e3 =
+            assertThrows(IllegalStateException.class, () -> CoreValidations.validateEquals(1, null, "bla"));
+        assertThat(e3.getMessage()).isEqualTo("bla");
+
+        assertDoesNotThrow(() -> CoreValidations.validateEquals(1, 1, "bla"));
+        assertDoesNotThrow(() -> CoreValidations.validateEquals(null, null, "bla"));
+    }
+
+    @Test
     void shouldValidateNotNull() {
         // Act & assert
         final Exception e =

@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.common.Config;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
 
 import java.util.Optional;
 
@@ -16,12 +16,13 @@ public class ConfigImpl implements Config {
     private final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
     private final ForgeConfigSpec spec;
 
-    private final CableImpl cable;
-    private final ControllerImpl controller;
-    private final DiskDriveImpl diskDrive;
+    private final Cable cable;
+    private final Controller controller;
+    private final DiskDrive diskDrive;
     private final Grid grid;
     private final StorageBlock storageBlock;
     private final FluidStorageBlock fluidStorageBlock;
+    private final Importer importer;
 
     public ConfigImpl() {
         cable = new CableImpl();
@@ -30,6 +31,7 @@ public class ConfigImpl implements Config {
         grid = new GridImpl();
         storageBlock = new StorageBlockImpl();
         fluidStorageBlock = new FluidStorageBlockImpl();
+        importer = new ImporterImpl();
         spec = builder.build();
     }
 
@@ -65,6 +67,11 @@ public class ConfigImpl implements Config {
     @Override
     public FluidStorageBlock getFluidStorageBlock() {
         return fluidStorageBlock;
+    }
+
+    @Override
+    public Importer getImporter() {
+        return importer;
     }
 
     private class CableImpl implements Cable {
@@ -375,6 +382,23 @@ public class ConfigImpl implements Config {
         @Override
         public long getCreativeEnergyUsage() {
             return creativeUsage.get();
+        }
+    }
+
+    private class ImporterImpl implements Importer {
+        private final ForgeConfigSpec.LongValue energyUsage;
+
+        ImporterImpl() {
+            builder.push("importer");
+            energyUsage = builder
+                .comment("The energy used by the Importer")
+                .defineInRange(ENERGY_USAGE, 2, 0, Long.MAX_VALUE);
+            builder.pop();
+        }
+
+        @Override
+        public long getEnergyUsage() {
+            return energyUsage.get();
         }
     }
 }

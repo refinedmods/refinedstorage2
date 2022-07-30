@@ -12,11 +12,11 @@ import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.ClientFluidGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientFluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import java.util.Objects;
@@ -48,7 +48,7 @@ public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResou
         grid.addWatcher(this);
         final GridService<FluidResource> gridService = new GridServiceImpl<>(
             Objects.requireNonNull(storageChannel),
-            new PlayerSource(playerInventory.player),
+            new PlayerActor(playerInventory.player),
             resource -> Long.MAX_VALUE,
             Platform.INSTANCE.getBucketAmount()
         );
@@ -88,7 +88,7 @@ public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResou
             resource,
             change.change(),
             Objects.requireNonNull(storageChannel)
-                .findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
+                .findTrackedResourceByActorType(resource, PlayerActor.class).orElse(null)
         );
     }
 

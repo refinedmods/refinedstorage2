@@ -12,19 +12,17 @@ import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.NoOpGridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.apiimpl.network.LevelConnectionProvider;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.item.ItemResourceType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.ClientStorageRepository;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorageRepositoryImpl;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemResourceType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientStorageRepository;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorageRepositoryImpl;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
@@ -54,6 +52,9 @@ public class PlatformApiImpl implements PlatformApi {
         new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageChannelTypes.ITEM);
     private final OrderedRegistry<ResourceLocation, GridSynchronizer> gridSynchronizerRegistry =
         new OrderedRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
+    private final OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> importerTransferStrategyRegistry =
+        new OrderedRegistryImpl<>(createIdentifier("noop"),
+            (level, pos, direction) -> (filter, actor, network) -> false);
 
     @Override
     public OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry() {
@@ -91,13 +92,8 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public StorageType<ItemResource> getItemStorageType() {
-        return ItemStorageType.INSTANCE;
-    }
-
-    @Override
-    public StorageType<FluidResource> getFluidStorageType() {
-        return FluidStorageType.INSTANCE;
+    public OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> getImporterTransferStrategyRegistry() {
+        return importerTransferStrategyRegistry;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ExactModeAccessor;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 
 import java.util.ArrayList;
@@ -14,21 +14,21 @@ import net.minecraft.network.chat.Component;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ExactModeSideButtonWidget extends AbstractSideButtonWidget {
-    private final ExactModeAccessor exactModeAccessor;
+    private final ClientProperty<Boolean> property;
     private final TooltipRenderer tooltipRenderer;
     private final List<Component> tooltipWhenOn;
     private final List<Component> tooltipWhenOff;
 
-    public ExactModeSideButtonWidget(final ExactModeAccessor exactModeAccessor, final TooltipRenderer tooltipRenderer) {
-        super(createPressAction(exactModeAccessor));
-        this.exactModeAccessor = exactModeAccessor;
+    public ExactModeSideButtonWidget(final ClientProperty<Boolean> property, final TooltipRenderer tooltipRenderer) {
+        super(createPressAction(property));
+        this.property = property;
         this.tooltipRenderer = tooltipRenderer;
         this.tooltipWhenOn = calculateTooltip(true);
         this.tooltipWhenOff = calculateTooltip(false);
     }
 
-    private static OnPress createPressAction(final ExactModeAccessor exactModeAccessor) {
-        return btn -> exactModeAccessor.setExactMode(!exactModeAccessor.isExactMode());
+    private static OnPress createPressAction(final ClientProperty<Boolean> property) {
+        return btn -> property.setValue(!property.getValue());
     }
 
     private List<Component> calculateTooltip(final boolean exactMode) {
@@ -40,7 +40,7 @@ public class ExactModeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        return exactModeAccessor.isExactMode() ? 0 : 16;
+        return Boolean.TRUE.equals(property.getValue()) ? 0 : 16;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ExactModeSideButtonWidget extends AbstractSideButtonWidget {
     public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
         tooltipRenderer.render(
             poseStack,
-            exactModeAccessor.isExactMode() ? tooltipWhenOn : tooltipWhenOff,
+            Boolean.TRUE.equals(property.getValue()) ? tooltipWhenOn : tooltipWhenOff,
             mouseX,
             mouseY
         );

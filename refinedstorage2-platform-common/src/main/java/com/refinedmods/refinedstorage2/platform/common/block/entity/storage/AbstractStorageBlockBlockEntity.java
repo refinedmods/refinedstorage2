@@ -7,13 +7,13 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.FilteredResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageSettingsProvider;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.Objects;

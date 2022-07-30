@@ -1,14 +1,15 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -37,6 +38,8 @@ public final class BlockEntities {
         itemStorageBlocks = new EnumMap<>(ItemStorageType.Variant.class);
     private final Map<FluidStorageType.Variant, Supplier<BlockEntityType<FluidStorageBlockBlockEntity>>>
         fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
+    @Nullable
+    private Supplier<BlockEntityType<ImporterBlockEntity>> importer;
 
     private BlockEntities() {
     }
@@ -105,5 +108,13 @@ public final class BlockEntities {
 
     public BlockEntityType<FluidStorageBlockBlockEntity> getFluidStorageBlock(final FluidStorageType.Variant variant) {
         return fluidStorageBlocks.get(variant).get();
+    }
+
+    public BlockEntityType<ImporterBlockEntity> getImporter() {
+        return Objects.requireNonNull(importer).get();
+    }
+
+    public void setImporter(final Supplier<BlockEntityType<ImporterBlockEntity>> supplier) {
+        this.importer = supplier;
     }
 }

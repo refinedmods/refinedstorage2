@@ -3,11 +3,11 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.bl
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.FilteredResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.AbstractStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -33,9 +33,10 @@ public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageC
         this.stored = buf.readLong();
         this.capacity = buf.readLong();
 
-        addSlots(player, new FilteredResourceFilterContainer(
-            PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, () -> {
-        }, resourceType));
+        addSlots(
+            player,
+            new FilteredResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, resourceType)
+        );
 
         initializeResourceFilterSlots(buf);
     }

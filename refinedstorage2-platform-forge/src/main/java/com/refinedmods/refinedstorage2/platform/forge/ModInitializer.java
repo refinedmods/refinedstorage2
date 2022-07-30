@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBlock;
@@ -11,16 +10,20 @@ import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
@@ -32,6 +35,8 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
@@ -46,6 +51,8 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockIte
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.FluidHandlerImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.ItemHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
 import net.minecraft.core.Direction;
@@ -89,6 +96,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.GRID;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.IMPORTER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.ITEM_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.MACHINE_CASING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
@@ -123,11 +131,11 @@ public class ModInitializer extends AbstractModInitializer {
     private final DeferredRegister<Item> itemRegistry =
         DeferredRegister.create(ForgeRegistries.ITEMS, IdentifierUtil.MOD_ID);
     private final DeferredRegister<BlockEntityType<?>> blockEntityTypeRegistry =
-        DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, IdentifierUtil.MOD_ID);
+        DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, IdentifierUtil.MOD_ID);
     private final DeferredRegister<LootItemFunctionType> lootFunctionTypeRegistry =
         DeferredRegister.create(Registry.LOOT_FUNCTION_REGISTRY, IdentifierUtil.MOD_ID);
     private final DeferredRegister<MenuType<?>> menuTypeRegistry =
-        DeferredRegister.create(ForgeRegistries.CONTAINERS, IdentifierUtil.MOD_ID);
+        DeferredRegister.create(ForgeRegistries.MENU_TYPES, IdentifierUtil.MOD_ID);
     private final DeferredRegister<SoundEvent> soundEventRegistry =
         DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, IdentifierUtil.MOD_ID);
 
@@ -137,6 +145,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerAdditionalStorageTypes();
         registerAdditionalStorageChannelTypes();
         registerNetworkComponents();
+        registerImporterTransferStrategyFactories();
         registerContent();
         registerSounds();
         registerAdditionalResourceTypes();
@@ -144,11 +153,23 @@ public class ModInitializer extends AbstractModInitializer {
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onClientSetup);
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterModels);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterModelGeometry);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterKeyMappings);
         });
 
         MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerCapabilities);
+    }
+
+    private void registerImporterTransferStrategyFactories() {
+        PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().register(
+            createIdentifier("item"),
+            new ItemHandlerImporterTransferStrategyFactory()
+        );
+        PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().register(
+            createIdentifier("fluid"),
+            new FluidHandlerImporterTransferStrategyFactory()
+        );
     }
 
     private void registerContent() {
@@ -189,17 +210,25 @@ public class ModInitializer extends AbstractModInitializer {
         ));
         Blocks.INSTANCE.getController().putAll(color -> blockRegistry.register(
             Blocks.INSTANCE.getController().getId(color, CONTROLLER).getPath(),
-            () -> new ControllerBlock(ControllerType.NORMAL, Blocks.INSTANCE.getController().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")
-            ))
+            () -> new ControllerBlock(
+                ControllerType.NORMAL,
+                Blocks.INSTANCE.getController().getName(
+                    color,
+                    createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")
+                ),
+                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getController)
+            )
         ));
         Blocks.INSTANCE.getCreativeController().putAll(color -> blockRegistry.register(
             Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER).getPath(),
-            () -> new ControllerBlock(ControllerType.CREATIVE, Blocks.INSTANCE.getCreativeController().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")
-            ))
+            () -> new ControllerBlock(
+                ControllerType.CREATIVE,
+                Blocks.INSTANCE.getCreativeController().getName(
+                    color,
+                    createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")
+                ),
+                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getCreativeController)
+            )
         ));
 
         for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
@@ -216,10 +245,21 @@ public class ModInitializer extends AbstractModInitializer {
             ));
         }
 
+        Blocks.INSTANCE.setImporter(blockRegistry.register(IMPORTER.getPath(), ImporterBlock::new));
+
         blockRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void registerItems() {
+        registerSimpleItems();
+        registerGridItems();
+        registerControllerItems();
+        registerStorageItems();
+
+        itemRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
+    }
+
+    private void registerSimpleItems() {
         itemRegistry.register(
             CABLE.getPath(),
             () -> new SimpleBlockItem(Blocks.INSTANCE.getCable(), CREATIVE_MODE_TAB)
@@ -258,6 +298,20 @@ public class ModInitializer extends AbstractModInitializer {
             () -> new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing(), CREATIVE_MODE_TAB)
         );
 
+        for (final ProcessorItem.Type type : ProcessorItem.Type.values()) {
+            itemRegistry.register(forProcessor(type).getPath(), () -> new ProcessorItem(CREATIVE_MODE_TAB));
+        }
+
+        itemRegistry.register(
+            IMPORTER.getPath(),
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getImporter(), CREATIVE_MODE_TAB)
+        );
+
+        itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
+        itemRegistry.register(DESTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
+    }
+
+    private void registerGridItems() {
         Blocks.INSTANCE.getGrid().forEach((color, block) -> itemRegistry.register(
             Blocks.INSTANCE.getGrid().getId(color, GRID).getPath(),
             () -> new GridBlockItem(
@@ -280,6 +334,9 @@ public class ModInitializer extends AbstractModInitializer {
                 ))
             )
         ));
+    }
+
+    private void registerControllerItems() {
         Blocks.INSTANCE.getController().forEach((c, block) -> Items.INSTANCE.getControllers().add(itemRegistry.register(
             Blocks.INSTANCE.getController().getId(c, CONTROLLER).getPath(),
             () -> new ControllerBlockItem(
@@ -302,11 +359,9 @@ public class ModInitializer extends AbstractModInitializer {
                 ))
             )
         ));
+    }
 
-        for (final ProcessorItem.Type type : ProcessorItem.Type.values()) {
-            itemRegistry.register(forProcessor(type).getPath(), () -> new ProcessorItem(CREATIVE_MODE_TAB));
-        }
-
+    private void registerStorageItems() {
         for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
             if (variant != ItemStorageType.Variant.CREATIVE) {
                 Items.INSTANCE.setItemStoragePart(variant, itemRegistry.register(
@@ -360,11 +415,6 @@ public class ModInitializer extends AbstractModInitializer {
                 )
             );
         }
-
-        itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
-        itemRegistry.register(DESTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
-
-        itemRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void registerBlockEntities() {
@@ -428,6 +478,11 @@ public class ModInitializer extends AbstractModInitializer {
             ));
         }
 
+        BlockEntities.INSTANCE.setImporter(blockEntityTypeRegistry.register(
+            IMPORTER.getPath(),
+            () -> BlockEntityType.Builder.of(ImporterBlockEntity::new, Blocks.INSTANCE.getImporter()).build(null)
+        ));
+
         blockEntityTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
@@ -456,6 +511,10 @@ public class ModInitializer extends AbstractModInitializer {
             FLUID_STORAGE_BLOCK.getPath(),
             () -> IForgeMenuType.create(FluidStorageBlockContainerMenu::new)
         ));
+        Menus.INSTANCE.setImporter(menuTypeRegistry.register(
+            IMPORTER.getPath(),
+            () -> IForgeMenuType.create(ImporterContainerMenu::new)
+        ));
 
         menuTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -481,14 +540,14 @@ public class ModInitializer extends AbstractModInitializer {
 
     @SubscribeEvent
     public void onRightClickBlock(final PlayerInteractEvent.RightClickBlock e) {
-        final BlockState state = e.getWorld().getBlockState(e.getHitVec().getBlockPos());
+        final BlockState state = e.getLevel().getBlockState(e.getHitVec().getBlockPos());
 
-        AbstractBaseBlock.tryUseWrench(state, e.getWorld(), e.getHitVec(), e.getPlayer(), e.getHand())
+        AbstractBaseBlock.tryUseWrench(state, e.getLevel(), e.getHitVec(), e.getEntity(), e.getHand())
             .or(() -> AbstractBaseBlock.tryUpdateColor(
                 state,
-                e.getWorld(),
+                e.getLevel(),
                 e.getHitVec().getBlockPos(),
-                e.getPlayer(),
+                e.getEntity(),
                 e.getHand()
             ))
             .ifPresent(result -> {

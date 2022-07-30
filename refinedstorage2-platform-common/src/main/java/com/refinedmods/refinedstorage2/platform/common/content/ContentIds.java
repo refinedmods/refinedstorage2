@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 
 import net.minecraft.resources.ResourceLocation;
@@ -27,6 +27,7 @@ public final class ContentIds {
     public static final ResourceLocation ITEM_STORAGE_BLOCK = createIdentifier("item_storage_block");
     public static final ResourceLocation FLUID_STORAGE_BLOCK = createIdentifier("fluid_storage_block");
     public static final ResourceLocation STORAGE_BLOCK = createIdentifier("storage_block");
+    public static final ResourceLocation IMPORTER = createIdentifier("importer");
 
     private ContentIds() {
     }

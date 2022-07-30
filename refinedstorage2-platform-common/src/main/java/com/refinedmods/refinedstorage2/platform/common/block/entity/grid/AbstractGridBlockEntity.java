@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
@@ -45,7 +45,7 @@ public abstract class AbstractGridBlockEntity<T>
         getNode().forEachResource((stack, trackedResource) -> {
             writeResourceAmount(buf, stack);
             PacketUtil.writeTrackedResource(buf, trackedResource.orElse(null));
-        }, PlayerSource.class);
+        }, PlayerActor.class);
     }
 
     protected abstract void writeResourceAmount(FriendlyByteBuf buf, ResourceAmount<T> stack);

@@ -9,9 +9,10 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.SmallTextTooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
@@ -121,7 +122,10 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         addWidget(scrollbar);
         addWidget(searchField);
 
-        addSideButton(new RedstoneModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
+        addSideButton(new RedstoneModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
+            this::renderComponentTooltip
+        ));
         addSideButton(new SortingDirectionSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new SortingTypeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new SizeSideButtonWidget(getMenu(), this::renderComponentTooltip));
@@ -516,13 +520,15 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
 
     @Override
     public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
+        // First do the prevent sorting.
+        // Order matters. In Auto-selected mode, the search field will swallow the SHIFT key.
+        if (hasShiftDown() && Platform.INSTANCE.getConfig().getGrid().isPreventSortingWhileShiftIsDown()) {
+            getMenu().getView().setPreventSorting(true);
+        }
+
         if (searchField != null
             && (searchField.keyPressed(key, scanCode, modifiers) || searchField.canConsumeInput())) {
             return true;
-        }
-
-        if (hasShiftDown() && Platform.INSTANCE.getConfig().getGrid().isPreventSortingWhileShiftIsDown()) {
-            getMenu().getView().setPreventSorting(true);
         }
 
         return super.keyPressed(key, scanCode, modifiers);

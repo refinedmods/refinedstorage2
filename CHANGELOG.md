@@ -7,6 +7,29 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- The Importer will now extract as much of 1 resource type as possible, according to the per tick transfer quota, at
+  once for all the inventory slots.
+- The Importer no longer transmits a network signal on the direction it's facing.
+- The Importer can now import from the Disk Drive.
+- The Importer no longer has a dedicated item/fluid mode. It will import what it's connected to, 1 resource type per
+  tick is possible.
+- Updated to the latest Forge version.
+- Ported to Minecraft 1.19.1.
+
+### Fixed
+
+- Fixed Grid stack zeroing not working correctly when Auto-selected mode is on.
+- Fixed transferring items into Grid with NBT tag on Forge not working correctly.
+
+### Added
+
+- Importer.
+- Emissive rendering.
+
+## [2.0.0-milestone.2.0] - 2022-07-05
+
 Device inventories and disks created in v2.0.0-milestone.1.4 will be lost.
 
 ### Changed
@@ -32,6 +55,7 @@ disks, etc. to intermediate storage like a chest.
 - The Wrench now dismantles devices when crouching.
     - The Disk Drive in item form now supports rendering of disks that were dismantled.
     - In order to retain Controller energy, the Controller must now be dismantled.
+    - All config and upgrades are transferred to the item.
 - You can now use any Wrench from other mods in order to rotate or dismantle.
 - Item and fluid storage blocks.
 - Initial advancements.
@@ -90,6 +114,7 @@ before updating.
 - Prevent loading unloaded chunks.
 - Fix various bugs related to networks and chunk loading/unloading.
 - Fix not being able to move network devices with mods like Carrier.
+- Fix CTRL + CLICK in creative mode not retaining block data.
 - Fix item quantity not being formatted in the Grid.
 - Fix amount in detailed Grid tooltip being formatted with units.
 
@@ -108,6 +133,7 @@ before updating.
 - Made block breaking faster.
 - Refined Storage now uses the bundled AutoConfig with ClothConfig and bundles ClothConfig.
 - Item quantity of "1" is now always being rendered in the Grid.
+- Exact mode is now off by default.
 
 ### Removed
 
@@ -174,7 +200,7 @@ upgrading to a later version.
 - The Grid search bar now has much more powerful searching, supporting expressions. Consult the Patchouli documentation.
 - A single item in storage can now be larger than 2,147,483,647.
 - You can now place directional blocks facing up/down.
-- Fullbright rendering isn't implemented yet.
+- Emissive rendering isn't implemented yet.
 - You can now add multiple controllers to a network to meet the energy requirements of your network.
 - The Priority screen now has a "Reset" button.
 - The Grid can now use smooth scrolling.

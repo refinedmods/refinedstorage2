@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.AccessModeAccessor;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 
 import java.util.ArrayList;
@@ -19,21 +19,21 @@ import net.minecraft.network.chat.Component;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class AccessModeSideButtonWidget extends AbstractSideButtonWidget {
-    private final AccessModeAccessor accessModeAccessor;
+    private final ClientProperty<AccessMode> property;
     private final TooltipRenderer tooltipRenderer;
     private final Map<AccessMode, List<Component>> tooltips = new EnumMap<>(AccessMode.class);
 
-    public AccessModeSideButtonWidget(final AccessModeAccessor accessModeAccessor,
+    public AccessModeSideButtonWidget(final ClientProperty<AccessMode> property,
                                       final TooltipRenderer tooltipRenderer) {
-        super(createPressAction(accessModeAccessor));
-        this.accessModeAccessor = accessModeAccessor;
+        super(createPressAction(property));
+        this.property = property;
         this.tooltipRenderer = tooltipRenderer;
         Arrays.stream(AccessMode.values()).forEach(accessMode ->
             tooltips.put(accessMode, calculateTooltip(accessMode)));
     }
 
-    private static OnPress createPressAction(final AccessModeAccessor accessModeAccessor) {
-        return btn -> accessModeAccessor.setAccessMode(accessModeAccessor.getAccessMode().toggle());
+    private static OnPress createPressAction(final ClientProperty<AccessMode> property) {
+        return btn -> property.setValue(property.getValue().toggle());
     }
 
     private List<Component> calculateTooltip(final AccessMode accessMode) {
@@ -48,7 +48,7 @@ public class AccessModeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected int getXTexture() {
-        return switch (accessModeAccessor.getAccessMode()) {
+        return switch (property.getValue()) {
             case INSERT_EXTRACT -> 0;
             case INSERT -> 16;
             case EXTRACT -> 32;
@@ -62,6 +62,6 @@ public class AccessModeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
-        tooltipRenderer.render(poseStack, tooltips.get(accessModeAccessor.getAccessMode()), mouseX, mouseY);
+        tooltipRenderer.render(poseStack, tooltips.get(property.getValue()), mouseX, mouseY);
     }
 }

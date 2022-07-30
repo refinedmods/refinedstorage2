@@ -31,6 +31,6 @@ public class DiskDriveBlockEntityRendererImpl<T extends AbstractDiskDriveBlockEn
 
     @Override
     protected DiskDriveState getDriveState(final AbstractDiskDriveBlockEntity blockEntity) {
-        return blockEntity.getModelData().getData(ForgeDiskDriveBlockEntity.STATE_PROPERTY);
+        return blockEntity.getModelData().get(ForgeDiskDriveBlockEntity.STATE_PROPERTY);
     }
 }

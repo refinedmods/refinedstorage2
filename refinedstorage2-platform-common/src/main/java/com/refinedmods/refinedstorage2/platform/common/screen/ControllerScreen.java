@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ProgressWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
 
@@ -48,7 +49,10 @@ public class ControllerScreen extends AbstractBaseScreen<ControllerContainerMenu
     @Override
     protected void init() {
         super.init();
-        addSideButton(new RedstoneModeSideButtonWidget(getMenu(), this::renderComponentTooltip));
+        addSideButton(new RedstoneModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
+            this::renderComponentTooltip
+        ));
     }
 
     private double getPercentageFull() {

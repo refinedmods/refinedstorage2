@@ -5,9 +5,9 @@ import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkCompone
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.fluid.FluidResourceType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid.FluidResourceType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 

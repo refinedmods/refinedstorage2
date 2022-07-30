@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ListenableResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
-import com.refinedmods.refinedstorage2.api.storage.Source;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageImpl;
@@ -52,13 +52,13 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
     }
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Source source) {
-        return storage.extract(resource, amount, action, source);
+    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
+        return storage.extract(resource, amount, action, actor);
     }
 
     @Override
-    public long insert(final T resource, final long amount, final Action action, final Source source) {
-        return storage.insert(resource, amount, action, source);
+    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
+        return storage.insert(resource, amount, action, actor);
     }
 
     @Override
@@ -72,8 +72,8 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
-                                                                     final Class<? extends Source> sourceType) {
-        return storage.findTrackedResourceBySourceType(resource, sourceType);
+    public Optional<TrackedResource> findTrackedResourceByActorType(final T resource,
+                                                                    final Class<? extends Actor> actorType) {
+        return storage.findTrackedResourceByActorType(resource, actorType);
     }
 }

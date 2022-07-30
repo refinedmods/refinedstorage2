@@ -1,5 +1,5 @@
 {
-  "parent": "refinedstorage2:block/fullbright_all_cutout",
+  "parent": "refinedstorage2:block/emissive_all_cutout",
   "textures": {
     "particle": "refinedstorage2:block/controller/off",
     "all": "refinedstorage2:block/controller/on",

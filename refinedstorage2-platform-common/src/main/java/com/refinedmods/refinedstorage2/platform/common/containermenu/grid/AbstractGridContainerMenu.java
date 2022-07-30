@@ -11,14 +11,14 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.RedstoneModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBaseContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.RedstoneModeAccessor;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.property.TwoWaySyncProperty;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
@@ -35,7 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainerMenu
-    implements ResourceListListener<T>, RedstoneModeAccessor, GridWatcher {
+    implements ResourceListListener<T>, GridWatcher {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static String lastSearchQuery = "";
@@ -48,8 +48,6 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     protected StorageChannel<T> storageChannel; // TODO - Support changing of the channel.
     @Nullable
     private Runnable sizeChangedListener;
-
-    private final TwoWaySyncProperty<RedstoneMode> redstoneModeProperty;
 
     private GridSynchronizer synchronizer;
     private boolean autoSelected;
@@ -66,19 +64,9 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         super(type, syncId);
 
         this.view = view;
-
         this.playerInventory = playerInventory;
 
-        this.redstoneModeProperty = TwoWaySyncProperty.forClient(
-            0,
-            RedstoneModeSettings::getRedstoneMode,
-            RedstoneModeSettings::getRedstoneMode,
-            RedstoneMode.IGNORE,
-            redstoneMode -> {
-            }
-        );
-
-        addDataSlot(redstoneModeProperty);
+        registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
 
         this.active = buf.readBoolean();
 
@@ -108,15 +96,11 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
 
         this.view = view;
 
-        this.redstoneModeProperty = TwoWaySyncProperty.forServer(
-            0,
-            RedstoneModeSettings::getRedstoneMode,
-            RedstoneModeSettings::getRedstoneMode,
+        registerProperty(new ServerProperty<>(
+            PropertyTypes.REDSTONE_MODE,
             grid::getRedstoneMode,
             grid::setRedstoneMode
-        );
-
-        addDataSlot(redstoneModeProperty);
+        ));
 
         this.playerInventory = playerInventory;
         this.storageChannel = grid.getNode().getStorageChannel();
@@ -199,16 +183,6 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
 
     public GridView<T> getView() {
         return view;
-    }
-
-    @Override
-    public RedstoneMode getRedstoneMode() {
-        return redstoneModeProperty.getDeserialized();
-    }
-
-    @Override
-    public void setRedstoneMode(final RedstoneMode redstoneMode) {
-        redstoneModeProperty.syncToServer(redstoneMode);
     }
 
     @Override

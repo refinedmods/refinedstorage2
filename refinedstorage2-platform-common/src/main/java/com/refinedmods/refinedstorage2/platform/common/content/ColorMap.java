@@ -25,10 +25,16 @@ public class ColorMap<T> {
     }
 
     public ResourceLocation getId(final DyeColor color, final ResourceLocation id) {
+        return generateId(color, id.getNamespace(), id.getPath());
+    }
+
+    public static ResourceLocation generateId(final DyeColor color,
+                                              final String namespace,
+                                              final String path) {
         if (color == NORMAL_COLOR) {
-            return id;
+            return new ResourceLocation(namespace, path);
         }
-        return new ResourceLocation(id.getNamespace(), color.getSerializedName() + "_" + id.getPath());
+        return new ResourceLocation(namespace, color.getName() + "_" + path);
     }
 
     public MutableComponent getName(final DyeColor color, final MutableComponent name) {

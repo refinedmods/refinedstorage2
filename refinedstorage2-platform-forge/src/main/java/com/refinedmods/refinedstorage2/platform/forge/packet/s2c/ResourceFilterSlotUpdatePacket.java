@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
 
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
 import java.util.Objects;
 import java.util.function.Supplier;

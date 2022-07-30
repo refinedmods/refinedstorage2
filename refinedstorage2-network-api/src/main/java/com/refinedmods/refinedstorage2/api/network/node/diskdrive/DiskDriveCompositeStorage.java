@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.core.filter.Filter;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.Source;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeAwareChild;
 import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorage;
@@ -29,19 +29,19 @@ class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, CompositeAwar
     }
 
     @Override
-    public long extract(final T resource, final long amount, final Action action, final Source source) {
+    public long extract(final T resource, final long amount, final Action action, final Actor actor) {
         if (diskDrive.getAccessMode() == AccessMode.INSERT || !diskDrive.isActive()) {
             return 0;
         }
-        return disks.extract(resource, amount, action, source);
+        return disks.extract(resource, amount, action, actor);
     }
 
     @Override
-    public long insert(final T resource, final long amount, final Action action, final Source source) {
+    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
         if (diskDrive.getAccessMode() == AccessMode.EXTRACT || !diskDrive.isActive() || !filter.isAllowed(resource)) {
             return 0;
         }
-        return disks.insert(resource, amount, action, source);
+        return disks.insert(resource, amount, action, actor);
     }
 
     @Override
@@ -80,9 +80,9 @@ class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, CompositeAwar
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
-                                                                     final Class<? extends Source> sourceType) {
-        return disks.findTrackedResourceBySourceType(resource, sourceType);
+    public Optional<TrackedResource> findTrackedResourceByActorType(final T resource,
+                                                                    final Class<? extends Actor> actorType) {
+        return disks.findTrackedResourceByActorType(resource, actorType);
     }
 
     @Override

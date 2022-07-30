@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.api.grid.service;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.EmptySource;
-import com.refinedmods.refinedstorage2.api.storage.Source;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
+import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelImpl;
@@ -28,7 +28,7 @@ class GridServiceImplTest {
     @BeforeEach
     void setUp() {
         storageChannel = new StorageChannelImpl<>();
-        sut = new GridServiceImpl<>(storageChannel, GridSource.INSTANCE, r -> MAX_COUNT, 1);
+        sut = new GridServiceImpl<>(storageChannel, GridActor.INSTANCE, r -> MAX_COUNT, 1);
     }
 
     @Nested
@@ -38,7 +38,7 @@ class GridServiceImplTest {
         void shouldInsertIntoDestination(final GridInsertMode insertMode) {
             // Arrange
             final Storage<String> source = new LimitedStorageImpl<>(100);
-            source.insert("A", MAX_COUNT * 3, Action.EXECUTE, EmptySource.INSTANCE);
+            source.insert("A", MAX_COUNT * 3, Action.EXECUTE, EmptyActor.INSTANCE);
 
             final Storage<String> destination = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(destination);
@@ -58,10 +58,10 @@ class GridServiceImplTest {
             assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", (MAX_COUNT * 3) - expectedAmount)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class))
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class))
                 .get()
                 .usingRecursiveComparison()
-                .isEqualTo(new TrackedResource(GridSource.NAME, 0));
+                .isEqualTo(new TrackedResource(GridActor.NAME, 0));
         }
 
         @ParameterizedTest
@@ -79,7 +79,7 @@ class GridServiceImplTest {
             // Assert
             assertThat(storageChannel.getAll()).isEmpty();
             assertThat(source.getAll()).isEmpty();
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isEmpty();
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class)).isEmpty();
         }
 
         @ParameterizedTest
@@ -87,11 +87,11 @@ class GridServiceImplTest {
         void shouldNotInsertIntoDestinationWhenNoSpaceIsPresentInDestination(final GridInsertMode insertMode) {
             // Arrange
             final Storage<String> source = new LimitedStorageImpl<>(100);
-            source.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
+            source.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             final Storage<String> destination = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(destination);
-            storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
+            storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
             sut.insert("A", insertMode, source);
@@ -103,7 +103,7 @@ class GridServiceImplTest {
             assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 100)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isEmpty();
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class)).isEmpty();
         }
     }
 
@@ -113,11 +113,11 @@ class GridServiceImplTest {
         void shouldInsertIntoDestinationWithRemainder() {
             // Arrange
             final Storage<String> source = new LimitedStorageImpl<>(100);
-            source.insert("A", MAX_COUNT, Action.EXECUTE, EmptySource.INSTANCE);
+            source.insert("A", MAX_COUNT, Action.EXECUTE, EmptyActor.INSTANCE);
 
             final Storage<String> destination = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(destination);
-            storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE, EmptySource.INSTANCE);
+            storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
             sut.insert("A", GridInsertMode.ENTIRE_RESOURCE, source);
@@ -129,10 +129,10 @@ class GridServiceImplTest {
             assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 1)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class))
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class))
                 .get()
                 .usingRecursiveComparison()
-                .isEqualTo(new TrackedResource(GridSource.NAME, 0));
+                .isEqualTo(new TrackedResource(GridActor.NAME, 0));
         }
 
         @Test
@@ -149,18 +149,18 @@ class GridServiceImplTest {
                 public long extract(final String resource,
                                     final long amount,
                                     final Action action,
-                                    final Source source) {
+                                    final Actor source) {
                     if (amount != MAX_COUNT) {
                         return 0;
                     }
                     return super.extract(resource, amount, action, source);
                 }
             };
-            source.insert("A", MAX_COUNT, Action.EXECUTE, EmptySource.INSTANCE);
+            source.insert("A", MAX_COUNT, Action.EXECUTE, EmptyActor.INSTANCE);
 
             final Storage<String> destination = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(destination);
-            storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE, EmptySource.INSTANCE);
+            storageChannel.insert("A", 100 - MAX_COUNT + 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
             sut.insert("A", GridInsertMode.ENTIRE_RESOURCE, source);
@@ -172,7 +172,7 @@ class GridServiceImplTest {
             assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", MAX_COUNT)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isEmpty();
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class)).isEmpty();
         }
     }
 
@@ -186,7 +186,7 @@ class GridServiceImplTest {
 
             final Storage<String> source = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(source);
-            storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
+            storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
             sut.extract("A", extractMode, destination);
@@ -204,10 +204,10 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", expectedExtracted)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class))
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class))
                 .get()
                 .usingRecursiveComparison()
-                .isEqualTo(new TrackedResource(GridSource.NAME, 0));
+                .isEqualTo(new TrackedResource(GridActor.NAME, 0));
         }
 
         @ParameterizedTest
@@ -225,7 +225,7 @@ class GridServiceImplTest {
             // Assert
             assertThat(storageChannel.getAll()).isEmpty();
             assertThat(destination.getAll()).isEmpty();
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isNotPresent();
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class)).isNotPresent();
         }
 
         @ParameterizedTest
@@ -233,11 +233,11 @@ class GridServiceImplTest {
         void shouldNotExtractFromSourceIfThereIsNoSpaceInDestination(final GridExtractMode extractMode) {
             // Arrange
             final Storage<String> destination = new LimitedStorageImpl<>(100);
-            destination.insert("B", 100, Action.EXECUTE, EmptySource.INSTANCE);
+            destination.insert("B", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             final Storage<String> source = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(source);
-            storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
+            storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
             sut.extract("A", extractMode, destination);
@@ -249,7 +249,7 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("B", 100)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class)).isEmpty();
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class)).isEmpty();
         }
     }
 
@@ -262,7 +262,7 @@ class GridServiceImplTest {
 
             final Storage<String> source = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(source);
-            storageChannel.insert("A", MAX_COUNT - 1, Action.EXECUTE, EmptySource.INSTANCE);
+            storageChannel.insert("A", MAX_COUNT - 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
             sut.extract("A", GridExtractMode.ENTIRE_RESOURCE, destination);
@@ -272,10 +272,10 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", MAX_COUNT - 1)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class))
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class))
                 .get()
                 .usingRecursiveComparison()
-                .isEqualTo(new TrackedResource(GridSource.NAME, 0));
+                .isEqualTo(new TrackedResource(GridActor.NAME, 0));
         }
 
         @Test
@@ -285,7 +285,7 @@ class GridServiceImplTest {
 
             final Storage<String> source = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(source);
-            storageChannel.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
+            storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
             sut.extract("A", GridExtractMode.ENTIRE_RESOURCE, destination);
@@ -297,10 +297,10 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", MAX_COUNT - 1)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class))
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class))
                 .get()
                 .usingRecursiveComparison()
-                .isEqualTo(new TrackedResource(GridSource.NAME, 0));
+                .isEqualTo(new TrackedResource(GridActor.NAME, 0));
         }
     }
 
@@ -313,7 +313,7 @@ class GridServiceImplTest {
 
             final Storage<String> source = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
             storageChannel.addSource(source);
-            storageChannel.insert("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
+            storageChannel.insert("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Act
             sut.extract("A", GridExtractMode.HALF_RESOURCE, destination);
@@ -323,16 +323,16 @@ class GridServiceImplTest {
             assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
                 new ResourceAmount<>("A", 1)
             );
-            assertThat(storageChannel.findTrackedResourceBySourceType("A", GridSource.class))
+            assertThat(storageChannel.findTrackedResourceByActorType("A", GridActor.class))
                 .get()
                 .usingRecursiveComparison()
-                .isEqualTo(new TrackedResource(GridSource.NAME, 0));
+                .isEqualTo(new TrackedResource(GridActor.NAME, 0));
         }
     }
 
-    private static class GridSource implements Source {
+    private static class GridActor implements Actor {
         private static final String NAME = "GridSource";
-        private static final GridSource INSTANCE = new GridSource();
+        private static final GridActor INSTANCE = new GridActor();
 
         @Override
         public String getName() {

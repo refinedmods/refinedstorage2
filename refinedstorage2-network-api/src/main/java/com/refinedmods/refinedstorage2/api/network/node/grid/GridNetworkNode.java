@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.Source;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
@@ -41,11 +41,11 @@ public class GridNetworkNode<T> extends AbstractNetworkNode {
     }
 
     public void forEachResource(final BiConsumer<ResourceAmount<T>, Optional<TrackedResource>> consumer,
-                                final Class<? extends Source> sourceType) {
+                                final Class<? extends Actor> sourceType) {
         final StorageChannel<T> storageChannel = getStorageChannel();
         storageChannel.getAll().forEach(resourceAmount -> consumer.accept(
             resourceAmount,
-            storageChannel.findTrackedResourceBySourceType(resourceAmount.getResource(), sourceType)
+            storageChannel.findTrackedResourceByActorType(resourceAmount.getResource(), sourceType)
         ));
     }
 

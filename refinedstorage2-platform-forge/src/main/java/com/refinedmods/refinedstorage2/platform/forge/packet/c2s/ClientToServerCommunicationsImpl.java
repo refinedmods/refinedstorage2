@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyType;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
@@ -42,8 +43,8 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendPropertyChange(final int id, final int value) {
-        networkManager.send(new PropertyChangePacket(id, value));
+    public <T> void sendPropertyChange(final PropertyType<T> type, final T value) {
+        networkManager.send(new PropertyChangePacket(type.id(), type.serializer().apply(value)));
     }
 
     @Override

@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskSta
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
-import com.refinedmods.refinedstorage2.platform.apiimpl.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
@@ -18,6 +17,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.Sto
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.EmptyStorageDiskInfoAccessor;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.LevelUtil;
@@ -91,17 +91,12 @@ public abstract class AbstractDiskDriveBlockEntity
         getNode().setNormalizer(this::normalize);
     }
 
-    public static void serverTick(final BlockState state, final AbstractDiskDriveBlockEntity blockEntity) {
-        AbstractInternalNetworkNodeContainerBlockEntity.serverTick(state, blockEntity);
-        blockEntity.updateDiskStateIfNecessaryInLevel();
-    }
-
     public static boolean hasDisk(final CompoundTag tag, final int slot) {
         return tag.contains(TAG_DISK_INVENTORY)
             && ContainerUtil.hasItemInSlot(tag.getCompound(TAG_DISK_INVENTORY), slot);
     }
 
-    private void updateDiskStateIfNecessaryInLevel() {
+    public void updateDiskStateIfNecessaryInLevel() {
         if (!syncRequested) {
             return;
         }

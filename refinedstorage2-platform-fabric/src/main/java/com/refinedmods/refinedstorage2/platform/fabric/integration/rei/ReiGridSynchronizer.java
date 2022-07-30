@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.integration.rei;
 
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.AbstractGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.AbstractGridSynchronizer;
 
 import javax.annotation.Nullable;
 

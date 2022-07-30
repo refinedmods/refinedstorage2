@@ -15,8 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.client.IFluidTypeRenderProperties;
-import net.minecraftforge.client.RenderProperties;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 
@@ -39,15 +38,15 @@ public class FluidStackFluidRenderer extends AbstractFluidRenderer {
         final FluidStack stack = getFluidStackFromCache(fluidResource);
         final Fluid fluid = fluidResource.fluid();
 
-        final IFluidTypeRenderProperties renderProperties = RenderProperties.get(fluid);
+        final IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid);
 
-        final int packedRgb = renderProperties.getColorTint(stack);
+        final int packedRgb = renderProperties.getTintColor(stack);
         final TextureAtlasSprite sprite = getStillFluidSprite(renderProperties, stack);
 
         render(poseStack, x, y, z, packedRgb, sprite);
     }
 
-    private TextureAtlasSprite getStillFluidSprite(final IFluidTypeRenderProperties renderProperties,
+    private TextureAtlasSprite getStillFluidSprite(final IClientFluidTypeExtensions renderProperties,
                                                    final FluidStack fluidStack) {
         final Minecraft minecraft = Minecraft.getInstance();
         final ResourceLocation fluidStill = renderProperties.getStillTexture(fluidStack);

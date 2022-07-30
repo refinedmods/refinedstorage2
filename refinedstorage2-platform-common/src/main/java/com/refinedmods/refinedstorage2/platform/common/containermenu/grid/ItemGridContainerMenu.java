@@ -11,11 +11,11 @@ import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationRe
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlayerSource;
-import com.refinedmods.refinedstorage2.platform.apiimpl.grid.ClientItemGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import java.util.Objects;
@@ -46,7 +46,7 @@ public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResourc
         grid.addWatcher(this);
         final GridService<ItemResource> gridService = new GridServiceImpl<>(
             Objects.requireNonNull(storageChannel),
-            new PlayerSource(playerInventory.player),
+            new PlayerActor(playerInventory.player),
             itemResource -> (long) itemResource.item().getMaxStackSize(),
             1
         );
@@ -81,7 +81,7 @@ public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResourc
             resource,
             change.change(),
             Objects.requireNonNull(storageChannel)
-                .findTrackedResourceBySourceType(resource, PlayerSource.class).orElse(null)
+                .findTrackedResourceByActorType(resource, PlayerActor.class).orElse(null)
         );
     }
 

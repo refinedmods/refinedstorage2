@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyType;
 
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public interface ClientToServerCommunications {
 
     void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slotIndex);
 
-    void sendPropertyChange(int id, int value);
+    <T> void sendPropertyChange(PropertyType<T> type, T value);
 
     void sendResourceTypeChange(ResourceType type);
 

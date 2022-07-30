@@ -4,9 +4,9 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
+import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
-import com.refinedmods.refinedstorage2.api.storage.Source;
 import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -136,11 +136,11 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         });
     }
 
-    private void extractSourceBucket(final boolean bucketFromInventory, final Source source) {
+    private void extractSourceBucket(final boolean bucketFromInventory, final Actor actor) {
         if (bucketFromInventory) {
             extractBucket(playerInventoryStorage, Action.EXECUTE);
         } else {
-            bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, source);
+            bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, actor);
         }
     }
 
@@ -167,7 +167,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     }
 
     private boolean hasBucketInStorage() {
-        return bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE, EmptySource.INSTANCE) == 1;
+        return bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE, EmptyActor.INSTANCE) == 1;
     }
 
     private boolean hasBucketInInventory() {

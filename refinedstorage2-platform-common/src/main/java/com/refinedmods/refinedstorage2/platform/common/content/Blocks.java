@@ -1,15 +1,16 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.FluidStorageType;
-import com.refinedmods.refinedstorage2.platform.apiimpl.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -36,6 +37,8 @@ public final class Blocks {
         new EnumMap<>(ItemStorageType.Variant.class);
     private final Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> fluidStorageBlocks =
         new EnumMap<>(FluidStorageType.Variant.class);
+    @Nullable
+    private Supplier<ImporterBlock> importer;
 
     private Blocks() {
     }
@@ -103,5 +106,13 @@ public final class Blocks {
 
     public FluidStorageBlock getFluidStorageBlock(final FluidStorageType.Variant variant) {
         return fluidStorageBlocks.get(variant).get();
+    }
+
+    public void setImporter(final Supplier<ImporterBlock> importerSupplier) {
+        this.importer = importerSupplier;
+    }
+
+    public ImporterBlock getImporter() {
+        return Objects.requireNonNull(importer).get();
     }
 }

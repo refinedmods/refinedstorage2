@@ -1,5 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.Property;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyType;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -8,8 +17,31 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
+    private final Map<PropertyType<?>, Property<?>> propertyMap = new HashMap<>();
+
     protected AbstractBaseContainerMenu(final MenuType<?> type, final int syncId) {
         super(type, syncId);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> ClientProperty<T> getProperty(final PropertyType<T> type) {
+        return (ClientProperty<T>) propertyMap.get(type);
+    }
+
+    public void receivePropertyChangeFromClient(final ResourceLocation id, final int newValue) {
+        for (final Map.Entry<PropertyType<?>, Property<?>> entry : propertyMap.entrySet()) {
+            final PropertyType<?> type = entry.getKey();
+            if (!type.id().equals(id)) {
+                continue;
+            }
+            final Property<?> property = entry.getValue();
+            ((ServerProperty<?>) property).set(newValue);
+        }
+    }
+
+    protected <T> void registerProperty(final Property<T> property) {
+        propertyMap.put(property.getType(), property);
+        addDataSlot(property.getDataSlot());
     }
 
     protected void resetSlots() {

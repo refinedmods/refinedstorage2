@@ -58,7 +58,7 @@ dependencies {
         exclude(group: 'me.shedaniel.cloth')
     }
     // We test with REI on Fabric.
-    modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}")
+    // modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}")
 
     modCompileOnlyApi "mezz.jei:jei-${project.minecraftVersion}-common-api:${project.jeiVersion}"
     modCompileOnlyApi "mezz.jei:jei-${project.minecraftVersion}-fabric-api:${project.jeiVersion}"

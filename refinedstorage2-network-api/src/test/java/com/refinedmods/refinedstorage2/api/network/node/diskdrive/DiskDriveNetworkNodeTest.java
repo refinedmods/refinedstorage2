@@ -2,14 +2,14 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
-import com.refinedmods.refinedstorage2.api.network.node.storage.FakeSource;
+import com.refinedmods.refinedstorage2.api.network.node.storage.FakeActor;
 import com.refinedmods.refinedstorage2.api.network.test.extension.AddDiskDrive;
 import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
 import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.EmptySource;
+import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
@@ -60,7 +60,7 @@ class DiskDriveNetworkNodeTest {
     void shouldInitialize(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(10);
-        storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
 
         // Act
@@ -76,7 +76,7 @@ class DiskDriveNetworkNodeTest {
     void testInitialState(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(10);
-        storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
 
         // Act
@@ -97,13 +97,13 @@ class DiskDriveNetworkNodeTest {
     void testDiskState(final boolean active) {
         // Arrange
         final Storage<String> normalStorage = new LimitedStorageImpl<>(100);
-        normalStorage.insert("A", 74, Action.EXECUTE, EmptySource.INSTANCE);
+        normalStorage.insert("A", 74, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> nearCapacityStorage = new LimitedStorageImpl<>(100);
-        nearCapacityStorage.insert("A", 75, Action.EXECUTE, EmptySource.INSTANCE);
+        nearCapacityStorage.insert("A", 75, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> fullStorage = new LimitedStorageImpl<>(100);
-        fullStorage.insert("A", 100, Action.EXECUTE, EmptySource.INSTANCE);
+        fullStorage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> unlimitedStorage = new InMemoryStorageImpl<>();
 
@@ -141,7 +141,7 @@ class DiskDriveNetworkNodeTest {
         initializeDiskDriveAndActivate();
 
         final Storage<String> storage = new LimitedStorageImpl<>(10);
-        storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(7, storage);
 
         // Act
@@ -158,12 +158,12 @@ class DiskDriveNetworkNodeTest {
     void shouldChangeDiskInSlot(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> originalStorage = new LimitedStorageImpl<>(10);
-        originalStorage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        originalStorage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(7, originalStorage);
         initializeDiskDriveAndActivate();
 
         final Storage<String> replacedStorage = new LimitedStorageImpl<>(10);
-        replacedStorage.insert("B", 2, Action.EXECUTE, EmptySource.INSTANCE);
+        replacedStorage.insert("B", 2, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(7, replacedStorage);
 
         // Act
@@ -186,7 +186,7 @@ class DiskDriveNetworkNodeTest {
     void shouldRemoveDiskInSlot(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(10);
-        storage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(7, storage);
         initializeDiskDriveAndActivate();
 
@@ -223,8 +223,8 @@ class DiskDriveNetworkNodeTest {
         @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
-        storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
@@ -246,8 +246,8 @@ class DiskDriveNetworkNodeTest {
         @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
-        storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
@@ -278,9 +278,9 @@ class DiskDriveNetworkNodeTest {
         initializeDiskDriveAndActivate();
 
         // Act
-        final long inserted1 = networkStorage.insert("A", 150, Action.EXECUTE, EmptySource.INSTANCE);
-        final long inserted2 = networkStorage.insert("A", 10, Action.EXECUTE, EmptySource.INSTANCE);
-        final long inserted3 = networkStorage.insert("B", 300, Action.EXECUTE, EmptySource.INSTANCE);
+        final long inserted1 = networkStorage.insert("A", 150, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = networkStorage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted3 = networkStorage.insert("B", 300, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted1).isEqualTo(150);
@@ -309,23 +309,23 @@ class DiskDriveNetworkNodeTest {
     void shouldExtract(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage1 = new LimitedStorageImpl<>(100);
-        storage1.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
-        storage1.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage1.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage1.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(1, storage1);
 
         final Storage<String> storage2 = new LimitedStorageImpl<>(100);
-        storage2.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
-        storage2.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage2.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage2.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(2, storage2);
 
         final Storage<String> storage3 = new LimitedStorageImpl<>(100);
-        storage3.insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        storage3.insert("C", 10, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(3, storage3);
 
         initializeDiskDriveAndActivate();
 
         // Act
-        final long extracted = networkStorage.extract("A", 85, Action.EXECUTE, EmptySource.INSTANCE);
+        final long extracted = networkStorage.extract("A", 85, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isEqualTo(85);
@@ -361,9 +361,9 @@ class DiskDriveNetworkNodeTest {
         initializeDiskDriveAndActivate();
 
         // Act
-        final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        final long inserted2 = networkStorage.insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        final long inserted3 = networkStorage.insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = networkStorage.insert("B", 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted3 = networkStorage.insert("C", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted1).isEqualTo(12);
@@ -383,9 +383,9 @@ class DiskDriveNetworkNodeTest {
         initializeDiskDriveAndActivate();
 
         // Act
-        final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        final long inserted2 = networkStorage.insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        final long inserted3 = networkStorage.insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = networkStorage.insert("B", 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted3 = networkStorage.insert("C", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted1).isZero();
@@ -405,9 +405,9 @@ class DiskDriveNetworkNodeTest {
         initializeDiskDriveAndActivate();
 
         // Act
-        final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        final long inserted2 = networkStorage.insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        final long inserted3 = networkStorage.insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = networkStorage.insert("B", 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted3 = networkStorage.insert("C", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted1).isZero();
@@ -427,9 +427,9 @@ class DiskDriveNetworkNodeTest {
         initializeDiskDriveAndActivate();
 
         // Act
-        final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        final long inserted2 = networkStorage.insert("B", 12, Action.EXECUTE, EmptySource.INSTANCE);
-        final long inserted3 = networkStorage.insert("C", 10, Action.EXECUTE, EmptySource.INSTANCE);
+        final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = networkStorage.insert("B", 12, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted3 = networkStorage.insert("C", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted1).isEqualTo(12);
@@ -450,7 +450,7 @@ class DiskDriveNetworkNodeTest {
         initializeDiskDriveAndActivate();
 
         // Act
-        final long inserted = networkStorage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        final long inserted = networkStorage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         switch (accessMode) {
@@ -471,10 +471,10 @@ class DiskDriveNetworkNodeTest {
         storageProviderRepository.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
-        storage.insert("A", 20, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 20, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
-        final long extracted = networkStorage.extract("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        final long extracted = networkStorage.extract("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         switch (accessMode) {
@@ -494,7 +494,7 @@ class DiskDriveNetworkNodeTest {
         sut.setActivenessProvider(() -> false);
 
         // Act
-        final long inserted = networkStorage.insert("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        final long inserted = networkStorage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(inserted).isZero();
@@ -505,14 +505,14 @@ class DiskDriveNetworkNodeTest {
         @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 20, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 20, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
         sut.setActivenessProvider(() -> false);
 
         // Act
-        final long extracted = networkStorage.extract("A", 5, Action.EXECUTE, EmptySource.INSTANCE);
+        final long extracted = networkStorage.extract("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         assertThat(extracted).isZero();
@@ -523,8 +523,8 @@ class DiskDriveNetworkNodeTest {
         @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
-        storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
@@ -542,8 +542,8 @@ class DiskDriveNetworkNodeTest {
     void shouldShowOnNetworkWhenActive(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 50, Action.EXECUTE, EmptySource.INSTANCE);
-        storage.insert("B", 50, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
         sut.initialize(storageProviderRepository);
 
@@ -562,12 +562,12 @@ class DiskDriveNetworkNodeTest {
         @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 76, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 76, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
         // Act
-        networkStorage.extract("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
+        networkStorage.extract("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         verify(diskDriveListener, never()).onDiskChanged();
@@ -582,7 +582,7 @@ class DiskDriveNetworkNodeTest {
         initializeDiskDriveAndActivate();
 
         // Act
-        networkStorage.insert("A", 74, Action.EXECUTE, EmptySource.INSTANCE);
+        networkStorage.insert("A", 74, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
         verify(diskDriveListener, never()).onDiskChanged();
@@ -596,13 +596,13 @@ class DiskDriveNetworkNodeTest {
     ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 75, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 75, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
         // Act
-        networkStorage.extract("A", 1, action, EmptySource.INSTANCE);
-        networkStorage.extract("A", 1, action, EmptySource.INSTANCE);
+        networkStorage.extract("A", 1, action, EmptyActor.INSTANCE);
+        networkStorage.extract("A", 1, action, EmptyActor.INSTANCE);
 
         // Assert
         final VerificationMode expectedTimes = action == Action.EXECUTE ? times(1) : never();
@@ -617,13 +617,13 @@ class DiskDriveNetworkNodeTest {
     ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 74, Action.EXECUTE, EmptySource.INSTANCE);
+        storage.insert("A", 74, Action.EXECUTE, EmptyActor.INSTANCE);
         storageProviderRepository.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
         // Act
-        networkStorage.insert("A", 1, action, EmptySource.INSTANCE);
-        networkStorage.insert("A", 1, action, EmptySource.INSTANCE);
+        networkStorage.insert("A", 1, action, EmptyActor.INSTANCE);
+        networkStorage.insert("A", 1, action, EmptyActor.INSTANCE);
 
         // Assert
         final VerificationMode expectedTimes = action == Action.EXECUTE ? times(1) : never();
@@ -638,11 +638,11 @@ class DiskDriveNetworkNodeTest {
         initializeDiskDriveAndActivate();
 
         // Act
-        final long inserted = networkStorage.insert("A", 10, Action.EXECUTE, FakeSource.INSTANCE);
+        final long inserted = networkStorage.insert("A", 10, Action.EXECUTE, FakeActor.INSTANCE);
 
         // Assert
         assertThat(inserted).isEqualTo(10);
-        assertThat(networkStorage.findTrackedResourceBySourceType("A", FakeSource.class)).isNotEmpty();
+        assertThat(networkStorage.findTrackedResourceByActorType("A", FakeActor.class)).isNotEmpty();
     }
 
     private void initializeDiskDriveAndActivate() {
@@ -680,7 +680,7 @@ class DiskDriveNetworkNodeTest {
             }
 
             // Act
-            networkStorage.insert("A", 1, Action.EXECUTE, EmptySource.INSTANCE);
+            networkStorage.insert("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
             // Assert
             if (oneHasPriority) {

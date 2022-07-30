@@ -71,6 +71,11 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
     }
 
     public void initialize(final StorageRepository newStorageRepository) {
+        // Avoid initializing multiple times, this causes problems with already initialized storages going out of sync
+        // with the composite storage (object reference changes).
+        if (diskCount > 0) {
+            return;
+        }
         this.storageRepository = newStorageRepository;
         for (int i = 0; i < DISK_COUNT; ++i) {
             initializeDiskInSlot(i);
