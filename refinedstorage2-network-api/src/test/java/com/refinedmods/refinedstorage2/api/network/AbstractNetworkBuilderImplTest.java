@@ -14,7 +14,7 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.BeforeEach;
 
-abstract class AbstractNetworkBuilderTest {
+abstract class AbstractNetworkBuilderImplTest {
     protected NetworkBuilder sut;
     private ComponentMapFactory<NetworkComponent, Network> componentMapFactory;
 
@@ -23,7 +23,7 @@ abstract class AbstractNetworkBuilderTest {
         componentMapFactory = NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY.copy();
         componentMapFactory.addFactory(InterceptingNetworkComponent.class,
             network -> new InterceptingNetworkComponent());
-        sut = new NetworkBuilder(new NetworkFactory(componentMapFactory));
+        sut = new NetworkBuilderImpl(new NetworkFactory(componentMapFactory));
     }
 
     protected void clearTracking(final Network network) {

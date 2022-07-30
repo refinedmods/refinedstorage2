@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistryImpl;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.NetworkBuilder;
+import com.refinedmods.refinedstorage2.api.network.NetworkBuilderImpl;
 import com.refinedmods.refinedstorage2.api.network.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
@@ -45,7 +46,8 @@ public class PlatformApiImpl implements PlatformApi {
         new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemResourceType.INSTANCE);
     private final ComponentMapFactory<NetworkComponent, Network> networkComponentMapFactory =
         new ComponentMapFactory<>();
-    private final NetworkBuilder networkBuilder = new NetworkBuilder(new NetworkFactory(networkComponentMapFactory));
+    private final NetworkBuilder networkBuilder =
+        new NetworkBuilderImpl(new NetworkFactory(networkComponentMapFactory));
     private final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry =
         new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemStorageType.INSTANCE);
     private final OrderedRegistry<ResourceLocation, StorageChannelType<?>> storageChannelTypeRegistry =
