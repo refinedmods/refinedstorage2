@@ -461,6 +461,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ContentIds.SPEED_UPGRADE,
             new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
         );
+        Items.INSTANCE.setSpeedUpgrade(speedUpgrade);
         addApplicableUpgrades(speedUpgrade);
     }
 

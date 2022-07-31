@@ -11,6 +11,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - All directional blocks no longer transmit a network signal out of the direction.
 - All directional blocks no longer accept a network signal from the facing direction.
+- Upgrade items now state the applicable destinations in the tooltip.
+- Upgrade items can now have a maximum of 1 type per upgrade inventory.
+- You can now SHIFT + CLICK transfer resources in the filter slots again.
 
 ### Fixed
 
@@ -20,7 +23,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Upgrade
 - Speed Upgrade
-- You can now SHIFT + CLICK transfer resources in the filter slots.
 
 ## [2.0.0-milestone.2.1] - 2022-07-30
 

@@ -19,7 +19,7 @@ public class UpgradeContainer extends SimpleContainer {
     public UpgradeContainer(final UpgradeDestination destination,
                             final UpgradeRegistry registry,
                             final Runnable listener) {
-        super(4);
+        super(UpgradeConstants.UPGRADE_SLOTS);
         this.destination = destination;
         this.registry = registry;
         this.addListener(container -> listener.run());
