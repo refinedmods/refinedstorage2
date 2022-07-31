@@ -432,6 +432,7 @@ public class ModInitializer extends AbstractModInitializer {
             SPEED_UPGRADE.getPath(),
             () -> new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
         );
+        Items.INSTANCE.setSpeedUpgrade(speedUpgrade);
         addApplicableUpgrades(speedUpgrade);
     }
 

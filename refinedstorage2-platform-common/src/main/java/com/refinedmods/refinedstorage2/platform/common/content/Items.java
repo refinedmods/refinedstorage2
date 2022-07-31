@@ -24,6 +24,8 @@ public final class Items {
     private final List<Supplier<ControllerBlockItem>> controllers = new ArrayList<>();
     @Nullable
     private Supplier<Item> storageHousing;
+    @Nullable
+    private Supplier<Item> speedUpgrade;
 
     private Items() {
     }
@@ -52,7 +54,15 @@ public final class Items {
         return Objects.requireNonNull(storageHousing).get();
     }
 
-    public void setStorageHousing(final Supplier<Item> storageHousingSupplier) {
-        this.storageHousing = storageHousingSupplier;
+    public void setStorageHousing(final Supplier<Item> supplier) {
+        this.storageHousing = supplier;
+    }
+
+    public Item getSpeedUpgrade() {
+        return Objects.requireNonNull(speedUpgrade).get();
+    }
+
+    public void setSpeedUpgrade(final Supplier<Item> supplier) {
+        this.speedUpgrade = supplier;
     }
 }

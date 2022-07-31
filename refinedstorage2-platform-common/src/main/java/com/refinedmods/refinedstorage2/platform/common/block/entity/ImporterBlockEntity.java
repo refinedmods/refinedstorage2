@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
@@ -53,7 +54,10 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
             BlockEntities.INSTANCE.getImporter(),
             pos,
             state,
-            new ImporterNetworkNode(Platform.INSTANCE.getConfig().getImporter().getEnergyUsage(), 8)
+            new ImporterNetworkNode(
+                calculateEnergyUsage(0),
+                UpgradeConstants.DEFAULT_COOL_DOWN_TIMER
+            )
         );
         getNode().setNormalizer(this::normalize);
         this.resourceFilterContainer = new ResourceFilterContainer(
@@ -64,7 +68,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
         this.upgradeContainer = new UpgradeContainer(
             UpgradeDestinations.IMPORTER,
             PlatformApi.INSTANCE.getUpgradeRegistry(),
-            this::setChanged
+            this::upgradeContainerChanged
         );
     }
 
@@ -153,6 +157,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
         }
 
         initializeResourceFilter();
+        initializeUpgrades();
 
         super.load(tag);
     }
@@ -183,6 +188,22 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
 
     private void initializeResourceFilter() {
         getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
+    }
+
+    private void upgradeContainerChanged() {
+        initializeUpgrades();
+        setChanged();
+    }
+
+    private void initializeUpgrades() {
+        final int amountOfSpeedUpgrades = upgradeContainer.countItem(Items.INSTANCE.getSpeedUpgrade());
+        getNode().setCoolDownTime(UpgradeConstants.calculateCoolDownTime(amountOfSpeedUpgrades));
+        getNode().setEnergyUsage(calculateEnergyUsage(amountOfSpeedUpgrades));
+    }
+
+    private static long calculateEnergyUsage(final int amountOfSpeedUpgrades) {
+        return Platform.INSTANCE.getConfig().getImporter().getEnergyUsage()
+            + (Platform.INSTANCE.getConfig().getUpgrade().getSpeedUpgradeEnergyUsage() * amountOfSpeedUpgrades);
     }
 
     @Override

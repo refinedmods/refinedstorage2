@@ -23,6 +23,8 @@ public interface Config {
 
     Importer getImporter();
 
+    Upgrade getUpgrade();
+
     interface Grid {
         boolean isLargeFont();
 
@@ -101,5 +103,9 @@ public interface Config {
 
     interface Importer {
         long getEnergyUsage();
+    }
+
+    interface Upgrade {
+        long getSpeedUpgradeEnergyUsage();
     }
 }

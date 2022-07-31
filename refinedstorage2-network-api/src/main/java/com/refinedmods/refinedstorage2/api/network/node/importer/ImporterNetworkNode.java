@@ -13,10 +13,10 @@ import javax.annotation.Nullable;
 
 // TODO: Write a gametest.
 public class ImporterNetworkNode extends AbstractNetworkNode {
-    private final long energyUsage;
+    private long energyUsage;
     private final Filter filter = new Filter();
     private final Actor actor = new NetworkNodeActor(this);
-    private final long coolDownTime;
+    private long coolDownTime;
     private long coolDownTimer;
 
     @Nullable
@@ -61,6 +61,15 @@ public class ImporterNetworkNode extends AbstractNetworkNode {
 
     public void setFilterTemplates(final Set<Object> templates) {
         filter.setTemplates(templates);
+    }
+
+    public void setCoolDownTime(final long coolDownTime) {
+        this.coolDownTime = coolDownTime;
+        this.coolDownTimer = coolDownTime;
+    }
+
+    public void setEnergyUsage(final long energyUsage) {
+        this.energyUsage = energyUsage;
     }
 
     @Override
