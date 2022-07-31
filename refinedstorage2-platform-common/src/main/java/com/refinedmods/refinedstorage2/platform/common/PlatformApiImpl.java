@@ -58,7 +58,7 @@ public class PlatformApiImpl implements PlatformApi {
         new OrderedRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
     private final OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> importerTransferStrategyRegistry =
         new OrderedRegistryImpl<>(createIdentifier("noop"),
-            (level, pos, direction) -> (filter, actor, network) -> false);
+            (level, pos, direction, hasStackUpgrade) -> (filter, actor, network) -> false);
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
 
     @Override

@@ -26,6 +26,8 @@ public final class Items {
     private Supplier<Item> storageHousing;
     @Nullable
     private Supplier<Item> speedUpgrade;
+    @Nullable
+    private Supplier<Item> stackUpgrade;
 
     private Items() {
     }
@@ -64,5 +66,13 @@ public final class Items {
 
     public void setSpeedUpgrade(final Supplier<Item> supplier) {
         this.speedUpgrade = supplier;
+    }
+
+    public Item getStackUpgrade() {
+        return Objects.requireNonNull(stackUpgrade).get();
+    }
+
+    public void setStackUpgrade(final Supplier<Item> supplier) {
+        this.stackUpgrade = supplier;
     }
 }

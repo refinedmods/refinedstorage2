@@ -411,18 +411,27 @@ public class ConfigImpl implements Config {
 
     private class UpgradeImpl implements Upgrade {
         private final ForgeConfigSpec.LongValue speedUpgradeEnergyUsage;
+        private final ForgeConfigSpec.LongValue stackUpgradeEnergyUsage;
 
         UpgradeImpl() {
             builder.push("upgrade");
             speedUpgradeEnergyUsage = builder
                 .comment("The additional energy used per Speed Upgrade")
                 .defineInRange(ENERGY_USAGE, 4, 0, Long.MAX_VALUE);
+            stackUpgradeEnergyUsage = builder
+                .comment("The additional energy used by the Stack Upgrade")
+                .defineInRange(ENERGY_USAGE, 16, 0, Long.MAX_VALUE);
             builder.pop();
         }
 
         @Override
         public long getSpeedUpgradeEnergyUsage() {
             return speedUpgradeEnergyUsage.get();
+        }
+
+        @Override
+        public long getStackUpgradeEnergyUsage() {
+            return stackUpgradeEnergyUsage.get();
         }
     }
 }

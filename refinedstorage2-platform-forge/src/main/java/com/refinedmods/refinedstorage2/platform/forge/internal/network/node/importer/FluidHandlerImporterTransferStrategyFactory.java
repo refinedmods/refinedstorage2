@@ -16,7 +16,8 @@ public class FluidHandlerImporterTransferStrategyFactory implements ImporterTran
     @Override
     public ImporterTransferStrategy create(final ServerLevel level,
                                            final BlockPos pos,
-                                           final Direction direction) {
+                                           final Direction direction,
+                                           final boolean hasStackUpgrade) {
         final ImporterSource<FluidResource> source = new FluidHandlerImporterSource(
             level,
             pos,
@@ -25,7 +26,7 @@ public class FluidHandlerImporterTransferStrategyFactory implements ImporterTran
         return new ImporterTransferStrategyImpl<>(
             source,
             StorageChannelTypes.FLUID,
-            FluidType.BUCKET_VOLUME
+            hasStackUpgrade ? FluidType.BUCKET_VOLUME * 64 : FluidType.BUCKET_VOLUME
         );
     }
 }

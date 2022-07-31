@@ -462,7 +462,13 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
         );
         Items.INSTANCE.setSpeedUpgrade(speedUpgrade);
-        addApplicableUpgrades(speedUpgrade);
+        final Supplier<Item> stackUpgrade = register(
+            Registry.ITEM,
+            ContentIds.STACK_UPGRADE,
+            new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+        );
+        Items.INSTANCE.setStackUpgrade(stackUpgrade);
+        addApplicableUpgrades(speedUpgrade, stackUpgrade);
     }
 
     private void registerBlockEntities() {

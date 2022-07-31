@@ -107,6 +107,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SILICON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SPEED_UPGRADE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STACK_UPGRADE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_HOUSING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.UPGRADE;
@@ -433,7 +434,12 @@ public class ModInitializer extends AbstractModInitializer {
             () -> new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
         );
         Items.INSTANCE.setSpeedUpgrade(speedUpgrade);
-        addApplicableUpgrades(speedUpgrade);
+        final Supplier<Item> stackUpgrade = itemRegistry.register(
+            STACK_UPGRADE.getPath(),
+            () -> new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+        );
+        Items.INSTANCE.setStackUpgrade(stackUpgrade);
+        addApplicableUpgrades(speedUpgrade, stackUpgrade);
     }
 
     private void registerBlockEntities() {

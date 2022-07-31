@@ -19,24 +19,25 @@ public class StorageImporterTransferStrategyFactory<T, P> implements ImporterTra
     private final StorageChannelType<T> storageChannelType;
     private final Function<P, T> fromPlatformMapper;
     private final Function<T, P> toPlatformMapper;
-    private final long transferQuota;
+    private final long singleAmount;
 
     public StorageImporterTransferStrategyFactory(final BlockApiLookup<Storage<P>, Direction> lookup,
                                                   final StorageChannelType<T> storageChannelType,
                                                   final Function<P, T> fromPlatformMapper,
                                                   final Function<T, P> toPlatformMapper,
-                                                  final long transferQuota) {
+                                                  final long singleAmount) {
         this.lookup = lookup;
         this.storageChannelType = storageChannelType;
         this.fromPlatformMapper = fromPlatformMapper;
         this.toPlatformMapper = toPlatformMapper;
-        this.transferQuota = transferQuota;
+        this.singleAmount = singleAmount;
     }
 
     @Override
     public ImporterTransferStrategy create(final ServerLevel level,
                                            final BlockPos pos,
-                                           final Direction direction) {
+                                           final Direction direction,
+                                           final boolean hasStackUpgrade) {
         final ImporterSource<T> source = new StorageImporterSource<>(
             lookup,
             fromPlatformMapper,
@@ -48,7 +49,7 @@ public class StorageImporterTransferStrategyFactory<T, P> implements ImporterTra
         return new ImporterTransferStrategyImpl<>(
             source,
             storageChannelType,
-            transferQuota
+            hasStackUpgrade ? singleAmount * 64 : singleAmount
         );
     }
 }
