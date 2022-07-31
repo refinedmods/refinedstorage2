@@ -13,7 +13,9 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.forge.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage2.platform.forge.integration.energy.ControllerForgeEnergy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridEventHandlerImpl;
@@ -137,5 +139,10 @@ public final class PlatformImpl extends AbstractPlatform {
         if (energyStorage instanceof ControllerForgeEnergy controllerForgeEnergy) {
             controllerForgeEnergy.setSilently(stored);
         }
+    }
+
+    @Override
+    public TransferManager createTransferManager(final AbstractContainerMenu containerMenu) {
+        return new TransferManager(containerMenu, ContainerTransferDestination::new);
     }
 }

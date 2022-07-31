@@ -16,6 +16,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Fixed network connection state not rebuilding after using Wrench on a directional block.
 
+### Added
+
+- Upgrade
+- Speed Upgrade
+- You can now SHIFT + CLICK transfer resources in the filter slots.
+
 ## [2.0.0-milestone.2.1] - 2022-07-30
 
 ### Changed

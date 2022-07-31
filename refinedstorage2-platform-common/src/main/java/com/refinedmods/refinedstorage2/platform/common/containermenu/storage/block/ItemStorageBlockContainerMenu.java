@@ -29,7 +29,8 @@ public class ItemStorageBlockContainerMenu extends AbstractStorageBlockContainer
             PlatformApi.INSTANCE.getResourceTypeRegistry(),
             playerInventory.player,
             buf,
-            ItemResourceType.INSTANCE);
+            ItemResourceType.INSTANCE
+        );
     }
 
     public ItemStorageBlockContainerMenu(final int syncId,

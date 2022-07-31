@@ -17,7 +17,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 
 public class ImporterContainerMenu extends AbstractResourceFilterContainerMenu implements ResourceTypeAccessor {
     private static final int FILTER_SLOT_X = 8;
@@ -80,33 +79,13 @@ public class ImporterContainerMenu extends AbstractResourceFilterContainerMenu i
             addSlot(new Slot(upgradeContainer, i, 187, 6 + (i * 18)));
         }
         addPlayerInventory(player.getInventory(), 8, 55);
+
+        transferManager.addBiTransfer(player.getInventory(), upgradeContainer);
+        transferManager.addFilterTransfer(player.getInventory());
     }
 
     private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
         final int x = FILTER_SLOT_X + (18 * i);
         return new ResourceFilterSlot(resourceFilterContainer, i, x, FILTER_SLOT_Y);
-    }
-
-    @Override
-    public ItemStack quickMoveStack(final Player player, final int index) {
-        ItemStack originalStack = ItemStack.EMPTY;
-        final Slot slot = this.slots.get(index);
-        if (slot.hasItem()) {
-            final ItemStack stackInSlot = slot.getItem();
-            originalStack = stackInSlot.copy();
-
-            if (index >= 9 && index < 9 + 4 && !moveItemStackTo(stackInSlot, 9 + 4, slots.size(), true)) {
-                return ItemStack.EMPTY;
-            } else if (index >= 9 + 4 && !moveItemStackTo(stackInSlot, 9, 9 + 4, false)) {
-                return ItemStack.EMPTY;
-            }
-
-            if (stackInSlot.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-        }
-        return originalStack;
     }
 }

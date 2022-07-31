@@ -67,7 +67,7 @@ public abstract class AbstractModInitializer {
         PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
             UpgradeDestinations.IMPORTER,
             speedUpgrade,
-            3
+            4
         );
     }
 }

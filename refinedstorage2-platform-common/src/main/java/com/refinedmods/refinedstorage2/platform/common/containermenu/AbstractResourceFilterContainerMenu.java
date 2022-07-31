@@ -99,6 +99,22 @@ public abstract class AbstractResourceFilterContainerMenu extends AbstractBaseCo
         }
     }
 
+    public void addToFilterIfNotExisting(final ItemStack stack) {
+        if (currentResourceType == null) {
+            return;
+        }
+        for (final ResourceFilterSlot resourceFilterSlot : resourceFilterSlots) {
+            if (resourceFilterSlot.contains(stack, currentResourceType)) {
+                return;
+            }
+        }
+        for (final ResourceFilterSlot resourceFilterSlot : resourceFilterSlots) {
+            if (resourceFilterSlot.changeIfEmpty(stack, currentResourceType)) {
+                return;
+            }
+        }
+    }
+
     @Override
     public Component getCurrentResourceTypeName() {
         return currentResourceType != null ? currentResourceType.getName() : Component.empty();
