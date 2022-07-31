@@ -56,6 +56,8 @@ public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageC
             addSlot(createFilterSlot(resourceFilterContainer, i));
         }
         addPlayerInventory(player.getInventory(), 8, 141);
+
+        transferManager.addFilterTransfer(player.getInventory());
     }
 
     private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {

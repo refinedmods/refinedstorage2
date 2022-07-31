@@ -79,6 +79,9 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
             addSlot(createFilterSlot(resourceFilterContainer, i));
         }
         addPlayerInventory(player.getInventory(), 8, 141);
+
+        transferManager.addBiTransfer(player.getInventory(), diskInventory);
+        transferManager.addFilterTransfer(player.getInventory());
     }
 
     private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
@@ -138,28 +141,5 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
         return getDiskStacks()
             .map(storageInfoAccessor::getInfo)
             .flatMap(Optional::stream);
-    }
-
-    @Override
-    public ItemStack quickMoveStack(final Player player, final int index) {
-        ItemStack originalStack = ItemStack.EMPTY;
-        final Slot slot = this.slots.get(index);
-        if (slot.hasItem()) {
-            final ItemStack stackInSlot = slot.getItem();
-            originalStack = stackInSlot.copy();
-
-            if (index < 8 && !moveItemStackTo(stackInSlot, 8, slots.size(), true)) {
-                return ItemStack.EMPTY;
-            } else if (index >= 8 && !moveItemStackTo(stackInSlot, 0, 8, false)) {
-                return ItemStack.EMPTY;
-            }
-
-            if (stackInSlot.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-        }
-        return originalStack;
     }
 }

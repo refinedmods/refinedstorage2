@@ -15,7 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SetupMinecraft
 class UpgradeRegistryImplTest {
-
     UpgradeRegistry sut;
 
     @BeforeEach
@@ -137,5 +136,12 @@ class UpgradeRegistryImplTest {
 
         // Assert
         assertThat(sut.getDestinations(Items.GLASS)).isEmpty();
+    }
+
+    private record UpgradeDestinationImpl(Component name) implements UpgradeDestination {
+        @Override
+        public Component getName() {
+            return name();
+        }
     }
 }

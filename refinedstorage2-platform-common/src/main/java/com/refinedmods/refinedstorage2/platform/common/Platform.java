@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.menu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
 import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
@@ -68,4 +69,6 @@ public interface Platform {
     EnergyStorage createEnergyStorage(ControllerType controllerType, Runnable listener);
 
     void setEnergy(EnergyStorage energyStorage, long stored);
+
+    TransferManager createTransferManager(AbstractContainerMenu containerMenu);
 }
