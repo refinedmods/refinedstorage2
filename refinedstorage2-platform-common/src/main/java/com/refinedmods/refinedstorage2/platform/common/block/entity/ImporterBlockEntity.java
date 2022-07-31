@@ -16,6 +16,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeD
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -55,7 +56,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
             pos,
             state,
             new ImporterNetworkNode(
-                calculateEnergyUsage(0),
+                calculateEnergyUsage(0, false),
                 UpgradeConstants.DEFAULT_COOL_DOWN_TIMER
             )
         );
@@ -87,9 +88,10 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
     @SuppressWarnings("deprecation")
     public void setBlockState(final BlockState newBlockState) {
         super.setBlockState(newBlockState);
-        if (level instanceof ServerLevel serverLevel) {
-            updateTransferStrategy(serverLevel);
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
         }
+        updateTransferStrategy(serverLevel);
     }
 
     @Override
@@ -118,13 +120,14 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
 
     private CompositeImporterTransferStrategy createStrategy(final ServerLevel serverLevel,
                                                              final Direction direction) {
+        final boolean hasStackUpgrade = hasStackUpgrade();
         final Direction incomingDirection = direction.getOpposite();
         final BlockPos sourcePosition = worldPosition.offset(direction.getNormal());
         final List<ImporterTransferStrategyFactory> factories =
             PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().getAll();
         final List<ImporterTransferStrategy> strategies = factories
             .stream()
-            .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection))
+            .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, hasStackUpgrade))
             .toList();
         return new CompositeImporterTransferStrategy(strategies);
     }
@@ -192,18 +195,27 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
 
     private void upgradeContainerChanged() {
         initializeUpgrades();
+        if (level instanceof ServerLevel serverLevel) {
+            updateTransferStrategy(serverLevel);
+        }
         setChanged();
     }
 
     private void initializeUpgrades() {
         final int amountOfSpeedUpgrades = upgradeContainer.countItem(Items.INSTANCE.getSpeedUpgrade());
+        final boolean hasStackUpgrade = hasStackUpgrade();
         getNode().setCoolDownTime(UpgradeConstants.calculateCoolDownTime(amountOfSpeedUpgrades));
-        getNode().setEnergyUsage(calculateEnergyUsage(amountOfSpeedUpgrades));
+        getNode().setEnergyUsage(calculateEnergyUsage(amountOfSpeedUpgrades, hasStackUpgrade));
     }
 
-    private static long calculateEnergyUsage(final int amountOfSpeedUpgrades) {
+    private boolean hasStackUpgrade() {
+        return upgradeContainer.hasAnyOf(Set.of(Items.INSTANCE.getStackUpgrade()));
+    }
+
+    private static long calculateEnergyUsage(final int amountOfSpeedUpgrades, final boolean hasStackUpgrade) {
         return Platform.INSTANCE.getConfig().getImporter().getEnergyUsage()
-            + (Platform.INSTANCE.getConfig().getUpgrade().getSpeedUpgradeEnergyUsage() * amountOfSpeedUpgrades);
+            + (Platform.INSTANCE.getConfig().getUpgrade().getSpeedUpgradeEnergyUsage() * amountOfSpeedUpgrades)
+            + (hasStackUpgrade ? Platform.INSTANCE.getConfig().getUpgrade().getStackUpgradeEnergyUsage() : 0L);
     }
 
     @Override

@@ -30,6 +30,7 @@ public final class ContentIds {
     public static final ResourceLocation IMPORTER = createIdentifier("importer");
     public static final ResourceLocation UPGRADE = createIdentifier("upgrade");
     public static final ResourceLocation SPEED_UPGRADE = createIdentifier("speed_upgrade");
+    public static final ResourceLocation STACK_UPGRADE = createIdentifier("stack_upgrade");
 
     private ContentIds() {
     }

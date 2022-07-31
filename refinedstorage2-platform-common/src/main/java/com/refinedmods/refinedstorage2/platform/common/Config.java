@@ -107,5 +107,7 @@ public interface Config {
 
     interface Upgrade {
         long getSpeedUpgradeEnergyUsage();
+
+        long getStackUpgradeEnergyUsage();
     }
 }

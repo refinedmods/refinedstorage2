@@ -63,11 +63,17 @@ public abstract class AbstractModInitializer {
         );
     }
 
-    protected void addApplicableUpgrades(final Supplier<Item> speedUpgrade) {
+    protected void addApplicableUpgrades(final Supplier<Item> speedUpgrade,
+                                         final Supplier<Item> stackUpgrade) {
         PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
             UpgradeDestinations.IMPORTER,
             speedUpgrade,
             4
+        );
+        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+            UpgradeDestinations.IMPORTER,
+            stackUpgrade,
+            1
         );
     }
 }

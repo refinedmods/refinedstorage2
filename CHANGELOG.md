@@ -23,6 +23,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Upgrade
 - Speed Upgrade
+- Stack Upgrade
 
 ## [2.0.0-milestone.2.1] - 2022-07-30
 

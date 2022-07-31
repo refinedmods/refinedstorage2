@@ -324,9 +324,16 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     private static class UpgradeImpl implements Upgrade {
         private long speedUpgradeEnergyUsage = 4;
 
+        private long stackUpgradeEnergyUsage = 16;
+
         @Override
         public long getSpeedUpgradeEnergyUsage() {
             return speedUpgradeEnergyUsage;
+        }
+
+        @Override
+        public long getStackUpgradeEnergyUsage() {
+            return stackUpgradeEnergyUsage;
         }
     }
 }
