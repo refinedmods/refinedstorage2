@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
+import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.AbstractNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectionalBlock;
@@ -33,13 +34,15 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
                                                               final BlockState state,
                                                               final T node) {
         super(type, pos, state, node);
-        getNode().setActivenessProvider(this::isActive);
     }
 
     private boolean isActive() {
-        return level != null
-            && level.isLoaded(worldPosition)
-            && redstoneMode.isActive(level.hasNeighborSignal(worldPosition));
+        final long energyUsage = getNode().getEnergyUsage();
+        final boolean hasLevel = level != null && level.isLoaded(worldPosition);
+        return hasLevel
+            && redstoneMode.isActive(level.hasNeighborSignal(worldPosition))
+            && getNode().getNetwork() != null
+            && getNode().getNetwork().getComponent(EnergyNetworkComponent.class).getStored() >= energyUsage;
     }
 
     @Override
@@ -56,35 +59,37 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
         }
     }
 
-    public void updateActivenessInLevel(final BlockState state,
-                                        @Nullable final BooleanProperty activenessProperty) {
+    public void updateActiveness(final BlockState state,
+                                 @Nullable final BooleanProperty activenessProperty) {
         if (lastActive == null) {
-            lastActive = determineInitialActiveness(state, activenessProperty);
+            lastActive = getNode().isActive();
         }
 
-        final boolean active = getNode().isActive();
+        final boolean active = isActive();
         final boolean inTime = System.currentTimeMillis() - lastActiveChanged > ACTIVE_CHANGE_MINIMUM_INTERVAL_MS;
 
         if (active != lastActive && (lastActiveChanged == 0 || inTime)) {
-            LOGGER.info("Activeness state change for block at {}: {} -> {}", getBlockPos(), lastActive, active);
+            LOGGER.info("Activeness change for node at {}: {} -> {}", getBlockPos(), lastActive, active);
 
             this.lastActive = active;
             this.lastActiveChanged = System.currentTimeMillis();
 
-            activenessChanged(active);
-
-            if (activenessProperty != null) {
-                updateActivenessState(state, activenessProperty, active);
-            }
+            activenessChanged(state, active, activenessProperty);
         }
     }
 
-    private boolean determineInitialActiveness(final BlockState state,
-                                               @Nullable final BooleanProperty activenessProperty) {
-        if (activenessProperty != null) {
-            return state.getValue(activenessProperty);
+    protected void activenessChanged(final BlockState state,
+                                     final boolean newActive,
+                                     @Nullable final BooleanProperty activenessProperty) {
+        getNode().setActive(newActive);
+
+        final boolean needToUpdateBlockState = activenessProperty != null
+            && state.getValue(activenessProperty) != newActive;
+
+        if (needToUpdateBlockState) {
+            LOGGER.info("Sending block update for block at {} due to state change to {}", getBlockPos(), newActive);
+            updateActivenessState(state, activenessProperty, newActive);
         }
-        return getNode().isActive();
     }
 
     private void updateActivenessState(final BlockState state,
@@ -93,9 +98,6 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
         if (level != null) {
             level.setBlockAndUpdate(getBlockPos(), state.setValue(activenessProperty, active));
         }
-    }
-
-    protected void activenessChanged(final boolean active) {
     }
 
     public RedstoneMode getRedstoneMode() {

@@ -75,11 +75,11 @@ class GridNetworkNodeTest {
 
         // Act
         sut.addWatcher(watcher);
-        sut.onActiveChanged(true);
-        sut.onActiveChanged(false);
+        sut.setActive(true);
+        sut.setActive(false);
         sut.removeWatcher(watcher);
-        sut.onActiveChanged(true);
-        sut.onActiveChanged(false);
+        sut.setActive(true);
+        sut.setActive(false);
 
         // Assert
         assertThat(watcher.changes).containsExactly(true, false);

@@ -71,7 +71,7 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
 
         if (energyType != inLevelEnergyType && (lastTypeChanged == 0 || inTime)) {
             LOGGER.info(
-                "Energy type state change for block at {}: {} -> {}",
+                "Energy type state change for Controller at {}: {} -> {}",
                 getBlockPos(),
                 inLevelEnergyType,
                 energyType
@@ -91,7 +91,10 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putLong(TAG_STORED, getNode().getActualStored());
-        // this is not deserialized on purpose and is only here for rendering purposes
+        saveRenderingInfo(tag);
+    }
+
+    private void saveRenderingInfo(final CompoundTag tag) {
         tag.putLong(TAG_CAPACITY, getNode().getActualCapacity());
     }
 

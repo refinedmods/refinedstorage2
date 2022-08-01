@@ -29,7 +29,7 @@ class NetworkTestExtensionTest {
     @AddNetworkNode(networkId = "a")
     StorageNetworkNode<String> storageInA;
 
-    @AddDiskDrive(networkId = "b")
+    @AddDiskDrive(networkId = "b", active = false)
     DiskDriveNetworkNode storageInB;
 
     @Test
@@ -38,6 +38,13 @@ class NetworkTestExtensionTest {
         assertThat(a).isNotNull();
         assertThat(b).isNotNull();
         assertThat(a).isNotSameAs(b);
+    }
+
+    @Test
+    void shouldSetActivenessOfNetworkNode() {
+        // Assert
+        assertThat(storageInA.isActive()).isTrue();
+        assertThat(storageInB.isActive()).isFalse();
     }
 
     @Test

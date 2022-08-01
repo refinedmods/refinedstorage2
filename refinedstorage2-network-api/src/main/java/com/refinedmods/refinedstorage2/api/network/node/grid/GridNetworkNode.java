@@ -65,7 +65,7 @@ public class GridNetworkNode<T> extends AbstractNetworkNode {
     }
 
     @Override
-    public void onActiveChanged(final boolean newActive) {
+    protected void onActiveChanged(final boolean newActive) {
         super.onActiveChanged(newActive);
         watchers.forEach(watcher -> watcher.onActiveChanged(newActive));
     }

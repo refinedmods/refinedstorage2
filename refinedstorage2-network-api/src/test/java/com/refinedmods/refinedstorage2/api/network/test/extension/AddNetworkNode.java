@@ -12,5 +12,7 @@ import javax.annotation.Nonnull;
 public @interface AddNetworkNode {
     long energyUsage() default 0L;
 
+    boolean active() default true;
+
     String networkId() default "default";
 }

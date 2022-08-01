@@ -26,6 +26,7 @@ class EnergyNetworkComponentTest {
         final EnergyNetworkComponent sut = new EnergyNetworkComponent();
 
         final ControllerNetworkNode controller = new ControllerNetworkNode();
+        controller.setActive(true);
         controller.setEnergyStorage(new EnergyStorageImpl(1000));
         controller.receive(100, Action.EXECUTE);
         final NetworkNodeContainer container = () -> controller;
@@ -55,6 +56,7 @@ class EnergyNetworkComponentTest {
         final ControllerNetworkNode controller = new ControllerNetworkNode();
         controller.setEnergyStorage(new EnergyStorageImpl(1000));
         controller.receive(100, Action.EXECUTE);
+        controller.setActive(true);
         final NetworkNodeContainer container = () -> controller;
 
         sut.onContainerAdded(container);

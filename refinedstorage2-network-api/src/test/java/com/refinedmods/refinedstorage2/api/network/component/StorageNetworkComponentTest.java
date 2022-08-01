@@ -43,13 +43,13 @@ class StorageNetworkComponentTest {
         diskDrive.setListener(mock(DiskDriveListener.class));
         diskDrive.setDiskProvider(storageProviderRepository);
         diskDrive.initialize(storageProviderRepository);
-        diskDrive.onActiveChanged(true);
+        diskDrive.setActive(true);
         diskDriveContainer = () -> diskDrive;
 
         storage = new StorageNetworkNode<>(0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
         storage.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
         storage.initializeNewStorage(storageProviderRepository, new LimitedStorageImpl<>(100), UUID.randomUUID());
-        storage.onActiveChanged(true);
+        storage.setActive(true);
         storageContainer = () -> storage;
     }
 

@@ -12,5 +12,7 @@ public @interface AddDiskDrive {
 
     long energyUsagePerDisk() default 0L;
 
+    boolean active() default true;
+
     String networkId() default "default";
 }
