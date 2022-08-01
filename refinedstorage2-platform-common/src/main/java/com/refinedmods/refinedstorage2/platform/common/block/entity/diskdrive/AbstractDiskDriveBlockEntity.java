@@ -89,7 +89,7 @@ public abstract class AbstractDiskDriveBlockEntity
         ));
         getNode().setDiskProvider(diskInventory);
         getNode().setListener(this);
-        getNode().setNormalizer(this::normalize);
+        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(exactMode, value));
     }
 
     public static boolean hasDisk(final CompoundTag tag, final int slot) {
@@ -123,16 +123,6 @@ public abstract class AbstractDiskDriveBlockEntity
 
     private void initializeResourceFilter() {
         getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
-    }
-
-    private Object normalize(final Object value) {
-        if (exactMode) {
-            return value;
-        }
-        if (value instanceof FuzzyModeNormalizer<?> fuzzyModeNormalizer) {
-            return fuzzyModeNormalizer.normalize();
-        }
-        return value;
     }
 
     @Override
