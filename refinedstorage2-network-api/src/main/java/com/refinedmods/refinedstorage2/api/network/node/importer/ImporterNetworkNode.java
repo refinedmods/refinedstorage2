@@ -65,7 +65,6 @@ public class ImporterNetworkNode extends AbstractNetworkNode {
 
     public void setCoolDownTime(final long coolDownTime) {
         this.coolDownTime = coolDownTime;
-        this.coolDownTimer = coolDownTime;
     }
 
     public void setEnergyUsage(final long energyUsage) {

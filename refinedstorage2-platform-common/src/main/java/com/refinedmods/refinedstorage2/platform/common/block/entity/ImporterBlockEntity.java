@@ -57,7 +57,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
             state,
             new ImporterNetworkNode(
                 calculateEnergyUsage(0, false),
-                UpgradeConstants.DEFAULT_COOL_DOWN_TIMER
+                UpgradeConstants.calculateCoolDownTime(0)
             )
         );
         getNode().setNormalizer(this::normalize);
@@ -195,10 +195,10 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
 
     private void upgradeContainerChanged() {
         initializeUpgrades();
+        setChanged();
         if (level instanceof ServerLevel serverLevel) {
             updateTransferStrategy(serverLevel);
         }
-        setChanged();
     }
 
     private void initializeUpgrades() {

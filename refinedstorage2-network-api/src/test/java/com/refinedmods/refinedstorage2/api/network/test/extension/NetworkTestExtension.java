@@ -86,7 +86,6 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
         for (final Field field : fields) {
             tryAddSimpleNetworkNode(testInstance, field);
             tryAddDiskDrive(testInstance, field);
-            tryAddImporter(testInstance, field);
         }
     }
 
@@ -97,18 +96,6 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
                 annotation.baseEnergyUsage(),
                 annotation.energyUsagePerDisk(),
                 NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY
-            );
-            final Network network = networkMap.get(annotation.networkId());
-            registerNetworkNode(testInstance, field, resolvedNode, network);
-        }
-    }
-
-    private void tryAddImporter(final Object testInstance, final Field field) {
-        final AddImporter annotation = field.getAnnotation(AddImporter.class);
-        if (annotation != null) {
-            final NetworkNode resolvedNode = new ImporterNetworkNode(
-                annotation.energyUsage(),
-                annotation.coolDownTime()
             );
             final Network network = networkMap.get(annotation.networkId());
             registerNetworkNode(testInstance, field, resolvedNode, network);
@@ -131,6 +118,8 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
             return new SpyingNetworkNode(energyUsage);
         } else if (type == GridNetworkNode.class) {
             return new GridNetworkNode<>(energyUsage, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
+        } else if (type == ImporterNetworkNode.class) {
+            return new ImporterNetworkNode(energyUsage, 0);
         }
         throw new RuntimeException(type.getName());
     }

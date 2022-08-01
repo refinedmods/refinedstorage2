@@ -74,7 +74,7 @@ public class TransferManager {
     }
 
     private ItemStack doTransfer(final ItemStack initial, final List<TransferDestination> destinations) {
-        ItemStack remainder = initial.copy();
+        ItemStack remainder = initial;
         for (final TransferDestination destination : destinations) {
             final ItemStack destinationRemainder = destination.transfer(remainder);
             if (destinationRemainder == null) {
@@ -82,7 +82,7 @@ public class TransferManager {
             }
             remainder = destinationRemainder;
             if (remainder.isEmpty()) {
-                break;
+                return ItemStack.EMPTY;
             }
         }
         return remainder;
