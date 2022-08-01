@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.api.network.node.importer;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
-import com.refinedmods.refinedstorage2.api.network.test.extension.AddImporter;
+import com.refinedmods.refinedstorage2.api.network.test.extension.AddNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
 import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
@@ -16,6 +16,7 @@ import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 
 import java.util.Set;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -24,8 +25,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(NetworkTestExtension.class)
 @SetupNetwork
 class ImporterNetworkNodeTest {
-    @AddImporter(energyUsage = 5, coolDownTime = 3)
+    @AddNetworkNode
     ImporterNetworkNode sut;
+
+    @BeforeEach
+    void setUp() {
+        sut.setEnergyUsage(5);
+    }
 
     @Test
     void testInitialState() {
@@ -230,9 +236,10 @@ class ImporterNetworkNodeTest {
             1
         );
         sut.setTransferStrategy(strategy);
+        sut.setCoolDownTime(3);
 
         // Act & assert
-        sut.update(); // do it once, cooldown is now = 3
+        sut.update(); // Do it once, cooldown is now = 3
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("A", 1)
         );
@@ -241,7 +248,7 @@ class ImporterNetworkNodeTest {
             new ResourceAmount<>("B", 5)
         );
 
-        sut.update(); // cooldown is now = 2
+        sut.update(); // Cooldown is now = 2
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("A", 1)
         );
@@ -250,7 +257,7 @@ class ImporterNetworkNodeTest {
             new ResourceAmount<>("B", 5)
         );
 
-        sut.update(); // cooldown is now = 1
+        sut.update(); // Cooldown is now = 1
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("A", 1)
         );
@@ -259,7 +266,7 @@ class ImporterNetworkNodeTest {
             new ResourceAmount<>("B", 5)
         );
 
-        sut.update(); // cooldown is now = 0
+        sut.update(); // Cooldown is now = 0
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("A", 1)
         );
@@ -268,7 +275,7 @@ class ImporterNetworkNodeTest {
             new ResourceAmount<>("B", 5)
         );
 
-        sut.update(); // do it another time, cooldown is now = 3
+        sut.update(); // Do it another time, cooldown is now = 3
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("A", 2)
         );
@@ -335,11 +342,6 @@ class ImporterNetworkNodeTest {
 
         // Act
         sut.update();
-        // cooldown
-        sut.update();
-        sut.update();
-        sut.update();
-        // Act 2
         sut.update();
 
         // Assert
