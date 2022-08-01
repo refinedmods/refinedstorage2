@@ -2,53 +2,33 @@ package com.refinedmods.refinedstorage2.api.network.node.controller;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
+import com.refinedmods.refinedstorage2.api.network.test.extension.AddNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
+import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
 
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(NetworkTestExtension.class)
+@SetupNetwork
 class ControllerNetworkNodeTest {
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    void shouldAlwaysBeActive(final boolean explicitlyActive) {
-        // Arrange
-        final ControllerNetworkNode sut = new ControllerNetworkNode();
-        sut.setEnergyStorage(new EnergyStorageImpl(100));
-        if (explicitlyActive) {
-            sut.setActivenessProvider(() -> true);
-        }
-
-        // Assert
-        assertThat(sut.isActive()).isTrue();
-        assertThat(sut.getEnergyUsage()).isZero();
-    }
-
-    @Test
-    void shouldAlwaysBeActiveUnlessToldNotTo() {
-        // Arrange
-        final ControllerNetworkNode sut = new ControllerNetworkNode();
-        sut.setEnergyStorage(new EnergyStorageImpl(100));
-        sut.setActivenessProvider(() -> false);
-
-        // Assert
-        assertThat(sut.isActive()).isFalse();
-        assertThat(sut.getEnergyUsage()).isZero();
-    }
+    @AddNetworkNode
+    ControllerNetworkNode sut;
 
     @Test
     void testStoredAndCapacityWhenInactive() {
         // Arrange
-        final ControllerNetworkNode sut = new ControllerNetworkNode();
         sut.setEnergyStorage(new EnergyStorageImpl(100));
         sut.receive(10, Action.EXECUTE);
 
-        sut.setActivenessProvider(() -> false);
+        sut.setActive(false);
 
         // Act
         final long stored = sut.getStored();
@@ -80,7 +60,6 @@ class ControllerNetworkNodeTest {
     @MethodSource("getStoredAndExpectedState")
     void testCalculatingStates(final long stored, final ControllerEnergyState expectedState) {
         // Arrange
-        final ControllerNetworkNode sut = new ControllerNetworkNode();
         sut.setEnergyStorage(new EnergyStorageImpl(100));
         sut.receive(stored, Action.EXECUTE);
 
@@ -94,10 +73,9 @@ class ControllerNetworkNodeTest {
     @Test
     void testEnergyStateShouldBeOffWhenInactive() {
         // Arrange
-        final ControllerNetworkNode sut = new ControllerNetworkNode();
         sut.setEnergyStorage(new EnergyStorageImpl(100));
         sut.receive(50, Action.EXECUTE);
-        sut.setActivenessProvider(() -> false);
+        sut.setActive(false);
 
         // Act
         final ControllerEnergyState state = sut.getState();
@@ -109,7 +87,6 @@ class ControllerNetworkNodeTest {
     @Test
     void shouldReceiveEnergy() {
         // Arrange
-        final ControllerNetworkNode sut = new ControllerNetworkNode();
         sut.setEnergyStorage(new EnergyStorageImpl(100));
 
         // Act
@@ -126,7 +103,6 @@ class ControllerNetworkNodeTest {
     @Test
     void shouldExtractEnergy() {
         // Arrange
-        final ControllerNetworkNode sut = new ControllerNetworkNode();
         sut.setEnergyStorage(new EnergyStorageImpl(100));
 
         // Act

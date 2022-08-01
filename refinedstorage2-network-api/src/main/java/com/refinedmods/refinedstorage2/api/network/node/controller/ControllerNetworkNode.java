@@ -36,11 +36,6 @@ public class ControllerNetworkNode extends AbstractNetworkNode implements Energy
     }
 
     @Override
-    public boolean isActive() {
-        return activenessProvider == null || activenessProvider.getAsBoolean();
-    }
-
-    @Override
     public long getStored() {
         if (!isActive()) {
             return 0;

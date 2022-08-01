@@ -43,7 +43,7 @@ class ImporterNetworkNodeTest {
     @Test
     void testWithoutTransferStrategy(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
         // Act
-        sut.update();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).isEmpty();
@@ -63,10 +63,10 @@ class ImporterNetworkNodeTest {
             1
         );
         sut.setTransferStrategy(strategy);
-        sut.setActivenessProvider(() -> false);
+        sut.setActive(false);
 
         // Act
-        sut.update();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).isEmpty();
@@ -92,7 +92,7 @@ class ImporterNetworkNodeTest {
         sut.setTransferStrategy(strategy);
 
         // Act
-        sut.update();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -122,7 +122,7 @@ class ImporterNetworkNodeTest {
         sut.setTransferStrategy(strategy);
 
         // Act
-        sut.update();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -151,7 +151,7 @@ class ImporterNetworkNodeTest {
         sut.setTransferStrategy(strategy);
 
         // Act
-        sut.update();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -187,7 +187,7 @@ class ImporterNetworkNodeTest {
         sut.setTransferStrategy(strategy);
 
         // Act
-        sut.update();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -215,7 +215,7 @@ class ImporterNetworkNodeTest {
         sut.setTransferStrategy(strategy);
 
         // Act
-        sut.update();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().isEmpty();
@@ -239,7 +239,7 @@ class ImporterNetworkNodeTest {
         sut.setCoolDownTime(3);
 
         // Act & assert
-        sut.update(); // Do it once, cooldown is now = 3
+        sut.doWork(); // Do it once, cooldown is now = 3
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("A", 1)
         );
@@ -248,7 +248,7 @@ class ImporterNetworkNodeTest {
             new ResourceAmount<>("B", 5)
         );
 
-        sut.update(); // Cooldown is now = 2
+        sut.doWork(); // Cooldown is now = 2
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("A", 1)
         );
@@ -257,7 +257,7 @@ class ImporterNetworkNodeTest {
             new ResourceAmount<>("B", 5)
         );
 
-        sut.update(); // Cooldown is now = 1
+        sut.doWork(); // Cooldown is now = 1
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("A", 1)
         );
@@ -266,7 +266,7 @@ class ImporterNetworkNodeTest {
             new ResourceAmount<>("B", 5)
         );
 
-        sut.update(); // Cooldown is now = 0
+        sut.doWork(); // Cooldown is now = 0
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("A", 1)
         );
@@ -275,7 +275,7 @@ class ImporterNetworkNodeTest {
             new ResourceAmount<>("B", 5)
         );
 
-        sut.update(); // Do it another time, cooldown is now = 3
+        sut.doWork(); // Do it another time, cooldown is now = 3
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("A", 2)
         );
@@ -305,7 +305,7 @@ class ImporterNetworkNodeTest {
         sut.setTransferStrategy(strategy);
 
         // Act
-        sut.update();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -341,8 +341,8 @@ class ImporterNetworkNodeTest {
         sut.setTransferStrategy(strategy);
 
         // Act
-        sut.update();
-        sut.update();
+        sut.doWork();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -375,7 +375,7 @@ class ImporterNetworkNodeTest {
         sut.setTransferStrategy(strategy);
 
         // Act
-        sut.update();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).isEmpty();
@@ -404,7 +404,7 @@ class ImporterNetworkNodeTest {
         sut.setTransferStrategy(strategy);
 
         // Act
-        sut.update();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).isEmpty();
@@ -434,7 +434,7 @@ class ImporterNetworkNodeTest {
         sut.setTransferStrategy(strategy);
 
         // Act
-        sut.update();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
@@ -467,7 +467,7 @@ class ImporterNetworkNodeTest {
         sut.setTransferStrategy(strategy);
 
         // Act
-        sut.update();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).isEmpty();
@@ -496,7 +496,7 @@ class ImporterNetworkNodeTest {
         sut.setTransferStrategy(strategy);
 
         // Act
-        sut.update();
+        sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(

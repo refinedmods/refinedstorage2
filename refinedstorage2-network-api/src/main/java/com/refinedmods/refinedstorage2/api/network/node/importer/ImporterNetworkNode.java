@@ -32,14 +32,14 @@ public class ImporterNetworkNode extends AbstractNetworkNode {
     }
 
     @Override
-    public void update() {
-        super.update();
-        if (transferStrategy != null && isActive()) {
+    public void doWork() {
+        if (isActive() && transferStrategy != null) {
             tryTransfer(transferStrategy);
         }
     }
 
     private void tryTransfer(final ImporterTransferStrategy strategy) {
+        // TODO: Remove timer from this crap.
         --coolDownTimer;
         if (coolDownTimer < 0) {
             strategy.transfer(filter, actor, Objects.requireNonNull(network));

@@ -291,7 +291,7 @@ class StorageNetworkNodeTest {
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
         activateStorage();
 
-        sut.setActivenessProvider(() -> false);
+        sut.setActive(false);
 
         // Act
         final long inserted = networkStorage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -307,7 +307,7 @@ class StorageNetworkNodeTest {
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
         activateStorage();
 
-        sut.setActivenessProvider(() -> false);
+        sut.setActive(false);
 
         // Act
         final long extracted = networkStorage.extract("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -327,7 +327,7 @@ class StorageNetworkNodeTest {
         activateStorage();
 
         // Act
-        sut.onActiveChanged(false);
+        sut.setActive(false);
 
         // Assert
         assertThat(networkStorage.getAll()).isEmpty();
@@ -342,7 +342,7 @@ class StorageNetworkNodeTest {
         sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
         // Act
-        sut.onActiveChanged(true);
+        sut.setActive(true);
 
         // Assert
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -370,7 +370,7 @@ class StorageNetworkNodeTest {
     }
 
     private void activateStorage() {
-        sut.onActiveChanged(true);
+        sut.setActive(true);
     }
 
     @Nested
@@ -385,11 +385,11 @@ class StorageNetworkNodeTest {
             // Arrange
             final LimitedStorageImpl<String> storage1 = new LimitedStorageImpl<>(100);
             sut.initializeNewStorage(storageRepository, storage1, UUID.randomUUID());
-            sut.onActiveChanged(true);
+            sut.setActive(true);
 
             final LimitedStorageImpl<String> storage2 = new LimitedStorageImpl<>(100);
             otherStorage.initializeNewStorage(storageRepository, storage2, UUID.randomUUID());
-            otherStorage.onActiveChanged(true);
+            otherStorage.setActive(true);
 
             if (oneHasPriority) {
                 sut.setPriority(5);

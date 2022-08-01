@@ -12,8 +12,4 @@ public interface NetworkNode {
     Network getNetwork();
 
     void setNetwork(@Nullable Network network);
-
-    boolean isActive();
-
-    void update();
 }
