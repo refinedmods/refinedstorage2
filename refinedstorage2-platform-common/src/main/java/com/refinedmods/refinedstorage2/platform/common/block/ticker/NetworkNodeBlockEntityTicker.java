@@ -33,6 +33,6 @@ public class NetworkNodeBlockEntityTicker<
     @Override
     public void tick(final Level level, final BlockPos pos, final BlockState state, final T blockEntity) {
         blockEntity.updateActiveness(state, activenessProperty);
-        blockEntity.getNode().doWork();
+        blockEntity.doWork();
     }
 }

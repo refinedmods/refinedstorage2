@@ -109,6 +109,10 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
         setChanged();
     }
 
+    public void doWork() {
+        getNode().doWork();
+    }
+
     @Override
     public boolean canPerformOutgoingConnection(final Direction direction) {
         final Direction myDirection = getDirection();
