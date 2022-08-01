@@ -60,7 +60,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
             state,
             new ImporterNetworkNode(calculateEnergyUsage(0, false))
         );
-        getNode().setNormalizer(this::normalize);
+        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(exactMode, value));
         this.resourceFilterContainer = new ResourceFilterContainer(
             PlatformApi.INSTANCE.getResourceTypeRegistry(),
             9,
@@ -71,16 +71,6 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
             PlatformApi.INSTANCE.getUpgradeRegistry(),
             this::upgradeContainerChanged
         );
-    }
-
-    private Object normalize(final Object value) {
-        if (exactMode) {
-            return value;
-        }
-        if (value instanceof FuzzyModeNormalizer<?> fuzzyModeNormalizer) {
-            return fuzzyModeNormalizer.normalize();
-        }
-        return value;
     }
 
     // used to handle rotations
