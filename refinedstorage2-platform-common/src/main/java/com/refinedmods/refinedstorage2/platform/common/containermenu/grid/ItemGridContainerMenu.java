@@ -3,11 +3,11 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.service.GridServiceImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -18,7 +18,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
-import java.util.Objects;
+import javax.annotation.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,22 +43,12 @@ public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResourc
                                  final Inventory playerInventory,
                                  final AbstractGridBlockEntity<ItemResource> grid) {
         super(Menus.INSTANCE.getGrid(), syncId, playerInventory, grid, createView());
-        grid.addWatcher(this);
-        final GridService<ItemResource> gridService = new GridServiceImpl<>(
-            Objects.requireNonNull(storageChannel),
+        final GridService<ItemResource> gridService = grid.getNode().createService(
             new PlayerActor(playerInventory.player),
             itemResource -> (long) itemResource.item().getMaxStackSize(),
             1
         );
         this.itemGridEventHandler = Platform.INSTANCE.createItemGridEventHandler(this, gridService, playerInventory);
-    }
-
-    @Override
-    public void removed(final Player playerEntity) {
-        super.removed(playerEntity);
-        if (grid != null) {
-            grid.removeWatcher(this);
-        }
     }
 
     private static GridViewImpl<ItemResource> createView() {
@@ -71,17 +61,17 @@ public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResourc
     }
 
     @Override
-    public void onChanged(final ResourceListOperationResult<ItemResource> change) {
+    public void onChanged(final ResourceListOperationResult<ItemResource> change,
+                          @Nullable final TrackedResource trackedResource) {
         final ItemResource resource = change.resourceAmount().getResource();
 
-        LOGGER.info("Received a change of {} for {}", change.change(), resource);
+        LOGGER.debug("Received a change of {} for {}", change.change(), resource);
 
         Platform.INSTANCE.getServerToClientCommunications().sendGridItemUpdate(
             (ServerPlayer) playerInventory.player,
             resource,
             change.change(),
-            Objects.requireNonNull(storageChannel)
-                .findTrackedResourceByActorType(resource, PlayerActor.class).orElse(null)
+            trackedResource
         );
     }
 

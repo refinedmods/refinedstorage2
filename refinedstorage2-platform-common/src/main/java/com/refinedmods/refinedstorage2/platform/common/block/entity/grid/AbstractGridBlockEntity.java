@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity.grid;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
@@ -50,11 +51,11 @@ public abstract class AbstractGridBlockEntity<T>
 
     protected abstract void writeResourceAmount(FriendlyByteBuf buf, ResourceAmount<T> stack);
 
-    public void addWatcher(final GridWatcher watcher) {
-        getNode().addWatcher(watcher);
+    public void addWatcher(final GridWatcher<T> watcher, final Class<? extends Actor> actorType) {
+        getNode().addWatcher(watcher, actorType);
     }
 
-    public void removeWatcher(final GridWatcher watcher) {
+    public void removeWatcher(final GridWatcher<T> watcher) {
         getNode().removeWatcher(watcher);
     }
 }
