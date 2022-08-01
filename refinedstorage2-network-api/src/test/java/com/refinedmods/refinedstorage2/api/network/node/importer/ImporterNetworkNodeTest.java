@@ -41,7 +41,9 @@ class ImporterNetworkNodeTest {
     }
 
     @Test
-    void testWithoutTransferStrategy(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+    void shouldNotWorkWithoutTransferStrategy(
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+    ) {
         // Act
         sut.doWork();
 
@@ -50,7 +52,7 @@ class ImporterNetworkNodeTest {
     }
 
     @Test
-    void testWithoutActiveness(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+    void shouldNotWorkWithoutBeingActive(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
         // Arrange
         storageChannel.addSource(new InMemoryStorageImpl<>());
 
@@ -106,7 +108,8 @@ class ImporterNetworkNodeTest {
 
     @Test
     void testTransferWithoutSpaceInNetwork(
-        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+    ) {
         // Arrange
         storageChannel.addSource(new LimitedStorageImpl<>(100));
         storageChannel.insert("C", 100, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -136,7 +139,8 @@ class ImporterNetworkNodeTest {
 
     @Test
     void testTransferOverMultipleSlots(
-        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+    ) {
         // Arrange
         storageChannel.addSource(new InMemoryStorageImpl<>());
 
@@ -164,7 +168,8 @@ class ImporterNetworkNodeTest {
 
     @Test
     void testTransferWhereResourceIsNotAccepted(
-        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+    ) {
         // Arrange
         storageChannel.addSource(new InMemoryStorageImpl<>() {
             @Override
@@ -220,69 +225,6 @@ class ImporterNetworkNodeTest {
         // Assert
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().isEmpty();
         assertThat(source.getAll()).isEmpty();
-    }
-
-    @Test
-    void testCoolDown(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
-        // Arrange
-        storageChannel.addSource(new InMemoryStorageImpl<>());
-
-        final FakeImporterSource source = new FakeImporterSource("A", "B")
-            .add("A", 5)
-            .add("B", 5);
-        final ImporterTransferStrategy strategy = new ImporterTransferStrategyImpl<>(
-            source,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-            1
-        );
-        sut.setTransferStrategy(strategy);
-        sut.setCoolDownTime(3);
-
-        // Act & assert
-        sut.doWork(); // Do it once, cooldown is now = 3
-        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 1)
-        );
-        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 4),
-            new ResourceAmount<>("B", 5)
-        );
-
-        sut.doWork(); // Cooldown is now = 2
-        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 1)
-        );
-        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 4),
-            new ResourceAmount<>("B", 5)
-        );
-
-        sut.doWork(); // Cooldown is now = 1
-        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 1)
-        );
-        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 4),
-            new ResourceAmount<>("B", 5)
-        );
-
-        sut.doWork(); // Cooldown is now = 0
-        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 1)
-        );
-        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 4),
-            new ResourceAmount<>("B", 5)
-        );
-
-        sut.doWork(); // Do it another time, cooldown is now = 3
-        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 2)
-        );
-        assertThat(source.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 3),
-            new ResourceAmount<>("B", 5)
-        );
     }
 
     @Test

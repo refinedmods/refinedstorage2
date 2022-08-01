@@ -16,15 +16,11 @@ public class ImporterNetworkNode extends AbstractNetworkNode {
     private long energyUsage;
     private final Filter filter = new Filter();
     private final Actor actor = new NetworkNodeActor(this);
-    private long coolDownTime;
-    private long coolDownTimer;
-
     @Nullable
     private ImporterTransferStrategy transferStrategy;
 
-    public ImporterNetworkNode(final long energyUsage, final long coolDownTime) {
+    public ImporterNetworkNode(final long energyUsage) {
         this.energyUsage = energyUsage;
-        this.coolDownTime = coolDownTime;
     }
 
     public void setTransferStrategy(@Nullable final ImporterTransferStrategy transferStrategy) {
@@ -34,16 +30,7 @@ public class ImporterNetworkNode extends AbstractNetworkNode {
     @Override
     public void doWork() {
         if (isActive() && transferStrategy != null) {
-            tryTransfer(transferStrategy);
-        }
-    }
-
-    private void tryTransfer(final ImporterTransferStrategy strategy) {
-        // TODO: Remove timer from this crap.
-        --coolDownTimer;
-        if (coolDownTimer < 0) {
-            strategy.transfer(filter, actor, Objects.requireNonNull(network));
-            coolDownTimer = coolDownTime;
+            transferStrategy.transfer(filter, actor, Objects.requireNonNull(network));
         }
     }
 
@@ -61,10 +48,6 @@ public class ImporterNetworkNode extends AbstractNetworkNode {
 
     public void setFilterTemplates(final Set<Object> templates) {
         filter.setTemplates(templates);
-    }
-
-    public void setCoolDownTime(final long coolDownTime) {
-        this.coolDownTime = coolDownTime;
     }
 
     public void setEnergyUsage(final long energyUsage) {

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
 
+import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -50,15 +51,14 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
     private final UpgradeContainer upgradeContainer;
     private boolean exactMode;
 
+    private RateLimiter rateLimiter = UpgradeConstants.getRateLimiter(0);
+
     public ImporterBlockEntity(final BlockPos pos, final BlockState state) {
         super(
             BlockEntities.INSTANCE.getImporter(),
             pos,
             state,
-            new ImporterNetworkNode(
-                calculateEnergyUsage(0, false),
-                UpgradeConstants.calculateCoolDownTime(0)
-            )
+            new ImporterNetworkNode(calculateEnergyUsage(0, false))
         );
         getNode().setNormalizer(this::normalize);
         this.resourceFilterContainer = new ResourceFilterContainer(
@@ -101,6 +101,13 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
             return;
         }
         updateTransferStrategy(serverLevel);
+    }
+
+    @Override
+    public void doWork() {
+        if (rateLimiter.tryAcquire()) {
+            super.doWork();
+        }
     }
 
     private void updateTransferStrategy(final ServerLevel serverLevel) {
@@ -204,7 +211,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
     private void initializeUpgrades() {
         final int amountOfSpeedUpgrades = upgradeContainer.countItem(Items.INSTANCE.getSpeedUpgrade());
         final boolean hasStackUpgrade = hasStackUpgrade();
-        getNode().setCoolDownTime(UpgradeConstants.calculateCoolDownTime(amountOfSpeedUpgrades));
+        rateLimiter = UpgradeConstants.getRateLimiter(amountOfSpeedUpgrades);
         getNode().setEnergyUsage(calculateEnergyUsage(amountOfSpeedUpgrades, hasStackUpgrade));
     }
 

@@ -38,7 +38,7 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
         ),
         SimpleNetworkNode.class, a -> new SimpleNetworkNode(a.energyUsage()),
         GridNetworkNode.class, a -> new GridNetworkNode<>(a.energyUsage(), NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
-        ImporterNetworkNode.class, a -> new ImporterNetworkNode(a.energyUsage(), 0),
+        ImporterNetworkNode.class, a -> new ImporterNetworkNode(a.energyUsage()),
         ControllerNetworkNode.class, a -> new ControllerNetworkNode()
     );
 
