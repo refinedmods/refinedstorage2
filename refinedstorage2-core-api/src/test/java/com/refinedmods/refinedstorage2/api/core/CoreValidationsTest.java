@@ -102,4 +102,16 @@ class CoreValidationsTest {
 
         assertDoesNotThrow(() -> CoreValidations.validateContains(List.of(1), 1, "bla"));
     }
+
+    @Test
+    void shouldValidateNotContains() {
+        // Act & assert
+        final Exception e = assertThrows(
+            IllegalArgumentException.class,
+            () -> CoreValidations.validateNotContains(List.of(1), 1, "bla")
+        );
+        assertThat(e.getMessage()).isEqualTo("bla");
+
+        assertDoesNotThrow(() -> CoreValidations.validateNotContains(List.of(1), 2, "bla"));
+    }
 }
