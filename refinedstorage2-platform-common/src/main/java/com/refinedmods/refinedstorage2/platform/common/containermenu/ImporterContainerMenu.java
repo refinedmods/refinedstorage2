@@ -72,10 +72,10 @@ public class ImporterContainerMenu extends AbstractResourceFilterContainerMenu i
     private void addSlots(final Player player,
                           final ResourceFilterContainer resourceFilterContainer,
                           final UpgradeContainer upgradeContainer) {
-        for (int i = 0; i < 9; ++i) {
+        for (int i = 0; i < resourceFilterContainer.size(); ++i) {
             addSlot(createFilterSlot(resourceFilterContainer, i));
         }
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
             addSlot(new Slot(upgradeContainer, i, 187, 6 + (i * 18)));
         }
         addPlayerInventory(player.getInventory(), 8, 55);

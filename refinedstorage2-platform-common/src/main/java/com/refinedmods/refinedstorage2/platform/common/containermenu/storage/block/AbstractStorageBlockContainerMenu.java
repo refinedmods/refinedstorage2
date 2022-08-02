@@ -52,7 +52,7 @@ public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageC
     }
 
     private void addSlots(final Player player, final ResourceFilterContainer resourceFilterContainer) {
-        for (int i = 0; i < 9; ++i) {
+        for (int i = 0; i < resourceFilterContainer.size(); ++i) {
             addSlot(createFilterSlot(resourceFilterContainer, i));
         }
         addPlayerInventory(player.getInventory(), 8, 141);

@@ -12,16 +12,22 @@ class CoreValidationsTest {
     @Test
     void shouldValidateEquals() {
         // Act & assert
-        final Exception e1 =
-            assertThrows(IllegalStateException.class, () -> CoreValidations.validateEquals(1, 2, "bla"));
+        final Exception e1 = assertThrows(
+            IllegalStateException.class,
+            () -> CoreValidations.validateEquals(1, 2, "bla")
+        );
         assertThat(e1.getMessage()).isEqualTo("bla");
 
-        final Exception e2 =
-            assertThrows(IllegalStateException.class, () -> CoreValidations.validateEquals(null, 2, "bla"));
+        final Exception e2 = assertThrows(
+            IllegalStateException.class,
+            () -> CoreValidations.validateEquals(null, 2, "bla")
+        );
         assertThat(e2.getMessage()).isEqualTo("bla");
 
-        final Exception e3 =
-            assertThrows(IllegalStateException.class, () -> CoreValidations.validateEquals(1, null, "bla"));
+        final Exception e3 = assertThrows(
+            IllegalStateException.class,
+            () -> CoreValidations.validateEquals(1, null, "bla")
+        );
         assertThat(e3.getMessage()).isEqualTo("bla");
 
         assertDoesNotThrow(() -> CoreValidations.validateEquals(1, 1, "bla"));
@@ -31,8 +37,10 @@ class CoreValidationsTest {
     @Test
     void shouldValidateNotNull() {
         // Act & assert
-        final Exception e =
-            assertThrows(NullPointerException.class, () -> CoreValidations.validateNotNull(null, "bla"));
+        final Exception e = assertThrows(
+            NullPointerException.class,
+            () -> CoreValidations.validateNotNull(null, "bla")
+        );
         assertThat(e.getMessage()).isEqualTo("bla");
 
         assertDoesNotThrow(() -> CoreValidations.validateNotNull("not null", "bla"));
@@ -43,8 +51,10 @@ class CoreValidationsTest {
     @Test
     void shouldValidateNotNegative() {
         // Act & assert
-        final Exception e =
-            assertThrows(IllegalArgumentException.class, () -> CoreValidations.validateNotNegative(-1, "bla"));
+        final Exception e = assertThrows(
+            IllegalArgumentException.class,
+            () -> CoreValidations.validateNotNegative(-1, "bla")
+        );
         assertThat(e.getMessage()).isEqualTo("bla");
 
         assertDoesNotThrow(() -> CoreValidations.validateNotNegative(0, "bla"));
@@ -56,12 +66,16 @@ class CoreValidationsTest {
     @Test
     void shouldValidateNegative() {
         // Act & assert
-        final Exception e1 =
-            assertThrows(IllegalArgumentException.class, () -> CoreValidations.validateNegative(0, "bla"));
+        final Exception e1 = assertThrows(
+            IllegalArgumentException.class,
+            () -> CoreValidations.validateNegative(0, "bla")
+        );
         assertThat(e1.getMessage()).isEqualTo("bla");
 
-        final Exception e2 =
-            assertThrows(IllegalArgumentException.class, () -> CoreValidations.validateNegative(1, "bla"));
+        final Exception e2 = assertThrows(
+            IllegalArgumentException.class,
+            () -> CoreValidations.validateNegative(1, "bla")
+        );
         assertThat(e2.getMessage()).isEqualTo("bla");
 
         assertDoesNotThrow(() -> CoreValidations.validateNegative(-1, "bla"));
@@ -71,8 +85,10 @@ class CoreValidationsTest {
     @Test
     void shouldValidateLargerThanZero() {
         // Act & assert
-        final Exception e =
-            assertThrows(IllegalArgumentException.class, () -> CoreValidations.validateLargerThanZero(0, "bla"));
+        final Exception e = assertThrows(
+            IllegalArgumentException.class,
+            () -> CoreValidations.validateLargerThanZero(0, "bla")
+        );
         assertThat(e.getMessage()).isEqualTo("bla");
 
         final Exception e2 =
@@ -86,8 +102,11 @@ class CoreValidationsTest {
     @Test
     void shouldValidateEmpty() {
         // Act & assert
-        final Exception e =
-            assertThrows(IllegalArgumentException.class, () -> CoreValidations.validateEmpty(List.of(1), "bla"));
+        final List<Integer> badList = List.of(1);
+        final Exception e = assertThrows(
+            IllegalArgumentException.class,
+            () -> CoreValidations.validateEmpty(badList, "bla")
+        );
         assertThat(e.getMessage()).isEqualTo("bla");
 
         assertDoesNotThrow(() -> CoreValidations.validateEmpty(List.of(), "bla"));
@@ -96,8 +115,11 @@ class CoreValidationsTest {
     @Test
     void shouldValidateContains() {
         // Act & assert
-        final Exception e =
-            assertThrows(IllegalArgumentException.class, () -> CoreValidations.validateContains(List.of(1), 2, "bla"));
+        final List<Integer> badList = List.of(1);
+        final Exception e = assertThrows(
+            IllegalArgumentException.class,
+            () -> CoreValidations.validateContains(badList, 2, "bla")
+        );
         assertThat(e.getMessage()).isEqualTo("bla");
 
         assertDoesNotThrow(() -> CoreValidations.validateContains(List.of(1), 1, "bla"));
@@ -106,9 +128,10 @@ class CoreValidationsTest {
     @Test
     void shouldValidateNotContains() {
         // Act & assert
+        final List<Integer> badList = List.of(1);
         final Exception e = assertThrows(
             IllegalArgumentException.class,
-            () -> CoreValidations.validateNotContains(List.of(1), 1, "bla")
+            () -> CoreValidations.validateNotContains(badList, 1, "bla")
         );
         assertThat(e.getMessage()).isEqualTo("bla");
 
