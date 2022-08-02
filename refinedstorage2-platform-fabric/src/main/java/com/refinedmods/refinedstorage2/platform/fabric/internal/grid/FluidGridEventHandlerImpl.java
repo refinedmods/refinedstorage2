@@ -10,6 +10,8 @@ import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 
+import javax.annotation.Nullable;
+
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -23,7 +25,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.ofFluidVariant;
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toFluidVariant;

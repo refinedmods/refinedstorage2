@@ -5,13 +5,13 @@ import com.refinedmods.refinedstorage2.platform.fabric.render.model.baked.Emissi
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
 
 public final class EmissiveModelRegistry {
     public static final EmissiveModelRegistry INSTANCE = new EmissiveModelRegistry();

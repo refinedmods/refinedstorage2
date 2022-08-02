@@ -5,6 +5,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
@@ -17,8 +19,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.BakedModelWrapper;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
     private final BakedModel baseModel;
@@ -46,9 +46,9 @@ public class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
-    public @NotNull List<BakedQuad> getQuads(@Nullable final BlockState state,
+    public @Nonnull List<BakedQuad> getQuads(@Nullable final BlockState state,
                                              @Nullable final Direction side,
-                                             @NotNull final RandomSource rand) {
+                                             @Nonnull final RandomSource rand) {
         if (side == null) {
             if (noSideCache == null) {
                 noSideCache = createQuads(state, null, rand);
@@ -60,7 +60,7 @@ public class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
 
     private List<BakedQuad> createQuads(@Nullable final BlockState state,
                                         @Nullable final Direction side,
-                                        @NotNull final RandomSource rand) {
+                                        @Nonnull final RandomSource rand) {
         final List<BakedQuad> quads = new ArrayList<>(super.getQuads(
             state,
             side,

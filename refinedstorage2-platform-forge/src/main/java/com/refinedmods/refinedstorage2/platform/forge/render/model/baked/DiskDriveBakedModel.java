@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -34,8 +36,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.data.ModelData;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
     private static final Vector3f[] TRANSLATORS = new Vector3f[8];
@@ -81,12 +81,12 @@ public class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
         return overrides;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public List<BakedQuad> getQuads(@Nullable final BlockState state,
                                     @Nullable final Direction side,
-                                    @NotNull final RandomSource rand,
-                                    @NotNull final ModelData extraData,
+                                    @Nonnull final RandomSource rand,
+                                    @Nonnull final ModelData extraData,
                                     @Nullable final RenderType renderType) {
         if (state == null || !(state.getBlock() instanceof DiskDriveBlock diskDriveBlock)) {
             return super.getQuads(state, side, rand);
