@@ -1,0 +1,6 @@
+<!DOCTYPE import-control PUBLIC
+        "-//Checkstyle//DTD ImportControl Configuration 1.4//EN"
+        "https://checkstyle.org/dtds/import_control_1_4.dtd">
+<import-control pkg="com.refinedmods.refinedstorage2" strategyOnMismatch="allowed">
+    <disallow pkg="org.jetbrains.annotations"/>
+</import-control>
