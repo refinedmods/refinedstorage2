@@ -2,6 +2,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.menu;
 
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
+import javax.annotation.Nullable;
+
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -9,7 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import org.jetbrains.annotations.Nullable;
 
 public class FabricExtendedMenuProviderAdapter implements ExtendedScreenHandlerFactory {
     private final ExtendedMenuProvider extendedMenuProvider;

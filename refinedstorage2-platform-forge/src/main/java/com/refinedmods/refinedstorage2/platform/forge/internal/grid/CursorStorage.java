@@ -1,10 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.forge.internal.grid;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import org.jetbrains.annotations.NotNull;
 
 public class CursorStorage implements IItemHandler {
     private final AbstractContainerMenu containerMenu;
@@ -19,13 +20,13 @@ public class CursorStorage implements IItemHandler {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public ItemStack getStackInSlot(final int slot) {
         return containerMenu.getCarried();
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public ItemStack insertItem(final int slot, final ItemStack stack, final boolean simulate) {
         if (slot != 0) {
             return stack;
@@ -60,7 +61,7 @@ public class CursorStorage implements IItemHandler {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public ItemStack extractItem(final int slot, final int amount, final boolean simulate) {
         if (slot != 0) {
             return ItemStack.EMPTY;
@@ -82,7 +83,7 @@ public class CursorStorage implements IItemHandler {
     }
 
     @Override
-    public boolean isItemValid(final int slot, @NotNull final ItemStack stack) {
+    public boolean isItemValid(final int slot, @Nonnull final ItemStack stack) {
         return slot == 0;
     }
 

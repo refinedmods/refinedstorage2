@@ -57,6 +57,8 @@ import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.impo
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
 import java.util.function.Supplier;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -87,8 +89,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CABLE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTION_CORE;
@@ -593,9 +593,9 @@ public class ModInitializer extends AbstractModInitializer {
         final LazyOptional<IEnergyStorage> capability = LazyOptional
             .of(() -> (IEnergyStorage) controllerBlockEntity.getEnergyStorage());
         e.addCapability(createIdentifier("energy"), new ICapabilityProvider() {
-            @NotNull
             @Override
-            public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> cap,
+            @Nonnull
+            public <T> LazyOptional<T> getCapability(final Capability<T> cap,
                                                      @Nullable final Direction side) {
                 if (cap == CapabilityEnergy.ENERGY
                     && controllerBlockEntity.getEnergyStorage() instanceof IEnergyStorage) {
