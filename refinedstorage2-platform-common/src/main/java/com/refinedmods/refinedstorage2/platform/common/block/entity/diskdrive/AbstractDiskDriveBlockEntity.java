@@ -90,7 +90,7 @@ public abstract class AbstractDiskDriveBlockEntity
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
             AMOUNT_OF_DISKS
         ));
-        this.diskInventory = new DiskDriveInventory(this, getNode().getDiskCount());
+        this.diskInventory = new DiskDriveInventory(this, getNode().getAmountOfDiskSlots());
         getNode().setDiskProvider(diskInventory);
         getNode().setListener(this);
         getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(exactMode, value));

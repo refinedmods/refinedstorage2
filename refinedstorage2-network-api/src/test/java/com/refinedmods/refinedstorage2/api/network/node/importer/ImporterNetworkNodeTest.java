@@ -2,8 +2,10 @@ package com.refinedmods.refinedstorage2.api.network.node.importer;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.api.network.test.extension.AddNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkEnergyComponent;
 import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
 import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
@@ -21,12 +23,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ExtendWith(NetworkTestExtension.class)
-@SetupNetwork
+@SetupNetwork(energyStored = 1000, energyCapacity = 1000)
 class ImporterNetworkNodeTest {
     @AddNetworkNode
     ImporterNetworkNode sut;
+
+    @AddNetworkNode(networkId = "nonexistent")
+    ImporterNetworkNode sutWithoutNetwork;
 
     @BeforeEach
     void setUp() {
@@ -41,18 +47,41 @@ class ImporterNetworkNodeTest {
     }
 
     @Test
+    void shouldExtractEnergy(
+        @InjectNetworkEnergyComponent final EnergyNetworkComponent energy
+    ) {
+        // Act
+        sut.doWork();
+
+        // Assert
+        assertThat(energy.getStored()).isEqualTo(1000 - 5);
+    }
+
+    @Test
     void shouldNotWorkWithoutTransferStrategy(
-        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel,
+        @InjectNetworkEnergyComponent final EnergyNetworkComponent energy
     ) {
         // Act
         sut.doWork();
 
         // Assert
         assertThat(storageChannel.getAll()).isEmpty();
+        assertThat(energy.getStored()).isEqualTo(1000 - 5);
     }
 
     @Test
-    void shouldNotWorkWithoutBeingActive(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+    void shouldNotWorkWithoutNetwork() {
+        // Act & assert
+        assertDoesNotThrow(sutWithoutNetwork::doWork);
+        assertThat(sutWithoutNetwork.isActive()).isTrue();
+    }
+
+    @Test
+    void shouldNotWorkOrExtractEnergyWithoutBeingActive(
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel,
+        @InjectNetworkEnergyComponent final EnergyNetworkComponent energy
+    ) {
         // Arrange
         storageChannel.addSource(new InMemoryStorageImpl<>());
 
@@ -76,6 +105,7 @@ class ImporterNetworkNodeTest {
             new ResourceAmount<>("A", 100),
             new ResourceAmount<>("B", 100)
         );
+        assertThat(energy.getStored()).isEqualTo(1000);
     }
 
     @Test

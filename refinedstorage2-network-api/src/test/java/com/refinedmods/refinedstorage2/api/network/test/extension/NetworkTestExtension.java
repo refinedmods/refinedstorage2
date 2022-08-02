@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -131,9 +132,11 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
     private void registerNetworkNode(final Object testInstance,
                                      final Field field,
                                      final NetworkNode networkNode,
-                                     final Network network) {
+                                     @Nullable final Network network) {
         networkNode.setNetwork(network);
-        network.addContainer(() -> networkNode);
+        if (network != null) {
+            network.addContainer(() -> networkNode);
+        }
         setField(testInstance, field, networkNode);
     }
 

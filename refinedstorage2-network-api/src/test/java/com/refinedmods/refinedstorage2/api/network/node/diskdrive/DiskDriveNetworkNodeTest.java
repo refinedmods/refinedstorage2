@@ -90,7 +90,7 @@ class DiskDriveNetworkNodeTest {
         assertThat(states.getStates())
             .hasSize(9)
             .allMatch(state -> state == StorageDiskState.NONE);
-        assertThat(sut.getDiskCount()).isEqualTo(9);
+        assertThat(sut.getAmountOfDiskSlots()).isEqualTo(9);
     }
 
     @ParameterizedTest
