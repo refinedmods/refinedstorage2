@@ -50,8 +50,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
     private final ResourceFilterContainer resourceFilterContainer;
     private final UpgradeContainer upgradeContainer;
     private boolean exactMode;
-
-    private RateLimiter rateLimiter = UpgradeConstants.getRateLimiter(0);
+    private RateLimiter rateLimiter = createRateLimiter(0);
 
     public ImporterBlockEntity(final BlockPos pos, final BlockState state) {
         super(
@@ -201,7 +200,7 @@ public class ImporterBlockEntity extends AbstractInternalNetworkNodeContainerBlo
     private void initializeUpgrades() {
         final int amountOfSpeedUpgrades = upgradeContainer.countItem(Items.INSTANCE.getSpeedUpgrade());
         final boolean hasStackUpgrade = hasStackUpgrade();
-        rateLimiter = UpgradeConstants.getRateLimiter(amountOfSpeedUpgrades);
+        rateLimiter = createRateLimiter(amountOfSpeedUpgrades);
         getNode().setEnergyUsage(calculateEnergyUsage(amountOfSpeedUpgrades, hasStackUpgrade));
     }
 

@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import javax.annotation.Nullable;
 
+import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -138,5 +139,9 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
             return null;
         }
         return directionalBlock.extractDirection(blockState);
+    }
+
+    protected RateLimiter createRateLimiter(final int amountOfSpeedUpgrades) {
+        return RateLimiter.create((double) amountOfSpeedUpgrades + 1);
     }
 }
