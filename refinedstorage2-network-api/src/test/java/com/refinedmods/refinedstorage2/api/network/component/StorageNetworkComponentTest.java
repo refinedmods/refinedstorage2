@@ -38,7 +38,7 @@ class StorageNetworkComponentTest {
 
         final FakeStorageProviderRepository storageProviderRepository = new FakeStorageProviderRepository();
         storageProviderRepository.setInSlot(0, new LimitedStorageImpl<>(100));
-        diskDrive = new DiskDriveNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY);
+        diskDrive = new DiskDriveNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY, 9);
         diskDrive.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
         diskDrive.setListener(mock(DiskDriveListener.class));
         diskDrive.setDiskProvider(storageProviderRepository);

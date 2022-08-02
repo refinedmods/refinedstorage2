@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskProvider;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
@@ -14,8 +13,8 @@ import net.minecraft.world.item.ItemStack;
 public class DiskDriveInventory extends SimpleContainer implements StorageDiskProvider {
     private final AbstractDiskDriveBlockEntity diskDrive;
 
-    public DiskDriveInventory(final AbstractDiskDriveBlockEntity diskDrive) {
-        super(DiskDriveNetworkNode.DISK_COUNT);
+    public DiskDriveInventory(final AbstractDiskDriveBlockEntity diskDrive, final int diskCount) {
+        super(diskCount);
         this.diskDrive = diskDrive;
     }
 

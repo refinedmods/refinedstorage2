@@ -88,8 +88,9 @@ class DiskDriveNetworkNodeTest {
         assertThat(networkStorage.getAll()).isEmpty();
         assertThat(networkStorage.getStored()).isZero();
         assertThat(states.getStates())
-            .hasSize(DiskDriveNetworkNode.DISK_COUNT)
+            .hasSize(9)
             .allMatch(state -> state == StorageDiskState.NONE);
+        assertThat(sut.getDiskCount()).isEqualTo(9);
     }
 
     @ParameterizedTest
@@ -205,13 +206,13 @@ class DiskDriveNetworkNodeTest {
     void shouldNotChangeDiskInInvalidSlot() {
         // Act
         sut.onDiskChanged(-1);
-        sut.onDiskChanged(DiskDriveNetworkNode.DISK_COUNT);
-
-        final DiskDriveState states = sut.createState();
+        sut.onDiskChanged(9);
 
         // Assert
+        final DiskDriveState states = sut.createState();
+
         assertThat(states.getStates())
-            .hasSize(DiskDriveNetworkNode.DISK_COUNT)
+            .hasSize(9)
             .allMatch(state -> state == StorageDiskState.NONE);
     }
 

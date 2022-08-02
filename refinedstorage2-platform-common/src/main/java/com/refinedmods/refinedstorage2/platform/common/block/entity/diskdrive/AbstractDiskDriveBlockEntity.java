@@ -56,6 +56,8 @@ public abstract class AbstractDiskDriveBlockEntity
     implements BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider, StorageSettingsProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private static final int AMOUNT_OF_DISKS = 9;
+
     private static final String TAG_PRIORITY = "pri";
     private static final String TAG_FILTER_MODE = "fim";
     private static final String TAG_EXACT_MODE = "em";
@@ -69,7 +71,7 @@ public abstract class AbstractDiskDriveBlockEntity
     @Nullable
     protected DiskDriveState driveState;
 
-    private final DiskDriveInventory diskInventory = new DiskDriveInventory(this);
+    private final DiskDriveInventory diskInventory;
     private final ResourceFilterContainer resourceFilterContainer = new ResourceFilterContainer(
         PlatformApi.INSTANCE.getResourceTypeRegistry(),
         9,
@@ -85,8 +87,10 @@ public abstract class AbstractDiskDriveBlockEntity
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new DiskDriveNetworkNode(
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
+            AMOUNT_OF_DISKS
         ));
+        this.diskInventory = new DiskDriveInventory(this, getNode().getDiskCount());
         getNode().setDiskProvider(diskInventory);
         getNode().setListener(this);
         getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(exactMode, value));

@@ -109,7 +109,8 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
             final DiskDriveNetworkNode resolvedNode = new DiskDriveNetworkNode(
                 annotation.baseEnergyUsage(),
                 annotation.energyUsagePerDisk(),
-                NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY
+                NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY,
+                annotation.diskCount()
             );
             resolvedNode.setActive(annotation.active());
             final Network network = networkMap.get(annotation.networkId());

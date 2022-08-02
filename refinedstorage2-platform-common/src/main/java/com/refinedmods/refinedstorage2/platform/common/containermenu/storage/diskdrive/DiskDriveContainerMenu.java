@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
@@ -44,7 +43,7 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
 
         addSlots(
             playerInventory.player,
-            new SimpleContainer(DiskDriveNetworkNode.DISK_COUNT),
+            new SimpleContainer(9),
             new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9)
         );
 
@@ -72,10 +71,10 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
     private void addSlots(final Player player,
                           final SimpleContainer diskInventory,
                           final ResourceFilterContainer resourceFilterContainer) {
-        for (int i = 0; i < DiskDriveNetworkNode.DISK_COUNT; ++i) {
+        for (int i = 0; i < diskInventory.getContainerSize(); ++i) {
             diskSlots.add(addSlot(createDiskSlot(diskInventory, i)));
         }
-        for (int i = 0; i < 9; ++i) {
+        for (int i = 0; i < resourceFilterContainer.size(); ++i) {
             addSlot(createFilterSlot(resourceFilterContainer, i));
         }
         addPlayerInventory(player.getInventory(), 8, 141);
