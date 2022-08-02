@@ -14,5 +14,7 @@ public @interface AddDiskDrive {
 
     boolean active() default true;
 
+    int diskCount() default 9;
+
     String networkId() default "default";
 }
