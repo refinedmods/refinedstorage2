@@ -245,7 +245,7 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
         return Optional.empty();
     }
 
-    public int getDiskCount() {
+    public int getAmountOfDiskSlots() {
         return disks.length;
     }
 

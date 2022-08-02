@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 import javax.annotation.Nullable;
@@ -29,9 +28,11 @@ public class ImporterNetworkNode extends AbstractNetworkNode {
 
     @Override
     public void doWork() {
-        if (isActive() && transferStrategy != null) {
-            transferStrategy.transfer(filter, actor, Objects.requireNonNull(network));
+        super.doWork();
+        if (network == null || !isActive() || transferStrategy == null) {
+            return;
         }
+        transferStrategy.transfer(filter, actor, network);
     }
 
     public FilterMode getFilterMode() {
