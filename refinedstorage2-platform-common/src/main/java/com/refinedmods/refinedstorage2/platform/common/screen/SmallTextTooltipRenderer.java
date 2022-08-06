@@ -37,7 +37,7 @@ public class SmallTextTooltipRenderer extends GuiComponent {
         }
         final float smallTextScale = (minecraft != null && minecraft.isEnforceUnicode()) ? 1F : 0.7F;
         final int tooltipWidth = calculateWidth(font, lines, smallLines, smallTextScale);
-        final int tooltipHeight = calculateHeight(font, lines, smallLines);
+        final int tooltipHeight = calculateHeight(lines, smallLines);
         final int tooltipX = calculateTooltipX(x, screenWidth, tooltipWidth);
         final int tooltipY = calculateTooltipY(y, screenHeight, tooltipHeight);
         render(font, poseStack, lines, smallLines, smallTextScale, tooltipWidth, tooltipHeight, tooltipX, tooltipY);
@@ -145,8 +145,7 @@ public class SmallTextTooltipRenderer extends GuiComponent {
     }
 
 
-    private int calculateHeight(final Font font,
-                                final List<? extends FormattedCharSequence> lines,
+    private int calculateHeight(final List<? extends FormattedCharSequence> lines,
                                 final List<? extends FormattedCharSequence> smallLines) {
         int tooltipHeight = (lines.size() * 12);
         tooltipHeight += smallLines.size() * 9;
