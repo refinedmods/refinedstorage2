@@ -25,8 +25,7 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
     private static final String TAG_REDSTONE_MODE = "rm";
 
     private final RateLimiter activenessChangeRateLimiter = RateLimiter.create(1);
-    @Nullable
-    private Boolean lastActive;
+    private boolean lastActive;
     private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
 
     protected AbstractInternalNetworkNodeContainerBlockEntity(final BlockEntityType<?> type,
@@ -61,12 +60,7 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
 
     public void updateActiveness(final BlockState state,
                                  @Nullable final BooleanProperty activenessProperty) {
-        if (lastActive == null) {
-            lastActive = getNode().isActive();
-        }
-
         final boolean newActive = isActive();
-
         if (newActive != lastActive && activenessChangeRateLimiter.tryAcquire()) {
             LOGGER.info("Activeness change for node at {}: {} -> {}", getBlockPos(), lastActive, newActive);
             this.lastActive = newActive;
