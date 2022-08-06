@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.2] - 2022-08-06
+
 ### Changed
 
 - All directional blocks no longer transmit a network signal out of the direction.
