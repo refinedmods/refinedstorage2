@@ -13,6 +13,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -78,7 +79,9 @@ public class ItemGridScreen extends AbstractGridScreen<ItemResource, ItemGridCon
                                   final int slotX,
                                   final int slotY,
                                   final AbstractGridResource<ItemResource> resource) {
-        itemRenderer.renderAndDecorateItem(((ItemGridResource) resource).getItemStack(), slotX, slotY);
+        final ItemStack itemStack = ((ItemGridResource) resource).getItemStack();
+        itemRenderer.renderGuiItem(itemStack, slotX, slotY);
+        itemRenderer.renderGuiItemDecorations(Minecraft.getInstance().font, itemStack, slotX, slotY, null);
     }
 
     @Override

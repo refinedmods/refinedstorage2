@@ -111,7 +111,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     protected abstract ResourceAmount<T> readResourceAmount(FriendlyByteBuf buf);
 
     public void onResourceUpdate(final T template, final long amount, @Nullable final TrackedResource trackedResource) {
-        LOGGER.info("{} got updated with {}", template, amount);
+        LOGGER.debug("{} got updated with {}", template, amount);
         view.onChange(template, amount, trackedResource);
     }
 

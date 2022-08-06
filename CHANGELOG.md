@@ -18,6 +18,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Fixed network connection state not rebuilding after using Wrench on a directional block.
+- Fixed Grid tooltip being too small in some cases and item durability not being rendered.
 
 ### Added
 
