@@ -46,9 +46,10 @@ public class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
-    public @Nonnull List<BakedQuad> getQuads(@Nullable final BlockState state,
-                                             @Nullable final Direction side,
-                                             @Nonnull final RandomSource rand) {
+    @Nonnull
+    public List<BakedQuad> getQuads(@Nullable final BlockState state,
+                                    @Nullable final Direction side,
+                                    @Nonnull final RandomSource rand) {
         if (side == null) {
             if (noSideCache == null) {
                 noSideCache = createQuads(state, null, rand);
@@ -58,6 +59,7 @@ public class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
         return cache.computeIfAbsent(side, key -> createQuads(state, side, rand));
     }
 
+    @SuppressWarnings("deprecation")
     private List<BakedQuad> createQuads(@Nullable final BlockState state,
                                         @Nullable final Direction side,
                                         @Nonnull final RandomSource rand) {
@@ -80,6 +82,7 @@ public class DiskDriveItemBakedModel extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public BakedModel applyTransform(final ItemTransforms.TransformType cameraTransformType,
                                      final PoseStack poseStack,
                                      final boolean applyLeftHandTransform) {

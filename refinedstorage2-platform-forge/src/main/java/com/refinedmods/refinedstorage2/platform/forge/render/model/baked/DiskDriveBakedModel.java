@@ -189,6 +189,7 @@ public class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
             return quads;
         }
 
+        @SuppressWarnings("deprecation")
         private List<BakedQuad> getBaseQuads(final BlockState state,
                                              final RandomSource rand,
                                              @Nullable final Direction side,
@@ -200,6 +201,7 @@ public class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
             );
         }
 
+        @SuppressWarnings("deprecation")
         private List<BakedQuad> getDiskModel(final BlockState state,
                                              final RandomSource rand,
                                              @Nullable final Direction side,

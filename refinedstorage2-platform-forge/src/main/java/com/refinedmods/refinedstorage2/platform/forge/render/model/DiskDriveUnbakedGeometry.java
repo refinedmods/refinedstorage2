@@ -73,7 +73,7 @@ public class DiskDriveUnbakedGeometry extends AbstractUnbakedGeometry<DiskDriveU
                                                                   final ModelBakery bakery,
                                                                   final Function<Material, TextureAtlasSprite>
                                                                       sg) {
-        return (trans) -> {
+        return trans -> {
             final Transformation translation = new Transformation(trans, null, null, null);
             final ModelState wrappedState = new SimpleModelState(translation, state.isUvLocked());
             return bakery.bake(DISK_DISCONNECTED_MODEL, wrappedState, sg);
