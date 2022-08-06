@@ -22,12 +22,11 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
     extends AbstractNetworkNodeContainerBlockEntity<T> {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final int ACTIVE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
     private static final String TAG_REDSTONE_MODE = "rm";
 
+    private final RateLimiter activenessChangeRateLimiter = RateLimiter.create(1);
     @Nullable
     private Boolean lastActive;
-    private long lastActiveChanged;
     private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
 
     protected AbstractInternalNetworkNodeContainerBlockEntity(final BlockEntityType<?> type,
@@ -66,16 +65,12 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
             lastActive = getNode().isActive();
         }
 
-        final boolean active = isActive();
-        final boolean inTime = System.currentTimeMillis() - lastActiveChanged > ACTIVE_CHANGE_MINIMUM_INTERVAL_MS;
+        final boolean newActive = isActive();
 
-        if (active != lastActive && (lastActiveChanged == 0 || inTime)) {
-            LOGGER.info("Activeness change for node at {}: {} -> {}", getBlockPos(), lastActive, active);
-
-            this.lastActive = active;
-            this.lastActiveChanged = System.currentTimeMillis();
-
-            activenessChanged(state, active, activenessProperty);
+        if (newActive != lastActive && activenessChangeRateLimiter.tryAcquire()) {
+            LOGGER.info("Activeness change for node at {}: {} -> {}", getBlockPos(), lastActive, newActive);
+            this.lastActive = newActive;
+            activenessChanged(state, newActive, activenessProperty);
         }
     }
 

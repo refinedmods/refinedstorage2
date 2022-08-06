@@ -90,17 +90,20 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void registerEmissiveControllerModels(final DyeColor color) {
+        final ResourceLocation spriteLocation = createIdentifier("block/controller/cutouts/" + color.getName());
+        // Block
         EmissiveModelRegistry.INSTANCE.register(
             createIdentifier("block/controller/" + color.getName()),
-            createIdentifier("block/controller/cutouts/" + color.getName())
+            spriteLocation
         );
+        // Item
         EmissiveModelRegistry.INSTANCE.register(
             ColorMap.generateId(color, IdentifierUtil.MOD_ID, "controller"),
-            createIdentifier("block/controller/cutouts/" + color.getName())
+            spriteLocation
         );
         EmissiveModelRegistry.INSTANCE.register(
             ColorMap.generateId(color, IdentifierUtil.MOD_ID, "creative_controller"),
-            createIdentifier("block/controller/cutouts/" + color.getName())
+            spriteLocation
         );
     }
 

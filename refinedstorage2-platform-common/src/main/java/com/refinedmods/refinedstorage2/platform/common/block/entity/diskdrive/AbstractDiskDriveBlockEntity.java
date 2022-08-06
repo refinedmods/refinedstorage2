@@ -24,6 +24,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.LevelUtil;
 
 import javax.annotation.Nullable;
 
+import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.ByteTag;
@@ -66,8 +67,6 @@ public abstract class AbstractDiskDriveBlockEntity
     private static final String TAG_STATES = "states";
     private static final String TAG_RESOURCE_FILTER = "rf";
 
-    private static final int DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
-
     @Nullable
     protected DiskDriveState driveState;
 
@@ -77,9 +76,9 @@ public abstract class AbstractDiskDriveBlockEntity
         9,
         this::resourceFilterContainerChanged
     );
+    private final RateLimiter diskStateChangeRateLimiter = RateLimiter.create(1);
 
     private boolean syncRequested;
-    private long lastStateChanged;
 
     private boolean exactMode;
 
@@ -105,10 +104,8 @@ public abstract class AbstractDiskDriveBlockEntity
         if (!syncRequested) {
             return;
         }
-        final boolean inTime = (System.currentTimeMillis() - lastStateChanged) > DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS;
-        if (lastStateChanged == 0 || inTime) {
+        if (diskStateChangeRateLimiter.tryAcquire()) {
             LOGGER.info("Disk state change for block at {}", getBlockPos());
-            this.lastStateChanged = System.currentTimeMillis();
             this.syncRequested = false;
             sync();
         }

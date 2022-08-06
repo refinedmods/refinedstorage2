@@ -60,7 +60,7 @@ class CoreValidationsTest {
         assertDoesNotThrow(() -> CoreValidations.validateNotNegative(0, "bla"));
         assertDoesNotThrow(() -> CoreValidations.validateNotNegative(1, "bla"));
 
-        assertThat(CoreValidations.validateNotNegative(0, "test")).isEqualTo(0);
+        assertThat(CoreValidations.validateNotNegative(0, "test")).isZero();
     }
 
     @Test
