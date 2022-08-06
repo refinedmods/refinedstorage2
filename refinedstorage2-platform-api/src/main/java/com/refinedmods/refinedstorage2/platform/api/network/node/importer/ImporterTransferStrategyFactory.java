@@ -10,5 +10,5 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.1")
 @FunctionalInterface
 public interface ImporterTransferStrategyFactory {
-    ImporterTransferStrategy create(ServerLevel level, BlockPos pos, Direction direction);
+    ImporterTransferStrategy create(ServerLevel level, BlockPos pos, Direction direction, boolean hasStackUpgrade);
 }

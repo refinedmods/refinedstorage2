@@ -3,12 +3,14 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.UpgradeContainer;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -25,7 +27,8 @@ public class ImporterContainerMenu extends AbstractResourceFilterContainerMenu i
 
         addSlots(
             playerInventory.player,
-            new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9)
+            new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9),
+            new UpgradeContainer(UpgradeDestinations.IMPORTER, PlatformApi.INSTANCE.getUpgradeRegistry())
         );
 
         initializeResourceFilterSlots(buf);
@@ -38,7 +41,8 @@ public class ImporterContainerMenu extends AbstractResourceFilterContainerMenu i
     public ImporterContainerMenu(final int syncId,
                                  final Player player,
                                  final ImporterBlockEntity importer,
-                                 final ResourceFilterContainer resourceFilterContainer) {
+                                 final ResourceFilterContainer resourceFilterContainer,
+                                 final UpgradeContainer upgradeContainer) {
         super(
             Menus.INSTANCE.getImporter(),
             syncId,
@@ -46,7 +50,7 @@ public class ImporterContainerMenu extends AbstractResourceFilterContainerMenu i
             player,
             resourceFilterContainer
         );
-        addSlots(player, resourceFilterContainer);
+        addSlots(player, resourceFilterContainer, upgradeContainer);
 
         registerProperty(new ServerProperty<>(
             PropertyTypes.FILTER_MODE,
@@ -65,11 +69,19 @@ public class ImporterContainerMenu extends AbstractResourceFilterContainerMenu i
         ));
     }
 
-    private void addSlots(final Player player, final ResourceFilterContainer resourceFilterContainer) {
-        for (int i = 0; i < 9; ++i) {
+    private void addSlots(final Player player,
+                          final ResourceFilterContainer resourceFilterContainer,
+                          final UpgradeContainer upgradeContainer) {
+        for (int i = 0; i < resourceFilterContainer.size(); ++i) {
             addSlot(createFilterSlot(resourceFilterContainer, i));
         }
+        for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
+            addSlot(new Slot(upgradeContainer, i, 187, 6 + (i * 18)));
+        }
         addPlayerInventory(player.getInventory(), 8, 55);
+
+        transferManager.addBiTransfer(player.getInventory(), upgradeContainer);
+        transferManager.addFilterTransfer(player.getInventory());
     }
 
     private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {

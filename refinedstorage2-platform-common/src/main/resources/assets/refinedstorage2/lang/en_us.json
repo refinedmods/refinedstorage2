@@ -89,6 +89,10 @@
   "item.refinedstorage2.construction_core": "Construction Core",
   "item.refinedstorage2.destruction_core": "Destruction Core",
   "item.refinedstorage2.wrench": "Wrench",
+  "item.refinedstorage2.upgrade": "Upgrade",
+  "item.refinedstorage2.speed_upgrade": "Speed Upgrade",
+  "item.refinedstorage2.stack_upgrade": "Stack Upgrade",
+  "item.refinedstorage2.upgrade.supported_by": "Supported by:",
   "misc.refinedstorage2.stored": "Stored: %s",
   "misc.refinedstorage2.stored_with_capacity": "Stored: %s / %s",
   "misc.refinedstorage2.stacks": "Stacks: %s",
@@ -150,5 +154,7 @@
   "advancements.refinedstorage2.viewing_fluids": "Viewing fluids",
   "advancements.refinedstorage2.viewing_fluids.description": "Craft a Fluid Grid to interact with your fluid storage",
   "advancements.refinedstorage2.importing": "Importing",
-  "advancements.refinedstorage2.importing.description": "Get resources into the storage network with an Importer"
+  "advancements.refinedstorage2.importing.description": "Get resources into the storage network with an Importer",
+  "advancements.refinedstorage2.upgrading": "Upgrading",
+  "advancements.refinedstorage2.upgrading.description": "Craft an Upgrade to improve various devices"
 }

@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider
 
 import javax.annotation.Nullable;
 
+import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -33,11 +34,10 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
 
     private static final String TAG_STORED = "stored";
     private static final String TAG_CAPACITY = "capacity";
-    private static final int ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
 
     private final ControllerType type;
     private final EnergyStorage energyStorage;
-    private long lastTypeChanged;
+    private final RateLimiter energyStateChangeRateLimiter = RateLimiter.create(1);
 
     public ControllerBlockEntity(final ControllerType type, final BlockPos pos, final BlockState state) {
         super(getBlockEntityType(type), pos, state, new ControllerNetworkNode());
@@ -65,19 +65,17 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
     }
 
     public void updateEnergyTypeInLevel(final BlockState state) {
-        final ControllerEnergyType energyType = ControllerEnergyType.ofState(getNode().getState());
+        final ControllerEnergyType currentEnergyType = ControllerEnergyType.ofState(getNode().getState());
         final ControllerEnergyType inLevelEnergyType = state.getValue(ControllerBlock.ENERGY_TYPE);
-        final boolean inTime = System.currentTimeMillis() - lastTypeChanged > ENERGY_TYPE_CHANGE_MINIMUM_INTERVAL_MS;
 
-        if (energyType != inLevelEnergyType && (lastTypeChanged == 0 || inTime)) {
+        if (currentEnergyType != inLevelEnergyType && energyStateChangeRateLimiter.tryAcquire()) {
             LOGGER.info(
-                "Energy type state change for block at {}: {} -> {}",
+                "Energy type state change for Controller at {}: {} -> {}",
                 getBlockPos(),
                 inLevelEnergyType,
-                energyType
+                currentEnergyType
             );
-            this.lastTypeChanged = System.currentTimeMillis();
-            updateEnergyTypeInLevel(state, energyType);
+            updateEnergyTypeInLevel(state, currentEnergyType);
         }
     }
 
@@ -91,7 +89,10 @@ public class ControllerBlockEntity extends AbstractInternalNetworkNodeContainerB
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putLong(TAG_STORED, getNode().getActualStored());
-        // this is not deserialized on purpose and is only here for rendering purposes
+        saveRenderingInfo(tag);
+    }
+
+    private void saveRenderingInfo(final CompoundTag tag) {
         tag.putLong(TAG_CAPACITY, getNode().getActualCapacity());
     }
 

@@ -23,6 +23,7 @@ public class ConfigImpl implements Config {
     private final StorageBlock storageBlock;
     private final FluidStorageBlock fluidStorageBlock;
     private final Importer importer;
+    private final Upgrade upgrade;
 
     public ConfigImpl() {
         cable = new CableImpl();
@@ -32,6 +33,7 @@ public class ConfigImpl implements Config {
         storageBlock = new StorageBlockImpl();
         fluidStorageBlock = new FluidStorageBlockImpl();
         importer = new ImporterImpl();
+        upgrade = new UpgradeImpl();
         spec = builder.build();
     }
 
@@ -72,6 +74,11 @@ public class ConfigImpl implements Config {
     @Override
     public Importer getImporter() {
         return importer;
+    }
+
+    @Override
+    public Upgrade getUpgrade() {
+        return upgrade;
     }
 
     private class CableImpl implements Cable {
@@ -399,6 +406,32 @@ public class ConfigImpl implements Config {
         @Override
         public long getEnergyUsage() {
             return energyUsage.get();
+        }
+    }
+
+    private class UpgradeImpl implements Upgrade {
+        private final ForgeConfigSpec.LongValue speedUpgradeEnergyUsage;
+        private final ForgeConfigSpec.LongValue stackUpgradeEnergyUsage;
+
+        UpgradeImpl() {
+            builder.push("upgrade");
+            speedUpgradeEnergyUsage = builder
+                .comment("The additional energy used per Speed Upgrade")
+                .defineInRange(ENERGY_USAGE, 4, 0, Long.MAX_VALUE);
+            stackUpgradeEnergyUsage = builder
+                .comment("The additional energy used by the Stack Upgrade")
+                .defineInRange(ENERGY_USAGE, 16, 0, Long.MAX_VALUE);
+            builder.pop();
+        }
+
+        @Override
+        public long getSpeedUpgradeEnergyUsage() {
+            return speedUpgradeEnergyUsage.get();
+        }
+
+        @Override
+        public long getStackUpgradeEnergyUsage() {
+            return stackUpgradeEnergyUsage.get();
         }
     }
 }

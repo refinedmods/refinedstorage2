@@ -16,13 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.TooltipFlag;
 
-public class ItemFilteredResource implements FilteredResource {
-    private final ItemResource value;
-
-    public ItemFilteredResource(final ItemResource value) {
-        this.value = value;
-    }
-
+public record ItemFilteredResource(ItemResource value) implements FilteredResource {
     @Override
     public void writeToPacket(final FriendlyByteBuf buf) {
         PacketUtil.writeItemResource(buf, value);

@@ -6,11 +6,10 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
@@ -35,7 +34,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainerMenu
-    implements ResourceListListener<T>, GridWatcher {
+    implements GridWatcher<T> {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static String lastSearchQuery = "";
@@ -44,8 +43,6 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     protected final GridView<T> view;
     @Nullable
     protected AbstractGridBlockEntity<T> grid;
-    @Nullable
-    protected StorageChannel<T> storageChannel; // TODO - Support changing of the channel.
     @Nullable
     private Runnable sizeChangedListener;
 
@@ -103,9 +100,8 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         ));
 
         this.playerInventory = playerInventory;
-        this.storageChannel = grid.getNode().getStorageChannel();
-        this.storageChannel.addListener(this);
         this.grid = grid;
+        this.grid.addWatcher(this, PlayerActor.class);
 
         addSlots(0);
 
@@ -115,7 +111,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     protected abstract ResourceAmount<T> readResourceAmount(FriendlyByteBuf buf);
 
     public void onResourceUpdate(final T template, final long amount, @Nullable final TrackedResource trackedResource) {
-        LOGGER.info("{} got updated with {}", template, amount);
+        LOGGER.debug("{} got updated with {}", template, amount);
         view.onChange(template, amount, trackedResource);
     }
 
@@ -170,9 +166,8 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     @Override
     public void removed(final Player playerEntity) {
         super.removed(playerEntity);
-
-        if (storageChannel != null) {
-            storageChannel.removeListener(this);
+        if (grid != null) {
+            grid.removeWatcher(this);
         }
     }
 

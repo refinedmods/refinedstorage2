@@ -1,6 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
-import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,7 +14,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.level.block.Block.box;
 
@@ -77,12 +78,12 @@ final class CableBlockSupport {
                                final LevelAccessor world,
                                final BlockPos pos,
                                @Nullable final Direction blacklistedDirection) {
-        final boolean north = hasConnection(world, pos, Direction.NORTH, blacklistedDirection);
-        final boolean east = hasConnection(world, pos, Direction.EAST, blacklistedDirection);
-        final boolean south = hasConnection(world, pos, Direction.SOUTH, blacklistedDirection);
-        final boolean west = hasConnection(world, pos, Direction.WEST, blacklistedDirection);
-        final boolean up = hasConnection(world, pos, Direction.UP, blacklistedDirection);
-        final boolean down = hasConnection(world, pos, Direction.DOWN, blacklistedDirection);
+        final boolean north = hasVisualConnection(world, pos, Direction.NORTH, blacklistedDirection);
+        final boolean east = hasVisualConnection(world, pos, Direction.EAST, blacklistedDirection);
+        final boolean south = hasVisualConnection(world, pos, Direction.SOUTH, blacklistedDirection);
+        final boolean west = hasVisualConnection(world, pos, Direction.WEST, blacklistedDirection);
+        final boolean up = hasVisualConnection(world, pos, Direction.UP, blacklistedDirection);
+        final boolean down = hasVisualConnection(world, pos, Direction.DOWN, blacklistedDirection);
 
         return currentState
             .setValue(NORTH, north)
@@ -93,14 +94,17 @@ final class CableBlockSupport {
             .setValue(DOWN, down);
     }
 
-    private static boolean hasConnection(final LevelAccessor world,
-                                         final BlockPos pos,
-                                         final Direction direction,
-                                         @Nullable final Direction blacklistedDirection) {
+    private static boolean hasVisualConnection(final LevelAccessor world,
+                                               final BlockPos pos,
+                                               final Direction direction,
+                                               @Nullable final Direction blacklistedDirection) {
         if (direction == blacklistedDirection) {
             return false;
         }
         final BlockPos offsetPos = pos.offset(direction.getNormal());
-        return world.getBlockEntity(offsetPos) instanceof NetworkNodeContainer;
+        if (!(world.getBlockEntity(offsetPos) instanceof PlatformNetworkNodeContainer container)) {
+            return false;
+        }
+        return container.canAcceptIncomingConnection(direction);
     }
 }

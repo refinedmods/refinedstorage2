@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.importer.Import
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
+import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
 import javax.annotation.Nullable;
 
@@ -70,6 +71,11 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
+    public UpgradeRegistry getUpgradeRegistry() {
+        return ensureLoaded().getUpgradeRegistry();
+    }
+
+    @Override
     public void requestNetworkNodeInitialization(final NetworkNodeContainer container,
                                                  final Level level,
                                                  final Runnable callback) {
@@ -79,6 +85,11 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public void requestNetworkNodeRemoval(final NetworkNodeContainer container, final Level level) {
         ensureLoaded().requestNetworkNodeRemoval(container, level);
+    }
+
+    @Override
+    public void requestNetworkNodeUpdate(final NetworkNodeContainer container, final Level level) {
+        ensureLoaded().requestNetworkNodeUpdate(container, level);
     }
 
     private PlatformApi ensureLoaded() {

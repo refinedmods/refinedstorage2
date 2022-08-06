@@ -8,6 +8,11 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid.FluidResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
+import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
+
+import java.util.function.Supplier;
+
+import net.minecraft.world.item.Item;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
@@ -55,6 +60,20 @@ public abstract class AbstractModInitializer {
         PlatformApi.INSTANCE.getResourceTypeRegistry().register(
             createIdentifier(FLUID_REGISTRY_KEY),
             FluidResourceType.INSTANCE
+        );
+    }
+
+    protected void addApplicableUpgrades(final Supplier<Item> speedUpgrade,
+                                         final Supplier<Item> stackUpgrade) {
+        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+            UpgradeDestinations.IMPORTER,
+            speedUpgrade,
+            4
+        );
+        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+            UpgradeDestinations.IMPORTER,
+            stackUpgrade,
+            1
         );
     }
 }

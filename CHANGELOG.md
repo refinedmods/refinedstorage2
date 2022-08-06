@@ -9,6 +9,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- All directional blocks no longer transmit a network signal out of the direction.
+- All directional blocks no longer accept a network signal from the facing direction.
+- Upgrade items now state the applicable destinations in the tooltip.
+- Upgrade items can now have a maximum of 1 type per upgrade inventory.
+- You can now SHIFT + CLICK transfer resources in the filter slots again.
+
+### Fixed
+
+- Fixed network connection state not rebuilding after using Wrench on a directional block.
+- Fixed Grid tooltip being too small in some cases and item durability not being rendered.
+
+### Added
+
+- Upgrade
+- Speed Upgrade
+- Stack Upgrade
+
+## [2.0.0-milestone.2.1] - 2022-07-30
+
+### Changed
+
 - The Importer will now extract as much of 1 resource type as possible, according to the per tick transfer quota, at
   once for all the inventory slots.
 - The Importer no longer transmits a network signal on the direction it's facing.

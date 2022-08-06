@@ -10,7 +10,7 @@ allprojects {
 
 subprojects {
     group = 'com.refinedmods.refinedstorage2'
-    version = '2.0.0-milestone.2.1'
+    version = '2.0.0-milestone.2.2'
 
     if (System.getenv('GITHUB_SHA') != null) {
         version += '+' + System.getenv('GITHUB_SHA').substring(0, 7)
@@ -40,6 +40,7 @@ subprojects {
 
     checkstyle {
         configFile rootProject.file("checkstyle.xml")
+        configDirectory.set(rootProject.projectDir)
         toolVersion = project.checkstyleVersion
     }
 

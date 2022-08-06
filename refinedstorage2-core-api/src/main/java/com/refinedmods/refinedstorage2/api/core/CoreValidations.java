@@ -61,4 +61,10 @@ public final class CoreValidations {
             throw new IllegalArgumentException(message);
         }
     }
+
+    public static <T> void validateNotContains(final Collection<T> collection, final T value, final String message) {
+        if (collection.contains(value)) {
+            throw new IllegalArgumentException(message);
+        }
+    }
 }

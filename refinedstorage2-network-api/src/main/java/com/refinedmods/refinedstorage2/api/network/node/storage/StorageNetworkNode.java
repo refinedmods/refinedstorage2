@@ -57,7 +57,7 @@ public class StorageNetworkNode<T> extends AbstractNetworkNode implements Storag
     }
 
     @Override
-    public void onActiveChanged(final boolean newActive) {
+    protected void onActiveChanged(final boolean newActive) {
         super.onActiveChanged(newActive);
         if (network == null || internalStorage == null) {
             return;

@@ -2,26 +2,35 @@ package com.refinedmods.refinedstorage2.api.network.node.grid;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
+import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.grid.service.GridService;
+import com.refinedmods.refinedstorage2.api.network.node.storage.FakeActor;
 import com.refinedmods.refinedstorage2.api.network.test.extension.AddNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
 import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
+import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(NetworkTestExtension.class)
 @SetupNetwork
@@ -31,7 +40,7 @@ class GridNetworkNodeTest {
 
     @BeforeEach
     void setUp(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
-        networkStorage.addSource(new TrackedStorageImpl<>(new LimitedStorageImpl<>(1000), () -> 0L));
+        networkStorage.addSource(new TrackedStorageImpl<>(new LimitedStorageImpl<>(1000), () -> 2L));
         networkStorage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
         networkStorage.insert("B", 200, Action.EXECUTE, EmptyActor.INSTANCE);
     }
@@ -63,34 +72,132 @@ class GridNetworkNodeTest {
             new ResourceAmount<>("B", 200)
         );
         assertThat(trackedResources).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            Optional.of(new TrackedResource(EmptyActor.INSTANCE.getName(), 0L)),
-            Optional.of(new TrackedResource(EmptyActor.INSTANCE.getName(), 0L))
+            Optional.of(new TrackedResource(EmptyActor.INSTANCE.getName(), 2L)),
+            Optional.of(new TrackedResource(EmptyActor.INSTANCE.getName(), 2L))
         );
     }
 
     @Test
-    void shouldNotifyWatchers() {
+    void shouldNotifyWatchersOfActivenessChanges() {
         // Arrange
         final FakeGridWatcher watcher = new FakeGridWatcher();
 
         // Act
-        sut.addWatcher(watcher);
-        sut.onActiveChanged(true);
-        sut.onActiveChanged(false);
+        sut.addWatcher(watcher, EmptyActor.class);
+        sut.setActive(true);
+        sut.setActive(false);
         sut.removeWatcher(watcher);
-        sut.onActiveChanged(true);
-        sut.onActiveChanged(false);
+        sut.setActive(true);
+        sut.setActive(false);
 
         // Assert
-        assertThat(watcher.changes).containsExactly(true, false);
+        assertThat(watcher.activenessChanges).containsExactly(true, false);
+        assertThat(watcher.changes).isEmpty();
     }
 
-    private static class FakeGridWatcher implements GridWatcher {
-        private final List<Boolean> changes = new ArrayList<>();
+    @Test
+    void shouldNotifyWatchersOfStorageChanges(
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
+        // Arrange
+        final FakeGridWatcher watcher = new FakeGridWatcher();
+        sut.addWatcher(watcher, FakeActor.class);
+
+        // Act
+        networkStorage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        networkStorage.insert("A", 1, Action.EXECUTE, FakeActor.INSTANCE);
+        sut.removeWatcher(watcher);
+        networkStorage.insert("A", 1, Action.EXECUTE, FakeActor.INSTANCE);
+
+        // Assert
+        assertThat(watcher.activenessChanges).isEmpty();
+        assertThat(watcher.changes).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new Change<>("A", 10, null),
+            new Change<>("A", 1, new TrackedResource("Fake", 2))
+        );
+    }
+
+    @Test
+    void shouldNotBeAbleToRemoveUnknownWatcher() {
+        // Arrange
+        final FakeGridWatcher watcher = new FakeGridWatcher();
+
+        // Act & assert
+        assertThrows(IllegalArgumentException.class, () -> sut.removeWatcher(watcher));
+    }
+
+    @Test
+    void shouldNotBeAbleToAddDuplicateWatcher() {
+        // Arrange
+        final FakeGridWatcher watcher = new FakeGridWatcher();
+        final Class<? extends Actor> actorType1 = EmptyActor.class;
+        final Class<? extends Actor> actorType2 = FakeActor.class;
+
+        sut.addWatcher(watcher, actorType1);
+
+        // Act & assert
+        assertThrows(IllegalArgumentException.class, () -> sut.addWatcher(watcher, actorType1));
+        assertThrows(IllegalArgumentException.class, () -> sut.addWatcher(watcher, actorType2));
+    }
+
+    @Test
+    void shouldCreateService(
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
+        // Arrange
+        final GridService<String> service = sut.createService(
+            FakeActor.INSTANCE,
+            r -> 5L,
+            1
+        );
+
+        final InMemoryStorageImpl<String> source = new InMemoryStorageImpl<>();
+        source.insert("Z", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // Act
+        service.insert("Z", GridInsertMode.SINGLE_RESOURCE, source);
+        final Collection<ResourceAmount<String>> afterSingle = networkStorage
+            .getAll()
+            .stream()
+            .map(ra -> new ResourceAmount<>(ra.getResource(), ra.getAmount()))
+            .toList();
+
+        service.insert("Z", GridInsertMode.ENTIRE_RESOURCE, source);
+        final Collection<ResourceAmount<String>> afterEntire = networkStorage
+            .getAll()
+            .stream()
+            .map(ra -> new ResourceAmount<>(ra.getResource(), ra.getAmount()))
+            .toList();
+
+        // Assert
+        assertThat(afterSingle).usingRecursiveFieldByFieldElementComparator().contains(
+            new ResourceAmount<>("Z", 1)
+        );
+        assertThat(afterEntire).usingRecursiveFieldByFieldElementComparator().contains(
+            new ResourceAmount<>("Z", 6)
+        );
+    }
+
+    private static class FakeGridWatcher implements GridWatcher<String> {
+        private final List<Boolean> activenessChanges = new ArrayList<>();
+        private final List<Change<String>> changes = new ArrayList<>();
 
         @Override
         public void onActiveChanged(final boolean newActive) {
-            changes.add(newActive);
+            activenessChanges.add(newActive);
         }
+
+        @Override
+        public void onChanged(final ResourceListOperationResult<String> change,
+                              final @Nullable TrackedResource trackedResource) {
+            changes.add(new Change<>(
+                change.resourceAmount().getResource(),
+                change.change(),
+                trackedResource
+            ));
+        }
+    }
+
+    private record Change<T>(T resource, long change, @Nullable TrackedResource trackedResource) {
     }
 }

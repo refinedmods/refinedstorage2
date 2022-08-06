@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -43,11 +44,26 @@ public class ResourceFilterSlot extends Slot {
         return new SimpleContainer(1);
     }
 
-    public void change(final ItemStack carried, final ResourceType type) {
-        type.translate(carried).ifPresentOrElse(
+    public void change(final ItemStack stack, final ResourceType type) {
+        type.translate(stack).ifPresentOrElse(
             resource -> resourceFilterContainer.set(containerIndex, resource),
             () -> resourceFilterContainer.remove(containerIndex)
         );
+    }
+
+    public boolean changeIfEmpty(final ItemStack stack, final ResourceType type) {
+        final FilteredResource existing = resourceFilterContainer.get(containerIndex);
+        if (existing != null) {
+            return false;
+        }
+        change(stack, type);
+        return true;
+    }
+
+    public boolean contains(final ItemStack stack, final ResourceType type) {
+        final Optional<FilteredResource> translated = type.translate(stack);
+        final Optional<FilteredResource> current = Optional.ofNullable(resourceFilterContainer.get(containerIndex));
+        return translated.equals(current);
     }
 
     public void broadcastChanges(final Player player) {

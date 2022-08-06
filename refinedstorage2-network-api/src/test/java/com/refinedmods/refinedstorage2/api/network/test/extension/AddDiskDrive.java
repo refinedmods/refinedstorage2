@@ -12,5 +12,9 @@ public @interface AddDiskDrive {
 
     long energyUsagePerDisk() default 0L;
 
+    boolean active() default true;
+
+    int diskCount() default 9;
+
     String networkId() default "default";
 }

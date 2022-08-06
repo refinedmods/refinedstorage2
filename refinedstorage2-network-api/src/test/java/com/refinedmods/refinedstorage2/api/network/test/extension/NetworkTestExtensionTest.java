@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
@@ -29,8 +30,11 @@ class NetworkTestExtensionTest {
     @AddNetworkNode(networkId = "a")
     StorageNetworkNode<String> storageInA;
 
-    @AddDiskDrive(networkId = "b")
+    @AddDiskDrive(networkId = "b", active = false)
     DiskDriveNetworkNode storageInB;
+
+    @AddNetworkNode(networkId = "nonexistent")
+    SimpleNetworkNode nonexistentNetworkNode;
 
     @Test
     void shouldInjectNetwork() {
@@ -38,6 +42,21 @@ class NetworkTestExtensionTest {
         assertThat(a).isNotNull();
         assertThat(b).isNotNull();
         assertThat(a).isNotSameAs(b);
+    }
+
+    @Test
+    void shouldSetNetwork() {
+        // Assert
+        assertThat(nonexistentNetworkNode.getNetwork()).isNull();
+        assertThat(storageInA.getNetwork()).isEqualTo(a);
+        assertThat(storageInB.getNetwork()).isEqualTo(b);
+    }
+
+    @Test
+    void shouldSetActivenessOfNetworkNode() {
+        // Assert
+        assertThat(storageInA.isActive()).isTrue();
+        assertThat(storageInB.isActive()).isFalse();
     }
 
     @Test

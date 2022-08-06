@@ -15,7 +15,8 @@ public class ItemHandlerImporterTransferStrategyFactory implements ImporterTrans
     @Override
     public ImporterTransferStrategy create(final ServerLevel level,
                                            final BlockPos pos,
-                                           final Direction direction) {
+                                           final Direction direction,
+                                           final boolean hasStackUpgrade) {
         final ImporterSource<ItemResource> source = new ItemHandlerImporterSource(
             level,
             pos,
@@ -24,7 +25,7 @@ public class ItemHandlerImporterTransferStrategyFactory implements ImporterTrans
         return new ImporterTransferStrategyImpl<>(
             source,
             StorageChannelTypes.ITEM,
-            1
+            hasStackUpgrade ? 64 : 1
         );
     }
 }

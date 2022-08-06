@@ -3,12 +3,12 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.service.GridServiceImpl;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -19,7 +19,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientFluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
-import java.util.Objects;
+import javax.annotation.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -45,9 +45,7 @@ public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResou
                                   final FluidGridBlockEntity grid,
                                   final ExtractableStorage<ItemResource> bucketStorage) {
         super(Menus.INSTANCE.getFluidGrid(), syncId, playerInventory, grid, createView());
-        grid.addWatcher(this);
-        final GridService<FluidResource> gridService = new GridServiceImpl<>(
-            Objects.requireNonNull(storageChannel),
+        final GridService<FluidResource> gridService = grid.getNode().createService(
             new PlayerActor(playerInventory.player),
             resource -> Long.MAX_VALUE,
             Platform.INSTANCE.getBucketAmount()
@@ -60,14 +58,6 @@ public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResou
         );
     }
 
-    @Override
-    public void removed(final Player playerEntity) {
-        super.removed(playerEntity);
-        if (grid != null) {
-            grid.removeWatcher(this);
-        }
-    }
-
     private static GridViewImpl<FluidResource> createView() {
         return new GridViewImpl<>(Platform.INSTANCE.getFluidGridResourceFactory(), new ResourceListImpl<>());
     }
@@ -78,17 +68,17 @@ public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResou
     }
 
     @Override
-    public void onChanged(final ResourceListOperationResult<FluidResource> change) {
+    public void onChanged(final ResourceListOperationResult<FluidResource> change,
+                          @Nullable final TrackedResource trackedResource) {
         final FluidResource resource = change.resourceAmount().getResource();
 
-        LOGGER.info("Received a change of {} for {}", change.change(), resource);
+        LOGGER.debug("Received a change of {} for {}", change.change(), resource);
 
         Platform.INSTANCE.getServerToClientCommunications().sendGridFluidUpdate(
             (ServerPlayer) playerInventory.player,
             resource,
             change.change(),
-            Objects.requireNonNull(storageChannel)
-                .findTrackedResourceByActorType(resource, PlayerActor.class).orElse(null)
+            trackedResource
         );
     }
 

@@ -13,7 +13,9 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridEventHandlerImpl;
@@ -139,6 +141,11 @@ public final class PlatformImpl extends AbstractPlatform {
         if (energyStorage instanceof ControllerTeamRebornEnergy controllerTeamRebornEnergy) {
             controllerTeamRebornEnergy.setStoredSilently(stored);
         }
+    }
+
+    @Override
+    public TransferManager createTransferManager(final AbstractContainerMenu containerMenu) {
+        return new TransferManager(containerMenu, ContainerTransferDestination::new);
     }
 
     private Optional<FluidResource> convertNonEmptyToFluid(final ItemStack stack) {

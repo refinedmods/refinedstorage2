@@ -147,12 +147,9 @@ public class SmallTextTooltipRenderer extends GuiComponent {
 
     private int calculateHeight(final List<? extends FormattedCharSequence> lines,
                                 final List<? extends FormattedCharSequence> smallLines) {
-        int tooltipHeight = 8;
-        if (lines.size() > 1) {
-            tooltipHeight += 2 + (lines.size() - 1) * 10;
-        }
-        tooltipHeight += smallLines.size() * 10;
-        return tooltipHeight;
+        int tooltipHeight = (lines.size() * 12);
+        tooltipHeight += smallLines.size() * 9;
+        return tooltipHeight - (Minecraft.getInstance().isEnforceUnicode() ? 0 : 3);
     }
 
     private int calculateTooltipX(final int x, final int screenWidth, final int tooltipWidth) {

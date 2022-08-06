@@ -1,9 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.Property;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,10 +19,12 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
+    protected final TransferManager transferManager;
     private final Map<PropertyType<?>, Property<?>> propertyMap = new HashMap<>();
 
     protected AbstractBaseContainerMenu(final MenuType<?> type, final int syncId) {
         super(type, syncId);
+        this.transferManager = Platform.INSTANCE.createTransferManager(this);
     }
 
     @SuppressWarnings("unchecked")
@@ -71,6 +75,7 @@ public abstract class AbstractBaseContainerMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(final Player player, final int index) {
+        transferManager.transfer(index);
         return ItemStack.EMPTY;
     }
 }

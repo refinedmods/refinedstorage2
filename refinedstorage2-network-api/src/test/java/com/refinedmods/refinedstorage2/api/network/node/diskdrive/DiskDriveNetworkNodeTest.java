@@ -88,8 +88,9 @@ class DiskDriveNetworkNodeTest {
         assertThat(networkStorage.getAll()).isEmpty();
         assertThat(networkStorage.getStored()).isZero();
         assertThat(states.getStates())
-            .hasSize(DiskDriveNetworkNode.DISK_COUNT)
+            .hasSize(9)
             .allMatch(state -> state == StorageDiskState.NONE);
+        assertThat(sut.getAmountOfDiskSlots()).isEqualTo(9);
     }
 
     @ParameterizedTest
@@ -115,10 +116,7 @@ class DiskDriveNetworkNodeTest {
 
         // Act
         sut.initialize(storageProviderRepository);
-        sut.setActivenessProvider(() -> active);
-        if (active) {
-            sut.onActiveChanged(true);
-        }
+        sut.setActive(active);
 
         final DiskDriveState state = sut.createState();
 
@@ -208,13 +206,13 @@ class DiskDriveNetworkNodeTest {
     void shouldNotChangeDiskInInvalidSlot() {
         // Act
         sut.onDiskChanged(-1);
-        sut.onDiskChanged(DiskDriveNetworkNode.DISK_COUNT);
-
-        final DiskDriveState states = sut.createState();
+        sut.onDiskChanged(9);
 
         // Assert
+        final DiskDriveState states = sut.createState();
+
         assertThat(states.getStates())
-            .hasSize(DiskDriveNetworkNode.DISK_COUNT)
+            .hasSize(9)
             .allMatch(state -> state == StorageDiskState.NONE);
     }
 
@@ -230,8 +228,7 @@ class DiskDriveNetworkNodeTest {
 
         // Act
         final Collection<ResourceAmount<String>> preInactiveness = new HashSet<>(networkStorage.getAll());
-        sut.onActiveChanged(false);
-        sut.setActivenessProvider(() -> false);
+        sut.setActive(false);
         sut.onDiskChanged(1);
         final Collection<ResourceAmount<String>> postInactiveness = networkStorage.getAll();
 
@@ -491,7 +488,7 @@ class DiskDriveNetworkNodeTest {
         storageProviderRepository.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
-        sut.setActivenessProvider(() -> false);
+        sut.setActive(false);
 
         // Act
         final long inserted = networkStorage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -509,7 +506,7 @@ class DiskDriveNetworkNodeTest {
         storageProviderRepository.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
-        sut.setActivenessProvider(() -> false);
+        sut.setActive(false);
 
         // Act
         final long extracted = networkStorage.extract("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -530,7 +527,7 @@ class DiskDriveNetworkNodeTest {
 
         // Act
         final Collection<ResourceAmount<String>> preInactiveness = new HashSet<>(networkStorage.getAll());
-        sut.onActiveChanged(false);
+        sut.setActive(false);
         final Collection<ResourceAmount<String>> postInactiveness = networkStorage.getAll();
 
         // Assert
@@ -548,7 +545,7 @@ class DiskDriveNetworkNodeTest {
         sut.initialize(storageProviderRepository);
 
         // Act
-        sut.onActiveChanged(true);
+        sut.setActive(true);
 
         // Assert
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -647,7 +644,7 @@ class DiskDriveNetworkNodeTest {
 
     private void initializeDiskDriveAndActivate() {
         sut.initialize(storageProviderRepository);
-        sut.onActiveChanged(true);
+        sut.setActive(true);
     }
 
     @Nested
@@ -669,7 +666,7 @@ class DiskDriveNetworkNodeTest {
             storageProviderManager2.setInSlot(1, storage2);
             otherDiskDrive.setDiskProvider(storageProviderManager2);
             otherDiskDrive.initialize(storageProviderManager2);
-            otherDiskDrive.onActiveChanged(true);
+            otherDiskDrive.setActive(true);
 
             if (oneHasPriority) {
                 sut.setPriority(5);

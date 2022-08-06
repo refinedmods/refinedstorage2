@@ -26,8 +26,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class DiskDriveNetworkNode extends AbstractNetworkNode implements StorageProvider {
-    public static final int DISK_COUNT = 8;
-
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
 
     @Nullable
@@ -40,7 +38,7 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
     private final long energyUsage;
     private final long energyUsagePerDisk;
 
-    private final DiskDriveDiskStorage<?>[] disks = new DiskDriveDiskStorage[DISK_COUNT];
+    private final DiskDriveDiskStorage<?>[] disks;
     private final Map<StorageChannelType<?>, DiskDriveCompositeStorage<?>> compositeStorages;
     private int diskCount;
 
@@ -51,10 +49,12 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
 
     public DiskDriveNetworkNode(final long energyUsage,
                                 final long energyUsagePerDisk,
-                                final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
+                                final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry,
+                                final int diskCount) {
         this.energyUsage = energyUsage;
         this.energyUsagePerDisk = energyUsagePerDisk;
         this.compositeStorages = createCompositeStorages(storageChannelTypeRegistry);
+        this.disks = new DiskDriveDiskStorage[diskCount];
     }
 
     private Map<StorageChannelType<?>, DiskDriveCompositeStorage<?>> createCompositeStorages(
@@ -77,7 +77,7 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
             return;
         }
         this.storageRepository = newStorageRepository;
-        for (int i = 0; i < DISK_COUNT; ++i) {
+        for (int i = 0; i < disks.length; ++i) {
             initializeDiskInSlot(i);
         }
         updateDiskCount();
@@ -137,7 +137,7 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
     }
 
     @Override
-    public void onActiveChanged(final boolean newActive) {
+    protected void onActiveChanged(final boolean newActive) {
         super.onActiveChanged(newActive);
         if (network == null) {
             return;
@@ -161,8 +161,7 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void enableAllDisksForChannel(final StorageChannelType<?> type,
                                           final DiskDriveCompositeStorage<?> composite) {
-        for (int i = 0; i < DISK_COUNT; ++i) {
-            final DiskDriveDiskStorage<?> disk = disks[i];
+        for (final DiskDriveDiskStorage<?> disk : disks) {
             if (disk != null && disk.getStorageChannelType() == type) {
                 composite.addSource((DiskDriveDiskStorage) disk);
             }
@@ -199,8 +198,8 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
     }
 
     public DiskDriveState createState() {
-        final DiskDriveState states = new DiskDriveState(DISK_COUNT);
-        for (int i = 0; i < DISK_COUNT; ++i) {
+        final DiskDriveState states = new DiskDriveState(disks.length);
+        for (int i = 0; i < disks.length; ++i) {
             states.setState(i, getState(disks[i]));
         }
         return states;
@@ -244,6 +243,10 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
             return Optional.of((Storage<T>) storage);
         }
         return Optional.empty();
+    }
+
+    public int getAmountOfDiskSlots() {
+        return disks.length;
     }
 
     private record DiskChange(boolean removed,

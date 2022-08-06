@@ -41,6 +41,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem
 import com.refinedmods.refinedstorage2.platform.common.item.ItemStorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
+import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
@@ -54,6 +55,10 @@ import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriv
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.FluidHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.ItemHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
+
+import java.util.function.Supplier;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -84,8 +89,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CABLE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTION_CORE;
@@ -103,8 +106,11 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.QUARTZ_ENRICHED_IRON_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SILICON;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.SPEED_UPGRADE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STACK_UPGRADE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.STORAGE_HOUSING;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.UPGRADE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.WRENCH;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageBlock;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.forFluidStorageDisk;
@@ -255,6 +261,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerGridItems();
         registerControllerItems();
         registerStorageItems();
+        registerUpgrades();
 
         itemRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -417,6 +424,24 @@ public class ModInitializer extends AbstractModInitializer {
         }
     }
 
+    private void registerUpgrades() {
+        itemRegistry.register(
+            UPGRADE.getPath(),
+            () -> new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+        );
+        final Supplier<Item> speedUpgrade = itemRegistry.register(
+            SPEED_UPGRADE.getPath(),
+            () -> new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+        );
+        Items.INSTANCE.setSpeedUpgrade(speedUpgrade);
+        final Supplier<Item> stackUpgrade = itemRegistry.register(
+            STACK_UPGRADE.getPath(),
+            () -> new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+        );
+        Items.INSTANCE.setStackUpgrade(stackUpgrade);
+        addApplicableUpgrades(speedUpgrade, stackUpgrade);
+    }
+
     private void registerBlockEntities() {
         BlockEntities.INSTANCE.setCable(blockEntityTypeRegistry.register(
             CABLE.getPath(),
@@ -568,9 +593,9 @@ public class ModInitializer extends AbstractModInitializer {
         final LazyOptional<IEnergyStorage> capability = LazyOptional
             .of(() -> (IEnergyStorage) controllerBlockEntity.getEnergyStorage());
         e.addCapability(createIdentifier("energy"), new ICapabilityProvider() {
-            @NotNull
             @Override
-            public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> cap,
+            @Nonnull
+            public <T> LazyOptional<T> getCapability(final Capability<T> cap,
                                                      @Nullable final Direction side) {
                 if (cap == CapabilityEnergy.ENERGY
                     && controllerBlockEntity.getEnergyStorage() instanceof IEnergyStorage) {

@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
@@ -44,7 +43,7 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
 
         addSlots(
             playerInventory.player,
-            new SimpleContainer(DiskDriveNetworkNode.DISK_COUNT),
+            new SimpleContainer(9),
             new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9)
         );
 
@@ -72,13 +71,16 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
     private void addSlots(final Player player,
                           final SimpleContainer diskInventory,
                           final ResourceFilterContainer resourceFilterContainer) {
-        for (int i = 0; i < DiskDriveNetworkNode.DISK_COUNT; ++i) {
+        for (int i = 0; i < diskInventory.getContainerSize(); ++i) {
             diskSlots.add(addSlot(createDiskSlot(diskInventory, i)));
         }
-        for (int i = 0; i < 9; ++i) {
+        for (int i = 0; i < resourceFilterContainer.size(); ++i) {
             addSlot(createFilterSlot(resourceFilterContainer, i));
         }
         addPlayerInventory(player.getInventory(), 8, 141);
+
+        transferManager.addBiTransfer(player.getInventory(), diskInventory);
+        transferManager.addFilterTransfer(player.getInventory());
     }
 
     private Slot createFilterSlot(final ResourceFilterContainer resourceFilterContainer, final int i) {
@@ -138,28 +140,5 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
         return getDiskStacks()
             .map(storageInfoAccessor::getInfo)
             .flatMap(Optional::stream);
-    }
-
-    @Override
-    public ItemStack quickMoveStack(final Player player, final int index) {
-        ItemStack originalStack = ItemStack.EMPTY;
-        final Slot slot = this.slots.get(index);
-        if (slot.hasItem()) {
-            final ItemStack stackInSlot = slot.getItem();
-            originalStack = stackInSlot.copy();
-
-            if (index < 8 && !moveItemStackTo(stackInSlot, 8, slots.size(), true)) {
-                return ItemStack.EMPTY;
-            } else if (index >= 8 && !moveItemStackTo(stackInSlot, 0, 8, false)) {
-                return ItemStack.EMPTY;
-            }
-
-            if (stackInSlot.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-        }
-        return originalStack;
     }
 }

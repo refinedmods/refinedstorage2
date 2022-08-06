@@ -78,7 +78,9 @@ public class ItemGridScreen extends AbstractGridScreen<ItemResource, ItemGridCon
                                   final int slotX,
                                   final int slotY,
                                   final AbstractGridResource<ItemResource> resource) {
-        itemRenderer.renderAndDecorateItem(((ItemGridResource) resource).getItemStack(), slotX, slotY);
+        final ItemStack itemStack = ((ItemGridResource) resource).getItemStack();
+        itemRenderer.renderGuiItem(itemStack, slotX, slotY);
+        itemRenderer.renderGuiItemDecorations(font, itemStack, slotX, slotY, null);
     }
 
     @Override

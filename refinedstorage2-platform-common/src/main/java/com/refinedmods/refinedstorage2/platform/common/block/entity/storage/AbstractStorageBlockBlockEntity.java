@@ -54,23 +54,13 @@ public abstract class AbstractStorageBlockBlockEntity<T>
                                               final StorageNetworkNode<T> node,
                                               final ResourceType resourceType) {
         super(type, pos, state, node);
-        node.setNormalizer(this::normalize);
+        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(exactMode, value));
         this.resourceFilterContainer = new FilteredResourceFilterContainer(
             PlatformApi.INSTANCE.getResourceTypeRegistry(),
             9,
             this::resourceFilterContainerChanged,
             resourceType
         );
-    }
-
-    private Object normalize(final Object value) {
-        if (exactMode) {
-            return value;
-        }
-        if (value instanceof FuzzyModeNormalizer<?> fuzzyModeNormalizer) {
-            return fuzzyModeNormalizer.normalize();
-        }
-        return value;
     }
 
     protected abstract PlatformStorage<T> createStorage(Runnable listener);

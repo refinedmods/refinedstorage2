@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.api.network.node;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 
-import java.util.function.BooleanSupplier;
 import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
@@ -12,14 +11,7 @@ import org.apiguardian.api.API;
 public abstract class AbstractNetworkNode implements NetworkNode {
     @Nullable
     protected Network network;
-    @Nullable
-    protected BooleanSupplier activenessProvider;
-
     private boolean active;
-
-    public void setActivenessProvider(@Nullable final BooleanSupplier activenessProvider) {
-        this.activenessProvider = activenessProvider;
-    }
 
     @Override
     @Nullable
@@ -32,31 +24,17 @@ public abstract class AbstractNetworkNode implements NetworkNode {
         this.network = network;
     }
 
-    @Override
+    public void setActive(final boolean active) {
+        this.active = active;
+        onActiveChanged(active);
+    }
+
     public boolean isActive() {
-        if (network == null || (activenessProvider != null && !activenessProvider.getAsBoolean())) {
-            return false;
-        }
-        final long stored = network.getComponent(EnergyNetworkComponent.class).getStored();
-        return stored >= getEnergyUsage();
+        return active;
     }
 
-    @Override
-    public void update() {
-        updateActiveness();
-        extractEnergy();
-    }
-
-    private void updateActiveness() {
-        final boolean newActive = isActive();
-        if (active != newActive) {
-            active = newActive;
-            onActiveChanged(active);
-        }
-    }
-
-    private void extractEnergy() {
-        if (!active || network == null) {
+    public void doWork() {
+        if (network == null || !active) {
             return;
         }
         network.getComponent(EnergyNetworkComponent.class).extract(getEnergyUsage());

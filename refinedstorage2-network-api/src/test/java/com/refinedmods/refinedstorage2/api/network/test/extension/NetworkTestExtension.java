@@ -7,19 +7,22 @@ import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkCompon
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
+import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
-import com.refinedmods.refinedstorage2.api.network.test.SpyingNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import javax.annotation.Nullable;
 
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -29,6 +32,17 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
 public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
+    private static final Map<Class<?>, Function<AddNetworkNode, AbstractNetworkNode>> SIMPLE_FACTORIES = Map.of(
+        StorageNetworkNode.class, a -> new StorageNetworkNode<>(
+            a.energyUsage(),
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE
+        ),
+        SimpleNetworkNode.class, a -> new SimpleNetworkNode(a.energyUsage()),
+        GridNetworkNode.class, a -> new GridNetworkNode<>(a.energyUsage(), NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
+        ImporterNetworkNode.class, a -> new ImporterNetworkNode(a.energyUsage()),
+        ControllerNetworkNode.class, a -> new ControllerNetworkNode()
+    );
+
     private final Map<String, Network> networkMap = new HashMap<>();
 
     public NetworkTestExtension() {
@@ -67,6 +81,7 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
         storage.receive(stored, Action.EXECUTE);
         final ControllerNetworkNode controller = new ControllerNetworkNode();
         controller.setEnergyStorage(storage);
+        controller.setActive(true);
         component.onContainerAdded(() -> controller);
     }
 
@@ -86,30 +101,19 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
         for (final Field field : fields) {
             tryAddSimpleNetworkNode(testInstance, field);
             tryAddDiskDrive(testInstance, field);
-            tryAddImporter(testInstance, field);
         }
     }
 
     private void tryAddDiskDrive(final Object testInstance, final Field field) {
         final AddDiskDrive annotation = field.getAnnotation(AddDiskDrive.class);
         if (annotation != null) {
-            final NetworkNode resolvedNode = new DiskDriveNetworkNode(
+            final DiskDriveNetworkNode resolvedNode = new DiskDriveNetworkNode(
                 annotation.baseEnergyUsage(),
                 annotation.energyUsagePerDisk(),
-                NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY
+                NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY,
+                annotation.diskCount()
             );
-            final Network network = networkMap.get(annotation.networkId());
-            registerNetworkNode(testInstance, field, resolvedNode, network);
-        }
-    }
-
-    private void tryAddImporter(final Object testInstance, final Field field) {
-        final AddImporter annotation = field.getAnnotation(AddImporter.class);
-        if (annotation != null) {
-            final NetworkNode resolvedNode = new ImporterNetworkNode(
-                annotation.energyUsage(),
-                annotation.coolDownTime()
-            );
+            resolvedNode.setActive(annotation.active());
             final Network network = networkMap.get(annotation.networkId());
             registerNetworkNode(testInstance, field, resolvedNode, network);
         }
@@ -118,29 +122,21 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
     private void tryAddSimpleNetworkNode(final Object testInstance, final Field field) {
         final AddNetworkNode annotation = field.getAnnotation(AddNetworkNode.class);
         if (annotation != null) {
-            final NetworkNode resolvedNode = resolveSimpleNetworkNode(field.getType(), annotation.energyUsage());
+            final AbstractNetworkNode resolvedNode = SIMPLE_FACTORIES.get(field.getType()).apply(annotation);
+            resolvedNode.setActive(annotation.active());
             final Network network = networkMap.get(annotation.networkId());
             registerNetworkNode(testInstance, field, resolvedNode, network);
         }
     }
 
-    private NetworkNode resolveSimpleNetworkNode(final Class<?> type, final long energyUsage) {
-        if (type == StorageNetworkNode.class) {
-            return new StorageNetworkNode<>(energyUsage, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
-        } else if (type == SpyingNetworkNode.class) {
-            return new SpyingNetworkNode(energyUsage);
-        } else if (type == GridNetworkNode.class) {
-            return new GridNetworkNode<>(energyUsage, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
-        }
-        throw new RuntimeException(type.getName());
-    }
-
     private void registerNetworkNode(final Object testInstance,
                                      final Field field,
                                      final NetworkNode networkNode,
-                                     final Network network) {
+                                     @Nullable final Network network) {
         networkNode.setNetwork(network);
-        network.addContainer(() -> networkNode);
+        if (network != null) {
+            network.addContainer(() -> networkNode);
+        }
         setField(testInstance, field, networkNode);
     }
 

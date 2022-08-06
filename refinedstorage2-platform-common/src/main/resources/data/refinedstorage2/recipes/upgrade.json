@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "EGE",
+    "EPE",
+    "EGE"
+  ],
+  "key": {
+    "E": {
+      "item": "refinedstorage2:quartz_enriched_iron"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "P": {
+      "item": "refinedstorage2:improved_processor"
+    }
+  },
+  "result": {
+    "item": "refinedstorage2:upgrade"
+  }
+}

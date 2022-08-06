@@ -24,6 +24,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.LevelUtil;
 
 import javax.annotation.Nullable;
 
+import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.ByteTag;
@@ -45,6 +46,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,6 +57,8 @@ public abstract class AbstractDiskDriveBlockEntity
     implements BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider, StorageSettingsProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private static final int AMOUNT_OF_DISKS = 9;
+
     private static final String TAG_PRIORITY = "pri";
     private static final String TAG_FILTER_MODE = "fim";
     private static final String TAG_EXACT_MODE = "em";
@@ -63,20 +67,18 @@ public abstract class AbstractDiskDriveBlockEntity
     private static final String TAG_STATES = "states";
     private static final String TAG_RESOURCE_FILTER = "rf";
 
-    private static final int DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
-
     @Nullable
     protected DiskDriveState driveState;
 
-    private final DiskDriveInventory diskInventory = new DiskDriveInventory(this);
+    private final DiskDriveInventory diskInventory;
     private final ResourceFilterContainer resourceFilterContainer = new ResourceFilterContainer(
         PlatformApi.INSTANCE.getResourceTypeRegistry(),
         9,
         this::resourceFilterContainerChanged
     );
+    private final RateLimiter diskStateChangeRateLimiter = RateLimiter.create(1);
 
     private boolean syncRequested;
-    private long lastStateChanged;
 
     private boolean exactMode;
 
@@ -84,11 +86,13 @@ public abstract class AbstractDiskDriveBlockEntity
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new DiskDriveNetworkNode(
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
+            AMOUNT_OF_DISKS
         ));
+        this.diskInventory = new DiskDriveInventory(this, getNode().getAmountOfDiskSlots());
         getNode().setDiskProvider(diskInventory);
         getNode().setListener(this);
-        getNode().setNormalizer(this::normalize);
+        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(exactMode, value));
     }
 
     public static boolean hasDisk(final CompoundTag tag, final int slot) {
@@ -100,10 +104,8 @@ public abstract class AbstractDiskDriveBlockEntity
         if (!syncRequested) {
             return;
         }
-        final boolean inTime = (System.currentTimeMillis() - lastStateChanged) > DISK_STATE_CHANGE_MINIMUM_INTERVAL_MS;
-        if (lastStateChanged == 0 || inTime) {
+        if (diskStateChangeRateLimiter.tryAcquire()) {
             LOGGER.info("Disk state change for block at {}", getBlockPos());
-            this.lastStateChanged = System.currentTimeMillis();
             this.syncRequested = false;
             sync();
         }
@@ -124,16 +126,6 @@ public abstract class AbstractDiskDriveBlockEntity
         getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
     }
 
-    private Object normalize(final Object value) {
-        if (exactMode) {
-            return value;
-        }
-        if (value instanceof FuzzyModeNormalizer<?> fuzzyModeNormalizer) {
-            return fuzzyModeNormalizer.normalize();
-        }
-        return value;
-    }
-
     @Override
     public void setLevel(final Level level) {
         super.setLevel(level);
@@ -143,9 +135,11 @@ public abstract class AbstractDiskDriveBlockEntity
     }
 
     @Override
-    public void activenessChanged(final boolean active) {
-        super.activenessChanged(active);
-        LevelUtil.updateBlock(level, worldPosition, this.getBlockState());
+    public void activenessChanged(final BlockState state,
+                                  final boolean newActive,
+                                  @Nullable final BooleanProperty activenessProperty) {
+        super.activenessChanged(state, newActive, activenessProperty);
+        LevelUtil.updateBlock(level, worldPosition, getBlockState());
     }
 
     /**

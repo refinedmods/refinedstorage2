@@ -1,12 +1,16 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
+import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.AbstractNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import javax.annotation.Nullable;
 
+import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,17 +18,14 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// TODO: this should just block everything outgoing if directional, should also work when wrenching.
 public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends AbstractNetworkNode>
     extends AbstractNetworkNodeContainerBlockEntity<T> {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final int ACTIVE_CHANGE_MINIMUM_INTERVAL_MS = 1000;
     private static final String TAG_REDSTONE_MODE = "rm";
 
-    @Nullable
-    private Boolean lastActive;
-    private long lastActiveChanged;
+    private final RateLimiter activenessChangeRateLimiter = RateLimiter.create(1);
+    private boolean lastActive;
     private RedstoneMode redstoneMode = RedstoneMode.IGNORE;
 
     protected AbstractInternalNetworkNodeContainerBlockEntity(final BlockEntityType<?> type,
@@ -32,13 +33,15 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
                                                               final BlockState state,
                                                               final T node) {
         super(type, pos, state, node);
-        getNode().setActivenessProvider(this::isActive);
     }
 
     private boolean isActive() {
-        return level != null
-            && level.isLoaded(worldPosition)
-            && redstoneMode.isActive(level.hasNeighborSignal(worldPosition));
+        final long energyUsage = getNode().getEnergyUsage();
+        final boolean hasLevel = level != null && level.isLoaded(worldPosition);
+        return hasLevel
+            && redstoneMode.isActive(level.hasNeighborSignal(worldPosition))
+            && getNode().getNetwork() != null
+            && getNode().getNetwork().getComponent(EnergyNetworkComponent.class).getStored() >= energyUsage;
     }
 
     @Override
@@ -55,35 +58,28 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
         }
     }
 
-    public void updateActivenessInLevel(final BlockState state,
-                                        @Nullable final BooleanProperty activenessProperty) {
-        if (lastActive == null) {
-            lastActive = determineInitialActiveness(state, activenessProperty);
-        }
-
-        final boolean active = getNode().isActive();
-        final boolean inTime = System.currentTimeMillis() - lastActiveChanged > ACTIVE_CHANGE_MINIMUM_INTERVAL_MS;
-
-        if (active != lastActive && (lastActiveChanged == 0 || inTime)) {
-            LOGGER.info("Activeness state change for block at {}: {} -> {}", getBlockPos(), lastActive, active);
-
-            this.lastActive = active;
-            this.lastActiveChanged = System.currentTimeMillis();
-
-            activenessChanged(active);
-
-            if (activenessProperty != null) {
-                updateActivenessState(state, activenessProperty, active);
-            }
+    public void updateActiveness(final BlockState state,
+                                 @Nullable final BooleanProperty activenessProperty) {
+        final boolean newActive = isActive();
+        if (newActive != lastActive && activenessChangeRateLimiter.tryAcquire()) {
+            LOGGER.info("Activeness change for node at {}: {} -> {}", getBlockPos(), lastActive, newActive);
+            this.lastActive = newActive;
+            activenessChanged(state, newActive, activenessProperty);
         }
     }
 
-    private boolean determineInitialActiveness(final BlockState state,
-                                               @Nullable final BooleanProperty activenessProperty) {
-        if (activenessProperty != null) {
-            return state.getValue(activenessProperty);
+    protected void activenessChanged(final BlockState state,
+                                     final boolean newActive,
+                                     @Nullable final BooleanProperty activenessProperty) {
+        getNode().setActive(newActive);
+
+        final boolean needToUpdateBlockState = activenessProperty != null
+            && state.getValue(activenessProperty) != newActive;
+
+        if (needToUpdateBlockState) {
+            LOGGER.info("Sending block update for block at {} due to state change to {}", getBlockPos(), newActive);
+            updateActivenessState(state, activenessProperty, newActive);
         }
-        return getNode().isActive();
     }
 
     private void updateActivenessState(final BlockState state,
@@ -94,9 +90,6 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
         }
     }
 
-    protected void activenessChanged(final boolean active) {
-    }
-
     public RedstoneMode getRedstoneMode() {
         return redstoneMode;
     }
@@ -104,5 +97,40 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
     public void setRedstoneMode(final RedstoneMode redstoneMode) {
         this.redstoneMode = redstoneMode;
         setChanged();
+    }
+
+    public void doWork() {
+        getNode().doWork();
+    }
+
+    @Override
+    public boolean canPerformOutgoingConnection(final Direction direction) {
+        final Direction myDirection = getDirection();
+        if (myDirection == null) {
+            return true;
+        }
+        return myDirection != direction;
+    }
+
+    @Override
+    public boolean canAcceptIncomingConnection(final Direction direction) {
+        final Direction myDirection = getDirection();
+        if (myDirection == null) {
+            return true;
+        }
+        return myDirection != direction.getOpposite();
+    }
+
+    @Nullable
+    protected final Direction getDirection() {
+        final BlockState blockState = getBlockState();
+        if (!(blockState.getBlock() instanceof AbstractDirectionalBlock<?> directionalBlock)) {
+            return null;
+        }
+        return directionalBlock.extractDirection(blockState);
+    }
+
+    protected RateLimiter createRateLimiter(final int amountOfSpeedUpgrades) {
+        return RateLimiter.create((double) amountOfSpeedUpgrades + 1);
     }
 }
