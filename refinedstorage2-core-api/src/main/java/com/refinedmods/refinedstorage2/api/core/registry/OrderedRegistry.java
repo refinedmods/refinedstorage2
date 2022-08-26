@@ -40,6 +40,14 @@ public interface OrderedRegistry<I, T> {
     Optional<T> get(I id);
 
     /**
+     * @param id the id
+     * @return the value, if present, otherwise the default
+     */
+    default T getOrElseDefault(I id) {
+        return get(id).orElseGet(this::getDefault);
+    }
+
+    /**
      * @return the default value
      */
     T getDefault();

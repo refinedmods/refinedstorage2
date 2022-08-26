@@ -4,6 +4,9 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public final class QuantityFormatter {
     private static final DecimalFormat FORMATTER_WITH_UNITS = new DecimalFormat(
         "####0.#",

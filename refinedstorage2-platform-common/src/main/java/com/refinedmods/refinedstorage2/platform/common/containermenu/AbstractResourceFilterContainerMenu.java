@@ -49,7 +49,7 @@ public abstract class AbstractResourceFilterContainerMenu extends AbstractBaseCo
 
     protected void initializeResourceFilterSlots(final FriendlyByteBuf buf) {
         final ResourceLocation type = buf.readResourceLocation();
-        this.currentResourceType = resourceTypeRegistry.get(type).orElse(resourceTypeRegistry.getDefault());
+        this.currentResourceType = resourceTypeRegistry.getOrElseDefault(type);
         for (final ResourceFilterSlot resourceFilterSlot : resourceFilterSlots) {
             resourceFilterSlot.readFromUpdatePacket(buf);
         }
@@ -121,7 +121,7 @@ public abstract class AbstractResourceFilterContainerMenu extends AbstractBaseCo
     }
 
     public void setCurrentResourceType(final ResourceLocation id) {
-        this.currentResourceType = resourceTypeRegistry.get(id).orElse(resourceTypeRegistry.getDefault());
+        this.currentResourceType = resourceTypeRegistry.getOrElseDefault(id);
     }
 
     @Override
