@@ -11,6 +11,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Ported to Minecraft 1.19.2.
 
+### Fixed
+
+- Fixed mixin crash on startup on Fabric.
+
 ## [2.0.0-milestone.2.2] - 2022-08-06
 
 ### Changed
