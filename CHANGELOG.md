@@ -9,6 +9,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Ported to Minecraft 1.19.2.
+
+### Fixed
+
+- Fixed mixin crash on startup on Fabric.
+
+## [2.0.0-milestone.2.2] - 2022-08-06
+
+### Changed
+
 - All directional blocks no longer transmit a network signal out of the direction.
 - All directional blocks no longer accept a network signal from the facing direction.
 - Upgrade items now state the applicable destinations in the tooltip.
