@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed missing AutoConfig config option translations on Fabric.
+
 ## [2.0.0-milestone.2.3] - 2022-08-26
 
 ### Changed
