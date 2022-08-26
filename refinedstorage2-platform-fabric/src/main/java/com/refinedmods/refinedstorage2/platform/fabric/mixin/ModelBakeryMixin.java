@@ -22,7 +22,7 @@ public class ModelBakeryMixin {
     @Shadow
     private Map<Triple<ResourceLocation, Transformation, Boolean>, BakedModel> bakedCache;
 
-    @Inject(method = "bake", at = @At("RETURN"), cancellable = true, remap = false)
+    @Inject(method = "bake", at = @At("RETURN"), cancellable = true)
     public void onBake(final ResourceLocation resourceLocation,
                        final ModelState modelState,
                        final CallbackInfoReturnable<BakedModel> returnable) {
