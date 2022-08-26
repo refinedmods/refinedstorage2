@@ -10,7 +10,7 @@ allprojects {
 
 subprojects {
     group = 'com.refinedmods.refinedstorage2'
-    version = '2.0.0-milestone.2.3'
+    version = '2.0.0-milestone.2.4'
 
     if (System.getenv('GITHUB_SHA') != null) {
         version += '+' + System.getenv('GITHUB_SHA').substring(0, 7)
