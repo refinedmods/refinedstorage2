@@ -21,6 +21,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Fixed mixin crash on startup on Fabric.
 
+### Added
+
+- NoIndium mod is now packaged with the mod on Fabric to avoid launching Sodium without Indium.
+
 ## [2.0.0-milestone.2.2] - 2022-08-06
 
 ### Changed

@@ -25,6 +25,10 @@ repositories {
         name = 'wthit'
         url "https://maven.bai.lol"
     }
+    maven {
+        name = 'NoIndium'
+        url = 'https://maven.cafeteria.dev/releases/'
+    }
 }
 
 dependencies {
@@ -67,6 +71,9 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:${project.modMenuVersion}"
 
     modRuntimeOnly("mcp.mobius.waila:wthit:fabric-${project.wthitVersion}")
+
+    modImplementation "me.luligabi:NoIndium:${project.noIndiumVersion}"
+    include "me.luligabi:NoIndium:${project.noIndiumVersion}"
 }
 
 loom {
