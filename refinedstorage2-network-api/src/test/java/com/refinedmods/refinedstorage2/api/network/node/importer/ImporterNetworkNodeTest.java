@@ -137,7 +137,7 @@ class ImporterNetworkNodeTest {
     }
 
     @Test
-    void testTransferWithoutSpaceInNetwork(
+    void shouldNotTransferIfThereIsNoSpaceInTheNetwork(
         @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
     ) {
         // Arrange
