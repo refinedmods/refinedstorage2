@@ -2,9 +2,9 @@ package com.refinedmods.refinedstorage2.api.network.node.controller;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
-import com.refinedmods.refinedstorage2.api.network.test.extension.AddNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
-import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
+import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
+import com.refinedmods.refinedstorage2.network.test.NetworkTestExtension;
+import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import java.util.stream.Stream;
 

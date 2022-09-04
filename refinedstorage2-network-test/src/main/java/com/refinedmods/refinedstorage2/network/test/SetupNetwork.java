@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.test.extension;
+package com.refinedmods.refinedstorage2.network.test;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;

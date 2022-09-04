@@ -34,3 +34,5 @@ include 'refinedstorage2-platform-fabric'
 include 'refinedstorage2-platform-forge'
 include 'refinedstorage2-platform-common'
 include 'refinedstorage2-platform-test'
+include 'refinedstorage2-network-test'
+

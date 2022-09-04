@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.test.extension;
+package com.refinedmods.refinedstorage2.network.test;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
@@ -8,7 +8,6 @@ import com.refinedmods.refinedstorage2.api.network.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
 import org.junit.jupiter.api.Nested;
