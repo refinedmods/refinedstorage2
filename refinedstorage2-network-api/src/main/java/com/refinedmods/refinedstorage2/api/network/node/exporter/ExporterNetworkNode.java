@@ -14,30 +14,33 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
     private final List<ExporterTransferStrategy> strategies = new ArrayList<>();
     @Nullable
     private ExporterTransferStrategyFactory strategyFactory;
+    private ExporterTransferStrategyExecutor strategyExecutor;
 
-    public ExporterNetworkNode(final long energyUsage) {
+    public ExporterNetworkNode(final long energyUsage, final ExporterTransferStrategyExecutor strategyExecutor) {
         this.energyUsage = energyUsage;
+        this.strategyExecutor = strategyExecutor;
     }
 
     public void setStrategyFactory(@Nullable final ExporterTransferStrategyFactory strategyFactory) {
         this.strategyFactory = strategyFactory;
     }
 
+    public void setStrategyExecutor(final ExporterTransferStrategyExecutor strategyExecutor) {
+        this.strategyExecutor = strategyExecutor;
+    }
+
     @Override
     public void doWork() {
         super.doWork();
-        if (network == null || !isActive()) {
+        if (network == null || !isActive() || strategies.isEmpty()) {
             return;
         }
-        for (final ExporterTransferStrategy strategy : strategies) {
-            if (strategy.transfer(actor, network)) {
-                break;
-            }
-        }
+        strategyExecutor.execute(strategies, network, actor);
     }
 
     public void setTemplates(final List<Object> newTemplates) {
         strategies.clear();
+        strategyExecutor.onTemplatesChanged();
         if (strategyFactory == null) {
             return;
         }
