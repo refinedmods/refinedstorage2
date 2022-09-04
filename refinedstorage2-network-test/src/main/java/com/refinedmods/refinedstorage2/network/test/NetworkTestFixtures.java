@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.test;
+package com.refinedmods.refinedstorage2.network.test;
 
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;

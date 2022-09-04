@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.test.extension;
+package com.refinedmods.refinedstorage2.network.test;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.Network;
@@ -17,7 +17,6 @@ import com.refinedmods.refinedstorage2.api.network.node.exporter.FirstAvailableE
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
 import java.lang.annotation.Annotation;

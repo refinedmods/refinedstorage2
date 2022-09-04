@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.test;
+package com.refinedmods.refinedstorage2.api.network;
 
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 

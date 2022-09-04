@@ -8,6 +8,7 @@ dependencies {
     testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
     testImplementation "org.mockito:mockito-core:${project.mockitoVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${project.junitVersion}"
+    testImplementation project(':refinedstorage2-network-test')
     implementation project(':refinedstorage2-core-api')
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-storage-api')
