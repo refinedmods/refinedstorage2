@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.api.network.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.FirstAvailableExporterTransferStrategyExecutor;
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
@@ -34,15 +35,19 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 
 public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
     private static final Map<Class<?>, Function<AddNetworkNode, AbstractNetworkNode>> SIMPLE_FACTORIES = Map.of(
-        StorageNetworkNode.class, a -> new StorageNetworkNode<>(
-            a.energyUsage(),
+        StorageNetworkNode.class, ctx -> new StorageNetworkNode<>(
+            ctx.energyUsage(),
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE
         ),
-        SimpleNetworkNode.class, a -> new SimpleNetworkNode(a.energyUsage()),
-        GridNetworkNode.class, a -> new GridNetworkNode<>(a.energyUsage(), NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
-        ImporterNetworkNode.class, a -> new ImporterNetworkNode(a.energyUsage()),
-        ExporterNetworkNode.class, a -> new ExporterNetworkNode(a.energyUsage()),
-        ControllerNetworkNode.class, a -> new ControllerNetworkNode()
+        SimpleNetworkNode.class, ctx -> new SimpleNetworkNode(ctx.energyUsage()),
+        GridNetworkNode.class,
+        ctx -> new GridNetworkNode<>(ctx.energyUsage(), NetworkTestFixtures.STORAGE_CHANNEL_TYPE),
+        ImporterNetworkNode.class, ctx -> new ImporterNetworkNode(ctx.energyUsage()),
+        ExporterNetworkNode.class, ctx -> new ExporterNetworkNode(
+            ctx.energyUsage(),
+            FirstAvailableExporterTransferStrategyExecutor.INSTANCE
+        ),
+        ControllerNetworkNode.class, ctx -> new ControllerNetworkNode()
     );
 
     private final Map<String, Network> networkMap = new HashMap<>();
