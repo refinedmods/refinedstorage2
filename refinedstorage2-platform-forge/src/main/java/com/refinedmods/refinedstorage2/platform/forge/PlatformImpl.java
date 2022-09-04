@@ -40,8 +40,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -121,7 +121,7 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public Optional<FluidResource> convertToFluid(final ItemStack stack) {
         return stack
-            .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
+            .getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null)
             .map(handler -> handler.getFluidInTank(0))
             .map(contents -> contents.isEmpty() ? null : new FluidResource(contents.getFluid(), contents.getTag()));
     }
