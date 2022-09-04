@@ -15,8 +15,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -39,7 +39,7 @@ public class ItemHandlerImporterSource implements ImporterSource<ItemResource> {
         if (blockEntity == null) {
             return LazyOptional.empty();
         }
-        return blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction);
+        return blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction);
     }
 
     @Override

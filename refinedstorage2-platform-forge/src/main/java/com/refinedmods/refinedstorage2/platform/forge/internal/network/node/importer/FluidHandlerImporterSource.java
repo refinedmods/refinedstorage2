@@ -14,9 +14,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.ofFluidStack;
@@ -38,7 +38,7 @@ public class FluidHandlerImporterSource implements ImporterSource<FluidResource>
         if (blockEntity == null) {
             return LazyOptional.empty();
         }
-        return blockEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, direction);
+        return blockEntity.getCapability(ForgeCapabilities.FLUID_HANDLER, direction);
     }
 
     @Override

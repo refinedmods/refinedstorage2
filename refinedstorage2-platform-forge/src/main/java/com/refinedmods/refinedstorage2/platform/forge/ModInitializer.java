@@ -75,10 +75,10 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -597,7 +597,7 @@ public class ModInitializer extends AbstractModInitializer {
             @Nonnull
             public <T> LazyOptional<T> getCapability(final Capability<T> cap,
                                                      @Nullable final Direction side) {
-                if (cap == CapabilityEnergy.ENERGY
+                if (cap == ForgeCapabilities.ENERGY
                     && controllerBlockEntity.getEnergyStorage() instanceof IEnergyStorage) {
                     return capability.cast();
                 }
