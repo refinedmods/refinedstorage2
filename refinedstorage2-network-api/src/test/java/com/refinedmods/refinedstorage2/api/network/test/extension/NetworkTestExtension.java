@@ -20,8 +20,11 @@ import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNo
 import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import javax.annotation.Nullable;
@@ -74,11 +77,25 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
     }
 
     private void setupNetworks(final Object testInstance) {
-        final SetupNetwork[] annotations = testInstance.getClass().getAnnotationsByType(SetupNetwork.class);
-        for (final SetupNetwork annotation : annotations) {
+        for (final SetupNetwork annotation : getAnnotations(testInstance, SetupNetwork.class)) {
             final Network network = new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY);
             setupNetworkEnergy(annotation.energyCapacity(), annotation.energyStored(), network);
             networkMap.put(annotation.id(), network);
+        }
+    }
+
+    private <A extends Annotation> List<A> getAnnotations(final Object testInstance, final Class<A> annotationType) {
+        final List<A> annotations = new ArrayList<>();
+        collectAnnotations(annotations, testInstance.getClass(), annotationType);
+        return annotations;
+    }
+
+    private <A extends Annotation> void collectAnnotations(final List<A> annotations,
+                                                           final Class<?> clazz,
+                                                           final Class<A> annotationType) {
+        annotations.addAll(List.of(clazz.getAnnotationsByType(annotationType)));
+        if (clazz.getSuperclass() != null) {
+            collectAnnotations(annotations, clazz.getSuperclass(), annotationType);
         }
     }
 
@@ -93,8 +110,7 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
     }
 
     private void injectNetworks(final Object testInstance) {
-        final Field[] fields = testInstance.getClass().getDeclaredFields();
-        for (final Field field : fields) {
+        for (final Field field : getFields(testInstance)) {
             final InjectNetwork annotation = field.getAnnotation(InjectNetwork.class);
             if (annotation != null) {
                 final Network network = networkMap.get(annotation.value());
@@ -104,10 +120,22 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
     }
 
     private void addNetworkNodes(final Object testInstance) {
-        final Field[] fields = testInstance.getClass().getDeclaredFields();
-        for (final Field field : fields) {
+        for (final Field field : getFields(testInstance)) {
             tryAddSimpleNetworkNode(testInstance, field);
             tryAddDiskDrive(testInstance, field);
+        }
+    }
+
+    private List<Field> getFields(final Object testInstance) {
+        final List<Field> fields = new ArrayList<>();
+        collectFields(fields, testInstance.getClass());
+        return fields;
+    }
+
+    private void collectFields(final List<Field> fields, final Class<?> clazz) {
+        fields.addAll(List.of(clazz.getDeclaredFields()));
+        if (clazz.getSuperclass() != null) {
+            collectFields(fields, clazz.getSuperclass());
         }
     }
 
