@@ -1,6 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractModInitializer;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractBaseBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractStorageBlock;
@@ -55,6 +57,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockIte
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.exporter.StorageExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.importer.StorageImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
@@ -65,6 +68,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.ResourceTypeCh
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.StorageInfoRequestPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import me.shedaniel.autoconfig.AutoConfig;
@@ -141,6 +145,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerAdditionalStorageChannelTypes();
         registerNetworkComponents();
         registerImporterTransferStrategyFactories();
+        registerExporterTransferStrategyFactories();
         registerContent();
         registerPackets();
         registerSounds();
@@ -178,6 +183,33 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 FluidStorage.SIDED,
                 StorageChannelTypes.FLUID,
                 VariantUtil::ofFluidVariant,
+                VariantUtil::toFluidVariant,
+                FluidConstants.BUCKET
+            )
+        );
+    }
+
+    private void registerExporterTransferStrategyFactories() {
+        PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().register(
+            createIdentifier("item"),
+            new StorageExporterTransferStrategyFactory<>(
+                ItemStorage.SIDED,
+                StorageChannelTypes.ITEM,
+                resource -> resource instanceof ItemResource itemResource
+                    ? Optional.of(itemResource)
+                    : Optional.empty(),
+                VariantUtil::toItemVariant,
+                1
+            )
+        );
+        PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().register(
+            createIdentifier("fluid"),
+            new StorageExporterTransferStrategyFactory<>(
+                FluidStorage.SIDED,
+                StorageChannelTypes.FLUID,
+                resource -> resource instanceof FluidResource fluidResource
+                    ? Optional.of(fluidResource)
+                    : Optional.empty(),
                 VariantUtil::toFluidVariant,
                 FluidConstants.BUCKET
             )

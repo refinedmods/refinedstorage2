@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
@@ -59,6 +60,9 @@ public class PlatformApiImpl implements PlatformApi {
     private final OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> importerTransferStrategyRegistry =
         new OrderedRegistryImpl<>(createIdentifier("noop"),
             (level, pos, direction, hasStackUpgrade) -> (filter, actor, network) -> false);
+    private final OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> exporterTransferStrategyRegistry =
+        new OrderedRegistryImpl<>(createIdentifier("noop"),
+            (level, pos, direction, hasStackUpgrade) -> (resource, actor, network) -> false);
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
 
     @Override
@@ -99,6 +103,11 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> getImporterTransferStrategyRegistry() {
         return importerTransferStrategyRegistry;
+    }
+
+    @Override
+    public OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry() {
+        return exporterTransferStrategyRegistry;
     }
 
     @Override
