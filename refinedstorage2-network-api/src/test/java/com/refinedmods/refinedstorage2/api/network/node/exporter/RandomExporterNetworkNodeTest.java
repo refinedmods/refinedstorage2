@@ -19,8 +19,8 @@ class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
     FixedRandomizer randomizer = new FixedRandomizer();
 
     @Override
-    protected ExporterTransferStrategyExecutor createStrategyExecutor() {
-        return new RandomExporterTransferStrategyExecutor(randomizer);
+    protected ExporterSchedulingMode createSchedulingMode() {
+        return new RandomExporterSchedulingMode(randomizer);
     }
 
     @Test
@@ -31,12 +31,9 @@ class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
         storageChannel.insert("B", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> destination = new InMemoryStorageImpl<>();
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            5
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B"));
         randomizer.setIndex(0);
 
@@ -71,12 +68,9 @@ class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
         storageChannel.insert("B", 7, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> destination = new InMemoryStorageImpl<>();
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            10
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B"));
         randomizer.setIndex(0);
 

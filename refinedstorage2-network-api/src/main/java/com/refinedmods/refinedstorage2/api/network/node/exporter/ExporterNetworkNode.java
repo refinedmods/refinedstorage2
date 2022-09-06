@@ -11,40 +11,37 @@ import javax.annotation.Nullable;
 public class ExporterNetworkNode extends AbstractNetworkNode {
     private long energyUsage;
     private final Actor actor = new NetworkNodeActor(this);
-    private final List<ExporterTransferStrategy> strategies = new ArrayList<>();
+    private final List<Object> templates = new ArrayList<>();
     @Nullable
-    private ExporterTransferStrategyFactory strategyFactory;
-    private ExporterTransferStrategyExecutor strategyExecutor;
+    private ExporterTransferStrategy transferStrategy;
+    private ExporterSchedulingMode schedulingMode;
 
-    public ExporterNetworkNode(final long energyUsage, final ExporterTransferStrategyExecutor strategyExecutor) {
+    public ExporterNetworkNode(final long energyUsage, final ExporterSchedulingMode schedulingMode) {
         this.energyUsage = energyUsage;
-        this.strategyExecutor = strategyExecutor;
+        this.schedulingMode = schedulingMode;
     }
 
-    public void setStrategyFactory(@Nullable final ExporterTransferStrategyFactory strategyFactory) {
-        this.strategyFactory = strategyFactory;
+    public void setTransferStrategy(@Nullable final ExporterTransferStrategy transferStrategy) {
+        this.transferStrategy = transferStrategy;
     }
 
-    public void setStrategyExecutor(final ExporterTransferStrategyExecutor strategyExecutor) {
-        this.strategyExecutor = strategyExecutor;
+    public void setSchedulingMode(final ExporterSchedulingMode schedulingMode) {
+        this.schedulingMode = schedulingMode;
     }
 
     @Override
     public void doWork() {
         super.doWork();
-        if (network == null || !isActive() || strategies.isEmpty()) {
+        if (network == null || !isActive() || transferStrategy == null) {
             return;
         }
-        strategyExecutor.execute(strategies, network, actor);
+        schedulingMode.execute(templates, transferStrategy, network, actor);
     }
 
     public void setTemplates(final List<Object> newTemplates) {
-        strategies.clear();
-        strategyExecutor.onTemplatesChanged();
-        if (strategyFactory == null) {
-            return;
-        }
-        strategies.addAll(newTemplates.stream().flatMap(t -> strategyFactory.create(t).stream()).toList());
+        templates.clear();
+        templates.addAll(newTemplates);
+        schedulingMode.onTemplatesChanged();
     }
 
     public void setEnergyUsage(final long energyUsage) {

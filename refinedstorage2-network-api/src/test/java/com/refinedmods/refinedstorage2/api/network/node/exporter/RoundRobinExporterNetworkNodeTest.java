@@ -16,8 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
     @Override
-    protected ExporterTransferStrategyExecutor createStrategyExecutor() {
-        return new RoundRobinExporterTransferStrategyExecutor();
+    protected ExporterSchedulingMode createSchedulingMode() {
+        return new RoundRobinExporterSchedulingMode();
     }
 
     @Test
@@ -28,12 +28,9 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
         storageChannel.insert("B", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> destination = new InMemoryStorageImpl<>();
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            5
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B"));
 
         // Act & assert
@@ -79,12 +76,9 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
         storageChannel.insert("B", 7, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> destination = new InMemoryStorageImpl<>();
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            10
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B"));
 
         // Act & assert
@@ -121,12 +115,9 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
         storageChannel.insert("C", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> destination = new InMemoryStorageImpl<>();
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            5
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B", "C"));
 
         // Act & assert

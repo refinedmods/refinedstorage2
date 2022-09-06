@@ -17,8 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
     @Override
-    protected ExporterTransferStrategyExecutor createStrategyExecutor() {
-        return FirstAvailableExporterTransferStrategyExecutor.INSTANCE;
+    protected ExporterSchedulingMode createSchedulingMode() {
+        return FirstAvailableExporterSchedulingMode.INSTANCE;
     }
 
     @Test
@@ -29,12 +29,9 @@ class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeT
         storageChannel.insert("B", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> destination = new InMemoryStorageImpl<>();
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            1
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 1);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A"));
 
         // Act
@@ -59,12 +56,9 @@ class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeT
         storageChannel.insert("B", 7, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> destination = new InMemoryStorageImpl<>();
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            10
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B"));
 
         // Act
@@ -96,12 +90,9 @@ class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeT
                 return super.insert(resource, amount, action, actor);
             }
         };
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            20
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 20);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B", "C"));
 
         // Act & assert

@@ -13,7 +13,7 @@ import com.refinedmods.refinedstorage2.api.network.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.FirstAvailableExporterTransferStrategyExecutor;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.FirstAvailableExporterSchedulingMode;
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
@@ -47,7 +47,7 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
         ImporterNetworkNode.class, ctx -> new ImporterNetworkNode(ctx.energyUsage()),
         ExporterNetworkNode.class, ctx -> new ExporterNetworkNode(
             ctx.energyUsage(),
-            FirstAvailableExporterTransferStrategyExecutor.INSTANCE
+            FirstAvailableExporterSchedulingMode.INSTANCE
         ),
         ControllerNetworkNode.class, ctx -> new ControllerNetworkNode()
     );
