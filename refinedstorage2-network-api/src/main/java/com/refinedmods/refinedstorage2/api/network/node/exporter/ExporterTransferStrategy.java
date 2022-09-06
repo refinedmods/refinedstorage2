@@ -7,9 +7,8 @@ import org.apiguardian.api.API;
 
 /**
  * A transfer strategy that transfers a resource from the network to a destination.
- * Created through a {@link ExporterTransferStrategyFactory}, where the resource is given.
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
 public interface ExporterTransferStrategy {
-    boolean transfer(Actor actor, Network network);
+    boolean transfer(Object resource, Actor actor, Network network);
 }

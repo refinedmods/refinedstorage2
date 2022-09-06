@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkCompon
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
@@ -16,7 +17,7 @@ import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import java.util.List;
-import java.util.Optional;
+import javax.annotation.Nullable;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,12 +35,12 @@ abstract class AbstractExporterNetworkNodeTest {
     @AddNetworkNode(networkId = "nonexistent")
     ExporterNetworkNode sutWithoutNetwork;
 
-    protected abstract ExporterTransferStrategyExecutor createStrategyExecutor();
+    protected abstract ExporterSchedulingMode createSchedulingMode();
 
     @BeforeEach
     void setUp() {
         sut.setEnergyUsage(5);
-        sut.setStrategyExecutor(createStrategyExecutor());
+        sut.setSchedulingMode(createSchedulingMode());
     }
 
     @Test
@@ -60,19 +61,32 @@ abstract class AbstractExporterNetworkNodeTest {
     }
 
     @Test
-    void shouldBeAbleToSetTemplatesWithoutStrategy() {
-        // Arrange
-        final List<Object> templates = List.of("A", "B");
-
-        // Act
-        assertDoesNotThrow(() -> sut.setTemplates(templates));
-    }
-
-    @Test
     void shouldNotTransferWithoutNetwork() {
         // Act & assert
         assertDoesNotThrow(sutWithoutNetwork::doWork);
         assertThat(sutWithoutNetwork.isActive()).isTrue();
+    }
+
+    @Test
+    void shouldNotTransferWithoutStrategy(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
+        // Arrange
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+        storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.insert("B", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        final Storage<String> destination = new InMemoryStorageImpl<>();
+
+        sut.setTemplates(List.of("A", "B"));
+
+        // Act
+        sut.doWork();
+
+        // Assert
+        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("A", 100),
+            new ResourceAmount<>("B", 100)
+        );
+        assertThat(destination.getAll()).isEmpty();
     }
 
     @Test
@@ -83,12 +97,9 @@ abstract class AbstractExporterNetworkNodeTest {
         storageChannel.insert("B", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> destination = new InMemoryStorageImpl<>();
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            1
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 1);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B"));
         sut.setActive(false);
 
@@ -111,12 +122,9 @@ abstract class AbstractExporterNetworkNodeTest {
         storageChannel.insert("B", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> destination = new InMemoryStorageImpl<>();
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            1
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 1);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of());
 
         // Act
@@ -136,12 +144,9 @@ abstract class AbstractExporterNetworkNodeTest {
     ) {
         // Arrange
         final Storage<String> destination = new InMemoryStorageImpl<>();
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            10
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B"));
 
         // Act
@@ -166,12 +171,9 @@ abstract class AbstractExporterNetworkNodeTest {
         final Storage<String> destination = new LimitedStorageImpl<>(5);
         destination.insert("C", 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            10
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B"));
 
         // Act & assert
@@ -210,12 +212,9 @@ abstract class AbstractExporterNetworkNodeTest {
         final Storage<String> destination = new LimitedStorageImpl<>(1);
         destination.insert("C", 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            5
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 5);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B"));
 
         // Act
@@ -241,12 +240,9 @@ abstract class AbstractExporterNetworkNodeTest {
         storageChannel.insert("B", 7, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> destination = new InMemoryStorageImpl<>();
-        final ExporterTransferStrategyFactory strategyFactory = new ExporterTransferStrategyFactoryImpl(
-            destination,
-            10
-        );
+        final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
-        sut.setStrategyFactory(strategyFactory);
+        sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B"));
 
         // Act
@@ -261,19 +257,25 @@ abstract class AbstractExporterNetworkNodeTest {
         );
     }
 
-    record ExporterTransferStrategyFactoryImpl(Storage<String> destination, long transferQuota)
-        implements ExporterTransferStrategyFactory {
+    protected static ExporterTransferStrategy createTransferStrategy(
+        final InsertableStorage<String> destination,
+        final long transferQuota
+    ) {
+        return new FakeAbstractExporterTransferStrategy(destination, transferQuota);
+    }
+
+    private static class FakeAbstractExporterTransferStrategy extends AbstractExporterTransferStrategy<String> {
+        private FakeAbstractExporterTransferStrategy(
+            final InsertableStorage<String> destination,
+            final long transferQuota
+        ) {
+            super(destination, NetworkTestFixtures.STORAGE_CHANNEL_TYPE, transferQuota);
+        }
+
+        @Nullable
         @Override
-        public Optional<ExporterTransferStrategy> create(final Object resource) {
-            if (resource instanceof String str) {
-                return Optional.of(new ExporterTransferStrategyImpl<>(
-                    str,
-                    destination,
-                    NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
-                    transferQuota
-                ));
-            }
-            return Optional.empty();
+        protected String tryConvert(final Object resource) {
+            return resource instanceof String str ? str : null;
         }
     }
 }
