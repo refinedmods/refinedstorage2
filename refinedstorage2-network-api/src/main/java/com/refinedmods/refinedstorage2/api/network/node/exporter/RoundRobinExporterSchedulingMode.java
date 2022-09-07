@@ -16,9 +16,15 @@ public class RoundRobinExporterSchedulingMode implements ExporterSchedulingMode 
         if (templates.isEmpty()) {
             return;
         }
-        final Object template = templates.get(index % templates.size());
-        strategy.transfer(template, actor, network);
-        index = (index + 1) % templates.size();
+        final int startIndex = index % templates.size();
+        for (int i = startIndex; i < templates.size(); ++i) {
+            final Object template = templates.get(i);
+            if (strategy.transfer(template, actor, network)) {
+                index = (index + 1) % templates.size();
+                return;
+            }
+        }
+        index = 0;
     }
 
     @Override

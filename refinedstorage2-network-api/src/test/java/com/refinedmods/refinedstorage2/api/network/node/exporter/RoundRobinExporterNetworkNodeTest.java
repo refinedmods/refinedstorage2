@@ -68,39 +68,78 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
     }
 
     @Test
-    void shouldWasteCycleIfFirstResourceIsNotAvailable(
+    void shouldUseNextResourceIfFirstOneIsNotAvailableInSameCycle(
         @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
     ) {
         // Arrange
         storageChannel.addSource(new InMemoryStorageImpl<>());
-        storageChannel.insert("B", 7, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.insert("C", 8, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.insert("D", 9, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> destination = new InMemoryStorageImpl<>();
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
         sut.setTransferStrategy(strategy);
-        sut.setTemplates(List.of("A", "B"));
+        sut.setTemplates(List.of("A", "B", "C", "D"));
 
         // Act & assert
         sut.doWork();
 
-        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("B", 7)
+        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("D", 9)
         );
-        assertThat(destination.getAll()).isEmpty();
-
-        sut.doWork();
-
-        assertThat(storageChannel.getAll()).isEmpty();
         assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("B", 7)
+            new ResourceAmount<>("C", 8)
         );
 
         sut.doWork();
 
         assertThat(storageChannel.getAll()).isEmpty();
         assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("B", 7)
+            new ResourceAmount<>("C", 8),
+            new ResourceAmount<>("D", 9)
+        );
+
+        sut.doWork();
+
+        assertThat(storageChannel.getAll()).isEmpty();
+        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("C", 8),
+            new ResourceAmount<>("D", 9)
+        );
+
+        storageChannel.insert("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.insert("B", 2, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        sut.doWork();
+
+        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("B", 2)
+        );
+        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 1),
+            new ResourceAmount<>("C", 8),
+            new ResourceAmount<>("D", 9)
+        );
+
+        sut.doWork();
+
+        assertThat(storageChannel.getAll()).isEmpty();
+        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 1),
+            new ResourceAmount<>("B", 2),
+            new ResourceAmount<>("C", 8),
+            new ResourceAmount<>("D", 9)
+        );
+
+        sut.doWork();
+
+        assertThat(storageChannel.getAll()).isEmpty();
+        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 1),
+            new ResourceAmount<>("B", 2),
+            new ResourceAmount<>("C", 8),
+            new ResourceAmount<>("D", 9)
         );
     }
 
