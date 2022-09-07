@@ -8,6 +8,8 @@ import com.refinedmods.refinedstorage2.api.storage.TransferHelper;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
+import java.util.Collection;
+import java.util.Collections;
 import javax.annotation.Nullable;
 
 public abstract class AbstractExporterTransferStrategy<T> implements ExporterTransferStrategy {
@@ -15,9 +17,9 @@ public abstract class AbstractExporterTransferStrategy<T> implements ExporterTra
     private final StorageChannelType<T> storageChannelType;
     private final long transferQuota;
 
-    public AbstractExporterTransferStrategy(final InsertableStorage<T> destination,
-                                            final StorageChannelType<T> storageChannelType,
-                                            final long transferQuota) {
+    protected AbstractExporterTransferStrategy(final InsertableStorage<T> destination,
+                                               final StorageChannelType<T> storageChannelType,
+                                               final long transferQuota) {
         this.destination = destination;
         this.storageChannelType = storageChannelType;
         this.transferQuota = transferQuota;
@@ -26,21 +28,40 @@ public abstract class AbstractExporterTransferStrategy<T> implements ExporterTra
     @Nullable
     protected abstract T tryConvert(Object resource);
 
+    protected Collection<T> expand(final T resource, final StorageChannel<T> storageChannel) {
+        return Collections.singletonList(resource);
+    }
+
     @Override
     public boolean transfer(final Object resource, final Actor actor, final Network network) {
         final T converted = tryConvert(resource);
         if (converted == null) {
             return false;
         }
-        return doTransfer(converted, actor, network);
+        return tryTransferConverted(converted, actor, network);
     }
 
-    private boolean doTransfer(final T converted, final Actor actor, final Network network) {
+    private boolean tryTransferConverted(final T converted, final Actor actor, final Network network) {
         final StorageChannel<T> storageChannel = network.getComponent(StorageNetworkComponent.class)
             .getStorageChannel(storageChannelType);
+        final Collection<T> expanded = expand(converted, storageChannel);
+        return tryTransferExpanded(actor, storageChannel, expanded);
+    }
 
+    private boolean tryTransferExpanded(final Actor actor,
+                                        final StorageChannel<T> storageChannel,
+                                        final Collection<T> expanded) {
+        for (final T resource : expanded) {
+            if (tryTransfer(actor, storageChannel, resource)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean tryTransfer(final Actor actor, final StorageChannel<T> storageChannel, final T resource) {
         final long transferred = TransferHelper.transfer(
-            converted,
+            resource,
             transferQuota,
             actor,
             storageChannel,

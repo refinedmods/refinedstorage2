@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.node.exporter.AbstractExporte
 import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.common.internal.network.node.AbstractFuzzyExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.StorageInsertableStorage;
 
 import java.util.Optional;
@@ -39,12 +40,33 @@ public class StorageExporterTransferStrategyFactory<T, P> implements ExporterTra
     public ExporterTransferStrategy create(final ServerLevel level,
                                            final BlockPos pos,
                                            final Direction direction,
-                                           final boolean hasStackUpgrade) {
-        return new AbstractExporterTransferStrategy<>(
-            new StorageInsertableStorage<>(lookup, toPlatformMapper, level, pos, direction),
-            storageChannelType,
-            hasStackUpgrade ? singleAmount * 64 : singleAmount
-        ) {
+                                           final boolean hasStackUpgrade,
+                                           final boolean fuzzyMode) {
+        final StorageInsertableStorage<T, P> insertTarget = new StorageInsertableStorage<>(
+            lookup,
+            toPlatformMapper,
+            level,
+            pos,
+            direction
+        );
+        final long transferQuota = hasStackUpgrade ? singleAmount * 64 : singleAmount;
+        return create(fuzzyMode, insertTarget, transferQuota);
+    }
+
+    private AbstractExporterTransferStrategy<T> create(final boolean fuzzyMode,
+                                                       final StorageInsertableStorage<T, P> insertTarget,
+                                                       final long transferQuota) {
+        if (fuzzyMode) {
+            return new AbstractFuzzyExporterTransferStrategy<>(insertTarget, storageChannelType, transferQuota) {
+                @Nullable
+                @Override
+                protected T tryConvert(final Object resource) {
+                    return mapper.apply(resource).orElse(null);
+                }
+            };
+        }
+
+        return new AbstractExporterTransferStrategy<>(insertTarget, storageChannelType, transferQuota) {
             @Nullable
             @Override
             protected T tryConvert(final Object resource) {
