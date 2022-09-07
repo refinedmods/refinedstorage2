@@ -14,6 +14,7 @@ public interface ExporterTransferStrategyFactory {
         ServerLevel level,
         BlockPos pos,
         Direction direction,
-        boolean hasStackUpgrade
+        boolean hasStackUpgrade,
+        boolean fuzzyMode
     );
 }
