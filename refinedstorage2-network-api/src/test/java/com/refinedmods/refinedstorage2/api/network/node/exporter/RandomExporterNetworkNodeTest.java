@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node.exporter;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.FixedRandomizer;
+import com.refinedmods.refinedstorage2.api.core.util.Randomizer;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
@@ -16,11 +16,17 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
-    FixedRandomizer randomizer = new FixedRandomizer();
-
     @Override
     protected ExporterSchedulingMode createSchedulingMode() {
-        return new RandomExporterSchedulingMode(randomizer);
+        return new RandomExporterSchedulingMode(new Randomizer() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> void shuffle(final List<T> list) {
+                list.clear();
+                list.add((T) "A");
+                list.add((T) "B");
+            }
+        });
     }
 
     @Test
@@ -35,7 +41,6 @@ class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
 
         sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B"));
-        randomizer.setIndex(0);
 
         // Act & assert
         sut.doWork();
@@ -60,7 +65,7 @@ class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
     }
 
     @Test
-    void shouldWasteCycleIfResourceIsNotAvailable(
+    void shouldUseNextResourceIfFirstOneIsNotAvailableInSameCycle(
         @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
     ) {
         // Arrange
@@ -72,14 +77,20 @@ class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
 
         sut.setTransferStrategy(strategy);
         sut.setTemplates(List.of("A", "B"));
-        randomizer.setIndex(0);
 
         // Act & assert
         sut.doWork();
 
-        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+        assertThat(storageChannel.getAll()).isEmpty();
+        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount<>("B", 7)
         );
-        assertThat(destination.getAll()).isEmpty();
+
+        sut.doWork();
+
+        assertThat(storageChannel.getAll()).isEmpty();
+        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("B", 7)
+        );
     }
 }

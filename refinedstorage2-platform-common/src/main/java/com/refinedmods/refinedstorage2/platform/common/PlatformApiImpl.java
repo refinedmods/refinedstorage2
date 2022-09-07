@@ -62,7 +62,7 @@ public class PlatformApiImpl implements PlatformApi {
             (level, pos, direction, hasStackUpgrade) -> (filter, actor, network) -> false);
     private final OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> exporterTransferStrategyRegistry =
         new OrderedRegistryImpl<>(createIdentifier("noop"),
-            (level, pos, direction, hasStackUpgrade) -> (resource, actor, network) -> false);
+            (level, pos, direction, hasStackUpgrade, fuzzyMode) -> (resource, actor, network) -> false);
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
 
     @Override
