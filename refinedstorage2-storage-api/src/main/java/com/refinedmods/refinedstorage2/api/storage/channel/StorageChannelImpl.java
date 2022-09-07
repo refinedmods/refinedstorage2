@@ -28,7 +28,7 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
 
     public StorageChannelImpl(final ResourceList<T> list) {
         this.list = new ListenableResourceList<>(list);
-        this.storage = new CompositeStorageImpl<>(list);
+        this.storage = new CompositeStorageImpl<>(this.list);
     }
 
     @Override
