@@ -28,6 +28,11 @@ public abstract class AbstractExporterTransferStrategy<T> implements ExporterTra
     @Nullable
     protected abstract T tryConvert(Object resource);
 
+    /**
+     * @param resource       the resource to expand
+     * @param storageChannel the storage channel belonging to the resource
+     * @return the list of expanded resources, will be tried out in the order of the list. Can be empty.
+     */
     protected Collection<T> expand(final T resource, final StorageChannel<T> storageChannel) {
         return Collections.singletonList(resource);
     }
