@@ -14,7 +14,7 @@ import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
-import com.refinedmods.refinedstorage2.network.test.NetworkTestExtension;
+import com.refinedmods.refinedstorage2.network.test.NetworkTest;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import java.util.Set;
@@ -23,19 +23,21 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(NetworkTestExtension.class)
+@NetworkTest
 @SetupNetwork
 class StorageNetworkNodeTest {
     private static final int ENERGY_USAGE = 5;
 
-    @AddNetworkNode(energyUsage = ENERGY_USAGE)
+    @AddNetworkNode(properties = {
+        @AddNetworkNode.Property(key = PROPERTY_ENERGY_USAGE, longValue = ENERGY_USAGE)
+    })
     StorageNetworkNode<String> sut;
 
     StorageRepository storageRepository;

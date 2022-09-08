@@ -11,9 +11,9 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
-import com.refinedmods.refinedstorage2.network.test.AddDiskDrive;
+import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
-import com.refinedmods.refinedstorage2.network.test.NetworkTestExtension;
+import com.refinedmods.refinedstorage2.network.test.NetworkTest;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import java.util.Collection;
@@ -24,25 +24,29 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.verification.VerificationMode;
 
+import static com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE;
+import static com.refinedmods.refinedstorage2.network.test.nodefactory.DiskDriveNetworkNodeFactory.PROPERTY_ENERGY_USAGE_PER_DISK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith(NetworkTestExtension.class)
+@NetworkTest
 @SetupNetwork
 class DiskDriveNetworkNodeTest {
     private static final long BASE_USAGE = 10;
     private static final long USAGE_PER_DISK = 3;
 
-    @AddDiskDrive(baseEnergyUsage = BASE_USAGE, energyUsagePerDisk = USAGE_PER_DISK)
+    @AddNetworkNode(properties = {
+        @AddNetworkNode.Property(key = PROPERTY_ENERGY_USAGE, longValue = BASE_USAGE),
+        @AddNetworkNode.Property(key = PROPERTY_ENERGY_USAGE_PER_DISK, longValue = USAGE_PER_DISK)
+    })
     DiskDriveNetworkNode sut;
 
     FakeStorageProviderRepository storageProviderRepository;
@@ -649,7 +653,7 @@ class DiskDriveNetworkNodeTest {
 
     @Nested
     class PriorityTest {
-        @AddDiskDrive
+        @AddNetworkNode
         DiskDriveNetworkNode otherDiskDrive;
 
         @ParameterizedTest

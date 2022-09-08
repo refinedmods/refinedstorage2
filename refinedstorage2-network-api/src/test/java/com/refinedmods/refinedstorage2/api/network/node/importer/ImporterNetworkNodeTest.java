@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkEnergyComponent;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
-import com.refinedmods.refinedstorage2.network.test.NetworkTestExtension;
+import com.refinedmods.refinedstorage2.network.test.NetworkTest;
 import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
@@ -20,12 +20,11 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-@ExtendWith(NetworkTestExtension.class)
+@NetworkTest
 @SetupNetwork(energyStored = 1000, energyCapacity = 1000)
 class ImporterNetworkNodeTest {
     @AddNetworkNode

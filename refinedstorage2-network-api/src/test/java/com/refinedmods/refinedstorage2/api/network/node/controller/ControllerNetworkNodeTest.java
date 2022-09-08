@@ -3,20 +3,19 @@ package com.refinedmods.refinedstorage2.api.network.node.controller;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
-import com.refinedmods.refinedstorage2.network.test.NetworkTestExtension;
+import com.refinedmods.refinedstorage2.network.test.NetworkTest;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(NetworkTestExtension.class)
+@NetworkTest
 @SetupNetwork
 class ControllerNetworkNodeTest {
     @AddNetworkNode
