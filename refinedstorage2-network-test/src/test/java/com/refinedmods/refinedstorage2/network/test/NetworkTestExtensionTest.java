@@ -9,6 +9,10 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory;
+import com.refinedmods.refinedstorage2.network.test.nodefactory.DiskDriveNetworkNodeFactory;
+import com.refinedmods.refinedstorage2.network.test.nodefactory.SimpleNetworkNodeFactory;
+import com.refinedmods.refinedstorage2.network.test.nodefactory.StorageNetworkNodeFactory;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith({NetworkTestExtension.class})
 @SetupNetwork(id = "a", energyCapacity = 100, energyStored = 50)
 @SetupNetwork(id = "b")
+@RegisterNetworkNode(value = DiskDriveNetworkNodeFactory.class, clazz = DiskDriveNetworkNode.class)
+@RegisterNetworkNode(value = StorageNetworkNodeFactory.class, clazz = StorageNetworkNode.class)
+@RegisterNetworkNode(value = SimpleNetworkNodeFactory.class, clazz = SimpleNetworkNode.class)
 class NetworkTestExtensionTest {
     @InjectNetwork("a")
     Network a;
@@ -26,10 +33,14 @@ class NetworkTestExtensionTest {
     @InjectNetwork("b")
     Network b;
 
-    @AddNetworkNode(networkId = "a")
+    @AddNetworkNode(networkId = "a", properties = {
+        @AddNetworkNode.Property(key = AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE, longValue = 10)
+    })
     StorageNetworkNode<String> storageInA;
 
-    @AddDiskDrive(networkId = "b", active = false)
+    @AddNetworkNode(networkId = "b", properties = {
+        @AddNetworkNode.Property(key = AbstractNetworkNodeFactory.PROPERTY_ACTIVE, boolValue = false)
+    })
     DiskDriveNetworkNode storageInB;
 
     @AddNetworkNode(networkId = "nonexistent")
@@ -56,6 +67,13 @@ class NetworkTestExtensionTest {
         // Assert
         assertThat(storageInA.isActive()).isTrue();
         assertThat(storageInB.isActive()).isFalse();
+    }
+
+    @Test
+    void shouldSetEnergyUsage() {
+        // Assert
+        assertThat(storageInA.getEnergyUsage()).isEqualTo(10);
+        assertThat(storageInB.getEnergyUsage()).isZero();
     }
 
     @Test

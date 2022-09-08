@@ -10,9 +10,15 @@ import javax.annotation.Nonnull;
 @Target(ElementType.FIELD)
 @Nonnull
 public @interface AddNetworkNode {
-    long energyUsage() default 0L;
-
-    boolean active() default true;
-
     String networkId() default "default";
+
+    Property[] properties() default {};
+
+    @interface Property {
+        String key();
+
+        long longValue() default -1;
+
+        boolean boolValue() default false;
+    }
 }
