@@ -108,7 +108,8 @@ class NetworkTestExtensionTest {
     @Test
     void shouldInjectStorageChannel(
         @InjectNetworkStorageChannel(networkId = "a") final StorageChannel<String> storageChannelA,
-        @InjectNetworkStorageChannel(networkId = "b") final StorageChannel<String> storageChannelB) {
+        @InjectNetworkStorageChannel(networkId = "b") final StorageChannel<String> storageChannelB
+    ) {
         // Assert
         assertThat(storageChannelA).isSameAs(
             a.getComponent(StorageNetworkComponent.class).getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
@@ -119,7 +120,8 @@ class NetworkTestExtensionTest {
     @Test
     void shouldInjectNetworkEnergyComponent(
         @InjectNetworkEnergyComponent(networkId = "a") final EnergyNetworkComponent networkEnergyA,
-        @InjectNetworkEnergyComponent(networkId = "b") final EnergyNetworkComponent networkEnergyB) {
+        @InjectNetworkEnergyComponent(networkId = "b") final EnergyNetworkComponent networkEnergyB
+    ) {
         // Assert
         assertThat(networkEnergyA).isSameAs(a.getComponent(EnergyNetworkComponent.class));
         assertThat(networkEnergyB).isSameAs(b.getComponent(EnergyNetworkComponent.class));

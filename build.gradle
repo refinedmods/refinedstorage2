@@ -1,7 +1,8 @@
 plugins {
     id 'maven-publish'
-    id 'org.sonarqube' version "3.3"
+    id 'org.sonarqube' version '3.3'
     id 'checkstyle'
+    id 'info.solidsoft.pitest' version '1.7.4'
 }
 
 allprojects {
@@ -44,11 +45,30 @@ subprojects {
         toolVersion = project.checkstyleVersion
     }
 
+    if (!(project.name in [
+            // These project have less tests because they depend on Minecraft a lot, making it difficult to test.
+            'refinedstorage2-platform-api',
+            'refinedstorage2-platform-common',
+            // These projects don't have tests or JUnit, so omit these to avoid failing
+            'refinedstorage2-platform-fabric',
+            'refinedstorage2-platform-forge',
+            'refinedstorage2-platform-test'
+    ])) {
+        apply plugin: 'info.solidsoft.pitest'
+        pitest {
+            junit5PluginVersion = '1.0.0'
+            pitestVersion = '1.9.0'
+            outputFormats.set(['HTML'])
+            mutationThreshold.set(90)
+            coverageThreshold.set(80)
+        }
+    }
+
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
     tasks.withType(JavaCompile).configureEach {
         it.options.encoding = 'UTF-8'
-        it.options.release = 17
+        it.options.release.set(17)
     }
 
     processResources {
@@ -122,6 +142,7 @@ sonarqube {
         property "sonar.organization", "refinedmods"
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
+        // These project have less tests because they depend on Minecraft a lot, making it difficult to test.
         property "sonar.coverage.exclusions", "refinedstorage2-platform-forge/**/*,refinedstorage2-platform-fabric/**/*,refinedstorage2-platform-common/**/*,refinedstorage2-platform-api/**/*"
         // JEI/REI code is duplicated as reusing it in a common module isn't possible/too difficult.
         property "sonar.cpd.exclusions", "refinedstorage2-platform-forge/src/main/java/com/refinedmods/refinedstorage2/platform/forge/integration/jei/*,refinedstorage2-platform-forge/src/main/java/com/refinedmods/refinedstorage2/platform/forge/integration/rei/*,refinedstorage2-platform-fabric/src/main/java/com/refinedmods/refinedstorage2/platform/fabric/integration/jei/*,refinedstorage2-platform-fabric/src/main/java/com/refinedmods/refinedstorage2/platform/fabric/integration/rei/*"

@@ -21,14 +21,13 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
-import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
-public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
+public class NetworkTestExtension implements BeforeEachCallback, ParameterResolver {
     private final Map<String, Network> networkMap = new HashMap<>();
     private final Map<Class<? extends NetworkNode>, NetworkNodeFactory<?>> networkNodeFactories = new HashMap<>();
 
@@ -37,12 +36,6 @@ public class NetworkTestExtension implements BeforeEachCallback, AfterEachCallba
         extensionContext
             .getTestInstances()
             .ifPresent(testInstances -> testInstances.getAllInstances().forEach(this::processTestInstance));
-    }
-
-    @Override
-    public void afterEach(final ExtensionContext extensionContext) {
-        networkMap.clear();
-        networkNodeFactories.clear();
     }
 
     private void processTestInstance(final Object testInstance) {
