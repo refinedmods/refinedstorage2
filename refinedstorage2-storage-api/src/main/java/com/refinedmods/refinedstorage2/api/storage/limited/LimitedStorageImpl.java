@@ -40,20 +40,12 @@ public class LimitedStorageImpl<T> extends AbstractProxyStorage<T> implements Li
 
     @Override
     public long insert(final T resource, final long amount, final Action action, final Actor actor) {
-        CoreValidations.validateLargerThanZero(amount, "Amount must be larger than 0");
-        if (delegate.getStored() + amount > capacity) {
-            return insertPartly(resource, action, actor);
-        } else {
-            return super.insert(resource, amount, action, actor);
-        }
-    }
-
-    private long insertPartly(final T resource, final Action action, final Actor actor) {
-        final long spaceRemainingInStorage = capacity - delegate.getStored();
-        if (spaceRemainingInStorage == 0) {
+        final long spaceRemaining = capacity - delegate.getStored();
+        if (spaceRemaining == 0) {
             return 0;
         }
-        return super.insert(resource, spaceRemainingInStorage, action, actor);
+        final long maxInsert = Math.min(amount, spaceRemaining);
+        return super.insert(resource, maxInsert, action, actor);
     }
 
     @Override

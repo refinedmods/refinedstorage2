@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.api.storage;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,6 +23,7 @@ class StorageRepositoryImplTest {
     }
 
     @Test
+    @SuppressWarnings("rawtypes")
     void shouldBeAbleToSetAndRetrieveStorage() {
         // Arrange
         final UUID id = UUID.randomUUID();
@@ -36,6 +38,8 @@ class StorageRepositoryImplTest {
 
         assertThat(existingStorage).containsSame(storage);
         assertThat(nonExistentStorage).isEmpty();
+        assertThat(sut.getAll()).extracting(Map.Entry::getKey).containsExactly(id);
+        assertThat(sut.getAll()).extracting(Map.Entry::getValue).containsExactly((Storage) storage);
     }
 
     @Test

@@ -24,4 +24,12 @@ public final class TrackedResource {
     public long getTime() {
         return time;
     }
+
+    @Override
+    public String toString() {
+        return "TrackedResource{"
+            + "sourceName='" + sourceName + '\''
+            + ", time=" + time
+            + '}';
+    }
 }

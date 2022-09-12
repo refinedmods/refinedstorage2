@@ -71,8 +71,8 @@ class GridNetworkNodeTest {
             new ResourceAmount<>("B", 200)
         );
         assertThat(trackedResources).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            Optional.of(new TrackedResource(EmptyActor.INSTANCE.getName(), 2L)),
-            Optional.of(new TrackedResource(EmptyActor.INSTANCE.getName(), 2L))
+            Optional.of(new TrackedResource("Empty", 2L)),
+            Optional.of(new TrackedResource("Empty", 2L))
         );
     }
 

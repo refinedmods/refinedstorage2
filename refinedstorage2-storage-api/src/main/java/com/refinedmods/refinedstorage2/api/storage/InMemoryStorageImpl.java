@@ -24,49 +24,35 @@ public class InMemoryStorageImpl<T> implements Storage<T> {
         ResourceAmount.validate(resource, amount);
 
         return list.get(resource).map(resourceAmount -> {
-            if (amount > resourceAmount.getAmount()) {
-                return extractCompletely(resourceAmount, action);
-            } else {
-                return extractPartly(resource, amount, action);
-            }
+            final long maxExtract = Math.min(
+                resourceAmount.getAmount(),
+                amount
+            );
+            return doExtract(resource, maxExtract, action);
         }).orElse(0L);
     }
 
-    private long extractPartly(final T resource, final long amount, final Action action) {
+    private long doExtract(final T resource, final long amount, final Action action) {
         if (action == Action.EXECUTE) {
             list.remove(resource, amount);
             stored -= amount;
         }
-
         return amount;
-    }
-
-    private long extractCompletely(final ResourceAmount<T> resourceAmount, final Action action) {
-        if (action == Action.EXECUTE) {
-            list.remove(resourceAmount.getResource(), resourceAmount.getAmount());
-            stored -= resourceAmount.getAmount();
-        }
-
-        return resourceAmount.getAmount();
     }
 
     @Override
     public long insert(final T resource, final long amount, final Action action, final Actor actor) {
         ResourceAmount.validate(resource, amount);
-        insertCompletely(resource, amount, action);
+        if (action == Action.EXECUTE) {
+            stored += amount;
+            list.add(resource, amount);
+        }
         return amount;
     }
 
     @Override
     public Collection<ResourceAmount<T>> getAll() {
         return list.getAll();
-    }
-
-    private void insertCompletely(final T template, final long amount, final Action action) {
-        if (action == Action.EXECUTE) {
-            stored += amount;
-            list.add(template, amount);
-        }
     }
 
     @Override
