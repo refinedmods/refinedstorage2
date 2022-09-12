@@ -59,7 +59,7 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
             lexer.scan();
             return lexer.getTokens();
         } catch (LexerException e) {
-            throw new GridQueryParserException(e.getRange(), e.getMessage(), e);
+            throw new GridQueryParserException(e.getMessage(), e);
         }
     }
 
@@ -69,7 +69,7 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
             parser.parse();
             return parser.getNodes();
         } catch (ParserException e) {
-            throw new GridQueryParserException(e.getToken().position().range(), e.getMessage(), e);
+            throw new GridQueryParserException(e.getMessage(), e);
         }
     }
 
@@ -91,7 +91,7 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
         } else if (node instanceof ParenNode parenNode) {
             return implicitAnd(parenNode.nodes());
         }
-        throw new GridQueryParserException(node.getRange(), "Unsupported node", null);
+        throw new GridQueryParserException("Unsupported node", null);
     }
 
     private Predicate<AbstractGridResource<T>> parseBinOp(final BinOpNode node) throws GridQueryParserException {
@@ -101,7 +101,7 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
         } else if ("||".equals(operator)) {
             return parseOrBinOpNode(node);
         } else {
-            throw new GridQueryParserException(node.getRange(), "Unsupported operator: " + operator, null);
+            throw new GridQueryParserException("Unsupported operator: " + operator, null);
         }
     }
 
@@ -131,7 +131,7 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
             if (content instanceof LiteralNode literalNode) {
                 predicate = attributeMatch(keys, literalNode.token().content());
             } else {
-                throw new GridQueryParserException(content.getRange(), "Expected a literal", null);
+                throw new GridQueryParserException("Expected a literal", null);
             }
         } else if (">".equals(operator)) {
             predicate = count(content, (actualCount, wantedCount) -> actualCount > wantedCount);
@@ -144,7 +144,7 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
         } else if ("=".equals(operator)) {
             predicate = count(content, Long::equals);
         } else {
-            throw new GridQueryParserException(content.getRange(), "Unsupported unary operator", null);
+            throw new GridQueryParserException("Unsupported unary operator", null);
         }
         return predicate;
     }
@@ -153,11 +153,11 @@ public class GridQueryParserImpl<T> implements GridQueryParser<T> {
                                                                 final BiPredicate<Long, Long> predicate)
         throws GridQueryParserException {
         if (!(node instanceof LiteralNode)) {
-            throw new GridQueryParserException(node.getRange(), "Count filtering expects a literal", null);
+            throw new GridQueryParserException("Count filtering expects a literal", null);
         }
 
         if (((LiteralNode) node).token().type() != TokenType.INTEGER_NUMBER) {
-            throw new GridQueryParserException(node.getRange(), "Count filtering expects an integer number", null);
+            throw new GridQueryParserException("Count filtering expects an integer number", null);
         }
 
         final long wantedCount = Long.parseLong(((LiteralNode) node).token().content());
