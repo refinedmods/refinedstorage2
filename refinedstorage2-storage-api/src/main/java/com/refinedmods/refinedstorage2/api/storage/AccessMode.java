@@ -18,5 +18,5 @@ public enum AccessMode {
     /**
      * Extract-only.
      */
-    EXTRACT;
+    EXTRACT
 }
