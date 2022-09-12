@@ -82,4 +82,18 @@ class ResourceAmountTest {
         // Assert
         assertThat(sut.getAmount()).isEqualTo(1);
     }
+
+    @Test
+    void testToString() {
+        // Arrange
+        final ResourceAmount<String> sut = new ResourceAmount<>("A", 3);
+
+        // Act & assert
+        assertThat(sut.toString()).isEqualTo(
+            "ResourceAmount{"
+                + "resource=A"
+                + ", amount=3"
+                + '}'
+        );
+    }
 }
