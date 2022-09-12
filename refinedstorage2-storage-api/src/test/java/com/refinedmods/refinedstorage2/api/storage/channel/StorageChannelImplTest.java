@@ -8,6 +8,8 @@ import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.composite.PrioritizedStorage;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 
 import java.util.Optional;
 
@@ -203,6 +205,31 @@ class StorageChannelImplTest {
         // Assert
         assertThat(resource).isPresent();
         assertThat(resource.get()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 50));
+        assertThat(sut.findTrackedResourceByActorType("A", EmptyActor.class)).isEmpty();
+    }
+
+    @Test
+    void shouldBeAbleToRetrieveTrackedResource() {
+        // Arrange
+        final Storage<String> storage = new TrackedStorageImpl<>(
+            new LimitedStorageImpl<>(100),
+            () -> 0L
+        );
+
+        sut.addSource(storage);
+
+        // Act
+        sut.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // Assert
+        final Optional<ResourceAmount<String>> value = sut.get("A");
+        assertThat(value).isPresent();
+        assertThat(value.get()).usingRecursiveComparison().isEqualTo(new ResourceAmount<>("A", 50));
+
+        assertThat(sut.findTrackedResourceByActorType("A", EmptyActor.class))
+            .get()
+            .usingRecursiveComparison()
+            .isEqualTo(new TrackedResource("Empty", 0));
     }
 
     @Test

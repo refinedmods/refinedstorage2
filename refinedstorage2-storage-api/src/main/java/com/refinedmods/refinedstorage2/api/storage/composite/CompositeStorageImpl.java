@@ -55,7 +55,7 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
     @Override
     public void removeSource(final Storage<T> source) {
         sources.remove(source);
-        sortSources();
+        // Re-sort isn't necessary, since they are ordered when added.
         removeContentOfSourceFromList(source);
         parentComposites.forEach(parentComposite -> parentComposite.onSourceRemovedFromChild(source));
         if (source instanceof CompositeAwareChild<T> compositeAwareChild) {
