@@ -89,7 +89,7 @@ class ResourceAmountTest {
         final ResourceAmount<String> sut = new ResourceAmount<>("A", 3);
 
         // Act & assert
-        assertThat(sut.toString()).isEqualTo(
+        assertThat(sut).hasToString(
             "ResourceAmount{"
                 + "resource=A"
                 + ", amount=3"

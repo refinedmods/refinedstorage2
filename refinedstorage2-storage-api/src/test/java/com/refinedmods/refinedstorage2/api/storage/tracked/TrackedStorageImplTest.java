@@ -104,6 +104,10 @@ class TrackedStorageImplTest {
 
             if (action == Action.EXECUTE) {
                 assertThat(trackedResource).isPresent();
+                assertThat(trackedResource).get().hasToString("TrackedResource{"
+                    + "sourceName='Source1'"
+                    + ", time=1"
+                    + '}');
                 assertThat(trackedResource.get().getSourceName()).isEqualTo("Source1");
                 assertThat(trackedResource.get().getTime()).isEqualTo(1);
             } else {
