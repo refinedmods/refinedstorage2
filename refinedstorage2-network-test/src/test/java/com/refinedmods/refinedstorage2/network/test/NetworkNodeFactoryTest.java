@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
 @SetupNetwork
-public class NetworkNodeFactoryTest {
+class NetworkNodeFactoryTest {
     @AddNetworkNode
     ControllerNetworkNode controller;
     @AddNetworkNode
