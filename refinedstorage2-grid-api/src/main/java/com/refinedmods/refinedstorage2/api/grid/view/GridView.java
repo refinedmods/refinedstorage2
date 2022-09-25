@@ -40,19 +40,15 @@ public interface GridView<T> {
     void setFilterAndSort(Predicate<AbstractGridResource<T>> predicate);
 
     /**
-     * @return whether the view is currently not sorting
-     */
-    boolean isPreventSorting();
-
-    /**
      * Preventing sorting means that the changes will still arrive at the backing list and view list, but,
      * the view list won't be resorted and if a resource is zeroed, will stay in view until sorting is enabled
      * again.
      * This still requires a call to {@link #sort()} when preventing sorting is disabled again.
      *
-     * @param preventSorting whether the view should prevent sorting on changes
+     * @param changedPreventSorting whether the view should prevent sorting on changes
+     * @return whether prevent sorting has changed
      */
-    void setPreventSorting(boolean preventSorting);
+    boolean setPreventSorting(boolean changedPreventSorting);
 
     /**
      * Changing the sorting direction still requires a call to {@link #sort()}.

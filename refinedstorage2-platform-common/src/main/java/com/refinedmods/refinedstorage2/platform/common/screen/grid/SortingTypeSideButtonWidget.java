@@ -32,7 +32,16 @@ public class SortingTypeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     private static OnPress createPressAction(final AbstractGridContainerMenu<?> menu) {
-        return btn -> menu.setSortingType(menu.getSortingType().toggle());
+        return btn -> menu.setSortingType(toggle(menu.getSortingType()));
+    }
+
+    private static GridSortingType toggle(final GridSortingType sortingType) {
+        return switch (sortingType) {
+            case QUANTITY -> GridSortingType.NAME;
+            case NAME -> GridSortingType.ID;
+            case ID -> GridSortingType.LAST_MODIFIED;
+            case LAST_MODIFIED -> GridSortingType.QUANTITY;
+        };
     }
 
     private List<Component> calculateTooltip(final GridSortingType type) {
