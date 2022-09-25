@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.network.test.NetworkTest;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
+import com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,7 +35,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @NetworkTest
 @SetupNetwork
 class GridNetworkNodeTest {
-    @AddNetworkNode
+    @AddNetworkNode(properties = {
+        @AddNetworkNode.Property(key = AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE, longValue = 5)
+    })
     GridNetworkNode<String> sut;
 
     @BeforeEach
@@ -42,6 +45,12 @@ class GridNetworkNodeTest {
         networkStorage.addSource(new TrackedStorageImpl<>(new LimitedStorageImpl<>(1000), () -> 2L));
         networkStorage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
         networkStorage.insert("B", 200, Action.EXECUTE, EmptyActor.INSTANCE);
+    }
+
+    @Test
+    void testInitialState() {
+        // Assert
+        assertThat(sut.getEnergyUsage()).isEqualTo(5);
     }
 
     @Test

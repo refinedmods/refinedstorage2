@@ -166,6 +166,7 @@ abstract class AbstractExporterNetworkNodeTest {
         storageChannel.addSource(new InMemoryStorageImpl<>());
         storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
         storageChannel.insert("B", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.insert("C", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
         final Storage<String> destination = new LimitedStorageImpl<>(5);
         destination.insert("C", 1, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -173,6 +174,7 @@ abstract class AbstractExporterNetworkNodeTest {
         final ExporterTransferStrategy strategy = createTransferStrategy(destination, 10);
 
         sut.setTransferStrategy(strategy);
+        sut.setTemplates(List.of("C"));
         sut.setTemplates(List.of("A", "B"));
 
         // Act & assert
@@ -180,7 +182,8 @@ abstract class AbstractExporterNetworkNodeTest {
 
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount<>("A", 96),
-            new ResourceAmount<>("B", 100)
+            new ResourceAmount<>("B", 100),
+            new ResourceAmount<>("C", 100)
         );
         assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount<>("A", 4),
@@ -191,7 +194,8 @@ abstract class AbstractExporterNetworkNodeTest {
 
         assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount<>("A", 96),
-            new ResourceAmount<>("B", 100)
+            new ResourceAmount<>("B", 100),
+            new ResourceAmount<>("C", 100)
         );
         assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount<>("A", 4),

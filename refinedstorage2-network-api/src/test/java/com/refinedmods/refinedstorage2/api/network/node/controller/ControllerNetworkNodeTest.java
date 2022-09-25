@@ -22,6 +22,16 @@ class ControllerNetworkNodeTest {
     ControllerNetworkNode sut;
 
     @Test
+    void testInitialState() {
+        // Assert
+        assertThat(sut.getEnergyUsage()).isZero();
+        assertThat(sut.getCapacity()).isZero();
+        assertThat(sut.getActualCapacity()).isZero();
+        assertThat(sut.getStored()).isZero();
+        assertThat(sut.getActualStored()).isZero();
+    }
+
+    @Test
     void testStoredAndCapacityWhenInactive() {
         // Arrange
         sut.setEnergyStorage(new EnergyStorageImpl(100));
@@ -112,6 +122,32 @@ class ControllerNetworkNodeTest {
         assertThat(extracted).isEqualTo(10);
         assertThat(sut.getCapacity()).isEqualTo(100);
         assertThat(sut.getActualCapacity()).isEqualTo(100);
+        assertThat(sut.getStored()).isZero();
+        assertThat(sut.getActualStored()).isZero();
+    }
+
+    @Test
+    void shouldNotReceiveEnergyWithoutEnergyStorage() {
+        // Act
+        final long inserted = sut.receive(10, Action.EXECUTE);
+
+        // Assert
+        assertThat(inserted).isZero();
+        assertThat(sut.getCapacity()).isZero();
+        assertThat(sut.getActualCapacity()).isZero();
+        assertThat(sut.getStored()).isZero();
+        assertThat(sut.getActualStored()).isZero();
+    }
+
+    @Test
+    void shouldNotExtractEnergyWithoutEnergyStorage() {
+        // Act
+        final long extracted = sut.extract(20, Action.EXECUTE);
+
+        // Assert
+        assertThat(extracted).isZero();
+        assertThat(sut.getCapacity()).isZero();
+        assertThat(sut.getActualCapacity()).isZero();
         assertThat(sut.getStored()).isZero();
         assertThat(sut.getActualStored()).isZero();
     }

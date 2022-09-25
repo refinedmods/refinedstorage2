@@ -280,14 +280,17 @@ public abstract class AbstractDiskDriveBlockEntity
 
         final ListTag statesList = tag.getList(TAG_STATES, Tag.TAG_BYTE);
 
-        driveState = new DiskDriveState(statesList.size());
-        for (int i = 0; i < statesList.size(); ++i) {
-            int idx = ((ByteTag) statesList.get(i)).getAsInt();
-            if (idx < 0 || idx >= StorageDiskState.values().length) {
-                idx = StorageDiskState.NONE.ordinal();
+        driveState = DiskDriveState.of(
+            statesList.size(),
+            idx -> {
+                final int ordinal = ((ByteTag) statesList.get(idx)).getAsInt();
+                final StorageDiskState[] values = StorageDiskState.values();
+                if (ordinal < 0 || ordinal >= values.length) {
+                    return StorageDiskState.NONE;
+                }
+                return values[ordinal];
             }
-            driveState.setState(i, StorageDiskState.values()[idx]);
-        }
+        );
 
         onDriveStateUpdated();
     }

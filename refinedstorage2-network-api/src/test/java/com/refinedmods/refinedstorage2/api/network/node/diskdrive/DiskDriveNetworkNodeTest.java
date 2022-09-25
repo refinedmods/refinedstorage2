@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
+import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.node.storage.FakeActor;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
@@ -12,6 +13,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
+import com.refinedmods.refinedstorage2.network.test.InjectNetwork;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.network.test.NetworkTest;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
@@ -352,7 +354,8 @@ class DiskDriveNetworkNodeTest {
 
     @Test
     void shouldRespectAllowlistWhenInserting(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
         sut.setFilterTemplates(Set.of("A", "B"));
@@ -373,8 +376,42 @@ class DiskDriveNetworkNodeTest {
     }
 
     @Test
+    void shouldRespectAllowlistWithNormalizerWhenInserting(
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
+        // Arrange
+        sut.setFilterMode(FilterMode.ALLOW);
+        sut.setFilterTemplates(Set.of("A"));
+        sut.setNormalizer(resource -> {
+            if (resource instanceof String str) {
+                return str.substring(0, 1);
+            }
+            return resource;
+        });
+
+        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        storageProviderRepository.setInSlot(1, storage);
+        initializeDiskDriveAndActivate();
+
+        // Act
+        final long inserted1 = networkStorage.insert("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted2 = networkStorage.insert("A1", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted3 = networkStorage.insert("A2", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted4 = networkStorage.insert("B", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted5 = networkStorage.insert("B1", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // Assert
+        assertThat(inserted1).isEqualTo(1);
+        assertThat(inserted2).isEqualTo(1);
+        assertThat(inserted3).isEqualTo(1);
+        assertThat(inserted4).isZero();
+        assertThat(inserted5).isZero();
+    }
+
+    @Test
     void shouldRespectEmptyAllowlistWhenInserting(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
         sut.setFilterMode(FilterMode.ALLOW);
         sut.setFilterTemplates(Set.of());
@@ -396,7 +433,8 @@ class DiskDriveNetworkNodeTest {
 
     @Test
     void shouldRespectBlocklistWhenInserting(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
         sut.setFilterMode(FilterMode.BLOCK);
         sut.setFilterTemplates(Set.of("A", "B"));
@@ -418,7 +456,8 @@ class DiskDriveNetworkNodeTest {
 
     @Test
     void shouldRespectEmptyBlocklistWhenInserting(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
         sut.setFilterMode(FilterMode.BLOCK);
         sut.setFilterTemplates(Set.of());
@@ -486,7 +525,8 @@ class DiskDriveNetworkNodeTest {
 
     @Test
     void shouldNotAllowInsertsWhenInactive(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(1, storage);
@@ -503,7 +543,8 @@ class DiskDriveNetworkNodeTest {
 
     @Test
     void shouldNotAllowExtractsWhenInactive(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 20, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -521,7 +562,8 @@ class DiskDriveNetworkNodeTest {
 
     @Test
     void shouldHideFromNetworkWhenInactive(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -559,8 +601,42 @@ class DiskDriveNetworkNodeTest {
     }
 
     @Test
+    void shouldNoLongerShowOnNetworkWhenRemoved(
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage,
+        @InjectNetwork final Network network
+    ) {
+        // Arrange
+        final Storage<String> storage1 = new LimitedStorageImpl<>(100);
+        storage1.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageProviderRepository.setInSlot(1, storage1);
+        initializeDiskDriveAndActivate();
+
+        // Act & assert
+        final Storage<String> storage2 = new LimitedStorageImpl<>(100);
+        storage2.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageProviderRepository.setInSlot(2, storage2);
+        sut.onDiskChanged(2);
+
+        assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 50),
+            new ResourceAmount<>("B", 50)
+        );
+
+        network.removeContainer(() -> sut);
+        assertThat(networkStorage.getAll()).isEmpty();
+
+        final Storage<String> storage3 = new LimitedStorageImpl<>(100);
+        storage3.insert("C", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageProviderRepository.setInSlot(3, storage3);
+        sut.onDiskChanged(3);
+
+        assertThat(networkStorage.getAll()).isEmpty();
+    }
+
+    @Test
     void shouldNotCallDiskStateChangeListenerWhenUnnecessaryOnExtracting(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 76, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -576,7 +652,8 @@ class DiskDriveNetworkNodeTest {
 
     @Test
     void shouldNotCallDiskStateChangeListenerWhenUnnecessaryOnInserting(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storageProviderRepository.setInSlot(1, storage);

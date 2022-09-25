@@ -183,6 +183,7 @@ class RoundRobinExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest 
             new ResourceAmount<>("B", 5)
         );
 
+        // Now C would be the next one, but we expect to go back to A.
         sut.setTemplates(List.of("A", "C"));
         sut.doWork();
 
