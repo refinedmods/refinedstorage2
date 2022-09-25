@@ -117,6 +117,33 @@ class CompositeStorageImplTest {
     }
 
     @Test
+    void shouldOnlyRespectPriorityWhenSortingSourcesExplicitlyWhenChangingPriorityAfterAddingSource() {
+        // Arrange
+        final PrioritizedStorage<String> storage1 = new PrioritizedStorage<>(1, new LimitedStorageImpl<>(10));
+        final Storage<String> storage2 = new PrioritizedStorage<>(2, new LimitedStorageImpl<>(10));
+
+        sut.addSource(storage1);
+        sut.addSource(storage2);
+
+        // Act & assert
+        sut.insert("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        assertThat(storage1.getStored()).isZero();
+        assertThat(storage2.getStored()).isEqualTo(1);
+
+        storage1.setPriority(3);
+
+        sut.insert("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        assertThat(storage1.getStored()).isZero();
+        assertThat(storage2.getStored()).isEqualTo(2);
+
+        sut.sortSources();
+
+        sut.insert("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        assertThat(storage1.getStored()).isEqualTo(1);
+        assertThat(storage2.getStored()).isEqualTo(2);
+    }
+
+    @Test
     void shouldRemoveSource() {
         // Arrange
         final Storage<String> storage1 = new LimitedStorageImpl<>(10);
