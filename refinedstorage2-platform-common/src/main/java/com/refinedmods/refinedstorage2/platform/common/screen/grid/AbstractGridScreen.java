@@ -536,8 +536,7 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
 
     @Override
     public boolean keyReleased(final int key, final int scanCode, final int modifiers) {
-        if (getMenu().getView().isPreventSorting()) {
-            getMenu().getView().setPreventSorting(false);
+        if (getMenu().getView().setPreventSorting(false)) {
             getMenu().getView().sort();
         }
 

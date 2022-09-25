@@ -17,6 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 class GridViewImplTest {
     private GridView<String> view;
@@ -206,6 +207,24 @@ class GridViewImplTest {
     }
 
     @Test
+    void shouldCallListenerWhenSorting() {
+        // Arrange
+        view.loadResource("B", 6, null);
+        view.loadResource("A", 15, null);
+        view.loadResource("D", 10, null);
+
+        final Runnable listener = mock(Runnable.class);
+        view.setListener(listener);
+
+        // Act
+        view.sort();
+
+        // Assert
+        verify(listener, times(1)).run();
+        verifyNoMoreInteractions(listener);
+    }
+
+    @Test
     void shouldUpdateExistingResource() {
         // Arrange
         view.loadResource("B", 6, null);
@@ -268,7 +287,10 @@ class GridViewImplTest {
             new FakeGridResource("A", 15)
         );
 
-        view.setPreventSorting(true);
+        final boolean changed = view.setPreventSorting(true);
+        assertThat(changed).isTrue();
+        final boolean changed2 = view.setPreventSorting(true);
+        assertThat(changed2).isFalse();
 
         view.onChange("B", 5, null);
         verify(listener, never()).run();
@@ -279,7 +301,8 @@ class GridViewImplTest {
             new FakeGridResource("A", 15)
         );
 
-        view.setPreventSorting(false);
+        final boolean changed3 = view.setPreventSorting(false);
+        assertThat(changed3).isTrue();
         view.sort();
 
         assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(

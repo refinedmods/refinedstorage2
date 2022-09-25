@@ -69,13 +69,10 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     @Override
-    public boolean isPreventSorting() {
-        return preventSorting;
-    }
-
-    @Override
-    public void setPreventSorting(final boolean preventSorting) {
-        this.preventSorting = preventSorting;
+    public boolean setPreventSorting(final boolean changedPreventSorting) {
+        final boolean changed = preventSorting != changedPreventSorting;
+        this.preventSorting = changedPreventSorting;
+        return changed;
     }
 
     @Override
@@ -98,7 +95,7 @@ public class GridViewImpl<T> implements GridView<T> {
     public void sort() {
         LOGGER.info("Sorting grid view");
 
-        viewListIndex.clear();
+        //viewListIndex.clear();
         viewList = backingList
             .getAll()
             .stream()

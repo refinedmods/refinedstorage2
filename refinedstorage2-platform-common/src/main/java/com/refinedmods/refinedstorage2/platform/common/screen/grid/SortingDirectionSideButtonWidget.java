@@ -33,7 +33,13 @@ public class SortingDirectionSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     private static OnPress createPressAction(final AbstractGridContainerMenu<?> menu) {
-        return btn -> menu.setSortingDirection(menu.getSortingDirection().toggle());
+        return btn -> menu.setSortingDirection(toggle(menu.getSortingDirection()));
+    }
+
+    private static GridSortingDirection toggle(final GridSortingDirection sortingDirection) {
+        return sortingDirection == GridSortingDirection.ASCENDING
+            ? GridSortingDirection.DESCENDING
+            : GridSortingDirection.ASCENDING;
     }
 
     private List<Component> calculateTooltip(final GridSortingDirection type) {
