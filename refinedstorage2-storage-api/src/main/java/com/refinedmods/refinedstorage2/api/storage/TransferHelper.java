@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.api.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 
 import javax.annotation.Nullable;
 
@@ -39,7 +38,6 @@ public final class TransferHelper {
                                     final ExtractableStorage<T> source,
                                     final InsertableStorage<T> destination,
                                     @Nullable final InsertableStorage<T> fallback) {
-        ResourceAmount.validate(resource, amount);
         final long extractedSimulated = source.extract(resource, amount, Action.SIMULATE, actor);
         if (extractedSimulated == 0) {
             return 0;
