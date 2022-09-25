@@ -42,14 +42,17 @@ public class GridViewImpl<T> implements GridView<T> {
     private boolean preventSorting;
 
     /**
-     * @param gridResourceFactory a factory that transforms a resource amount to a grid resource
-     * @param backingList         the backing list
+     * @param gridResourceFactory     a factory that transforms a resource amount to a grid resource
+     * @param backingList             the backing list
+     * @param initialTrackedResources initial tracked resources state
      */
     public GridViewImpl(final Function<ResourceAmount<T>, AbstractGridResource<T>> gridResourceFactory,
-                        final ResourceList<T> backingList) {
+                        final ResourceList<T> backingList,
+                        final Map<T, TrackedResource> initialTrackedResources) {
         this.gridResourceFactory = gridResourceFactory;
         this.identitySort = GridSortingType.NAME.getComparator().apply(this);
         this.backingList = backingList;
+        this.trackedResources.putAll(initialTrackedResources);
     }
 
     @Override
@@ -81,12 +84,6 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     @Override
-    public void loadResource(final T resource, final long amount, @Nullable final TrackedResource trackedResource) {
-        backingList.add(resource, amount);
-        trackedResources.put(resource, trackedResource);
-    }
-
-    @Override
     public Optional<TrackedResource> getTrackedResource(final T resource) {
         return Optional.ofNullable(trackedResources.get(resource));
     }
@@ -95,7 +92,7 @@ public class GridViewImpl<T> implements GridView<T> {
     public void sort() {
         LOGGER.info("Sorting grid view");
 
-        //viewListIndex.clear();
+        viewListIndex.clear();
         viewList = backingList
             .getAll()
             .stream()

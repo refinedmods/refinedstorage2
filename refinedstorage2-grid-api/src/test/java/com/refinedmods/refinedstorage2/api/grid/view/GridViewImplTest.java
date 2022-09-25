@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
-import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.Optional;
@@ -20,17 +19,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 class GridViewImplTest {
-    private GridView<String> view;
+    private GridViewBuilder<String> viewBuilder;
 
     @BeforeEach
     void setUp() {
-        view = new GridViewImpl<>(FakeGridResource::new, new ResourceListImpl<>());
-        view.setSortingType(GridSortingType.QUANTITY);
+        viewBuilder = new GridViewBuilderImpl<>(FakeGridResource::new);
     }
 
     @RepeatedTest(100)
     void shouldPreserveOrderWhenSortingAndTwoResourcesHaveTheSameQuantity() {
         // Arrange
+        final GridView<String> view = viewBuilder.build();
+
         view.setSortingDirection(GridSortingDirection.DESCENDING);
 
         // Act & assert
@@ -62,13 +62,15 @@ class GridViewImplTest {
     @EnumSource(GridSortingType.class)
     void testSortingAscending(final GridSortingType sortingType) {
         // Arrange
+        final GridView<String> view = viewBuilder
+            .withResource("A", 10, null)
+            .withResource("A", 5, new TrackedResource("Raoul", 3))
+            .withResource("B", 1, new TrackedResource("VdB", 2))
+            .withResource("C", 2, null)
+            .build();
+
         view.setSortingType(sortingType);
         view.setSortingDirection(GridSortingDirection.ASCENDING);
-
-        view.loadResource("A", 10, null);
-        view.loadResource("A", 5, new TrackedResource("Raoul", 3));
-        view.loadResource("B", 1, new TrackedResource("VdB", 2));
-        view.loadResource("C", 2, null);
 
         // Act
         view.sort();
@@ -104,13 +106,15 @@ class GridViewImplTest {
     @EnumSource(GridSortingType.class)
     void testSortingDescending(final GridSortingType sortingType) {
         // Arrange
+        final GridView<String> view = viewBuilder
+            .withResource("A", 10, null)
+            .withResource("A", 5, new TrackedResource("Raoul", 3))
+            .withResource("B", 1, new TrackedResource("VDB", 2))
+            .withResource("C", 2, null)
+            .build();
+
         view.setSortingType(sortingType);
         view.setSortingDirection(GridSortingDirection.DESCENDING);
-
-        view.loadResource("A", 10, null);
-        view.loadResource("A", 5, new TrackedResource("Raoul", 3));
-        view.loadResource("B", 1, new TrackedResource("VDB", 2));
-        view.loadResource("C", 2, null);
 
         // Act
         view.sort();
@@ -144,20 +148,21 @@ class GridViewImplTest {
 
     @Test
     void shouldLoadResourcesAndRetrieveTrackedResourcesProperly() {
+        // Arrange
+        final GridView<String> view = viewBuilder
+            .withResource("A", 1, new TrackedResource("Raoul", 1))
+            .withResource("A", 1, new TrackedResource("RaoulA", 2))
+            .withResource("B", 1, new TrackedResource("VDB", 3))
+            .withResource("B", 1, null)
+            .withResource("D", 1, null)
+            .build();
+
         // Act
-        view.loadResource("A", 1, new TrackedResource("Raoul", 1));
-        view.loadResource("A", 1, new TrackedResource("RaoulA", 2));
-
-        view.loadResource("B", 1, new TrackedResource("VDB", 3));
-        view.loadResource("B", 1, null);
-
-        view.loadResource("D", 1, null);
-
-        // Assert
         final Optional<TrackedResource> a = view.getTrackedResource("A");
         final Optional<TrackedResource> b = view.getTrackedResource("B");
         final Optional<TrackedResource> d = view.getTrackedResource("D");
 
+        // Assert
         assertThat(a).get().usingRecursiveComparison().isEqualTo(new TrackedResource("RaoulA", 2));
         assertThat(b).isEmpty();
         assertThat(d).isEmpty();
@@ -166,8 +171,11 @@ class GridViewImplTest {
     @Test
     void shouldInsertNewResource() {
         // Arrange
-        view.loadResource("B", 15, null);
-        view.loadResource("D", 10, null);
+        final GridView<String> view = viewBuilder
+            .withResource("B", 15, null)
+            .withResource("D", 10, null)
+            .build();
+
         view.sort();
 
         final Runnable listener = mock(Runnable.class);
@@ -188,8 +196,11 @@ class GridViewImplTest {
     @Test
     void shouldNotInsertNewResourceWhenFilteringProhibitsIt() {
         // Arrange
-        view.loadResource("B", 15, null);
-        view.loadResource("D", 10, null);
+        final GridView<String> view = viewBuilder
+            .withResource("B", 15, null)
+            .withResource("D", 10, null)
+            .build();
+
         view.setFilterAndSort(resource -> !resource.getResourceAmount().getResource().equals("A"));
 
         final Runnable listener = mock(Runnable.class);
@@ -209,9 +220,11 @@ class GridViewImplTest {
     @Test
     void shouldCallListenerWhenSorting() {
         // Arrange
-        view.loadResource("B", 6, null);
-        view.loadResource("A", 15, null);
-        view.loadResource("D", 10, null);
+        final GridView<String> view = viewBuilder
+            .withResource("B", 6, null)
+            .withResource("A", 15, null)
+            .withResource("D", 10, null)
+            .build();
 
         final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
@@ -227,9 +240,12 @@ class GridViewImplTest {
     @Test
     void shouldUpdateExistingResource() {
         // Arrange
-        view.loadResource("B", 6, null);
-        view.loadResource("A", 15, null);
-        view.loadResource("D", 10, null);
+        final GridView<String> view = viewBuilder
+            .withResource("B", 6, null)
+            .withResource("A", 15, null)
+            .withResource("D", 10, null)
+            .build();
+
         view.sort();
 
         final Runnable listener = mock(Runnable.class);
@@ -250,9 +266,12 @@ class GridViewImplTest {
     @Test
     void shouldNotUpdateExistingResourceWhenFilteringProhibitsIt() {
         // Arrange
-        view.loadResource("B", 6, null);
-        view.loadResource("A", 15, null);
-        view.loadResource("D", 10, null);
+        final GridView<String> view = viewBuilder
+            .withResource("B", 6, null)
+            .withResource("A", 15, null)
+            .withResource("D", 10, null)
+            .build();
+
         view.setFilterAndSort(resource -> !resource.getResourceAmount().getResource().equals("B"));
 
         final Runnable listener = mock(Runnable.class);
@@ -272,9 +291,12 @@ class GridViewImplTest {
     @Test
     void shouldNotReorderExistingResourceWhenPreventingSorting() {
         // Arrange
-        view.loadResource("B", 6, null);
-        view.loadResource("A", 15, null);
-        view.loadResource("D", 10, null);
+        final GridView<String> view = viewBuilder
+            .withResource("B", 6, null)
+            .withResource("A", 15, null)
+            .withResource("D", 10, null)
+            .build();
+
         view.sort();
 
         final Runnable listener = mock(Runnable.class);
@@ -315,6 +337,8 @@ class GridViewImplTest {
     @Test
     void shouldUpdateTrackedResourceAfterReceivingChange() {
         // Act
+        final GridView<String> view = viewBuilder.build();
+
         view.onChange("A", 1, new TrackedResource("Raoul", 1));
         view.onChange("A", 1, new TrackedResource("RaoulA", 2));
 
@@ -336,9 +360,12 @@ class GridViewImplTest {
     @Test
     void shouldUpdateExistingResourceWhenPerformingPartialRemoval() {
         // Arrange
-        view.loadResource("B", 20, null);
-        view.loadResource("A", 15, null);
-        view.loadResource("D", 10, null);
+        final GridView<String> view = viewBuilder
+            .withResource("B", 20, null)
+            .withResource("A", 15, null)
+            .withResource("D", 10, null)
+            .build();
+
         view.sort();
 
         final Runnable listener = mock(Runnable.class);
@@ -359,9 +386,12 @@ class GridViewImplTest {
     @Test
     void shouldNotUpdateExistingResourceWhenPerformingPartialRemovalAndFilteringProhibitsIt() {
         // Arrange
-        view.loadResource("B", 20, null);
-        view.loadResource("A", 15, null);
-        view.loadResource("D", 10, null);
+        final GridView<String> view = viewBuilder
+            .withResource("B", 20, null)
+            .withResource("A", 15, null)
+            .withResource("D", 10, null)
+            .build();
+
         view.setFilterAndSort(resource -> !resource.getResourceAmount().getResource().equals("B"));
 
         final Runnable listener = mock(Runnable.class);
@@ -381,9 +411,12 @@ class GridViewImplTest {
     @Test
     void shouldNotReorderExistingResourceWhenPerformingPartialRemovalAndPreventingSorting() {
         // Arrange
-        view.loadResource("B", 20, null);
-        view.loadResource("A", 15, null);
-        view.loadResource("D", 10, null);
+        final GridView<String> view = viewBuilder
+            .withResource("B", 20, null)
+            .withResource("A", 15, null)
+            .withResource("D", 10, null)
+            .build();
+
         view.sort();
 
         final Runnable listener = mock(Runnable.class);
@@ -420,9 +453,12 @@ class GridViewImplTest {
     @Test
     void shouldRemoveExistingResourceCompletely() {
         // Arrange
-        view.loadResource("B", 20, null);
-        view.loadResource("A", 15, null);
-        view.loadResource("D", 10, null);
+        final GridView<String> view = viewBuilder
+            .withResource("B", 20, null)
+            .withResource("A", 15, null)
+            .withResource("D", 10, null)
+            .build();
+
         view.sort();
 
         final Runnable listener = mock(Runnable.class);
@@ -442,9 +478,12 @@ class GridViewImplTest {
     @Test
     void shouldNotReorderWhenRemovingExistingResourceCompletelyAndPreventingSorting() {
         // Arrange
-        view.loadResource("A", 15, null);
-        view.loadResource("B", 20, null);
-        view.loadResource("D", 10, null);
+        final GridView<String> view = viewBuilder
+            .withResource("A", 15, null)
+            .withResource("B", 20, null)
+            .withResource("D", 10, null)
+            .build();
+
         view.sort();
 
         final Runnable listener = mock(Runnable.class);
@@ -479,9 +518,12 @@ class GridViewImplTest {
     @Test
     void shouldReuseExistingResourceWhenPreventingSortingAndRemovingExistingResourceCompletelyAndThenReinserting() {
         // Arrange
-        view.loadResource("A", 15, null);
-        view.loadResource("B", 20, null);
-        view.loadResource("D", 10, null);
+        final GridView<String> view = viewBuilder
+            .withResource("A", 15, null)
+            .withResource("B", 20, null)
+            .withResource("D", 10, null)
+            .build();
+
         view.sort();
 
         final Runnable listener = mock(Runnable.class);
