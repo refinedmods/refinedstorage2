@@ -174,7 +174,8 @@ public class NetworkTestExtension implements BeforeEachCallback, ParameterResolv
     public boolean supportsParameter(final ParameterContext parameterContext,
                                      final ExtensionContext extensionContext) throws ParameterResolutionException {
         return parameterContext.isAnnotated(InjectNetworkStorageChannel.class)
-            || parameterContext.isAnnotated(InjectNetworkEnergyComponent.class);
+            || parameterContext.isAnnotated(InjectNetworkEnergyComponent.class)
+            || parameterContext.isAnnotated(InjectNetwork.class);
     }
 
     @Override
@@ -186,6 +187,9 @@ public class NetworkTestExtension implements BeforeEachCallback, ParameterResolv
             .or(() -> parameterContext
                 .findAnnotation(InjectNetworkEnergyComponent.class)
                 .map(annotation -> (Object) getNetworkEnergy(annotation.networkId())))
+            .or(() -> parameterContext
+                .findAnnotation(InjectNetwork.class)
+                .map(annotation -> networkMap.get(annotation.value())))
             .orElseThrow();
     }
 
