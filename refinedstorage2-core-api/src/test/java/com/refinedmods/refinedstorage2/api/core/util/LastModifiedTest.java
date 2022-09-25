@@ -10,7 +10,10 @@ class LastModifiedTest {
     @ValueSource(longs = {0, 1000, 59 * 1000, (60 * 1000) - 1})
     void shouldHandleSecondsAgo(final long timePassed) {
         // Act
-        final LastModified lastModified = LastModified.calculate(0, timePassed);
+        final LastModified lastModified = LastModified.calculate(
+            System.currentTimeMillis(),
+            System.currentTimeMillis() + timePassed
+        );
 
         // Assert
         assertThat(lastModified).usingRecursiveComparison()
@@ -21,7 +24,10 @@ class LastModifiedTest {
     @ValueSource(longs = {60 * 1000, 60 * 59 * 1000, (60 * 60 * 1000) - 1})
     void shouldHandleMinutesAgo(final long timePassed) {
         // Act
-        final LastModified lastModified = LastModified.calculate(0, timePassed);
+        final LastModified lastModified = LastModified.calculate(
+            System.currentTimeMillis(),
+            System.currentTimeMillis() + timePassed
+        );
 
         // Assert
         assertThat(lastModified).usingRecursiveComparison()
@@ -32,7 +38,10 @@ class LastModifiedTest {
     @ValueSource(longs = {60 * 60 * 1000, 60 * 60 * 23 * 1000, (60 * 60 * 24 * 1000) - 1})
     void shouldHandleHoursAgo(final long timePassed) {
         // Act
-        final LastModified lastModified = LastModified.calculate(0, timePassed);
+        final LastModified lastModified = LastModified.calculate(
+            System.currentTimeMillis(),
+            System.currentTimeMillis() + timePassed
+        );
 
         // Assert
         assertThat(lastModified).usingRecursiveComparison()
@@ -43,7 +52,10 @@ class LastModifiedTest {
     @ValueSource(longs = {60 * 60 * 24 * 1000, 60 * 60 * 24 * 6 * 1000, (60 * 60 * 24 * 7 * 1000) - 1})
     void shouldHandleDaysAgo(final long timePassed) {
         // Act
-        final LastModified lastModified = LastModified.calculate(0, timePassed);
+        final LastModified lastModified = LastModified.calculate(
+            System.currentTimeMillis(),
+            System.currentTimeMillis() + timePassed
+        );
 
         // Assert
         assertThat(lastModified).usingRecursiveComparison()
@@ -54,7 +66,10 @@ class LastModifiedTest {
     @ValueSource(longs = {60 * 60 * 24 * 7 * 1000, 60L * 60 * 24 * 364 * 1000, (60L * 60 * 24 * 365 * 1000) - 1})
     void shouldHandleWeeksAgo(final long timePassed) {
         // Act
-        final LastModified lastModified = LastModified.calculate(0, timePassed);
+        final LastModified lastModified = LastModified.calculate(
+            System.currentTimeMillis(),
+            System.currentTimeMillis() + timePassed
+        );
 
         // Assert
         assertThat(lastModified).usingRecursiveComparison()
@@ -65,7 +80,10 @@ class LastModifiedTest {
     @ValueSource(longs = {60L * 60 * 24 * 365 * 1000, 60L * 60 * 24 * 365 * 10 * 1000})
     void shouldHandleYearsAgo(final long timePassed) {
         // Act
-        final LastModified lastModified = LastModified.calculate(0, timePassed);
+        final LastModified lastModified = LastModified.calculate(
+            System.currentTimeMillis(),
+            System.currentTimeMillis() + timePassed
+        );
 
         // Assert
         assertThat(lastModified).usingRecursiveComparison()

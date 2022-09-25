@@ -40,7 +40,7 @@ class OrderedRegistryImplTest {
     }
 
     @Test
-    void shouldRegister() {
+    void shouldRegisterAndRetrieve() {
         // Act
         sut.register("B", 20);
 
@@ -49,6 +49,7 @@ class OrderedRegistryImplTest {
         assertThat(sut.getAll()).containsExactly(10, 20);
         assertThat(sut.get("A")).get().isEqualTo(10);
         assertThat(sut.get("B")).get().isEqualTo(20);
+        assertThat(sut.getOrElseDefault("C")).isEqualTo(10);
         assertThat(sut.getId(10)).get().isEqualTo("A");
         assertThat(sut.getId(20)).get().isEqualTo("B");
         assertThat(sut.next(10)).isEqualTo(20);
