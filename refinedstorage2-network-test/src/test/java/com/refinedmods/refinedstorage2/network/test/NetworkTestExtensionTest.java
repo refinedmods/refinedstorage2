@@ -47,7 +47,7 @@ class NetworkTestExtensionTest {
     SimpleNetworkNode nonexistentNetworkNode;
 
     @Test
-    void shouldInjectNetwork() {
+    void shouldInjectNetworkThroughField() {
         // Assert
         assertThat(a).isNotNull();
         assertThat(b).isNotNull();
@@ -125,6 +125,16 @@ class NetworkTestExtensionTest {
         // Assert
         assertThat(networkEnergyA).isSameAs(a.getComponent(EnergyNetworkComponent.class));
         assertThat(networkEnergyB).isSameAs(b.getComponent(EnergyNetworkComponent.class));
+    }
+
+    @Test
+    void shouldInjectNetworkThroughParameter(
+        @InjectNetwork("a") final Network injectedA,
+        @InjectNetwork("b") final Network injectedB
+    ) {
+        // Assert
+        assertThat(injectedA).isSameAs(a);
+        assertThat(injectedB).isSameAs(b);
     }
 
     @Nested
