@@ -1,12 +1,15 @@
 package com.refinedmods.refinedstorage2.api.network.node.exporter;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeActor;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 
 import java.util.List;
@@ -24,7 +27,7 @@ class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeT
     @Test
     void shouldTransfer(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
         // Arrange
-        storageChannel.addSource(new InMemoryStorageImpl<>());
+        storageChannel.addSource(new TrackedStorageImpl<>(new InMemoryStorageImpl<>(), () -> 1L));
         storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
         storageChannel.insert("B", 100, Action.EXECUTE, EmptyActor.INSTANCE);
 
@@ -45,6 +48,11 @@ class FirstAvailableExporterNetworkNodeTest extends AbstractExporterNetworkNodeT
         assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount<>("A", 1)
         );
+        assertThat(storageChannel.findTrackedResourceByActorType("A", NetworkNodeActor.class))
+            .get()
+            .usingRecursiveComparison()
+            .isEqualTo(new TrackedResource(ExporterNetworkNode.class.getName(), 1));
+        assertThat(storageChannel.findTrackedResourceByActorType("B", NetworkNodeActor.class)).isEmpty();
     }
 
     @Test

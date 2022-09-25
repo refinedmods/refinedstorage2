@@ -61,7 +61,7 @@ class DiskDriveCompositeStorage<T> implements CompositeStorage<T>, CompositeAwar
 
     @Override
     public void sortSources() {
-        disks.sortSources();
+        // no-op: cannot sort individual disks.
     }
 
     @Override

@@ -41,7 +41,6 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
     public void setTemplates(final List<Object> newTemplates) {
         templates.clear();
         templates.addAll(newTemplates);
-        schedulingMode.onTemplatesChanged();
     }
 
     public void setEnergyUsage(final long energyUsage) {

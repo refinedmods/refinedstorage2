@@ -30,51 +30,20 @@ public class EnergyStorageImpl implements EnergyStorage {
 
     @Override
     public long receive(final long amount, final Action action) {
-        if (stored + amount > capacity) {
-            return receivePartly(action);
-        } else {
-            return receiveCompletely(amount, action);
-        }
-    }
-
-    private long receiveCompletely(final long amount, final Action action) {
+        final long spaceRemaining = capacity - stored;
+        final long maxReceive = Math.min(amount, spaceRemaining);
         if (action == Action.EXECUTE) {
-            stored += amount;
+            stored += maxReceive;
         }
-        return amount;
-    }
-
-    private long receivePartly(final Action action) {
-        final long spaceRemainingInStorage = capacity - stored;
-        if (spaceRemainingInStorage == 0) {
-            return 0;
-        }
-        if (action == Action.EXECUTE) {
-            stored += spaceRemainingInStorage;
-        }
-        return spaceRemainingInStorage;
+        return maxReceive;
     }
 
     @Override
     public long extract(final long amount, final Action action) {
-        if (amount > stored) {
-            return extractCompletely(action);
-        }
-        return extractPartly(amount, action);
-    }
-
-    private long extractPartly(final long amount, final Action action) {
+        final long maxExtract = Math.min(stored, amount);
         if (action == Action.EXECUTE) {
-            this.stored -= amount;
+            stored -= maxExtract;
         }
-        return amount;
-    }
-
-    private long extractCompletely(final Action action) {
-        final long extracted = stored;
-        if (action == Action.EXECUTE) {
-            this.stored = 0;
-        }
-        return extracted;
+        return maxExtract;
     }
 }

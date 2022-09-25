@@ -26,9 +26,4 @@ public class RoundRobinExporterSchedulingMode implements ExporterSchedulingMode 
         }
         index = 0;
     }
-
-    @Override
-    public void onTemplatesChanged() {
-        index = 0;
-    }
 }

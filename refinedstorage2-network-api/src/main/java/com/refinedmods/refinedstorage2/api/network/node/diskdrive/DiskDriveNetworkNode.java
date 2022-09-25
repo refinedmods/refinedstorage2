@@ -198,11 +198,7 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
     }
 
     public DiskDriveState createState() {
-        final DiskDriveState states = new DiskDriveState(disks.length);
-        for (int i = 0; i < disks.length; ++i) {
-            states.setState(i, getState(disks[i]));
-        }
-        return states;
+        return DiskDriveState.of(disks.length, idx -> getState(disks[idx]));
     }
 
     private StorageDiskState getState(@Nullable final DiskDriveDiskStorage<?> disk) {

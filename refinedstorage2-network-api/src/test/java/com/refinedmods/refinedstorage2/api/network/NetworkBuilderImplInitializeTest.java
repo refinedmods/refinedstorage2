@@ -9,6 +9,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class NetworkBuilderImplInitializeTest extends AbstractNetworkBuilderImplTest {
     @Test
+    void shouldNotFormNetworkIfAlreadyFormed() {
+        // Arrange
+        final FakeConnectionProvider connectionProvider = new FakeConnectionProvider();
+        final NetworkNodeContainer container = createContainerWithNetwork();
+
+        // Act
+        final boolean success = sut.initialize(container, connectionProvider);
+
+        // Assert
+        assertThat(success).isFalse();
+    }
+
+    @Test
     void shouldFormNetwork() {
         // Arrange
         final FakeConnectionProvider connectionProvider = new FakeConnectionProvider();
@@ -19,9 +32,11 @@ class NetworkBuilderImplInitializeTest extends AbstractNetworkBuilderImplTest {
         connectionProvider.with(container, unrelatedContainer);
 
         // Act
-        sut.initialize(container, connectionProvider);
+        final boolean success = sut.initialize(container, connectionProvider);
 
         // Assert
+        assertThat(success).isTrue();
+
         assertThat(container.getNode().getNetwork()).isNotNull();
         assertThat(container.getNode().getNetwork().getComponent(GraphNetworkComponent.class).getContainers())
             .containsExactly(container);
@@ -58,9 +73,11 @@ class NetworkBuilderImplInitializeTest extends AbstractNetworkBuilderImplTest {
             .connect(existingContainer1, newContainer);
 
         // Act
-        sut.initialize(newContainer, connectionProvider);
+        final boolean success = sut.initialize(newContainer, connectionProvider);
 
         // Assert
+        assertThat(success).isTrue();
+
         final Network expectedNetwork = existingContainer1.getNode().getNetwork();
         assertThat(expectedNetwork).isNotNull();
 
@@ -107,9 +124,11 @@ class NetworkBuilderImplInitializeTest extends AbstractNetworkBuilderImplTest {
             .connect(newContainer, existingContainer1);
 
         // Act
-        sut.initialize(newContainer, connectionProvider);
+        final boolean success = sut.initialize(newContainer, connectionProvider);
 
         // Assert
+        assertThat(success).isTrue();
+
         final Network expectedNetwork = existingContainer1.getNode().getNetwork();
         assertThat(expectedNetwork).isNotNull();
 
@@ -154,11 +173,15 @@ class NetworkBuilderImplInitializeTest extends AbstractNetworkBuilderImplTest {
             .connect(container2, container3);
 
         // Act
-        sut.initialize(container1, connectionProvider);
-        sut.initialize(container2, connectionProvider);
-        sut.initialize(container3, connectionProvider);
+        final boolean success1 = sut.initialize(container1, connectionProvider);
+        final boolean success2 = sut.initialize(container2, connectionProvider);
+        final boolean success3 = sut.initialize(container3, connectionProvider);
 
         // Assert
+        assertThat(success1).isTrue();
+        assertThat(success2).isFalse();
+        assertThat(success3).isFalse();
+
         final Network expectedNetwork = container1.getNode().getNetwork();
         assertThat(expectedNetwork).isNotNull();
 
