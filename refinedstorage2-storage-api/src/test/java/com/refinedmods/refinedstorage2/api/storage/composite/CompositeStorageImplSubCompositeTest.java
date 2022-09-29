@@ -21,6 +21,43 @@ class CompositeStorageImplSubCompositeTest {
     }
 
     @Test
+    void testAddingSubCompositeShouldAddAllResourcesToParent() {
+        // Arrange
+        final CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
+        subComposite.addSource(new InMemoryStorageImpl<>());
+        subComposite.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // Act
+        sut.addSource(subComposite);
+
+        // Assert
+        assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 10)
+        );
+    }
+
+    @Test
+    void testRemovingSubCompositeShouldRemoveAllResourcesFromParent() {
+        // Arrange
+        final CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
+        subComposite.addSource(new InMemoryStorageImpl<>());
+        subComposite.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        sut.addSource(subComposite);
+
+        final Storage<String> subCompositeStorage = new InMemoryStorageImpl<>();
+        subCompositeStorage.insert("B", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // Act
+        sut.removeSource(subComposite);
+
+        subComposite.addSource(subCompositeStorage);
+
+        // Assert
+        assertThat(sut.getAll()).isEmpty();
+    }
+
+    @Test
     void testAddingSourceToSubCompositeShouldNotifyParent() {
         // Arrange
         final CompositeStorage<String> subComposite = new CompositeStorageImpl<>(new ResourceListImpl<>());
