@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
@@ -39,6 +40,8 @@ public final class Blocks {
         new EnumMap<>(FluidStorageType.Variant.class);
     @Nullable
     private Supplier<ImporterBlock> importer;
+    @Nullable
+    private Supplier<ExporterBlock> exporter;
 
     private Blocks() {
     }
@@ -114,5 +117,13 @@ public final class Blocks {
 
     public ImporterBlock getImporter() {
         return Objects.requireNonNull(importer).get();
+    }
+
+    public void setExporter(final Supplier<ExporterBlock> exporterSupplier) {
+        this.exporter = exporterSupplier;
+    }
+
+    public ExporterBlock getExporter() {
+        return Objects.requireNonNull(exporter).get();
     }
 }

@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "refinedstorage2:exporter"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage2.exporting"
+    },
+    "description": {
+      "translate": "advancements.refinedstorage2.exporting.description"
+    }
+  },
+  "parent": "refinedstorage2:root",
+  "criteria": {
+    "exporter_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "refinedstorage2:exporter"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

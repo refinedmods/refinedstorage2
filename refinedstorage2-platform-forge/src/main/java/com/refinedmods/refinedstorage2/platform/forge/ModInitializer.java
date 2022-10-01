@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
@@ -96,6 +97,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXPORTER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.GRID;
@@ -252,6 +254,7 @@ public class ModInitializer extends AbstractModInitializer {
         }
 
         Blocks.INSTANCE.setImporter(blockRegistry.register(IMPORTER.getPath(), ImporterBlock::new));
+        Blocks.INSTANCE.setExporter(blockRegistry.register(EXPORTER.getPath(), ExporterBlock::new));
 
         blockRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -312,6 +315,10 @@ public class ModInitializer extends AbstractModInitializer {
         itemRegistry.register(
             IMPORTER.getPath(),
             () -> new SimpleBlockItem(Blocks.INSTANCE.getImporter(), CREATIVE_MODE_TAB)
+        );
+        itemRegistry.register(
+            EXPORTER.getPath(),
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getExporter(), CREATIVE_MODE_TAB)
         );
 
         itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));

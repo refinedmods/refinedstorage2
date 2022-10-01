@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "refinedstorage2:cable"
+    },
+    {
+      "item": "refinedstorage2:construction_core"
+    },
+    {
+      "item": "refinedstorage2:improved_processor"
+    }
+  ],
+  "result": {
+    "item": "refinedstorage2:exporter"
+  }
+}

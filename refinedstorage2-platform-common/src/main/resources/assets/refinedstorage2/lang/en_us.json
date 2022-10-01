@@ -19,6 +19,7 @@
   "block.refinedstorage2.4096b_fluid_storage_block": "4096B Fluid Storage Block",
   "block.refinedstorage2.creative_fluid_storage_block": "Creative Fluid Storage Block",
   "block.refinedstorage2.importer": "Importer",
+  "block.refinedstorage2.exporter": "Exporter",
   "gui.refinedstorage2.disk_drive.disks": "Disks",
   "gui.refinedstorage2.grid.sorting.direction": "Sorting direction",
   "gui.refinedstorage2.grid.sorting.direction.ascending": "Ascending",
@@ -152,6 +153,8 @@
   "text.autoconfig.refinedstorage2.option.fluidStorageBlock.creativeEnergyUsage": "Creative energy usage",
   "text.autoconfig.refinedstorage2.option.importer": "Importer",
   "text.autoconfig.refinedstorage2.option.importer.energyUsage": "Energy usage",
+  "text.autoconfig.refinedstorage2.option.exporter": "Importer",
+  "text.autoconfig.refinedstorage2.option.exporter.energyUsage": "Energy usage",
   "text.autoconfig.refinedstorage2.option.upgrade": "Upgrade",
   "text.autoconfig.refinedstorage2.option.upgrade.speedUpgradeEnergyUsage": "Speed upgrade energy usage",
   "text.autoconfig.refinedstorage2.option.upgrade.stackUpgradeEnergyUsage": "Stack upgrade energy usage",
@@ -170,6 +173,8 @@
   "advancements.refinedstorage2.viewing_fluids.description": "Craft a Fluid Grid to interact with your fluid storage",
   "advancements.refinedstorage2.importing": "Importing",
   "advancements.refinedstorage2.importing.description": "Get resources into the storage network with an Importer",
+  "advancements.refinedstorage2.exporting": "Exporting",
+  "advancements.refinedstorage2.exporting.description": "Get resources out of the storage network with an Exporter",
   "advancements.refinedstorage2.upgrading": "Upgrading",
   "advancements.refinedstorage2.upgrading.description": "Craft an Upgrade to improve various devices"
 }
