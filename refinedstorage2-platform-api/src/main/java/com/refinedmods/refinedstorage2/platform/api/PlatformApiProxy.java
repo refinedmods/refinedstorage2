@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.PlatformExporterSchedulingMode;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
@@ -54,6 +55,11 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry() {
         return ensureLoaded().getExporterTransferStrategyRegistry();
+    }
+
+    @Override
+    public OrderedRegistry<ResourceLocation, PlatformExporterSchedulingMode> getExporterSchedulingModeRegistry() {
+        return ensureLoaded().getExporterSchedulingModeRegistry();
     }
 
     @Override

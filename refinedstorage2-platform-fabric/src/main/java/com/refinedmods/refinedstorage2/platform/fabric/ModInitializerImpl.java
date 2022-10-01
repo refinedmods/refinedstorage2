@@ -153,6 +153,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerSounds();
         registerSidedHandlers();
         registerAdditionalResourceTypes();
+        registerAdditionalExporterSchedulingModes();
         registerTickHandler();
         registerEvents();
 
