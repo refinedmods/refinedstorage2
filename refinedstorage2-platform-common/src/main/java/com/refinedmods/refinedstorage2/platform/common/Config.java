@@ -23,6 +23,8 @@ public interface Config {
 
     Importer getImporter();
 
+    Exporter getExporter();
+
     Upgrade getUpgrade();
 
     interface Grid {
@@ -102,6 +104,10 @@ public interface Config {
     }
 
     interface Importer {
+        long getEnergyUsage();
+    }
+
+    interface Exporter {
         long getEnergyUsage();
     }
 
