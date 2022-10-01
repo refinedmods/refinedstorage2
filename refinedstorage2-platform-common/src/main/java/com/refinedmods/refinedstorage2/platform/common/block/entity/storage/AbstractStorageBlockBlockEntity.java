@@ -71,7 +71,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
     }
 
     private void initializeResourceFilter() {
-        getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
+        getNode().setFilterTemplates(resourceFilterContainer.getUniqueTemplates());
     }
 
     @Override
