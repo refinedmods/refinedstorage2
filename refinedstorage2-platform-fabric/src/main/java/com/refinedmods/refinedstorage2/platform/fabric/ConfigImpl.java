@@ -37,6 +37,9 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     private ImporterImpl importer = new ImporterImpl();
 
     @ConfigEntry.Gui.CollapsibleObject
+    private ExporterImpl exporter = new ExporterImpl();
+
+    @ConfigEntry.Gui.CollapsibleObject
     private UpgradeImpl upgrade = new UpgradeImpl();
 
     public static ConfigImpl get() {
@@ -76,6 +79,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public Importer getImporter() {
         return importer;
+    }
+
+    @Override
+    public Exporter getExporter() {
+        return exporter;
     }
 
     @Override
@@ -313,6 +321,15 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     }
 
     private static class ImporterImpl implements Importer {
+        private long energyUsage = 2;
+
+        @Override
+        public long getEnergyUsage() {
+            return energyUsage;
+        }
+    }
+
+    private static class ExporterImpl implements Exporter {
         private long energyUsage = 2;
 
         @Override

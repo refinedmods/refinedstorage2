@@ -156,7 +156,7 @@
   "text.autoconfig.refinedstorage2.option.fluidStorageBlock.creativeEnergyUsage": "Creative energy usage",
   "text.autoconfig.refinedstorage2.option.importer": "Importer",
   "text.autoconfig.refinedstorage2.option.importer.energyUsage": "Energy usage",
-  "text.autoconfig.refinedstorage2.option.exporter": "Importer",
+  "text.autoconfig.refinedstorage2.option.exporter": "Exporter",
   "text.autoconfig.refinedstorage2.option.exporter.energyUsage": "Energy usage",
   "text.autoconfig.refinedstorage2.option.upgrade": "Upgrade",
   "text.autoconfig.refinedstorage2.option.upgrade.speedUpgradeEnergyUsage": "Speed upgrade energy usage",

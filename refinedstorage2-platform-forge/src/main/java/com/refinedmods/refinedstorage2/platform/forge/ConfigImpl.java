@@ -23,6 +23,7 @@ public class ConfigImpl implements Config {
     private final StorageBlock storageBlock;
     private final FluidStorageBlock fluidStorageBlock;
     private final Importer importer;
+    private final Exporter exporter;
     private final Upgrade upgrade;
 
     public ConfigImpl() {
@@ -33,6 +34,7 @@ public class ConfigImpl implements Config {
         storageBlock = new StorageBlockImpl();
         fluidStorageBlock = new FluidStorageBlockImpl();
         importer = new ImporterImpl();
+        exporter = new ExporterImpl();
         upgrade = new UpgradeImpl();
         spec = builder.build();
     }
@@ -74,6 +76,11 @@ public class ConfigImpl implements Config {
     @Override
     public Importer getImporter() {
         return importer;
+    }
+
+    @Override
+    public Exporter getExporter() {
+        return exporter;
     }
 
     @Override
@@ -399,6 +406,23 @@ public class ConfigImpl implements Config {
             builder.push("importer");
             energyUsage = builder
                 .comment("The energy used by the Importer")
+                .defineInRange(ENERGY_USAGE, 2, 0, Long.MAX_VALUE);
+            builder.pop();
+        }
+
+        @Override
+        public long getEnergyUsage() {
+            return energyUsage.get();
+        }
+    }
+
+    private class ExporterImpl implements Exporter {
+        private final ForgeConfigSpec.LongValue energyUsage;
+
+        ExporterImpl() {
+            builder.push("exporter");
+            energyUsage = builder
+                .comment("The energy used by the Exporter")
                 .defineInRange(ENERGY_USAGE, 2, 0, Long.MAX_VALUE);
             builder.pop();
         }
