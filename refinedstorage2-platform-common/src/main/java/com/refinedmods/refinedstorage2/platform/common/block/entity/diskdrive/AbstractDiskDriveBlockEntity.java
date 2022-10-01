@@ -123,7 +123,7 @@ public abstract class AbstractDiskDriveBlockEntity
     }
 
     private void initializeResourceFilter() {
-        getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
+        getNode().setFilterTemplates(resourceFilterContainer.getUniqueTemplates());
     }
 
     @Override

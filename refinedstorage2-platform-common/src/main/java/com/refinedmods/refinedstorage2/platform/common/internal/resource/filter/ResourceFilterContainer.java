@@ -4,7 +4,9 @@ import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -66,8 +68,15 @@ public class ResourceFilterContainer {
         return items[index];
     }
 
-    public Set<Object> getTemplates() {
-        final Set<Object> result = new HashSet<>();
+    public Set<Object> getUniqueTemplates() {
+        return getTemplates(new HashSet<>());
+    }
+
+    public List<Object> getTemplates() {
+        return getTemplates(new ArrayList<>());
+    }
+
+    private <C extends Collection<Object>> C getTemplates(final C result) {
         for (int i = 0; i < size(); ++i) {
             final FilteredResource item = items[i];
             if (item == null) {

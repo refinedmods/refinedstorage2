@@ -41,6 +41,7 @@ class ResourceFilterContainerTest {
         assertThat(sut.get(2)).isNull();
         assertThat(sut.size()).isEqualTo(3);
         assertThat(sut.getTemplates()).isEmpty();
+        assertThat(sut.getUniqueTemplates()).isEmpty();
         assertThat(sut.determineDefaultType()).isEqualTo(PlatformTestFixtures.RESOURCE_TYPE_REGISTRY.getDefault());
     }
 
@@ -59,6 +60,27 @@ class ResourceFilterContainerTest {
         assertThat(sut.get(2)).isNull();
         assertThat(sut.size()).isEqualTo(3);
         assertThat(sut.getTemplates()).containsExactly(value);
+        assertThat(sut.getUniqueTemplates()).containsExactly(value);
+        assertThat(sut.determineDefaultType()).isEqualTo(ItemResourceType.INSTANCE);
+    }
+
+    @Test
+    void shouldSetDuplicatedFilter() {
+        // Arrange
+        final ItemResource value = new ItemResource(Items.DIRT, null);
+
+        // Act
+        sut.set(1, new ItemFilteredResource(value));
+        sut.set(2, new ItemFilteredResource(value));
+
+        // Assert
+        assertThat(listener.isChanged()).isTrue();
+        assertThat(sut.get(0)).isNull();
+        assertThat(sut.get(1)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(value));
+        assertThat(sut.get(2)).usingRecursiveComparison().isEqualTo(new ItemFilteredResource(value));
+        assertThat(sut.size()).isEqualTo(3);
+        assertThat(sut.getTemplates()).containsExactly(value, value);
+        assertThat(sut.getUniqueTemplates()).containsExactly(value);
         assertThat(sut.determineDefaultType()).isEqualTo(ItemResourceType.INSTANCE);
     }
 
@@ -78,6 +100,7 @@ class ResourceFilterContainerTest {
         assertThat(sut.get(2)).isNull();
         assertThat(sut.size()).isEqualTo(3);
         assertThat(sut.getTemplates()).isEmpty();
+        assertThat(sut.getUniqueTemplates()).isEmpty();
         assertThat(sut.determineDefaultType()).isEqualTo(PlatformTestFixtures.RESOURCE_TYPE_REGISTRY.getDefault());
     }
 
@@ -103,6 +126,7 @@ class ResourceFilterContainerTest {
         assertThat(deserialized.get(2)).usingRecursiveComparison().isEqualTo(new FluidFilteredResource(fluidValue));
         assertThat(deserialized.size()).isEqualTo(3);
         assertThat(deserialized.getTemplates()).containsExactlyInAnyOrder(itemValue, fluidValue);
+        assertThat(deserialized.getUniqueTemplates()).containsExactlyInAnyOrder(itemValue, fluidValue);
         assertThat(deserialized.determineDefaultType()).isEqualTo(ItemResourceType.INSTANCE);
     }
 
@@ -128,7 +152,8 @@ class ResourceFilterContainerTest {
         assertThat(deserialized.get(1)).isNull();
         assertThat(deserialized.get(2)).usingRecursiveComparison().isEqualTo(new FluidFilteredResource(fluidValue));
         assertThat(deserialized.size()).isEqualTo(3);
-        assertThat(deserialized.getTemplates()).containsExactlyInAnyOrder(fluidValue);
+        assertThat(deserialized.getTemplates()).containsExactly(fluidValue);
+        assertThat(deserialized.getUniqueTemplates()).containsExactly(fluidValue);
         assertThat(deserialized.determineDefaultType()).isEqualTo(FluidResourceType.INSTANCE);
     }
 
@@ -198,6 +223,7 @@ class ResourceFilterContainerTest {
         assertThat(deserialized.get(2)).usingRecursiveComparison().isEqualTo(new FluidFilteredResource(fluidValue));
         assertThat(deserialized.size()).isEqualTo(3);
         assertThat(deserialized.getTemplates()).containsExactlyInAnyOrder(itemValue, fluidValue);
+        assertThat(deserialized.getUniqueTemplates()).containsExactlyInAnyOrder(itemValue, fluidValue);
         assertThat(deserialized.determineDefaultType()).isEqualTo(ItemResourceType.INSTANCE);
     }
 
@@ -233,7 +259,8 @@ class ResourceFilterContainerTest {
         assertThat(deserialized.get(1)).isNull();
         assertThat(deserialized.get(2)).isNull();
         assertThat(deserialized.size()).isEqualTo(3);
-        assertThat(deserialized.getTemplates()).containsExactlyInAnyOrder(itemValue);
+        assertThat(deserialized.getTemplates()).containsExactly(itemValue);
+        assertThat(deserialized.getUniqueTemplates()).containsExactly(itemValue);
         assertThat(deserialized.determineDefaultType()).isEqualTo(ItemResourceType.INSTANCE);
     }
 }
