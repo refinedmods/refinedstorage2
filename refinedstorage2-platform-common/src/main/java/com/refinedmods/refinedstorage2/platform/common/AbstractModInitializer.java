@@ -106,5 +106,15 @@ public abstract class AbstractModInitializer {
             stackUpgrade,
             1
         );
+        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+            UpgradeDestinations.EXPORTER,
+            speedUpgrade,
+            4
+        );
+        PlatformApi.INSTANCE.getUpgradeRegistry().addApplicableUpgrade(
+            UpgradeDestinations.EXPORTER,
+            stackUpgrade,
+            1
+        );
     }
 }
