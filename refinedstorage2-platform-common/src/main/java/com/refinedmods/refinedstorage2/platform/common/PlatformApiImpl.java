@@ -9,11 +9,14 @@ import com.refinedmods.refinedstorage2.api.network.NetworkBuilderImpl;
 import com.refinedmods.refinedstorage2.api.network.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.FirstAvailableExporterSchedulingMode;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.PlatformExporterSchedulingMode;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.PlatformExporterSchedulingModeImpl;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
@@ -33,6 +36,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import java.util.Objects;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -63,6 +67,12 @@ public class PlatformApiImpl implements PlatformApi {
     private final OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> exporterTransferStrategyRegistry =
         new OrderedRegistryImpl<>(createIdentifier("noop"),
             (level, pos, direction, hasStackUpgrade, fuzzyMode) -> (resource, actor, network) -> false);
+    private final OrderedRegistry<ResourceLocation, PlatformExporterSchedulingMode> exporterSchedulingModeRegistry =
+        new OrderedRegistryImpl<>(createIdentifier("first_available"),
+            new PlatformExporterSchedulingModeImpl(
+                FirstAvailableExporterSchedulingMode.INSTANCE,
+                Component.translatable("gui.refinedstorage2.exporter.scheduling_mode.first_available")
+            ));
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
 
     @Override
@@ -108,6 +118,11 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry() {
         return exporterTransferStrategyRegistry;
+    }
+
+    @Override
+    public OrderedRegistry<ResourceLocation, PlatformExporterSchedulingMode> getExporterSchedulingModeRegistry() {
+        return exporterSchedulingModeRegistry;
     }
 
     @Override

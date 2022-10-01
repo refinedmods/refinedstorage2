@@ -157,6 +157,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerContent();
         registerSounds();
         registerAdditionalResourceTypes();
+        registerAdditionalExporterSchedulingModes();
         registerTickHandler();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
