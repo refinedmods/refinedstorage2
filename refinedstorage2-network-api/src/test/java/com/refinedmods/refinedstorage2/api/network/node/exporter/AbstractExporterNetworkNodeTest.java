@@ -49,6 +49,35 @@ abstract class AbstractExporterNetworkNodeTest {
     }
 
     @Test
+    void shouldUseFirstSuccessfulStrategy(
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+    ) {
+        // Arrange
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+        storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        final Storage<String> destination = new LimitedStorageImpl<>(100);
+
+        sut.setTransferStrategy(new CompositeExporterTransferStrategy(List.of(
+            createTransferStrategy(destination, 10),
+            createTransferStrategy(destination, 10),
+            createTransferStrategy(destination, 10)
+        )));
+        sut.setTemplates(List.of("A"));
+
+        // Act
+        sut.doWork();
+
+        // Assert
+        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 90)
+        );
+        assertThat(destination.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 10)
+        );
+    }
+
+    @Test
     void shouldExtractEnergy(
         @InjectNetworkEnergyComponent final EnergyNetworkComponent energy
     ) {
