@@ -96,6 +96,32 @@ abstract class AbstractExporterNetworkNodeTest {
     }
 
     @Test
+    void shouldNotTransferWithoutSchedulingMode(
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+    ) {
+        // Arrange
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+        storageChannel.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.insert("B", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        final Storage<String> destination = new InMemoryStorageImpl<>();
+
+        sut.setTemplates(List.of("A", "B"));
+        sut.setTransferStrategy(createTransferStrategy(destination, 1));
+        sut.setSchedulingMode(null);
+
+        // Act
+        sut.doWork();
+
+        // Assert
+        assertThat(storageChannel.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("A", 100),
+            new ResourceAmount<>("B", 100)
+        );
+        assertThat(destination.getAll()).isEmpty();
+    }
+
+    @Test
     void shouldNotTransferWithoutStrategy(@InjectNetworkStorageChannel final StorageChannel<String> storageChannel) {
         // Arrange
         storageChannel.addSource(new InMemoryStorageImpl<>());

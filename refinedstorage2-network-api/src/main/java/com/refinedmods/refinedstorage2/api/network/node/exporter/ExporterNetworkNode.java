@@ -14,25 +14,25 @@ public class ExporterNetworkNode extends AbstractNetworkNode {
     private final List<Object> templates = new ArrayList<>();
     @Nullable
     private ExporterTransferStrategy transferStrategy;
+    @Nullable
     private ExporterSchedulingMode schedulingMode;
 
-    public ExporterNetworkNode(final long energyUsage, final ExporterSchedulingMode schedulingMode) {
+    public ExporterNetworkNode(final long energyUsage) {
         this.energyUsage = energyUsage;
-        this.schedulingMode = schedulingMode;
     }
 
     public void setTransferStrategy(@Nullable final ExporterTransferStrategy transferStrategy) {
         this.transferStrategy = transferStrategy;
     }
 
-    public void setSchedulingMode(final ExporterSchedulingMode schedulingMode) {
+    public void setSchedulingMode(@Nullable final ExporterSchedulingMode schedulingMode) {
         this.schedulingMode = schedulingMode;
     }
 
     @Override
     public void doWork() {
         super.doWork();
-        if (network == null || !isActive() || transferStrategy == null) {
+        if (network == null || !isActive() || transferStrategy == null || schedulingMode == null) {
             return;
         }
         schedulingMode.execute(templates, transferStrategy, network, actor);
