@@ -42,6 +42,7 @@
   "gui.refinedstorage2.grid.synchronizer.jei.two_way": "JEI two-way",
   "gui.refinedstorage2.grid.synchronizer.rei": "REI",
   "gui.refinedstorage2.grid.synchronizer.rei.two_way": "REI two-way",
+  "gui.refinedstorage2.exporter.scheduling_mode": "Scheduling mode",
   "gui.refinedstorage2.exporter.scheduling_mode.first_available": "First available",
   "gui.refinedstorage2.exporter.scheduling_mode.round_robin": "Round robin",
   "gui.refinedstorage2.exporter.scheduling_mode.random": "Random",

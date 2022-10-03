@@ -1,12 +1,20 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
+import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.ticker.AbstractBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -43,14 +51,24 @@ public class ExporterBlock extends AbstractDirectionalCableBlock implements Enti
     private static final VoxelShape LINE_DOWN_3 = box(3, 4, 3, 13, 6, 13);
     private static final VoxelShape LINE_DOWN = Shapes.or(LINE_DOWN_1, LINE_DOWN_2, LINE_DOWN_3);
 
+    private static final AbstractBlockEntityTicker<ExporterBlockEntity> TICKER =
+        new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getExporter);
+
     public ExporterBlock() {
         super(BlockConstants.CABLE_PROPERTIES);
     }
 
+    @Override
+    public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
+        return new ExporterBlockEntity(pos, state);
+    }
+
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(final BlockPos blockPos, final BlockState state) {
-        return null;
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level,
+                                                                  final BlockState blockState,
+                                                                  final BlockEntityType<T> type) {
+        return TICKER.get(level, type);
     }
 
     @Override

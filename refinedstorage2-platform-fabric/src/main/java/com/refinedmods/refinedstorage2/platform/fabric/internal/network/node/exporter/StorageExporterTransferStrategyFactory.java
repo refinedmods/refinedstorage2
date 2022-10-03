@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.exporter;
 
-import com.refinedmods.refinedstorage2.api.network.node.exporter.AbstractExporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.AbstractExporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.AbstractFuzzyExporterTransferStrategy;
