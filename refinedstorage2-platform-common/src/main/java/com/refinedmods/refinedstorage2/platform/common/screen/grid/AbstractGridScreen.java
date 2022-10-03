@@ -30,7 +30,6 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -73,9 +72,6 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
 
         menu.setSizeChangedListener(this::init);
 
-        this.titleLabelX = 7;
-        this.titleLabelY = 7;
-        this.inventoryLabelX = 7;
         this.inventoryLabelY = 75;
         this.imageWidth = 227;
         this.imageHeight = 176;
@@ -203,10 +199,13 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
     }
 
     @Override
+    protected ResourceLocation getTexture() {
+        throw new IllegalStateException("Cannot be called");
+    }
+
+    @Override
     protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
+        prepareBackgroundShader(TEXTURE);
 
         final int x = (width - imageWidth) / 2;
         final int y = (height - imageHeight) / 2;
@@ -252,9 +251,7 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
             return;
         }
 
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
+        prepareBackgroundShader(TEXTURE);
 
         blit(poseStack, rowX, rowY, 0, 238, 162, 18);
 
@@ -431,14 +428,10 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
 
     @Override
     public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float partialTicks) {
-        renderBackground(poseStack);
         super.render(poseStack, mouseX, mouseY, partialTicks);
-        renderTooltip(poseStack, mouseX, mouseY);
-
         if (scrollbar != null) {
             scrollbar.render(poseStack, mouseX, mouseY, partialTicks);
         }
-
         if (searchField != null) {
             searchField.render(poseStack, 0, 0, 0);
         }
