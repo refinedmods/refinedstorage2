@@ -21,12 +21,14 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEn
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
@@ -153,7 +155,6 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerSounds();
         registerSidedHandlers();
         registerAdditionalResourceTypes();
-        registerAdditionalExporterSchedulingModes();
         registerTickHandler();
         registerEvents();
 
@@ -193,6 +194,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerExporterTransferStrategyFactories() {
+        // TODO: create for Forge!
         PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().register(
             createIdentifier("item"),
             new StorageExporterTransferStrategyFactory<>(
@@ -586,9 +588,18 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
         BlockEntities.INSTANCE.setImporter(register(
             Registry.BLOCK_ENTITY_TYPE,
-            IMPORTER, FabricBlockEntityTypeBuilder.create(
+            IMPORTER,
+            FabricBlockEntityTypeBuilder.create(
                 ImporterBlockEntity::new,
                 Blocks.INSTANCE.getImporter()
+            ).build()
+        ));
+        BlockEntities.INSTANCE.setExporter(register(
+            Registry.BLOCK_ENTITY_TYPE,
+            EXPORTER,
+            FabricBlockEntityTypeBuilder.create(
+                ExporterBlockEntity::new,
+                Blocks.INSTANCE.getExporter()
             ).build()
         ));
     }
@@ -628,6 +639,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             Registry.MENU,
             IMPORTER,
             new ExtendedScreenHandlerType<>(ImporterContainerMenu::new)
+        ));
+        Menus.INSTANCE.setExporter(register(
+            Registry.MENU,
+            EXPORTER,
+            new ExtendedScreenHandlerType<>(ExporterContainerMenu::new)
         ));
     }
 

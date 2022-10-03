@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEn
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
@@ -40,6 +41,8 @@ public final class BlockEntities {
         fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
     @Nullable
     private Supplier<BlockEntityType<ImporterBlockEntity>> importer;
+    @Nullable
+    private Supplier<BlockEntityType<ExporterBlockEntity>> exporter;
 
     private BlockEntities() {
     }
@@ -116,5 +119,13 @@ public final class BlockEntities {
 
     public void setImporter(final Supplier<BlockEntityType<ImporterBlockEntity>> supplier) {
         this.importer = supplier;
+    }
+
+    public BlockEntityType<ExporterBlockEntity> getExporter() {
+        return Objects.requireNonNull(exporter).get();
+    }
+
+    public void setExporter(final Supplier<BlockEntityType<ExporterBlockEntity>> supplier) {
+        this.exporter = supplier;
     }
 }

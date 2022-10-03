@@ -18,12 +18,14 @@ import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
@@ -157,7 +159,6 @@ public class ModInitializer extends AbstractModInitializer {
         registerContent();
         registerSounds();
         registerAdditionalResourceTypes();
-        registerAdditionalExporterSchedulingModes();
         registerTickHandler();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
@@ -515,6 +516,10 @@ public class ModInitializer extends AbstractModInitializer {
             IMPORTER.getPath(),
             () -> BlockEntityType.Builder.of(ImporterBlockEntity::new, Blocks.INSTANCE.getImporter()).build(null)
         ));
+        BlockEntities.INSTANCE.setExporter(blockEntityTypeRegistry.register(
+            EXPORTER.getPath(),
+            () -> BlockEntityType.Builder.of(ExporterBlockEntity::new, Blocks.INSTANCE.getExporter()).build(null)
+        ));
 
         blockEntityTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -547,6 +552,10 @@ public class ModInitializer extends AbstractModInitializer {
         Menus.INSTANCE.setImporter(menuTypeRegistry.register(
             IMPORTER.getPath(),
             () -> IForgeMenuType.create(ImporterContainerMenu::new)
+        ));
+        Menus.INSTANCE.setExporter(menuTypeRegistry.register(
+            EXPORTER.getPath(),
+            () -> IForgeMenuType.create(ExporterContainerMenu::new)
         ));
 
         menuTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());

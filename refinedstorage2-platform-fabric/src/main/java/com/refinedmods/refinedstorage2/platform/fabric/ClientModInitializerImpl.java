@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.ExporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
@@ -165,6 +166,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         MenuScreens.register(Menus.INSTANCE.getItemStorage(), ItemStorageBlockScreen::new);
         MenuScreens.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);
         MenuScreens.register(Menus.INSTANCE.getImporter(), ImporterScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getExporter(), ExporterScreen::new);
     }
 
     private void registerKeyBindings() {
