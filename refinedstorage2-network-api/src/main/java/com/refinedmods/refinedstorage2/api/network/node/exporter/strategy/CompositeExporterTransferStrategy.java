@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.node.exporter;
+package com.refinedmods.refinedstorage2.api.network.node.exporter.strategy;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
@@ -20,5 +20,12 @@ public class CompositeExporterTransferStrategy implements ExporterTransferStrate
             }
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "CompositeExporterTransferStrategy{"
+            + "strategies=" + strategies
+            + '}';
     }
 }
