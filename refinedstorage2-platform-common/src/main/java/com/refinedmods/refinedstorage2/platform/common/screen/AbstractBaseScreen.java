@@ -1,14 +1,18 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
+import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
+import com.refinedmods.refinedstorage2.platform.common.screen.widget.ResourceFilterButtonWidget;
 
 import java.util.List;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
@@ -18,6 +22,9 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
 
     protected AbstractBaseScreen(final T menu, final Inventory playerInventory, final Component text) {
         super(menu, playerInventory, text);
+        this.titleLabelX = 7;
+        this.titleLabelY = 7;
+        this.inventoryLabelX = 7;
     }
 
     @Override
@@ -25,14 +32,58 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         clearWidgets();
         super.init();
         sideButtonY = 6;
+        tryAddResourceFilterButton();
     }
+
+    private void tryAddResourceFilterButton() {
+        if (!(menu instanceof AbstractResourceFilterContainerMenu resourceFilterMenu)) {
+            return;
+        }
+        final ResourceFilterButtonWidget resourceFilterButton = new ResourceFilterButtonWidget(
+            getResourceFilterButtonX(),
+            topPos + 4,
+            resourceFilterMenu
+        );
+        resourceFilterButton.active = isResourceFilterButtonActive();
+        addRenderableWidget(resourceFilterButton);
+    }
+
+    protected int getResourceFilterButtonX() {
+        return leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7;
+    }
+
+    protected boolean isResourceFilterButtonActive() {
+        return true;
+    }
+
+    protected abstract ResourceLocation getTexture();
 
     @Override
     protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
+        prepareBackgroundShader(getTexture());
+
+        final int x = (width - imageWidth) / 2;
+        final int y = (height - imageHeight) / 2;
+
+        blit(poseStack, x, y, 0, 0, imageWidth, imageHeight);
+
         renderResourceFilterSlots(poseStack);
     }
 
-    protected void renderResourceFilterSlots(final PoseStack poseStack) {
+    protected static void prepareBackgroundShader(final ResourceLocation texture) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, texture);
+    }
+
+    @Override
+    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float delta) {
+        renderBackground(poseStack);
+        super.render(poseStack, mouseX, mouseY, delta);
+        renderTooltip(poseStack, mouseX, mouseY);
+    }
+
+    protected final void renderResourceFilterSlots(final PoseStack poseStack) {
         for (final Slot slot : menu.slots) {
             if (slot instanceof ResourceFilterSlot resourceFilterSlot) {
                 resourceFilterSlot.render(poseStack, leftPos + slot.x, topPos + slot.y, getBlitOffset());
@@ -49,7 +100,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         addRenderableWidget(button);
     }
 
-    protected void setScissor(final int x, final int y, final int w, final int h) {
+    protected final void setScissor(final int x, final int y, final int w, final int h) {
         if (minecraft == null) {
             return;
         }

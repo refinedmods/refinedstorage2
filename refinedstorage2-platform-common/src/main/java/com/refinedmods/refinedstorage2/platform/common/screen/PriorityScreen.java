@@ -60,8 +60,6 @@ public class PriorityScreen extends AbstractContainerScreen<AbstractContainerMen
         this.parent = parent;
         this.property = property;
 
-        this.titleLabelX = 7;
-        this.titleLabelY = 7;
         this.imageWidth = 164;
         this.imageHeight = 92;
     }

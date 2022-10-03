@@ -2,8 +2,6 @@ package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.AbstractStorageBlockContainerMenu;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -25,8 +23,7 @@ public abstract class AbstractStorageBlockScreen extends AbstractStorageScreen<A
     }
 
     @Override
-    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        super.renderBg(poseStack, delta, mouseX, mouseY);
+    protected ResourceLocation getTexture() {
+        return TEXTURE;
     }
 }
