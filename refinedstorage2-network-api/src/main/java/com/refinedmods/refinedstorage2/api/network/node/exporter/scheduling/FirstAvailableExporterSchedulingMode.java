@@ -1,13 +1,13 @@
-package com.refinedmods.refinedstorage2.api.network.node.exporter;
+package com.refinedmods.refinedstorage2.api.network.node.exporter.scheduling;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
+import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 
 import java.util.List;
 
 public class FirstAvailableExporterSchedulingMode implements ExporterSchedulingMode {
-    public static final ExporterSchedulingMode INSTANCE =
-        new FirstAvailableExporterSchedulingMode();
+    public static final ExporterSchedulingMode INSTANCE = new FirstAvailableExporterSchedulingMode();
 
     private FirstAvailableExporterSchedulingMode() {
     }
