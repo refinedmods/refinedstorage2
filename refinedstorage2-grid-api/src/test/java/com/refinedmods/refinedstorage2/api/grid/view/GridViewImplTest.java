@@ -1,7 +1,9 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +26,31 @@ class GridViewImplTest {
     @BeforeEach
     void setUp() {
         viewBuilder = new GridViewBuilderImpl<>(FakeGridResource::new);
+    }
+
+    @Test
+    void shouldAddResourcesWithSameNameButDifferentIdentity() {
+        // Ensure that we do not get in trouble when adding 2 resources with the same name, but a different identity.
+        // This test avoids the bug where the view insertion fails, because the resource is already "contained"
+        // in the view, but actually isn't because it has a different identity.
+
+        // Arrange
+        final GridViewBuilder<ResourceWithMetadata> builder = new GridViewBuilderImpl<>(GridResourceWithMetadata::new);
+        final GridView<ResourceWithMetadata> view = builder.build();
+
+        // Act
+        view.onChange(new ResourceWithMetadata("A", 1), 1, null);
+        view.onChange(new ResourceWithMetadata("A", 2), 1, null);
+
+        // Assert
+        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new GridResourceWithMetadata(new ResourceAmount<>(
+                new ResourceWithMetadata("A", 1), 1
+            )),
+            new GridResourceWithMetadata(new ResourceAmount<>(
+                new ResourceWithMetadata("A", 2), 1
+            ))
+        );
     }
 
     @RepeatedTest(100)
@@ -566,5 +593,19 @@ class GridViewImplTest {
             new FakeGridResource("A", 15),
             new FakeGridResource("B", 8)
         );
+    }
+
+    private record ResourceWithMetadata(String name, int metadata) {
+    }
+
+    private static class GridResourceWithMetadata extends AbstractGridResource<ResourceWithMetadata> {
+        GridResourceWithMetadata(final ResourceAmount<ResourceWithMetadata> resourceAmount) {
+            super(resourceAmount, resourceAmount.getResource().name(), Map.of());
+        }
+
+        @Override
+        public int getId() {
+            return 0;
+        }
     }
 }

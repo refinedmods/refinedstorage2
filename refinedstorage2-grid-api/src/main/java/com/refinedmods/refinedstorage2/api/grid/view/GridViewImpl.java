@@ -114,12 +114,14 @@ public class GridViewImpl<T> implements GridView<T> {
 
         final AbstractGridResource<T> gridResource = viewListIndex.get(resource);
         if (gridResource != null) {
+            LOGGER.debug("{} was already found in the view list", resource);
             if (gridResource.isZeroed()) {
                 reinsertZeroedResourceIntoViewList(resource, operationResult, gridResource);
             } else {
                 handleChangeForExistingResource(resource, operationResult, gridResource);
             }
         } else {
+            LOGGER.debug("{} is a new resource, adding it into the view list if filter allows it", resource);
             handleChangeForNewResource(resource, operationResult);
         }
     }
@@ -143,6 +145,7 @@ public class GridViewImpl<T> implements GridView<T> {
     private void reinsertZeroedResourceIntoViewList(final T resource,
                                                     final ResourceListOperationResult<T> operationResult,
                                                     final AbstractGridResource<T> oldGridResource) {
+        LOGGER.debug("{} was zeroed, unzeroing", resource);
         final AbstractGridResource<T> newResource = gridResourceFactory.apply(operationResult.resourceAmount());
         viewListIndex.put(resource, newResource);
         final int index = CoreValidations.validateNotNegative(
@@ -158,9 +161,13 @@ public class GridViewImpl<T> implements GridView<T> {
         final boolean noLongerAvailable = !operationResult.available();
         final boolean canBeSorted = !preventSorting;
         if (canBeSorted) {
+            LOGGER.debug("Actually updating {} resource in the view list", resource);
             updateExistingResourceInViewList(resource, gridResource, noLongerAvailable);
         } else if (noLongerAvailable) {
+            LOGGER.debug("{} is no longer available, zeroing", resource);
             gridResource.setZeroed(true);
+        } else {
+            LOGGER.debug("{} can't be sorted, preventing sorting is on", resource);
         }
     }
 
@@ -180,6 +187,7 @@ public class GridViewImpl<T> implements GridView<T> {
     private void handleChangeForNewResource(final T resource, final ResourceListOperationResult<T> operationResult) {
         final AbstractGridResource<T> gridResource = gridResourceFactory.apply(operationResult.resourceAmount());
         if (filter.test(gridResource)) {
+            LOGGER.debug("Filter allowed, actually adding {}", resource);
             viewListIndex.put(resource, gridResource);
             addIntoView(gridResource);
             notifyListener();
@@ -187,9 +195,22 @@ public class GridViewImpl<T> implements GridView<T> {
     }
 
     private void addIntoView(final AbstractGridResource<T> resource) {
+        // Calculate the position according to sorting rules.
         final int wouldBePosition = Collections.binarySearch(viewList, resource, getComparator());
-        CoreValidations.validateNegative(wouldBePosition, "Resource is already present in view list, cannot reinsert");
-        viewList.add(-wouldBePosition - 1, resource);
+        // Most of the time, the "would be" position is negative, indicating that the resource wasn't found yet in the
+        // list, comparing with sorting rules. The absolute of this position would be the "real" position if sorted.
+        if (wouldBePosition < 0) {
+            viewList.add(-wouldBePosition - 1, resource);
+        } else {
+            // If the "would be" position is positive, this means that the resource is already contained in the list,
+            // comparing with sorting rules.
+            // This doesn't mean that the *exact* resource is already in the list, but that is purely "contained"
+            // in the list when comparing with sorting rules.
+            // For example: a resource with different identity but the same name (in Minecraft: an enchanted book
+            // with different NBT).
+            // In that case, just insert it after the "existing" resource.
+            viewList.add(wouldBePosition + 1, resource);
+        }
     }
 
     private void notifyListener() {
