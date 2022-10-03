@@ -32,7 +32,7 @@ public class RoundRobinExporterSchedulingMode implements ExporterSchedulingMode 
         state.setIndex(0);
     }
 
-    public RoundRobinState getState() {
-        return state;
+    public int getIndex() {
+        return state.getIndex();
     }
 }

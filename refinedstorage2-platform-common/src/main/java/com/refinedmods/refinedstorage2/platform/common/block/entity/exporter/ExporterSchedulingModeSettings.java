@@ -67,7 +67,7 @@ public enum ExporterSchedulingModeSettings {
 
     public void writeToTag(final CompoundTag tag, final ExporterSchedulingMode schedulingMode) {
         if (schedulingMode instanceof RoundRobinExporterSchedulingMode roundRobin) {
-            tag.putInt(TAG_ROUND_ROBIN_INDEX, roundRobin.getState().getIndex());
+            tag.putInt(TAG_ROUND_ROBIN_INDEX, roundRobin.getIndex());
         }
     }
 }
