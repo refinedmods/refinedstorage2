@@ -194,7 +194,6 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerExporterTransferStrategyFactories() {
-        // TODO: create for Forge!
         PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().register(
             createIdentifier("item"),
             new StorageExporterTransferStrategyFactory<>(

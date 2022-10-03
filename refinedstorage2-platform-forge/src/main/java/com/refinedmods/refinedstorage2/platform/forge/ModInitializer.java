@@ -55,6 +55,8 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockIte
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.FluidHandlerExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.ItemHandlerExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.FluidHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.ItemHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
@@ -156,6 +158,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerAdditionalStorageChannelTypes();
         registerNetworkComponents();
         registerImporterTransferStrategyFactories();
+        registerExporterTransferStrategyFactories();
         registerContent();
         registerSounds();
         registerAdditionalResourceTypes();
@@ -179,6 +182,17 @@ public class ModInitializer extends AbstractModInitializer {
         PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().register(
             createIdentifier("fluid"),
             new FluidHandlerImporterTransferStrategyFactory()
+        );
+    }
+
+    private void registerExporterTransferStrategyFactories() {
+        PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().register(
+            createIdentifier("item"),
+            new ItemHandlerExporterTransferStrategyFactory()
+        );
+        PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().register(
+            createIdentifier("fluid"),
+            new FluidHandlerExporterTransferStrategyFactory()
         );
     }
 

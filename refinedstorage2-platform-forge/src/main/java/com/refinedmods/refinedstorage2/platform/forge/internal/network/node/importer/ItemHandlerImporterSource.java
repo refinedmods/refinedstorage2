@@ -4,47 +4,34 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.forge.internal.storage.InteractionCoordinates;
+import com.refinedmods.refinedstorage2.platform.forge.internal.storage.ItemHandlerInsertableStorage;
 
 import java.util.Collections;
 import java.util.Iterator;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.AbstractIterator;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.ofItemStack;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toItemStack;
 
 public class ItemHandlerImporterSource implements ImporterSource<ItemResource> {
-    private final Level level;
-    private final BlockPos pos;
-    private final Direction direction;
+    private final InteractionCoordinates interactionCoordinates;
+    private final ItemHandlerInsertableStorage insertTarget;
 
-    public ItemHandlerImporterSource(final Level level, final BlockPos pos, final Direction direction) {
-        this.level = level;
-        this.pos = pos;
-        this.direction = direction;
-    }
-
-    private LazyOptional<IItemHandler> getItemHandler() {
-        final BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity == null) {
-            return LazyOptional.empty();
-        }
-        return blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction);
+    public ItemHandlerImporterSource(final InteractionCoordinates interactionCoordinates) {
+        this.interactionCoordinates = interactionCoordinates;
+        this.insertTarget = new ItemHandlerInsertableStorage(interactionCoordinates);
     }
 
     @Override
     public Iterator<ItemResource> getResources() {
-        return getItemHandler().map(itemHandler -> (Iterator<ItemResource>) new AbstractIterator<ItemResource>() {
+        final LazyOptional<IItemHandler> possibleItemHandler = interactionCoordinates.getItemHandler();
+        return possibleItemHandler.map(itemHandler -> (Iterator<ItemResource>) new AbstractIterator<ItemResource>() {
             private int index;
 
             @Nullable
@@ -67,7 +54,7 @@ public class ItemHandlerImporterSource implements ImporterSource<ItemResource> {
 
     @Override
     public long extract(final ItemResource resource, final long amount, final Action action, final Actor actor) {
-        return getItemHandler().map(itemHandler -> {
+        return interactionCoordinates.getItemHandler().map(itemHandler -> {
             final ItemStack stack = toItemStack(resource, amount);
             long extracted = 0;
             for (int i = 0; i < itemHandler.getSlots() && extracted < amount; ++i) {
@@ -86,14 +73,6 @@ public class ItemHandlerImporterSource implements ImporterSource<ItemResource> {
 
     @Override
     public long insert(final ItemResource resource, final long amount, final Action action, final Actor actor) {
-        return getItemHandler().map(itemHandler -> {
-            final ItemStack stack = toItemStack(resource, amount);
-            final ItemStack remainder = ItemHandlerHelper.insertItem(
-                itemHandler,
-                stack,
-                action == Action.SIMULATE
-            );
-            return amount - remainder.getCount();
-        }).orElse(0L);
+        return insertTarget.insert(resource, amount, action, actor);
     }
 }
