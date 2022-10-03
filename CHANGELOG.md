@@ -12,6 +12,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fixed missing AutoConfig config option translations on Fabric.
 - Fixed Grid resource failing to insert if another resource with the same name but different NBT data already exists.
 
+### Added
+
+- Exporter
+
+### Changed
+
+- You can now select a "Scheduling mode" in the Exporter: first available, round robin, random.
+
 ## [2.0.0-milestone.2.3] - 2022-08-26
 
 ### Changed
