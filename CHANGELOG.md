@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Fixed missing AutoConfig config option translations on Fabric.
+- Fixed Grid resource failing to insert if another resource with the same name but different NBT data already exists.
 
 ## [2.0.0-milestone.2.3] - 2022-08-26
 
