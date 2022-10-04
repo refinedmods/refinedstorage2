@@ -129,8 +129,4 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
         }
         return directionalBlock.extractDirection(blockState);
     }
-
-    protected RateLimiter createRateLimiter(final int amountOfSpeedUpgrades) {
-        return RateLimiter.create((double) amountOfSpeedUpgrades + 1);
-    }
 }
