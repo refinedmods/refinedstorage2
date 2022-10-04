@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.direction.Direction
 import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionTypeImpl;
 
 import java.util.Objects;
+import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public abstract class AbstractDirectionalCableBlock
@@ -96,6 +98,22 @@ public abstract class AbstractDirectionalCableBlock
                                final BlockGetter world,
                                final BlockPos pos,
                                final CollisionContext context) {
-        return CableBlockSupport.getShape(state);
+        return Shapes.or(CableBlockSupport.getShape(state), getExtensionShape(state));
     }
+
+    @Override
+    @Nullable
+    protected VoxelShape getScreenOpenableShape(final BlockState state) {
+        return getExtensionShape(state);
+    }
+
+    private VoxelShape getExtensionShape(final BlockState state) {
+        final Direction direction = getDirection(state);
+        if (direction == null) {
+            return Shapes.empty();
+        }
+        return getExtensionShape(direction);
+    }
+
+    protected abstract VoxelShape getExtensionShape(Direction direction);
 }
