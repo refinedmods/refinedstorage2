@@ -11,9 +11,11 @@ import java.util.Set;
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,7 +23,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public abstract class AbstractLevelInteractingUpgradeableNetworkNodeContainerBlockEntity<T extends AbstractNetworkNode>
-    extends AbstractInternalNetworkNodeContainerBlockEntity<T> {
+    extends AbstractInternalNetworkNodeContainerBlockEntity<T>
+    implements BlockEntityWithDrops {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String TAG_UPGRADES = "u";
 
@@ -129,5 +132,14 @@ public abstract class AbstractLevelInteractingUpgradeableNetworkNodeContainerBlo
 
     private static RateLimiter createRateLimiter(final int amountOfSpeedUpgrades) {
         return RateLimiter.create((double) amountOfSpeedUpgrades + 1);
+    }
+
+    @Override
+    public NonNullList<ItemStack> getDrops() {
+        final NonNullList<ItemStack> drops = NonNullList.create();
+        for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
+            drops.add(upgradeContainer.getItem(i));
+        }
+        return drops;
     }
 }
