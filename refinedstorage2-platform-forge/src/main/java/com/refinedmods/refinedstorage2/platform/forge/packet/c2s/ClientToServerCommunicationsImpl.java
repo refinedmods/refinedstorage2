@@ -58,4 +58,9 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     public void sendStorageInfoRequest(final UUID storageId) {
         networkManager.send(new StorageInfoRequestPacket(storageId));
     }
+
+    @Override
+    public void sendResourceFilterSlotAmountChange(final int slotIndex, final long amount) {
+        networkManager.send(new ResourceFilterSlotAmountChangePacket(slotIndex, amount));
+    }
 }

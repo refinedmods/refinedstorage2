@@ -20,7 +20,7 @@ import net.minecraft.world.item.TooltipFlag;
 public record ItemFilteredResource(ItemResource value, long amount) implements FilteredResource {
     private static final String TAG_AMOUNT = "amt";
 
-    public static long getAmount(final CompoundTag tag) {
+    public static long getAmountFromTag(final CompoundTag tag) {
         return tag.getLong(TAG_AMOUNT);
     }
 
@@ -48,7 +48,25 @@ public record ItemFilteredResource(ItemResource value, long amount) implements F
     }
 
     @Override
-    public String getAmount() {
+    public long getAmount() {
+        return amount;
+    }
+
+    @Override
+    public FilteredResource withAmount(final long newAmount) {
+        return new ItemFilteredResource(value, newAmount);
+    }
+
+    @Override
+    public long getMaxAmount() {
+        return value.toItemStack().getMaxStackSize();
+    }
+
+    @Override
+    public String getFormattedAmount() {
+        if (amount == 1) {
+            return "";
+        }
         return QuantityFormatter.formatWithUnits(amount);
     }
 

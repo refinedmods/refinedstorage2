@@ -16,7 +16,7 @@ import net.minecraft.world.inventory.Slot;
 
 public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu {
     private static final int EXPORT_CONFIG_SLOT_X = 8;
-    private static final int EXPORT_CONFIG_SLOT_Y = 54;
+    private static final int EXPORT_CONFIG_SLOT_Y = 20;
 
     public InterfaceContainerMenu(final int syncId,
                                   final Player player,
@@ -34,9 +34,9 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
                 PlatformApi.INSTANCE.getResourceTypeRegistry(),
                 9,
                 ItemResourceType.INSTANCE,
-                true
+                64
             ),
-            new UpgradeContainer(UpgradeDestinations.INTERFACE, PlatformApi.INSTANCE.getUpgradeRegistry())
+            new UpgradeContainer(1, UpgradeDestinations.INTERFACE, PlatformApi.INSTANCE.getUpgradeRegistry())
         );
         initializeResourceFilterSlots(buf);
     }
@@ -47,10 +47,8 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
         for (int i = 0; i < resourceFilterContainer.size(); ++i) {
             addSlot(createExportConfigSlot(resourceFilterContainer, i));
         }
-        for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
-            addSlot(new Slot(upgradeContainer, i, 187, 6 + (i * 18)));
-        }
-        addPlayerInventory(player.getInventory(), 8, 134);
+        addSlot(new Slot(upgradeContainer, 0, 187, 6));
+        addPlayerInventory(player.getInventory(), 8, 100);
 
         transferManager.addBiTransfer(player.getInventory(), upgradeContainer);
         transferManager.addFilterTransfer(player.getInventory());

@@ -320,7 +320,9 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         final int color = resource.isZeroed()
             ? Objects.requireNonNullElse(ChatFormatting.RED.getColor(), 15)
             : Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15);
-        renderAmount(poseStack, slotX, slotY, text, color);
+        final boolean large = (minecraft != null && minecraft.isEnforceUnicode())
+            || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
+        renderAmount(poseStack, slotX, slotY, text, color, large);
     }
 
     protected abstract void renderResource(PoseStack poseStack, int slotX, int slotY, AbstractGridResource<R> resource);

@@ -24,4 +24,6 @@ public interface ClientToServerCommunications {
     void sendResourceTypeChange(ResourceType type);
 
     void sendStorageInfoRequest(UUID storageId);
+
+    void sendResourceFilterSlotAmountChange(int slotIndex, long amount);
 }

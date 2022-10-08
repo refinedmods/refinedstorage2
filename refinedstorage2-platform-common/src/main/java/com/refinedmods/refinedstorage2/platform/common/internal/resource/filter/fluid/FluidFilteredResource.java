@@ -18,7 +18,7 @@ import net.minecraft.world.entity.player.Player;
 public record FluidFilteredResource(FluidResource value, long amount) implements FilteredResource {
     private static final String TAG_AMOUNT = "amt";
 
-    public static long getAmount(final CompoundTag tag) {
+    public static long getAmountFromTag(final CompoundTag tag) {
         return tag.getLong(TAG_AMOUNT);
     }
 
@@ -46,7 +46,22 @@ public record FluidFilteredResource(FluidResource value, long amount) implements
     }
 
     @Override
-    public String getAmount() {
+    public long getAmount() {
+        return amount;
+    }
+
+    @Override
+    public FilteredResource withAmount(final long newAmount) {
+        return new FluidFilteredResource(value, newAmount);
+    }
+
+    @Override
+    public long getMaxAmount() {
+        return Long.MAX_VALUE;
+    }
+
+    @Override
+    public String getFormattedAmount() {
         return Platform.INSTANCE.getBucketQuantityFormatter().formatWithUnits(amount);
     }
 

@@ -52,7 +52,7 @@ public class ItemResourceType implements ResourceType {
         return ItemResource.fromTag(tag)
             .map(itemResource -> new ItemFilteredResource(
                 itemResource,
-                ItemFilteredResource.getAmount(tag)
+                ItemFilteredResource.getAmountFromTag(tag)
             ));
     }
 }

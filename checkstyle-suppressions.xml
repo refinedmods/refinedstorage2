@@ -5,4 +5,6 @@
 <suppressions>
     <!-- Test directories don't need a package-info.java file -->
     <suppress checks="JavadocPackage" files="test[\\/].*.java"/>
+    <!-- Mod initializer can be longer due to initialization logic -->
+    <suppress checks="FileLength" files="ModInitializer.*.java"/>
 </suppressions>

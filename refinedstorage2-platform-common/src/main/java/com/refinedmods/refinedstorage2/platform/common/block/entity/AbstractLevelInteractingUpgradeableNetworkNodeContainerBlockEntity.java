@@ -40,6 +40,7 @@ public abstract class AbstractLevelInteractingUpgradeableNetworkNodeContainerBlo
     ) {
         super(type, pos, state, node);
         this.upgradeContainer = new UpgradeContainer(
+            4,
             destination,
             PlatformApi.INSTANCE.getUpgradeRegistry(),
             this::upgradeContainerChanged

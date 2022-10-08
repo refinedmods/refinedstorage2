@@ -73,7 +73,15 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
 
     @Override
     public void sendStorageInfoRequest(final UUID storageId) {
-        sendToServer(PacketIds.STORAGE_INFO_REQUEST, data -> data.writeUUID(storageId));
+        sendToServer(PacketIds.STORAGE_INFO_REQUEST, buf -> buf.writeUUID(storageId));
+    }
+
+    @Override
+    public void sendResourceFilterSlotAmountChange(final int slotIndex, final long amount) {
+        sendToServer(PacketIds.RESOURCE_FILTER_SLOT_AMOUNT_CHANGE, buf -> {
+            buf.writeInt(slotIndex);
+            buf.writeLong(amount);
+        });
     }
 
     private static void sendToServer(final ResourceLocation id, final Consumer<FriendlyByteBuf> bufConsumer) {
