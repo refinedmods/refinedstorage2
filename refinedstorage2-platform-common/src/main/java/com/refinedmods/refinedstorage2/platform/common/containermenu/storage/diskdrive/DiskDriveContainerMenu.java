@@ -44,7 +44,7 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
         addSlots(
             playerInventory.player,
             new SimpleContainer(9),
-            new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9)
+            new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, false)
         );
 
         initializeResourceFilterSlots(buf);

@@ -46,7 +46,8 @@ public class InterfaceBlockEntity
             PlatformApi.INSTANCE.getResourceTypeRegistry(),
             9,
             this::exportConfigChanged,
-            ItemResourceType.INSTANCE
+            ItemResourceType.INSTANCE,
+            true
         );
         this.upgradeContainer = new UpgradeContainer(
             UpgradeDestinations.INTERFACE,

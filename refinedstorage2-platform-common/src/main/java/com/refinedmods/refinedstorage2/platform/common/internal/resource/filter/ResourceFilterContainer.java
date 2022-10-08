@@ -25,19 +25,27 @@ public class ResourceFilterContainer {
     private final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry;
     private final FilteredResource[] items;
     private final Runnable listener;
+    private final boolean supportsAmount;
 
     public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
-                                   final int size) {
+                                   final int size,
+                                   final boolean supportsAmount) {
         this(resourceTypeRegistry, size, () -> {
-        });
+        }, supportsAmount);
     }
 
     public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                    final int size,
-                                   final Runnable listener) {
+                                   final Runnable listener,
+                                   final boolean supportsAmount) {
         this.resourceTypeRegistry = resourceTypeRegistry;
         this.items = new FilteredResource[size];
         this.listener = listener;
+        this.supportsAmount = supportsAmount;
+    }
+
+    public boolean supportsAmount() {
+        return supportsAmount;
     }
 
     public void set(final int index, final FilteredResource resource) {

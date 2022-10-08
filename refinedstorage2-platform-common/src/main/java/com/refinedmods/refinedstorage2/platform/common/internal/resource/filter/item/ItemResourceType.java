@@ -32,16 +32,27 @@ public class ItemResourceType implements ResourceType {
     public Optional<FilteredResource> translate(final ItemStack stack) {
         return stack.isEmpty()
             ? Optional.empty()
-            : Optional.of(new ItemFilteredResource(new ItemResource(stack.getItem(), stack.getTag())));
+            : Optional.of(doTranslate(stack));
+    }
+
+    private static ItemFilteredResource doTranslate(final ItemStack stack) {
+        return new ItemFilteredResource(
+            new ItemResource(stack.getItem(), stack.getTag()),
+            stack.getCount()
+        );
     }
 
     @Override
     public FilteredResource fromPacket(final FriendlyByteBuf buf) {
-        return new ItemFilteredResource(PacketUtil.readItemResource(buf));
+        return new ItemFilteredResource(PacketUtil.readItemResource(buf), buf.readLong());
     }
 
     @Override
     public Optional<FilteredResource> fromTag(final CompoundTag tag) {
-        return ItemResource.fromTag(tag).map(ItemFilteredResource::new);
+        return ItemResource.fromTag(tag)
+            .map(itemResource -> new ItemFilteredResource(
+                itemResource,
+                ItemFilteredResource.getAmount(tag)
+            ));
     }
 }

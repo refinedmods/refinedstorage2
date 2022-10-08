@@ -323,26 +323,6 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         renderAmount(poseStack, slotX, slotY, text, color);
     }
 
-    protected void renderAmount(final PoseStack poseStack,
-                                final int x,
-                                final int y,
-                                final String amount,
-                                final int color) {
-        final boolean large = (minecraft != null && minecraft.isEnforceUnicode())
-            || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
-
-        poseStack.pushPose();
-        poseStack.translate(x, y, 300);
-
-        if (!large) {
-            poseStack.scale(0.5F, 0.5F, 1);
-        }
-
-        font.drawShadow(poseStack, amount, (float) (large ? 16 : 30) - font.width(amount), large ? 8 : 22, color);
-
-        poseStack.popPose();
-    }
-
     protected abstract void renderResource(PoseStack poseStack, int slotX, int slotY, AbstractGridResource<R> resource);
 
     protected abstract String getAmount(AbstractGridResource<R> resource);
