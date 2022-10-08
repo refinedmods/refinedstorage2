@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
@@ -34,6 +35,8 @@ public final class Menus {
     private Supplier<MenuType<ImporterContainerMenu>> importer;
     @Nullable
     private Supplier<MenuType<ExporterContainerMenu>> exporter;
+    @Nullable
+    private Supplier<MenuType<InterfaceContainerMenu>> iface;
 
     private Menus() {
     }
@@ -100,5 +103,13 @@ public final class Menus {
 
     public void setExporter(final Supplier<MenuType<ExporterContainerMenu>> supplier) {
         this.exporter = supplier;
+    }
+
+    public MenuType<InterfaceContainerMenu> getInterface() {
+        return Objects.requireNonNull(iface).get();
+    }
+
+    public void setInterface(final Supplier<MenuType<InterfaceContainerMenu>> supplier) {
+        this.iface = supplier;
     }
 }

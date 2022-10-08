@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ExporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
@@ -70,6 +71,7 @@ public final class ClientModInitializer {
         MenuScreens.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);
         MenuScreens.register(Menus.INSTANCE.getImporter(), ImporterScreen::new);
         MenuScreens.register(Menus.INSTANCE.getExporter(), ExporterScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getInterface(), InterfaceScreen::new);
     }
 
     @SubscribeEvent
