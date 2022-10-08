@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -55,13 +56,22 @@ public abstract class AbstractResourceFilterContainerMenu extends AbstractBaseCo
         }
     }
 
-    public void readResourceFilterSlotUpdate(final int slotIndex, final FriendlyByteBuf buf) {
+    private Optional<ResourceFilterSlot> getResourceFilterSlot(final int slotIndex) {
         if (slotIndex < 0 || slotIndex >= slots.size()) {
-            return;
+            return Optional.empty();
         }
         if (slots.get(slotIndex) instanceof ResourceFilterSlot resourceFilterSlot) {
-            resourceFilterSlot.readFromUpdatePacket(buf);
+            return Optional.of(resourceFilterSlot);
         }
+        return Optional.empty();
+    }
+
+    public void readResourceFilterSlotUpdate(final int slotIndex, final FriendlyByteBuf buf) {
+        getResourceFilterSlot(slotIndex).ifPresent(slot -> slot.readFromUpdatePacket(buf));
+    }
+
+    public void handleResourceFilterSlotAmountChange(final int slotIndex, final long amount) {
+        getResourceFilterSlot(slotIndex).ifPresent(slot -> slot.changeAmount(amount));
     }
 
     @Override

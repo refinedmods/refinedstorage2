@@ -59,8 +59,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
             PlatformApi.INSTANCE.getResourceTypeRegistry(),
             9,
             this::resourceFilterContainerChanged,
-            resourceType,
-            false
+            resourceType
         );
     }
 

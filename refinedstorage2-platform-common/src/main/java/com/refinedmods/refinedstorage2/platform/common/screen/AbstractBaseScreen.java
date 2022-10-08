@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
-import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
@@ -23,10 +22,12 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 
 public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
+    private final Inventory playerInventory;
     private int sideButtonY;
 
     protected AbstractBaseScreen(final T menu, final Inventory playerInventory, final Component text) {
         super(menu, playerInventory, text);
+        this.playerInventory = playerInventory;
         this.titleLabelX = 7;
         this.titleLabelY = 7;
         this.inventoryLabelX = 7;
@@ -123,33 +124,36 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
                                           final boolean supportsAmount) {
         filteredResource.render(poseStack, x, y, z);
         if (supportsAmount) {
-            renderAmount(
-                poseStack,
-                x,
-                y,
-                filteredResource.getAmount(),
-                Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15)
-            );
+            renderResourceFilterSlotAmount(poseStack, x, y, filteredResource);
         }
+    }
+
+    protected void renderResourceFilterSlotAmount(final PoseStack poseStack,
+                                                  final int x,
+                                                  final int y,
+                                                  final FilteredResource filteredResource) {
+        renderAmount(
+            poseStack,
+            x,
+            y,
+            filteredResource.getFormattedAmount(),
+            Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15),
+            true
+        );
     }
 
     protected void renderAmount(final PoseStack poseStack,
                                 final int x,
                                 final int y,
                                 final String amount,
-                                final int color) {
-        final boolean large = (minecraft != null && minecraft.isEnforceUnicode())
-            || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
-
+                                final int color,
+                                final boolean large) {
         poseStack.pushPose();
         poseStack.translate(x, y, 300);
-
         if (!large) {
             poseStack.scale(0.5F, 0.5F, 1);
         }
-
         font.drawShadow(poseStack, amount, (float) (large ? 16 : 30) - font.width(amount), large ? 8 : 22, color);
-
         poseStack.popPose();
     }
 
@@ -194,15 +198,16 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         }
     }
 
-    private boolean tryOpenResourceFilterAmountScreen(final Slot slot, final ClickType type) {
-        final boolean isFilterSlot = slot instanceof ResourceFilterSlot;
+    protected boolean tryOpenResourceFilterAmountScreen(final Slot slot, final ClickType type) {
+        final boolean isFilterSlot = slot instanceof ResourceFilterSlot filterSlot
+            && filterSlot.getFilteredResource() != null;
         final boolean doesFilterSlotSupportAmount = isFilterSlot && ((ResourceFilterSlot) slot).supportsAmount();
         final boolean isRegularClick = type != ClickType.QUICK_MOVE;
         final boolean isNotCarryingItem = getMenu().getCarried().isEmpty();
         final boolean canChangeAmount =
             isFilterSlot && doesFilterSlotSupportAmount && isRegularClick && isNotCarryingItem;
-        if (canChangeAmount) {
-            // TODO
+        if (canChangeAmount && minecraft != null) {
+            minecraft.setScreen(new ResourceAmountScreen(this, playerInventory, ((ResourceFilterSlot) slot)));
         }
         return canChangeAmount;
     }

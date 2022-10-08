@@ -39,13 +39,17 @@ public class ResourceFilterSlot extends Slot {
         this.cachedResource = resourceFilterContainer.get(index);
     }
 
+    public ResourceFilterSlot atPosition(final int newX, final int newY) {
+        return new ResourceFilterSlot(resourceFilterContainer, index, newX, newY);
+    }
+
     public boolean supportsAmount() {
         return resourceFilterContainer.supportsAmount();
     }
 
     @Nullable
     public FilteredResource getFilteredResource() {
-        return resourceFilterContainer.get(index);
+        return resourceFilterContainer.get(containerIndex);
     }
 
     private static SimpleContainer createDummyContainer() {
@@ -103,5 +107,16 @@ public class ResourceFilterSlot extends Slot {
             return Collections.emptyList();
         }
         return filteredResource.getTooltipLines(player);
+    }
+
+    public void changeAmount(final long amount) {
+        resourceFilterContainer.setAmount(containerIndex, amount);
+    }
+
+    public void changeAmountOnClient(final long amount) {
+        Platform.INSTANCE.getClientToServerCommunications().sendResourceFilterSlotAmountChange(
+            index,
+            amount
+        );
     }
 }

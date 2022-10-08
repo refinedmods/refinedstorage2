@@ -11,18 +11,32 @@ public class FilteredResourceFilterContainer extends ResourceFilterContainer {
 
     public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                            final int size,
-                                           final ResourceType allowedType,
-                                           final boolean supportsAmount) {
+                                           final ResourceType allowedType) {
         this(resourceTypeRegistry, size, () -> {
-        }, allowedType, supportsAmount);
+        }, allowedType, -1);
+    }
+
+    public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                           final int size,
+                                           final ResourceType allowedType,
+                                           final long maxAmount) {
+        this(resourceTypeRegistry, size, () -> {
+        }, allowedType, maxAmount);
+    }
+
+    public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                           final int size,
+                                           final Runnable listener,
+                                           final ResourceType allowedType) {
+        this(resourceTypeRegistry, size, listener, allowedType, -1);
     }
 
     public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                            final int size,
                                            final Runnable listener,
                                            final ResourceType allowedType,
-                                           final boolean supportsAmount) {
-        super(resourceTypeRegistry, size, listener, supportsAmount);
+                                           final long maxAmount) {
+        super(resourceTypeRegistry, size, listener, maxAmount);
         this.allowedType = allowedType;
     }
 

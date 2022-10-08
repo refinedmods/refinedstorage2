@@ -18,7 +18,13 @@ public interface FilteredResource {
 
     Object getValue();
 
-    String getAmount();
+    long getAmount();
+
+    FilteredResource withAmount(long newAmount);
+
+    long getMaxAmount();
+
+    String getFormattedAmount();
 
     ResourceType getType();
 

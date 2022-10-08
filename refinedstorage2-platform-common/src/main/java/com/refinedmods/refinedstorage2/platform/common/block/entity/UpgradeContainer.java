@@ -11,15 +11,16 @@ public class UpgradeContainer extends SimpleContainer {
     private final UpgradeDestination destination;
     private final UpgradeRegistry registry;
 
-    public UpgradeContainer(final UpgradeDestination destination, final UpgradeRegistry registry) {
-        this(destination, registry, () -> {
+    public UpgradeContainer(final int size, final UpgradeDestination destination, final UpgradeRegistry registry) {
+        this(size, destination, registry, () -> {
         });
     }
 
-    public UpgradeContainer(final UpgradeDestination destination,
+    public UpgradeContainer(final int size,
+                            final UpgradeDestination destination,
                             final UpgradeRegistry registry,
                             final Runnable listener) {
-        super(4);
+        super(size);
         this.destination = destination;
         this.registry = registry;
         this.addListener(container -> listener.run());

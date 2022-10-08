@@ -47,7 +47,7 @@ public class FluidResourceType implements ResourceType {
         return FluidResource.fromTag(tag)
             .map(fluidResource -> new FluidFilteredResource(
                 fluidResource,
-                FluidFilteredResource.getAmount(tag)
+                FluidFilteredResource.getAmountFromTag(tag)
             ));
     }
 }

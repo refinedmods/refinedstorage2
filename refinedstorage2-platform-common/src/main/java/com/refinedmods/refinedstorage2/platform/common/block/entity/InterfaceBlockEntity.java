@@ -47,9 +47,10 @@ public class InterfaceBlockEntity
             9,
             this::exportConfigChanged,
             ItemResourceType.INSTANCE,
-            true
+            64
         );
         this.upgradeContainer = new UpgradeContainer(
+            1,
             UpgradeDestinations.INTERFACE,
             PlatformApi.INSTANCE.getUpgradeRegistry(),
             this::upgradeContainerChanged
@@ -107,6 +108,6 @@ public class InterfaceBlockEntity
 
     @Override
     public Component getDisplayName() {
-        return createTranslation("gui", "interface.import");
+        return createTranslation("block", "interface");
     }
 }

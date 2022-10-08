@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,32 +26,60 @@ public class ResourceFilterContainer {
     private final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry;
     private final FilteredResource[] items;
     private final Runnable listener;
-    private final boolean supportsAmount;
+    private final long maxAmount;
 
     public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                    final int size,
-                                   final boolean supportsAmount) {
+                                   final long maxAmount) {
         this(resourceTypeRegistry, size, () -> {
-        }, supportsAmount);
+        }, maxAmount);
+    }
+
+    public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                   final int size) {
+        this(resourceTypeRegistry, size, () -> {
+        }, -1);
+    }
+
+    public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                   final int size,
+                                   final Runnable listener) {
+        this(resourceTypeRegistry, size, listener, -1);
     }
 
     public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                    final int size,
                                    final Runnable listener,
-                                   final boolean supportsAmount) {
+                                   final long maxAmount) {
         this.resourceTypeRegistry = resourceTypeRegistry;
         this.items = new FilteredResource[size];
         this.listener = listener;
-        this.supportsAmount = supportsAmount;
+        this.maxAmount = maxAmount;
     }
 
     public boolean supportsAmount() {
-        return supportsAmount;
+        return maxAmount >= 0;
     }
 
     public void set(final int index, final FilteredResource resource) {
         setSilently(index, resource);
         listener.run();
+    }
+
+    public void setAmount(final int index, final long amount) {
+        if (!supportsAmount()) {
+            return;
+        }
+        final FilteredResource filteredResource = get(index);
+        if (filteredResource == null) {
+            return;
+        }
+        final long newAmount = Mth.clamp(
+            amount,
+            1,
+            Math.min(maxAmount, filteredResource.getMaxAmount())
+        );
+        set(index, filteredResource.withAmount(newAmount));
     }
 
     private void setSilently(final int index, final FilteredResource resource) {
