@@ -27,6 +27,8 @@ public interface Config {
 
     Upgrade getUpgrade();
 
+    Interface getInterface();
+
     interface Grid {
         boolean isLargeFont();
 
@@ -115,5 +117,9 @@ public interface Config {
         long getSpeedUpgradeEnergyUsage();
 
         long getStackUpgradeEnergyUsage();
+    }
+
+    interface Interface {
+        long getEnergyUsage();
     }
 }

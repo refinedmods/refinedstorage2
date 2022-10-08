@@ -25,6 +25,7 @@ public class ConfigImpl implements Config {
     private final Importer importer;
     private final Exporter exporter;
     private final Upgrade upgrade;
+    private final InterfaceImpl iface;
 
     public ConfigImpl() {
         cable = new CableImpl();
@@ -36,6 +37,7 @@ public class ConfigImpl implements Config {
         importer = new ImporterImpl();
         exporter = new ExporterImpl();
         upgrade = new UpgradeImpl();
+        iface = new InterfaceImpl();
         spec = builder.build();
     }
 
@@ -86,6 +88,11 @@ public class ConfigImpl implements Config {
     @Override
     public Upgrade getUpgrade() {
         return upgrade;
+    }
+
+    @Override
+    public Interface getInterface() {
+        return iface;
     }
 
     private class CableImpl implements Cable {
@@ -456,6 +463,23 @@ public class ConfigImpl implements Config {
         @Override
         public long getStackUpgradeEnergyUsage() {
             return stackUpgradeEnergyUsage.get();
+        }
+    }
+
+    private class InterfaceImpl implements Interface {
+        private final ForgeConfigSpec.LongValue energyUsage;
+
+        InterfaceImpl() {
+            builder.push("interface");
+            energyUsage = builder
+                .comment("The energy used by the Interface")
+                .defineInRange(ENERGY_USAGE, 4, 0, Long.MAX_VALUE);
+            builder.pop();
+        }
+
+        @Override
+        public long getEnergyUsage() {
+            return energyUsage.get();
         }
     }
 }

@@ -25,7 +25,7 @@ public class NetworkNodeBlockEntityTicker<
     }
 
     public NetworkNodeBlockEntityTicker(final Supplier<BlockEntityType<T>> allowedTypeSupplier,
-                                        final @Nullable BooleanProperty activenessProperty) {
+                                        @Nullable final BooleanProperty activenessProperty) {
         super(allowedTypeSupplier);
         this.activenessProperty = activenessProperty;
     }

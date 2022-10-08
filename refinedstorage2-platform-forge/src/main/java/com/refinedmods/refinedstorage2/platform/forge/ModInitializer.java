@@ -12,12 +12,14 @@ import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
@@ -106,6 +108,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.IMPORTER;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.INTERFACE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.ITEM_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.MACHINE_CASING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
@@ -271,6 +274,7 @@ public class ModInitializer extends AbstractModInitializer {
 
         Blocks.INSTANCE.setImporter(blockRegistry.register(IMPORTER.getPath(), ImporterBlock::new));
         Blocks.INSTANCE.setExporter(blockRegistry.register(EXPORTER.getPath(), ExporterBlock::new));
+        Blocks.INSTANCE.setInterface(blockRegistry.register(INTERFACE.getPath(), InterfaceBlock::new));
 
         blockRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -335,6 +339,10 @@ public class ModInitializer extends AbstractModInitializer {
         itemRegistry.register(
             EXPORTER.getPath(),
             () -> new SimpleBlockItem(Blocks.INSTANCE.getExporter(), CREATIVE_MODE_TAB)
+        );
+        itemRegistry.register(
+            INTERFACE.getPath(),
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getInterface(), CREATIVE_MODE_TAB)
         );
 
         itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
@@ -533,6 +541,10 @@ public class ModInitializer extends AbstractModInitializer {
         BlockEntities.INSTANCE.setExporter(blockEntityTypeRegistry.register(
             EXPORTER.getPath(),
             () -> BlockEntityType.Builder.of(ExporterBlockEntity::new, Blocks.INSTANCE.getExporter()).build(null)
+        ));
+        BlockEntities.INSTANCE.setInterface(blockEntityTypeRegistry.register(
+            INTERFACE.getPath(),
+            () -> BlockEntityType.Builder.of(InterfaceBlockEntity::new, Blocks.INSTANCE.getInterface()).build(null)
         ));
 
         blockEntityTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());

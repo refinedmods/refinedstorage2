@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "active=true": {
+      "model": "refinedstorage2:block/interface_active"
+    },
+    "active=false": {
+      "model": "refinedstorage2:block/interface_inactive"
+    }
+  }
+}

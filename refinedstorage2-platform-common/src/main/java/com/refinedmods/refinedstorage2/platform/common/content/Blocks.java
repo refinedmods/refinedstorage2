@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
@@ -42,6 +43,8 @@ public final class Blocks {
     private Supplier<ImporterBlock> importer;
     @Nullable
     private Supplier<ExporterBlock> exporter;
+    @Nullable
+    private Supplier<InterfaceBlock> iface;
 
     private Blocks() {
     }
@@ -125,5 +128,13 @@ public final class Blocks {
 
     public ExporterBlock getExporter() {
         return Objects.requireNonNull(exporter).get();
+    }
+
+    public void setInterface(final Supplier<InterfaceBlock> interfaceSupplier) {
+        this.iface = interfaceSupplier;
+    }
+
+    public InterfaceBlock getInterface() {
+        return Objects.requireNonNull(iface).get();
     }
 }
