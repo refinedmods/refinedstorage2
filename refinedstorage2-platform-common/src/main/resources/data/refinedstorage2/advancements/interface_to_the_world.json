@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "refinedstorage2:interface"
+    },
+    "title": {
+      "translate": "advancements.refinedstorage2.interface_to_the_world"
+    },
+    "description": {
+      "translate": "advancements.refinedstorage2.interface_to_the_world.description"
+    }
+  },
+  "parent": "refinedstorage2:root",
+  "criteria": {
+    "interface_in_inventory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "refinedstorage2:interface"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
