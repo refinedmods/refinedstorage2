@@ -74,7 +74,8 @@ public abstract class AbstractDiskDriveBlockEntity
     private final ResourceFilterContainer resourceFilterContainer = new ResourceFilterContainer(
         PlatformApi.INSTANCE.getResourceTypeRegistry(),
         9,
-        this::resourceFilterContainerChanged
+        this::resourceFilterContainerChanged,
+        false
     );
     private final RateLimiter diskStateChangeRateLimiter = RateLimiter.create(1);
 

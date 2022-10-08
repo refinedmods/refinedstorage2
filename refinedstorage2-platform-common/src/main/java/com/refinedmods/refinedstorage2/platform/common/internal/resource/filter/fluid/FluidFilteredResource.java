@@ -15,15 +15,24 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
-public record FluidFilteredResource(FluidResource value) implements FilteredResource {
+public record FluidFilteredResource(FluidResource value, long amount) implements FilteredResource {
+    private static final String TAG_AMOUNT = "amt";
+
+    public static long getAmount(final CompoundTag tag) {
+        return tag.getLong(TAG_AMOUNT);
+    }
+
     @Override
     public void writeToPacket(final FriendlyByteBuf buf) {
         PacketUtil.writeFluidResource(buf, value);
+        buf.writeLong(amount);
     }
 
     @Override
     public CompoundTag toTag() {
-        return FluidResource.toTag(value);
+        final CompoundTag tag = FluidResource.toTag(value);
+        tag.putLong(TAG_AMOUNT, amount);
+        return tag;
     }
 
     @Override
@@ -34,6 +43,11 @@ public record FluidFilteredResource(FluidResource value) implements FilteredReso
     @Override
     public Object getValue() {
         return value;
+    }
+
+    @Override
+    public String getAmount() {
+        return Platform.INSTANCE.getBucketQuantityFormatter().formatWithUnits(amount);
     }
 
     @Override

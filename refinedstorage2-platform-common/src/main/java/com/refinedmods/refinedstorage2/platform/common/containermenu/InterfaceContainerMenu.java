@@ -33,7 +33,8 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
             new FilteredResourceFilterContainer(
                 PlatformApi.INSTANCE.getResourceTypeRegistry(),
                 9,
-                ItemResourceType.INSTANCE
+                ItemResourceType.INSTANCE,
+                true
             ),
             new UpgradeContainer(UpgradeDestinations.INTERFACE, PlatformApi.INSTANCE.getUpgradeRegistry())
         );

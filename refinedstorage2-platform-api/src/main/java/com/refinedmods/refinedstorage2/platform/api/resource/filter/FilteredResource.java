@@ -18,6 +18,8 @@ public interface FilteredResource {
 
     Object getValue();
 
+    String getAmount();
+
     ResourceType getType();
 
     List<Component> getTooltipLines(@Nullable Player player);

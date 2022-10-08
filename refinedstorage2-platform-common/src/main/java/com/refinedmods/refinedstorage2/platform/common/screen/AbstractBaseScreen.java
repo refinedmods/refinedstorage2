@@ -1,20 +1,25 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ResourceFilterButtonWidget;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 
 public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
@@ -92,10 +97,60 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
 
     protected final void renderResourceFilterSlots(final PoseStack poseStack) {
         for (final Slot slot : menu.slots) {
-            if (slot instanceof ResourceFilterSlot resourceFilterSlot) {
-                resourceFilterSlot.render(poseStack, leftPos + slot.x, topPos + slot.y, getBlitOffset());
+            if (!(slot instanceof ResourceFilterSlot resourceFilterSlot)) {
+                continue;
             }
+            final FilteredResource filteredResource = resourceFilterSlot.getFilteredResource();
+            if (filteredResource == null) {
+                continue;
+            }
+            renderResourceFilterSlot(
+                poseStack,
+                leftPos + slot.x,
+                topPos + slot.y,
+                getBlitOffset(),
+                filteredResource,
+                resourceFilterSlot.supportsAmount()
+            );
         }
+    }
+
+    private void renderResourceFilterSlot(final PoseStack poseStack,
+                                          final int x,
+                                          final int y,
+                                          final int z,
+                                          final FilteredResource filteredResource,
+                                          final boolean supportsAmount) {
+        filteredResource.render(poseStack, x, y, z);
+        if (supportsAmount) {
+            renderAmount(
+                poseStack,
+                x,
+                y,
+                filteredResource.getAmount(),
+                Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15)
+            );
+        }
+    }
+
+    protected void renderAmount(final PoseStack poseStack,
+                                final int x,
+                                final int y,
+                                final String amount,
+                                final int color) {
+        final boolean large = (minecraft != null && minecraft.isEnforceUnicode())
+            || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
+
+        poseStack.pushPose();
+        poseStack.translate(x, y, 300);
+
+        if (!large) {
+            poseStack.scale(0.5F, 0.5F, 1);
+        }
+
+        font.drawShadow(poseStack, amount, (float) (large ? 16 : 30) - font.width(amount), large ? 8 : 22, color);
+
+        poseStack.popPose();
     }
 
     public void addSideButton(final AbstractSideButtonWidget button) {
@@ -130,5 +185,25 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
                 this.renderComponentTooltip(poseStack, lines, x, y);
             }
         }
+    }
+
+    @Override
+    protected void slotClicked(final Slot slot, final int slotId, final int mouseButton, final ClickType type) {
+        if (!tryOpenResourceFilterAmountScreen(slot, type)) {
+            super.slotClicked(slot, slotId, mouseButton, type);
+        }
+    }
+
+    private boolean tryOpenResourceFilterAmountScreen(final Slot slot, final ClickType type) {
+        final boolean isFilterSlot = slot instanceof ResourceFilterSlot;
+        final boolean doesFilterSlotSupportAmount = isFilterSlot && ((ResourceFilterSlot) slot).supportsAmount();
+        final boolean isRegularClick = type != ClickType.QUICK_MOVE;
+        final boolean isNotCarryingItem = getMenu().getCarried().isEmpty();
+        final boolean canChangeAmount =
+            isFilterSlot && doesFilterSlotSupportAmount && isRegularClick && isNotCarryingItem;
+        if (canChangeAmount) {
+            // TODO
+        }
+        return canChangeAmount;
     }
 }

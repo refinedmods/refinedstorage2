@@ -11,16 +11,18 @@ public class FilteredResourceFilterContainer extends ResourceFilterContainer {
 
     public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                            final int size,
-                                           final ResourceType allowedType) {
+                                           final ResourceType allowedType,
+                                           final boolean supportsAmount) {
         this(resourceTypeRegistry, size, () -> {
-        }, allowedType);
+        }, allowedType, supportsAmount);
     }
 
     public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                            final int size,
                                            final Runnable listener,
-                                           final ResourceType allowedType) {
-        super(resourceTypeRegistry, size, listener);
+                                           final ResourceType allowedType,
+                                           final boolean supportsAmount) {
+        super(resourceTypeRegistry, size, listener, supportsAmount);
         this.allowedType = allowedType;
     }
 

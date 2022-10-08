@@ -63,7 +63,8 @@ public class ExporterBlockEntity
         this.resourceFilterContainer = new ResourceFilterContainer(
             PlatformApi.INSTANCE.getResourceTypeRegistry(),
             9,
-            this::resourceFilterContainerChanged
+            this::resourceFilterContainerChanged,
+            false
         );
     }
 
