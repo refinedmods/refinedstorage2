@@ -39,6 +39,9 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         if (!(menu instanceof AbstractResourceFilterContainerMenu resourceFilterMenu)) {
             return;
         }
+        if (!isResourceFilterButtonVisible()) {
+            return;
+        }
         final ResourceFilterButtonWidget resourceFilterButton = new ResourceFilterButtonWidget(
             getResourceFilterButtonX(),
             topPos + 4,
@@ -50,6 +53,10 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
 
     protected int getResourceFilterButtonX() {
         return leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7;
+    }
+
+    protected boolean isResourceFilterButtonVisible() {
+        return true;
     }
 
     protected boolean isResourceFilterButtonActive() {
