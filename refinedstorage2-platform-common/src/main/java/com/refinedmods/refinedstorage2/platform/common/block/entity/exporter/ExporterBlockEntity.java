@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.Export
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractLevelInteractingUpgradeableNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractUpgradeableLevelInteractingNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
@@ -37,7 +37,7 @@ import org.apache.logging.log4j.Logger;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ExporterBlockEntity
-    extends AbstractLevelInteractingUpgradeableNetworkNodeContainerBlockEntity<ExporterNetworkNode>
+    extends AbstractUpgradeableLevelInteractingNetworkNodeContainerBlockEntity<ExporterNetworkNode>
     implements ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 

@@ -103,7 +103,6 @@ public abstract class AbstractAmountScreen extends AbstractBaseScreen<AbstractCo
         amountField.setVisible(true);
         amountField.setCanLoseFocus(false);
         amountField.setFocus(true);
-        amountField.active = true; // TODO: does this fix the bug where I can't type initially?
         amountField.setResponder(value -> {
             if (confirmButton != null) {
                 confirmButton.active = getAndValidateAmount().isPresent();
@@ -167,6 +166,12 @@ public abstract class AbstractAmountScreen extends AbstractBaseScreen<AbstractCo
     }
 
     @Override
+    public boolean charTyped(final char unknown1, final int unknown2) {
+        return (amountField != null && amountField.charTyped(unknown1, unknown2))
+            || super.charTyped(unknown1, unknown2);
+    }
+
+    @Override
     public boolean keyPressed(final int key, final int scanCode, final int modifiers) {
         if (key == GLFW.GLFW_KEY_ESCAPE) {
             close();
@@ -178,7 +183,8 @@ public abstract class AbstractAmountScreen extends AbstractBaseScreen<AbstractCo
             tryConfirm();
             return true;
         }
-        if (amountField != null && amountField.keyPressed(key, scanCode, modifiers)) {
+        if (amountField != null
+            && (amountField.keyPressed(key, scanCode, modifiers) || amountField.canConsumeInput())) {
             return true;
         }
         return super.keyPressed(key, scanCode, modifiers);
