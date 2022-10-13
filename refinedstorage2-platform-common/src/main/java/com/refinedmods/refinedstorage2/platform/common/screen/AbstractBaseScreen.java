@@ -149,7 +149,8 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
                                 final int color,
                                 final boolean large) {
         poseStack.pushPose();
-        poseStack.translate(x, y, 300);
+        // Large amounts overlap with the slot lines (see Minecraft behavior)
+        poseStack.translate(x + (large ? 1 : 0), y + (large ? 1 : 0), 300);
         if (!large) {
             poseStack.scale(0.5F, 0.5F, 1);
         }

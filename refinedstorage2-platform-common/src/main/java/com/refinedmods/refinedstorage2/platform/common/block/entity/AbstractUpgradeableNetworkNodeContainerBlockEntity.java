@@ -10,28 +10,22 @@ import java.util.Set;
 
 import com.google.common.util.concurrent.RateLimiter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-public abstract class AbstractLevelInteractingUpgradeableNetworkNodeContainerBlockEntity<T extends AbstractNetworkNode>
+public abstract class AbstractUpgradeableNetworkNodeContainerBlockEntity<T extends AbstractNetworkNode>
     extends AbstractInternalNetworkNodeContainerBlockEntity<T>
     implements BlockEntityWithDrops {
-    private static final Logger LOGGER = LogManager.getLogger();
     private static final String TAG_UPGRADES = "u";
 
     protected final UpgradeContainer upgradeContainer;
     private RateLimiter rateLimiter = createRateLimiter(0);
 
-    protected AbstractLevelInteractingUpgradeableNetworkNodeContainerBlockEntity(
+    protected AbstractUpgradeableNetworkNodeContainerBlockEntity(
         final BlockEntityType<?> type,
         final BlockPos pos,
         final BlockState state,
@@ -40,47 +34,11 @@ public abstract class AbstractLevelInteractingUpgradeableNetworkNodeContainerBlo
     ) {
         super(type, pos, state, node);
         this.upgradeContainer = new UpgradeContainer(
-            4,
             destination,
             PlatformApi.INSTANCE.getUpgradeRegistry(),
             this::upgradeContainerChanged
         );
     }
-
-    // used to handle rotations
-    @Override
-    @SuppressWarnings("deprecation")
-    public void setBlockState(final BlockState newBlockState) {
-        super.setBlockState(newBlockState);
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-        initialize(serverLevel);
-    }
-
-    @Override
-    public void setLevel(final Level level) {
-        super.setLevel(level);
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-        initialize(serverLevel);
-    }
-
-    protected final void initialize(final ServerLevel level) {
-        final Direction direction = getDirection();
-        if (direction == null) {
-            LOGGER.warn(
-                "Failed to initialize: could not extract direction from block at {}, state is {}",
-                worldPosition,
-                getBlockState()
-            );
-            return;
-        }
-        initialize(level, direction);
-    }
-
-    protected abstract void initialize(ServerLevel level, Direction direction);
 
     @Override
     public void doWork() {
@@ -89,12 +47,9 @@ public abstract class AbstractLevelInteractingUpgradeableNetworkNodeContainerBlo
         }
     }
 
-    private void upgradeContainerChanged() {
+    protected void upgradeContainerChanged() {
         configureAccordingToUpgrades();
         setChanged();
-        if (level instanceof ServerLevel serverLevel) {
-            initialize(serverLevel);
-        }
     }
 
     @Override
@@ -112,7 +67,7 @@ public abstract class AbstractLevelInteractingUpgradeableNetworkNodeContainerBlo
         super.load(tag);
     }
 
-    private void configureAccordingToUpgrades() {
+    protected void configureAccordingToUpgrades() {
         final int amountOfSpeedUpgrades = upgradeContainer.countItem(Items.INSTANCE.getSpeedUpgrade());
         final boolean hasStackUpgrade = hasStackUpgrade();
         final long upgradeEnergyUsage = calculateUpgradeEnergyUsage(amountOfSpeedUpgrades, hasStackUpgrade);
