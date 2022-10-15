@@ -20,6 +20,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEn
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
@@ -95,6 +96,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -634,6 +637,26 @@ public class ModInitializer extends AbstractModInitializer {
         if (e.getObject() instanceof ControllerBlockEntity controllerBlockEntity) {
             registerControllerEnergy(e, controllerBlockEntity);
         }
+        if (e.getObject() instanceof AbstractDiskDriveBlockEntity diskDriveBlockEntity) {
+            registerDiskDriveItemHandler(e, diskDriveBlockEntity);
+        }
+    }
+
+    private void registerDiskDriveItemHandler(final AttachCapabilitiesEvent<BlockEntity> e,
+                                              final AbstractDiskDriveBlockEntity diskDriveBlockEntity) {
+        final LazyOptional<IItemHandler> capability = LazyOptional
+            .of(() -> new InvWrapper(diskDriveBlockEntity.getDiskInventory()));
+        e.addCapability(createIdentifier("disk_items"), new ICapabilityProvider() {
+            @Override
+            @Nonnull
+            public <T> LazyOptional<T> getCapability(final Capability<T> cap,
+                                                     @Nullable final Direction side) {
+                if (cap == ForgeCapabilities.ITEM_HANDLER) {
+                    return capability.cast();
+                }
+                return LazyOptional.empty();
+            }
+        });
     }
 
     private void registerControllerEnergy(final AttachCapabilitiesEvent<BlockEntity> e,
