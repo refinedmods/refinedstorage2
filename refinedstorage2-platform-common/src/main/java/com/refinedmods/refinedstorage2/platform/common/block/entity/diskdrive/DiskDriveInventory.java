@@ -24,6 +24,14 @@ public class DiskDriveInventory extends SimpleContainer implements StorageDiskPr
     }
 
     @Override
+    public ItemStack removeItem(final int slot, final int amount) {
+        // Forge InvWrapper calls this instead of setItem.
+        final ItemStack result = super.removeItem(slot, amount);
+        diskDrive.onDiskChanged(slot);
+        return result;
+    }
+
+    @Override
     public void setItem(final int slot, final ItemStack stack) {
         super.setItem(slot, stack);
         // level will not yet be present
