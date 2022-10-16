@@ -46,14 +46,14 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     }
 
     private final BakedModel diskModel;
-    private final BakedModel diskDisconnectedModel;
+    private final BakedModel diskInactiveModel;
 
     public DiskDriveBakedModel(final BakedModel baseModel,
                                final BakedModel diskModel,
-                               final BakedModel diskDisconnectedModel) {
+                               final BakedModel diskInactiveModel) {
         this.wrapped = baseModel;
         this.diskModel = diskModel;
-        this.diskDisconnectedModel = diskDisconnectedModel;
+        this.diskInactiveModel = diskInactiveModel;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
                 continue;
             }
             context.pushTransform(TRANSLATORS[i]);
-            context.fallbackConsumer().accept(diskDisconnectedModel);
+            context.fallbackConsumer().accept(diskInactiveModel);
             context.popTransform();
         }
     }

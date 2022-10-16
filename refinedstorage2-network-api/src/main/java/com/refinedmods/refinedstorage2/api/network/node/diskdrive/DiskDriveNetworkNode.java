@@ -205,7 +205,7 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
         if (disk == null) {
             return StorageDiskState.NONE;
         } else if (!isActive()) {
-            return StorageDiskState.DISCONNECTED;
+            return StorageDiskState.INACTIVE;
         }
         return disk.getState();
     }

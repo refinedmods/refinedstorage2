@@ -233,12 +233,12 @@ with open('colors.txt') as colors_file:
         generate_referencing_item_model(
             get_color_key(color, 'grid'), 'refinedstorage2:block/grid/' + color)
         generate_blockstate_for_each_bi_direction_and_active(get_color_key(
-            color, 'grid'), lambda direction, active: 'refinedstorage2:block/grid/' + color if active else 'refinedstorage2:block/grid/disconnected')
+            color, 'grid'), lambda direction, active: 'refinedstorage2:block/grid/' + color if active else 'refinedstorage2:block/grid/inactive')
 
         generate_north_cutout_block_model('fluid_grid/' + color, particle='refinedstorage2:block/fluid_grid/right', east='refinedstorage2:block/fluid_grid/right', south='refinedstorage2:block/fluid_grid/back', west='refinedstorage2:block/fluid_grid/left',
                                                   up='refinedstorage2:block/fluid_grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/fluid_grid/front', cutout='refinedstorage2:block/fluid_grid/cutouts/' + color, emissive_cutout=True)
         generate_referencing_item_model(get_color_key(color, 'fluid_grid'), 'refinedstorage2:block/fluid_grid/' + color)
-        generate_blockstate_for_each_bi_direction_and_active(get_color_key(color, 'fluid_grid'), lambda direction, active: 'refinedstorage2:block/fluid_grid/' + color if active else 'refinedstorage2:block/fluid_grid/disconnected')
+        generate_blockstate_for_each_bi_direction_and_active(get_color_key(color, 'fluid_grid'), lambda direction, active: 'refinedstorage2:block/fluid_grid/' + color if active else 'refinedstorage2:block/fluid_grid/inactive')
 
         generate_simple_loot_table(get_color_key(color, 'grid'), 'refinedstorage2:' + get_color_key(color, 'grid'))
         generate_simple_loot_table(get_color_key(color, 'fluid_grid'), 'refinedstorage2:' + get_color_key(color, 'fluid_grid'))
@@ -329,8 +329,8 @@ with open('colors.txt') as colors_file:
         'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'controller'), color_names))
     })
 
-    generate_north_cutout_block_model('grid/disconnected', particle='refinedstorage2:block/grid/right', east='refinedstorage2:block/grid/right', south='refinedstorage2:block/grid/back', west='refinedstorage2:block/grid/left',
-                                      up='refinedstorage2:block/grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/grid/front', cutout='refinedstorage2:block/grid/cutouts/disconnected', emissive_cutout=False)
+    generate_north_cutout_block_model('grid/inactive', particle='refinedstorage2:block/grid/right', east='refinedstorage2:block/grid/right', south='refinedstorage2:block/grid/back', west='refinedstorage2:block/grid/left',
+                                      up='refinedstorage2:block/grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/grid/front', cutout='refinedstorage2:block/grid/cutouts/inactive', emissive_cutout=False)
 
-    generate_north_cutout_block_model('fluid_grid/disconnected', particle='refinedstorage2:block/fluid_grid/right', east='refinedstorage2:block/fluid_grid/right', south='refinedstorage2:block/fluid_grid/back', west='refinedstorage2:block/fluid_grid/left',
-                                      up='refinedstorage2:block/fluid_grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/fluid_grid/front', cutout='refinedstorage2:block/fluid_grid/cutouts/disconnected', emissive_cutout=False)
+    generate_north_cutout_block_model('fluid_grid/inactive', particle='refinedstorage2:block/fluid_grid/right', east='refinedstorage2:block/fluid_grid/right', south='refinedstorage2:block/fluid_grid/back', west='refinedstorage2:block/fluid_grid/left',
+                                      up='refinedstorage2:block/fluid_grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/fluid_grid/front', cutout='refinedstorage2:block/fluid_grid/cutouts/inactive', emissive_cutout=False)
