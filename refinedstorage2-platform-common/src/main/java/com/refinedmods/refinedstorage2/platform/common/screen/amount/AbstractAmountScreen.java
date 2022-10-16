@@ -1,4 +1,6 @@
-package com.refinedmods.refinedstorage2.platform.common.screen;
+package com.refinedmods.refinedstorage2.platform.common.screen.amount;
+
+import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -38,16 +40,23 @@ public abstract class AbstractAmountScreen extends AbstractBaseScreen<AbstractCo
     @Nullable
     private Button confirmButton;
 
-    protected AbstractAmountScreen(final Screen parent, final Inventory playerInventory, final Component title) {
-        this(new DefaultDummyContainerMenu(), parent, playerInventory, title);
+    private final AmountScreenConfiguration configuration;
+
+    protected AbstractAmountScreen(final Screen parent,
+                                   final Inventory playerInventory,
+                                   final Component title,
+                                   final AmountScreenConfiguration configuration) {
+        this(new DefaultDummyContainerMenu(), parent, playerInventory, title, configuration);
     }
 
     protected AbstractAmountScreen(final AbstractContainerMenu containerMenu,
                                    final Screen parent,
                                    final Inventory playerInventory,
-                                   final Component title) {
+                                   final Component title,
+                                   final AmountScreenConfiguration configuration) {
         super(containerMenu, playerInventory, title);
         this.parent = parent;
+        this.configuration = configuration;
     }
 
     @Override
@@ -55,31 +64,40 @@ public abstract class AbstractAmountScreen extends AbstractBaseScreen<AbstractCo
         super.init();
         addActionButtons();
         addAmountField();
-        addIncrementButtons(getIncrementsTop(), leftPos + INCREMENT_BUTTON_X, topPos + INCREMENT_BUTTON_TOP_Y);
-        addIncrementButtons(getIncrementsBottom(), leftPos + INCREMENT_BUTTON_X, topPos + imageHeight - 27);
+        addIncrementButtons(
+            configuration.getIncrementsTop(),
+            leftPos + INCREMENT_BUTTON_X,
+            topPos + INCREMENT_BUTTON_TOP_Y
+        );
+        addIncrementButtons(
+            configuration.getIncrementsBottom(),
+            leftPos + INCREMENT_BUTTON_X,
+            topPos + imageHeight - 27
+        );
     }
 
     private void addActionButtons() {
-        final Vector3f actionButtonPos = getActionButtonPosition();
+        final Vector3f pos = configuration.getActionButtonsStartPosition();
+
         addRenderableWidget(new Button(
-            leftPos + (int) actionButtonPos.x(),
-            topPos + (int) actionButtonPos.y(),
+            leftPos + (int) pos.x(),
+            topPos + (int) pos.y(),
             ACTION_BUTTON_WIDTH,
             20,
             RESET_TEXT,
             btn -> reset()
         ));
         confirmButton = addRenderableWidget(new Button(
-            leftPos + (int) actionButtonPos.x(),
-            topPos + (int) actionButtonPos.y() + 24,
+            leftPos + (int) pos.x(),
+            topPos + (int) pos.y() + 24,
             ACTION_BUTTON_WIDTH,
             20,
             SET_TEXT,
             btn -> tryConfirm()
         ));
         addRenderableWidget(new Button(
-            leftPos + (int) actionButtonPos.x(),
-            topPos + (int) actionButtonPos.y() + 48,
+            leftPos + (int) pos.x(),
+            topPos + (int) pos.y() + 48,
             ACTION_BUTTON_WIDTH,
             20,
             CANCEL_TEXT,
@@ -88,7 +106,7 @@ public abstract class AbstractAmountScreen extends AbstractBaseScreen<AbstractCo
     }
 
     private void addAmountField() {
-        final Vector3f pos = getAmountFieldPosition();
+        final Vector3f pos = configuration.getAmountFieldPosition();
 
         amountField = new EditBox(
             font,
@@ -99,7 +117,7 @@ public abstract class AbstractAmountScreen extends AbstractBaseScreen<AbstractCo
             Component.empty()
         );
         amountField.setBordered(false);
-        amountField.setValue(String.valueOf(getInitialAmount()));
+        amountField.setValue(String.valueOf(configuration.getInitialAmount()));
         amountField.setVisible(true);
         amountField.setCanLoseFocus(false);
         amountField.setFocus(true);
@@ -111,22 +129,6 @@ public abstract class AbstractAmountScreen extends AbstractBaseScreen<AbstractCo
 
         addRenderableWidget(amountField);
     }
-
-    protected abstract int getInitialAmount();
-
-    protected abstract int[] getIncrementsTop();
-
-    protected abstract int[] getIncrementsBottom();
-
-    protected abstract Vector3f getAmountFieldPosition();
-
-    protected abstract Vector3f getActionButtonPosition();
-
-    protected abstract int getMinAmount();
-
-    protected abstract int getMaxAmount();
-
-    protected abstract int getResetAmount();
 
     protected abstract void accept(int amount);
 
@@ -145,7 +147,11 @@ public abstract class AbstractAmountScreen extends AbstractBaseScreen<AbstractCo
         }
         getAndValidateAmount().ifPresent(oldAmount -> {
             final int newAmount = oldAmount + delta;
-            final int correctedNewAmount = Mth.clamp(newAmount, getMinAmount(), getMaxAmount());
+            final int correctedNewAmount = Mth.clamp(
+                newAmount,
+                configuration.getMinAmount(),
+                configuration.getMaxAmount()
+            );
             amountField.setValue(String.valueOf(correctedNewAmount));
         });
     }
@@ -194,7 +200,7 @@ public abstract class AbstractAmountScreen extends AbstractBaseScreen<AbstractCo
         if (amountField == null) {
             return;
         }
-        amountField.setValue("" + getResetAmount());
+        amountField.setValue(String.valueOf(configuration.getResetAmount()));
     }
 
     private void tryConfirm() {
@@ -223,7 +229,7 @@ public abstract class AbstractAmountScreen extends AbstractBaseScreen<AbstractCo
     }
 
     private Optional<Integer> validateAmount(final int amount) {
-        if (amount >= getMinAmount() && amount <= getMaxAmount()) {
+        if (amount >= configuration.getMinAmount() && amount <= configuration.getMaxAmount()) {
             return Optional.of(amount);
         } else {
             return Optional.empty();
