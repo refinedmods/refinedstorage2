@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.screen;
+package com.refinedmods.refinedstorage2.platform.common.screen.amount;
 
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
@@ -23,69 +23,38 @@ public class ResourceAmountScreen extends AbstractAmountScreen {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/resource_amount.png");
     private static final MutableComponent TITLE = createTranslation("gui", "amount");
 
-    private static final int[] INCREMENTS_TOP = {1, 10, 64};
-    private static final int[] INCREMENTS_BOTTOM = {1, -10, -64};
-
-    private static final Vector3f AMOUNT_FIELD_POSITION = new Vector3f(9, 51, 0);
-    private static final Vector3f ACTION_BUTTON_POSITION = new Vector3f(114, 22, 0);
-
     private final ResourceFilterSlot slot;
 
     public ResourceAmountScreen(final Screen parent,
                                 final Inventory playerInventory,
                                 final ResourceFilterSlot slot) {
-        super(new DummyContainerMenu(slot), parent, playerInventory, TITLE);
+        super(
+            new DummyContainerMenu(slot),
+            parent,
+            playerInventory,
+            TITLE,
+            AmountScreenConfiguration.AmountScreenConfigurationBuilder.create()
+                .withInitialAmount(getInitialAmount(slot))
+                .withIncrementsTop(1, 10, 64)
+                .withIncrementsBottom(-1, -10, -64)
+                .withAmountFieldPosition(new Vector3f(9, 51, 0))
+                .withActionButtonsStartPosition(new Vector3f(114, 22, 0))
+                .withMinAmount(1)
+                .withMaxAmount(getMaxAmount(slot))
+                .withResetAmount(1)
+                .build()
+        );
         this.slot = slot;
         this.imageWidth = 172;
         this.imageHeight = 99;
     }
 
-    @Override
-    protected int getInitialAmount() {
-        final FilteredResource filteredResource = slot.getFilteredResource();
-        if (filteredResource == null) {
-            return 0;
-        }
-        return (int) filteredResource.getAmount();
+    private static int getInitialAmount(final ResourceFilterSlot slot) {
+        return slot.getFilteredResource() == null ? 0 : (int) slot.getFilteredResource().getAmount();
     }
 
-    @Override
-    protected int[] getIncrementsTop() {
-        return INCREMENTS_TOP;
-    }
-
-    @Override
-    protected int[] getIncrementsBottom() {
-        return INCREMENTS_BOTTOM;
-    }
-
-    @Override
-    protected Vector3f getAmountFieldPosition() {
-        return AMOUNT_FIELD_POSITION;
-    }
-
-    @Override
-    protected Vector3f getActionButtonPosition() {
-        return ACTION_BUTTON_POSITION;
-    }
-
-    @Override
-    protected int getMinAmount() {
-        return 1;
-    }
-
-    @Override
-    protected int getMaxAmount() {
-        final FilteredResource filteredResource = slot.getFilteredResource();
-        if (filteredResource == null) {
-            return 0;
-        }
-        return (int) slot.getFilteredResource().getMaxAmount();
-    }
-
-    @Override
-    protected int getResetAmount() {
-        return 1;
+    private static int getMaxAmount(final ResourceFilterSlot slot) {
+        return slot.getFilteredResource() == null ? 0 : (int) slot.getFilteredResource().getMaxAmount();
     }
 
     @Override

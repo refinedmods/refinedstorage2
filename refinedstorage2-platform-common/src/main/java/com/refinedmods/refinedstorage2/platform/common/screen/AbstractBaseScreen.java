@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.screen;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractResourceFilterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
+import com.refinedmods.refinedstorage2.platform.common.screen.amount.ResourceAmountScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ResourceFilterButtonWidget;
 
@@ -98,22 +99,26 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
 
     protected final void renderResourceFilterSlots(final PoseStack poseStack) {
         for (final Slot slot : menu.slots) {
-            if (!(slot instanceof ResourceFilterSlot resourceFilterSlot)) {
-                continue;
-            }
-            final FilteredResource filteredResource = resourceFilterSlot.getFilteredResource();
-            if (filteredResource == null) {
-                continue;
-            }
-            renderResourceFilterSlot(
-                poseStack,
-                leftPos + slot.x,
-                topPos + slot.y,
-                getBlitOffset(),
-                filteredResource,
-                resourceFilterSlot.supportsAmount()
-            );
+            tryRenderResourceFilterSlot(poseStack, slot);
         }
+    }
+
+    private void tryRenderResourceFilterSlot(final PoseStack poseStack, final Slot slot) {
+        if (!(slot instanceof ResourceFilterSlot resourceFilterSlot)) {
+            return;
+        }
+        final FilteredResource filteredResource = resourceFilterSlot.getFilteredResource();
+        if (filteredResource == null) {
+            return;
+        }
+        renderResourceFilterSlot(
+            poseStack,
+            leftPos + slot.x,
+            topPos + slot.y,
+            getBlitOffset(),
+            filteredResource,
+            resourceFilterSlot.supportsAmount()
+        );
     }
 
     private void renderResourceFilterSlot(final PoseStack poseStack,
@@ -150,7 +155,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
                                 final boolean large) {
         poseStack.pushPose();
         // Large amounts overlap with the slot lines (see Minecraft behavior)
-        poseStack.translate(x + (large ? 1 : 0), y + (large ? 1 : 0), 300);
+        poseStack.translate(x + (large ? 1D : 0D), y + (large ? 1D : 0D), 300D);
         if (!large) {
             poseStack.scale(0.5F, 0.5F, 1);
         }

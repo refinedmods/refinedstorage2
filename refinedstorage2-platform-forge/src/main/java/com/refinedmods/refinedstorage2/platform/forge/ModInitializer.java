@@ -655,7 +655,7 @@ public class ModInitializer extends AbstractModInitializer {
         e.addCapability(createIdentifier("items"), new ICapabilityProvider() {
             @Override
             @Nonnull
-            public <T> LazyOptional<T> getCapability(final Capability<T> cap,
+            public <C> LazyOptional<C> getCapability(final Capability<C> cap,
                                                      @Nullable final Direction side) {
                 if (cap == ForgeCapabilities.ITEM_HANDLER) {
                     return capability.cast();
