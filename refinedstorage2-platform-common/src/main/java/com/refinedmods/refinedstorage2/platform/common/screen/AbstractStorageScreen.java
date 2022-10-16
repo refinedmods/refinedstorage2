@@ -6,8 +6,8 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBas
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AccessModeSideButtonWidget;
-import com.refinedmods.refinedstorage2.platform.common.screen.widget.ExactModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.FilterModeSideButtonWidget;
+import com.refinedmods.refinedstorage2.platform.common.screen.widget.FuzzyModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.PrioritySideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ProgressWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
@@ -59,8 +59,8 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
             getMenu().getProperty(PropertyTypes.FILTER_MODE),
             this::renderComponentTooltip
         ));
-        addSideButton(new ExactModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.EXACT_MODE),
+        addSideButton(new FuzzyModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
             this::renderComponentTooltip
         ));
         addSideButton(new AccessModeSideButtonWidget(

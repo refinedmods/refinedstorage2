@@ -61,7 +61,7 @@ public abstract class AbstractDiskDriveBlockEntity
 
     private static final String TAG_PRIORITY = "pri";
     private static final String TAG_FILTER_MODE = "fim";
-    private static final String TAG_EXACT_MODE = "em";
+    private static final String TAG_FUZZY_MODE = "fm";
     private static final String TAG_ACCESS_MODE = "am";
     private static final String TAG_DISK_INVENTORY = "inv";
     private static final String TAG_STATES = "states";
@@ -80,7 +80,7 @@ public abstract class AbstractDiskDriveBlockEntity
 
     private boolean syncRequested;
 
-    private boolean exactMode;
+    private boolean fuzzyMode;
 
     protected AbstractDiskDriveBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new DiskDriveNetworkNode(
@@ -92,7 +92,7 @@ public abstract class AbstractDiskDriveBlockEntity
         this.diskInventory = new DiskDriveInventory(this, getNode().getAmountOfDiskSlots());
         getNode().setDiskProvider(diskInventory);
         getNode().setListener(this);
-        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(exactMode, value));
+        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(fuzzyMode, value));
     }
 
     public static boolean hasDisk(final CompoundTag tag, final int slot) {
@@ -185,8 +185,8 @@ public abstract class AbstractDiskDriveBlockEntity
             getNode().setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
         }
 
-        if (tag.contains(TAG_EXACT_MODE)) {
-            this.exactMode = tag.getBoolean(TAG_EXACT_MODE);
+        if (tag.contains(TAG_FUZZY_MODE)) {
+            this.fuzzyMode = tag.getBoolean(TAG_FUZZY_MODE);
         }
 
         initializeResourceFilter();
@@ -202,7 +202,7 @@ public abstract class AbstractDiskDriveBlockEntity
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
         tag.putInt(TAG_PRIORITY, getNode().getPriority());
         tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getNode().getAccessMode()));
-        tag.putBoolean(TAG_EXACT_MODE, exactMode);
+        tag.putBoolean(TAG_FUZZY_MODE, fuzzyMode);
     }
 
     public SimpleContainer getDiskInventory() {
@@ -221,13 +221,13 @@ public abstract class AbstractDiskDriveBlockEntity
     }
 
     @Override
-    public boolean isExactMode() {
-        return exactMode;
+    public boolean isFuzzyMode() {
+        return fuzzyMode;
     }
 
     @Override
-    public void setExactMode(final boolean exactMode) {
-        this.exactMode = exactMode;
+    public void setFuzzyMode(final boolean fuzzyMode) {
+        this.fuzzyMode = fuzzyMode;
         initializeResourceFilter();
         setChanged();
     }

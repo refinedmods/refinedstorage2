@@ -38,7 +38,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
     private static final String TAG_STORAGE_ID = "sid";
     private static final String TAG_PRIORITY = "pri";
     private static final String TAG_FILTER_MODE = "fim";
-    private static final String TAG_EXACT_MODE = "em";
+    private static final String TAG_FUZZY_MODE = "fm";
     private static final String TAG_RESOURCE_FILTER = "rf";
     private static final String TAG_ACCESS_MODE = "am";
 
@@ -46,7 +46,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
 
     @Nullable
     private UUID storageId;
-    private boolean exactMode;
+    private boolean fuzzyMode;
 
     protected AbstractStorageBlockBlockEntity(final BlockEntityType<?> type,
                                               final BlockPos pos,
@@ -54,7 +54,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
                                               final StorageNetworkNode<T> node,
                                               final ResourceType resourceType) {
         super(type, pos, state, node);
-        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(exactMode, value));
+        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(fuzzyMode, value));
         this.resourceFilterContainer = new FilteredResourceFilterContainer(
             PlatformApi.INSTANCE.getResourceTypeRegistry(),
             9,
@@ -133,8 +133,8 @@ public abstract class AbstractStorageBlockBlockEntity<T>
             getNode().setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
         }
 
-        if (tag.contains(TAG_EXACT_MODE)) {
-            this.exactMode = tag.getBoolean(TAG_EXACT_MODE);
+        if (tag.contains(TAG_FUZZY_MODE)) {
+            this.fuzzyMode = tag.getBoolean(TAG_FUZZY_MODE);
         }
 
         if (tag.contains(TAG_ACCESS_MODE)) {
@@ -177,7 +177,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
         tag.putInt(TAG_PRIORITY, getNode().getPriority());
-        tag.putBoolean(TAG_EXACT_MODE, exactMode);
+        tag.putBoolean(TAG_FUZZY_MODE, fuzzyMode);
         tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getNode().getAccessMode()));
     }
 
@@ -198,13 +198,13 @@ public abstract class AbstractStorageBlockBlockEntity<T>
     }
 
     @Override
-    public boolean isExactMode() {
-        return exactMode;
+    public boolean isFuzzyMode() {
+        return fuzzyMode;
     }
 
     @Override
-    public void setExactMode(final boolean exactMode) {
-        this.exactMode = exactMode;
+    public void setFuzzyMode(final boolean fuzzyMode) {
+        this.fuzzyMode = fuzzyMode;
         initializeResourceFilter();
         setChanged();
     }

@@ -41,8 +41,8 @@ public final class PropertyTypes {
         ExporterSchedulingModeSettings::getById
     );
 
-    public static final PropertyType<Boolean> EXACT_MODE = new PropertyType<>(
-        createIdentifier("exact_mode"),
+    public static final PropertyType<Boolean> FUZZY_MODE = new PropertyType<>(
+        createIdentifier("fuzzy_mode"),
         value -> Boolean.TRUE.equals(value) ? 1 : 0,
         value -> value == 1
     );

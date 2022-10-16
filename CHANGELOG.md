@@ -24,6 +24,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - You can now select a "Scheduling mode" in the Exporter: first available, round robin, random.
 - The Interface no longer has dedicated import slots. The imported items now go into the export slots.
 - The Interface now imports items immediately.
+- "Exact mode" has been replaced with "Fuzzy mode", which is off by default for performance.
 
 ## [2.0.0-milestone.2.3] - 2022-08-26
 

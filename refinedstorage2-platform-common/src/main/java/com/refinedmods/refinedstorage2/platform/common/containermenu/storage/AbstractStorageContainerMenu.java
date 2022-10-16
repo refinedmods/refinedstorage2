@@ -24,7 +24,7 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceFilte
 
         registerProperty(new ClientProperty<>(PropertyTypes.PRIORITY, 0));
         registerProperty(new ClientProperty<>(PropertyTypes.FILTER_MODE, FilterMode.BLOCK));
-        registerProperty(new ClientProperty<>(PropertyTypes.EXACT_MODE, false));
+        registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
         registerProperty(new ClientProperty<>(PropertyTypes.ACCESS_MODE, AccessMode.INSERT_EXTRACT));
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
     }
@@ -48,9 +48,9 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceFilte
             storageSettingsProvider::setFilterMode
         ));
         registerProperty(new ServerProperty<>(
-            PropertyTypes.EXACT_MODE,
-            storageSettingsProvider::isExactMode,
-            storageSettingsProvider::setExactMode
+            PropertyTypes.FUZZY_MODE,
+            storageSettingsProvider::isFuzzyMode,
+            storageSettingsProvider::setFuzzyMode
         ));
         registerProperty(new ServerProperty<>(
             PropertyTypes.ACCESS_MODE,

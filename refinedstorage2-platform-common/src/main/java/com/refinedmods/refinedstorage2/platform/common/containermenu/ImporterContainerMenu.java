@@ -48,7 +48,7 @@ public class ImporterContainerMenu extends AbstractSimpleFilterContainerMenu<Imp
     @Override
     protected void registerClientProperties() {
         registerProperty(new ClientProperty<>(PropertyTypes.FILTER_MODE, FilterMode.BLOCK));
-        registerProperty(new ClientProperty<>(PropertyTypes.EXACT_MODE, false));
+        registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
     }
 
@@ -60,9 +60,9 @@ public class ImporterContainerMenu extends AbstractSimpleFilterContainerMenu<Imp
             blockEntity::setFilterMode
         ));
         registerProperty(new ServerProperty<>(
-            PropertyTypes.EXACT_MODE,
-            blockEntity::isExactMode,
-            blockEntity::setExactMode
+            PropertyTypes.FUZZY_MODE,
+            blockEntity::isFuzzyMode,
+            blockEntity::setFuzzyMode
         ));
         registerProperty(new ServerProperty<>(
             PropertyTypes.REDSTONE_MODE,

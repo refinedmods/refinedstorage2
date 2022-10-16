@@ -13,9 +13,9 @@ public interface StorageSettingsProvider {
 
     void setFilterMode(FilterMode filterMode);
 
-    boolean isExactMode();
+    boolean isFuzzyMode();
 
-    void setExactMode(boolean exactMode);
+    void setFuzzyMode(boolean fuzzyMode);
 
     AccessMode getAccessMode();
 
