@@ -36,11 +36,11 @@ public class StorageInsertableStorage<T, P> implements InsertableStorage<T> {
             return 0L;
         }
         try (Transaction tx = Transaction.openOuter()) {
-            final long extracted = storage.insert(toPlatformMapper.apply(resource), amount, tx);
+            final long inserted = storage.insert(toPlatformMapper.apply(resource), amount, tx);
             if (action == Action.EXECUTE) {
                 tx.commit();
             }
-            return extracted;
+            return inserted;
         }
     }
 }

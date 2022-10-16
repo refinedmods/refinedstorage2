@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
@@ -37,6 +38,8 @@ public final class Menus {
     private Supplier<MenuType<ExporterContainerMenu>> exporter;
     @Nullable
     private Supplier<MenuType<InterfaceContainerMenu>> iface;
+    @Nullable
+    private Supplier<MenuType<ExternalStorageContainerMenu>> externalStorage;
 
     private Menus() {
     }
@@ -111,5 +114,13 @@ public final class Menus {
 
     public void setInterface(final Supplier<MenuType<InterfaceContainerMenu>> supplier) {
         this.iface = supplier;
+    }
+
+    public MenuType<ExternalStorageContainerMenu> getExternalStorage() {
+        return Objects.requireNonNull(externalStorage).get();
+    }
+
+    public void setExternalStorage(final Supplier<MenuType<ExternalStorageContainerMenu>> supplier) {
+        this.externalStorage = supplier;
     }
 }

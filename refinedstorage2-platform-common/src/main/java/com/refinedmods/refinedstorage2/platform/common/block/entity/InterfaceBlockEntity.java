@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannel;
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResource;
@@ -51,7 +52,7 @@ public class InterfaceBlockEntity
             pos,
             state,
             new InterfaceNetworkNode<>(
-                0,
+                Platform.INSTANCE.getConfig().getInterface().getEnergyUsage(),
                 StorageChannelTypes.ITEM
             )
         );

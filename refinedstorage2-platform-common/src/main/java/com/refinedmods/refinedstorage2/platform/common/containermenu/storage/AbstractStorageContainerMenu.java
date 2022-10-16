@@ -33,34 +33,34 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceFilte
                                            final int syncId,
                                            final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                            final Player player,
-                                           final StorageSettingsProvider storageSettingsProvider,
+                                           final StorageConfigurationProvider storageConfigurationProvider,
                                            final ResourceFilterContainer container) {
         super(type, syncId, resourceTypeRegistry, player, container);
 
         registerProperty(new ServerProperty<>(
             PropertyTypes.PRIORITY,
-            storageSettingsProvider::getPriority,
-            storageSettingsProvider::setPriority
+            storageConfigurationProvider::getPriority,
+            storageConfigurationProvider::setPriority
         ));
         registerProperty(new ServerProperty<>(
             PropertyTypes.FILTER_MODE,
-            storageSettingsProvider::getFilterMode,
-            storageSettingsProvider::setFilterMode
+            storageConfigurationProvider::getFilterMode,
+            storageConfigurationProvider::setFilterMode
         ));
         registerProperty(new ServerProperty<>(
             PropertyTypes.FUZZY_MODE,
-            storageSettingsProvider::isFuzzyMode,
-            storageSettingsProvider::setFuzzyMode
+            storageConfigurationProvider::isFuzzyMode,
+            storageConfigurationProvider::setFuzzyMode
         ));
         registerProperty(new ServerProperty<>(
             PropertyTypes.ACCESS_MODE,
-            storageSettingsProvider::getAccessMode,
-            storageSettingsProvider::setAccessMode
+            storageConfigurationProvider::getAccessMode,
+            storageConfigurationProvider::setAccessMode
         ));
         registerProperty(new ServerProperty<>(
             PropertyTypes.REDSTONE_MODE,
-            storageSettingsProvider::getRedstoneMode,
-            storageSettingsProvider::setRedstoneMode
+            storageConfigurationProvider::getRedstoneMode,
+            storageConfigurationProvider::setRedstoneMode
         ));
     }
 }

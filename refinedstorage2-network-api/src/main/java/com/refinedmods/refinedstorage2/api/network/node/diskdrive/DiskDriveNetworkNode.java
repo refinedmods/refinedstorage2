@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.StorageConfiguration;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
@@ -25,7 +26,7 @@ import javax.annotation.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DiskDriveNetworkNode extends AbstractNetworkNode implements StorageProvider {
+public class DiskDriveNetworkNode extends AbstractNetworkNode implements StorageProvider, StorageConfiguration {
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
 
     @Nullable
@@ -168,10 +169,12 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
         }
     }
 
+    @Override
     public FilterMode getFilterMode() {
         return filter.getMode();
     }
 
+    @Override
     public void setFilterMode(final FilterMode mode) {
         filter.setMode(mode);
     }
@@ -210,14 +213,17 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
         return disk.getState();
     }
 
+    @Override
     public AccessMode getAccessMode() {
         return accessMode;
     }
 
+    @Override
     public void setAccessMode(final AccessMode accessMode) {
         this.accessMode = accessMode;
     }
 
+    @Override
     public void setPriority(final int priority) {
         this.priority = priority;
         if (network != null) {
@@ -227,6 +233,7 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
         }
     }
 
+    @Override
     public int getPriority() {
         return priority;
     }
