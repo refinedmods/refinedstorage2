@@ -1,14 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.UpgradeContainer;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.OutputSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemResourceType;
-import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -25,8 +22,7 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
     public InterfaceContainerMenu(final int syncId,
                                   final Player player,
                                   final ResourceFilterContainer exportConfig,
-                                  final Container exported,
-                                  final UpgradeContainer upgradeContainer) {
+                                  final Container exported) {
         super(
             Menus.INSTANCE.getInterface(),
             syncId,
@@ -34,7 +30,7 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
             player,
             exportConfig
         );
-        addSlots(player, exportConfig, exported, upgradeContainer);
+        addSlots(player, exportConfig, exported);
     }
 
     public InterfaceContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
@@ -47,30 +43,24 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
                 ItemResourceType.INSTANCE,
                 64
             ),
-            new SimpleContainer(9),
-            new UpgradeContainer(UpgradeDestinations.INTERFACE, PlatformApi.INSTANCE.getUpgradeRegistry())
+            new SimpleContainer(9)
         );
         initializeResourceFilterSlots(buf);
     }
 
     private void addSlots(final Player player,
                           final ResourceFilterContainer exportConfig,
-                          final Container exportedItems,
-                          final UpgradeContainer upgradeContainer) {
+                          final Container exportedItems) {
         for (int i = 0; i < exportConfig.size(); ++i) {
             addSlot(createExportConfigSlot(exportConfig, i));
         }
         for (int i = 0; i < exportedItems.getContainerSize(); ++i) {
-            addSlot(createExportOutputSlot(exportedItems, i));
-        }
-        for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
-            addSlot(new Slot(upgradeContainer, i, 187, 6 + (i * 18)));
+            addSlot(createExportedItemSlot(exportedItems, i));
         }
 
         addPlayerInventory(player.getInventory(), 8, 100);
 
-        transferManager.addTransfer(exportedItems, player.getInventory());
-        transferManager.addBiTransfer(player.getInventory(), upgradeContainer);
+        transferManager.addBiTransfer(exportedItems, player.getInventory());
         transferManager.addFilterTransfer(player.getInventory());
     }
 
@@ -79,9 +69,9 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
         return new ResourceFilterSlot(resourceFilterContainer, index, x, EXPORT_CONFIG_SLOT_Y);
     }
 
-    private Slot createExportOutputSlot(final Container container, final int index) {
+    private Slot createExportedItemSlot(final Container container, final int index) {
         final int x = getExportSlotX(index);
-        return new OutputSlot(container, index, x, EXPORT_OUTPUT_SLOT_Y);
+        return new Slot(container, index, x, EXPORT_OUTPUT_SLOT_Y);
     }
 
     private static int getExportSlotX(final int index) {

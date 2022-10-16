@@ -17,10 +17,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Exporter
+- Interface
 
 ### Changed
 
 - You can now select a "Scheduling mode" in the Exporter: first available, round robin, random.
+- The Interface no longer has dedicated import slots. The imported items now go into the export slots.
+- The Interface now imports items immediately.
 
 ## [2.0.0-milestone.2.3] - 2022-08-26
 

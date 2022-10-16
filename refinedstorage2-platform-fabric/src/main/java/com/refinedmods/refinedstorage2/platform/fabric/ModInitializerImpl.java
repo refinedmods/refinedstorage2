@@ -76,6 +76,8 @@ import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.StorageInfoReq
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
 
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import me.shedaniel.autoconfig.AutoConfig;
@@ -94,10 +96,12 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
@@ -696,17 +700,32 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerSidedHandlers() {
-        registerDiskDriveInventory();
+        registerItemStorage(
+            AbstractDiskDriveBlockEntity.class::isInstance,
+            AbstractDiskDriveBlockEntity.class::cast,
+            AbstractDiskDriveBlockEntity::getDiskInventory,
+            BlockEntities.INSTANCE.getDiskDrive()
+        );
+        registerItemStorage(
+            InterfaceBlockEntity.class::isInstance,
+            InterfaceBlockEntity.class::cast,
+            InterfaceBlockEntity::getExportedItems,
+            BlockEntities.INSTANCE.getInterface()
+        );
         registerControllerEnergy();
     }
 
-    private void registerDiskDriveInventory() {
+    private <T extends BlockEntity> void registerItemStorage(final Predicate<BlockEntity> test,
+                                                             final Function<BlockEntity, T> caster,
+                                                             final Function<T, Container> containerSupplier,
+                                                             final BlockEntityType<?> type) {
         ItemStorage.SIDED.registerForBlockEntities((blockEntity, context) -> {
-            if (blockEntity instanceof AbstractDiskDriveBlockEntity diskDrive) {
-                return InventoryStorage.of(diskDrive.getDiskInventory(), context);
+            if (test.test(blockEntity)) {
+                final T casted = caster.apply(blockEntity);
+                return InventoryStorage.of(containerSupplier.apply(casted), context);
             }
             return null;
-        }, BlockEntities.INSTANCE.getDiskDrive());
+        }, type);
     }
 
     private void registerControllerEnergy() {

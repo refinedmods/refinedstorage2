@@ -65,6 +65,7 @@ import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.impo
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.ItemHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -72,6 +73,7 @@ import javax.annotation.Nullable;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Container;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -638,15 +640,19 @@ public class ModInitializer extends AbstractModInitializer {
             registerControllerEnergy(e, controllerBlockEntity);
         }
         if (e.getObject() instanceof AbstractDiskDriveBlockEntity diskDriveBlockEntity) {
-            registerDiskDriveItemHandler(e, diskDriveBlockEntity);
+            registerItemHandler(e, diskDriveBlockEntity, AbstractDiskDriveBlockEntity::getDiskInventory);
+        }
+        if (e.getObject() instanceof InterfaceBlockEntity interfaceBlockEntity) {
+            registerItemHandler(e, interfaceBlockEntity, InterfaceBlockEntity::getExportedItems);
         }
     }
 
-    private void registerDiskDriveItemHandler(final AttachCapabilitiesEvent<BlockEntity> e,
-                                              final AbstractDiskDriveBlockEntity diskDriveBlockEntity) {
+    private <T extends BlockEntity> void registerItemHandler(final AttachCapabilitiesEvent<BlockEntity> e,
+                                                             final T diskDriveBlockEntity,
+                                                             final Function<T, Container> containerSupplier) {
         final LazyOptional<IItemHandler> capability = LazyOptional
-            .of(() -> new InvWrapper(diskDriveBlockEntity.getDiskInventory()));
-        e.addCapability(createIdentifier("disk_items"), new ICapabilityProvider() {
+            .of(() -> new InvWrapper(containerSupplier.apply(diskDriveBlockEntity)));
+        e.addCapability(createIdentifier("items"), new ICapabilityProvider() {
             @Override
             @Nonnull
             public <T> LazyOptional<T> getCapability(final Capability<T> cap,
