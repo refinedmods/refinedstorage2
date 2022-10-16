@@ -91,7 +91,7 @@ public class ItemStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity
         return new ItemStorageBlockContainerMenu(
             syncId,
             player,
-            resourceFilterContainer,
+            getFilterContainer(),
             this
         );
     }
