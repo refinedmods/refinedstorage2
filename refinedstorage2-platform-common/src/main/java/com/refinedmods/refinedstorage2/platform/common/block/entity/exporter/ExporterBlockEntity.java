@@ -9,9 +9,9 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractUpgradeableLevelInteractingNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -42,14 +42,12 @@ public class ExporterBlockEntity
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_SCHEDULING_MODE = "sm";
-    private static final String TAG_FUZZY_MODE = "fm";
-    private static final String TAG_RESOURCE_FILTER = "rf";
 
-    private final ResourceFilterContainer resourceFilterContainer;
+    private final FilterWithFuzzyMode filter;
+
     private ExporterSchedulingModeSettings schedulingModeSettings = ExporterSchedulingModeSettings.FIRST_AVAILABLE;
     @Nullable
     private ExporterSchedulingMode schedulingMode;
-    private boolean fuzzyMode;
 
     public ExporterBlockEntity(final BlockPos pos, final BlockState state) {
         super(
@@ -59,12 +57,9 @@ public class ExporterBlockEntity
             new ExporterNetworkNode(0),
             UpgradeDestinations.EXPORTER
         );
+        this.filter = new FilterWithFuzzyMode(this::setChanged, value -> {
+        }, getNode()::setTemplates);
         this.setSchedulingMode(null, schedulingModeSettings);
-        this.resourceFilterContainer = new ResourceFilterContainer(
-            PlatformApi.INSTANCE.getResourceTypeRegistry(),
-            9,
-            this::resourceFilterContainerChanged
-        );
     }
 
     @Override
@@ -82,7 +77,13 @@ public class ExporterBlockEntity
             PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().getAll();
         final List<ExporterTransferStrategy> strategies = factories
             .stream()
-            .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, hasStackUpgrade, fuzzyMode))
+            .map(factory -> factory.create(
+                serverLevel,
+                sourcePosition,
+                incomingDirection,
+                hasStackUpgrade,
+                filter.isFuzzyMode()
+            ))
             .toList();
         return new CompositeExporterTransferStrategy(strategies);
     }
@@ -90,12 +91,11 @@ public class ExporterBlockEntity
     @Override
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
         if (schedulingMode != null) {
             tag.putInt(TAG_SCHEDULING_MODE, schedulingModeSettings.getId());
             schedulingModeSettings.writeToTag(tag, schedulingMode);
         }
-        tag.putBoolean(TAG_FUZZY_MODE, fuzzyMode);
+        filter.save(tag);
     }
 
     @Override
@@ -104,14 +104,7 @@ public class ExporterBlockEntity
             setSchedulingMode(tag, ExporterSchedulingModeSettings.getById(tag.getInt(TAG_SCHEDULING_MODE)));
         }
 
-        if (tag.contains(TAG_FUZZY_MODE)) {
-            this.fuzzyMode = tag.getBoolean(TAG_FUZZY_MODE);
-        }
-
-        if (tag.contains(TAG_RESOURCE_FILTER)) {
-            resourceFilterContainer.load(tag.getCompound(TAG_RESOURCE_FILTER));
-        }
-        initializeResourceFilter();
+        filter.load(tag);
 
         super.load(tag);
     }
@@ -144,29 +137,19 @@ public class ExporterBlockEntity
     }
 
     public boolean isFuzzyMode() {
-        return fuzzyMode;
+        return filter.isFuzzyMode();
     }
 
     public void setFuzzyMode(final boolean fuzzyMode) {
-        this.fuzzyMode = fuzzyMode;
-        setChanged();
+        filter.setFuzzyMode(fuzzyMode);
         if (level instanceof ServerLevel serverLevel) {
             initialize(serverLevel);
         }
     }
 
-    private void resourceFilterContainerChanged() {
-        initializeResourceFilter();
-        setChanged();
-    }
-
-    private void initializeResourceFilter() {
-        getNode().setTemplates(resourceFilterContainer.getTemplates());
-    }
-
     @Override
     public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
-        resourceFilterContainer.writeToUpdatePacket(buf);
+        filter.getFilterContainer().writeToUpdatePacket(buf);
     }
 
     @Override
@@ -177,6 +160,6 @@ public class ExporterBlockEntity
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
-        return new ExporterContainerMenu(syncId, player, this, resourceFilterContainer, upgradeContainer);
+        return new ExporterContainerMenu(syncId, player, this, filter.getFilterContainer(), upgradeContainer);
     }
 }

@@ -85,7 +85,7 @@ public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntit
         return new FluidStorageBlockContainerMenu(
             syncId,
             player,
-            resourceFilterContainer,
+            getFilterContainer(),
             this
         );
     }

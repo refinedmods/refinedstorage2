@@ -4,14 +4,13 @@ import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageSettingsProvider;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
@@ -38,15 +37,12 @@ public abstract class AbstractStorageBlockBlockEntity<T>
     private static final String TAG_STORAGE_ID = "sid";
     private static final String TAG_PRIORITY = "pri";
     private static final String TAG_FILTER_MODE = "fim";
-    private static final String TAG_FUZZY_MODE = "fm";
-    private static final String TAG_RESOURCE_FILTER = "rf";
     private static final String TAG_ACCESS_MODE = "am";
 
-    protected final ResourceFilterContainer resourceFilterContainer;
+    private final FilterWithFuzzyMode filter;
 
     @Nullable
     private UUID storageId;
-    private boolean fuzzyMode;
 
     protected AbstractStorageBlockBlockEntity(final BlockEntityType<?> type,
                                               final BlockPos pos,
@@ -54,25 +50,12 @@ public abstract class AbstractStorageBlockBlockEntity<T>
                                               final StorageNetworkNode<T> node,
                                               final ResourceType resourceType) {
         super(type, pos, state, node);
-        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(fuzzyMode, value));
-        this.resourceFilterContainer = new FilteredResourceFilterContainer(
-            PlatformApi.INSTANCE.getResourceTypeRegistry(),
-            9,
-            this::resourceFilterContainerChanged,
-            resourceType
-        );
+        this.filter = new FilterWithFuzzyMode(resourceType, this::setChanged, getNode()::setFilterTemplates, value -> {
+        });
+        getNode().setNormalizer(filter.createNormalizer());
     }
 
     protected abstract PlatformStorage<T> createStorage(Runnable listener);
-
-    private void resourceFilterContainerChanged() {
-        initializeResourceFilter();
-        setChanged();
-    }
-
-    private void initializeResourceFilter() {
-        getNode().setFilterTemplates(resourceFilterContainer.getUniqueTemplates());
-    }
 
     @Override
     public void setLevel(final Level level) {
@@ -133,19 +116,11 @@ public abstract class AbstractStorageBlockBlockEntity<T>
             getNode().setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
         }
 
-        if (tag.contains(TAG_FUZZY_MODE)) {
-            this.fuzzyMode = tag.getBoolean(TAG_FUZZY_MODE);
-        }
-
         if (tag.contains(TAG_ACCESS_MODE)) {
             getNode().setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
         }
 
-        if (tag.contains(TAG_RESOURCE_FILTER)) {
-            resourceFilterContainer.load(tag.getCompound(TAG_RESOURCE_FILTER));
-        }
-
-        initializeResourceFilter();
+        filter.load(tag);
 
         super.load(tag);
     }
@@ -174,11 +149,10 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         if (storageId != null) {
             tag.putUUID(TAG_STORAGE_ID, storageId);
         }
-        tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
         tag.putInt(TAG_PRIORITY, getNode().getPriority());
-        tag.putBoolean(TAG_FUZZY_MODE, fuzzyMode);
         tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getNode().getAccessMode()));
+        filter.save(tag);
     }
 
     @Nullable
@@ -199,14 +173,16 @@ public abstract class AbstractStorageBlockBlockEntity<T>
 
     @Override
     public boolean isFuzzyMode() {
-        return fuzzyMode;
+        return filter.isFuzzyMode();
     }
 
     @Override
     public void setFuzzyMode(final boolean fuzzyMode) {
-        this.fuzzyMode = fuzzyMode;
-        initializeResourceFilter();
-        setChanged();
+        filter.setFuzzyMode(fuzzyMode);
+    }
+
+    protected final ResourceFilterContainer getFilterContainer() {
+        return filter.getFilterContainer();
     }
 
     @Override
@@ -235,6 +211,6 @@ public abstract class AbstractStorageBlockBlockEntity<T>
     public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
         buf.writeLong(getNode().getStored());
         buf.writeLong(getNode().getCapacity());
-        resourceFilterContainer.writeToUpdatePacket(buf);
+        filter.getFilterContainer().writeToUpdatePacket(buf);
     }
 }

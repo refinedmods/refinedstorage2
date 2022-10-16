@@ -6,11 +6,9 @@ import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterNetwork
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -39,11 +37,8 @@ public class ImporterBlockEntity
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_FILTER_MODE = "fim";
-    private static final String TAG_FUZZY_MODE = "fm";
-    private static final String TAG_RESOURCE_FILTER = "rf";
 
-    private final ResourceFilterContainer resourceFilterContainer;
-    private boolean fuzzyMode;
+    private final FilterWithFuzzyMode filter;
 
     public ImporterBlockEntity(final BlockPos pos, final BlockState state) {
         super(
@@ -53,12 +48,9 @@ public class ImporterBlockEntity
             new ImporterNetworkNode(0),
             UpgradeDestinations.IMPORTER
         );
-        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(fuzzyMode, value));
-        this.resourceFilterContainer = new ResourceFilterContainer(
-            PlatformApi.INSTANCE.getResourceTypeRegistry(),
-            9,
-            this::resourceFilterContainerChanged
-        );
+        this.filter = new FilterWithFuzzyMode(this::setChanged, getNode()::setFilterTemplates, value -> {
+        });
+        getNode().setNormalizer(filter.createNormalizer());
     }
 
     @Override
@@ -84,9 +76,8 @@ public class ImporterBlockEntity
     @Override
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
-        tag.putBoolean(TAG_FUZZY_MODE, fuzzyMode);
+        filter.save(tag);
     }
 
     @Override
@@ -95,26 +86,17 @@ public class ImporterBlockEntity
             getNode().setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
         }
 
-        if (tag.contains(TAG_FUZZY_MODE)) {
-            this.fuzzyMode = tag.getBoolean(TAG_FUZZY_MODE);
-        }
-
-        if (tag.contains(TAG_RESOURCE_FILTER)) {
-            resourceFilterContainer.load(tag.getCompound(TAG_RESOURCE_FILTER));
-        }
-        initializeResourceFilter();
+        filter.load(tag);
 
         super.load(tag);
     }
 
     public boolean isFuzzyMode() {
-        return fuzzyMode;
+        return filter.isFuzzyMode();
     }
 
     public void setFuzzyMode(final boolean fuzzyMode) {
-        this.fuzzyMode = fuzzyMode;
-        initializeResourceFilter();
-        setChanged();
+        filter.setFuzzyMode(fuzzyMode);
     }
 
     public FilterMode getFilterMode() {
@@ -126,15 +108,6 @@ public class ImporterBlockEntity
         setChanged();
     }
 
-    private void resourceFilterContainerChanged() {
-        initializeResourceFilter();
-        setChanged();
-    }
-
-    private void initializeResourceFilter() {
-        getNode().setFilterTemplates(resourceFilterContainer.getUniqueTemplates());
-    }
-
     @Override
     protected void setEnergyUsage(final long upgradeEnergyUsage) {
         final long baseEnergyUsage = Platform.INSTANCE.getConfig().getImporter().getEnergyUsage();
@@ -143,7 +116,7 @@ public class ImporterBlockEntity
 
     @Override
     public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
-        resourceFilterContainer.writeToUpdatePacket(buf);
+        filter.getFilterContainer().writeToUpdatePacket(buf);
     }
 
     @Override
@@ -154,6 +127,6 @@ public class ImporterBlockEntity
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
-        return new ImporterContainerMenu(syncId, player, this, resourceFilterContainer, upgradeContainer);
+        return new ImporterContainerMenu(syncId, player, this, filter.getFilterContainer(), upgradeContainer);
     }
 }
