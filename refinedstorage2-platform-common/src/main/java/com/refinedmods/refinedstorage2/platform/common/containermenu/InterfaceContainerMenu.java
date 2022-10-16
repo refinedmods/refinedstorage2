@@ -1,11 +1,16 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemResourceType;
+import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -21,8 +26,9 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
 
     public InterfaceContainerMenu(final int syncId,
                                   final Player player,
+                                  final InterfaceBlockEntity blockEntity,
                                   final ResourceFilterContainer exportConfig,
-                                  final Container exported) {
+                                  final Container exportedItems) {
         super(
             Menus.INSTANCE.getInterface(),
             syncId,
@@ -30,7 +36,18 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
             player,
             exportConfig
         );
-        addSlots(player, exportConfig, exported);
+        addSlots(player, exportConfig, exportedItems);
+
+        registerProperty(new ServerProperty<>(
+            PropertyTypes.EXACT_MODE,
+            blockEntity::isExactMode,
+            blockEntity::setExactMode
+        ));
+        registerProperty(new ServerProperty<>(
+            PropertyTypes.REDSTONE_MODE,
+            blockEntity::getRedstoneMode,
+            blockEntity::setRedstoneMode
+        ));
     }
 
     public InterfaceContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
@@ -46,6 +63,9 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
             new SimpleContainer(9)
         );
         initializeResourceFilterSlots(buf);
+
+        registerProperty(new ClientProperty<>(PropertyTypes.EXACT_MODE, false));
+        registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
     }
 
     private void addSlots(final Player player,

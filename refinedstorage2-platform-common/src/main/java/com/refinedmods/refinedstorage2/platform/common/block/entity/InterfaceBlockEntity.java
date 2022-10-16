@@ -2,9 +2,12 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.node.iface.InterfaceExportState;
 import com.refinedmods.refinedstorage2.api.network.node.iface.InterfaceNetworkNode;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannel;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
@@ -14,6 +17,9 @@ import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -32,17 +38,17 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-// TODO: Redstone mode
-// TODO: Exact mode
 public class InterfaceBlockEntity
     extends AbstractInternalNetworkNodeContainerBlockEntity<InterfaceNetworkNode<ItemResource>>
     implements InterfaceExportState<ItemResource>, ExtendedMenuProvider, BlockEntityWithDrops {
     private static final String TAG_EXPORT_CONFIG = "ec";
     private static final String TAG_EXPORT_ITEMS = "ei";
+    private static final String TAG_EXACT_MODE = "em";
     private static final int EXPORT_SLOTS = 9;
 
     private final ResourceFilterContainer exportConfig;
     private final SimpleContainer exportedItems = new SimpleContainer(EXPORT_SLOTS);
+    private boolean exactMode;
 
     public InterfaceBlockEntity(final BlockPos pos, final BlockState state) {
         super(
@@ -71,6 +77,7 @@ public class InterfaceBlockEntity
         super.saveAdditional(tag);
         tag.put(TAG_EXPORT_CONFIG, exportConfig.toTag());
         tag.put(TAG_EXPORT_ITEMS, exportedItems.createTag());
+        tag.putBoolean(TAG_EXACT_MODE, exactMode);
     }
 
     @Override
@@ -81,7 +88,19 @@ public class InterfaceBlockEntity
         if (tag.contains(TAG_EXPORT_ITEMS)) {
             exportedItems.fromTag(tag.getList(TAG_EXPORT_ITEMS, Tag.TAG_COMPOUND));
         }
+        if (tag.contains(TAG_EXACT_MODE)) {
+            exactMode = tag.getBoolean(TAG_EXACT_MODE);
+        }
         super.load(tag);
+    }
+
+    public boolean isExactMode() {
+        return exactMode;
+    }
+
+    public void setExactMode(final boolean exactMode) {
+        this.exactMode = exactMode;
+        setChanged();
     }
 
     private void exportConfigChanged() {
@@ -95,7 +114,7 @@ public class InterfaceBlockEntity
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
-        return new InterfaceContainerMenu(syncId, player, exportConfig, exportedItems);
+        return new InterfaceContainerMenu(syncId, player, this, exportConfig, exportedItems);
     }
 
     @Override
@@ -111,6 +130,29 @@ public class InterfaceBlockEntity
     @Override
     public int getSlots() {
         return exportConfig.size();
+    }
+
+    @Override
+    public Collection<ItemResource> expandExportCandidates(final StorageChannel<ItemResource> storageChannel,
+                                                           final ItemResource resource) {
+        if (exactMode || !(storageChannel instanceof FuzzyStorageChannel<ItemResource> fuzzyStorageChannel)) {
+            return Collections.singletonList(resource);
+        }
+        return fuzzyStorageChannel
+            .getFuzzy(resource)
+            .stream()
+            .map(ResourceAmount::getResource)
+            .collect(Collectors.toSet());
+    }
+
+    @Override
+    public boolean isCurrentlyExportedResourceValid(final ItemResource want, final ItemResource got) {
+        if (exactMode) {
+            return got.equals(want);
+        }
+        final ItemResource normalizedGot = got.normalize();
+        final ItemResource normalizedWant = want.normalize();
+        return normalizedGot.equals(normalizedWant);
     }
 
     @Nullable

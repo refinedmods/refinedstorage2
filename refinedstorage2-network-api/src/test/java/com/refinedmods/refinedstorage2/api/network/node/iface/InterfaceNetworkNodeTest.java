@@ -240,6 +240,33 @@ class InterfaceNetworkNodeTest {
     }
 
     @Test
+    void shouldExportResourceFuzzilyToEmptySlot(
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+    ) {
+        // Arrange
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+        storageChannel.insert("A1", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.insert("A2", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        exportState.setRequestedResource(1, "A", 10);
+
+        // Act
+        sut.doWork();
+
+        // Assert
+        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
+        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A1");
+        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(2);
+
+        assertThat(storageChannel.getAll())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount<>("A1", 8),
+                new ResourceAmount<>("A2", 10)
+            );
+    }
+
+    @Test
     void shouldClearSlotWhenNoLongerRequestingAnything(
         @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
     ) {
@@ -446,6 +473,65 @@ class InterfaceNetworkNodeTest {
         assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
         assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
         assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(7);
+        assertThat(storageChannel.getAll()).isEmpty();
+    }
+
+    @Test
+    void shouldKeepExportingResourceFuzzilyUntilWantedAmountIsReached(
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+    ) {
+        // Arrange
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+        storageChannel.insert("A1", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        storageChannel.insert("A2", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        exportState.setRequestedResource(1, "A", 10);
+
+        // Act & assert
+        sut.doWork();
+        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
+        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A1");
+        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(2);
+        assertThat(storageChannel.getAll())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount<>("A1", 8),
+                new ResourceAmount<>("A2", 10)
+            );
+
+        sut.doWork();
+        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
+        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A1");
+        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(4);
+        assertThat(storageChannel.getAll())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount<>("A1", 6),
+                new ResourceAmount<>("A2", 10)
+            );
+    }
+
+    @Test
+    void shouldKeepExportingResourceFuzzilyUntilWantedAmountIsReachedEvenIfTheResourceIsNoLongerAvailableInTheNetwork(
+        @InjectNetworkStorageChannel final StorageChannel<String> storageChannel
+    ) {
+        // Arrange
+        storageChannel.addSource(new InMemoryStorageImpl<>());
+        storageChannel.insert("A1", 1, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        exportState.setRequestedResource(1, "A", 1);
+
+        // Act & assert
+        sut.doWork();
+        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
+        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A1");
+        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(1);
+        assertThat(storageChannel.getAll()).isEmpty();
+
+        sut.doWork();
+        assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
+        assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A1");
+        assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(1);
         assertThat(storageChannel.getAll()).isEmpty();
     }
 
