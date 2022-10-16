@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.ExternalStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
@@ -46,6 +47,8 @@ public final class BlockEntities {
     private Supplier<BlockEntityType<ExporterBlockEntity>> exporter;
     @Nullable
     private Supplier<BlockEntityType<InterfaceBlockEntity>> iface;
+    @Nullable
+    private Supplier<BlockEntityType<ExternalStorageBlockEntity>> externalStorage;
 
     private BlockEntities() {
     }
@@ -138,5 +141,13 @@ public final class BlockEntities {
 
     public void setInterface(final Supplier<BlockEntityType<InterfaceBlockEntity>> supplier) {
         this.iface = supplier;
+    }
+
+    public BlockEntityType<ExternalStorageBlockEntity> getExternalStorage() {
+        return Objects.requireNonNull(externalStorage).get();
+    }
+
+    public void setExternalStorage(final Supplier<BlockEntityType<ExternalStorageBlockEntity>> supplier) {
+        this.externalStorage = supplier;
     }
 }
