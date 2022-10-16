@@ -60,8 +60,8 @@ public class InterfaceNetworkNode<T> extends AbstractNetworkNode {
         } else if (want != null && got == null) {
             doInitialExport(state, index, want, storageChannel);
         } else if (want != null) {
-            final boolean isSame = state.isCurrentlyExportedResourceValid(want, got);
-            if (!isSame) {
+            final boolean valid = state.isCurrentlyExportedResourceValid(want, got);
+            if (!valid) {
                 clearExport(state, index, got, storageChannel);
             } else {
                 doExportWithExistingResource(state, index, got, storageChannel);
