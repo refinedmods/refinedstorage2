@@ -21,6 +21,7 @@
   "block.refinedstorage2.importer": "Importer",
   "block.refinedstorage2.exporter": "Exporter",
   "block.refinedstorage2.interface": "Interface",
+  "block.refinedstorage2.external_storage": "External Storage",
   "gui.refinedstorage2.disk_drive.disks": "Disks",
   "gui.refinedstorage2.grid.sorting.direction": "Sorting direction",
   "gui.refinedstorage2.grid.sorting.direction.ascending": "Ascending",
@@ -186,5 +187,7 @@
   "advancements.refinedstorage2.upgrading": "Upgrading",
   "advancements.refinedstorage2.upgrading.description": "Craft an Upgrade to improve various devices",
   "advancements.refinedstorage2.interface_to_the_world": "Interface to the world",
-  "advancements.refinedstorage2.interface_to_the_world.description": "Export and import items at the same time with an Interface"
+  "advancements.refinedstorage2.interface_to_the_world.description": "Export and import items at the same time with an Interface",
+  "advancements.refinedstorage2.storing_externally": "Storing externally",
+  "advancements.refinedstorage2.storing_externally.description": "Use an External Storage to provide the network with storage from an external block like a chest"
 }

@@ -33,6 +33,7 @@ public final class ContentIds {
     public static final ResourceLocation SPEED_UPGRADE = createIdentifier("speed_upgrade");
     public static final ResourceLocation STACK_UPGRADE = createIdentifier("stack_upgrade");
     public static final ResourceLocation INTERFACE = createIdentifier("interface");
+    public static final ResourceLocation EXTERNAL_STORAGE = createIdentifier("external_storage");
 
     private ContentIds() {
     }

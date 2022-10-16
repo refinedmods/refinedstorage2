@@ -54,6 +54,13 @@ final class DirectionalCableBlockShapes {
     private static final VoxelShape IMPORTER_DOWN_2 = box(5, 2, 5, 11, 4, 11);
     private static final VoxelShape IMPORTER_DOWN_3 = box(3, 0, 3, 13, 2, 13);
 
+    private static final VoxelShape HOLDER_NORTH = box(7, 7, 2, 9, 9, 6);
+    private static final VoxelShape HOLDER_EAST = box(10, 7, 7, 14, 9, 9);
+    private static final VoxelShape HOLDER_SOUTH = box(7, 7, 10, 9, 9, 14);
+    private static final VoxelShape HOLDER_WEST = box(2, 7, 7, 6, 9, 9);
+    private static final VoxelShape HOLDER_UP = box(7, 10, 7, 9, 14, 9);
+    private static final VoxelShape HOLDER_DOWN = box(7, 2, 7, 9, 6, 9);
+
     static final VoxelShape EXPORTER_NORTH = Shapes.or(EXPORTER_NORTH_1, EXPORTER_NORTH_2, EXPORTER_NORTH_3);
     static final VoxelShape EXPORTER_EAST = Shapes.or(EXPORTER_EAST_1, EXPORTER_EAST_2, EXPORTER_EAST_3);
     static final VoxelShape EXPORTER_SOUTH = Shapes.or(EXPORTER_SOUTH_1, EXPORTER_SOUTH_2, EXPORTER_SOUTH_3);
@@ -67,6 +74,13 @@ final class DirectionalCableBlockShapes {
     static final VoxelShape IMPORTER_WEST = Shapes.or(IMPORTER_WEST_1, IMPORTER_WEST_2, IMPORTER_WEST_3);
     static final VoxelShape IMPORTER_UP = Shapes.or(IMPORTER_UP_1, IMPORTER_UP_2, IMPORTER_UP_3);
     static final VoxelShape IMPORTER_DOWN = Shapes.or(IMPORTER_DOWN_1, IMPORTER_DOWN_2, IMPORTER_DOWN_3);
+
+    static final VoxelShape EXTERNAL_STORAGE_NORTH = Shapes.or(box(3, 3, 0, 13, 13, 2), HOLDER_NORTH);
+    static final VoxelShape EXTERNAL_STORAGE_EAST = Shapes.or(box(14, 3, 3, 16, 13, 13), HOLDER_EAST);
+    static final VoxelShape EXTERNAL_STORAGE_SOUTH = Shapes.or(box(3, 3, 14, 13, 13, 16), HOLDER_SOUTH);
+    static final VoxelShape EXTERNAL_STORAGE_WEST = Shapes.or(box(0, 3, 3, 2, 13, 13), HOLDER_WEST);
+    static final VoxelShape EXTERNAL_STORAGE_UP = Shapes.or(box(3, 14, 3, 13, 16, 13), HOLDER_UP);
+    static final VoxelShape EXTERNAL_STORAGE_DOWN = Shapes.or(box(3, 0, 3, 13, 2, 13), HOLDER_DOWN);
 
     private DirectionalCableBlockShapes() {
     }

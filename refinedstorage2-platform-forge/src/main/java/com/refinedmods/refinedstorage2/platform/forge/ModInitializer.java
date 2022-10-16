@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
@@ -18,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.ExternalStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
@@ -110,6 +112,7 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXPORTER;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXTERNAL_STORAGE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.GRID;
@@ -281,6 +284,10 @@ public class ModInitializer extends AbstractModInitializer {
         Blocks.INSTANCE.setImporter(blockRegistry.register(IMPORTER.getPath(), ImporterBlock::new));
         Blocks.INSTANCE.setExporter(blockRegistry.register(EXPORTER.getPath(), ExporterBlock::new));
         Blocks.INSTANCE.setInterface(blockRegistry.register(INTERFACE.getPath(), InterfaceBlock::new));
+        Blocks.INSTANCE.setExternalStorage(blockRegistry.register(
+            EXTERNAL_STORAGE.getPath(),
+            ExternalStorageBlock::new
+        ));
 
         blockRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -349,6 +356,10 @@ public class ModInitializer extends AbstractModInitializer {
         itemRegistry.register(
             INTERFACE.getPath(),
             () -> new SimpleBlockItem(Blocks.INSTANCE.getInterface(), CREATIVE_MODE_TAB)
+        );
+        itemRegistry.register(
+            EXTERNAL_STORAGE.getPath(),
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getExternalStorage(), CREATIVE_MODE_TAB)
         );
 
         itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
@@ -551,6 +562,13 @@ public class ModInitializer extends AbstractModInitializer {
         BlockEntities.INSTANCE.setInterface(blockEntityTypeRegistry.register(
             INTERFACE.getPath(),
             () -> BlockEntityType.Builder.of(InterfaceBlockEntity::new, Blocks.INSTANCE.getInterface()).build(null)
+        ));
+        BlockEntities.INSTANCE.setExternalStorage(blockEntityTypeRegistry.register(
+            EXTERNAL_STORAGE.getPath(),
+            () -> BlockEntityType.Builder.of(
+                ExternalStorageBlockEntity::new,
+                Blocks.INSTANCE.getExternalStorage()
+            ).build(null)
         ));
 
         blockEntityTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());

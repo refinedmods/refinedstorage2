@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
@@ -45,6 +46,8 @@ public final class Blocks {
     private Supplier<ExporterBlock> exporter;
     @Nullable
     private Supplier<InterfaceBlock> iface;
+    @Nullable
+    private Supplier<ExternalStorageBlock> externalStorage;
 
     private Blocks() {
     }
@@ -136,5 +139,13 @@ public final class Blocks {
 
     public InterfaceBlock getInterface() {
         return Objects.requireNonNull(iface).get();
+    }
+
+    public void setExternalStorage(final Supplier<ExternalStorageBlock> externalStorageSupplier) {
+        this.externalStorage = externalStorageSupplier;
+    }
+
+    public ExternalStorageBlock getExternalStorage() {
+        return Objects.requireNonNull(externalStorage).get();
     }
 }
