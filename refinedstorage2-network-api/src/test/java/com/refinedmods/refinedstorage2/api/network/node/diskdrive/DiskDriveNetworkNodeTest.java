@@ -120,13 +120,13 @@ class DiskDriveNetworkNodeTest {
         // Assert
         assertThat(state.getState(0)).isEqualTo(StorageDiskState.NONE);
         assertThat(state.getState(1)).isEqualTo(StorageDiskState.NONE);
-        assertThat(state.getState(2)).isEqualTo(active ? StorageDiskState.NORMAL : StorageDiskState.DISCONNECTED);
-        assertThat(state.getState(3)).isEqualTo(active ? StorageDiskState.NORMAL : StorageDiskState.DISCONNECTED);
+        assertThat(state.getState(2)).isEqualTo(active ? StorageDiskState.NORMAL : StorageDiskState.INACTIVE);
+        assertThat(state.getState(3)).isEqualTo(active ? StorageDiskState.NORMAL : StorageDiskState.INACTIVE);
         assertThat(state.getState(4)).isEqualTo(StorageDiskState.NONE);
         assertThat(state.getState(5)).isEqualTo(
-            active ? StorageDiskState.NEAR_CAPACITY : StorageDiskState.DISCONNECTED);
+            active ? StorageDiskState.NEAR_CAPACITY : StorageDiskState.INACTIVE);
         assertThat(state.getState(6)).isEqualTo(StorageDiskState.NONE);
-        assertThat(state.getState(7)).isEqualTo(active ? StorageDiskState.FULL : StorageDiskState.DISCONNECTED);
+        assertThat(state.getState(7)).isEqualTo(active ? StorageDiskState.FULL : StorageDiskState.INACTIVE);
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + (USAGE_PER_DISK * 4));
     }
 

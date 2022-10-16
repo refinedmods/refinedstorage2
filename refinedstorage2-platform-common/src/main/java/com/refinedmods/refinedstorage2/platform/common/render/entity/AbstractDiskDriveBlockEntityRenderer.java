@@ -129,7 +129,7 @@ public abstract class AbstractDiskDriveBlockEntityRenderer<T extends AbstractDis
     private int getColor(final StorageDiskState state) {
         return switch (state) {
             case NONE -> 0;
-            case DISCONNECTED -> 0x323232;
+            case INACTIVE -> 0x323232;
             case NORMAL -> 0x00E9FF;
             case NEAR_CAPACITY -> 0xFFB700;
             case FULL -> 0xDA4B40;

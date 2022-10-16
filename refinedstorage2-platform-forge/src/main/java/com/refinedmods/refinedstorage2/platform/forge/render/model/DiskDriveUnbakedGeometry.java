@@ -24,7 +24,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class DiskDriveUnbakedGeometry extends AbstractUnbakedGeometry<DiskDriveUnbakedGeometry> {
     private static final ResourceLocation BASE_MODEL = createIdentifier("block/disk_drive_base");
-    private static final ResourceLocation DISK_DISCONNECTED_MODEL = createIdentifier("block/disk_disconnected");
+    private static final ResourceLocation DISK_INACTIVE_MODEL = createIdentifier("block/disk_inactive");
     private static final ResourceLocation DISK_MODEL = createIdentifier("block/disk");
 
     @Override
@@ -76,7 +76,7 @@ public class DiskDriveUnbakedGeometry extends AbstractUnbakedGeometry<DiskDriveU
         return trans -> {
             final Transformation translation = new Transformation(trans, null, null, null);
             final ModelState wrappedState = new SimpleModelState(translation, state.isUvLocked());
-            return bakery.bake(DISK_DISCONNECTED_MODEL, wrappedState, sg);
+            return bakery.bake(DISK_INACTIVE_MODEL, wrappedState, sg);
         };
     }
 }

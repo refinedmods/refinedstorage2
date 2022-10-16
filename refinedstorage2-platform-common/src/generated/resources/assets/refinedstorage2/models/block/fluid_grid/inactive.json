@@ -8,6 +8,6 @@
     "west": "refinedstorage2:block/fluid_grid/left",
     "up": "refinedstorage2:block/fluid_grid/top",
     "down": "refinedstorage2:block/bottom",
-    "cutout": "refinedstorage2:block/fluid_grid/cutouts/disconnected"
+    "cutout": "refinedstorage2:block/fluid_grid/cutouts/inactive"
   }
 }

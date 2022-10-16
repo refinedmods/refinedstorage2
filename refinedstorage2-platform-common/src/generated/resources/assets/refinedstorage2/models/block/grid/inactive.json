@@ -8,6 +8,6 @@
     "west": "refinedstorage2:block/grid/left",
     "up": "refinedstorage2:block/grid/top",
     "down": "refinedstorage2:block/bottom",
-    "cutout": "refinedstorage2:block/grid/cutouts/disconnected"
+    "cutout": "refinedstorage2:block/grid/cutouts/inactive"
   }
 }
