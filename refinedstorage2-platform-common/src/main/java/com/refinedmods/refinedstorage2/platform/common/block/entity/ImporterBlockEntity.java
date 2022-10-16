@@ -39,11 +39,11 @@ public class ImporterBlockEntity
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_FILTER_MODE = "fim";
-    private static final String TAG_EXACT_MODE = "em";
+    private static final String TAG_FUZZY_MODE = "fm";
     private static final String TAG_RESOURCE_FILTER = "rf";
 
     private final ResourceFilterContainer resourceFilterContainer;
-    private boolean exactMode;
+    private boolean fuzzyMode;
 
     public ImporterBlockEntity(final BlockPos pos, final BlockState state) {
         super(
@@ -53,7 +53,7 @@ public class ImporterBlockEntity
             new ImporterNetworkNode(0),
             UpgradeDestinations.IMPORTER
         );
-        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(exactMode, value));
+        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(fuzzyMode, value));
         this.resourceFilterContainer = new ResourceFilterContainer(
             PlatformApi.INSTANCE.getResourceTypeRegistry(),
             9,
@@ -86,7 +86,7 @@ public class ImporterBlockEntity
         super.saveAdditional(tag);
         tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
         tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
-        tag.putBoolean(TAG_EXACT_MODE, exactMode);
+        tag.putBoolean(TAG_FUZZY_MODE, fuzzyMode);
     }
 
     @Override
@@ -95,8 +95,8 @@ public class ImporterBlockEntity
             getNode().setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
         }
 
-        if (tag.contains(TAG_EXACT_MODE)) {
-            this.exactMode = tag.getBoolean(TAG_EXACT_MODE);
+        if (tag.contains(TAG_FUZZY_MODE)) {
+            this.fuzzyMode = tag.getBoolean(TAG_FUZZY_MODE);
         }
 
         if (tag.contains(TAG_RESOURCE_FILTER)) {
@@ -107,12 +107,12 @@ public class ImporterBlockEntity
         super.load(tag);
     }
 
-    public boolean isExactMode() {
-        return exactMode;
+    public boolean isFuzzyMode() {
+        return fuzzyMode;
     }
 
-    public void setExactMode(final boolean exactMode) {
-        this.exactMode = exactMode;
+    public void setFuzzyMode(final boolean fuzzyMode) {
+        this.fuzzyMode = fuzzyMode;
         initializeResourceFilter();
         setChanged();
     }

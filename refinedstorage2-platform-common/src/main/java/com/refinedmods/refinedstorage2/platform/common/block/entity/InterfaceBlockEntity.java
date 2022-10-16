@@ -43,12 +43,12 @@ public class InterfaceBlockEntity
     implements InterfaceExportState<ItemResource>, ExtendedMenuProvider, BlockEntityWithDrops {
     private static final String TAG_EXPORT_CONFIG = "ec";
     private static final String TAG_EXPORT_ITEMS = "ei";
-    private static final String TAG_EXACT_MODE = "em";
+    private static final String TAG_FUZZY_MODE = "fm";
     private static final int EXPORT_SLOTS = 9;
 
     private final ResourceFilterContainer exportConfig;
     private final SimpleContainer exportedItems = new SimpleContainer(EXPORT_SLOTS);
-    private boolean exactMode;
+    private boolean fuzzyMode;
 
     public InterfaceBlockEntity(final BlockPos pos, final BlockState state) {
         super(
@@ -77,7 +77,7 @@ public class InterfaceBlockEntity
         super.saveAdditional(tag);
         tag.put(TAG_EXPORT_CONFIG, exportConfig.toTag());
         tag.put(TAG_EXPORT_ITEMS, exportedItems.createTag());
-        tag.putBoolean(TAG_EXACT_MODE, exactMode);
+        tag.putBoolean(TAG_FUZZY_MODE, fuzzyMode);
     }
 
     @Override
@@ -88,18 +88,18 @@ public class InterfaceBlockEntity
         if (tag.contains(TAG_EXPORT_ITEMS)) {
             exportedItems.fromTag(tag.getList(TAG_EXPORT_ITEMS, Tag.TAG_COMPOUND));
         }
-        if (tag.contains(TAG_EXACT_MODE)) {
-            exactMode = tag.getBoolean(TAG_EXACT_MODE);
+        if (tag.contains(TAG_FUZZY_MODE)) {
+            fuzzyMode = tag.getBoolean(TAG_FUZZY_MODE);
         }
         super.load(tag);
     }
 
-    public boolean isExactMode() {
-        return exactMode;
+    public boolean isFuzzyMode() {
+        return fuzzyMode;
     }
 
-    public void setExactMode(final boolean exactMode) {
-        this.exactMode = exactMode;
+    public void setFuzzyMode(final boolean fuzzyMode) {
+        this.fuzzyMode = fuzzyMode;
         setChanged();
     }
 
@@ -135,7 +135,10 @@ public class InterfaceBlockEntity
     @Override
     public Collection<ItemResource> expandExportCandidates(final StorageChannel<ItemResource> storageChannel,
                                                            final ItemResource resource) {
-        if (exactMode || !(storageChannel instanceof FuzzyStorageChannel<ItemResource> fuzzyStorageChannel)) {
+        if (!fuzzyMode) {
+            return Collections.singletonList(resource);
+        }
+        if (!(storageChannel instanceof FuzzyStorageChannel<ItemResource> fuzzyStorageChannel)) {
             return Collections.singletonList(resource);
         }
         return fuzzyStorageChannel
@@ -147,7 +150,7 @@ public class InterfaceBlockEntity
 
     @Override
     public boolean isCurrentlyExportedResourceValid(final ItemResource want, final ItemResource got) {
-        if (exactMode) {
+        if (!fuzzyMode) {
             return got.equals(want);
         }
         final ItemResource normalizedGot = got.normalize();

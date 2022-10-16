@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
-import com.refinedmods.refinedstorage2.platform.common.screen.widget.ExactModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ExporterSchedulingModeSideButtonWidget;
+import com.refinedmods.refinedstorage2.platform.common.screen.widget.FuzzyModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
 
 import net.minecraft.network.chat.Component;
@@ -30,8 +30,8 @@ public class ExporterScreen extends AbstractBaseScreen<ExporterContainerMenu> {
             getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
             this::renderComponentTooltip
         ));
-        addSideButton(new ExactModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.EXACT_MODE),
+        addSideButton(new FuzzyModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
             this::renderComponentTooltip
         ));
         addSideButton(new ExporterSchedulingModeSideButtonWidget(

@@ -39,9 +39,9 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
         addSlots(player, exportConfig, exportedItems);
 
         registerProperty(new ServerProperty<>(
-            PropertyTypes.EXACT_MODE,
-            blockEntity::isExactMode,
-            blockEntity::setExactMode
+            PropertyTypes.FUZZY_MODE,
+            blockEntity::isFuzzyMode,
+            blockEntity::setFuzzyMode
         ));
         registerProperty(new ServerProperty<>(
             PropertyTypes.REDSTONE_MODE,
@@ -64,7 +64,7 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
         );
         initializeResourceFilterSlots(buf);
 
-        registerProperty(new ClientProperty<>(PropertyTypes.EXACT_MODE, false));
+        registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
     }
 

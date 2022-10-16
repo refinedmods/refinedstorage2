@@ -42,14 +42,14 @@ public class ExporterBlockEntity
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_SCHEDULING_MODE = "sm";
-    private static final String TAG_EXACT_MODE = "em";
+    private static final String TAG_FUZZY_MODE = "fm";
     private static final String TAG_RESOURCE_FILTER = "rf";
 
     private final ResourceFilterContainer resourceFilterContainer;
     private ExporterSchedulingModeSettings schedulingModeSettings = ExporterSchedulingModeSettings.FIRST_AVAILABLE;
     @Nullable
     private ExporterSchedulingMode schedulingMode;
-    private boolean exactMode;
+    private boolean fuzzyMode;
 
     public ExporterBlockEntity(final BlockPos pos, final BlockState state) {
         super(
@@ -82,7 +82,7 @@ public class ExporterBlockEntity
             PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().getAll();
         final List<ExporterTransferStrategy> strategies = factories
             .stream()
-            .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, hasStackUpgrade, !exactMode))
+            .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection, hasStackUpgrade, fuzzyMode))
             .toList();
         return new CompositeExporterTransferStrategy(strategies);
     }
@@ -95,7 +95,7 @@ public class ExporterBlockEntity
             tag.putInt(TAG_SCHEDULING_MODE, schedulingModeSettings.getId());
             schedulingModeSettings.writeToTag(tag, schedulingMode);
         }
-        tag.putBoolean(TAG_EXACT_MODE, exactMode);
+        tag.putBoolean(TAG_FUZZY_MODE, fuzzyMode);
     }
 
     @Override
@@ -104,8 +104,8 @@ public class ExporterBlockEntity
             setSchedulingMode(tag, ExporterSchedulingModeSettings.getById(tag.getInt(TAG_SCHEDULING_MODE)));
         }
 
-        if (tag.contains(TAG_EXACT_MODE)) {
-            this.exactMode = tag.getBoolean(TAG_EXACT_MODE);
+        if (tag.contains(TAG_FUZZY_MODE)) {
+            this.fuzzyMode = tag.getBoolean(TAG_FUZZY_MODE);
         }
 
         if (tag.contains(TAG_RESOURCE_FILTER)) {
@@ -143,12 +143,12 @@ public class ExporterBlockEntity
         return schedulingModeSettings;
     }
 
-    public boolean isExactMode() {
-        return exactMode;
+    public boolean isFuzzyMode() {
+        return fuzzyMode;
     }
 
-    public void setExactMode(final boolean exactMode) {
-        this.exactMode = exactMode;
+    public void setFuzzyMode(final boolean fuzzyMode) {
+        this.fuzzyMode = fuzzyMode;
         setChanged();
         if (level instanceof ServerLevel serverLevel) {
             initialize(serverLevel);

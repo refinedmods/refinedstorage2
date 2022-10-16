@@ -13,13 +13,13 @@ import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class ExactModeSideButtonWidget extends AbstractSideButtonWidget {
+public class FuzzyModeSideButtonWidget extends AbstractSideButtonWidget {
     private final ClientProperty<Boolean> property;
     private final TooltipRenderer tooltipRenderer;
     private final List<Component> tooltipWhenOn;
     private final List<Component> tooltipWhenOff;
 
-    public ExactModeSideButtonWidget(final ClientProperty<Boolean> property, final TooltipRenderer tooltipRenderer) {
+    public FuzzyModeSideButtonWidget(final ClientProperty<Boolean> property, final TooltipRenderer tooltipRenderer) {
         super(createPressAction(property));
         this.property = property;
         this.tooltipRenderer = tooltipRenderer;
@@ -31,16 +31,16 @@ public class ExactModeSideButtonWidget extends AbstractSideButtonWidget {
         return btn -> property.setValue(!property.getValue());
     }
 
-    private List<Component> calculateTooltip(final boolean exactMode) {
+    private List<Component> calculateTooltip(final boolean fuzzyMode) {
         final List<Component> lines = new ArrayList<>();
-        lines.add(createTranslation("gui", "exact_mode"));
-        lines.add(createTranslation("gui", "exact_mode." + (exactMode ? "on" : "off")).withStyle(ChatFormatting.GRAY));
+        lines.add(createTranslation("gui", "fuzzy_mode"));
+        lines.add(createTranslation("gui", "fuzzy_mode." + (fuzzyMode ? "on" : "off")).withStyle(ChatFormatting.GRAY));
         return lines;
     }
 
     @Override
     protected int getXTexture() {
-        return Boolean.TRUE.equals(property.getValue()) ? 0 : 16;
+        return Boolean.TRUE.equals(property.getValue()) ? 16 : 0;
     }
 
     @Override
