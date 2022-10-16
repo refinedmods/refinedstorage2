@@ -1,6 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
+import com.refinedmods.refinedstorage2.platform.common.screen.widget.ExactModeSideButtonWidget;
+import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -18,6 +21,20 @@ public class InterfaceScreen extends AbstractBaseScreen<InterfaceContainerMenu> 
         this.inventoryLabelY = 88;
         this.imageWidth = 176;
         this.imageHeight = 182;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+
+        addSideButton(new RedstoneModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
+            this::renderComponentTooltip
+        ));
+        addSideButton(new ExactModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.EXACT_MODE),
+            this::renderComponentTooltip
+        ));
     }
 
     @Override

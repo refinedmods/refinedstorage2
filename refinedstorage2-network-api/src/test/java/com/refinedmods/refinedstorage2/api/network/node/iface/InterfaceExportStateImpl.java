@@ -1,8 +1,13 @@
 package com.refinedmods.refinedstorage2.api.network.node.iface;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
@@ -23,6 +28,31 @@ public class InterfaceExportStateImpl implements InterfaceExportState<String> {
     @Override
     public int getSlots() {
         return slots;
+    }
+
+    @Override
+    public Collection<String> expandExportCandidates(final StorageChannel<String> storageChannel,
+                                                     final String resource) {
+        if ("A".equals(resource)) {
+            final List<String> candidates = new ArrayList<>();
+            // simulate the behavior from FuzzyStorageChannel
+            if (storageChannel.get("A1").isPresent()) {
+                candidates.add("A1");
+            }
+            if (storageChannel.get("A2").isPresent()) {
+                candidates.add("A2");
+            }
+            return candidates;
+        }
+        return Collections.singletonList(resource);
+    }
+
+    @Override
+    public boolean isCurrentlyExportedResourceValid(final String want, final String got) {
+        if ("A".equals(want)) {
+            return got.startsWith("A");
+        }
+        return got.equals(want);
     }
 
     @Nullable

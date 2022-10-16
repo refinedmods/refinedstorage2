@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
+import java.util.Collection;
 import javax.annotation.Nullable;
 
 public class InterfaceNetworkNode<T> extends AbstractNetworkNode {
@@ -59,11 +60,11 @@ public class InterfaceNetworkNode<T> extends AbstractNetworkNode {
         } else if (want != null && got == null) {
             doInitialExport(state, index, want, storageChannel);
         } else if (want != null) {
-            final boolean isSame = got.equals(want);
+            final boolean isSame = state.isCurrentlyExportedResourceValid(want, got);
             if (!isSame) {
                 clearExport(state, index, got, storageChannel);
             } else {
-                doExportWithExistingResource(state, index, want, got, storageChannel);
+                doExportWithExistingResource(state, index, got, storageChannel);
             }
         }
     }
@@ -90,28 +91,30 @@ public class InterfaceNetworkNode<T> extends AbstractNetworkNode {
                                  final T want,
                                  final StorageChannel<T> storageChannel) {
         final long wantedAmount = state.getRequestedResourceAmount(slot);
-        final long extracted = storageChannel.extract(
-            want,
-            Math.min(transferQuota, wantedAmount),
-            Action.EXECUTE,
-            actor
-        );
-        if (extracted == 0) {
-            return;
+        final Collection<T> candidates = state.expandExportCandidates(storageChannel, want);
+        for (final T candidate : candidates) {
+            final long extracted = storageChannel.extract(
+                candidate,
+                Math.min(transferQuota, wantedAmount),
+                Action.EXECUTE,
+                actor
+            );
+            if (extracted > 0) {
+                state.setCurrentlyExported(slot, candidate, extracted);
+                break;
+            }
         }
-        state.setCurrentlyExported(slot, want, extracted);
     }
 
     private void doExportWithExistingResource(final InterfaceExportState<T> state,
                                               final int slot,
-                                              final T want,
                                               final T got,
                                               final StorageChannel<T> storageChannel) {
         final long wantedAmount = state.getRequestedResourceAmount(slot);
         final long currentAmount = state.getCurrentlyExportedResourceAmount(slot);
         final long difference = wantedAmount - currentAmount;
         if (difference > 0) {
-            exportAdditionalResources(state, slot, want, storageChannel, difference);
+            exportAdditionalResources(state, slot, got, storageChannel, difference);
         } else if (difference < 0) {
             returnResource(state, slot, got, storageChannel, difference);
         }
@@ -119,11 +122,11 @@ public class InterfaceNetworkNode<T> extends AbstractNetworkNode {
 
     private void exportAdditionalResources(final InterfaceExportState<T> state,
                                            final int slot,
-                                           final T want,
+                                           final T got,
                                            final StorageChannel<T> storageChannel,
                                            final long amount) {
         final long correctedAmount = Math.min(transferQuota, amount);
-        final long extracted = storageChannel.extract(want, correctedAmount, Action.EXECUTE, actor);
+        final long extracted = storageChannel.extract(got, correctedAmount, Action.EXECUTE, actor);
         if (extracted == 0) {
             return;
         }
