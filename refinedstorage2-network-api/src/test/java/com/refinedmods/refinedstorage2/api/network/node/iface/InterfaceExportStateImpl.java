@@ -35,6 +35,7 @@ public class InterfaceExportStateImpl implements InterfaceExportState<String> {
                                                      final String resource) {
         if ("A".equals(resource)) {
             final List<String> candidates = new ArrayList<>();
+            candidates.add("A");
             // simulate the behavior from FuzzyStorageChannel
             if (storageChannel.get("A1").isPresent()) {
                 candidates.add("A1");
@@ -55,9 +56,16 @@ public class InterfaceExportStateImpl implements InterfaceExportState<String> {
         return got.equals(want);
     }
 
+    private void validateIndex(final int index) {
+        if (index < 0 || index >= slots) {
+            throw new IllegalArgumentException("Out of bounds: " + index);
+        }
+    }
+
     @Nullable
     @Override
     public String getRequestedResource(final int index) {
+        validateIndex(index);
         final ResourceAmount<String> resourceAmount = this.requested.get(index);
         if (resourceAmount == null) {
             return null;
@@ -67,6 +75,7 @@ public class InterfaceExportStateImpl implements InterfaceExportState<String> {
 
     @Override
     public long getRequestedResourceAmount(final int index) {
+        validateIndex(index);
         final ResourceAmount<String> resourceAmount = this.requested.get(index);
         if (resourceAmount == null) {
             return 0L;
@@ -77,6 +86,7 @@ public class InterfaceExportStateImpl implements InterfaceExportState<String> {
     @Nullable
     @Override
     public String getCurrentlyExportedResource(final int index) {
+        validateIndex(index);
         final ResourceAmount<String> resourceAmount = this.current.get(index);
         if (resourceAmount == null) {
             return null;
@@ -86,6 +96,7 @@ public class InterfaceExportStateImpl implements InterfaceExportState<String> {
 
     @Override
     public long getCurrentlyExportedResourceAmount(final int index) {
+        validateIndex(index);
         final ResourceAmount<String> resourceAmount = this.current.get(index);
         if (resourceAmount == null) {
             return 0L;
@@ -95,11 +106,13 @@ public class InterfaceExportStateImpl implements InterfaceExportState<String> {
 
     @Override
     public void setCurrentlyExported(final int index, final String resource, final long amount) {
+        validateIndex(index);
         current.put(index, new ResourceAmount<>(resource, amount));
     }
 
     @Override
     public void decrementCurrentlyExportedAmount(final int index, final long amount) {
+        validateIndex(index);
         final ResourceAmount<String> resourceAmount = this.current.get(index);
         if (resourceAmount.getAmount() - amount <= 0) {
             this.current.remove(index);
@@ -110,6 +123,7 @@ public class InterfaceExportStateImpl implements InterfaceExportState<String> {
 
     @Override
     public void incrementCurrentlyExportedAmount(final int index, final long amount) {
+        validateIndex(index);
         final ResourceAmount<String> resourceAmount = this.current.get(index);
         resourceAmount.increment(amount);
     }
