@@ -33,6 +33,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.Item
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
@@ -691,6 +692,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             Registry.MENU,
             INTERFACE,
             new ExtendedScreenHandlerType<>(InterfaceContainerMenu::new)
+        ));
+        Menus.INSTANCE.setExternalStorage(register(
+            Registry.MENU,
+            EXTERNAL_STORAGE,
+            new ExtendedScreenHandlerType<>(ExternalStorageContainerMenu::new)
         ));
     }
 

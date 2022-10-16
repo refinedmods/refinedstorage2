@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerMo
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ExporterScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.ExternalStorageScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
@@ -72,6 +73,7 @@ public final class ClientModInitializer {
         MenuScreens.register(Menus.INSTANCE.getImporter(), ImporterScreen::new);
         MenuScreens.register(Menus.INSTANCE.getExporter(), ExporterScreen::new);
         MenuScreens.register(Menus.INSTANCE.getInterface(), InterfaceScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getExternalStorage(), ExternalStorageScreen::new);
     }
 
     @SubscribeEvent

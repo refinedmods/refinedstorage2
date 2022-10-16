@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
-public interface StorageSettingsProvider {
+public interface StorageConfigurationProvider {
     int getPriority();
 
     void setPriority(int priority);

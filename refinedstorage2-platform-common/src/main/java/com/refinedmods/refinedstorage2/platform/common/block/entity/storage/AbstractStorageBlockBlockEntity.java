@@ -7,10 +7,9 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageSettingsProvider;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationPersistence;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationProvider;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
@@ -31,14 +30,12 @@ import org.apache.logging.log4j.Logger;
 
 public abstract class AbstractStorageBlockBlockEntity<T>
     extends AbstractInternalNetworkNodeContainerBlockEntity<StorageNetworkNode<T>>
-    implements ExtendedMenuProvider, StorageSettingsProvider {
+    implements ExtendedMenuProvider, StorageConfigurationProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORAGE_ID = "sid";
-    private static final String TAG_PRIORITY = "pri";
-    private static final String TAG_FILTER_MODE = "fim";
-    private static final String TAG_ACCESS_MODE = "am";
 
+    private final StorageConfigurationPersistence storageConfigurationPersistence;
     private final FilterWithFuzzyMode filter;
 
     @Nullable
@@ -52,6 +49,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         super(type, pos, state, node);
         this.filter = new FilterWithFuzzyMode(resourceType, this::setChanged, getNode()::setFilterTemplates, value -> {
         });
+        this.storageConfigurationPersistence = new StorageConfigurationPersistence(getNode());
         getNode().setNormalizer(filter.createNormalizer());
     }
 
@@ -108,18 +106,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
             storageId = actualStorageId;
         }
 
-        if (tag.contains(TAG_PRIORITY)) {
-            getNode().setPriority(tag.getInt(TAG_PRIORITY));
-        }
-
-        if (tag.contains(TAG_FILTER_MODE)) {
-            getNode().setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
-        }
-
-        if (tag.contains(TAG_ACCESS_MODE)) {
-            getNode().setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
-        }
-
+        storageConfigurationPersistence.load(tag);
         filter.load(tag);
 
         super.load(tag);
@@ -149,9 +136,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         if (storageId != null) {
             tag.putUUID(TAG_STORAGE_ID, storageId);
         }
-        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
-        tag.putInt(TAG_PRIORITY, getNode().getPriority());
-        tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getNode().getAccessMode()));
+        storageConfigurationPersistence.save(tag);
         filter.save(tag);
     }
 

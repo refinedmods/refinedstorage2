@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.StorageConfiguration;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
@@ -19,7 +20,7 @@ import javax.annotation.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class StorageNetworkNode<T> extends AbstractNetworkNode implements StorageProvider {
+public class StorageNetworkNode<T> extends AbstractNetworkNode implements StorageProvider, StorageConfiguration {
     public static final Logger LOGGER = LogManager.getLogger();
 
     private final long energyUsage;
@@ -75,18 +76,22 @@ public class StorageNetworkNode<T> extends AbstractNetworkNode implements Storag
         return energyUsage;
     }
 
+    @Override
     public int getPriority() {
         return priority;
     }
 
+    @Override
     public AccessMode getAccessMode() {
         return accessMode;
     }
 
+    @Override
     public void setAccessMode(final AccessMode accessMode) {
         this.accessMode = accessMode;
     }
 
+    @Override
     public FilterMode getFilterMode() {
         return filter.getMode();
     }
@@ -95,10 +100,12 @@ public class StorageNetworkNode<T> extends AbstractNetworkNode implements Storag
         return filter.isAllowed(resource);
     }
 
+    @Override
     public void setFilterMode(final FilterMode mode) {
         filter.setMode(mode);
     }
 
+    @Override
     public void setPriority(final int priority) {
         this.priority = priority;
         if (network != null) {
