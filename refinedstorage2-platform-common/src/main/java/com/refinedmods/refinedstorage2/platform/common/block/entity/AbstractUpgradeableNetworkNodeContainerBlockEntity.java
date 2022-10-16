@@ -67,7 +67,7 @@ public abstract class AbstractUpgradeableNetworkNodeContainerBlockEntity<T exten
         super.load(tag);
     }
 
-    protected void configureAccordingToUpgrades() {
+    private void configureAccordingToUpgrades() {
         final int amountOfSpeedUpgrades = upgradeContainer.countItem(Items.INSTANCE.getSpeedUpgrade());
         final boolean hasStackUpgrade = hasStackUpgrade();
         final long upgradeEnergyUsage = calculateUpgradeEnergyUsage(amountOfSpeedUpgrades, hasStackUpgrade);
