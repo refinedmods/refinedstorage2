@@ -78,10 +78,7 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
         return extracted;
     }
 
-    private long extractFromStorages(final T template,
-                                     final long amount,
-                                     final Action action,
-                                     final Actor actor) {
+    private long extractFromStorages(final T template, final long amount, final Action action, final Actor actor) {
         long remaining = amount;
         for (final Storage<T> source : sources) {
             final long extracted = source.extract(template, remaining, action, actor);
@@ -95,27 +92,21 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
     }
 
     @Override
-    public long insert(final T resource,
-                       final long amount,
-                       final Action action,
-                       final Actor actor) {
-        final long inserted = insertIntoStorages(resource, amount, action, actor);
-        if (action == Action.EXECUTE && inserted > 0) {
-            list.add(resource, inserted);
-        }
-        return inserted;
-    }
-
-    private long insertIntoStorages(final T template,
-                                    final long amount,
-                                    final Action action,
-                                    final Actor actionSource) {
+    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
         long inserted = 0;
+        long toInsertIntoList = 0;
         for (final Storage<T> source : sources) {
-            inserted += source.insert(template, amount - inserted, action, actionSource);
+            final long insertedIntoSource = source.insert(resource, amount - inserted, action, actor);
+            if (!(source instanceof ConsumingStorage)) {
+                toInsertIntoList += insertedIntoSource;
+            }
+            inserted += insertedIntoSource;
             if (inserted == amount) {
                 break;
             }
+        }
+        if (action == Action.EXECUTE && toInsertIntoList > 0) {
+            list.add(resource, toInsertIntoList);
         }
         return inserted;
     }
