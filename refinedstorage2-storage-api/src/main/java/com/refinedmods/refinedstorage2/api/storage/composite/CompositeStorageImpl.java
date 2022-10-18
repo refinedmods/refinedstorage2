@@ -71,24 +71,23 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
 
     @Override
     public long extract(final T resource, final long amount, final Action action, final Actor actor) {
-        final long extracted = extractFromStorages(resource, amount, action, actor);
-        if (action == Action.EXECUTE && extracted > 0) {
-            list.remove(resource, extracted);
-        }
-        return extracted;
-    }
-
-    private long extractFromStorages(final T template, final long amount, final Action action, final Actor actor) {
         long remaining = amount;
+        long toRemoveFromList = 0;
         for (final Storage<T> source : sources) {
-            final long extracted = source.extract(template, remaining, action, actor);
-            remaining -= extracted;
+            final long extractedFromSource = source.extract(resource, remaining, action, actor);
+            if (!(source instanceof ConsumingStorage)) {
+                toRemoveFromList += extractedFromSource;
+            }
+            remaining -= extractedFromSource;
             if (remaining == 0) {
                 break;
             }
         }
-
-        return amount - remaining;
+        final long extracted = amount - remaining;
+        if (action == Action.EXECUTE && toRemoveFromList > 0) {
+            list.remove(resource, toRemoveFromList);
+        }
+        return extracted;
     }
 
     @Override
