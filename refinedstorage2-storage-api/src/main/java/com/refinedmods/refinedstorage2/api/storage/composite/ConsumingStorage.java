@@ -1,12 +1,12 @@
 package com.refinedmods.refinedstorage2.api.storage.composite;
 
+import com.refinedmods.refinedstorage2.api.storage.Storage;
+
 import org.apiguardian.api.API;
 
 /**
- * Marker interface for "consuming" storages.
- * Consuming storages are storages that accept resources, but don't expect results from operations
- * to be reflected in the composite storage cached list.
+ * A consuming storage is a storage that won't cause changes to be propagated in the {@link CompositeStorage} cache.
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
-public interface ConsumingStorage {
+public interface ConsumingStorage<T> extends Storage<T> {
 }

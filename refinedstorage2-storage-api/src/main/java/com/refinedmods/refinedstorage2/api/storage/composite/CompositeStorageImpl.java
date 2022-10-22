@@ -151,6 +151,16 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
         removeContentOfSourceFromList(source);
     }
 
+    @Override
+    public void addToCache(final T resource, final long amount) {
+        list.add(resource, amount);
+    }
+
+    @Override
+    public void removeFromCache(final T resource, final long amount) {
+        list.remove(resource, amount);
+    }
+
     private void addContentOfSourceToList(final Storage<T> source) {
         source.getAll().forEach(list::add);
     }
