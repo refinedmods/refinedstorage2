@@ -26,4 +26,22 @@ public interface ParentComposite<T> {
      * @param source the source
      */
     void onSourceRemovedFromChild(Storage<T> source);
+
+    /**
+     * Adds a resource to the composite storage cache.
+     * Useful for the {@link ConsumingStorage} to propagate changes manually.
+     *
+     * @param resource the resource
+     * @param amount   the amount
+     */
+    void addToCache(T resource, long amount);
+
+    /**
+     * Removes a resource from the composite storage cache.
+     * Useful for the {@link ConsumingStorage} to propagate changes manually.
+     *
+     * @param resource the resource
+     * @param amount   the amount
+     */
+    void removeFromCache(T resource, long amount);
 }

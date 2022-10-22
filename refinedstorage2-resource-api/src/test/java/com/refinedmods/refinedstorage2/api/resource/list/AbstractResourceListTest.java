@@ -161,6 +161,32 @@ abstract class AbstractResourceListTest {
     }
 
     @Test
+    void shouldRemoveResourcePartlyWithResourceAmountDirectly() {
+        // Arrange
+        final ResourceListOperationResult<String> result1 = list.add("A", 20);
+        list.add("B", 6);
+
+        // Act
+        final Optional<ResourceListOperationResult<String>> result2 = list.remove(new ResourceAmount<>(
+            "A",
+            5
+        ));
+
+        // Assert
+        assertThat(result2).isPresent();
+        assertThat(result2.get().id()).isEqualTo(result1.id());
+        assertThat(result2.get().change()).isEqualTo(-5);
+        assertThat(result2.get().resourceAmount().getAmount()).isEqualTo(15);
+        assertThat(result2.get().resourceAmount().getResource()).isEqualTo("A");
+        assertThat(result2.get().available()).isTrue();
+
+        assertThat(list.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 15),
+            new ResourceAmount<>("B", 6)
+        );
+    }
+
+    @Test
     void shouldRemoveResourceCompletely() {
         // Arrange
         final ResourceListOperationResult<String> result1 = list.add("A", 20);
@@ -168,6 +194,31 @@ abstract class AbstractResourceListTest {
 
         // Act
         final Optional<ResourceListOperationResult<String>> result2 = list.remove("A", 20);
+
+        // Assert
+        assertThat(result2).isPresent();
+        assertThat(result2.get().id()).isEqualTo(result1.id());
+        assertThat(result2.get().change()).isEqualTo(-20);
+        assertThat(result2.get().resourceAmount().getAmount()).isEqualTo(20);
+        assertThat(result2.get().resourceAmount().getResource()).isEqualTo("A");
+        assertThat(result2.get().available()).isFalse();
+
+        assertThat(list.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("B", 6)
+        );
+    }
+
+    @Test
+    void shouldRemoveResourceCompletelyWithResourceAmountDirectly() {
+        // Arrange
+        final ResourceListOperationResult<String> result1 = list.add("A", 20);
+        list.add("B", 6);
+
+        // Act
+        final Optional<ResourceListOperationResult<String>> result2 = list.remove(new ResourceAmount<>(
+            "A",
+            20
+        ));
 
         // Assert
         assertThat(result2).isPresent();

@@ -47,6 +47,18 @@ public interface ResourceList<T> {
     Optional<ResourceListOperationResult<T>> remove(T resource, long amount);
 
     /**
+     * Removes an amount of a certain resource in the list.
+     * If the amount reaches 0 due to this removal, the resource is removed from the list.
+     * Shorthand for {@link #remove(Object, long)}.
+     *
+     * @param resourceAmount the resource and the amount
+     * @return a result if the removal operation was successful, otherwise an empty {@link Optional}
+     */
+    default Optional<ResourceListOperationResult<T>> remove(ResourceAmount<T> resourceAmount) {
+        return remove(resourceAmount.getResource(), resourceAmount.getAmount());
+    }
+
+    /**
      * Retrieves the resource and its amount from the list, identified by resource.
      *
      * @param resource the resource
