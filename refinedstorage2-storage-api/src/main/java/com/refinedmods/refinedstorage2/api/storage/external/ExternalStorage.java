@@ -41,13 +41,14 @@ public class ExternalStorage<T> implements ConsumingStorage<T>, CompositeAwareCh
         return inserted;
     }
 
-    public void detectChanges() {
+    public boolean detectChanges() {
         final ResourceList<T> updatedCache = buildCache();
-        detectCompleteRemovals(updatedCache);
-        detectAdditionsAndPartialRemovals(updatedCache);
+        boolean hasChanges = detectCompleteRemovals(updatedCache);
+        hasChanges |= detectAdditionsAndPartialRemovals(updatedCache);
+        return hasChanges;
     }
 
-    private void detectCompleteRemovals(final ResourceList<T> updatedCache) {
+    private boolean detectCompleteRemovals(final ResourceList<T> updatedCache) {
         final Set<ResourceAmount<T>> removedInUpdatedCache = new HashSet<>();
         for (final ResourceAmount<T> inOldCache : cache.getAll()) {
             final Optional<ResourceAmount<T>> inUpdatedCache = updatedCache.get(inOldCache.getResource());
@@ -56,29 +57,36 @@ public class ExternalStorage<T> implements ConsumingStorage<T>, CompositeAwareCh
             }
         }
         removedInUpdatedCache.forEach(removed -> removeFromCache(removed.getResource(), removed.getAmount()));
+        return !removedInUpdatedCache.isEmpty();
     }
 
-    private void detectAdditionsAndPartialRemovals(final ResourceList<T> updatedCache) {
+    private boolean detectAdditionsAndPartialRemovals(final ResourceList<T> updatedCache) {
+        boolean hasChanges = false;
         for (final ResourceAmount<T> inUpdatedCache : updatedCache.getAll()) {
             final Optional<ResourceAmount<T>> inOldCache = cache.get(inUpdatedCache.getResource());
             final boolean doesNotExistInOldCache = inOldCache.isEmpty();
             if (doesNotExistInOldCache) {
                 addToCache(inUpdatedCache.getResource(), inUpdatedCache.getAmount());
+                hasChanges = true;
             } else {
-                detectPotentialDifference(inUpdatedCache, inOldCache.get());
+                hasChanges |= detectPotentialDifference(inUpdatedCache, inOldCache.get());
             }
         }
+        return hasChanges;
     }
 
-    private void detectPotentialDifference(final ResourceAmount<T> inUpdatedCache,
+    private boolean detectPotentialDifference(final ResourceAmount<T> inUpdatedCache,
                                            final ResourceAmount<T> inOldCache) {
         final T resource = inUpdatedCache.getResource();
         final long diff = inUpdatedCache.getAmount() - inOldCache.getAmount();
         if (diff > 0) {
             addToCache(resource, diff);
+            return true;
         } else if (diff < 0) {
             removeFromCache(resource, Math.abs(diff));
+            return true;
         }
+        return false;
     }
 
     private void addToCache(final T resource, final long amount) {
