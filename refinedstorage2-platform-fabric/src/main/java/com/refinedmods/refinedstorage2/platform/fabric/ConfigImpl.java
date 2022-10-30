@@ -45,6 +45,9 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @ConfigEntry.Gui.CollapsibleObject
     private InterfaceImpl iface = new InterfaceImpl();
 
+    @ConfigEntry.Gui.CollapsibleObject
+    private ExternalStorageImpl externalStorage = new ExternalStorageImpl();
+
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
@@ -97,6 +100,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
     @Override
     public Interface getInterface() {
         return iface;
+    }
+
+    @Override
+    public ExternalStorage getExternalStorage() {
+        return externalStorage;
     }
 
     private static class GridImpl implements Grid {
@@ -364,6 +372,15 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
     private static class InterfaceImpl implements Interface {
         private long energyUsage = 4;
+
+        @Override
+        public long getEnergyUsage() {
+            return energyUsage;
+        }
+    }
+
+    private static class ExternalStorageImpl implements ExternalStorage {
+        private long energyUsage = 6;
 
         @Override
         public long getEnergyUsage() {

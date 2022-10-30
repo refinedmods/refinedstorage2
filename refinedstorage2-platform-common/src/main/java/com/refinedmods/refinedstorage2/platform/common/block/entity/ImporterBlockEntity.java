@@ -63,7 +63,7 @@ public class ImporterBlockEntity
     private CompositeImporterTransferStrategy createStrategy(final ServerLevel serverLevel, final Direction direction) {
         final boolean hasStackUpgrade = hasStackUpgrade();
         final Direction incomingDirection = direction.getOpposite();
-        final BlockPos sourcePosition = worldPosition.offset(direction.getNormal());
+        final BlockPos sourcePosition = worldPosition.relative(direction);
         final List<ImporterTransferStrategyFactory> factories =
             PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().getAll();
         final List<ImporterTransferStrategy> strategies = factories

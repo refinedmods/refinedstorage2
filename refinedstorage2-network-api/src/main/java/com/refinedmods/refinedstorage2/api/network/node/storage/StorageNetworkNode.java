@@ -33,7 +33,7 @@ public class StorageNetworkNode<T> extends AbstractNetworkNode implements Storag
     @Nullable
     private Storage<T> internalStorage;
 
-    public StorageNetworkNode(final long energyUsage, final StorageChannelType<?> type) {
+    public StorageNetworkNode(final long energyUsage, final StorageChannelType<T> type) {
         this.energyUsage = energyUsage;
         this.type = type;
     }
