@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.AbstractStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
@@ -15,7 +16,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 
-public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageContainerMenu {
+public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageContainerMenu
+    implements StorageAccessor {
     private static final int FILTER_SLOT_X = 8;
     private static final int FILTER_SLOT_Y = 20;
 

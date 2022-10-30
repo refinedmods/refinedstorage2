@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.Ab
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ValidatedSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
@@ -25,7 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public class DiskDriveContainerMenu extends AbstractStorageContainerMenu {
+public class DiskDriveContainerMenu extends AbstractStorageContainerMenu implements StorageAccessor {
     private static final int DISK_SLOT_X = 61;
     private static final int DISK_SLOT_Y = 54;
 

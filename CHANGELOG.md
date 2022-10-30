@@ -18,6 +18,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Exporter
 - Interface
+- External Storage
 
 ### Changed
 
@@ -25,6 +26,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The Interface no longer has dedicated import slots. The imported items now go into the export slots.
 - The Interface now imports items immediately.
 - "Exact mode" has been replaced with "Fuzzy mode", which is off by default for performance.
+- The External Storage no longer shows the amount of resources stored on the GUI.
+- The External Storage now supports multiple resource types at the same time.
 
 ## [2.0.0-milestone.2.3] - 2022-08-26
 

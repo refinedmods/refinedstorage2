@@ -36,7 +36,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-// TODO: Interface is always active (?)
 public class InterfaceBlockEntity
     extends AbstractInternalNetworkNodeContainerBlockEntity<InterfaceNetworkNode<ItemResource>>
     implements InterfaceExportState<ItemResource>, ExtendedMenuProvider, BlockEntityWithDrops {

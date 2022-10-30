@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.externalstorage.ExternalStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.iface.InterfaceNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterNetworkNode;
@@ -31,7 +32,9 @@ class NetworkNodeFactoryTest {
     @AddNetworkNode
     StorageNetworkNode<String> storage;
     @AddNetworkNode
-    InterfaceNetworkNode interfaceNode;
+    InterfaceNetworkNode<String> interfaceNode;
+    @AddNetworkNode
+    ExternalStorageNetworkNode externalStorage;
 
     @Test
     void testInitialization() {
@@ -44,5 +47,6 @@ class NetworkNodeFactoryTest {
         assertThat(simple).isNotNull();
         assertThat(storage).isNotNull();
         assertThat(interfaceNode).isNotNull();
+        assertThat(externalStorage).isNotNull();
     }
 }
