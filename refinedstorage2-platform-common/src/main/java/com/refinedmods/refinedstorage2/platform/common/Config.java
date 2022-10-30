@@ -29,6 +29,8 @@ public interface Config {
 
     Interface getInterface();
 
+    ExternalStorage getExternalStorage();
+
     interface Grid {
         boolean isLargeFont();
 
@@ -120,6 +122,10 @@ public interface Config {
     }
 
     interface Interface {
+        long getEnergyUsage();
+    }
+
+    interface ExternalStorage {
         long getEnergyUsage();
     }
 }

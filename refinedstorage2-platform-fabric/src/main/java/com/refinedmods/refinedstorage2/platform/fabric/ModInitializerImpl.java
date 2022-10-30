@@ -21,11 +21,11 @@ import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.ExternalStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
@@ -67,6 +67,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.exporter.StorageExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.externalstorage.StorageExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.importer.StorageImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
@@ -163,6 +164,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerNetworkComponents();
         registerImporterTransferStrategyFactories();
         registerExporterTransferStrategyFactories();
+        registerExternalStorageProviderFactories();
         registerContent();
         registerPackets();
         registerSounds();
@@ -229,6 +231,25 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                     : Optional.empty(),
                 VariantUtil::toFluidVariant,
                 FluidConstants.BUCKET
+            )
+        );
+    }
+
+    private void registerExternalStorageProviderFactories() {
+        PlatformApi.INSTANCE.setExternalStorageProviderFactory(
+            StorageChannelTypes.ITEM,
+            new StorageExternalStorageProviderFactory<>(
+                ItemStorage.SIDED,
+                VariantUtil::ofItemVariant,
+                VariantUtil::toItemVariant
+            )
+        );
+        PlatformApi.INSTANCE.setExternalStorageProviderFactory(
+            StorageChannelTypes.FLUID,
+            new StorageExternalStorageProviderFactory<>(
+                FluidStorage.SIDED,
+                VariantUtil::ofFluidVariant,
+                VariantUtil::toFluidVariant
             )
         );
     }

@@ -101,7 +101,7 @@ final class CableBlockSupport {
         if (direction == blacklistedDirection) {
             return false;
         }
-        final BlockPos offsetPos = pos.offset(direction.getNormal());
+        final BlockPos offsetPos = pos.relative(direction);
         if (!(world.getBlockEntity(offsetPos) instanceof PlatformNetworkNodeContainer container)) {
             return false;
         }

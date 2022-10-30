@@ -8,12 +8,14 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.MutableComponent;
@@ -54,6 +56,19 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry() {
         return ensureLoaded().getExporterTransferStrategyRegistry();
+    }
+
+    @Override
+    public <T> void setExternalStorageProviderFactory(final StorageChannelType<T> channelType,
+                                                      final PlatformExternalStorageProviderFactory factory) {
+        ensureLoaded().setExternalStorageProviderFactory(channelType, factory);
+    }
+
+    @Override
+    public <T> Optional<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactory(
+        final StorageChannelType<T> channelType
+    ) {
+        return ensureLoaded().getExternalStorageProviderFactory(channelType);
     }
 
     @Override

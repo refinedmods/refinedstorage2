@@ -72,7 +72,7 @@ public class ExporterBlockEntity
     private ExporterTransferStrategy createStrategy(final ServerLevel serverLevel, final Direction direction) {
         final boolean hasStackUpgrade = hasStackUpgrade();
         final Direction incomingDirection = direction.getOpposite();
-        final BlockPos sourcePosition = worldPosition.offset(direction.getNormal());
+        final BlockPos sourcePosition = worldPosition.relative(direction);
         final List<ExporterTransferStrategyFactory> factories =
             PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().getAll();
         final List<ExporterTransferStrategy> strategies = factories
