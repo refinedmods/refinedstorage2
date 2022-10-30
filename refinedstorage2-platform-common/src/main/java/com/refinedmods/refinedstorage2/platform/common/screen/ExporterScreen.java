@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public class ExporterScreen extends AbstractBaseScreen<ExporterContainerMenu> {
-    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/exporter.png");
+    private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/generic_filter.png");
 
     public ExporterScreen(final ExporterContainerMenu menu, final Inventory playerInventory, final Component text) {
         super(menu, playerInventory, text);

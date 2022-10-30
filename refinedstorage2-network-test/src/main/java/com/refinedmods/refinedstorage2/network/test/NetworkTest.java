@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.node.SimpleNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.externalstorage.ExternalStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.iface.InterfaceNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterNetworkNode;
@@ -11,6 +12,7 @@ import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNo
 import com.refinedmods.refinedstorage2.network.test.nodefactory.ControllerNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.DiskDriveNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.ExporterNetworkNodeFactory;
+import com.refinedmods.refinedstorage2.network.test.nodefactory.ExternalStorageNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.GridNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.ImporterNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.InterfaceNetworkNodeFactory;
@@ -35,5 +37,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @RegisterNetworkNode(value = SimpleNetworkNodeFactory.class, clazz = SimpleNetworkNode.class)
 @RegisterNetworkNode(value = StorageNetworkNodeFactory.class, clazz = StorageNetworkNode.class)
 @RegisterNetworkNode(value = InterfaceNetworkNodeFactory.class, clazz = InterfaceNetworkNode.class)
+@RegisterNetworkNode(value = ExternalStorageNetworkNodeFactory.class, clazz = ExternalStorageNetworkNode.class)
 public @interface NetworkTest {
 }

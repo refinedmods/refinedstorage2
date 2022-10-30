@@ -49,17 +49,25 @@ class StorageNetworkNodeTest {
 
     @Test
     void testInitialState(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        // Act
+        final long inserted = networkStorage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long extracted = networkStorage.extract("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+
         // Assert
+        assertThat(inserted).isZero();
+        assertThat(extracted).isZero();
         assertThat(sut.getEnergyUsage()).isEqualTo(ENERGY_USAGE);
         assertThat(sut.getAccessMode()).isEqualTo(AccessMode.INSERT_EXTRACT);
         assertThat(sut.getFilterMode()).isEqualTo(FilterMode.BLOCK);
         assertThat(sut.getStored()).isZero();
         assertThat(sut.getCapacity()).isZero();
+        assertThat(sut.getPriority()).isZero();
         assertThat(networkStorage.getAll()).isEmpty();
+        assertThat(networkStorage.getStored()).isZero();
     }
 
     @Test
-    void shoulInitializeNewStorage(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    void shouldInitializeNewStorage(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final LimitedStorage<String> limitedStorage = new LimitedStorageImpl<>(100);
         limitedStorage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -145,7 +153,7 @@ class StorageNetworkNodeTest {
 
         // Assert
         assertThat(extracted).isEqualTo(30);
-        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount<>("A", 70),
             new ResourceAmount<>("B", 50)
         );
@@ -320,7 +328,8 @@ class StorageNetworkNodeTest {
 
     @Test
     void shouldHideStorageContentsWhenInactive(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);

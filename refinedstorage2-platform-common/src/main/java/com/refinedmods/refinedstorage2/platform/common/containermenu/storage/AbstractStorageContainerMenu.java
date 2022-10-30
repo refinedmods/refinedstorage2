@@ -15,8 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 
-public abstract class AbstractStorageContainerMenu extends AbstractResourceFilterContainerMenu
-    implements StorageAccessor {
+public abstract class AbstractStorageContainerMenu extends AbstractResourceFilterContainerMenu {
     protected AbstractStorageContainerMenu(final MenuType<?> type,
                                            final int syncId,
                                            final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry) {
