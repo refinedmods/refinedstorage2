@@ -59,14 +59,17 @@ class NetworkNodeStorage<T> implements Storage<T>, ConsumingStorage<T>, Composit
     @Override
     public void onAddedIntoComposite(final ParentComposite<T> parentComposite) {
         parents.add(parentComposite);
+        if (storage != null) {
+            storage.onAddedIntoComposite(parentComposite);
+        }
     }
 
     @Override
     public void onRemovedFromComposite(final ParentComposite<T> parentComposite) {
-        if (storage == null) {
-            return;
+        parents.remove(parentComposite);
+        if (storage != null) {
+            storage.onRemovedFromComposite(parentComposite);
         }
-        storage.onRemovedFromComposite(parentComposite);
     }
 
     public void setStorage(final ExternalStorage<T> storage) {
