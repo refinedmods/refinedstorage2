@@ -1,15 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.storage;
 
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
-import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationPersistence;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationProvider;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
@@ -30,12 +27,12 @@ import org.apache.logging.log4j.Logger;
 
 public abstract class AbstractStorageBlockBlockEntity<T>
     extends AbstractInternalNetworkNodeContainerBlockEntity<StorageNetworkNode<T>>
-    implements ExtendedMenuProvider, StorageConfigurationProvider {
+    implements ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORAGE_ID = "sid";
 
-    private final StorageConfigurationPersistence storageConfigurationPersistence;
+    protected final StorageConfigurationContainerImpl configContainer;
     private final FilterWithFuzzyMode filter;
 
     @Nullable
@@ -49,7 +46,13 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         super(type, pos, state, node);
         this.filter = new FilterWithFuzzyMode(resourceType, this::setChanged, getNode()::setFilterTemplates, value -> {
         });
-        this.storageConfigurationPersistence = new StorageConfigurationPersistence(getNode());
+        this.configContainer = new StorageConfigurationContainerImpl(
+            getNode(),
+            filter,
+            this::setChanged,
+            this::getRedstoneMode,
+            this::setRedstoneMode
+        );
         getNode().setNormalizer(filter.createNormalizer());
     }
 
@@ -106,7 +109,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
             storageId = actualStorageId;
         }
 
-        storageConfigurationPersistence.load(tag);
+        configContainer.load(tag);
         filter.load(tag);
 
         super.load(tag);
@@ -136,7 +139,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         if (storageId != null) {
             tag.putUUID(TAG_STORAGE_ID, storageId);
         }
-        storageConfigurationPersistence.save(tag);
+        configContainer.save(tag);
         filter.save(tag);
     }
 
@@ -145,51 +148,8 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         return storageId;
     }
 
-    @Override
-    public AccessMode getAccessMode() {
-        return getNode().getAccessMode();
-    }
-
-    @Override
-    public void setAccessMode(final AccessMode accessMode) {
-        getNode().setAccessMode(accessMode);
-        setChanged();
-    }
-
-    @Override
-    public boolean isFuzzyMode() {
-        return filter.isFuzzyMode();
-    }
-
-    @Override
-    public void setFuzzyMode(final boolean fuzzyMode) {
-        filter.setFuzzyMode(fuzzyMode);
-    }
-
     protected final ResourceFilterContainer getFilterContainer() {
         return filter.getFilterContainer();
-    }
-
-    @Override
-    public int getPriority() {
-        return getNode().getPriority();
-    }
-
-    @Override
-    public void setPriority(final int priority) {
-        getNode().setPriority(priority);
-        setChanged();
-    }
-
-    @Override
-    public FilterMode getFilterMode() {
-        return getNode().getFilterMode();
-    }
-
-    @Override
-    public void setFilterMode(final FilterMode mode) {
-        getNode().setFilterMode(mode);
-        setChanged();
     }
 
     @Override

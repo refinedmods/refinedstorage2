@@ -3,10 +3,10 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.bl
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.AbstractStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
@@ -48,8 +48,8 @@ public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageC
                                                 final OrderedRegistry<ResourceLocation, ResourceType> rtr,
                                                 final Player player,
                                                 final ResourceFilterContainer resourceFilterContainer,
-                                                final AbstractStorageBlockBlockEntity<?> storageBlock) {
-        super(type, syncId, rtr, player, storageBlock, resourceFilterContainer);
+                                                final StorageConfigurationContainer configContainer) {
+        super(type, syncId, rtr, player, configContainer, resourceFilterContainer);
         addSlots(player, resourceFilterContainer);
     }
 
