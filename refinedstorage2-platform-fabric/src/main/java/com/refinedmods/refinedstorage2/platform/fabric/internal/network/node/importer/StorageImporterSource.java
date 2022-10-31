@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.im
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.StorageInsertableStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.StorageInsertableStorage;
 
 import java.util.Collections;
 import java.util.Iterator;
