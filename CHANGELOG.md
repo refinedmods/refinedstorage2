@@ -28,6 +28,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - "Exact mode" has been replaced with "Fuzzy mode", which is off by default for performance.
 - The External Storage no longer shows the amount of resources stored on the GUI.
 - The External Storage now supports multiple resource types at the same time.
+- The External Storage no longer checks for external changes every tick, but rather has a cooldown system.
 
 ## [2.0.0-milestone.2.3] - 2022-08-26
 
