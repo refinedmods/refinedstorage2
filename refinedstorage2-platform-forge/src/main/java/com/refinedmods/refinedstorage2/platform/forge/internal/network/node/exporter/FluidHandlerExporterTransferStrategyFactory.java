@@ -9,6 +9,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.network.node.Abs
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.FluidHandlerInsertableStorage;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.InteractionCoordinates;
+import com.refinedmods.refinedstorage2.platform.forge.internal.storage.InteractionCoordinatesImpl;
 
 import javax.annotation.Nullable;
 
@@ -23,7 +24,7 @@ public class FluidHandlerExporterTransferStrategyFactory implements ExporterTran
                                            final Direction direction,
                                            final boolean hasStackUpgrade,
                                            final boolean fuzzyMode) {
-        final InteractionCoordinates coords = new InteractionCoordinates(
+        final InteractionCoordinates coords = new InteractionCoordinatesImpl(
             level,
             pos,
             direction
