@@ -74,7 +74,7 @@ class NetworkNodeStorage<T> implements Storage<T>, ConsumingStorage<T>, Composit
 
     public void setStorage(final ExternalStorage<T> storage) {
         if (this.storage != null) {
-            return;
+            throw new IllegalStateException("Storage is already set");
         }
         this.storage = storage;
         parents.forEach(parent -> {

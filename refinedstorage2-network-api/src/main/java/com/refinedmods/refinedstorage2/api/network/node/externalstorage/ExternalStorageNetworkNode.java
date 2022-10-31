@@ -39,13 +39,13 @@ public class ExternalStorageNetworkNode extends AbstractNetworkNode implements S
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void initialize(final ExternalStorageProviderFactory factory) {
+        stopExposingInternalStorages();
         storages.forEach((type, storage) -> initialize(factory, (StorageChannelType) type, storage));
     }
 
     private <T> void initialize(final ExternalStorageProviderFactory factory,
                                 final StorageChannelType<T> type,
                                 final ConfiguredStorage<T> configuredStorage) {
-        stopExposingInternalStorages();
         factory.create(type).ifPresent(provider -> {
             configuredStorage.internalStorage = new ExternalStorage<>(provider);
             if (isActive()) {
