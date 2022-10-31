@@ -11,7 +11,11 @@ public interface StorageConfiguration extends Priority {
 
     FilterMode getFilterMode();
 
+    boolean isAllowed(Object resource);
+
     void setFilterMode(FilterMode filterMode);
 
     void setPriority(int priority);
+
+    boolean isActive();
 }

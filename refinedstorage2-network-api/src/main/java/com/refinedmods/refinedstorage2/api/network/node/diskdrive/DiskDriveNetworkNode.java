@@ -175,6 +175,11 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
     }
 
     @Override
+    public boolean isAllowed(final Object resource) {
+        return filter.isAllowed(resource);
+    }
+
+    @Override
     public void setFilterMode(final FilterMode mode) {
         filter.setMode(mode);
     }

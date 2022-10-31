@@ -96,7 +96,8 @@ public class StorageNetworkNode<T> extends AbstractNetworkNode implements Storag
         return filter.getMode();
     }
 
-    public boolean isAllowed(final T resource) {
+    @Override
+    public boolean isAllowed(final Object resource) {
         return filter.isAllowed(resource);
     }
 
