@@ -50,7 +50,6 @@
         <module name="InterfaceIsType"/>
         <module name="MutableException"/>
         <module name="ThrowsCount"/>
-        <module name="ArrayTrailingComma"/>
         <module name="AvoidDoubleBraceInitialization"/>
         <module name="AvoidNoArgumentSuperConstructorCall"/>
         <module name="CovariantEquals"/>
