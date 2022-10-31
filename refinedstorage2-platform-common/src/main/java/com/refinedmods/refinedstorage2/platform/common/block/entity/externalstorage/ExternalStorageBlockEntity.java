@@ -8,7 +8,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractLevelInteractingNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationPersistence;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExternalStorageContainerMenu;
@@ -29,7 +29,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,7 +36,7 @@ import org.apache.logging.log4j.Logger;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ExternalStorageBlockEntity
-    extends AbstractInternalNetworkNodeContainerBlockEntity<ExternalStorageNetworkNode>
+    extends AbstractLevelInteractingNetworkNodeContainerBlockEntity<ExternalStorageNetworkNode>
     implements ExtendedMenuProvider, StorageConfigurationProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -57,29 +56,7 @@ public class ExternalStorageBlockEntity
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public void setBlockState(final BlockState newBlockState) {
-        super.setBlockState(newBlockState);
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-        initialize(serverLevel);
-    }
-
-    @Override
-    public void setLevel(final Level level) {
-        super.setLevel(level);
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-        initialize(serverLevel);
-    }
-
-    private void initialize(final ServerLevel serverLevel) {
-        final Direction direction = getDirection();
-        if (direction == null) {
-            return;
-        }
+    protected void initialize(final ServerLevel level, final Direction direction) {
         getNode().initialize(new ExternalStorageProviderFactory() {
             @Override
             public <T> Optional<ExternalStorageProvider<T>> create(final StorageChannelType<T> channelType) {
@@ -87,7 +64,7 @@ public class ExternalStorageBlockEntity
                 final BlockPos sourcePosition = worldPosition.relative(direction);
                 return PlatformApi.INSTANCE
                     .getExternalStorageProviderFactory(channelType)
-                    .map(factory -> factory.create(serverLevel, sourcePosition, incomingDirection));
+                    .map(factory -> factory.create(level, sourcePosition, incomingDirection));
             }
         });
     }

@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
-import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,19 +11,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class AbstractUpgradeableLevelInteractingNetworkNodeContainerBlockEntity<T extends AbstractNetworkNode>
-    extends AbstractUpgradeableNetworkNodeContainerBlockEntity<T>
-    implements BlockEntityWithDrops {
+public abstract class AbstractLevelInteractingNetworkNodeContainerBlockEntity<T extends AbstractNetworkNode>
+    extends AbstractInternalNetworkNodeContainerBlockEntity<T> {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    protected AbstractUpgradeableLevelInteractingNetworkNodeContainerBlockEntity(
+    protected AbstractLevelInteractingNetworkNodeContainerBlockEntity(
         final BlockEntityType<?> type,
         final BlockPos pos,
         final BlockState state,
-        final T node,
-        final UpgradeDestinations destination
+        final T node
     ) {
-        super(type, pos, state, node, destination);
+        super(type, pos, state, node);
     }
 
     // used to handle rotations
@@ -45,14 +42,6 @@ public abstract class AbstractUpgradeableLevelInteractingNetworkNodeContainerBlo
             return;
         }
         initialize(serverLevel);
-    }
-
-    @Override
-    protected void upgradeContainerChanged() {
-        super.upgradeContainerChanged();
-        if (level instanceof ServerLevel serverLevel) {
-            initialize(serverLevel);
-        }
     }
 
     protected final void initialize(final ServerLevel level) {
