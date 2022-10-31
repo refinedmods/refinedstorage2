@@ -16,7 +16,7 @@ public abstract class AbstractConfiguredProxyStorage<T, S extends Storage<T>> im
     protected S delegate;
     private final StorageConfiguration config;
 
-    public AbstractConfiguredProxyStorage(final StorageConfiguration config) {
+    protected AbstractConfiguredProxyStorage(final StorageConfiguration config) {
         this.config = config;
     }
 
