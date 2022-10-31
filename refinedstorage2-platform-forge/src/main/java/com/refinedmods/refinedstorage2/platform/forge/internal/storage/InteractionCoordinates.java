@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.internal.storage;
 
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 
@@ -44,6 +45,30 @@ public interface InteractionCoordinates {
         }).orElse(Collections.emptyListIterator());
     }
 
+    default Iterator<ResourceAmount<ItemResource>> getItemAmountIterator() {
+        return getItemHandler().map(
+            handler -> (Iterator<ResourceAmount<ItemResource>>) new AbstractIterator<ResourceAmount<ItemResource>>() {
+                private int index;
+
+                @Nullable
+                @Override
+                protected ResourceAmount<ItemResource> computeNext() {
+                    if (index > handler.getSlots()) {
+                        return endOfData();
+                    }
+                    for (; index < handler.getSlots(); ++index) {
+                        final ItemStack slot = handler.getStackInSlot(index);
+                        if (!slot.isEmpty()) {
+                            index++;
+                            return new ResourceAmount<>(ofItemStack(slot), slot.getCount());
+                        }
+                    }
+                    return endOfData();
+                }
+            }
+        ).orElse(Collections.emptyListIterator());
+    }
+
     default LazyOptional<IFluidHandler> getFluidHandler() {
         return LazyOptional.empty();
     }
@@ -68,6 +93,30 @@ public interface InteractionCoordinates {
                 return endOfData();
             }
         }).orElse(Collections.emptyListIterator());
+    }
+
+    default Iterator<ResourceAmount<FluidResource>> getFluidAmountIterator() {
+        return getFluidHandler().map(
+            handler -> (Iterator<ResourceAmount<FluidResource>>) new AbstractIterator<ResourceAmount<FluidResource>>() {
+                private int index;
+
+                @Nullable
+                @Override
+                protected ResourceAmount<FluidResource> computeNext() {
+                    if (index > handler.getTanks()) {
+                        return endOfData();
+                    }
+                    for (; index < handler.getTanks(); ++index) {
+                        final FluidStack slot = handler.getFluidInTank(index);
+                        if (!slot.isEmpty()) {
+                            index++;
+                            return new ResourceAmount<>(ofFluidStack(slot), slot.getAmount());
+                        }
+                    }
+                    return endOfData();
+                }
+            }
+        ).orElse(Collections.emptyListIterator());
     }
 
     static InteractionCoordinates ofItemHandler(final IItemHandler itemHandler) {
