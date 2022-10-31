@@ -36,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
 @SetupNetwork
+@SetupNetwork(id = "other")
 class ExternalStorageNetworkNodeTest {
     private static final long ENERGY_USAGE = 5;
 
@@ -376,6 +377,72 @@ class ExternalStorageNetworkNodeTest {
         sut.detectChanges();
 
         assertThat(networkStorage.getAll()).isEmpty();
+    }
+
+    @Test
+    void shouldNotifyNewNetworkAboutChangesWhenChangingNetworks(
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage,
+        @InjectNetworkStorageChannel(networkId = "other") final StorageChannel<String> otherNetworkStorage,
+        @InjectNetwork final Network network,
+        @InjectNetwork("other") final Network otherNetwork
+    ) {
+        // Arrange
+        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        storage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        sut.initialize(new FakeExternalStorageProviderFactory(provider));
+
+        // Act & assert
+        // Remove the external storage from the existing network, and add it to the other network.
+        network.removeContainer(() -> sut);
+        sut.setNetwork(otherNetwork);
+        otherNetwork.addContainer(() -> sut);
+
+        // The network storage should now be empty.
+        assertThat(networkStorage.getAll()).isEmpty();
+
+        // Now reinsert.
+        storage.insert("B", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.detectChanges();
+
+        // This is the desired state, the old parent should be cleaned up and not used.
+        assertThat(networkStorage.getAll()).isEmpty();
+        assertThat(otherNetworkStorage.getAll()).isNotEmpty();
+    }
+
+    @Test
+    void shouldNoLongerNotifyOldNetworkAboutChangesWhenChangingNetworks(
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage,
+        @InjectNetworkStorageChannel(networkId = "other") final StorageChannel<String> otherNetworkStorage,
+        @InjectNetwork final Network network,
+        @InjectNetwork("other") final Network otherNetwork
+    ) {
+        // Arrange
+        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        storage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        sut.initialize(new FakeExternalStorageProviderFactory(provider));
+
+        // Act & assert
+        // Remove the external storage from the existing network, and add it to the other network.
+        network.removeContainer(() -> sut);
+        sut.setNetwork(otherNetwork);
+        otherNetwork.addContainer(() -> sut);
+
+        // The network storage should now be empty.
+        assertThat(networkStorage.getAll()).isEmpty();
+
+        // Reset the external storage, so the parents in the NetworkNodeStorage are reused.
+        sut.setActive(false);
+        sut.setActive(true);
+
+        // Now reinsert.
+        storage.insert("B", 100, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.detectChanges();
+
+        // This is the desired state, the old parent should be cleaned up and not used.
+        assertThat(networkStorage.getAll()).isEmpty();
+        assertThat(otherNetworkStorage.getAll()).isNotEmpty();
     }
 
     @Test
