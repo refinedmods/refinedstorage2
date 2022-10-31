@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.Export
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.AbstractFuzzyExporterTransferStrategy;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.StorageInsertableStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.StorageInsertableStorage;
 
 import java.util.Optional;
 import java.util.function.Function;

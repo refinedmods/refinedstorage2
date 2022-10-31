@@ -1,6 +1,6 @@
 @ParametersAreNonnullByDefault
 @FieldsAndMethodsAreNonnullByDefault
-package com.refinedmods.refinedstorage2.platform.fabric.internal.network.node;
+package com.refinedmods.refinedstorage2.platform.fabric.internal.storage;
 
 import com.refinedmods.refinedstorage2.api.core.FieldsAndMethodsAreNonnullByDefault;
 

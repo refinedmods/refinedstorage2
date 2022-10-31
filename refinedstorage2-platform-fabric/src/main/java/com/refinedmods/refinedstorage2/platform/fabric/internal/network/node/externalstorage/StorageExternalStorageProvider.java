@@ -4,8 +4,8 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.StorageExtractableStorage;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.StorageInsertableStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.StorageExtractableStorage;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.StorageInsertableStorage;
 
 import java.util.Collections;
 import java.util.Iterator;
