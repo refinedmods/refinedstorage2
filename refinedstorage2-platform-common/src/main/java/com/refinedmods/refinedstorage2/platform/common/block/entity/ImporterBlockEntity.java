@@ -32,7 +32,7 @@ import org.apache.logging.log4j.Logger;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ImporterBlockEntity
-    extends AbstractUpgradeableLevelInteractingNetworkNodeContainerBlockEntity<ImporterNetworkNode>
+    extends AbstractUpgradeableNetworkNodeContainerBlockEntity<ImporterNetworkNode>
     implements ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 

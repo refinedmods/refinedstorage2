@@ -13,12 +13,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractUpgradeableNetworkNodeContainerBlockEntity<T extends AbstractNetworkNode>
-    extends AbstractInternalNetworkNodeContainerBlockEntity<T>
+    extends AbstractLevelInteractingNetworkNodeContainerBlockEntity<T>
     implements BlockEntityWithDrops {
     private static final String TAG_UPGRADES = "u";
 
@@ -47,9 +48,12 @@ public abstract class AbstractUpgradeableNetworkNodeContainerBlockEntity<T exten
         }
     }
 
-    protected void upgradeContainerChanged() {
+    private void upgradeContainerChanged() {
         configureAccordingToUpgrades();
         setChanged();
+        if (level instanceof ServerLevel serverLevel) {
+            initialize(serverLevel);
+        }
     }
 
     @Override
