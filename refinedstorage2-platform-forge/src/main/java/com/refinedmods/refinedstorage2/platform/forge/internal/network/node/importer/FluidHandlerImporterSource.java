@@ -17,6 +17,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.ofFluidStack;
+import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidAction;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidStack;
 
 public class FluidHandlerImporterSource implements ImporterSource<FluidResource> {
@@ -63,9 +64,5 @@ public class FluidHandlerImporterSource implements ImporterSource<FluidResource>
     @Override
     public long insert(final FluidResource resource, final long amount, final Action action, final Actor actor) {
         return insertTarget.insert(resource, amount, action, actor);
-    }
-
-    private static IFluidHandler.FluidAction toFluidAction(final Action action) {
-        return action == Action.SIMULATE ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE;
     }
 }
