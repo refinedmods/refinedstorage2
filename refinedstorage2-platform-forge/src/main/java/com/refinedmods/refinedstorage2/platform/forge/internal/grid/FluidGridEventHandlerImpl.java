@@ -20,13 +20,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.ofFluidStack;
+import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidAction;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidStack;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toItemStack;
 
@@ -69,10 +69,6 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
             }
             return drained.getAmount();
         });
-    }
-
-    private IFluidHandler.FluidAction toFluidAction(final Action action) {
-        return action == Action.SIMULATE ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE;
     }
 
     @Nullable
