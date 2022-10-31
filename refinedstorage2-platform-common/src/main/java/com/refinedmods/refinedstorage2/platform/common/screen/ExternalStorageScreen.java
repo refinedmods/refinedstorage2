@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AccessModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.FilterModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.FuzzyModeSideButtonWidget;

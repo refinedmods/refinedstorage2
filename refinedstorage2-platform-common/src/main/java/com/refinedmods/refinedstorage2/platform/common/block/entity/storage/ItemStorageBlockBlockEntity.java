@@ -92,7 +92,7 @@ public class ItemStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity
             syncId,
             player,
             getFilterContainer(),
-            this
+            configContainer
         );
     }
 }

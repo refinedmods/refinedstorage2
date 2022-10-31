@@ -86,7 +86,7 @@ public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntit
             syncId,
             player,
             getFilterContainer(),
-            this
+            configContainer
         );
     }
 }

@@ -1,9 +1,8 @@
-package com.refinedmods.refinedstorage2.platform.common.containermenu;
+package com.refinedmods.refinedstorage2.platform.common.containermenu.storage;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceTypeAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
@@ -30,13 +29,13 @@ public class ExternalStorageContainerMenu extends AbstractStorageContainerMenu i
     public ExternalStorageContainerMenu(final int syncId,
                                         final Player player,
                                         final ResourceFilterContainer resourceFilterContainer,
-                                        final ExternalStorageBlockEntity externalStorage) {
+                                        final StorageConfigurationContainer configContainer) {
         super(
             Menus.INSTANCE.getExternalStorage(),
             syncId,
             PlatformApi.INSTANCE.getResourceTypeRegistry(),
             player,
-            externalStorage,
+            configContainer,
             resourceFilterContainer
         );
 

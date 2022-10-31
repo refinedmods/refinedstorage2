@@ -4,11 +4,11 @@ import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ValidatedSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationContainer;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
@@ -55,14 +55,14 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
                                   final Player player,
                                   final SimpleContainer diskInventory,
                                   final ResourceFilterContainer resourceFilterContainer,
-                                  final AbstractDiskDriveBlockEntity diskDrive,
+                                  final StorageConfigurationContainer configContainer,
                                   final StorageDiskInfoAccessor storageInfoAccessor) {
         super(
             Menus.INSTANCE.getDiskDrive(),
             syncId,
             PlatformApi.INSTANCE.getResourceTypeRegistry(),
             player,
-            diskDrive,
+            configContainer,
             resourceFilterContainer
         );
         this.storageInfoAccessor = storageInfoAccessor;

@@ -1,18 +1,15 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage;
 
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.node.externalstorage.ExternalStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.externalstorage.ExternalStorageProviderFactory;
-import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractLevelInteractingNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationPersistence;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ExternalStorageContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationProvider;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -37,11 +34,11 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class ExternalStorageBlockEntity
     extends AbstractLevelInteractingNetworkNodeContainerBlockEntity<ExternalStorageNetworkNode>
-    implements ExtendedMenuProvider, StorageConfigurationProvider {
+    implements ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final FilterWithFuzzyMode filter;
-    private final StorageConfigurationPersistence storageConfigurationPersistence;
+    private final StorageConfigurationContainerImpl configContainer;
     private final WorkRate workRate = new WorkRate();
 
     public ExternalStorageBlockEntity(final BlockPos pos, final BlockState state) {
@@ -52,7 +49,13 @@ public class ExternalStorageBlockEntity
         this.filter = new FilterWithFuzzyMode(this::setChanged, getNode()::setFilterTemplates, value -> {
         });
         getNode().setNormalizer(filter.createNormalizer());
-        this.storageConfigurationPersistence = new StorageConfigurationPersistence(getNode());
+        this.configContainer = new StorageConfigurationContainerImpl(
+            getNode(),
+            filter,
+            this::setChanged,
+            this::getRedstoneMode,
+            this::setRedstoneMode
+        );
     }
 
     @Override
@@ -87,55 +90,14 @@ public class ExternalStorageBlockEntity
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
         filter.save(tag);
-        storageConfigurationPersistence.save(tag);
+        configContainer.save(tag);
     }
 
     @Override
     public void load(final CompoundTag tag) {
         super.load(tag);
         filter.load(tag);
-        storageConfigurationPersistence.load(tag);
-    }
-
-    @Override
-    public int getPriority() {
-        return getNode().getPriority();
-    }
-
-    @Override
-    public void setPriority(final int priority) {
-        getNode().setPriority(priority);
-        setChanged();
-    }
-
-    @Override
-    public FilterMode getFilterMode() {
-        return getNode().getFilterMode();
-    }
-
-    @Override
-    public void setFilterMode(final FilterMode filterMode) {
-        getNode().setFilterMode(filterMode);
-        setChanged();
-    }
-
-    public boolean isFuzzyMode() {
-        return filter.isFuzzyMode();
-    }
-
-    public void setFuzzyMode(final boolean fuzzyMode) {
-        filter.setFuzzyMode(fuzzyMode);
-    }
-
-    @Override
-    public AccessMode getAccessMode() {
-        return getNode().getAccessMode();
-    }
-
-    @Override
-    public void setAccessMode(final AccessMode accessMode) {
-        getNode().setAccessMode(accessMode);
-        setChanged();
+        configContainer.load(tag);
     }
 
     @Override
@@ -151,6 +113,6 @@ public class ExternalStorageBlockEntity
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
-        return new ExternalStorageContainerMenu(syncId, player, filter.getFilterContainer(), this);
+        return new ExternalStorageContainerMenu(syncId, player, filter.getFilterContainer(), configContainer);
     }
 }

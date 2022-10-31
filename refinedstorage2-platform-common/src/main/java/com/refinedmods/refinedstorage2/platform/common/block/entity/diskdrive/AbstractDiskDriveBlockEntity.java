@@ -1,18 +1,15 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
-import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationPersistence;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationProvider;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.EmptyStorageDiskInfoAccessor;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -52,7 +49,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public abstract class AbstractDiskDriveBlockEntity
     extends AbstractInternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode>
-    implements BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider, StorageConfigurationProvider {
+    implements BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final int AMOUNT_OF_DISKS = 9;
@@ -65,7 +62,7 @@ public abstract class AbstractDiskDriveBlockEntity
 
     private final DiskDriveInventory diskInventory;
     private final FilterWithFuzzyMode filter;
-    private final StorageConfigurationPersistence storageConfigurationPersistence;
+    private final StorageConfigurationContainerImpl configContainer;
     private final RateLimiter diskStateChangeRateLimiter = RateLimiter.create(1);
 
     private boolean syncRequested;
@@ -80,7 +77,13 @@ public abstract class AbstractDiskDriveBlockEntity
         this.diskInventory = new DiskDriveInventory(this, getNode().getAmountOfDiskSlots());
         this.filter = new FilterWithFuzzyMode(this::setChanged, getNode()::setFilterTemplates, value -> {
         });
-        this.storageConfigurationPersistence = new StorageConfigurationPersistence(getNode());
+        this.configContainer = new StorageConfigurationContainerImpl(
+            getNode(),
+            filter,
+            this::setChanged,
+            this::getRedstoneMode,
+            this::setRedstoneMode
+        );
         getNode().setDiskProvider(diskInventory);
         getNode().setListener(this);
         getNode().setNormalizer(filter.createNormalizer());
@@ -151,7 +154,7 @@ public abstract class AbstractDiskDriveBlockEntity
             ContainerUtil.read(tag.getCompound(TAG_DISK_INVENTORY), diskInventory);
         }
 
-        storageConfigurationPersistence.load(tag);
+        configContainer.load(tag);
         filter.load(tag);
 
         super.load(tag);
@@ -161,55 +164,12 @@ public abstract class AbstractDiskDriveBlockEntity
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
         tag.put(TAG_DISK_INVENTORY, ContainerUtil.write(diskInventory));
-        storageConfigurationPersistence.save(tag);
+        configContainer.save(tag);
         filter.save(tag);
     }
 
     public SimpleContainer getDiskInventory() {
         return diskInventory;
-    }
-
-    @Override
-    public FilterMode getFilterMode() {
-        return getNode().getFilterMode();
-    }
-
-    @Override
-    public void setFilterMode(final FilterMode mode) {
-        getNode().setFilterMode(mode);
-        setChanged();
-    }
-
-    @Override
-    public boolean isFuzzyMode() {
-        return filter.isFuzzyMode();
-    }
-
-    @Override
-    public void setFuzzyMode(final boolean fuzzyMode) {
-        filter.setFuzzyMode(fuzzyMode);
-    }
-
-    @Override
-    public AccessMode getAccessMode() {
-        return getNode().getAccessMode();
-    }
-
-    @Override
-    public void setAccessMode(final AccessMode accessMode) {
-        getNode().setAccessMode(accessMode);
-        setChanged();
-    }
-
-    @Override
-    public int getPriority() {
-        return getNode().getPriority();
-    }
-
-    @Override
-    public void setPriority(final int priority) {
-        getNode().setPriority(priority);
-        setChanged();
     }
 
     void onDiskChanged(final int slot) {
@@ -289,7 +249,7 @@ public abstract class AbstractDiskDriveBlockEntity
             player,
             diskInventory,
             filter.getFilterContainer(),
-            this,
+            configContainer,
             new EmptyStorageDiskInfoAccessor()
         );
     }
