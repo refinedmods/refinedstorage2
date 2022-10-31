@@ -23,11 +23,9 @@ public class ItemHandlerExporterTransferStrategyFactory implements ExporterTrans
                                            final Direction direction,
                                            final boolean hasStackUpgrade,
                                            final boolean fuzzyMode) {
-        final InsertableStorage<ItemResource> destination = new ItemHandlerInsertableStorage(new InteractionCoordinatesImpl(
-            level,
-            pos,
-            direction
-        ));
+        final InsertableStorage<ItemResource> destination = new ItemHandlerInsertableStorage(
+            new InteractionCoordinatesImpl(level, pos, direction)
+        );
         final int transferQuota = hasStackUpgrade ? 64 : 1;
         if (fuzzyMode) {
             return new AbstractFuzzyExporterTransferStrategy<>(destination, StorageChannelTypes.ITEM, transferQuota) {
