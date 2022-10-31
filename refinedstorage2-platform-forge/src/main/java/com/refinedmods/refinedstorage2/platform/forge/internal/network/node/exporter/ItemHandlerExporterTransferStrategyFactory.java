@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.Export
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.node.AbstractFuzzyExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
-import com.refinedmods.refinedstorage2.platform.forge.internal.storage.InteractionCoordinates;
+import com.refinedmods.refinedstorage2.platform.forge.internal.storage.InteractionCoordinatesImpl;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.ItemHandlerInsertableStorage;
 
 import javax.annotation.Nullable;
@@ -23,7 +23,7 @@ public class ItemHandlerExporterTransferStrategyFactory implements ExporterTrans
                                            final Direction direction,
                                            final boolean hasStackUpgrade,
                                            final boolean fuzzyMode) {
-        final InsertableStorage<ItemResource> destination = new ItemHandlerInsertableStorage(new InteractionCoordinates(
+        final InsertableStorage<ItemResource> destination = new ItemHandlerInsertableStorage(new InteractionCoordinatesImpl(
             level,
             pos,
             direction
