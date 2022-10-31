@@ -17,12 +17,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.UnaryOperator;
+import javax.annotation.Nullable;
 
 public class ExternalStorageNetworkNode extends AbstractNetworkNode implements StorageProvider, StorageConfiguration {
     private final long energyUsage;
-    private final Map<StorageChannelType<?>, ExternalStorage<?>> internalStorages = new HashMap<>();
-    private final Map<StorageChannelType<?>, NetworkNodeStorage<?>> exposedStorages = new HashMap<>();
-    private final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry;
+    private final Map<StorageChannelType<?>, ConfiguredStorage<?>> storages = new HashMap<>();
     private final Filter filter = new Filter();
 
     private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
@@ -31,26 +30,26 @@ public class ExternalStorageNetworkNode extends AbstractNetworkNode implements S
     public ExternalStorageNetworkNode(final long energyUsage,
                                       final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
         this.energyUsage = energyUsage;
-        this.storageChannelTypeRegistry = storageChannelTypeRegistry;
-        initializeExposedStorages();
+        initialize(storageChannelTypeRegistry);
     }
 
-    private void initializeExposedStorages() {
-        storageChannelTypeRegistry.getAll().forEach(type -> exposedStorages.put(type, new NetworkNodeStorage<>(this)));
+    private void initialize(final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
+        storageChannelTypeRegistry.getAll().forEach(type -> storages.put(type, new ConfiguredStorage<>()));
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void initialize(final ExternalStorageProviderFactory factory) {
-        storageChannelTypeRegistry.getAll().forEach(type -> initialize(factory, type));
+        storages.forEach((type, storage) -> initialize(factory, (StorageChannelType) type, storage));
     }
 
-    @SuppressWarnings({"rawtypes"})
-    private void initialize(final ExternalStorageProviderFactory factory, final StorageChannelType<?> type) {
+    private <T> void initialize(final ExternalStorageProviderFactory factory,
+                                final StorageChannelType<T> type,
+                                final ConfiguredStorage<T> configuredStorage) {
         stopExposingInternalStorages();
         factory.create(type).ifPresent(provider -> {
-            final ExternalStorage externalStorage = new ExternalStorage<>(provider);
-            internalStorages.put(type, externalStorage);
+            configuredStorage.internalStorage = new ExternalStorage<>(provider);
             if (isActive()) {
-                trySetInternalStorageOnExposedStorage(type, exposedStorages.get(type));
+                makeInternalStorageVisible(configuredStorage);
             }
         });
     }
@@ -61,27 +60,23 @@ public class ExternalStorageNetworkNode extends AbstractNetworkNode implements S
         if (!newActive) {
             stopExposingInternalStorages();
         } else {
-            exposedStorages.forEach(this::trySetInternalStorageOnExposedStorage);
+            storages.values().forEach(this::makeInternalStorageVisible);
         }
     }
 
     private void stopExposingInternalStorages() {
-        exposedStorages.values().forEach(NetworkNodeStorage::tryRemoveStorage);
+        storages.values().forEach(s -> s.exposedStorage.tryRemoveStorage());
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private void trySetInternalStorageOnExposedStorage(
-        final StorageChannelType<?> type,
-        final NetworkNodeStorage<?> exposedStorage
-    ) {
-        final ExternalStorage internalStorage = internalStorages.get(type);
-        if (internalStorage != null) {
-            exposedStorage.setStorage(internalStorage);
+    private <T> void makeInternalStorageVisible(final ConfiguredStorage<T> storage) {
+        if (storage.internalStorage == null) {
+            return;
         }
+        storage.exposedStorage.setStorage(storage.internalStorage);
     }
 
     public boolean detectChanges() {
-        return exposedStorages.values().stream().anyMatch(NetworkNodeStorage::detectChanges);
+        return storages.values().stream().anyMatch(storage -> storage.exposedStorage.detectChanges());
     }
 
     @Override
@@ -113,7 +108,7 @@ public class ExternalStorageNetworkNode extends AbstractNetworkNode implements S
     public void setPriority(final int priority) {
         this.priority = priority;
         if (network != null) {
-            exposedStorages.keySet().forEach(type -> network
+            storages.keySet().forEach(type -> network
                 .getComponent(StorageNetworkComponent.class)
                 .getStorageChannel(type)
                 .sortSources()
@@ -141,10 +136,20 @@ public class ExternalStorageNetworkNode extends AbstractNetworkNode implements S
     @Override
     @SuppressWarnings("unchecked")
     public <T> Optional<Storage<T>> getStorageForChannel(final StorageChannelType<T> channelType) {
-        final Storage<?> storage = exposedStorages.get(channelType);
+        final ConfiguredStorage<?> storage = storages.get(channelType);
         if (storage == null) {
             return Optional.empty();
         }
-        return Optional.of((Storage<T>) storage);
+        return Optional.of((Storage<T>) storage.exposedStorage);
+    }
+
+    private class ConfiguredStorage<T> {
+        @Nullable
+        private ExternalStorage<T> internalStorage;
+        private final NetworkNodeStorage<T> exposedStorage;
+
+        private ConfiguredStorage() {
+            this.exposedStorage = new NetworkNodeStorage<>(ExternalStorageNetworkNode.this);
+        }
     }
 }
