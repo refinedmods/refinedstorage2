@@ -67,7 +67,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.exporter.StorageExporterTransferStrategyFactory;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.externalstorage.StorageExternalStorageProviderFactory;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.externalstorage.StoragePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.importer.StorageImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
@@ -238,7 +238,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     private void registerExternalStorageProviderFactories() {
         PlatformApi.INSTANCE.setExternalStorageProviderFactory(
             StorageChannelTypes.ITEM,
-            new StorageExternalStorageProviderFactory<>(
+            new StoragePlatformExternalStorageProviderFactory<>(
                 ItemStorage.SIDED,
                 VariantUtil::ofItemVariant,
                 VariantUtil::toItemVariant
@@ -246,7 +246,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         );
         PlatformApi.INSTANCE.setExternalStorageProviderFactory(
             StorageChannelTypes.FLUID,
-            new StorageExternalStorageProviderFactory<>(
+            new StoragePlatformExternalStorageProviderFactory<>(
                 FluidStorage.SIDED,
                 VariantUtil::ofFluidVariant,
                 VariantUtil::toFluidVariant

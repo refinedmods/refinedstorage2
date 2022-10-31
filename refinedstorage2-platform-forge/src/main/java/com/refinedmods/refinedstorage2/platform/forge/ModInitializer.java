@@ -45,6 +45,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
@@ -64,6 +65,8 @@ import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.FluidHandlerExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.ItemHandlerExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.externalstorage.FluidHandlerPlatformExternalStorageProviderFactory;
+import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.externalstorage.ItemHandlerPlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.FluidHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.ItemHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
@@ -172,6 +175,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerNetworkComponents();
         registerImporterTransferStrategyFactories();
         registerExporterTransferStrategyFactories();
+        registerExternalStorageProviderFactories();
         registerContent();
         registerSounds();
         registerAdditionalResourceTypes();
@@ -206,6 +210,17 @@ public class ModInitializer extends AbstractModInitializer {
         PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().register(
             createIdentifier("fluid"),
             new FluidHandlerExporterTransferStrategyFactory()
+        );
+    }
+
+    private void registerExternalStorageProviderFactories() {
+        PlatformApi.INSTANCE.setExternalStorageProviderFactory(
+            StorageChannelTypes.ITEM,
+            new ItemHandlerPlatformExternalStorageProviderFactory()
+        );
+        PlatformApi.INSTANCE.setExternalStorageProviderFactory(
+            StorageChannelTypes.FLUID,
+            new FluidHandlerPlatformExternalStorageProviderFactory()
         );
     }
 
