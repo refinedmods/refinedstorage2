@@ -105,6 +105,11 @@ public class ExternalStorageNetworkNode extends AbstractNetworkNode implements S
     }
 
     @Override
+    public boolean isAllowed(final Object resource) {
+        return filter.isAllowed(resource);
+    }
+
+    @Override
     public void setPriority(final int priority) {
         this.priority = priority;
         if (network != null) {
@@ -127,10 +132,6 @@ public class ExternalStorageNetworkNode extends AbstractNetworkNode implements S
 
     public void setNormalizer(final UnaryOperator<Object> normalizer) {
         filter.setNormalizer(normalizer);
-    }
-
-    public <T> boolean isAllowed(final T resource) {
-        return filter.isAllowed(resource);
     }
 
     @Override
