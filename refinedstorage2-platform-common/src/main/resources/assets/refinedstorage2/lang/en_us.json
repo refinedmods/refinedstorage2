@@ -167,6 +167,8 @@
   "text.autoconfig.refinedstorage2.option.upgrade.stackUpgradeEnergyUsage": "Stack upgrade energy usage",
   "text.autoconfig.refinedstorage2.option.iface": "Interface",
   "text.autoconfig.refinedstorage2.option.iface.energyUsage": "Energy usage",
+  "text.autoconfig.refinedstorage2.option.externalStorage": "External Storage",
+  "text.autoconfig.refinedstorage2.option.externalStorage.energyUsage": "Energy usage",
   "advancements.refinedstorage2.root.description": "Use one or multiple Controllers in a network to provide your network with energy",
   "advancements.refinedstorage2.connecting": "Connecting",
   "advancements.refinedstorage2.connecting.description": "Use Cable to connect devices with each other, or place devices against each other",

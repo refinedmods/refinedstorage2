@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
+// TODO: Textures!
 public class ExporterSchedulingModeSideButtonWidget extends AbstractSideButtonWidget {
     private final ClientProperty<ExporterSchedulingModeSettings> property;
     private final TooltipRenderer tooltipRenderer;
