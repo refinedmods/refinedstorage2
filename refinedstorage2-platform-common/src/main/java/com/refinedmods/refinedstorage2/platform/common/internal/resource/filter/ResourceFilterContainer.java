@@ -4,7 +4,9 @@ import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -14,6 +16,7 @@ import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,25 +26,60 @@ public class ResourceFilterContainer {
     private final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry;
     private final FilteredResource[] items;
     private final Runnable listener;
+    private final long maxAmount;
 
+    public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                   final int size,
+                                   final long maxAmount) {
+        this(resourceTypeRegistry, size, () -> {
+        }, maxAmount);
+    }
 
     public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                    final int size) {
         this(resourceTypeRegistry, size, () -> {
-        });
+        }, -1);
     }
 
     public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                    final int size,
                                    final Runnable listener) {
+        this(resourceTypeRegistry, size, listener, -1);
+    }
+
+    public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                   final int size,
+                                   final Runnable listener,
+                                   final long maxAmount) {
         this.resourceTypeRegistry = resourceTypeRegistry;
         this.items = new FilteredResource[size];
         this.listener = listener;
+        this.maxAmount = maxAmount;
+    }
+
+    public boolean supportsAmount() {
+        return maxAmount >= 0;
     }
 
     public void set(final int index, final FilteredResource resource) {
         setSilently(index, resource);
         listener.run();
+    }
+
+    public void setAmount(final int index, final long amount) {
+        if (!supportsAmount()) {
+            return;
+        }
+        final FilteredResource filteredResource = get(index);
+        if (filteredResource == null) {
+            return;
+        }
+        final long newAmount = Mth.clamp(
+            amount,
+            1,
+            Math.min(maxAmount, filteredResource.getMaxAmount())
+        );
+        set(index, filteredResource.withAmount(newAmount));
     }
 
     private void setSilently(final int index, final FilteredResource resource) {
@@ -66,8 +104,15 @@ public class ResourceFilterContainer {
         return items[index];
     }
 
-    public Set<Object> getTemplates() {
-        final Set<Object> result = new HashSet<>();
+    public Set<Object> getUniqueTemplates() {
+        return getTemplates(new HashSet<>());
+    }
+
+    public List<Object> getTemplates() {
+        return getTemplates(new ArrayList<>());
+    }
+
+    private <C extends Collection<Object>> C getTemplates(final C result) {
         for (int i = 0; i < size(); ++i) {
             final FilteredResource item = items[i];
             if (item == null) {

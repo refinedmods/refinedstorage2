@@ -1,23 +1,18 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
-import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.BlockEntityWithDrops;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageSettingsProvider;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.EmptyStorageDiskInfoAccessor;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.LevelUtil;
@@ -54,33 +49,23 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public abstract class AbstractDiskDriveBlockEntity
     extends AbstractInternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode>
-    implements BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider, StorageSettingsProvider {
+    implements BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final int AMOUNT_OF_DISKS = 9;
 
-    private static final String TAG_PRIORITY = "pri";
-    private static final String TAG_FILTER_MODE = "fim";
-    private static final String TAG_EXACT_MODE = "em";
-    private static final String TAG_ACCESS_MODE = "am";
     private static final String TAG_DISK_INVENTORY = "inv";
     private static final String TAG_STATES = "states";
-    private static final String TAG_RESOURCE_FILTER = "rf";
 
     @Nullable
     protected DiskDriveState driveState;
 
     private final DiskDriveInventory diskInventory;
-    private final ResourceFilterContainer resourceFilterContainer = new ResourceFilterContainer(
-        PlatformApi.INSTANCE.getResourceTypeRegistry(),
-        9,
-        this::resourceFilterContainerChanged
-    );
+    private final FilterWithFuzzyMode filter;
+    private final StorageConfigurationContainerImpl configContainer;
     private final RateLimiter diskStateChangeRateLimiter = RateLimiter.create(1);
 
     private boolean syncRequested;
-
-    private boolean exactMode;
 
     protected AbstractDiskDriveBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new DiskDriveNetworkNode(
@@ -90,9 +75,18 @@ public abstract class AbstractDiskDriveBlockEntity
             AMOUNT_OF_DISKS
         ));
         this.diskInventory = new DiskDriveInventory(this, getNode().getAmountOfDiskSlots());
+        this.filter = new FilterWithFuzzyMode(this::setChanged, getNode()::setFilterTemplates, value -> {
+        });
+        this.configContainer = new StorageConfigurationContainerImpl(
+            getNode(),
+            filter,
+            this::setChanged,
+            this::getRedstoneMode,
+            this::setRedstoneMode
+        );
         getNode().setDiskProvider(diskInventory);
         getNode().setListener(this);
-        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(exactMode, value));
+        getNode().setNormalizer(filter.createNormalizer());
     }
 
     public static boolean hasDisk(final CompoundTag tag, final int slot) {
@@ -115,15 +109,6 @@ public abstract class AbstractDiskDriveBlockEntity
         if (level != null) {
             level.sendBlockUpdated(worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_ALL);
         }
-    }
-
-    private void resourceFilterContainerChanged() {
-        initializeResourceFilter();
-        setChanged();
-    }
-
-    private void initializeResourceFilter() {
-        getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
     }
 
     @Override
@@ -169,27 +154,8 @@ public abstract class AbstractDiskDriveBlockEntity
             ContainerUtil.read(tag.getCompound(TAG_DISK_INVENTORY), diskInventory);
         }
 
-        if (tag.contains(TAG_RESOURCE_FILTER)) {
-            resourceFilterContainer.load(tag.getCompound(TAG_RESOURCE_FILTER));
-        }
-
-        if (tag.contains(TAG_PRIORITY)) {
-            getNode().setPriority(tag.getInt(TAG_PRIORITY));
-        }
-
-        if (tag.contains(TAG_FILTER_MODE)) {
-            getNode().setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
-        }
-
-        if (tag.contains(TAG_ACCESS_MODE)) {
-            getNode().setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
-        }
-
-        if (tag.contains(TAG_EXACT_MODE)) {
-            this.exactMode = tag.getBoolean(TAG_EXACT_MODE);
-        }
-
-        initializeResourceFilter();
+        configContainer.load(tag);
+        filter.load(tag);
 
         super.load(tag);
     }
@@ -198,60 +164,12 @@ public abstract class AbstractDiskDriveBlockEntity
     public void saveAdditional(final CompoundTag tag) {
         super.saveAdditional(tag);
         tag.put(TAG_DISK_INVENTORY, ContainerUtil.write(diskInventory));
-        tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
-        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
-        tag.putInt(TAG_PRIORITY, getNode().getPriority());
-        tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getNode().getAccessMode()));
-        tag.putBoolean(TAG_EXACT_MODE, exactMode);
+        configContainer.save(tag);
+        filter.save(tag);
     }
 
     public SimpleContainer getDiskInventory() {
         return diskInventory;
-    }
-
-    @Override
-    public FilterMode getFilterMode() {
-        return getNode().getFilterMode();
-    }
-
-    @Override
-    public void setFilterMode(final FilterMode mode) {
-        getNode().setFilterMode(mode);
-        setChanged();
-    }
-
-    @Override
-    public boolean isExactMode() {
-        return exactMode;
-    }
-
-    @Override
-    public void setExactMode(final boolean exactMode) {
-        this.exactMode = exactMode;
-        initializeResourceFilter();
-        setChanged();
-    }
-
-    @Override
-    public AccessMode getAccessMode() {
-        return getNode().getAccessMode();
-    }
-
-    @Override
-    public void setAccessMode(final AccessMode accessMode) {
-        getNode().setAccessMode(accessMode);
-        setChanged();
-    }
-
-    @Override
-    public int getPriority() {
-        return getNode().getPriority();
-    }
-
-    @Override
-    public void setPriority(final int priority) {
-        getNode().setPriority(priority);
-        setChanged();
     }
 
     void onDiskChanged(final int slot) {
@@ -280,14 +198,17 @@ public abstract class AbstractDiskDriveBlockEntity
 
         final ListTag statesList = tag.getList(TAG_STATES, Tag.TAG_BYTE);
 
-        driveState = new DiskDriveState(statesList.size());
-        for (int i = 0; i < statesList.size(); ++i) {
-            int idx = ((ByteTag) statesList.get(i)).getAsInt();
-            if (idx < 0 || idx >= StorageDiskState.values().length) {
-                idx = StorageDiskState.NONE.ordinal();
+        driveState = DiskDriveState.of(
+            statesList.size(),
+            idx -> {
+                final int ordinal = ((ByteTag) statesList.get(idx)).getAsInt();
+                final StorageDiskState[] values = StorageDiskState.values();
+                if (ordinal < 0 || ordinal >= values.length) {
+                    return StorageDiskState.NONE;
+                }
+                return values[ordinal];
             }
-            driveState.setState(i, StorageDiskState.values()[idx]);
-        }
+        );
 
         onDriveStateUpdated();
     }
@@ -327,8 +248,8 @@ public abstract class AbstractDiskDriveBlockEntity
             syncId,
             player,
             diskInventory,
-            resourceFilterContainer,
-            this,
+            filter.getFilterContainer(),
+            configContainer,
             new EmptyStorageDiskInfoAccessor()
         );
     }
@@ -344,6 +265,6 @@ public abstract class AbstractDiskDriveBlockEntity
 
     @Override
     public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
-        resourceFilterContainer.writeToUpdatePacket(buf);
+        filter.getFilterContainer().writeToUpdatePacket(buf);
     }
 }

@@ -8,24 +8,34 @@ import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
@@ -35,6 +45,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.FluidStorageDiskItem;
@@ -52,10 +63,15 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockIte
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.FluidHandlerExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.ItemHandlerExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.externalstorage.FluidHandlerPlatformExternalStorageProviderFactory;
+import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.externalstorage.ItemHandlerPlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.FluidHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.importer.ItemHandlerImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.packet.NetworkManager;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,6 +79,7 @@ import javax.annotation.Nullable;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Container;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -75,10 +92,10 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -87,6 +104,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -96,10 +115,13 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXPORTER;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXTERNAL_STORAGE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.IMPORTER;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.INTERFACE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.ITEM_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.MACHINE_CASING;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.PROCESSOR_BINDING;
@@ -152,6 +174,8 @@ public class ModInitializer extends AbstractModInitializer {
         registerAdditionalStorageChannelTypes();
         registerNetworkComponents();
         registerImporterTransferStrategyFactories();
+        registerExporterTransferStrategyFactories();
+        registerExternalStorageProviderFactories();
         registerContent();
         registerSounds();
         registerAdditionalResourceTypes();
@@ -175,6 +199,28 @@ public class ModInitializer extends AbstractModInitializer {
         PlatformApi.INSTANCE.getImporterTransferStrategyRegistry().register(
             createIdentifier("fluid"),
             new FluidHandlerImporterTransferStrategyFactory()
+        );
+    }
+
+    private void registerExporterTransferStrategyFactories() {
+        PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().register(
+            createIdentifier("item"),
+            new ItemHandlerExporterTransferStrategyFactory()
+        );
+        PlatformApi.INSTANCE.getExporterTransferStrategyRegistry().register(
+            createIdentifier("fluid"),
+            new FluidHandlerExporterTransferStrategyFactory()
+        );
+    }
+
+    private void registerExternalStorageProviderFactories() {
+        PlatformApi.INSTANCE.setExternalStorageProviderFactory(
+            StorageChannelTypes.ITEM,
+            new ItemHandlerPlatformExternalStorageProviderFactory()
+        );
+        PlatformApi.INSTANCE.setExternalStorageProviderFactory(
+            StorageChannelTypes.FLUID,
+            new FluidHandlerPlatformExternalStorageProviderFactory()
         );
     }
 
@@ -252,6 +298,12 @@ public class ModInitializer extends AbstractModInitializer {
         }
 
         Blocks.INSTANCE.setImporter(blockRegistry.register(IMPORTER.getPath(), ImporterBlock::new));
+        Blocks.INSTANCE.setExporter(blockRegistry.register(EXPORTER.getPath(), ExporterBlock::new));
+        Blocks.INSTANCE.setInterface(blockRegistry.register(INTERFACE.getPath(), InterfaceBlock::new));
+        Blocks.INSTANCE.setExternalStorage(blockRegistry.register(
+            EXTERNAL_STORAGE.getPath(),
+            ExternalStorageBlock::new
+        ));
 
         blockRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -312,6 +364,18 @@ public class ModInitializer extends AbstractModInitializer {
         itemRegistry.register(
             IMPORTER.getPath(),
             () -> new SimpleBlockItem(Blocks.INSTANCE.getImporter(), CREATIVE_MODE_TAB)
+        );
+        itemRegistry.register(
+            EXPORTER.getPath(),
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getExporter(), CREATIVE_MODE_TAB)
+        );
+        itemRegistry.register(
+            INTERFACE.getPath(),
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getInterface(), CREATIVE_MODE_TAB)
+        );
+        itemRegistry.register(
+            EXTERNAL_STORAGE.getPath(),
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getExternalStorage(), CREATIVE_MODE_TAB)
         );
 
         itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
@@ -507,6 +571,21 @@ public class ModInitializer extends AbstractModInitializer {
             IMPORTER.getPath(),
             () -> BlockEntityType.Builder.of(ImporterBlockEntity::new, Blocks.INSTANCE.getImporter()).build(null)
         ));
+        BlockEntities.INSTANCE.setExporter(blockEntityTypeRegistry.register(
+            EXPORTER.getPath(),
+            () -> BlockEntityType.Builder.of(ExporterBlockEntity::new, Blocks.INSTANCE.getExporter()).build(null)
+        ));
+        BlockEntities.INSTANCE.setInterface(blockEntityTypeRegistry.register(
+            INTERFACE.getPath(),
+            () -> BlockEntityType.Builder.of(InterfaceBlockEntity::new, Blocks.INSTANCE.getInterface()).build(null)
+        ));
+        BlockEntities.INSTANCE.setExternalStorage(blockEntityTypeRegistry.register(
+            EXTERNAL_STORAGE.getPath(),
+            () -> BlockEntityType.Builder.of(
+                ExternalStorageBlockEntity::new,
+                Blocks.INSTANCE.getExternalStorage()
+            ).build(null)
+        ));
 
         blockEntityTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
@@ -539,6 +618,18 @@ public class ModInitializer extends AbstractModInitializer {
         Menus.INSTANCE.setImporter(menuTypeRegistry.register(
             IMPORTER.getPath(),
             () -> IForgeMenuType.create(ImporterContainerMenu::new)
+        ));
+        Menus.INSTANCE.setExporter(menuTypeRegistry.register(
+            EXPORTER.getPath(),
+            () -> IForgeMenuType.create(ExporterContainerMenu::new)
+        ));
+        Menus.INSTANCE.setInterface(menuTypeRegistry.register(
+            INTERFACE.getPath(),
+            () -> IForgeMenuType.create(InterfaceContainerMenu::new)
+        ));
+        Menus.INSTANCE.setExternalStorage(menuTypeRegistry.register(
+            EXTERNAL_STORAGE.getPath(),
+            () -> IForgeMenuType.create(ExternalStorageContainerMenu::new)
         ));
 
         menuTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -586,6 +677,30 @@ public class ModInitializer extends AbstractModInitializer {
         if (e.getObject() instanceof ControllerBlockEntity controllerBlockEntity) {
             registerControllerEnergy(e, controllerBlockEntity);
         }
+        if (e.getObject() instanceof AbstractDiskDriveBlockEntity diskDriveBlockEntity) {
+            registerItemHandler(e, diskDriveBlockEntity, AbstractDiskDriveBlockEntity::getDiskInventory);
+        }
+        if (e.getObject() instanceof InterfaceBlockEntity interfaceBlockEntity) {
+            registerItemHandler(e, interfaceBlockEntity, InterfaceBlockEntity::getExportedItems);
+        }
+    }
+
+    private <T extends BlockEntity> void registerItemHandler(final AttachCapabilitiesEvent<BlockEntity> e,
+                                                             final T diskDriveBlockEntity,
+                                                             final Function<T, Container> containerSupplier) {
+        final LazyOptional<IItemHandler> capability = LazyOptional
+            .of(() -> new InvWrapper(containerSupplier.apply(diskDriveBlockEntity)));
+        e.addCapability(createIdentifier("items"), new ICapabilityProvider() {
+            @Override
+            @Nonnull
+            public <C> LazyOptional<C> getCapability(final Capability<C> cap,
+                                                     @Nullable final Direction side) {
+                if (cap == ForgeCapabilities.ITEM_HANDLER) {
+                    return capability.cast();
+                }
+                return LazyOptional.empty();
+            }
+        });
     }
 
     private void registerControllerEnergy(final AttachCapabilitiesEvent<BlockEntity> e,
@@ -597,7 +712,7 @@ public class ModInitializer extends AbstractModInitializer {
             @Nonnull
             public <T> LazyOptional<T> getCapability(final Capability<T> cap,
                                                      @Nullable final Direction side) {
-                if (cap == CapabilityEnergy.ENERGY
+                if (cap == ForgeCapabilities.ENERGY
                     && controllerBlockEntity.getEnergyStorage() instanceof IEnergyStorage) {
                     return capability.cast();
                 }

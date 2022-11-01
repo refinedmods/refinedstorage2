@@ -11,6 +11,9 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import java.util.Iterator;
 import java.util.Objects;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.2.1")
 public class ImporterTransferStrategyImpl<T> implements ImporterTransferStrategy {
     private final ImporterSource<T> source;
     private final StorageChannelType<T> storageChannelType;

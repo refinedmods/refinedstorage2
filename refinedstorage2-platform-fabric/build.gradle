@@ -25,6 +25,10 @@ repositories {
         name = 'wthit'
         url "https://maven.bai.lol"
     }
+    maven {
+        name = 'NoIndium'
+        url = 'https://maven.cafeteria.dev/releases/'
+    }
 }
 
 dependencies {
@@ -44,12 +48,12 @@ dependencies {
         implementation project(it)
     }
 
-    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.clothConfigVersion}") {
+    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.clothConfigVersion}") {
         exclude(group: 'net.fabricmc.fabric-api')
     }
     include "me.shedaniel.cloth:cloth-config-fabric:${project.clothConfigVersion}"
 
-    modApi("teamreborn:energy:${project.energyVersion}") {
+    modImplementation("teamreborn:energy:${project.energyVersion}") {
         exclude(group: 'net.fabricmc.fabric-api')
     }
     include "teamreborn:energy:${project.energyVersion}"
@@ -58,15 +62,19 @@ dependencies {
         exclude(group: 'me.shedaniel.cloth')
     }
     // We test with REI on Fabric.
-    // modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}")
+    modRuntimeOnly "dev.architectury:architectury-fabric:6.2.43" // For REI
+    modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}")
 
-    modCompileOnlyApi "mezz.jei:jei-${project.minecraftVersion}-common-api:${project.jeiVersion}"
-    modCompileOnlyApi "mezz.jei:jei-${project.minecraftVersion}-fabric-api:${project.jeiVersion}"
+    modCompileOnly "mezz.jei:jei-${project.minecraftVersion}-common-api:${project.jeiVersion}"
+    modCompileOnly "mezz.jei:jei-${project.minecraftVersion}-fabric-api:${project.jeiVersion}"
     // modRuntimeOnly "mezz.jei:jei-${project.minecraftVersion}-fabric:${project.jeiVersion}"
 
     modImplementation "com.terraformersmc:modmenu:${project.modMenuVersion}"
 
     modRuntimeOnly("mcp.mobius.waila:wthit:fabric-${project.wthitVersion}")
+
+    modImplementation "me.luligabi:NoIndium:${project.noIndiumVersion}"
+    include "me.luligabi:NoIndium:${project.noIndiumVersion}"
 }
 
 loom {

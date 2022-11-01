@@ -1,9 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
@@ -31,6 +34,12 @@ public final class Menus {
     private Supplier<MenuType<FluidStorageBlockContainerMenu>> fluidStorage;
     @Nullable
     private Supplier<MenuType<ImporterContainerMenu>> importer;
+    @Nullable
+    private Supplier<MenuType<ExporterContainerMenu>> exporter;
+    @Nullable
+    private Supplier<MenuType<InterfaceContainerMenu>> iface;
+    @Nullable
+    private Supplier<MenuType<ExternalStorageContainerMenu>> externalStorage;
 
     private Menus() {
     }
@@ -89,5 +98,29 @@ public final class Menus {
 
     public void setImporter(final Supplier<MenuType<ImporterContainerMenu>> supplier) {
         this.importer = supplier;
+    }
+
+    public MenuType<ExporterContainerMenu> getExporter() {
+        return Objects.requireNonNull(exporter).get();
+    }
+
+    public void setExporter(final Supplier<MenuType<ExporterContainerMenu>> supplier) {
+        this.exporter = supplier;
+    }
+
+    public MenuType<InterfaceContainerMenu> getInterface() {
+        return Objects.requireNonNull(iface).get();
+    }
+
+    public void setInterface(final Supplier<MenuType<InterfaceContainerMenu>> supplier) {
+        this.iface = supplier;
+    }
+
+    public MenuType<ExternalStorageContainerMenu> getExternalStorage() {
+        return Objects.requireNonNull(externalStorage).get();
+    }
+
+    public void setExternalStorage(final Supplier<MenuType<ExternalStorageContainerMenu>> supplier) {
+        this.externalStorage = supplier;
     }
 }

@@ -11,7 +11,8 @@ public class UpgradeContainer extends SimpleContainer {
     private final UpgradeDestination destination;
     private final UpgradeRegistry registry;
 
-    public UpgradeContainer(final UpgradeDestination destination, final UpgradeRegistry registry) {
+    public UpgradeContainer(final UpgradeDestination destination,
+                            final UpgradeRegistry registry) {
         this(destination, registry, () -> {
         });
     }

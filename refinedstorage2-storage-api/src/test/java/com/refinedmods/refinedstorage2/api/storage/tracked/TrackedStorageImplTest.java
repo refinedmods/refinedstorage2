@@ -90,6 +90,9 @@ class TrackedStorageImplTest {
         @ParameterizedTest
         @EnumSource(Action.class)
         void shouldTrackResourceByInserting(final Action action) {
+            // Arrange
+            clock.set(1L);
+
             // Act
             final long inserted = sut.insert("A", 100, action, FakeActors.FakeActor1.INSTANCE);
 
@@ -100,8 +103,13 @@ class TrackedStorageImplTest {
                 sut.findTrackedResourceByActorType("A", FakeActors.FakeActor1.class);
 
             if (action == Action.EXECUTE) {
-                assertThat(trackedResource).get().usingRecursiveComparison()
-                    .isEqualTo(new TrackedResource("Source1", 0));
+                assertThat(trackedResource).isPresent();
+                assertThat(trackedResource).get().hasToString("TrackedResource{"
+                    + "sourceName='Source1'"
+                    + ", time=1"
+                    + '}');
+                assertThat(trackedResource.get().getSourceName()).isEqualTo("Source1");
+                assertThat(trackedResource.get().getTime()).isEqualTo(1);
             } else {
                 assertThat(trackedResource).isEmpty();
             }

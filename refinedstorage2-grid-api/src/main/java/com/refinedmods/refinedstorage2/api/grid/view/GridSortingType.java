@@ -35,13 +35,4 @@ public enum GridSortingType {
     public Function<GridView<?>, Comparator<AbstractGridResource<?>>> getComparator() {
         return comparator;
     }
-
-    public GridSortingType toggle() {
-        return switch (this) {
-            case QUANTITY -> NAME;
-            case NAME -> ID;
-            case ID -> LAST_MODIFIED;
-            case LAST_MODIFIED -> QUANTITY;
-        };
-    }
 }

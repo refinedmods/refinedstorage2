@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
-import com.refinedmods.refinedstorage2.platform.common.screen.PriorityScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
+import com.refinedmods.refinedstorage2.platform.common.screen.amount.PriorityScreen;
 
 import java.util.ArrayList;
 import java.util.List;

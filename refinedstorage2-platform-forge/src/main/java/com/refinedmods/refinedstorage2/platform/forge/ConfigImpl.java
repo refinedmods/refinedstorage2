@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.platform.common.Config;
+import com.refinedmods.refinedstorage2.platform.common.content.DefaultEnergyUsage;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
 
 import java.util.Optional;
@@ -16,24 +17,34 @@ public class ConfigImpl implements Config {
     private final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
     private final ForgeConfigSpec spec;
 
-    private final Cable cable;
-    private final Controller controller;
-    private final DiskDrive diskDrive;
-    private final Grid grid;
-    private final StorageBlock storageBlock;
-    private final FluidStorageBlock fluidStorageBlock;
-    private final Importer importer;
-    private final Upgrade upgrade;
+    private final SimpleEnergyUsageEntry cable;
+    private final ControllerEntry controller;
+    private final DiskDriveEntry diskDrive;
+    private final GridEntry grid;
+    private final StorageBlockEntry storageBlock;
+    private final FluidStorageBlockEntry fluidStorageBlock;
+    private final SimpleEnergyUsageEntry importer;
+    private final SimpleEnergyUsageEntry exporter;
+    private final UpgradeEntry upgrade;
+    private final SimpleEnergyUsageEntry iface;
+    private final SimpleEnergyUsageEntry externalStorage;
 
     public ConfigImpl() {
-        cable = new CableImpl();
-        controller = new ControllerImpl();
-        diskDrive = new DiskDriveImpl();
-        grid = new GridImpl();
-        storageBlock = new StorageBlockImpl();
-        fluidStorageBlock = new FluidStorageBlockImpl();
-        importer = new ImporterImpl();
-        upgrade = new UpgradeImpl();
+        cable = new SimpleEnergyUsageEntryImpl("cable", "Cable", DefaultEnergyUsage.CABLE);
+        controller = new ControllerEntryImpl();
+        diskDrive = new DiskDriveEntryImpl();
+        grid = new GridEntryImpl();
+        storageBlock = new StorageBlockEntryImpl();
+        fluidStorageBlock = new FluidStorageBlockEntryImpl();
+        importer = new SimpleEnergyUsageEntryImpl("importer", "Importer", DefaultEnergyUsage.IMPORTER);
+        exporter = new SimpleEnergyUsageEntryImpl("exporter", "Exporter", DefaultEnergyUsage.EXPORTER);
+        upgrade = new UpgradeEntryImpl();
+        iface = new SimpleEnergyUsageEntryImpl("interface", "Interface", DefaultEnergyUsage.INTERFACE);
+        externalStorage = new SimpleEnergyUsageEntryImpl(
+            "externalStorage",
+            "External Storage",
+            DefaultEnergyUsage.EXTERNAL_STORAGE
+        );
         spec = builder.build();
     }
 
@@ -42,52 +53,68 @@ public class ConfigImpl implements Config {
     }
 
     @Override
-    public Grid getGrid() {
+    public GridEntry getGrid() {
         return grid;
     }
 
     @Override
-    public Controller getController() {
+    public ControllerEntry getController() {
         return controller;
     }
 
     @Override
-    public DiskDrive getDiskDrive() {
+    public DiskDriveEntry getDiskDrive() {
         return diskDrive;
     }
 
     @Override
-    public Cable getCable() {
+    public SimpleEnergyUsageEntry getCable() {
         return cable;
     }
 
     @Override
-    public StorageBlock getStorageBlock() {
+    public StorageBlockEntry getStorageBlock() {
         return storageBlock;
     }
 
     @Override
-    public FluidStorageBlock getFluidStorageBlock() {
+    public FluidStorageBlockEntry getFluidStorageBlock() {
         return fluidStorageBlock;
     }
 
     @Override
-    public Importer getImporter() {
+    public SimpleEnergyUsageEntry getImporter() {
         return importer;
     }
 
     @Override
-    public Upgrade getUpgrade() {
+    public SimpleEnergyUsageEntry getExporter() {
+        return exporter;
+    }
+
+    @Override
+    public UpgradeEntry getUpgrade() {
         return upgrade;
     }
 
-    private class CableImpl implements Cable {
+    @Override
+    public SimpleEnergyUsageEntry getInterface() {
+        return iface;
+    }
+
+    @Override
+    public SimpleEnergyUsageEntry getExternalStorage() {
+        return externalStorage;
+    }
+
+    private class SimpleEnergyUsageEntryImpl implements SimpleEnergyUsageEntry {
         private final ForgeConfigSpec.LongValue energyUsage;
 
-        private CableImpl() {
-            builder.push("cable");
-            energyUsage = builder.comment("The energy used by the Cable")
-                .defineInRange(ENERGY_USAGE, 0, 0L, Long.MAX_VALUE);
+        SimpleEnergyUsageEntryImpl(final String path, final String readableName, final long defaultValue) {
+            builder.push(path);
+            energyUsage = builder
+                .comment("The energy used by the " + readableName)
+                .defineInRange(ENERGY_USAGE, defaultValue, 0, Long.MAX_VALUE);
             builder.pop();
         }
 
@@ -97,13 +124,13 @@ public class ConfigImpl implements Config {
         }
     }
 
-    private class ControllerImpl implements Controller {
-        private final ForgeConfigSpec.IntValue energyCapacity;
+    private class ControllerEntryImpl implements ControllerEntry {
+        private final ForgeConfigSpec.LongValue energyCapacity;
 
-        private ControllerImpl() {
+        private ControllerEntryImpl() {
             builder.push("controller");
             energyCapacity = builder.comment("The energy capacity of the Controller")
-                .defineInRange("energyCapacity", 1000, 0, Integer.MAX_VALUE);
+                .defineInRange("energyCapacity", DefaultEnergyUsage.CONTROLLER_CAPACITY, 0, Long.MAX_VALUE);
             builder.pop();
         }
 
@@ -113,16 +140,16 @@ public class ConfigImpl implements Config {
         }
     }
 
-    private class DiskDriveImpl implements DiskDrive {
-        private final ForgeConfigSpec.IntValue energyUsage;
-        private final ForgeConfigSpec.IntValue energyUsagePerDisk;
+    private class DiskDriveEntryImpl implements DiskDriveEntry {
+        private final ForgeConfigSpec.LongValue energyUsage;
+        private final ForgeConfigSpec.LongValue energyUsagePerDisk;
 
-        private DiskDriveImpl() {
+        private DiskDriveEntryImpl() {
             builder.push("diskDrive");
             energyUsage = builder.comment("The energy used by the Disk Drive")
-                .defineInRange(ENERGY_USAGE, 10, 0, Integer.MAX_VALUE);
+                .defineInRange(ENERGY_USAGE, DefaultEnergyUsage.DISK_DRIVE, 0, Long.MAX_VALUE);
             energyUsagePerDisk = builder.comment("The energy used per disk")
-                .defineInRange("energyUsagePerDisk", 5, 0, Integer.MAX_VALUE);
+                .defineInRange("energyUsagePerDisk", DefaultEnergyUsage.DISK_DRIVE_PER_DISK, 0, Long.MAX_VALUE);
             builder.pop();
         }
 
@@ -137,13 +164,13 @@ public class ConfigImpl implements Config {
         }
     }
 
-    private class GridImpl implements Grid {
+    private class GridEntryImpl implements GridEntry {
         private final ForgeConfigSpec.BooleanValue largeFont;
         private final ForgeConfigSpec.IntValue maxRowsStretch;
         private final ForgeConfigSpec.BooleanValue preventSortingWhileShiftIsDown;
         private final ForgeConfigSpec.BooleanValue detailedTooltip;
         private final ForgeConfigSpec.BooleanValue rememberSearchQuery;
-        private final ForgeConfigSpec.IntValue energyUsage;
+        private final ForgeConfigSpec.LongValue energyUsage;
         private final ForgeConfigSpec.BooleanValue smoothScrolling;
         private final ForgeConfigSpec.BooleanValue autoSelected;
         private final ForgeConfigSpec.ConfigValue<String> synchronizer;
@@ -151,7 +178,7 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.EnumValue<GridSortingType> sortingType;
         private final ForgeConfigSpec.EnumValue<GridSize> size;
 
-        GridImpl() {
+        GridEntryImpl() {
             builder.push("grid");
             largeFont = builder
                 .comment("Whether the Grid should use a large font for quantities")
@@ -170,7 +197,7 @@ public class ConfigImpl implements Config {
                 .define("rememberSearchQuery", false);
             energyUsage = builder
                 .comment("The energy used by the Grid")
-                .defineInRange(ENERGY_USAGE, 10, 0, Integer.MAX_VALUE);
+                .defineInRange(ENERGY_USAGE, DefaultEnergyUsage.GRID, 0, Long.MAX_VALUE);
             smoothScrolling = builder
                 .comment("Whether the Grid should use smooth scrolling")
                 .define("smoothScrolling", true);
@@ -286,30 +313,30 @@ public class ConfigImpl implements Config {
         }
     }
 
-    private class StorageBlockImpl implements StorageBlock {
+    private class StorageBlockEntryImpl implements StorageBlockEntry {
         private final ForgeConfigSpec.LongValue oneKEnergyUsage;
         private final ForgeConfigSpec.LongValue fourKEnergyUsage;
         private final ForgeConfigSpec.LongValue sixteenKEnergyUsage;
         private final ForgeConfigSpec.LongValue sixtyFourKEnergyUsage;
         private final ForgeConfigSpec.LongValue creativeUsage;
 
-        StorageBlockImpl() {
+        StorageBlockEntryImpl() {
             builder.push("storageBlock");
             oneKEnergyUsage = builder
                 .comment("The energy used by the 1K Storage Block")
-                .defineInRange("1kEnergyUsage", 2, 0, Long.MAX_VALUE);
+                .defineInRange("1kEnergyUsage", DefaultEnergyUsage.ONE_K_STORAGE_BLOCK, 0, Long.MAX_VALUE);
             fourKEnergyUsage = builder
                 .comment("The energy used by the 4K Storage Block")
-                .defineInRange("4kEnergyUsage", 4, 0, Long.MAX_VALUE);
+                .defineInRange("4kEnergyUsage", DefaultEnergyUsage.FOUR_K_STORAGE_BLOCK, 0, Long.MAX_VALUE);
             sixteenKEnergyUsage = builder
                 .comment("The energy used by the 16K Storage Block")
-                .defineInRange("16kEnergyUsage", 6, 0, Long.MAX_VALUE);
+                .defineInRange("16kEnergyUsage", DefaultEnergyUsage.SIXTEEN_K_STORAGE_BLOCK, 0, Long.MAX_VALUE);
             sixtyFourKEnergyUsage = builder
                 .comment("The energy used by the 64K Storage Block")
-                .defineInRange("64kEnergyUsage", 8, 0, Long.MAX_VALUE);
+                .defineInRange("64kEnergyUsage", DefaultEnergyUsage.SIXTY_FOUR_K_STORAGE_BLOCK, 0, Long.MAX_VALUE);
             creativeUsage = builder
                 .comment("The energy used by the Creative Storage Block")
-                .defineInRange("creativeEnergyUsage", 16, 0, Long.MAX_VALUE);
+                .defineInRange("creativeEnergyUsage", DefaultEnergyUsage.CREATIVE_STORAGE_BLOCK, 0, Long.MAX_VALUE);
             builder.pop();
         }
 
@@ -339,30 +366,55 @@ public class ConfigImpl implements Config {
         }
     }
 
-    private class FluidStorageBlockImpl implements FluidStorageBlock {
+    private class FluidStorageBlockEntryImpl implements FluidStorageBlockEntry {
         private final ForgeConfigSpec.LongValue sixtyFourBEnergyUsage;
         private final ForgeConfigSpec.LongValue twoHundredFiftySixBEnergyUsage;
         private final ForgeConfigSpec.LongValue thousandTwentyFourBEnergyUsage;
         private final ForgeConfigSpec.LongValue fourThousandNinetySixBEnergyUsage;
         private final ForgeConfigSpec.LongValue creativeUsage;
 
-        FluidStorageBlockImpl() {
+        FluidStorageBlockEntryImpl() {
             builder.push("fluidStorageBlock");
             sixtyFourBEnergyUsage = builder
                 .comment("The energy used by the 64B Fluid Storage Block")
-                .defineInRange("64bEnergyUsage", 2, 0, Long.MAX_VALUE);
+                .defineInRange(
+                    "64bEnergyUsage",
+                    DefaultEnergyUsage.SIXTY_FOUR_B_FLUID_STORAGE_BLOCK,
+                    0,
+                    Long.MAX_VALUE
+                );
             twoHundredFiftySixBEnergyUsage = builder
                 .comment("The energy used by the 256B Fluid Storage Block")
-                .defineInRange("256bEnergyUsage", 4, 0, Long.MAX_VALUE);
+                .defineInRange(
+                    "256bEnergyUsage",
+                    DefaultEnergyUsage.TWO_HUNDRED_FIFTY_SIX_B_FLUID_STORAGE_BLOCK,
+                    0,
+                    Long.MAX_VALUE
+                );
             thousandTwentyFourBEnergyUsage = builder
                 .comment("The energy used by the 1024B Fluid Storage Block")
-                .defineInRange("1024bEnergyUsage", 6, 0, Long.MAX_VALUE);
+                .defineInRange(
+                    "1024bEnergyUsage",
+                    DefaultEnergyUsage.THOUSAND_TWENTY_FOUR_B_FLUID_STORAGE_BLOCK,
+                    0,
+                    Long.MAX_VALUE
+                );
             fourThousandNinetySixBEnergyUsage = builder
                 .comment("The energy used by the 4096B Fluid Storage Block")
-                .defineInRange("4096bEnergyUsage", 8, 0, Long.MAX_VALUE);
+                .defineInRange(
+                    "4096bEnergyUsage",
+                    DefaultEnergyUsage.FOUR_THOUSAND_NINETY_SIX_B_FLUID_STORAGE_BLOCK,
+                    0,
+                    Long.MAX_VALUE
+                );
             creativeUsage = builder
                 .comment("The energy used by the Creative Fluid Storage Block")
-                .defineInRange("creativeEnergyUsage", 16, 0, Long.MAX_VALUE);
+                .defineInRange(
+                    "creativeEnergyUsage",
+                    DefaultEnergyUsage.CREATIVE_FLUID_STORAGE_BLOCK,
+                    0,
+                    Long.MAX_VALUE
+                );
             builder.pop();
         }
 
@@ -392,35 +444,18 @@ public class ConfigImpl implements Config {
         }
     }
 
-    private class ImporterImpl implements Importer {
-        private final ForgeConfigSpec.LongValue energyUsage;
-
-        ImporterImpl() {
-            builder.push("importer");
-            energyUsage = builder
-                .comment("The energy used by the Importer")
-                .defineInRange(ENERGY_USAGE, 2, 0, Long.MAX_VALUE);
-            builder.pop();
-        }
-
-        @Override
-        public long getEnergyUsage() {
-            return energyUsage.get();
-        }
-    }
-
-    private class UpgradeImpl implements Upgrade {
+    private class UpgradeEntryImpl implements UpgradeEntry {
         private final ForgeConfigSpec.LongValue speedUpgradeEnergyUsage;
         private final ForgeConfigSpec.LongValue stackUpgradeEnergyUsage;
 
-        UpgradeImpl() {
+        UpgradeEntryImpl() {
             builder.push("upgrade");
             speedUpgradeEnergyUsage = builder
                 .comment("The additional energy used per Speed Upgrade")
-                .defineInRange(ENERGY_USAGE, 4, 0, Long.MAX_VALUE);
+                .defineInRange(ENERGY_USAGE, DefaultEnergyUsage.SPEED_UPGRADE, 0, Long.MAX_VALUE);
             stackUpgradeEnergyUsage = builder
                 .comment("The additional energy used by the Stack Upgrade")
-                .defineInRange(ENERGY_USAGE, 16, 0, Long.MAX_VALUE);
+                .defineInRange(ENERGY_USAGE, DefaultEnergyUsage.STACK_UPGRADE, 0, Long.MAX_VALUE);
             builder.pop();
         }
 

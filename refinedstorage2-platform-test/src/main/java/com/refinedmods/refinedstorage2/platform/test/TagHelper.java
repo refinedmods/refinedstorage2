@@ -7,8 +7,12 @@ public final class TagHelper {
     }
 
     public static CompoundTag createDummyTag() {
+        return createDummyTag("tag");
+    }
+
+    public static CompoundTag createDummyTag(final String id) {
         final CompoundTag tag = new CompoundTag();
-        tag.putString("dummy", "tag");
+        tag.putString("dummy", id);
         return tag;
     }
 }

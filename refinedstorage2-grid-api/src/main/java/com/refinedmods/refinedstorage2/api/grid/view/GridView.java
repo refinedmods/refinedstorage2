@@ -13,8 +13,8 @@ import org.apiguardian.api.API;
  * Represents a grid view.
  * The grid view internally has a backing list and a view list.
  * The backing list is the logical view of the grid without any filtering or sorting applied. It's the source of truth.
- * The view list has filtering and sorting rules applied and is semi in sync with the backing list (depending if the
- * view is in "prevent sorting" mode).
+ * The view list has filtering and sorting rules applied and is in sync with the backing list (depending on the view
+ * being in "prevent sorting" mode).
  *
  * @param <T> the resource type
  */
@@ -40,19 +40,15 @@ public interface GridView<T> {
     void setFilterAndSort(Predicate<AbstractGridResource<T>> predicate);
 
     /**
-     * @return whether the view is currently not sorting
-     */
-    boolean isPreventSorting();
-
-    /**
      * Preventing sorting means that the changes will still arrive at the backing list and view list, but,
      * the view list won't be resorted and if a resource is zeroed, will stay in view until sorting is enabled
      * again.
      * This still requires a call to {@link #sort()} when preventing sorting is disabled again.
      *
-     * @param preventSorting whether the view should prevent sorting on changes
+     * @param changedPreventSorting whether the view should prevent sorting on changes
+     * @return whether prevent sorting has changed
      */
-    void setPreventSorting(boolean preventSorting);
+    boolean setPreventSorting(boolean changedPreventSorting);
 
     /**
      * Changing the sorting direction still requires a call to {@link #sort()}.
@@ -60,16 +56,6 @@ public interface GridView<T> {
      * @param sortingDirection the sorting direction
      */
     void setSortingDirection(GridSortingDirection sortingDirection);
-
-    /**
-     * Loads a resource in the backing list. The resource still won't be visible in the view list,
-     * call {@link #sort()} for that.
-     *
-     * @param resource        the resource
-     * @param amount          the amount
-     * @param trackedResource the tracked resource, can be null
-     */
-    void loadResource(T resource, long amount, @Nullable TrackedResource trackedResource);
 
     /**
      * @param resource the resource

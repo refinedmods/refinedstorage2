@@ -35,6 +35,18 @@ class CoreValidationsTest {
     }
 
     @Test
+    void shouldValidateNull() {
+        // Act & assert
+        final Exception e = assertThrows(
+            IllegalArgumentException.class,
+            () -> CoreValidations.validateNull("not null", "bla")
+        );
+        assertThat(e.getMessage()).isEqualTo("bla");
+
+        assertDoesNotThrow(() -> CoreValidations.validateNull(null, "bla"));
+    }
+
+    @Test
     void shouldValidateNotNull() {
         // Act & assert
         final Exception e = assertThrows(
@@ -49,7 +61,7 @@ class CoreValidationsTest {
     }
 
     @Test
-    void shouldValidateNotNegative() {
+    void shouldValidateNotNegativeInt() {
         // Act & assert
         final Exception e = assertThrows(
             IllegalArgumentException.class,
@@ -60,7 +72,22 @@ class CoreValidationsTest {
         assertDoesNotThrow(() -> CoreValidations.validateNotNegative(0, "bla"));
         assertDoesNotThrow(() -> CoreValidations.validateNotNegative(1, "bla"));
 
-        assertThat(CoreValidations.validateNotNegative(0, "test")).isZero();
+        assertThat(CoreValidations.validateNotNegative(1, "test")).isEqualTo(1);
+    }
+
+    @Test
+    void shouldValidateNotNegativeLong() {
+        // Act & assert
+        final Exception e = assertThrows(
+            IllegalArgumentException.class,
+            () -> CoreValidations.validateNotNegative(-1L, "bla")
+        );
+        assertThat(e.getMessage()).isEqualTo("bla");
+
+        assertDoesNotThrow(() -> CoreValidations.validateNotNegative(0L, "bla"));
+        assertDoesNotThrow(() -> CoreValidations.validateNotNegative(1L, "bla"));
+
+        assertThat(CoreValidations.validateNotNegative(1L, "test")).isEqualTo(1);
     }
 
     @Test

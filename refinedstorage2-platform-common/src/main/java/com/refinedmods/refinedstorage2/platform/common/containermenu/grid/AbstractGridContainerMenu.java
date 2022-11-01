@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
+import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilder;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
@@ -57,25 +58,24 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
                                         final int syncId,
                                         final Inventory playerInventory,
                                         final FriendlyByteBuf buf,
-                                        final GridView<T> view) {
+                                        final GridViewBuilder<T> viewBuilder) {
         super(type, syncId);
 
-        this.view = view;
         this.playerInventory = playerInventory;
 
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
 
         this.active = buf.readBoolean();
 
-        this.view.setSortingDirection(Platform.INSTANCE.getConfig().getGrid().getSortingDirection());
-        this.view.setSortingType(Platform.INSTANCE.getConfig().getGrid().getSortingType());
-
         final int amountOfResources = buf.readInt();
         for (int i = 0; i < amountOfResources; ++i) {
             final ResourceAmount<T> resourceAmount = readResourceAmount(buf);
             final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
-            view.loadResource(resourceAmount.getResource(), resourceAmount.getAmount(), trackedResource);
+            viewBuilder.withResource(resourceAmount.getResource(), resourceAmount.getAmount(), trackedResource);
         }
+        this.view = viewBuilder.build();
+        this.view.setSortingDirection(Platform.INSTANCE.getConfig().getGrid().getSortingDirection());
+        this.view.setSortingType(Platform.INSTANCE.getConfig().getGrid().getSortingType());
         this.view.sort();
 
         addSlots(0);
@@ -88,10 +88,10 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
                                         final int syncId,
                                         final Inventory playerInventory,
                                         final AbstractGridBlockEntity<T> grid,
-                                        final GridView<T> view) {
+                                        final GridViewBuilder<T> viewBuilder) {
         super(type, syncId);
 
-        this.view = view;
+        this.view = viewBuilder.build();
 
         registerProperty(new ServerProperty<>(
             PropertyTypes.REDSTONE_MODE,
@@ -224,7 +224,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     public void toggleSynchronizer() {
         final OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry =
             PlatformApi.INSTANCE.getGridSynchronizerRegistry();
-        final Config.Grid config = Platform.INSTANCE.getConfig().getGrid();
+        final Config.GridEntry config = Platform.INSTANCE.getConfig().getGrid();
 
         final GridSynchronizer newSynchronizer = synchronizerRegistry.next(getSynchronizer());
 

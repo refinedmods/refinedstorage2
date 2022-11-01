@@ -39,8 +39,8 @@ jobs:
             -   name: Make Gradle wrapper executable
                 if: ${{ runner.os != 'Windows' }}
                 run: chmod +x ./gradlew
-            -   name: Build and analyze
-                run: ./gradlew build codeCoverageReport sonarqube
+            -   name: Build, test and analyze
+                run: ./gradlew build pitest codeCoverageReport sonarqube
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

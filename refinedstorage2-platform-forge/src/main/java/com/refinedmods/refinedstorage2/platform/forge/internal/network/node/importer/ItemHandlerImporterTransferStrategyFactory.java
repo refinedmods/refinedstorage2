@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransfe
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
+import com.refinedmods.refinedstorage2.platform.forge.internal.storage.InteractionCoordinatesImpl;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,15 +18,12 @@ public class ItemHandlerImporterTransferStrategyFactory implements ImporterTrans
                                            final BlockPos pos,
                                            final Direction direction,
                                            final boolean hasStackUpgrade) {
-        final ImporterSource<ItemResource> source = new ItemHandlerImporterSource(
+        final ImporterSource<ItemResource> source = new ItemHandlerImporterSource(new InteractionCoordinatesImpl(
             level,
             pos,
             direction
-        );
-        return new ImporterTransferStrategyImpl<>(
-            source,
-            StorageChannelTypes.ITEM,
-            hasStackUpgrade ? 64 : 1
-        );
+        ));
+        final int transferQuota = hasStackUpgrade ? 64 : 1;
+        return new ImporterTransferStrategyImpl<>(source, StorageChannelTypes.ITEM, transferQuota);
     }
 }

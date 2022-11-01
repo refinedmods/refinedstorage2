@@ -1,17 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.storage;
 
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
-import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageSettingsProvider;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
@@ -32,21 +27,16 @@ import org.apache.logging.log4j.Logger;
 
 public abstract class AbstractStorageBlockBlockEntity<T>
     extends AbstractInternalNetworkNodeContainerBlockEntity<StorageNetworkNode<T>>
-    implements ExtendedMenuProvider, StorageSettingsProvider {
+    implements ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String TAG_STORAGE_ID = "sid";
-    private static final String TAG_PRIORITY = "pri";
-    private static final String TAG_FILTER_MODE = "fim";
-    private static final String TAG_EXACT_MODE = "em";
-    private static final String TAG_RESOURCE_FILTER = "rf";
-    private static final String TAG_ACCESS_MODE = "am";
 
-    protected final ResourceFilterContainer resourceFilterContainer;
+    protected final StorageConfigurationContainerImpl configContainer;
+    private final FilterWithFuzzyMode filter;
 
     @Nullable
     private UUID storageId;
-    private boolean exactMode;
 
     protected AbstractStorageBlockBlockEntity(final BlockEntityType<?> type,
                                               final BlockPos pos,
@@ -54,25 +44,19 @@ public abstract class AbstractStorageBlockBlockEntity<T>
                                               final StorageNetworkNode<T> node,
                                               final ResourceType resourceType) {
         super(type, pos, state, node);
-        getNode().setNormalizer(value -> FuzzyModeNormalizer.tryNormalize(exactMode, value));
-        this.resourceFilterContainer = new FilteredResourceFilterContainer(
-            PlatformApi.INSTANCE.getResourceTypeRegistry(),
-            9,
-            this::resourceFilterContainerChanged,
-            resourceType
+        this.filter = new FilterWithFuzzyMode(resourceType, this::setChanged, getNode()::setFilterTemplates, value -> {
+        });
+        this.configContainer = new StorageConfigurationContainerImpl(
+            getNode(),
+            filter,
+            this::setChanged,
+            this::getRedstoneMode,
+            this::setRedstoneMode
         );
+        getNode().setNormalizer(filter.createNormalizer());
     }
 
     protected abstract PlatformStorage<T> createStorage(Runnable listener);
-
-    private void resourceFilterContainerChanged() {
-        initializeResourceFilter();
-        setChanged();
-    }
-
-    private void initializeResourceFilter() {
-        getNode().setFilterTemplates(resourceFilterContainer.getTemplates());
-    }
 
     @Override
     public void setLevel(final Level level) {
@@ -125,27 +109,8 @@ public abstract class AbstractStorageBlockBlockEntity<T>
             storageId = actualStorageId;
         }
 
-        if (tag.contains(TAG_PRIORITY)) {
-            getNode().setPriority(tag.getInt(TAG_PRIORITY));
-        }
-
-        if (tag.contains(TAG_FILTER_MODE)) {
-            getNode().setFilterMode(FilterModeSettings.getFilterMode(tag.getInt(TAG_FILTER_MODE)));
-        }
-
-        if (tag.contains(TAG_EXACT_MODE)) {
-            this.exactMode = tag.getBoolean(TAG_EXACT_MODE);
-        }
-
-        if (tag.contains(TAG_ACCESS_MODE)) {
-            getNode().setAccessMode(AccessModeSettings.getAccessMode(tag.getInt(TAG_ACCESS_MODE)));
-        }
-
-        if (tag.contains(TAG_RESOURCE_FILTER)) {
-            resourceFilterContainer.load(tag.getCompound(TAG_RESOURCE_FILTER));
-        }
-
-        initializeResourceFilter();
+        configContainer.load(tag);
+        filter.load(tag);
 
         super.load(tag);
     }
@@ -174,11 +139,8 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         if (storageId != null) {
             tag.putUUID(TAG_STORAGE_ID, storageId);
         }
-        tag.put(TAG_RESOURCE_FILTER, resourceFilterContainer.toTag());
-        tag.putInt(TAG_FILTER_MODE, FilterModeSettings.getFilterMode(getNode().getFilterMode()));
-        tag.putInt(TAG_PRIORITY, getNode().getPriority());
-        tag.putBoolean(TAG_EXACT_MODE, exactMode);
-        tag.putInt(TAG_ACCESS_MODE, AccessModeSettings.getAccessMode(getNode().getAccessMode()));
+        configContainer.save(tag);
+        filter.save(tag);
     }
 
     @Nullable
@@ -186,55 +148,14 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         return storageId;
     }
 
-    @Override
-    public AccessMode getAccessMode() {
-        return getNode().getAccessMode();
-    }
-
-    @Override
-    public void setAccessMode(final AccessMode accessMode) {
-        getNode().setAccessMode(accessMode);
-        setChanged();
-    }
-
-    @Override
-    public boolean isExactMode() {
-        return exactMode;
-    }
-
-    @Override
-    public void setExactMode(final boolean exactMode) {
-        this.exactMode = exactMode;
-        initializeResourceFilter();
-        setChanged();
-    }
-
-    @Override
-    public int getPriority() {
-        return getNode().getPriority();
-    }
-
-    @Override
-    public void setPriority(final int priority) {
-        getNode().setPriority(priority);
-        setChanged();
-    }
-
-    @Override
-    public FilterMode getFilterMode() {
-        return getNode().getFilterMode();
-    }
-
-    @Override
-    public void setFilterMode(final FilterMode mode) {
-        getNode().setFilterMode(mode);
-        setChanged();
+    protected final ResourceFilterContainer getFilterContainer() {
+        return filter.getFilterContainer();
     }
 
     @Override
     public void writeScreenOpeningData(final ServerPlayer player, final FriendlyByteBuf buf) {
         buf.writeLong(getNode().getStored());
         buf.writeLong(getNode().getCapacity());
-        resourceFilterContainer.writeToUpdatePacket(buf);
+        filter.getFilterContainer().writeToUpdatePacket(buf);
     }
 }

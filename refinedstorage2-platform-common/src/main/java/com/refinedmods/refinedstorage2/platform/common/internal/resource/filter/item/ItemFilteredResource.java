@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item;
 
+import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
@@ -16,15 +17,24 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.TooltipFlag;
 
-public record ItemFilteredResource(ItemResource value) implements FilteredResource {
+public record ItemFilteredResource(ItemResource value, long amount) implements FilteredResource {
+    private static final String TAG_AMOUNT = "amt";
+
+    public static long getAmountFromTag(final CompoundTag tag) {
+        return tag.getLong(TAG_AMOUNT);
+    }
+
     @Override
     public void writeToPacket(final FriendlyByteBuf buf) {
         PacketUtil.writeItemResource(buf, value);
+        buf.writeLong(amount);
     }
 
     @Override
     public CompoundTag toTag() {
-        return ItemResource.toTag(value);
+        final CompoundTag tag = ItemResource.toTag(value);
+        tag.putLong(TAG_AMOUNT, amount);
+        return tag;
     }
 
     @Override
@@ -35,6 +45,29 @@ public record ItemFilteredResource(ItemResource value) implements FilteredResour
     @Override
     public Object getValue() {
         return value;
+    }
+
+    @Override
+    public long getAmount() {
+        return amount;
+    }
+
+    @Override
+    public FilteredResource withAmount(final long newAmount) {
+        return new ItemFilteredResource(value, newAmount);
+    }
+
+    @Override
+    public long getMaxAmount() {
+        return value.toItemStack().getMaxStackSize();
+    }
+
+    @Override
+    public String getFormattedAmount() {
+        if (amount == 1) {
+            return "";
+        }
+        return QuantityFormatter.formatWithUnits(amount);
     }
 
     @Override

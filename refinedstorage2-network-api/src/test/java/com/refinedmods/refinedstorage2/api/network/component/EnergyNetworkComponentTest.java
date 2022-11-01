@@ -31,21 +31,25 @@ class EnergyNetworkComponentTest {
         controller.receive(100, Action.EXECUTE);
         final NetworkNodeContainer container = () -> controller;
 
+        // Act
+        final long extractedBefore = sut.extract(1);
         final long capacityBefore = sut.getCapacity();
         final long storedBefore = sut.getStored();
 
-        // Act
         sut.onContainerAdded(container);
 
+        final long extractedAfter = sut.extract(1);
         final long capacityAfter = sut.getCapacity();
         final long storedAfter = sut.getStored();
 
         // Assert
+        assertThat(extractedBefore).isZero();
         assertThat(capacityBefore).isZero();
         assertThat(storedBefore).isZero();
 
         assertThat(capacityAfter).isEqualTo(1000);
-        assertThat(storedAfter).isEqualTo(100);
+        assertThat(storedAfter).isEqualTo(99);
+        assertThat(extractedAfter).isEqualTo(1);
     }
 
     @Test

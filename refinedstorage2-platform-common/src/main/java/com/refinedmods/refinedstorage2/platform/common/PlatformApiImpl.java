@@ -13,6 +13,8 @@ import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
@@ -29,7 +31,10 @@ import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeR
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
@@ -59,7 +64,12 @@ public class PlatformApiImpl implements PlatformApi {
     private final OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> importerTransferStrategyRegistry =
         new OrderedRegistryImpl<>(createIdentifier("noop"),
             (level, pos, direction, hasStackUpgrade) -> (filter, actor, network) -> false);
+    private final OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> exporterTransferStrategyRegistry =
+        new OrderedRegistryImpl<>(createIdentifier("noop"),
+            (level, pos, direction, hasStackUpgrade, fuzzyMode) -> (resource, actor, network) -> false);
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
+    private final Map<StorageChannelType<?>, PlatformExternalStorageProviderFactory> externalStorageProviderFactories =
+        new HashMap<>();
 
     @Override
     public OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry() {
@@ -99,6 +109,27 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> getImporterTransferStrategyRegistry() {
         return importerTransferStrategyRegistry;
+    }
+
+    @Override
+    public OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry() {
+        return exporterTransferStrategyRegistry;
+    }
+
+    @Override
+    public <T> void setExternalStorageProviderFactory(final StorageChannelType<T> channelType,
+                                                      final PlatformExternalStorageProviderFactory factory) {
+        if (externalStorageProviderFactories.containsKey(channelType)) {
+            throw new IllegalArgumentException(channelType + " is already registered");
+        }
+        externalStorageProviderFactories.put(channelType, factory);
+    }
+
+    @Override
+    public <T> Optional<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactory(
+        final StorageChannelType<T> channelType
+    ) {
+        return Optional.ofNullable(externalStorageProviderFactories.get(channelType));
     }
 
     @Override

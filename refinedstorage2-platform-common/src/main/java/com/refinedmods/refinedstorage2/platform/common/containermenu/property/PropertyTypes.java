@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AccessModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.RedstoneModeSettings;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterSchedulingModeSettings;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
@@ -34,8 +35,14 @@ public final class PropertyTypes {
         AccessModeSettings::getAccessMode
     );
 
-    public static final PropertyType<Boolean> EXACT_MODE = new PropertyType<>(
-        createIdentifier("exact_mode"),
+    public static final PropertyType<ExporterSchedulingModeSettings> EXPORTER_SCHEDULING_MODE = new PropertyType<>(
+        createIdentifier("exporter_scheduling_mode"),
+        ExporterSchedulingModeSettings::getId,
+        ExporterSchedulingModeSettings::getById
+    );
+
+    public static final PropertyType<Boolean> FUZZY_MODE = new PropertyType<>(
+        createIdentifier("fuzzy_mode"),
         value -> Boolean.TRUE.equals(value) ? 1 : 0,
         value -> value == 1
     );

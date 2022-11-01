@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.bl
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.AbstractStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageConfigurationContainer;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid.FluidResourceType;
@@ -34,14 +34,14 @@ public class FluidStorageBlockContainerMenu extends AbstractStorageBlockContaine
     public FluidStorageBlockContainerMenu(final int syncId,
                                           final Player player,
                                           final ResourceFilterContainer resourceFilterContainer,
-                                          final AbstractStorageBlockBlockEntity<?> storageBlock) {
+                                          final StorageConfigurationContainer configContainer) {
         super(
             Menus.INSTANCE.getFluidStorage(),
             syncId,
             PlatformApi.INSTANCE.getResourceTypeRegistry(),
             player,
             resourceFilterContainer,
-            storageBlock
+            configContainer
         );
     }
 

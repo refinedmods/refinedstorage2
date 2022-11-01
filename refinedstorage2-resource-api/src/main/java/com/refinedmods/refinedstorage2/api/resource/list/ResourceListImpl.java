@@ -24,8 +24,6 @@ public class ResourceListImpl<T> implements ResourceList<T> {
 
     @Override
     public ResourceListOperationResult<T> add(final T resource, final long amount) {
-        ResourceAmount.validate(resource, amount);
-
         final ResourceAmount<T> existing = entries.get(resource);
         if (existing != null) {
             return addToExisting(existing, amount);

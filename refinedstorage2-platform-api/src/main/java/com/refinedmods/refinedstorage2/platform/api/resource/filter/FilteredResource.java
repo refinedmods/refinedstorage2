@@ -18,6 +18,14 @@ public interface FilteredResource {
 
     Object getValue();
 
+    long getAmount();
+
+    FilteredResource withAmount(long newAmount);
+
+    long getMaxAmount();
+
+    String getFormattedAmount();
+
     ResourceType getType();
 
     List<Component> getTooltipLines(@Nullable Player player);

@@ -3,8 +3,7 @@ package com.refinedmods.refinedstorage2.api.network;
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.network.test.NetworkTestFixtures;
-import com.refinedmods.refinedstorage2.api.network.test.SpyingNetworkNode;
+import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 
 import java.util.ArrayList;
 import java.util.List;

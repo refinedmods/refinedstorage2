@@ -18,13 +18,5 @@ public enum AccessMode {
     /**
      * Extract-only.
      */
-    EXTRACT;
-
-    public AccessMode toggle() {
-        return switch (this) {
-            case INSERT_EXTRACT -> INSERT;
-            case INSERT -> EXTRACT;
-            case EXTRACT -> INSERT_EXTRACT;
-        };
-    }
+    EXTRACT
 }

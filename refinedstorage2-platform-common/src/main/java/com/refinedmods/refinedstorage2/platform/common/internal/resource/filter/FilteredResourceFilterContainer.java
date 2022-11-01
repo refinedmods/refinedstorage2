@@ -13,14 +13,30 @@ public class FilteredResourceFilterContainer extends ResourceFilterContainer {
                                            final int size,
                                            final ResourceType allowedType) {
         this(resourceTypeRegistry, size, () -> {
-        }, allowedType);
+        }, allowedType, -1);
+    }
+
+    public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                           final int size,
+                                           final ResourceType allowedType,
+                                           final long maxAmount) {
+        this(resourceTypeRegistry, size, () -> {
+        }, allowedType, maxAmount);
     }
 
     public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                            final int size,
                                            final Runnable listener,
                                            final ResourceType allowedType) {
-        super(resourceTypeRegistry, size, listener);
+        this(resourceTypeRegistry, size, listener, allowedType, -1);
+    }
+
+    public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
+                                           final int size,
+                                           final Runnable listener,
+                                           final ResourceType allowedType,
+                                           final long maxAmount) {
+        super(resourceTypeRegistry, size, listener, maxAmount);
         this.allowedType = allowedType;
     }
 

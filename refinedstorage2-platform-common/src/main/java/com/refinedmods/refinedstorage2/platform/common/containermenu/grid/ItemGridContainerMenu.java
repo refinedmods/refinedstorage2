@@ -3,9 +3,9 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
+import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilder;
+import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
@@ -35,14 +35,14 @@ public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResourc
     private final ItemGridEventHandler itemGridEventHandler;
 
     public ItemGridContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
-        super(Menus.INSTANCE.getGrid(), syncId, playerInventory, buf, createView());
+        super(Menus.INSTANCE.getGrid(), syncId, playerInventory, buf, createViewBuilder());
         this.itemGridEventHandler = new ClientItemGridEventHandler();
     }
 
     public ItemGridContainerMenu(final int syncId,
                                  final Inventory playerInventory,
                                  final AbstractGridBlockEntity<ItemResource> grid) {
-        super(Menus.INSTANCE.getGrid(), syncId, playerInventory, grid, createView());
+        super(Menus.INSTANCE.getGrid(), syncId, playerInventory, grid, createViewBuilder());
         final GridService<ItemResource> gridService = grid.getNode().createService(
             new PlayerActor(playerInventory.player),
             itemResource -> (long) itemResource.item().getMaxStackSize(),
@@ -51,8 +51,8 @@ public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResourc
         this.itemGridEventHandler = Platform.INSTANCE.createItemGridEventHandler(this, gridService, playerInventory);
     }
 
-    private static GridViewImpl<ItemResource> createView() {
-        return new GridViewImpl<>(Platform.INSTANCE.getItemGridResourceFactory(), new ResourceListImpl<>());
+    private static GridViewBuilder<ItemResource> createViewBuilder() {
+        return new GridViewBuilderImpl<>(Platform.INSTANCE.getItemGridResourceFactory());
     }
 
     @Override

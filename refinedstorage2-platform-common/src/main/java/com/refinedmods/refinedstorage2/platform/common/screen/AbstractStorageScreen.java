@@ -6,19 +6,16 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBas
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AccessModeSideButtonWidget;
-import com.refinedmods.refinedstorage2.platform.common.screen.widget.ExactModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.FilterModeSideButtonWidget;
+import com.refinedmods.refinedstorage2.platform.common.screen.widget.FuzzyModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.PrioritySideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ProgressWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
-import com.refinedmods.refinedstorage2.platform.common.screen.widget.ResourceFilterButtonWidget;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -33,9 +30,6 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
                                     final int progressWidgetX) {
         super(menu, inventory, title);
 
-        this.titleLabelX = 7;
-        this.titleLabelY = 7;
-        this.inventoryLabelX = 7;
         this.inventoryLabelY = 129;
         this.imageWidth = 176;
         this.imageHeight = 223;
@@ -53,8 +47,6 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
         addRenderableWidget(progressWidget);
     }
 
-    protected abstract boolean isResourceFilterButtonActive();
-
     @Override
     protected void init() {
         super.init();
@@ -67,8 +59,8 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
             getMenu().getProperty(PropertyTypes.FILTER_MODE),
             this::renderComponentTooltip
         ));
-        addSideButton(new ExactModeSideButtonWidget(
-            getMenu().getProperty(PropertyTypes.EXACT_MODE),
+        addSideButton(new FuzzyModeSideButtonWidget(
+            getMenu().getProperty(PropertyTypes.FUZZY_MODE),
             this::renderComponentTooltip
         ));
         addSideButton(new AccessModeSideButtonWidget(
@@ -81,14 +73,6 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
             this,
             this::renderComponentTooltip
         ));
-
-        final ResourceFilterButtonWidget resourceFilterButton = new ResourceFilterButtonWidget(
-            leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7,
-            topPos + 4,
-            menu
-        );
-        resourceFilterButton.active = isResourceFilterButtonActive();
-        addRenderableWidget(resourceFilterButton);
     }
 
     private List<Component> createTooltip() {
@@ -109,28 +93,8 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
     }
 
     @Override
-    protected void renderBg(final PoseStack poseStack, final float delta, final int mouseX, final int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-
-        final int x = (width - imageWidth) / 2;
-        final int y = (height - imageHeight) / 2;
-
-        blit(poseStack, x, y, 0, 0, imageWidth, imageHeight);
-
-        super.renderBg(poseStack, delta, mouseX, mouseY);
-    }
-
-    @Override
     protected void renderLabels(final PoseStack poseStack, final int mouseX, final int mouseY) {
         super.renderLabels(poseStack, mouseX, mouseY);
         progressWidget.render(poseStack, mouseX - leftPos, mouseY - topPos, 0);
-    }
-
-    @Override
-    public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float delta) {
-        renderBackground(poseStack);
-        super.render(poseStack, mouseX, mouseY, delta);
-        renderTooltip(poseStack, mouseX, mouseY);
     }
 }

@@ -28,9 +28,12 @@ public final class ContentIds {
     public static final ResourceLocation FLUID_STORAGE_BLOCK = createIdentifier("fluid_storage_block");
     public static final ResourceLocation STORAGE_BLOCK = createIdentifier("storage_block");
     public static final ResourceLocation IMPORTER = createIdentifier("importer");
+    public static final ResourceLocation EXPORTER = createIdentifier("exporter");
     public static final ResourceLocation UPGRADE = createIdentifier("upgrade");
     public static final ResourceLocation SPEED_UPGRADE = createIdentifier("speed_upgrade");
     public static final ResourceLocation STACK_UPGRADE = createIdentifier("stack_upgrade");
+    public static final ResourceLocation INTERFACE = createIdentifier("interface");
+    public static final ResourceLocation EXTERNAL_STORAGE = createIdentifier("external_storage");
 
     private ContentIds() {
     }

@@ -2,10 +2,6 @@ package com.refinedmods.refinedstorage2.api.network.node.storage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
-import com.refinedmods.refinedstorage2.api.network.test.extension.AddNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkStorageChannel;
-import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
-import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
@@ -16,6 +12,10 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
+import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
+import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
+import com.refinedmods.refinedstorage2.network.test.NetworkTest;
+import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import java.util.Set;
 import java.util.UUID;
@@ -23,19 +23,21 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(NetworkTestExtension.class)
+@NetworkTest
 @SetupNetwork
 class StorageNetworkNodeTest {
     private static final int ENERGY_USAGE = 5;
 
-    @AddNetworkNode(energyUsage = ENERGY_USAGE)
+    @AddNetworkNode(properties = {
+        @AddNetworkNode.Property(key = PROPERTY_ENERGY_USAGE, longValue = ENERGY_USAGE)
+    })
     StorageNetworkNode<String> sut;
 
     StorageRepository storageRepository;
@@ -47,17 +49,25 @@ class StorageNetworkNodeTest {
 
     @Test
     void testInitialState(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        // Act
+        final long inserted = networkStorage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long extracted = networkStorage.extract("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+
         // Assert
+        assertThat(inserted).isZero();
+        assertThat(extracted).isZero();
         assertThat(sut.getEnergyUsage()).isEqualTo(ENERGY_USAGE);
         assertThat(sut.getAccessMode()).isEqualTo(AccessMode.INSERT_EXTRACT);
         assertThat(sut.getFilterMode()).isEqualTo(FilterMode.BLOCK);
         assertThat(sut.getStored()).isZero();
         assertThat(sut.getCapacity()).isZero();
+        assertThat(sut.getPriority()).isZero();
         assertThat(networkStorage.getAll()).isEmpty();
+        assertThat(networkStorage.getStored()).isZero();
     }
 
     @Test
-    void shoulInitializeNewStorage(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    void shouldInitializeNewStorage(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final LimitedStorage<String> limitedStorage = new LimitedStorageImpl<>(100);
         limitedStorage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -143,7 +153,7 @@ class StorageNetworkNodeTest {
 
         // Assert
         assertThat(extracted).isEqualTo(30);
-        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(storage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount<>("A", 70),
             new ResourceAmount<>("B", 50)
         );
@@ -318,7 +328,8 @@ class StorageNetworkNodeTest {
 
     @Test
     void shouldHideStorageContentsWhenInactive(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);

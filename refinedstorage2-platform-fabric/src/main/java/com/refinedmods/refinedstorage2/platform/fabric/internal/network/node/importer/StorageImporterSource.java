@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.im
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterSource;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.storage.StorageInsertableStorage;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -24,6 +25,7 @@ public class StorageImporterSource<T, P> implements ImporterSource<T> {
     private final BlockApiCache<Storage<P>, Direction> cache;
     private final Function<P, T> fromPlatformMapper;
     private final Function<T, P> toPlatformMapper;
+    private final StorageInsertableStorage<T, P> insertTarget;
     private final Direction direction;
 
     public StorageImporterSource(final BlockApiLookup<Storage<P>, Direction> lookup,
@@ -35,6 +37,7 @@ public class StorageImporterSource<T, P> implements ImporterSource<T> {
         this.cache = BlockApiCache.create(lookup, serverLevel, pos);
         this.fromPlatformMapper = fromPlatformMapper;
         this.toPlatformMapper = toPlatformMapper;
+        this.insertTarget = new StorageInsertableStorage<>(lookup, toPlatformMapper, serverLevel, pos, direction);
         this.direction = direction;
     }
 
@@ -68,16 +71,6 @@ public class StorageImporterSource<T, P> implements ImporterSource<T> {
 
     @Override
     public long insert(final T resource, final long amount, final Action action, final Actor actor) {
-        final Storage<P> storage = cache.find(direction);
-        if (storage == null) {
-            return 0L;
-        }
-        try (Transaction tx = Transaction.openOuter()) {
-            final long extracted = storage.insert(toPlatformMapper.apply(resource), amount, tx);
-            if (action == Action.EXECUTE) {
-                tx.commit();
-            }
-            return extracted;
-        }
+        return insertTarget.insert(resource, amount, action, actor);
     }
 }

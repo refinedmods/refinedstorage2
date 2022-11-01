@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.storage.channel;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ListenableResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.listenable.ResourceListListener;
@@ -18,8 +19,17 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class StorageChannelImpl<T> implements StorageChannel<T> {
-    private final ListenableResourceList<T> list = new ListenableResourceList<>(new ResourceListImpl<>());
-    private final CompositeStorage<T> storage = new CompositeStorageImpl<>(list);
+    private final ListenableResourceList<T> list;
+    private final CompositeStorage<T> storage;
+
+    public StorageChannelImpl() {
+        this(new ResourceListImpl<>());
+    }
+
+    public StorageChannelImpl(final ResourceList<T> list) {
+        this.list = new ListenableResourceList<>(list);
+        this.storage = new CompositeStorageImpl<>(this.list);
+    }
 
     @Override
     public void sortSources() {

@@ -3,9 +3,9 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.view.GridViewImpl;
+import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilder;
+import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
@@ -36,7 +36,7 @@ public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResou
     private final FluidGridEventHandler fluidGridEventHandler;
 
     public FluidGridContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
-        super(Menus.INSTANCE.getFluidGrid(), syncId, playerInventory, buf, createView());
+        super(Menus.INSTANCE.getFluidGrid(), syncId, playerInventory, buf, createViewBuilder());
         this.fluidGridEventHandler = new ClientFluidGridEventHandler();
     }
 
@@ -44,7 +44,7 @@ public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResou
                                   final Inventory playerInventory,
                                   final FluidGridBlockEntity grid,
                                   final ExtractableStorage<ItemResource> bucketStorage) {
-        super(Menus.INSTANCE.getFluidGrid(), syncId, playerInventory, grid, createView());
+        super(Menus.INSTANCE.getFluidGrid(), syncId, playerInventory, grid, createViewBuilder());
         final GridService<FluidResource> gridService = grid.getNode().createService(
             new PlayerActor(playerInventory.player),
             resource -> Long.MAX_VALUE,
@@ -58,8 +58,8 @@ public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResou
         );
     }
 
-    private static GridViewImpl<FluidResource> createView() {
-        return new GridViewImpl<>(Platform.INSTANCE.getFluidGridResourceFactory(), new ResourceListImpl<>());
+    private static GridViewBuilder<FluidResource> createViewBuilder() {
+        return new GridViewBuilderImpl<>(Platform.INSTANCE.getFluidGridResourceFactory());
     }
 
     @Override

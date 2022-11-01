@@ -15,8 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 
-public abstract class AbstractStorageContainerMenu extends AbstractResourceFilterContainerMenu
-    implements StorageAccessor {
+public abstract class AbstractStorageContainerMenu extends AbstractResourceFilterContainerMenu {
     protected AbstractStorageContainerMenu(final MenuType<?> type,
                                            final int syncId,
                                            final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry) {
@@ -24,7 +23,7 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceFilte
 
         registerProperty(new ClientProperty<>(PropertyTypes.PRIORITY, 0));
         registerProperty(new ClientProperty<>(PropertyTypes.FILTER_MODE, FilterMode.BLOCK));
-        registerProperty(new ClientProperty<>(PropertyTypes.EXACT_MODE, false));
+        registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
         registerProperty(new ClientProperty<>(PropertyTypes.ACCESS_MODE, AccessMode.INSERT_EXTRACT));
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
     }
@@ -33,34 +32,34 @@ public abstract class AbstractStorageContainerMenu extends AbstractResourceFilte
                                            final int syncId,
                                            final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
                                            final Player player,
-                                           final StorageSettingsProvider storageSettingsProvider,
+                                           final StorageConfigurationContainer configContainer,
                                            final ResourceFilterContainer container) {
         super(type, syncId, resourceTypeRegistry, player, container);
 
         registerProperty(new ServerProperty<>(
             PropertyTypes.PRIORITY,
-            storageSettingsProvider::getPriority,
-            storageSettingsProvider::setPriority
+            configContainer::getPriority,
+            configContainer::setPriority
         ));
         registerProperty(new ServerProperty<>(
             PropertyTypes.FILTER_MODE,
-            storageSettingsProvider::getFilterMode,
-            storageSettingsProvider::setFilterMode
+            configContainer::getFilterMode,
+            configContainer::setFilterMode
         ));
         registerProperty(new ServerProperty<>(
-            PropertyTypes.EXACT_MODE,
-            storageSettingsProvider::isExactMode,
-            storageSettingsProvider::setExactMode
+            PropertyTypes.FUZZY_MODE,
+            configContainer::isFuzzyMode,
+            configContainer::setFuzzyMode
         ));
         registerProperty(new ServerProperty<>(
             PropertyTypes.ACCESS_MODE,
-            storageSettingsProvider::getAccessMode,
-            storageSettingsProvider::setAccessMode
+            configContainer::getAccessMode,
+            configContainer::setAccessMode
         ));
         registerProperty(new ServerProperty<>(
             PropertyTypes.REDSTONE_MODE,
-            storageSettingsProvider::getRedstoneMode,
-            storageSettingsProvider::setRedstoneMode
+            configContainer::getRedstoneMode,
+            configContainer::setRedstoneMode
         ));
     }
 }

@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.core;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -17,6 +18,10 @@ public final class QuantityFormatter {
         DecimalFormatSymbols.getInstance(Locale.US)
     );
 
+    static {
+        FORMATTER_WITH_UNITS.setRoundingMode(RoundingMode.FLOOR);
+    }
+
     private QuantityFormatter() {
     }
 
@@ -32,21 +37,21 @@ public final class QuantityFormatter {
     }
 
     private static String formatBillion(final long qty) {
-        return FORMATTER_WITH_UNITS.format(qty / 1_000_000_000F) + "B";
+        return FORMATTER_WITH_UNITS.format(qty / 1_000_000_000D) + "B";
     }
 
     private static String formatMillion(final long qty) {
         if (qty >= 100_000_000) {
-            return FORMATTER_WITH_UNITS.format(Math.floor(qty / 1_000_000F)) + "M";
+            return FORMATTER_WITH_UNITS.format(Math.floor(qty / 1_000_000D)) + "M";
         }
-        return FORMATTER_WITH_UNITS.format(qty / 1_000_000F) + "M";
+        return FORMATTER_WITH_UNITS.format(qty / 1_000_000D) + "M";
     }
 
     private static String formatThousand(final long qty) {
         if (qty >= 100_000) {
-            return FORMATTER_WITH_UNITS.format(Math.floor(qty / 1000F)) + "K";
+            return FORMATTER_WITH_UNITS.format(Math.floor(qty / 1000D)) + "K";
         }
-        return FORMATTER_WITH_UNITS.format(qty / 1000F) + "K";
+        return FORMATTER_WITH_UNITS.format(qty / 1000D) + "K";
     }
 
     public static String format(final long qty) {

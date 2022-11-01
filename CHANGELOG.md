@@ -7,6 +7,31 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed missing AutoConfig config option translations on Fabric.
+- Fixed Grid resource failing to insert if another resource with the same name but different NBT data already exists.
+- Fixed Importer not dropping upgrades when broken.
+- Fixed Disk Drive inventory not being available as external inventory on Forge.
+
+### Added
+
+- Exporter
+- Interface
+- External Storage
+
+### Changed
+
+- You can now select a "Scheduling mode" in the Exporter: first available, round robin, random.
+- The Interface no longer has dedicated import slots. The imported items now go into the export slots.
+- The Interface now imports items immediately.
+- "Exact mode" has been replaced with "Fuzzy mode", which is off by default for performance.
+- The External Storage no longer shows the amount of resources stored on the GUI.
+- The External Storage now supports multiple resource types at the same time.
+- The External Storage no longer checks for external changes every tick, but rather has a cooldown system.
+
+## [2.0.0-milestone.2.3] - 2022-08-26
+
 ### Changed
 
 - Ported to Minecraft 1.19.2.
@@ -14,6 +39,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Fixed mixin crash on startup on Fabric.
+
+### Added
+
+- NoIndium mod is now packaged with the mod on Fabric to avoid launching Sodium without Indium.
 
 ## [2.0.0-milestone.2.2] - 2022-08-06
 

@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,6 +37,19 @@ public class ResourceFilterSlot extends Slot {
         this.resourceFilterContainer = resourceFilterContainer;
         this.containerIndex = index;
         this.cachedResource = resourceFilterContainer.get(index);
+    }
+
+    public ResourceFilterSlot atPosition(final int newX, final int newY) {
+        return new ResourceFilterSlot(resourceFilterContainer, index, newX, newY);
+    }
+
+    public boolean supportsAmount() {
+        return resourceFilterContainer.supportsAmount();
+    }
+
+    @Nullable
+    public FilteredResource getFilteredResource() {
+        return resourceFilterContainer.get(containerIndex);
     }
 
     private static SimpleContainer createDummyContainer() {
@@ -89,19 +101,22 @@ public class ResourceFilterSlot extends Slot {
         return false;
     }
 
-    public void render(final PoseStack poseStack, final int x, final int y, final int z) {
-        final FilteredResource filteredResource = resourceFilterContainer.get(containerIndex);
-        if (filteredResource == null) {
-            return;
-        }
-        filteredResource.render(poseStack, x, y, z);
-    }
-
     public List<Component> getTooltipLines(@Nullable final Player player) {
         final FilteredResource filteredResource = resourceFilterContainer.get(containerIndex);
         if (filteredResource == null) {
             return Collections.emptyList();
         }
         return filteredResource.getTooltipLines(player);
+    }
+
+    public void changeAmount(final long amount) {
+        resourceFilterContainer.setAmount(containerIndex, amount);
+    }
+
+    public void changeAmountOnClient(final long amount) {
+        Platform.INSTANCE.getClientToServerCommunications().sendResourceFilterSlotAmountChange(
+            index,
+            amount
+        );
     }
 }

@@ -5,10 +5,6 @@ import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.network.node.storage.FakeActor;
-import com.refinedmods.refinedstorage2.api.network.test.extension.AddNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkStorageChannel;
-import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
-import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
@@ -18,6 +14,11 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
+import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
+import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
+import com.refinedmods.refinedstorage2.network.test.NetworkTest;
+import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
+import com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,15 +28,16 @@ import javax.annotation.Nullable;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(NetworkTestExtension.class)
+@NetworkTest
 @SetupNetwork
 class GridNetworkNodeTest {
-    @AddNetworkNode
+    @AddNetworkNode(properties = {
+        @AddNetworkNode.Property(key = AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE, longValue = 5)
+    })
     GridNetworkNode<String> sut;
 
     @BeforeEach
@@ -43,6 +45,12 @@ class GridNetworkNodeTest {
         networkStorage.addSource(new TrackedStorageImpl<>(new LimitedStorageImpl<>(1000), () -> 2L));
         networkStorage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
         networkStorage.insert("B", 200, Action.EXECUTE, EmptyActor.INSTANCE);
+    }
+
+    @Test
+    void testInitialState() {
+        // Assert
+        assertThat(sut.getEnergyUsage()).isEqualTo(5);
     }
 
     @Test
@@ -72,8 +80,8 @@ class GridNetworkNodeTest {
             new ResourceAmount<>("B", 200)
         );
         assertThat(trackedResources).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            Optional.of(new TrackedResource(EmptyActor.INSTANCE.getName(), 2L)),
-            Optional.of(new TrackedResource(EmptyActor.INSTANCE.getName(), 2L))
+            Optional.of(new TrackedResource("Empty", 2L)),
+            Optional.of(new TrackedResource("Empty", 2L))
         );
     }
 

@@ -18,15 +18,15 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.ofFluidStack;
+import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidAction;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidStack;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toItemStack;
 
@@ -71,10 +71,6 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         });
     }
 
-    private IFluidHandler.FluidAction toFluidAction(final Action action) {
-        return action == Action.SIMULATE ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE;
-    }
-
     @Nullable
     private IFluidHandlerItem getFluidCursorStorage() {
         return getFluidStorage(menu.getCarried());
@@ -83,7 +79,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     @SuppressWarnings("ConstantConditions")
     @Nullable
     private IFluidHandlerItem getFluidStorage(final ItemStack stack) {
-        return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).orElse(null);
+        return stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null).orElse(null);
     }
 
     @Override

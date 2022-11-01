@@ -108,13 +108,14 @@ class LimitedStorageImplTest {
         assertThat(backed.getActors()).containsExactly(actor);
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(Action.class)
     @SuppressWarnings("ConstantConditions")
-    void shouldNotInsertInvalidResourceOrAmount() {
+    void shouldNotInsertInvalidResourceOrAmount(final Action action) {
         // Act
-        final Executable action1 = () -> sut.insert("A", 0, Action.EXECUTE, EmptyActor.INSTANCE);
-        final Executable action2 = () -> sut.insert("A", -1, Action.EXECUTE, EmptyActor.INSTANCE);
-        final Executable action3 = () -> sut.insert(null, 1, Action.EXECUTE, EmptyActor.INSTANCE);
+        final Executable action1 = () -> sut.insert("A", 0, action, EmptyActor.INSTANCE);
+        final Executable action2 = () -> sut.insert("A", -1, action, EmptyActor.INSTANCE);
+        final Executable action3 = () -> sut.insert(null, 1, action, EmptyActor.INSTANCE);
 
         // Assert
         assertThrows(IllegalArgumentException.class, action1);

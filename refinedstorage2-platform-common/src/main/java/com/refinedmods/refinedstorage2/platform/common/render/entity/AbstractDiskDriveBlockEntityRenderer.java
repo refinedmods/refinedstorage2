@@ -101,6 +101,8 @@ public abstract class AbstractDiskDriveBlockEntityRenderer<T extends AbstractDis
             return;
         }
 
+        final int color = getColor(state);
+
         final float x1 = LED_X1 - (x * 7F);
         final float y1 = LED_Y1 - (y * 3F);
 
@@ -116,11 +118,21 @@ public abstract class AbstractDiskDriveBlockEntityRenderer<T extends AbstractDis
             x2 / 16F,
             y2 / 16F,
             LED_Z2 / 16F,
-            state.getColor() >> 16 & 0xFF,
-            state.getColor() >> 8 & 0xFF,
-            state.getColor() & 0xFF,
+            color >> 16 & 0xFF,
+            color >> 8 & 0xFF,
+            color & 0xFF,
             255,
             Direction.SOUTH
         );
+    }
+
+    private int getColor(final StorageDiskState state) {
+        return switch (state) {
+            case NONE -> 0;
+            case INACTIVE -> 0x323232;
+            case NORMAL -> 0x00E9FF;
+            case NEAR_CAPACITY -> 0xFFB700;
+            case FULL -> 0xDA4B40;
+        };
     }
 }

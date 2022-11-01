@@ -33,7 +33,15 @@ public class AccessModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     private static OnPress createPressAction(final ClientProperty<AccessMode> property) {
-        return btn -> property.setValue(property.getValue().toggle());
+        return btn -> property.setValue(toggle(property.getValue()));
+    }
+
+    private static AccessMode toggle(final AccessMode accessMode) {
+        return switch (accessMode) {
+            case INSERT_EXTRACT -> AccessMode.INSERT;
+            case INSERT -> AccessMode.EXTRACT;
+            case EXTRACT -> AccessMode.INSERT_EXTRACT;
+        };
     }
 
     private List<Component> calculateTooltip(final AccessMode accessMode) {

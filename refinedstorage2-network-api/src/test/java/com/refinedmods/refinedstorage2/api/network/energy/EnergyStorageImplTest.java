@@ -93,6 +93,21 @@ class EnergyStorageImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
+    void shouldNotReceiveEnergyWhenFull(final Action action) {
+        // Arrange
+        final EnergyStorage energyStorage = new EnergyStorageImpl(100);
+        energyStorage.receive(100, Action.EXECUTE);
+
+        // Act
+        final long inserted = energyStorage.receive(100, action);
+
+        // Assert
+        assertThat(inserted).isZero();
+        assertThat(energyStorage.getStored()).isEqualTo(100);
+    }
+
+    @ParameterizedTest
+    @EnumSource(Action.class)
     void shouldExtractEnergyPartly(final Action action) {
         // Arrange
         final EnergyStorage energyStorage = new EnergyStorageImpl(100);

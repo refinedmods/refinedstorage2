@@ -1,21 +1,25 @@
 package com.refinedmods.refinedstorage2.api.network.node;
 
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.test.extension.AddNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.test.extension.InjectNetworkEnergyComponent;
-import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
-import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
+import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
+import com.refinedmods.refinedstorage2.network.test.InjectNetworkEnergyComponent;
+import com.refinedmods.refinedstorage2.network.test.NetworkTest;
+import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
+import static com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory.PROPERTY_ACTIVE;
+import static com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-@ExtendWith(NetworkTestExtension.class)
+@NetworkTest
 @SetupNetwork(energyStored = 10, energyCapacity = 100)
 class SimpleNetworkNodeTest {
-    @AddNetworkNode(energyUsage = 10, active = false)
+    @AddNetworkNode(properties = {
+        @AddNetworkNode.Property(key = PROPERTY_ENERGY_USAGE, longValue = 10),
+        @AddNetworkNode.Property(key = PROPERTY_ACTIVE, boolValue = false)
+    })
     SimpleNetworkNode sut;
 
     @AddNetworkNode(networkId = "nonexistent")

@@ -2,25 +2,34 @@ package com.refinedmods.refinedstorage2.api.network.node.controller;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
-import com.refinedmods.refinedstorage2.api.network.test.extension.AddNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.test.extension.NetworkTestExtension;
-import com.refinedmods.refinedstorage2.api.network.test.extension.SetupNetwork;
+import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
+import com.refinedmods.refinedstorage2.network.test.NetworkTest;
+import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(NetworkTestExtension.class)
+@NetworkTest
 @SetupNetwork
 class ControllerNetworkNodeTest {
     @AddNetworkNode
     ControllerNetworkNode sut;
+
+    @Test
+    void testInitialState() {
+        // Assert
+        assertThat(sut.getEnergyUsage()).isZero();
+        assertThat(sut.getCapacity()).isZero();
+        assertThat(sut.getActualCapacity()).isZero();
+        assertThat(sut.getStored()).isZero();
+        assertThat(sut.getActualStored()).isZero();
+    }
 
     @Test
     void testStoredAndCapacityWhenInactive() {
@@ -113,6 +122,32 @@ class ControllerNetworkNodeTest {
         assertThat(extracted).isEqualTo(10);
         assertThat(sut.getCapacity()).isEqualTo(100);
         assertThat(sut.getActualCapacity()).isEqualTo(100);
+        assertThat(sut.getStored()).isZero();
+        assertThat(sut.getActualStored()).isZero();
+    }
+
+    @Test
+    void shouldNotReceiveEnergyWithoutEnergyStorage() {
+        // Act
+        final long inserted = sut.receive(10, Action.EXECUTE);
+
+        // Assert
+        assertThat(inserted).isZero();
+        assertThat(sut.getCapacity()).isZero();
+        assertThat(sut.getActualCapacity()).isZero();
+        assertThat(sut.getStored()).isZero();
+        assertThat(sut.getActualStored()).isZero();
+    }
+
+    @Test
+    void shouldNotExtractEnergyWithoutEnergyStorage() {
+        // Act
+        final long extracted = sut.extract(20, Action.EXECUTE);
+
+        // Assert
+        assertThat(extracted).isZero();
+        assertThat(sut.getCapacity()).isZero();
+        assertThat(sut.getActualCapacity()).isZero();
         assertThat(sut.getStored()).isZero();
         assertThat(sut.getActualStored()).isZero();
     }

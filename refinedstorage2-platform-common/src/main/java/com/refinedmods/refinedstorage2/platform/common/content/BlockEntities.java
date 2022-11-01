@@ -3,7 +3,10 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
@@ -40,6 +43,12 @@ public final class BlockEntities {
         fluidStorageBlocks = new EnumMap<>(FluidStorageType.Variant.class);
     @Nullable
     private Supplier<BlockEntityType<ImporterBlockEntity>> importer;
+    @Nullable
+    private Supplier<BlockEntityType<ExporterBlockEntity>> exporter;
+    @Nullable
+    private Supplier<BlockEntityType<InterfaceBlockEntity>> iface;
+    @Nullable
+    private Supplier<BlockEntityType<ExternalStorageBlockEntity>> externalStorage;
 
     private BlockEntities() {
     }
@@ -116,5 +125,29 @@ public final class BlockEntities {
 
     public void setImporter(final Supplier<BlockEntityType<ImporterBlockEntity>> supplier) {
         this.importer = supplier;
+    }
+
+    public BlockEntityType<ExporterBlockEntity> getExporter() {
+        return Objects.requireNonNull(exporter).get();
+    }
+
+    public void setExporter(final Supplier<BlockEntityType<ExporterBlockEntity>> supplier) {
+        this.exporter = supplier;
+    }
+
+    public BlockEntityType<InterfaceBlockEntity> getInterface() {
+        return Objects.requireNonNull(iface).get();
+    }
+
+    public void setInterface(final Supplier<BlockEntityType<InterfaceBlockEntity>> supplier) {
+        this.iface = supplier;
+    }
+
+    public BlockEntityType<ExternalStorageBlockEntity> getExternalStorage() {
+        return Objects.requireNonNull(externalStorage).get();
+    }
+
+    public void setExternalStorage(final Supplier<BlockEntityType<ExternalStorageBlockEntity>> supplier) {
+        this.externalStorage = supplier;
     }
 }

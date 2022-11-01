@@ -5,6 +5,10 @@
 <module name="Checker">
     <property name="charset" value="UTF-8"/>
     <property name="fileExtensions" value="java, properties, xml"/>
+    <module name="SuppressionFilter">
+        <property name="file" value="${config_loc}/checkstyle-suppressions.xml"/>
+        <property name="optional" value="false"/>
+    </module>
     <module name="BeforeExecutionExclusionFileFilter">
         <property name="fileNamePattern" value="module\-info\.java$"/>
     </module>
@@ -20,6 +24,7 @@
         <property name="max" value="700"/>
     </module>
     <module name="NewlineAtEndOfFile"/>
+    <module name="JavadocPackage"/>
     <module name="TreeWalker">
         <module name="FinalLocalVariable">
             <property name="validateEnhancedForLoopVariable" value="true"/>
@@ -45,7 +50,6 @@
         <module name="InterfaceIsType"/>
         <module name="MutableException"/>
         <module name="ThrowsCount"/>
-        <module name="ArrayTrailingComma"/>
         <module name="AvoidDoubleBraceInitialization"/>
         <module name="AvoidNoArgumentSuperConstructorCall"/>
         <module name="CovariantEquals"/>

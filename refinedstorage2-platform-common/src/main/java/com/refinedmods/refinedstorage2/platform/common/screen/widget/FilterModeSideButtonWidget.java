@@ -31,7 +31,11 @@ public class FilterModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     private static OnPress createPressAction(final ClientProperty<FilterMode> property) {
-        return btn -> property.setValue(property.getValue().toggle());
+        return btn -> property.setValue(toggle(property.getValue()));
+    }
+
+    private static FilterMode toggle(final FilterMode filterMode) {
+        return filterMode == FilterMode.ALLOW ? FilterMode.BLOCK : FilterMode.ALLOW;
     }
 
     private List<Component> calculateTooltip(final FilterMode filterMode) {

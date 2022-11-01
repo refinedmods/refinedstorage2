@@ -55,7 +55,7 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
     @Override
     public void removeSource(final Storage<T> source) {
         sources.remove(source);
-        sortSources();
+        // Re-sort isn't necessary, since they are ordered when added.
         removeContentOfSourceFromList(source);
         parentComposites.forEach(parentComposite -> parentComposite.onSourceRemovedFromChild(source));
         if (source instanceof CompositeAwareChild<T> compositeAwareChild) {
@@ -71,51 +71,41 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
 
     @Override
     public long extract(final T resource, final long amount, final Action action, final Actor actor) {
-        final long extracted = extractFromStorages(resource, amount, action, actor);
-        if (action == Action.EXECUTE && extracted > 0) {
-            list.remove(resource, extracted);
-        }
-        return extracted;
-    }
-
-    private long extractFromStorages(final T template,
-                                     final long amount,
-                                     final Action action,
-                                     final Actor actor) {
         long remaining = amount;
+        long toRemoveFromList = 0;
         for (final Storage<T> source : sources) {
-            final long extracted = source.extract(template, remaining, action, actor);
-            remaining -= extracted;
+            final long extractedFromSource = source.extract(resource, remaining, action, actor);
+            if (!(source instanceof ConsumingStorage)) {
+                toRemoveFromList += extractedFromSource;
+            }
+            remaining -= extractedFromSource;
             if (remaining == 0) {
                 break;
             }
         }
-
-        return amount - remaining;
+        final long extracted = amount - remaining;
+        if (action == Action.EXECUTE && toRemoveFromList > 0) {
+            list.remove(resource, toRemoveFromList);
+        }
+        return extracted;
     }
 
     @Override
-    public long insert(final T resource,
-                       final long amount,
-                       final Action action,
-                       final Actor actor) {
-        final long inserted = insertIntoStorages(resource, amount, action, actor);
-        if (action == Action.EXECUTE && inserted > 0) {
-            list.add(resource, inserted);
-        }
-        return inserted;
-    }
-
-    private long insertIntoStorages(final T template,
-                                    final long amount,
-                                    final Action action,
-                                    final Actor actionSource) {
+    public long insert(final T resource, final long amount, final Action action, final Actor actor) {
         long inserted = 0;
+        long toInsertIntoList = 0;
         for (final Storage<T> source : sources) {
-            inserted += source.insert(template, amount - inserted, action, actionSource);
+            final long insertedIntoSource = source.insert(resource, amount - inserted, action, actor);
+            if (!(source instanceof ConsumingStorage)) {
+                toInsertIntoList += insertedIntoSource;
+            }
+            inserted += insertedIntoSource;
             if (inserted == amount) {
                 break;
             }
+        }
+        if (action == Action.EXECUTE && toInsertIntoList > 0) {
+            list.add(resource, toInsertIntoList);
         }
         return inserted;
     }
@@ -159,6 +149,16 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
     @Override
     public void onSourceRemovedFromChild(final Storage<T> source) {
         removeContentOfSourceFromList(source);
+    }
+
+    @Override
+    public void addToCache(final T resource, final long amount) {
+        list.add(resource, amount);
+    }
+
+    @Override
+    public void removeFromCache(final T resource, final long amount) {
+        list.remove(resource, amount);
     }
 
     private void addContentOfSourceToList(final Storage<T> source) {

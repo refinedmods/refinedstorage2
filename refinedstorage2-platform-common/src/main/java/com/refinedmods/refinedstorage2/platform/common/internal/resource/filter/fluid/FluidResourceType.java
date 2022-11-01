@@ -31,16 +31,23 @@ public class FluidResourceType implements ResourceType {
 
     @Override
     public Optional<FilteredResource> translate(final ItemStack stack) {
-        return Platform.INSTANCE.convertToFluid(stack).map(FluidFilteredResource::new);
+        return Platform.INSTANCE.convertToFluid(stack).map(fluid -> new FluidFilteredResource(
+            fluid,
+            Platform.INSTANCE.getBucketAmount()
+        ));
     }
 
     @Override
     public FilteredResource fromPacket(final FriendlyByteBuf buf) {
-        return new FluidFilteredResource(PacketUtil.readFluidResource(buf));
+        return new FluidFilteredResource(PacketUtil.readFluidResource(buf), buf.readLong());
     }
 
     @Override
     public Optional<FilteredResource> fromTag(final CompoundTag tag) {
-        return FluidResource.fromTag(tag).map(FluidFilteredResource::new);
+        return FluidResource.fromTag(tag)
+            .map(fluidResource -> new FluidFilteredResource(
+                fluidResource,
+                FluidFilteredResource.getAmountFromTag(tag)
+            ));
     }
 }
