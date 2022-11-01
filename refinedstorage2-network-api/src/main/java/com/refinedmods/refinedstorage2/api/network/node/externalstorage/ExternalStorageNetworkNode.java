@@ -55,7 +55,7 @@ public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode imple
     }
 
     private void stopExposingInternalStorages() {
-        storages.values().forEach(s -> s.exposedStorage.tryRemoveStorage());
+        storages.values().forEach(s -> s.exposedStorage.tryClearDelegate());
     }
 
     private <T> void makeInternalStorageVisible(final ConfiguredStorage<T> storage) {

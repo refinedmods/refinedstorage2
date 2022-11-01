@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.api.network.node.storage;
 
-import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractConfiguredProxyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.StorageConfiguration;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
@@ -12,6 +11,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -53,9 +53,9 @@ class ExposedStorage<T> extends AbstractConfiguredProxyStorage<T, Storage<T>>
         parents.forEach(parent -> parent.onSourceAddedToChild(newDelegate));
     }
 
-    public void removeSource() {
-        CoreValidations.validateNotNull(this.delegate, "Cannot remove source when no source was present");
-        parents.forEach(parent -> parent.onSourceRemovedFromChild(this.delegate));
-        this.delegate = null;
+    @Override
+    public void clearDelegate() {
+        parents.forEach(parent -> parent.onSourceRemovedFromChild(Objects.requireNonNull(delegate)));
+        super.clearDelegate();
     }
 }

@@ -58,7 +58,7 @@ public class StorageNetworkNode<T> extends AbstractStorageNetworkNode implements
         if (newActive) {
             exposedStorage.setDelegate(internalStorage);
         } else {
-            exposedStorage.removeSource();
+            exposedStorage.clearDelegate();
         }
     }
 

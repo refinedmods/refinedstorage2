@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.api.storage.composite.ParentComposite;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorage;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 class ExposedExternalStorage<T> extends AbstractConfiguredProxyStorage<T, ExternalStorage<T>>
@@ -43,15 +44,13 @@ class ExposedExternalStorage<T> extends AbstractConfiguredProxyStorage<T, Extern
         });
     }
 
-    public void tryRemoveStorage() {
-        if (delegate == null) {
-            return;
-        }
+    @Override
+    public void clearDelegate() {
         parents.forEach(parent -> {
-            parent.onSourceRemovedFromChild(delegate);
+            parent.onSourceRemovedFromChild(Objects.requireNonNull(delegate));
             delegate.onRemovedFromComposite(parent);
         });
-        this.delegate = null;
+        super.clearDelegate();
     }
 
     public boolean detectChanges() {
