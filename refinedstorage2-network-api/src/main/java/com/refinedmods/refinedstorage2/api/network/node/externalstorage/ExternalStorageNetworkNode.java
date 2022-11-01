@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 
 public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode implements StorageProvider {
     private final long energyUsage;
-    private final Map<StorageChannelType<?>, ConfiguredStorage<?>> storages = new HashMap<>();
+    private final Map<StorageChannelType<?>, DynamicStorage<?>> storages = new HashMap<>();
 
     public ExternalStorageNetworkNode(final long energyUsage,
                                       final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
@@ -24,22 +24,24 @@ public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode imple
     }
 
     private void initialize(final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
-        storageChannelTypeRegistry.getAll().forEach(type -> storages.put(type, new ConfiguredStorage<>()));
+        storageChannelTypeRegistry.getAll().forEach(type -> storages.put(type, new DynamicStorage<>()));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void initialize(final ExternalStorageProviderFactory factory) {
-        stopExposingInternalStorages();
-        storages.forEach((type, storage) -> initialize(factory, (StorageChannelType) type, storage));
+        storages.forEach((type, storage) -> {
+            storage.exposedStorage.tryClearDelegate();
+            initialize(factory, (StorageChannelType) type, storage);
+        });
     }
 
     private <T> void initialize(final ExternalStorageProviderFactory factory,
                                 final StorageChannelType<T> type,
-                                final ConfiguredStorage<T> configuredStorage) {
+                                final DynamicStorage<T> dynamicStorage) {
         factory.create(type).ifPresent(provider -> {
-            configuredStorage.internalStorage = new ExternalStorage<>(provider);
+            dynamicStorage.internalStorage = new ExternalStorage<>(provider);
             if (isActive()) {
-                makeInternalStorageVisible(configuredStorage);
+                dynamicStorage.setVisible(true);
             }
         });
     }
@@ -47,22 +49,7 @@ public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode imple
     @Override
     protected void onActiveChanged(final boolean newActive) {
         super.onActiveChanged(newActive);
-        if (!newActive) {
-            stopExposingInternalStorages();
-        } else {
-            storages.values().forEach(this::makeInternalStorageVisible);
-        }
-    }
-
-    private void stopExposingInternalStorages() {
-        storages.values().forEach(s -> s.exposedStorage.tryClearDelegate());
-    }
-
-    private <T> void makeInternalStorageVisible(final ConfiguredStorage<T> storage) {
-        if (storage.internalStorage == null) {
-            return;
-        }
-        storage.exposedStorage.setDelegate(storage.internalStorage);
+        storages.values().forEach(storage -> storage.setVisible(newActive));
     }
 
     public boolean detectChanges() {
@@ -82,20 +69,35 @@ public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode imple
     @Override
     @SuppressWarnings("unchecked")
     public <T> Optional<Storage<T>> getStorageForChannel(final StorageChannelType<T> channelType) {
-        final ConfiguredStorage<?> storage = storages.get(channelType);
+        final DynamicStorage<?> storage = storages.get(channelType);
         if (storage == null) {
             return Optional.empty();
         }
         return Optional.of((Storage<T>) storage.exposedStorage);
     }
 
-    private class ConfiguredStorage<T> {
+    private class DynamicStorage<T> {
+        private final ExposedExternalStorage<T> exposedStorage;
         @Nullable
         private ExternalStorage<T> internalStorage;
-        private final ExposedExternalStorage<T> exposedStorage;
 
-        private ConfiguredStorage() {
+        private DynamicStorage() {
             this.exposedStorage = new ExposedExternalStorage<>(ExternalStorageNetworkNode.this);
+        }
+
+        public void setVisible(final boolean visible) {
+            if (visible) {
+                tryMakeInternalStorageVisible();
+            } else {
+                exposedStorage.tryClearDelegate();
+            }
+        }
+
+        private void tryMakeInternalStorageVisible() {
+            if (internalStorage == null) {
+                return;
+            }
+            exposedStorage.setDelegate(internalStorage);
         }
     }
 }
