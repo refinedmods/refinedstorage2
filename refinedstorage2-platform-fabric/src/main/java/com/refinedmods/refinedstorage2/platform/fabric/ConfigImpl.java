@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
+import com.refinedmods.refinedstorage2.platform.common.content.DefaultEnergyUsage;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 
@@ -16,101 +17,103 @@ import net.minecraft.resources.ResourceLocation;
 @Config(name = IdentifierUtil.MOD_ID)
 public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.platform.common.Config {
     @ConfigEntry.Gui.CollapsibleObject
-    private GridImpl grid = new GridImpl();
+    private GridEntryImpl grid = new GridEntryImpl();
 
     @ConfigEntry.Gui.CollapsibleObject
-    private ControllerImpl controller = new ControllerImpl();
+    private ControllerEntryImpl controller = new ControllerEntryImpl();
 
     @ConfigEntry.Gui.CollapsibleObject
-    private DiskDriveImpl diskDrive = new DiskDriveImpl();
+    private DiskDriveEntryImpl diskDrive = new DiskDriveEntryImpl();
 
     @ConfigEntry.Gui.CollapsibleObject
-    private CableImpl cable = new CableImpl();
+    private SimpleEnergyUsageEntryImpl cable = new SimpleEnergyUsageEntryImpl(DefaultEnergyUsage.CABLE);
 
     @ConfigEntry.Gui.CollapsibleObject
-    private StorageBlockImpl storageBlock = new StorageBlockImpl();
+    private StorageBlockEntryImpl storageBlock = new StorageBlockEntryImpl();
 
     @ConfigEntry.Gui.CollapsibleObject
-    private FluidStorageBlockImpl fluidStorageBlock = new FluidStorageBlockImpl();
+    private FluidStorageBlockEntryImpl fluidStorageBlock = new FluidStorageBlockEntryImpl();
 
     @ConfigEntry.Gui.CollapsibleObject
-    private ImporterImpl importer = new ImporterImpl();
+    private SimpleEnergyUsageEntryImpl importer = new SimpleEnergyUsageEntryImpl(DefaultEnergyUsage.IMPORTER);
 
     @ConfigEntry.Gui.CollapsibleObject
-    private ExporterImpl exporter = new ExporterImpl();
+    private SimpleEnergyUsageEntryImpl exporter = new SimpleEnergyUsageEntryImpl(DefaultEnergyUsage.EXPORTER);
 
     @ConfigEntry.Gui.CollapsibleObject
-    private UpgradeImpl upgrade = new UpgradeImpl();
+    private UpgradeEntryImpl upgrade = new UpgradeEntryImpl();
 
     @ConfigEntry.Gui.CollapsibleObject
-    private InterfaceImpl iface = new InterfaceImpl();
+    private SimpleEnergyUsageEntryImpl iface = new SimpleEnergyUsageEntryImpl(DefaultEnergyUsage.INTERFACE);
 
     @ConfigEntry.Gui.CollapsibleObject
-    private ExternalStorageImpl externalStorage = new ExternalStorageImpl();
+    private SimpleEnergyUsageEntryImpl externalStorage = new SimpleEnergyUsageEntryImpl(
+        DefaultEnergyUsage.EXTERNAL_STORAGE
+    );
 
     public static ConfigImpl get() {
         return AutoConfig.getConfigHolder(ConfigImpl.class).getConfig();
     }
 
     @Override
-    public Grid getGrid() {
+    public GridEntry getGrid() {
         return grid;
     }
 
     @Override
-    public Controller getController() {
+    public ControllerEntry getController() {
         return controller;
     }
 
     @Override
-    public DiskDrive getDiskDrive() {
+    public DiskDriveEntry getDiskDrive() {
         return diskDrive;
     }
 
     @Override
-    public Cable getCable() {
+    public SimpleEnergyUsageEntry getCable() {
         return cable;
     }
 
     @Override
-    public StorageBlock getStorageBlock() {
+    public StorageBlockEntry getStorageBlock() {
         return storageBlock;
     }
 
     @Override
-    public FluidStorageBlock getFluidStorageBlock() {
+    public FluidStorageBlockEntry getFluidStorageBlock() {
         return fluidStorageBlock;
     }
 
     @Override
-    public Importer getImporter() {
+    public SimpleEnergyUsageEntry getImporter() {
         return importer;
     }
 
     @Override
-    public Exporter getExporter() {
+    public SimpleEnergyUsageEntry getExporter() {
         return exporter;
     }
 
     @Override
-    public Upgrade getUpgrade() {
+    public UpgradeEntry getUpgrade() {
         return upgrade;
     }
 
     @Override
-    public Interface getInterface() {
+    public SimpleEnergyUsageEntry getInterface() {
         return iface;
     }
 
     @Override
-    public ExternalStorage getExternalStorage() {
+    public SimpleEnergyUsageEntry getExternalStorage() {
         return externalStorage;
     }
 
-    private static class GridImpl implements Grid {
+    private static class GridEntryImpl implements GridEntry {
         private boolean largeFont = false;
 
-        private long energyUsage = 10;
+        private long energyUsage = DefaultEnergyUsage.GRID;
 
         @ConfigEntry.BoundedDiscrete(min = 3L, max = 256)
         private int maxRowsStretch = 256;
@@ -237,10 +240,10 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
     }
 
-    private static class DiskDriveImpl implements DiskDrive {
-        private long energyUsage = 10;
+    private static class DiskDriveEntryImpl implements DiskDriveEntry {
+        private long energyUsage = DefaultEnergyUsage.DISK_DRIVE;
 
-        private long energyUsagePerDisk = 5;
+        private long energyUsagePerDisk = DefaultEnergyUsage.DISK_DRIVE_PER_DISK;
 
         @Override
         public long getEnergyUsage() {
@@ -253,8 +256,12 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
     }
 
-    private static class CableImpl implements Cable {
-        private long energyUsage = 0;
+    private static class SimpleEnergyUsageEntryImpl implements SimpleEnergyUsageEntry {
+        private long energyUsage;
+
+        SimpleEnergyUsageEntryImpl(final long energyUsage) {
+            this.energyUsage = energyUsage;
+        }
 
         @Override
         public long getEnergyUsage() {
@@ -262,20 +269,20 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
     }
 
-    private static class ControllerImpl implements Controller {
-        private long energyCapacity = 1000;
+    private static class ControllerEntryImpl implements ControllerEntry {
+        private long energyCapacity = DefaultEnergyUsage.CONTROLLER_CAPACITY;
 
         public long getEnergyCapacity() {
             return energyCapacity;
         }
     }
 
-    private static class StorageBlockImpl implements StorageBlock {
-        private long oneKEnergyUsage = 2;
-        private long fourKEnergyUsage = 4;
-        private long sixteenKEnergyUsage = 6;
-        private long sixtyFourKEnergyUsage = 8;
-        private long creativeEnergyUsage = 16;
+    private static class StorageBlockEntryImpl implements StorageBlockEntry {
+        private long oneKEnergyUsage = DefaultEnergyUsage.ONE_K_STORAGE_BLOCK;
+        private long fourKEnergyUsage = DefaultEnergyUsage.FOUR_K_STORAGE_BLOCK;
+        private long sixteenKEnergyUsage = DefaultEnergyUsage.SIXTEEN_K_STORAGE_BLOCK;
+        private long sixtyFourKEnergyUsage = DefaultEnergyUsage.SIXTY_FOUR_K_STORAGE_BLOCK;
+        private long creativeEnergyUsage = DefaultEnergyUsage.CREATIVE_STORAGE_BLOCK;
 
         @Override
         public long get1kEnergyUsage() {
@@ -303,12 +310,13 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
     }
 
-    private static class FluidStorageBlockImpl implements FluidStorageBlock {
-        private long sixtyFourBEnergyUsage = 2;
-        private long twoHundredFiftySixBEnergyUsage = 4;
-        private long thousandTwentyFourBEnergyUsage = 6;
-        private long fourThousandNinetySixBEnergyUsage = 8;
-        private long creativeEnergyUsage = 16;
+    private static class FluidStorageBlockEntryImpl implements FluidStorageBlockEntry {
+        private long sixtyFourBEnergyUsage = DefaultEnergyUsage.SIXTY_FOUR_B_FLUID_STORAGE_BLOCK;
+        private long twoHundredFiftySixBEnergyUsage = DefaultEnergyUsage.TWO_HUNDRED_FIFTY_SIX_B_FLUID_STORAGE_BLOCK;
+        private long thousandTwentyFourBEnergyUsage = DefaultEnergyUsage.THOUSAND_TWENTY_FOUR_B_FLUID_STORAGE_BLOCK;
+        private long fourThousandNinetySixBEnergyUsage =
+            DefaultEnergyUsage.FOUR_THOUSAND_NINETY_SIX_B_FLUID_STORAGE_BLOCK;
+        private long creativeEnergyUsage = DefaultEnergyUsage.CREATIVE_FLUID_STORAGE_BLOCK;
 
         @Override
         public long get64bEnergyUsage() {
@@ -336,28 +344,10 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
     }
 
-    private static class ImporterImpl implements Importer {
-        private long energyUsage = 2;
+    private static class UpgradeEntryImpl implements UpgradeEntry {
+        private long speedUpgradeEnergyUsage = DefaultEnergyUsage.SPEED_UPGRADE;
 
-        @Override
-        public long getEnergyUsage() {
-            return energyUsage;
-        }
-    }
-
-    private static class ExporterImpl implements Exporter {
-        private long energyUsage = 2;
-
-        @Override
-        public long getEnergyUsage() {
-            return energyUsage;
-        }
-    }
-
-    private static class UpgradeImpl implements Upgrade {
-        private long speedUpgradeEnergyUsage = 4;
-
-        private long stackUpgradeEnergyUsage = 16;
+        private long stackUpgradeEnergyUsage = DefaultEnergyUsage.STACK_UPGRADE;
 
         @Override
         public long getSpeedUpgradeEnergyUsage() {
@@ -367,24 +357,6 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public long getStackUpgradeEnergyUsage() {
             return stackUpgradeEnergyUsage;
-        }
-    }
-
-    private static class InterfaceImpl implements Interface {
-        private long energyUsage = 4;
-
-        @Override
-        public long getEnergyUsage() {
-            return energyUsage;
-        }
-    }
-
-    private static class ExternalStorageImpl implements ExternalStorage {
-        private long energyUsage = 6;
-
-        @Override
-        public long getEnergyUsage() {
-            return energyUsage;
         }
     }
 }
