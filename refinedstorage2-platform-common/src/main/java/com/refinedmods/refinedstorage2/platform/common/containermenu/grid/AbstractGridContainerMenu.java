@@ -224,7 +224,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     public void toggleSynchronizer() {
         final OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry =
             PlatformApi.INSTANCE.getGridSynchronizerRegistry();
-        final Config.Grid config = Platform.INSTANCE.getConfig().getGrid();
+        final Config.GridEntry config = Platform.INSTANCE.getConfig().getGrid();
 
         final GridSynchronizer newSynchronizer = synchronizerRegistry.next(getSynchronizer());
 

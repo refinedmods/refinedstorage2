@@ -9,29 +9,33 @@ import java.util.Optional;
 import net.minecraft.resources.ResourceLocation;
 
 public interface Config {
-    Grid getGrid();
+    GridEntry getGrid();
 
-    Controller getController();
+    ControllerEntry getController();
 
-    DiskDrive getDiskDrive();
+    DiskDriveEntry getDiskDrive();
 
-    Cable getCable();
+    SimpleEnergyUsageEntry getCable();
 
-    StorageBlock getStorageBlock();
+    StorageBlockEntry getStorageBlock();
 
-    FluidStorageBlock getFluidStorageBlock();
+    FluidStorageBlockEntry getFluidStorageBlock();
 
-    Importer getImporter();
+    SimpleEnergyUsageEntry getImporter();
 
-    Exporter getExporter();
+    SimpleEnergyUsageEntry getExporter();
 
-    Upgrade getUpgrade();
+    UpgradeEntry getUpgrade();
 
-    Interface getInterface();
+    SimpleEnergyUsageEntry getInterface();
 
-    ExternalStorage getExternalStorage();
+    SimpleEnergyUsageEntry getExternalStorage();
 
-    interface Grid {
+    interface SimpleEnergyUsageEntry {
+        long getEnergyUsage();
+    }
+
+    interface GridEntry extends SimpleEnergyUsageEntry {
         boolean isLargeFont();
 
         int getMaxRowsStretch();
@@ -41,8 +45,6 @@ public interface Config {
         boolean isDetailedTooltip();
 
         boolean isRememberSearchQuery();
-
-        long getEnergyUsage();
 
         boolean isSmoothScrolling();
 
@@ -69,21 +71,15 @@ public interface Config {
         void setSize(GridSize size);
     }
 
-    interface DiskDrive {
-        long getEnergyUsage();
-
+    interface DiskDriveEntry extends SimpleEnergyUsageEntry {
         long getEnergyUsagePerDisk();
     }
 
-    interface Cable {
-        long getEnergyUsage();
-    }
-
-    interface Controller {
+    interface ControllerEntry {
         long getEnergyCapacity();
     }
 
-    interface StorageBlock {
+    interface StorageBlockEntry {
         long get1kEnergyUsage();
 
         long get4kEnergyUsage();
@@ -95,7 +91,7 @@ public interface Config {
         long getCreativeEnergyUsage();
     }
 
-    interface FluidStorageBlock {
+    interface FluidStorageBlockEntry {
         long get64bEnergyUsage();
 
         long get256bEnergyUsage();
@@ -107,25 +103,9 @@ public interface Config {
         long getCreativeEnergyUsage();
     }
 
-    interface Importer {
-        long getEnergyUsage();
-    }
-
-    interface Exporter {
-        long getEnergyUsage();
-    }
-
-    interface Upgrade {
+    interface UpgradeEntry {
         long getSpeedUpgradeEnergyUsage();
 
         long getStackUpgradeEnergyUsage();
-    }
-
-    interface Interface {
-        long getEnergyUsage();
-    }
-
-    interface ExternalStorage {
-        long getEnergyUsage();
     }
 }
