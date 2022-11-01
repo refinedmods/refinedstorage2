@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.network.node;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
@@ -52,5 +53,11 @@ public abstract class AbstractConfiguredProxyStorage<T, S extends Storage<T>> im
     @Override
     public int getPriority() {
         return config.getPriority();
+    }
+
+    public void setDelegate(final S newDelegate) {
+        CoreValidations.validateNull(this.delegate, "The current delegate is still set");
+        CoreValidations.validateNotNull(newDelegate, "The new delegate cannot be null");
+        this.delegate = newDelegate;
     }
 }

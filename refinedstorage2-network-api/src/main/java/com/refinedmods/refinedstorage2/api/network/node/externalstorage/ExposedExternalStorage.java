@@ -10,11 +10,11 @@ import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorage;
 import java.util.HashSet;
 import java.util.Set;
 
-class NetworkNodeStorage<T> extends AbstractConfiguredProxyStorage<T, ExternalStorage<T>>
+class ExposedExternalStorage<T> extends AbstractConfiguredProxyStorage<T, ExternalStorage<T>>
     implements ConsumingStorage<T>, CompositeAwareChild<T> {
     private final Set<ParentComposite<T>> parents = new HashSet<>();
 
-    NetworkNodeStorage(final StorageConfiguration config) {
+    ExposedExternalStorage(final StorageConfiguration config) {
         super(config);
     }
 
@@ -34,14 +34,12 @@ class NetworkNodeStorage<T> extends AbstractConfiguredProxyStorage<T, ExternalSt
         }
     }
 
-    public void setStorage(final ExternalStorage<T> storage) {
-        if (this.delegate != null) {
-            throw new IllegalStateException("Storage is already set");
-        }
-        this.delegate = storage;
+    @Override
+    public void setDelegate(final ExternalStorage<T> newDelegate) {
+        super.setDelegate(newDelegate);
         parents.forEach(parent -> {
-            parent.onSourceAddedToChild(storage);
-            storage.onAddedIntoComposite(parent);
+            parent.onSourceAddedToChild(newDelegate);
+            newDelegate.onAddedIntoComposite(parent);
         });
     }
 

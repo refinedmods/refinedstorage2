@@ -15,11 +15,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-class NetworkNodeStorage<T> extends AbstractConfiguredProxyStorage<T, Storage<T>>
+class ExposedStorage<T> extends AbstractConfiguredProxyStorage<T, Storage<T>>
     implements TrackedStorage<T>, CompositeAwareChild<T> {
-    private final Set<ParentComposite<T>> parentComposites = new HashSet<>();
+    private final Set<ParentComposite<T>> parents = new HashSet<>();
 
-    NetworkNodeStorage(final StorageConfiguration config) {
+    ExposedStorage(final StorageConfiguration config) {
         super(config);
     }
 
@@ -33,27 +33,29 @@ class NetworkNodeStorage<T> extends AbstractConfiguredProxyStorage<T, Storage<T>
 
     @Override
     public void onAddedIntoComposite(final ParentComposite<T> parentComposite) {
-        parentComposites.add(parentComposite);
+        parents.add(parentComposite);
     }
 
     @Override
     public void onRemovedFromComposite(final ParentComposite<T> parentComposite) {
-        parentComposites.remove(parentComposite);
+        parents.remove(parentComposite);
     }
 
     public long getCapacity() {
-        return delegate instanceof LimitedStorage<?> limitedStorage ? limitedStorage.getCapacity() : 0L;
+        return delegate instanceof LimitedStorage<?> limitedStorage
+            ? limitedStorage.getCapacity()
+            : 0L;
     }
 
-    public void setSource(final Storage<T> source) {
-        CoreValidations.validateNotNull(source, "Source cannot be null");
-        this.delegate = source;
-        parentComposites.forEach(parentComposite -> parentComposite.onSourceAddedToChild(delegate));
+    @Override
+    public void setDelegate(final Storage<T> newDelegate) {
+        super.setDelegate(newDelegate);
+        parents.forEach(parent -> parent.onSourceAddedToChild(newDelegate));
     }
 
     public void removeSource() {
         CoreValidations.validateNotNull(this.delegate, "Cannot remove source when no source was present");
-        parentComposites.forEach(parentComposite -> parentComposite.onSourceRemovedFromChild(this.delegate));
+        parents.forEach(parent -> parent.onSourceRemovedFromChild(this.delegate));
         this.delegate = null;
     }
 }
