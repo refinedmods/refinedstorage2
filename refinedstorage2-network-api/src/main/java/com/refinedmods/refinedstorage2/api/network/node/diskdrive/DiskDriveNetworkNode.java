@@ -1,13 +1,8 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.core.filter.Filter;
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
-import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
-import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.StorageConfiguration;
-import com.refinedmods.refinedstorage2.api.storage.AccessMode;
+import com.refinedmods.refinedstorage2.api.network.node.AbstractStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
@@ -19,14 +14,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DiskDriveNetworkNode extends AbstractNetworkNode implements StorageProvider, StorageConfiguration {
+public class DiskDriveNetworkNode extends AbstractStorageNetworkNode implements StorageProvider {
     private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
 
     @Nullable
@@ -42,11 +36,6 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
     private final DiskDriveDiskStorage<?>[] disks;
     private final Map<StorageChannelType<?>, DiskDriveCompositeStorage<?>> compositeStorages;
     private int diskCount;
-
-    private final Filter filter = new Filter();
-
-    private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
-    private int priority;
 
     public DiskDriveNetworkNode(final long energyUsage,
                                 final long energyUsagePerDisk,
@@ -68,7 +57,7 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
     }
 
     private DiskDriveCompositeStorage<?> createCompositeStorage(final StorageChannelType<?> type) {
-        return new DiskDriveCompositeStorage<>(this, filter);
+        return new DiskDriveCompositeStorage<>(this);
     }
 
     public void initialize(final StorageRepository newStorageRepository) {
@@ -169,29 +158,6 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
         }
     }
 
-    @Override
-    public FilterMode getFilterMode() {
-        return filter.getMode();
-    }
-
-    @Override
-    public boolean isAllowed(final Object resource) {
-        return filter.isAllowed(resource);
-    }
-
-    @Override
-    public void setFilterMode(final FilterMode mode) {
-        filter.setMode(mode);
-    }
-
-    public void setFilterTemplates(final Set<Object> templates) {
-        filter.setTemplates(templates);
-    }
-
-    public void setNormalizer(final UnaryOperator<Object> normalizer) {
-        filter.setNormalizer(normalizer);
-    }
-
     public void setDiskProvider(final StorageDiskProvider diskProvider) {
         this.diskProvider = diskProvider;
     }
@@ -219,28 +185,8 @@ public class DiskDriveNetworkNode extends AbstractNetworkNode implements Storage
     }
 
     @Override
-    public AccessMode getAccessMode() {
-        return accessMode;
-    }
-
-    @Override
-    public void setAccessMode(final AccessMode accessMode) {
-        this.accessMode = accessMode;
-    }
-
-    @Override
-    public void setPriority(final int priority) {
-        this.priority = priority;
-        if (network != null) {
-            compositeStorages.keySet().forEach(type -> network.getComponent(StorageNetworkComponent.class)
-                .getStorageChannel(type)
-                .sortSources());
-        }
-    }
-
-    @Override
-    public int getPriority() {
-        return priority;
+    protected Set<StorageChannelType<?>> getRelevantStorageChannelTypes() {
+        return compositeStorages.keySet();
     }
 
     @Override

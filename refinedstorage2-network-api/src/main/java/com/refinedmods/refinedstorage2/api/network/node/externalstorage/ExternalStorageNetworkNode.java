@@ -1,13 +1,8 @@
 package com.refinedmods.refinedstorage2.api.network.node.externalstorage;
 
-import com.refinedmods.refinedstorage2.api.core.filter.Filter;
-import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
-import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
-import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.StorageConfiguration;
-import com.refinedmods.refinedstorage2.api.storage.AccessMode;
+import com.refinedmods.refinedstorage2.api.network.node.AbstractStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorage;
@@ -16,16 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.UnaryOperator;
 import javax.annotation.Nullable;
 
-public class ExternalStorageNetworkNode extends AbstractNetworkNode implements StorageProvider, StorageConfiguration {
+public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode implements StorageProvider {
     private final long energyUsage;
     private final Map<StorageChannelType<?>, ConfiguredStorage<?>> storages = new HashMap<>();
-    private final Filter filter = new Filter();
-
-    private AccessMode accessMode = AccessMode.INSERT_EXTRACT;
-    private int priority;
 
     public ExternalStorageNetworkNode(final long energyUsage,
                                       final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
@@ -85,53 +75,8 @@ public class ExternalStorageNetworkNode extends AbstractNetworkNode implements S
     }
 
     @Override
-    public AccessMode getAccessMode() {
-        return accessMode;
-    }
-
-    @Override
-    public void setAccessMode(final AccessMode accessMode) {
-        this.accessMode = accessMode;
-    }
-
-    @Override
-    public FilterMode getFilterMode() {
-        return filter.getMode();
-    }
-
-    @Override
-    public void setFilterMode(final FilterMode filterMode) {
-        filter.setMode(filterMode);
-    }
-
-    @Override
-    public boolean isAllowed(final Object resource) {
-        return filter.isAllowed(resource);
-    }
-
-    @Override
-    public void setPriority(final int priority) {
-        this.priority = priority;
-        if (network != null) {
-            storages.keySet().forEach(type -> network
-                .getComponent(StorageNetworkComponent.class)
-                .getStorageChannel(type)
-                .sortSources()
-            );
-        }
-    }
-
-    @Override
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setFilterTemplates(final Set<Object> templates) {
-        filter.setTemplates(templates);
-    }
-
-    public void setNormalizer(final UnaryOperator<Object> normalizer) {
-        filter.setNormalizer(normalizer);
+    protected Set<StorageChannelType<?>> getRelevantStorageChannelTypes() {
+        return storages.keySet();
     }
 
     @Override
