@@ -19,7 +19,7 @@ public class StorageNetworkNode<T> extends AbstractStorageNetworkNode implements
 
     private final long energyUsage;
     private final StorageChannelType<?> type;
-    private final NetworkNodeStorage<T> exposedStorage = new NetworkNodeStorage<>(this);
+    private final ExposedStorage<T> exposedStorage = new ExposedStorage<>(this);
 
     @Nullable
     private Storage<T> internalStorage;
@@ -56,7 +56,7 @@ public class StorageNetworkNode<T> extends AbstractStorageNetworkNode implements
         }
         LOGGER.info("Storage activeness got changed to '{}', updating underlying storage", newActive);
         if (newActive) {
-            exposedStorage.setSource(internalStorage);
+            exposedStorage.setDelegate(internalStorage);
         } else {
             exposedStorage.removeSource();
         }

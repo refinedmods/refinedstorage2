@@ -35,6 +35,18 @@ class CoreValidationsTest {
     }
 
     @Test
+    void shouldValidateNull() {
+        // Act & assert
+        final Exception e = assertThrows(
+            IllegalArgumentException.class,
+            () -> CoreValidations.validateNull("not null", "bla")
+        );
+        assertThat(e.getMessage()).isEqualTo("bla");
+
+        assertDoesNotThrow(() -> CoreValidations.validateNull(null, "bla"));
+    }
+
+    @Test
     void shouldValidateNotNull() {
         // Act & assert
         final Exception e = assertThrows(

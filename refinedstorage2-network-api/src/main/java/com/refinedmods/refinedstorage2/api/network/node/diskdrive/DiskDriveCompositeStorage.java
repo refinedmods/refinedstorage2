@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network.node.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.node.AbstractConfiguredProxyStorage;
+import com.refinedmods.refinedstorage2.api.network.node.AbstractImmutableConfiguredProxyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.StorageConfiguration;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
@@ -14,7 +14,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import java.util.Objects;
 import java.util.Optional;
 
-class DiskDriveCompositeStorage<T> extends AbstractConfiguredProxyStorage<T, CompositeStorageImpl<T>>
+class DiskDriveCompositeStorage<T> extends AbstractImmutableConfiguredProxyStorage<T, CompositeStorageImpl<T>>
     implements CompositeStorage<T>, CompositeAwareChild<T> {
     protected DiskDriveCompositeStorage(final StorageConfiguration config) {
         super(config);

@@ -62,7 +62,7 @@ public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode imple
         if (storage.internalStorage == null) {
             return;
         }
-        storage.exposedStorage.setStorage(storage.internalStorage);
+        storage.exposedStorage.setDelegate(storage.internalStorage);
     }
 
     public boolean detectChanges() {
@@ -92,10 +92,10 @@ public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode imple
     private class ConfiguredStorage<T> {
         @Nullable
         private ExternalStorage<T> internalStorage;
-        private final NetworkNodeStorage<T> exposedStorage;
+        private final ExposedExternalStorage<T> exposedStorage;
 
         private ConfiguredStorage() {
-            this.exposedStorage = new NetworkNodeStorage<>(ExternalStorageNetworkNode.this);
+            this.exposedStorage = new ExposedExternalStorage<>(ExternalStorageNetworkNode.this);
         }
     }
 }
