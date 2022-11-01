@@ -60,4 +60,16 @@ public abstract class AbstractConfiguredProxyStorage<T, S extends Storage<T>> im
         CoreValidations.validateNotNull(newDelegate, "The new delegate cannot be null");
         this.delegate = newDelegate;
     }
+
+    public final void tryClearDelegate() {
+        if (delegate == null) {
+            return;
+        }
+        clearDelegate();
+    }
+
+    public void clearDelegate() {
+        CoreValidations.validateNotNull(delegate, "There is no delegate set, cannot clear");
+        this.delegate = null;
+    }
 }
