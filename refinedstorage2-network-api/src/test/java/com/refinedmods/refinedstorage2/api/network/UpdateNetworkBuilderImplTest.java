@@ -11,7 +11,7 @@ import org.junit.jupiter.api.function.Executable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class NetworkBuilderImplUpdateTest extends AbstractNetworkBuilderImplTest {
+class UpdateNetworkBuilderImplTest extends AbstractNetworkBuilderImplTest {
     @Test
     void shouldNotBeAbleToUpdateWithoutNetworkAssigned() {
         // Arrange
