@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
 @SetupNetwork
-class DiskDriveNetworkNodePriorityTest {
+class PriorityDiskDriveNetworkNodeTest {
     @AddNetworkNode
     DiskDriveNetworkNode a;
 

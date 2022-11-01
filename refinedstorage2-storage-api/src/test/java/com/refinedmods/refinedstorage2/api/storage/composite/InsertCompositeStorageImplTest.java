@@ -16,7 +16,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CompositeStorageImplInsertTest {
+class InsertCompositeStorageImplTest {
     private CompositeStorageImpl<String> sut;
 
     @BeforeEach

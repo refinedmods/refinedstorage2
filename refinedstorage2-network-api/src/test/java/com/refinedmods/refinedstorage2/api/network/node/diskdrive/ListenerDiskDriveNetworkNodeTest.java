@@ -23,7 +23,7 @@ import static org.mockito.Mockito.verify;
 
 @NetworkTest
 @SetupNetwork
-class DiskDriveNetworkNodeListenerTest {
+class ListenerDiskDriveNetworkNodeTest {
     @AddNetworkNode
     DiskDriveNetworkNode sut;
 
