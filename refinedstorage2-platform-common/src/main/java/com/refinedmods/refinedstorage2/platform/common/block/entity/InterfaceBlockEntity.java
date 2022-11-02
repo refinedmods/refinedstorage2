@@ -36,6 +36,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
+// TODO: It's broken when attaching an ext storage on the same network :(
+// TODO: Interfaces will probably be stealing from each other.
 public class InterfaceBlockEntity
     extends AbstractInternalNetworkNodeContainerBlockEntity<InterfaceNetworkNode<ItemResource>>
     implements InterfaceExportState<ItemResource>, ExtendedMenuProvider, BlockEntityWithDrops {

@@ -41,6 +41,7 @@ jobs:
                 with:
                     branch: gh-pages
                     folder: build/docs/javadoc
+# TODO: re-enable
 #           -   name: Publish
 #               run: ./gradlew publish
 #               env:
