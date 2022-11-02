@@ -34,6 +34,7 @@ public interface PlatformApi {
 
     OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry();
 
+    // TODO: Add a priority to this.
     <T> void setExternalStorageProviderFactory(StorageChannelType<T> channelType,
                                                PlatformExternalStorageProviderFactory factory);
 
