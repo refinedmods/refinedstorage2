@@ -116,6 +116,7 @@ class ClearSlotInterfaceNetworkNodeTest {
         assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
         assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
         assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(5);
+        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactly(new ResourceAmount<>("A", 2));
@@ -124,6 +125,7 @@ class ClearSlotInterfaceNetworkNodeTest {
         assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
         assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
         assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(4);
+        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactly(new ResourceAmount<>("A", 3));
@@ -134,6 +136,7 @@ class ClearSlotInterfaceNetworkNodeTest {
         assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
         assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
         assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(4);
+        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
             .containsExactly(new ResourceAmount<>("A", 3));
@@ -153,6 +156,7 @@ class ClearSlotInterfaceNetworkNodeTest {
         assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
         assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
         assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(7);
+        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
 
         assertThat(storageChannel.getAll()).isEmpty();
     }

@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
@@ -24,6 +25,7 @@ import javax.annotation.Nullable;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
@@ -133,6 +135,14 @@ public class PlatformProxy implements Platform {
     @Override
     public TransferManager createTransferManager(final AbstractContainerMenu containerMenu) {
         return ensureLoaded().createTransferManager(containerMenu);
+    }
+
+    @Override
+    public long insertIntoContainer(final Container container,
+                                    final ItemResource itemResource,
+                                    final long amount,
+                                    final Action action) {
+        return ensureLoaded().insertIntoContainer(container, itemResource, amount, action);
     }
 
     private Platform ensureLoaded() {

@@ -1,8 +1,11 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.node.iface.InterfaceExportState;
+import com.refinedmods.refinedstorage2.api.network.node.iface.InterfaceExternalStorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.iface.InterfaceNetworkNode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
@@ -45,6 +48,7 @@ public class InterfaceBlockEntity
 
     private final FilterWithFuzzyMode filter;
     private final SimpleContainer exportedItems = new SimpleContainer(EXPORT_SLOTS);
+    private final InterfaceExternalStorageProvider<ItemResource> externalStorageProvider;
 
     public InterfaceBlockEntity(final BlockPos pos, final BlockState state) {
         super(
@@ -69,6 +73,11 @@ public class InterfaceBlockEntity
             64
         );
         this.exportedItems.addListener(c -> setChanged());
+        this.externalStorageProvider = new InterfaceExternalStorageProvider<>(() -> InterfaceBlockEntity.this);
+    }
+
+    public InterfaceExternalStorageProvider<ItemResource> getExternalStorageProvider() {
+        return externalStorageProvider;
     }
 
     @Override
@@ -206,5 +215,10 @@ public class InterfaceBlockEntity
             drops.add(exportedItems.getItem(i));
         }
         return drops;
+    }
+
+    @Override
+    public long insert(final ItemResource resource, final long amount, final Action action, final Actor actor) {
+        return Platform.INSTANCE.insertIntoContainer(exportedItems, resource, amount, action);
     }
 }

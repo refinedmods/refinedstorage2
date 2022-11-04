@@ -48,6 +48,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
+import com.refinedmods.refinedstorage2.platform.common.internal.network.node.externalstorage.InterfacePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
@@ -236,16 +237,23 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerExternalStorageProviderFactories() {
-        PlatformApi.INSTANCE.setExternalStorageProviderFactory(
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
             StorageChannelTypes.ITEM,
+            1,
+            new InterfacePlatformExternalStorageProviderFactory()
+        );
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
+            StorageChannelTypes.ITEM,
+            0,
             new StoragePlatformExternalStorageProviderFactory<>(
                 ItemStorage.SIDED,
                 VariantUtil::ofItemVariant,
                 VariantUtil::toItemVariant
             )
         );
-        PlatformApi.INSTANCE.setExternalStorageProviderFactory(
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
             StorageChannelTypes.FLUID,
+            0,
             new StoragePlatformExternalStorageProviderFactory<>(
                 FluidStorage.SIDED,
                 VariantUtil::ofFluidVariant,
