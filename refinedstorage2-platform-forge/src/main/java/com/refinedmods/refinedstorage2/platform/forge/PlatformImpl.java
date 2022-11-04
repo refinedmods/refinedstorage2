@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
@@ -36,6 +37,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
@@ -44,6 +46,8 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public final class PlatformImpl extends AbstractPlatform {
@@ -144,5 +148,17 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public TransferManager createTransferManager(final AbstractContainerMenu containerMenu) {
         return new TransferManager(containerMenu, ContainerTransferDestination::new);
+    }
+
+    @Override
+    public long insertIntoContainer(final Container container,
+                                    final ItemResource itemResource,
+                                    final long amount,
+                                    final Action action) {
+        final InvWrapper wrapper = new InvWrapper(container);
+        final ItemStack stack = itemResource.toItemStack();
+        stack.setCount((int) amount);
+        final ItemStack remainder = ItemHandlerHelper.insertItem(wrapper, stack, action == Action.SIMULATE);
+        return amount - remainder.getCount();
     }
 }

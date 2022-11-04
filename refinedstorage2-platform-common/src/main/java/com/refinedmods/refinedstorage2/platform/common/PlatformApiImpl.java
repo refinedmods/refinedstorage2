@@ -31,10 +31,13 @@ import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeR
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
@@ -68,8 +71,8 @@ public class PlatformApiImpl implements PlatformApi {
         new OrderedRegistryImpl<>(createIdentifier("noop"),
             (level, pos, direction, hasStackUpgrade, fuzzyMode) -> (resource, actor, network) -> false);
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
-    private final Map<StorageChannelType<?>, PlatformExternalStorageProviderFactory> externalStorageProviderFactories =
-        new HashMap<>();
+    private final Map<StorageChannelType<?>, Set<PlatformExternalStorageProviderFactory>>
+        externalStorageProviderFactories = new HashMap<>();
 
     @Override
     public OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry() {
@@ -117,19 +120,23 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public <T> void setExternalStorageProviderFactory(final StorageChannelType<T> channelType,
+    public <T> void addExternalStorageProviderFactory(final StorageChannelType<T> channelType,
+                                                      final int priority,
                                                       final PlatformExternalStorageProviderFactory factory) {
-        if (externalStorageProviderFactories.containsKey(channelType)) {
-            throw new IllegalArgumentException(channelType + " is already registered");
-        }
-        externalStorageProviderFactories.put(channelType, factory);
+        final Set<PlatformExternalStorageProviderFactory> factories = externalStorageProviderFactories.computeIfAbsent(
+            channelType,
+            k -> new TreeSet<>(
+                Comparator.comparingInt(PlatformExternalStorageProviderFactory::getPriority)
+            )
+        );
+        factories.add(factory);
     }
 
     @Override
-    public <T> Optional<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactory(
+    public <T> Set<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories(
         final StorageChannelType<T> channelType
     ) {
-        return Optional.ofNullable(externalStorageProviderFactories.get(channelType));
+        return externalStorageProviderFactories.getOrDefault(channelType, Collections.emptySet());
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.refinedmods.refinedstorage2.api.network.node.iface;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
 import java.util.ArrayList;
@@ -126,5 +128,18 @@ public class InterfaceExportStateImpl implements InterfaceExportState<String> {
         validateIndex(index);
         final ResourceAmount<String> resourceAmount = this.current.get(index);
         resourceAmount.increment(amount);
+    }
+
+    @Override
+    public long insert(final String resource, final long amount, final Action action, final Actor actor) {
+        for (int i = 0; i < getSlots(); ++i) {
+            if (getCurrentlyExportedResource(i) == null) {
+                if (action == Action.EXECUTE) {
+                    setCurrentlyExported(i, resource, amount);
+                }
+                return amount;
+            }
+        }
+        return 0;
     }
 }

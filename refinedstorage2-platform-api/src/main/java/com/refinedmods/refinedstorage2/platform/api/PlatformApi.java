@@ -15,7 +15,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepos
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
-import java.util.Optional;
+import java.util.Set;
 
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -34,11 +34,11 @@ public interface PlatformApi {
 
     OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry();
 
-    // TODO: Add a priority to this.
-    <T> void setExternalStorageProviderFactory(StorageChannelType<T> channelType,
+    <T> void addExternalStorageProviderFactory(StorageChannelType<T> channelType,
+                                               int priority,
                                                PlatformExternalStorageProviderFactory factory);
 
-    <T> Optional<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactory(
+    <T> Set<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories(
         StorageChannelType<T> channelType
     );
 

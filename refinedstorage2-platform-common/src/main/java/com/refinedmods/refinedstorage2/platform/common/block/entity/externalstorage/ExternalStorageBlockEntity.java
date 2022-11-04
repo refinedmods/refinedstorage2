@@ -66,8 +66,10 @@ public class ExternalStorageBlockEntity
                 final Direction incomingDirection = direction.getOpposite();
                 final BlockPos sourcePosition = worldPosition.relative(direction);
                 return PlatformApi.INSTANCE
-                    .getExternalStorageProviderFactory(channelType)
-                    .map(factory -> factory.create(level, sourcePosition, incomingDirection));
+                    .getExternalStorageProviderFactories(channelType)
+                    .stream()
+                    .flatMap(factory -> factory.<T>create(level, sourcePosition, incomingDirection).stream())
+                    .findFirst();
             }
         });
     }
@@ -76,6 +78,7 @@ public class ExternalStorageBlockEntity
     public void doWork() {
         super.doWork();
         if (workRate.canDoWork()) {
+            // TODO: some blocks constantly have changes ?!
             final boolean hasChanges = getNode().detectChanges();
             LOGGER.info("Detecting changes for external storage {}, changes = {}", worldPosition, hasChanges);
             if (hasChanges) {

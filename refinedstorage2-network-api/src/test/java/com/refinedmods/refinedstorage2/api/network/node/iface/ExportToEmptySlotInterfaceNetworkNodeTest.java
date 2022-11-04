@@ -68,6 +68,7 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
         assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
         assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
         assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(2);
+        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
 
         assertThat(storageChannel.getAll()).isEmpty();
     }
@@ -89,6 +90,7 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
         assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
         assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A");
         assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(1);
+        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
 
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()
@@ -143,6 +145,7 @@ class ExportToEmptySlotInterfaceNetworkNodeTest {
         assertThat(exportState.getCurrentlyExportedResource(0)).isNull();
         assertThat(exportState.getCurrentlyExportedResource(1)).isEqualTo("A1");
         assertThat(exportState.getCurrentlyExportedResourceAmount(1)).isEqualTo(2);
+        assertThat(exportState.getCurrentlyExportedResource(2)).isNull();
 
         assertThat(storageChannel.getAll())
             .usingRecursiveFieldByFieldElementComparator()

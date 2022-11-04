@@ -29,6 +29,16 @@ public class InterfaceNetworkNode<T> extends AbstractNetworkNode {
         this.energyUsage = energyUsage;
     }
 
+    public InterfaceExternalStorageProvider<T> createExternalStorageProvider() {
+        return new InterfaceExternalStorageProvider<>(new InterfaceExportStateProvider<>() {
+            @Nullable
+            @Override
+            public InterfaceExportState<T> getExportState() {
+                return exportState;
+            }
+        });
+    }
+
     public void setExportState(@Nullable final InterfaceExportState<T> exportState) {
         this.exportState = exportState;
     }

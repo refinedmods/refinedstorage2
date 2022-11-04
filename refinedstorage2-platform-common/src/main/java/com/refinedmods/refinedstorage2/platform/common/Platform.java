@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
@@ -23,6 +24,7 @@ import java.util.function.Function;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
@@ -71,4 +73,6 @@ public interface Platform {
     void setEnergy(EnergyStorage energyStorage, long stored);
 
     TransferManager createTransferManager(AbstractContainerMenu containerMenu);
+
+    long insertIntoContainer(Container container, ItemResource itemResource, long amount, Action action);
 }
