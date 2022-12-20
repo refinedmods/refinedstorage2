@@ -7,6 +7,10 @@
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+When porting to a new (binary-breaking) Minecraft version, the minor version number needs to be incremented.
+That way, we can still keep maintaining the previous Minecraft version if necessary without being in conflict
+with the version number of the new Minecraft version.
+
 ## Pull requests
 
 - Keep your PR as small as possible, this makes reviewing easier.
@@ -30,6 +34,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Gitflow
 
 This project uses [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
+
+We use [support branches](https://groups.google.com/g/gitflow-users/c/I9sErOSzYzE/m/AwVH06CuKT0J) for supporting different major/minor versions at the same time.
 
 ## Documentation
 
@@ -107,13 +113,13 @@ Refined Storage 2 is modularized. That means that the project is split up into v
 Important to note is that most modules aren't dependent on Minecraft or a mod loader. Only modules that start
 with `refinedstorage2-platform-*` have dependencies on Minecraft.
 
-| Name                           | Use in addons | Description                                                                           |
-|--------------------------------|---------------|---------------------------------------------------------------------------------------|
-| `refinedstorage2-core-api`     | ✔️            | Contains some utility classes and enums.                                              |
-| `refinedstorage2-grid-api`     | ✔️            | Contains Grid related functionality.                                                  |
-| `refinedstorage2-network-api`  | ✔️            | Contains storage network related functionality.                                       |
-| `refinedstorage2-network-api`  | ✔️            | Contains storage network related functionality.                                       |
-| `refinedstorage2-network-test` | ✔️            | JUnit extension which helps with setting up a network and a network node for testing. |
+| Name                              | Use in addons | Description                                                                           |
+|-----------------------------------|---------------|---------------------------------------------------------------------------------------|
+| `refinedstorage2-core-api`        | ✔️            | Contains some utility classes and enums.                                              |
+| `refinedstorage2-grid-api`        | ✔️            | Contains Grid related functionality.                                                  |
+| `refinedstorage2-network-api`     | ✔️            | Contains storage network related functionality.                                       |
+| `refinedstorage2-network-api`     | ✔️            | Contains storage network related functionality.                                       |
+| `refinedstorage2-network-test`    | ✔️            | JUnit extension which helps with setting up a network and a network node for testing. |
 | `refinedstorage2-query-parser`    | ✔️            | A query parser, contains a lexer and parser. Only used for Grid query parsing.        |
 | `refinedstorage2-resource-api`    | ✔️            | Contains API for handling resources.                                                  |
 | `refinedstorage2-storage-api`     | ✔️            | Contains storage related functionality.                                               |
