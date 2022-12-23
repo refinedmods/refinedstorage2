@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractLevelInteractingNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
@@ -27,19 +27,21 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ExternalStorageBlockEntity
-    extends AbstractLevelInteractingNetworkNodeContainerBlockEntity<ExternalStorageNetworkNode>
+    extends AbstractInternalNetworkNodeContainerBlockEntity<ExternalStorageNetworkNode>
     implements ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final FilterWithFuzzyMode filter;
     private final StorageConfigurationContainerImpl configContainer;
     private final WorkRate workRate = new WorkRate();
+    private boolean initialized;
 
     public ExternalStorageBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getExternalStorage(), pos, state, new ExternalStorageNetworkNode(
@@ -59,7 +61,21 @@ public class ExternalStorageBlockEntity
     }
 
     @Override
-    protected void initialize(final ServerLevel level, final Direction direction) {
+    protected void activenessChanged(final BlockState state,
+                                     final boolean newActive,
+                                     @Nullable final BooleanProperty activenessProperty) {
+        super.activenessChanged(state, newActive, activenessProperty);
+        if (!initialized && level instanceof ServerLevel serverLevel) {
+            loadStorage(serverLevel);
+            initialized = true;
+        }
+    }
+
+    private void loadStorage(final ServerLevel serverLevel) {
+        final Direction direction = getDirection();
+        if (direction == null) {
+            return;
+        }
         getNode().initialize(new ExternalStorageProviderFactory() {
             @Override
             public <T> Optional<ExternalStorageProvider<T>> create(final StorageChannelType<T> channelType) {
@@ -68,7 +84,7 @@ public class ExternalStorageBlockEntity
                 return PlatformApi.INSTANCE
                     .getExternalStorageProviderFactories(channelType)
                     .stream()
-                    .flatMap(factory -> factory.<T>create(level, sourcePosition, incomingDirection).stream())
+                    .flatMap(factory -> factory.<T>create(serverLevel, sourcePosition, incomingDirection).stream())
                     .findFirst();
             }
         });

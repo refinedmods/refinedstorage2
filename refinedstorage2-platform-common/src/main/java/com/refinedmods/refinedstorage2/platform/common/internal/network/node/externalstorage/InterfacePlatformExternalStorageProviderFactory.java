@@ -10,7 +10,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 
-// TODO: This breaks on world load :(
 public class InterfacePlatformExternalStorageProviderFactory implements PlatformExternalStorageProviderFactory {
     @Override
     public <T> Optional<ExternalStorageProvider<T>> create(final ServerLevel level,
@@ -19,7 +18,7 @@ public class InterfacePlatformExternalStorageProviderFactory implements Platform
         if (level.getBlockState(pos).getBlock() != Blocks.INSTANCE.getInterface()) {
             return Optional.empty();
         }
-        return Optional.of(new InterfaceExternalStorageProviderProxy<>(level, pos));
+        return Optional.of(new InterfaceProxyExternalStorageProvider<>(level, pos));
     }
 
     @Override
