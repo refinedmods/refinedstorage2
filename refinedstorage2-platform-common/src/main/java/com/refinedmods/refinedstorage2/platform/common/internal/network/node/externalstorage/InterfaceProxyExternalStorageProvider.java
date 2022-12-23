@@ -14,11 +14,11 @@ import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
-public class InterfaceExternalStorageProviderProxy<T> implements ExternalStorageProvider<T> {
+public class InterfaceProxyExternalStorageProvider<T> implements ExternalStorageProvider<T> {
     private final Level level;
     private final BlockPos pos;
 
-    public InterfaceExternalStorageProviderProxy(final Level level, final BlockPos pos) {
+    public InterfaceProxyExternalStorageProvider(final Level level, final BlockPos pos) {
         this.level = level;
         this.pos = pos;
     }
