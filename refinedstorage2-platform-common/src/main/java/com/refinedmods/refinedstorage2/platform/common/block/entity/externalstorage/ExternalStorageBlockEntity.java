@@ -61,18 +61,29 @@ public class ExternalStorageBlockEntity
     }
 
     @Override
+    public void setBlockState(final BlockState newBlockState) {
+        super.setBlockState(newBlockState);
+        if (level instanceof ServerLevel serverLevel) {
+            LOGGER.info("Reloading external storage @ {} as block state has changed", worldPosition);
+            loadStorage(serverLevel);
+        }
+    }
+
+    @Override
     protected void activenessChanged(final BlockState state,
                                      final boolean newActive,
                                      @Nullable final BooleanProperty activenessProperty) {
         super.activenessChanged(state, newActive, activenessProperty);
         if (!initialized && level instanceof ServerLevel serverLevel) {
+            LOGGER.info("Triggering initial load of external storage {}", worldPosition);
             loadStorage(serverLevel);
             initialized = true;
         }
     }
 
-    private void loadStorage(final ServerLevel serverLevel) {
+    public void loadStorage(final ServerLevel serverLevel) {
         final Direction direction = getDirection();
+        LOGGER.info("Loading storage for external storage with direction {} @ {}", direction, worldPosition);
         if (direction == null) {
             return;
         }
