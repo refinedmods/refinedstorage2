@@ -5,7 +5,10 @@ import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNodeActor;
+import com.refinedmods.refinedstorage2.api.network.node.externalstorage.ExposedExternalStorage;
+import com.refinedmods.refinedstorage2.api.network.node.iface.externalstorage.InterfaceExternalStorageProvider;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
@@ -25,18 +28,30 @@ public class InterfaceNetworkNode<T> extends AbstractNetworkNode {
         this.storageChannelType = storageChannelType;
     }
 
-    public void setEnergyUsage(final long energyUsage) {
-        this.energyUsage = energyUsage;
+    public boolean isActingAsExternalStorage() {
+        if (network == null) {
+            return false;
+        }
+        return network
+            .getComponent(StorageNetworkComponent.class)
+            .getStorageChannel(storageChannelType)
+            .hasSource(this::isStorageAnExternalStorageProviderThatReferencesMe);
     }
 
-    public InterfaceExternalStorageProvider<T> createExternalStorageProvider() {
-        return new InterfaceExternalStorageProvider<>(new InterfaceExportStateProvider<>() {
-            @Nullable
-            @Override
-            public InterfaceExportState<T> getExportState() {
-                return exportState;
-            }
-        });
+    private boolean isStorageAnExternalStorageProviderThatReferencesMe(final Storage<T> storage) {
+        return storage instanceof ExposedExternalStorage<T> proxy
+            && proxy.getDelegate() != null
+            && proxy.getDelegate().getProvider() instanceof InterfaceExternalStorageProvider<T> interfaceProvider
+            && interfaceProvider.getInterface() == this;
+    }
+
+    @Nullable
+    public InterfaceExportState<T> getExportState() {
+        return exportState;
+    }
+
+    public void setEnergyUsage(final long energyUsage) {
+        this.energyUsage = energyUsage;
     }
 
     public void setExportState(@Nullable final InterfaceExportState<T> exportState) {

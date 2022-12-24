@@ -60,6 +60,7 @@ class CompositeStorageImplTest {
             new ResourceAmount<>("B", 5),
             new ResourceAmount<>("C", 7)
         );
+        assertThat(sut.getSources()).containsExactly(storage1, storage2, storage3);
         assertThat(inserted).isEqualTo(5);
     }
 
@@ -90,6 +91,7 @@ class CompositeStorageImplTest {
             new ResourceAmount<>("A", 10),
             new ResourceAmount<>("B", 5)
         );
+        assertThat(sut.getSources()).containsExactly(storage1, storage2);
         assertThat(extracted).isZero();
     }
 
@@ -117,20 +119,21 @@ class CompositeStorageImplTest {
 
         // Assert
         assertThat(sut.getAll()).isEmpty();
+        assertThat(sut.getSources()).isEmpty();
         assertThat(extracted).isZero();
     }
 
     @Test
     void shouldRespectPriorityWhenAddingNewSources() {
         // Arrange
-        final Storage<String> storage1 = new LimitedStorageImpl<>(10);
-        final Storage<String> storage2 = new LimitedStorageImpl<>(10);
-        final Storage<String> storage3 = new LimitedStorageImpl<>(10);
+        final Storage<String> storage1 = new PrioritizedStorage<>(20, new LimitedStorageImpl<>(10));
+        final Storage<String> storage2 = new PrioritizedStorage<>(10, new LimitedStorageImpl<>(10));
+        final Storage<String> storage3 = new PrioritizedStorage<>(30, new LimitedStorageImpl<>(10));
 
         // Act
-        sut.addSource(new PrioritizedStorage<>(20, storage1));
-        sut.addSource(new PrioritizedStorage<>(10, storage2));
-        sut.addSource(new PrioritizedStorage<>(30, storage3));
+        sut.addSource(storage1);
+        sut.addSource(storage2);
+        sut.addSource(storage3);
 
         final long inserted = sut.insert("A", 12, Action.EXECUTE, EmptyActor.INSTANCE);
 
@@ -138,6 +141,7 @@ class CompositeStorageImplTest {
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount<>("A", 12)
         );
+        assertThat(sut.getSources()).containsExactly(storage3, storage1, storage2);
         assertThat(inserted).isEqualTo(12);
         assertThat(storage3.getStored()).isEqualTo(10);
         assertThat(storage1.getStored()).isEqualTo(2);
@@ -163,6 +167,7 @@ class CompositeStorageImplTest {
         assertThat(sut.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
             new ResourceAmount<>("A", 12)
         );
+        assertThat(sut.getSources()).containsExactly(storage1, storage2);
         assertThat(inserted).isEqualTo(12);
         assertThat(storage1.getStored()).isEqualTo(10);
         assertThat(storage2.getStored()).isEqualTo(2);

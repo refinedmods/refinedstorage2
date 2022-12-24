@@ -2,8 +2,9 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.node.iface.InterfaceExportState;
-import com.refinedmods.refinedstorage2.api.network.node.iface.InterfaceExternalStorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.iface.InterfaceNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.node.iface.externalstorage.InterfaceExternalStorageProvider;
+import com.refinedmods.refinedstorage2.api.network.node.iface.externalstorage.InterfaceExternalStorageProviderImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
@@ -39,7 +40,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-// TODO: Interfaces will probably be stealing from each other.
 public class InterfaceBlockEntity
     extends AbstractInternalNetworkNodeContainerBlockEntity<InterfaceNetworkNode<ItemResource>>
     implements InterfaceExportState<ItemResource>, ExtendedMenuProvider, BlockEntityWithDrops {
@@ -73,7 +73,7 @@ public class InterfaceBlockEntity
             64
         );
         this.exportedItems.addListener(c -> setChanged());
-        this.externalStorageProvider = new InterfaceExternalStorageProvider<>(() -> InterfaceBlockEntity.this);
+        this.externalStorageProvider = new InterfaceExternalStorageProviderImpl<>(getNode());
     }
 
     public InterfaceExternalStorageProvider<ItemResource> getExternalStorageProvider() {

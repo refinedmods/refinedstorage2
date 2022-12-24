@@ -7,6 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed IO loops caused by Interfaces stealing from each other.
+
+### Changed
+
+- An Interface that is acting as External Storage can no longer extract or insert from other Interfaces (and itself)
+  that are acting as External Storage.
+
 ## [2.0.0-milestone.2.4] - 2022-11-01
 
 ### Fixed

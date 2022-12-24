@@ -6,6 +6,7 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.apiguardian.api.API;
 
@@ -56,4 +57,12 @@ public interface StorageChannel<T> extends Storage<T>, TrackedStorage<T> {
      * @param source the source
      */
     void removeSource(Storage<T> source);
+
+    /**
+     * Checks if a source is present.
+     *
+     * @param matcher a predicate
+     * @return whether the predicate matched
+     */
+    boolean hasSource(Predicate<Storage<T>> matcher);
 }

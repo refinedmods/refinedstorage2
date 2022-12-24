@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
-import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
@@ -19,7 +18,6 @@ import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.network.test.NetworkTest;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.junit.jupiter.api.Nested;
@@ -63,7 +61,7 @@ class ExternalStorageNetworkNodeTest {
     void shouldInitialize(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new InMemoryStorageImpl<>();
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
 
         // Act
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
@@ -79,10 +77,10 @@ class ExternalStorageNetworkNodeTest {
     ) {
         // Arrange
         final Storage<String> storage1 = new InMemoryStorageImpl<>();
-        final ExternalStorageProvider<String> provider1 = new ExternalStorageProviderImpl<>(storage1);
+        final ExternalStorageProvider<String> provider1 = new StorageExternalStorageProvider<>(storage1);
 
         final Storage<String> storage2 = new InMemoryStorageImpl<>();
-        final ExternalStorageProvider<String> provider2 = new ExternalStorageProviderImpl<>(storage2);
+        final ExternalStorageProvider<String> provider2 = new StorageExternalStorageProvider<>(storage2);
 
         // Act
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider1));
@@ -108,7 +106,7 @@ class ExternalStorageNetworkNodeTest {
     void shouldInsert(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new InMemoryStorageImpl<>();
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
         // Act
@@ -130,7 +128,7 @@ class ExternalStorageNetworkNodeTest {
         // Arrange
         final Storage<String> storage = new InMemoryStorageImpl<>();
         storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
         // Act
@@ -154,7 +152,7 @@ class ExternalStorageNetworkNodeTest {
         sut.setFilterTemplates(Set.of("A", "B"));
 
         final Storage<String> storage = new InMemoryStorageImpl<>();
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
         // Act
@@ -177,7 +175,7 @@ class ExternalStorageNetworkNodeTest {
         sut.setFilterTemplates(Set.of());
 
         final Storage<String> storage = new InMemoryStorageImpl<>();
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
         // Act
@@ -198,7 +196,7 @@ class ExternalStorageNetworkNodeTest {
         sut.setFilterTemplates(Set.of("A", "B"));
 
         final Storage<String> storage = new InMemoryStorageImpl<>();
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
         // Act
@@ -220,7 +218,7 @@ class ExternalStorageNetworkNodeTest {
         sut.setFilterTemplates(Set.of());
 
         final Storage<String> storage = new InMemoryStorageImpl<>();
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
         // Act
@@ -243,7 +241,7 @@ class ExternalStorageNetworkNodeTest {
         sut.setAccessMode(accessMode);
 
         final Storage<String> storage = new InMemoryStorageImpl<>();
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
         // Act
@@ -266,7 +264,7 @@ class ExternalStorageNetworkNodeTest {
 
         final Storage<String> storage = new InMemoryStorageImpl<>();
         storage.insert("A", 20, Action.EXECUTE, EmptyActor.INSTANCE);
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
 
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
@@ -284,7 +282,7 @@ class ExternalStorageNetworkNodeTest {
     void shouldNotInsertWhenInactive(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new InMemoryStorageImpl<>();
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
 
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
         sut.setActive(false);
@@ -301,7 +299,7 @@ class ExternalStorageNetworkNodeTest {
         // Arrange
         final Storage<String> storage = new InMemoryStorageImpl<>();
         storage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
 
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
         sut.setActive(false);
@@ -319,7 +317,7 @@ class ExternalStorageNetworkNodeTest {
     ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
         networkStorage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -337,7 +335,7 @@ class ExternalStorageNetworkNodeTest {
     void shouldShowStorageContentsWhenActive(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
         networkStorage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -363,7 +361,7 @@ class ExternalStorageNetworkNodeTest {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
         // Act & assert
@@ -386,7 +384,7 @@ class ExternalStorageNetworkNodeTest {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
         // Act & assert
@@ -417,7 +415,7 @@ class ExternalStorageNetworkNodeTest {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
         // Act & assert
@@ -460,7 +458,7 @@ class ExternalStorageNetworkNodeTest {
     void shouldTrackChanges(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>()<>(storage);
         sut.initialize(new FakeExternalStorageProviderFactory(provider));
 
         // Act
@@ -475,7 +473,7 @@ class ExternalStorageNetworkNodeTest {
     void shouldDetectChanges(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        final ExternalStorageProvider<String> provider = new ExternalStorageProviderImpl<>(storage);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
         sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
 
         // Act
@@ -504,11 +502,11 @@ class ExternalStorageNetworkNodeTest {
                                    @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
             // Arrange
             final Storage<String> storage1 = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
-            final ExternalStorageProvider<String> provider1 = new ExternalStorageProviderImpl<>(storage1);
+            final ExternalStorageProvider<String> provider1 = new StorageExternalStorageProvider<>(storage1);
             sut.initialize(new ExternalStorageProviderFactoryImpl(provider1));
 
             final Storage<String> storage2 = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
-            final ExternalStorageProvider<String> provider2 = new ExternalStorageProviderImpl<>(storage2);
+            final ExternalStorageProvider<String> provider2 = new StorageExternalStorageProvider<>(storage2);
             otherStorage.initialize(new ExternalStorageProviderFactoryImpl(provider2));
 
             if (oneHasPriority) {
@@ -530,29 +528,6 @@ class ExternalStorageNetworkNodeTest {
                 assertThat(storage1.getAll()).isEmpty();
                 assertThat(storage2.getAll()).isNotEmpty();
             }
-        }
-    }
-
-    private static class ExternalStorageProviderImpl<T> implements ExternalStorageProvider<T> {
-        private final Storage<T> storage;
-
-        ExternalStorageProviderImpl(final Storage<T> storage) {
-            this.storage = storage;
-        }
-
-        @Override
-        public long extract(final T resource, final long amount, final Action action, final Actor actor) {
-            return storage.extract(resource, amount, action, actor);
-        }
-
-        @Override
-        public long insert(final T resource, final long amount, final Action action, final Actor actor) {
-            return storage.insert(resource, amount, action, actor);
-        }
-
-        @Override
-        public Iterator<ResourceAmount<T>> iterator() {
-            return storage.getAll().iterator();
         }
     }
 }
