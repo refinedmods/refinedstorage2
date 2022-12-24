@@ -11,6 +11,7 @@ import com.refinedmods.refinedstorage2.api.storage.composite.CompositeStorageImp
 import com.refinedmods.refinedstorage2.api.storage.composite.ParentComposite;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -38,6 +39,11 @@ class DiskDriveCompositeStorage<T> extends AbstractImmutableConfiguredProxyStora
     @Override
     public void removeSource(final Storage<T> source) {
         delegate().removeSource(source);
+    }
+
+    @Override
+    public List<Storage<T>> getSources() {
+        return delegate().getSources();
     }
 
     @Override

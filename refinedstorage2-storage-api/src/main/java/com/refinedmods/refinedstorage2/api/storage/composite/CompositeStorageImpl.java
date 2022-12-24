@@ -10,6 +10,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -61,6 +62,11 @@ public class CompositeStorageImpl<T> implements CompositeStorage<T>, CompositeAw
         if (source instanceof CompositeAwareChild<T> compositeAwareChild) {
             compositeAwareChild.onRemovedFromComposite(this);
         }
+    }
+
+    @Override
+    public List<Storage<T>> getSources() {
+        return Collections.unmodifiableList(sources);
     }
 
     @Override

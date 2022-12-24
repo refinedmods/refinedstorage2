@@ -9,6 +9,10 @@ public class NetworkNodeActor implements Actor {
         this.networkNode = networkNode;
     }
 
+    public NetworkNode getNetworkNode() {
+        return networkNode;
+    }
+
     @Override
     public String getName() {
         return networkNode.getClass().getName();

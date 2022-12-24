@@ -10,13 +10,19 @@ import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorage;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import javax.annotation.Nullable;
 
-class ExposedExternalStorage<T> extends AbstractConfiguredProxyStorage<T, ExternalStorage<T>>
+public class ExposedExternalStorage<T> extends AbstractConfiguredProxyStorage<T, ExternalStorage<T>>
     implements ConsumingStorage<T>, CompositeAwareChild<T> {
     private final Set<ParentComposite<T>> parents = new HashSet<>();
 
     ExposedExternalStorage(final StorageConfiguration config) {
         super(config);
+    }
+
+    @Nullable
+    public ExternalStorage<T> getDelegate() {
+        return delegate;
     }
 
     @Override

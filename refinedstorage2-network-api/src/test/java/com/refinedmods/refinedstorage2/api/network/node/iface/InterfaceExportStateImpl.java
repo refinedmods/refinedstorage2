@@ -27,6 +27,10 @@ public class InterfaceExportStateImpl implements InterfaceExportState<String> {
         requested.put(index, new ResourceAmount<>(resource, amount));
     }
 
+    public void clearRequestedResources() {
+        requested.clear();
+    }
+
     @Override
     public int getSlots() {
         return slots;

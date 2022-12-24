@@ -77,6 +77,24 @@ class StorageChannelImplTest {
         assertThat(extracted).isEqualTo(5);
     }
 
+    @Test
+    void shouldFindMatchingStorage() {
+        // Arrange
+        final Storage<String> matchedStorage = new LimitedStorageImpl<>(10);
+        matchedStorage.insert("A", 8, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.addSource(matchedStorage);
+
+        final Storage<String> unmatchedStorage = new LimitedStorageImpl<>(10);
+
+        // Act
+        final boolean foundMatched = sut.hasSource(s -> s == matchedStorage);
+        final boolean foundUnmatched = sut.hasSource(s -> s == unmatchedStorage);
+
+        // Assert
+        assertThat(foundMatched).isTrue();
+        assertThat(foundUnmatched).isFalse();
+    }
+
     @ParameterizedTest
     @EnumSource(Action.class)
     void shouldCallListenerOnInsertion(final Action action) {

@@ -23,6 +23,10 @@ public class ExternalStorage<T> implements ConsumingStorage<T>, CompositeAwareCh
         this.provider = provider;
     }
 
+    public ExternalStorageProvider<T> getProvider() {
+        return provider;
+    }
+
     @Override
     public long extract(final T resource, final long amount, final Action action, final Actor actor) {
         final long extracted = provider.extract(resource, amount, action, actor);
