@@ -18,8 +18,7 @@ import java.util.Optional;
 class DiskDriveCompositeStorage<T> extends AbstractImmutableConfiguredProxyStorage<T, CompositeStorageImpl<T>>
     implements CompositeStorage<T>, CompositeAwareChild<T> {
     protected DiskDriveCompositeStorage(final StorageConfiguration config) {
-        super(config);
-        this.delegate = new CompositeStorageImpl<>(new ResourceListImpl<>());
+        super(config, new CompositeStorageImpl<>(new ResourceListImpl<>()));
     }
 
     @Override

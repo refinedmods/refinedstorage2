@@ -6,8 +6,9 @@ public abstract class AbstractImmutableConfiguredProxyStorage<T, S extends Stora
     extends AbstractConfiguredProxyStorage<T, S> {
     private static final String ERROR_MESSAGE = "Cannot modify delegate, it's immutable";
 
-    protected AbstractImmutableConfiguredProxyStorage(final StorageConfiguration config) {
+    protected AbstractImmutableConfiguredProxyStorage(final StorageConfiguration config, final S delegate) {
         super(config);
+        this.delegate = delegate;
     }
 
     @Override

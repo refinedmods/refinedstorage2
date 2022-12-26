@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 
 public abstract class AbstractConfiguredProxyStorage<T, S extends Storage<T>> implements Storage<T>, Priority {
     @Nullable
-    protected S delegate;
+    protected S delegate; // TODO: Make private.
     private final StorageConfiguration config;
 
     protected AbstractConfiguredProxyStorage(final StorageConfiguration config) {

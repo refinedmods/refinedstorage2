@@ -6,25 +6,30 @@ import com.refinedmods.refinedstorage2.api.network.node.AbstractStorageNetworkNo
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorage;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.LongSupplier;
 import javax.annotation.Nullable;
 
 public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode implements StorageProvider {
     private final long energyUsage;
     private final Map<StorageChannelType<?>, DynamicStorage<?>> storages = new HashMap<>();
 
-    public ExternalStorageNetworkNode(final long energyUsage,
-                                      final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
+    public ExternalStorageNetworkNode(final long energyUsage) {
         this.energyUsage = energyUsage;
-        initialize(storageChannelTypeRegistry);
     }
 
-    private void initialize(final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry) {
-        storageChannelTypeRegistry.getAll().forEach(type -> storages.put(type, new DynamicStorage<>()));
+    public void initialize(final OrderedRegistry<?, ? extends StorageChannelType<?>> storageChannelTypeRegistry,
+                           final LongSupplier clock,
+                           final TrackedStorageRepositoryProvider trackedStorageRepositoryProvider) {
+        storageChannelTypeRegistry.getAll().forEach(type -> storages.put(type, new DynamicStorage<>(
+            trackedStorageRepositoryProvider.getRepository(type),
+            clock
+        )));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -39,7 +44,7 @@ public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode imple
                                 final StorageChannelType<T> type,
                                 final DynamicStorage<T> dynamicStorage) {
         factory.create(type).ifPresent(provider -> {
-            dynamicStorage.internalStorage = new ExternalStorage<>(provider);
+            dynamicStorage.internalStorage = new ExternalStorage<>(provider, dynamicStorage.exposedStorage);
             if (isActive()) {
                 dynamicStorage.setVisible(true);
             }
@@ -81,8 +86,13 @@ public class ExternalStorageNetworkNode extends AbstractStorageNetworkNode imple
         @Nullable
         private ExternalStorage<T> internalStorage;
 
-        private DynamicStorage() {
-            this.exposedStorage = new ExposedExternalStorage<>(ExternalStorageNetworkNode.this);
+        private DynamicStorage(final TrackedStorageRepository<T> trackingRepository,
+                               final LongSupplier clock) {
+            this.exposedStorage = new ExposedExternalStorage<>(
+                ExternalStorageNetworkNode.this,
+                trackingRepository,
+                clock
+            );
         }
 
         public void setVisible(final boolean visible) {

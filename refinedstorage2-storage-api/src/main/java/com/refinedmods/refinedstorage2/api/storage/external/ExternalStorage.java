@@ -14,13 +14,18 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
 public class ExternalStorage<T> implements ConsumingStorage<T>, CompositeAwareChild<T> {
     private final ExternalStorageProvider<T> provider;
-    private final Set<ParentComposite<T>> listeners = new HashSet<>();
+    private final Set<ParentComposite<T>> parents = new HashSet<>();
     private final ResourceList<T> cache = new ResourceListImpl<>();
+    private final ExternalStorageListener<T> listener;
 
-    public ExternalStorage(final ExternalStorageProvider<T> provider) {
+    public ExternalStorage(final ExternalStorageProvider<T> provider, final ExternalStorageListener<T> listener) {
         this.provider = provider;
+        this.listener = listener;
     }
 
     public ExternalStorageProvider<T> getProvider() {
@@ -31,6 +36,7 @@ public class ExternalStorage<T> implements ConsumingStorage<T>, CompositeAwareCh
     public long extract(final T resource, final long amount, final Action action, final Actor actor) {
         final long extracted = provider.extract(resource, amount, action, actor);
         if (action == Action.EXECUTE && extracted > 0) {
+            listener.beforeDetectChanges(resource, actor);
             detectChanges();
         }
         return extracted;
@@ -40,6 +46,7 @@ public class ExternalStorage<T> implements ConsumingStorage<T>, CompositeAwareCh
     public long insert(final T resource, final long amount, final Action action, final Actor actor) {
         final long inserted = provider.insert(resource, amount, action, actor);
         if (action == Action.EXECUTE && inserted > 0) {
+            listener.beforeDetectChanges(resource, actor);
             detectChanges();
         }
         return inserted;
@@ -80,7 +87,7 @@ public class ExternalStorage<T> implements ConsumingStorage<T>, CompositeAwareCh
     }
 
     private boolean detectPotentialDifference(final ResourceAmount<T> inUpdatedCache,
-                                           final ResourceAmount<T> inOldCache) {
+                                              final ResourceAmount<T> inOldCache) {
         final T resource = inUpdatedCache.getResource();
         final long diff = inUpdatedCache.getAmount() - inOldCache.getAmount();
         if (diff > 0) {
@@ -95,12 +102,12 @@ public class ExternalStorage<T> implements ConsumingStorage<T>, CompositeAwareCh
 
     private void addToCache(final T resource, final long amount) {
         cache.add(resource, amount);
-        listeners.forEach(listener -> listener.addToCache(resource, amount));
+        parents.forEach(parent -> parent.addToCache(resource, amount));
     }
 
     private void removeFromCache(final T resource, final long amount) {
         cache.remove(resource, amount);
-        listeners.forEach(listener -> listener.removeFromCache(resource, amount));
+        parents.forEach(parent -> parent.removeFromCache(resource, amount));
     }
 
     private ResourceList<T> buildCache() {
@@ -121,11 +128,11 @@ public class ExternalStorage<T> implements ConsumingStorage<T>, CompositeAwareCh
 
     @Override
     public void onAddedIntoComposite(final ParentComposite<T> parentComposite) {
-        listeners.add(parentComposite);
+        parents.add(parentComposite);
     }
 
     @Override
     public void onRemovedFromComposite(final ParentComposite<T> parentComposite) {
-        listeners.remove(parentComposite);
+        parents.remove(parentComposite);
     }
 }

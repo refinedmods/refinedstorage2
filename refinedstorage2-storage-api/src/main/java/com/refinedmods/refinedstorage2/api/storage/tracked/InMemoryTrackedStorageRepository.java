@@ -10,11 +10,14 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
 public class InMemoryTrackedStorageRepository<T> implements TrackedStorageRepository<T> {
-    private final Map<Class<? extends Actor>, Map<T, TrackedResource>> map = new HashMap<>();
+    protected final Map<Class<? extends Actor>, Map<T, TrackedResource>> trackedResourcesByActorType = new HashMap<>();
 
     @Override
     public void update(final T resource, final Actor actor, final long time) {
-        final Map<T, TrackedResource> resourceMap = map.computeIfAbsent(actor.getClass(), k -> new HashMap<>());
+        final Map<T, TrackedResource> resourceMap = trackedResourcesByActorType.computeIfAbsent(
+            actor.getClass(),
+            k -> new HashMap<>()
+        );
         final TrackedResource existing = resourceMap.get(resource);
         if (existing == null) {
             resourceMap.put(resource, new TrackedResource(actor.getName(), time));
@@ -24,11 +27,11 @@ public class InMemoryTrackedStorageRepository<T> implements TrackedStorageReposi
     }
 
     @Override
-    public Optional<TrackedResource> findTrackedResourceBySourceType(final T resource,
-                                                                     final Class<? extends Actor> actorType) {
-        final Map<T, TrackedResource> resourceMap = map.get(actorType);
-        if (resourceMap != null) {
-            return Optional.ofNullable(resourceMap.get(resource));
+    public Optional<TrackedResource> findTrackedResourceByActorType(final T resource,
+                                                                    final Class<? extends Actor> actorType) {
+        final Map<T, TrackedResource> resources = trackedResourcesByActorType.get(actorType);
+        if (resources != null) {
+            return Optional.ofNullable(resources.get(resource));
         }
         return Optional.empty();
     }

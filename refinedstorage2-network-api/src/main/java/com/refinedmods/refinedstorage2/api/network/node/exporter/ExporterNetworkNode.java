@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
 
+// TODO: Move to own module (refinedstorage2-network), everything in api should have @Api annot.
+// TODO: Add ADRs
 public class ExporterNetworkNode extends AbstractNetworkNode {
     private long energyUsage;
     private final Actor actor = new NetworkNodeActor(this);
