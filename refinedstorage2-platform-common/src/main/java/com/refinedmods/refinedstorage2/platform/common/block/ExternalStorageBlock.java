@@ -45,6 +45,7 @@ public class ExternalStorageBlock extends AbstractDirectionalCableBlock implemen
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void neighborChanged(final BlockState state,
                                 final Level level,
                                 final BlockPos pos,
