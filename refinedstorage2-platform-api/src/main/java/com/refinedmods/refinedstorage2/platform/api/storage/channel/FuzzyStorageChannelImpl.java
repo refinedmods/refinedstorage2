@@ -7,8 +7,10 @@ import com.refinedmods.refinedstorage2.platform.api.resource.list.FuzzyResourceL
 
 import java.util.Collection;
 
-public class FuzzyStorageChannelImpl<T extends FuzzyModeNormalizer<T>>
-    extends StorageChannelImpl<T>
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
+public class FuzzyStorageChannelImpl<T extends FuzzyModeNormalizer<T>> extends StorageChannelImpl<T>
     implements FuzzyStorageChannel<T> {
     private final FuzzyResourceList<T> fuzzyList;
 

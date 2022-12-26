@@ -63,6 +63,6 @@ public class PlatformStorage<T> extends AbstractProxyStorage<T> implements Seria
     @Override
     public Optional<TrackedResource> findTrackedResourceByActorType(final T resource,
                                                                     final Class<? extends Actor> actorType) {
-        return trackingRepository.findTrackedResourceBySourceType(resource, actorType);
+        return trackingRepository.findTrackedResourceByActorType(resource, actorType);
     }
 }

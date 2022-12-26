@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.api.network.node.externalstorage;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
 import com.refinedmods.refinedstorage2.api.network.Network;
+import com.refinedmods.refinedstorage2.api.network.node.storage.FakeActor;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
@@ -11,6 +12,7 @@ import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
+import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.network.test.AddNetworkNode;
 import com.refinedmods.refinedstorage2.network.test.InjectNetwork;
@@ -18,7 +20,9 @@ import com.refinedmods.refinedstorage2.network.test.InjectNetworkStorageChannel;
 import com.refinedmods.refinedstorage2.network.test.NetworkTest;
 import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -43,8 +47,8 @@ class ExternalStorageNetworkNodeTest {
     @Test
     void testInitialState(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Act
-        final long inserted = networkStorage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        final long extracted = networkStorage.extract("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final long inserted = networkStorage.insert("A", 10, Action.EXECUTE, FakeActor.INSTANCE);
+        final long extracted = networkStorage.extract("A", 10, Action.EXECUTE, FakeActor.INSTANCE);
 
         // Assert
         assertThat(inserted).isZero();
@@ -55,6 +59,7 @@ class ExternalStorageNetworkNodeTest {
         assertThat(sut.getFilterMode()).isEqualTo(FilterMode.BLOCK);
         assertThat(networkStorage.getAll()).isEmpty();
         assertThat(networkStorage.getStored()).isZero();
+        assertThat(networkStorage.findTrackedResourceByActorType("A", FakeActor.class)).isEmpty();
     }
 
     @Test
@@ -453,21 +458,136 @@ class ExternalStorageNetworkNodeTest {
         assertThat(networkStorage.getAll()).isEmpty();
     }
 
-    /* TODO - change tracking
-    @Test
-    void shouldTrackChanges(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void shouldTrackChangesWhenExtracting(
+        final Action action,
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
-        final Storage<String> storage = new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L);
-        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>()<>(storage);
-        sut.initialize(new FakeExternalStorageProviderFactory(provider));
+        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        storage.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
+        sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
+
+        final AtomicBoolean trackedResourceWasPresent = trackWhetherResourceHasChangedAndTrackedResourceIsAvailable(
+            networkStorage
+        );
 
         // Act
-        final long inserted = networkStorage.insert("A", 10, Action.EXECUTE, FakeActor.INSTANCE);
+        final long extracted = networkStorage.extract("A", 7, action, FakeActor.INSTANCE);
+
+        // Assert
+        assertThat(extracted).isEqualTo(7);
+        final Optional<TrackedResource> trackedResource = networkStorage.findTrackedResourceByActorType(
+            "A",
+            FakeActor.class
+        );
+        if (action == Action.EXECUTE) {
+            assertThat(trackedResource).get().usingRecursiveComparison().isEqualTo(new TrackedResource(
+                FakeActor.INSTANCE.getName(),
+                0
+            ));
+            assertThat(trackedResourceWasPresent).describedAs("tracked resource was present").isTrue();
+        } else {
+            assertThat(trackedResource).isEmpty();
+            assertThat(trackedResourceWasPresent).describedAs("tracked resource was present").isFalse();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void shouldNotTrackChangesWhenExtractionFailed(
+        final Action action,
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
+        // Arrange
+        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
+        sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
+
+        // Act
+        final long extracted = networkStorage.extract("A", 7, action, FakeActor.INSTANCE);
+
+        // Assert
+        assertThat(extracted).isZero();
+        final Optional<TrackedResource> trackedResource = networkStorage.findTrackedResourceByActorType(
+            "A",
+            FakeActor.class
+        );
+        assertThat(trackedResource).isEmpty();
+    }
+
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void shouldTrackChangesWhenInserting(
+        final Action action,
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
+        // Arrange
+        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
+        sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
+
+        final AtomicBoolean trackedResourceWasPresent = trackWhetherResourceHasChangedAndTrackedResourceIsAvailable(
+            networkStorage
+        );
+
+        // Act
+        final long inserted = networkStorage.insert("A", 10, action, FakeActor.INSTANCE);
 
         // Assert
         assertThat(inserted).isEqualTo(10);
-        assertThat(networkStorage.findTrackedResourceByActorType("A", FakeActor.class)).isNotEmpty();
-    } */
+        final Optional<TrackedResource> trackedResource = networkStorage.findTrackedResourceByActorType(
+            "A",
+            FakeActor.class
+        );
+        if (action == Action.EXECUTE) {
+            assertThat(trackedResource).get().usingRecursiveComparison().isEqualTo(new TrackedResource(
+                FakeActor.INSTANCE.getName(),
+                0
+            ));
+            assertThat(trackedResourceWasPresent).describedAs("tracked resource was present").isTrue();
+        } else {
+            assertThat(trackedResource).isEmpty();
+            assertThat(trackedResourceWasPresent).describedAs("tracked resource was present").isFalse();
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(Action.class)
+    void shouldNotTrackChangesWhenInsertionFailed(
+        final Action action,
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
+        // Arrange
+        final Storage<String> storage = new LimitedStorageImpl<>(0);
+        final ExternalStorageProvider<String> provider = new StorageExternalStorageProvider<>(storage);
+        sut.initialize(new ExternalStorageProviderFactoryImpl(provider));
+
+        // Act
+        final long inserted = networkStorage.insert("A", 10, action, FakeActor.INSTANCE);
+
+        // Assert
+        assertThat(inserted).isZero();
+        final Optional<TrackedResource> trackedResource = networkStorage.findTrackedResourceByActorType(
+            "A",
+            FakeActor.class
+        );
+        assertThat(trackedResource).isEmpty();
+    }
+
+    private AtomicBoolean trackWhetherResourceHasChangedAndTrackedResourceIsAvailable(
+        final StorageChannel<String> networkStorage
+    ) {
+        final AtomicBoolean found = new AtomicBoolean();
+        networkStorage.addListener(change -> {
+            if (change.resourceAmount().getResource().equals("A")) {
+                found.set(networkStorage.findTrackedResourceByActorType("A", FakeActor.class).isPresent());
+            }
+        });
+        return found;
+    }
 
     @Test
     void shouldDetectChanges(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {

@@ -10,5 +10,5 @@ import org.apiguardian.api.API;
 public interface TrackedStorageRepository<T> {
     void update(T resource, Actor actor, long time);
 
-    Optional<TrackedResource> findTrackedResourceBySourceType(T resource, Class<? extends Actor> actorType);
+    Optional<TrackedResource> findTrackedResourceByActorType(T resource, Class<? extends Actor> actorType);
 }

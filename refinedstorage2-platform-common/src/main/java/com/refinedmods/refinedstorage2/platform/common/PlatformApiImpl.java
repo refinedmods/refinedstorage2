@@ -18,6 +18,7 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSynchronizer;
@@ -60,7 +61,7 @@ public class PlatformApiImpl implements PlatformApi {
         new NetworkBuilderImpl(new NetworkFactory(networkComponentMapFactory));
     private final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry =
         new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemStorageType.INSTANCE);
-    private final OrderedRegistry<ResourceLocation, StorageChannelType<?>> storageChannelTypeRegistry =
+    private final OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> storageChannelTypeRegistry =
         new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageChannelTypes.ITEM);
     private final OrderedRegistry<ResourceLocation, GridSynchronizer> gridSynchronizerRegistry =
         new OrderedRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
@@ -95,9 +96,9 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     private PlatformStorageRepositoryImpl createStorageRepository(final CompoundTag tag) {
-        final PlatformStorageRepositoryImpl manager = createStorageRepository();
-        manager.read(tag);
-        return manager;
+        final PlatformStorageRepositoryImpl repository = createStorageRepository();
+        repository.read(tag);
+        return repository;
     }
 
     private PlatformStorageRepositoryImpl createStorageRepository() {
@@ -105,7 +106,7 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, StorageChannelType<?>> getStorageChannelTypeRegistry() {
+    public OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> getStorageChannelTypeRegistry() {
         return storageChannelTypeRegistry;
     }
 

@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Fixed IO loops caused by Interfaces stealing from each other.
+- Fixed storages from an External Storage not reporting when a resource has last changed.
 
 ### Changed
 

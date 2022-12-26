@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
@@ -28,7 +29,7 @@ public interface PlatformApi {
 
     PlatformStorageRepository getStorageRepository(Level level);
 
-    OrderedRegistry<ResourceLocation, StorageChannelType<?>> getStorageChannelTypeRegistry();
+    OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> getStorageChannelTypeRegistry();
 
     OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> getImporterTransferStrategyRegistry();
 

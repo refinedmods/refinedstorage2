@@ -39,7 +39,7 @@ public class DiskDriveNetworkNode extends AbstractStorageNetworkNode implements 
 
     public DiskDriveNetworkNode(final long energyUsage,
                                 final long energyUsagePerDisk,
-                                final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry,
+                                final OrderedRegistry<?, ? extends StorageChannelType<?>> storageChannelTypeRegistry,
                                 final int diskCount) {
         this.energyUsage = energyUsage;
         this.energyUsagePerDisk = energyUsagePerDisk;
@@ -48,7 +48,7 @@ public class DiskDriveNetworkNode extends AbstractStorageNetworkNode implements 
     }
 
     private Map<StorageChannelType<?>, DiskDriveCompositeStorage<?>> createCompositeStorages(
-        final OrderedRegistry<?, StorageChannelType<?>> storageChannelTypeRegistry
+        final OrderedRegistry<?, ? extends StorageChannelType<?>> storageChannelTypeRegistry
     ) {
         return storageChannelTypeRegistry
             .getAll()

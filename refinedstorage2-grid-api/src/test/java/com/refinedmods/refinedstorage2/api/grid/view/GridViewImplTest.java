@@ -53,7 +53,7 @@ class GridViewImplTest {
         );
     }
 
-    @RepeatedTest(100)
+    @RepeatedTest(100) // TODO: Remove
     void shouldPreserveOrderWhenSortingAndTwoResourcesHaveTheSameQuantity() {
         // Arrange
         final GridView<String> view = viewBuilder.build();

@@ -19,6 +19,7 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -37,20 +38,30 @@ public class ExternalStorageBlockEntity
     extends AbstractInternalNetworkNodeContainerBlockEntity<ExternalStorageNetworkNode>
     implements ExtendedMenuProvider {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final String TAG_TRACKED_RESOURCES = "tr";
 
     private final FilterWithFuzzyMode filter;
     private final StorageConfigurationContainerImpl configContainer;
+    private final ExternalStorageTrackedStorageRepositoryProvider trackedStorageRepositoryProvider;
     private final WorkRate workRate = new WorkRate();
     private boolean initialized;
 
     public ExternalStorageBlockEntity(final BlockPos pos, final BlockState state) {
         super(BlockEntities.INSTANCE.getExternalStorage(), pos, state, new ExternalStorageNetworkNode(
-            Platform.INSTANCE.getConfig().getExternalStorage().getEnergyUsage(),
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
+            Platform.INSTANCE.getConfig().getExternalStorage().getEnergyUsage()
         ));
         this.filter = new FilterWithFuzzyMode(this::setChanged, getNode()::setFilterTemplates, value -> {
         });
+        this.trackedStorageRepositoryProvider = new ExternalStorageTrackedStorageRepositoryProvider(
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
+            this::setChanged
+        );
         getNode().setNormalizer(filter.createNormalizer());
+        getNode().initialize(
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
+            System::currentTimeMillis,
+            trackedStorageRepositoryProvider
+        );
         this.configContainer = new StorageConfigurationContainerImpl(
             getNode(),
             filter,
@@ -122,6 +133,7 @@ public class ExternalStorageBlockEntity
         super.saveAdditional(tag);
         filter.save(tag);
         configContainer.save(tag);
+        tag.put(TAG_TRACKED_RESOURCES, trackedStorageRepositoryProvider.toTag());
     }
 
     @Override
@@ -129,6 +141,7 @@ public class ExternalStorageBlockEntity
         super.load(tag);
         filter.load(tag);
         configContainer.load(tag);
+        trackedStorageRepositoryProvider.fromTag(tag.getList(TAG_TRACKED_RESOURCES, Tag.TAG_COMPOUND));
     }
 
     @Override
