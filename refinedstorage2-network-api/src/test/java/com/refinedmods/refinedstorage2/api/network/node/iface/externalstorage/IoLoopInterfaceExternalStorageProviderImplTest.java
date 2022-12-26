@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
 @SetupNetwork
-public class IoLoopInterfaceExternalStorageProviderImplTest {
+class IoLoopInterfaceExternalStorageProviderImplTest {
     Storage<String> regularStorageInNetwork;
 
     @AddNetworkNode
@@ -86,7 +86,7 @@ public class IoLoopInterfaceExternalStorageProviderImplTest {
     // Insertions
     // from Interfaces acting as External Storage
     // to other Interfaces acting as External Storage
-    // isn't allowed as it would create an insertion loop between the Interfaces for unwanted items
+    // isn't allowed as it would create an insertion loop between the Interfaces for unwanted resources
     // and would double count them because the External Storage update is later.
     @Test
     void shouldNotAllowInsertionByAnotherInterfaceIfThatInterfaceIsActingAsExternalStorage(

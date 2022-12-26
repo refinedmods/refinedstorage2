@@ -61,6 +61,7 @@ public class ExternalStorageBlockEntity
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void setBlockState(final BlockState newBlockState) {
         super.setBlockState(newBlockState);
         if (level instanceof ServerLevel serverLevel) {

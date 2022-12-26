@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
 @SetupNetwork
-public class SelfIoInterfaceExternalStorageProviderImplTest {
+class SelfIoInterfaceExternalStorageProviderImplTest {
     @AddNetworkNode
     InterfaceNetworkNode<String> iface;
     InterfaceExportStateImpl exportState;
