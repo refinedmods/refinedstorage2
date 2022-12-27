@@ -590,6 +590,15 @@ class ExternalStorageNetworkNodeTest {
     }
 
     @Test
+    void shouldNotDetectChangesWithoutConnectedStorage() {
+        // Act
+        final boolean hasChanges = sut.detectChanges();
+
+        // Assert
+        assertThat(hasChanges).isFalse();
+    }
+
+    @Test
     void shouldDetectChanges(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);

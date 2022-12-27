@@ -12,7 +12,6 @@ import com.refinedmods.refinedstorage2.api.storage.composite.ParentComposite;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 class DiskDriveCompositeStorage<T> extends AbstractImmutableConfiguredProxyStorage<T, CompositeStorageImpl<T>>
@@ -26,43 +25,39 @@ class DiskDriveCompositeStorage<T> extends AbstractImmutableConfiguredProxyStora
         // no-op: cannot sort individual disks.
     }
 
-    private CompositeStorageImpl<T> delegate() {
-        return Objects.requireNonNull(delegate);
-    }
-
     @Override
     public void addSource(final Storage<T> source) {
-        delegate().addSource(source);
+        getDelegate().addSource(source);
     }
 
     @Override
     public void removeSource(final Storage<T> source) {
-        delegate().removeSource(source);
+        getDelegate().removeSource(source);
     }
 
     @Override
     public List<Storage<T>> getSources() {
-        return delegate().getSources();
+        return getDelegate().getSources();
     }
 
     @Override
     public void clearSources() {
-        delegate().clearSources();
+        getDelegate().clearSources();
     }
 
     @Override
     public Optional<TrackedResource> findTrackedResourceByActorType(final T resource,
                                                                     final Class<? extends Actor> actorType) {
-        return delegate().findTrackedResourceByActorType(resource, actorType);
+        return getDelegate().findTrackedResourceByActorType(resource, actorType);
     }
 
     @Override
     public void onAddedIntoComposite(final ParentComposite<T> parentComposite) {
-        delegate().onAddedIntoComposite(parentComposite);
+        getDelegate().onAddedIntoComposite(parentComposite);
     }
 
     @Override
     public void onRemovedFromComposite(final ParentComposite<T> parentComposite) {
-        delegate().onRemovedFromComposite(parentComposite);
+        getDelegate().onRemovedFromComposite(parentComposite);
     }
 }

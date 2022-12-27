@@ -10,15 +10,21 @@ import com.refinedmods.refinedstorage2.api.storage.composite.Priority;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import javax.annotation.Nullable;
 
 public abstract class AbstractConfiguredProxyStorage<T, S extends Storage<T>> implements Storage<T>, Priority {
     @Nullable
-    protected S delegate; // TODO: Make private.
+    private S delegate;
     private final StorageConfiguration config;
 
     protected AbstractConfiguredProxyStorage(final StorageConfiguration config) {
         this.config = config;
+    }
+
+    protected AbstractConfiguredProxyStorage(final StorageConfiguration config, final S delegate) {
+        this(config);
+        this.delegate = delegate;
     }
 
     @Override
@@ -53,6 +59,15 @@ public abstract class AbstractConfiguredProxyStorage<T, S extends Storage<T>> im
     @Override
     public int getPriority() {
         return config.getPriority();
+    }
+
+    protected S getDelegate() {
+        return Objects.requireNonNull(getUnsafeDelegate());
+    }
+
+    @Nullable
+    protected S getUnsafeDelegate() {
+        return delegate;
     }
 
     public void setDelegate(final S newDelegate) {

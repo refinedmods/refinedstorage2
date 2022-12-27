@@ -8,12 +8,12 @@ import com.refinedmods.refinedstorage2.api.storage.composite.ConsumingStorage;
 import com.refinedmods.refinedstorage2.api.storage.composite.ParentComposite;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorage;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageListener;
+import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.LongSupplier;
@@ -34,13 +34,18 @@ public class ExposedExternalStorage<T> extends AbstractConfiguredProxyStorage<T,
     }
 
     @Nullable
-    public ExternalStorage<T> getDelegate() {
-        return delegate;
+    public ExternalStorageProvider<T> getExternalStorageProvider() {
+        final ExternalStorage<T> delegate = getUnsafeDelegate();
+        if (delegate == null) {
+            return null;
+        }
+        return delegate.getProvider();
     }
 
     @Override
     public void onAddedIntoComposite(final ParentComposite<T> parentComposite) {
         parents.add(parentComposite);
+        final ExternalStorage<T> delegate = getUnsafeDelegate();
         if (delegate != null) {
             delegate.onAddedIntoComposite(parentComposite);
         }
@@ -49,6 +54,7 @@ public class ExposedExternalStorage<T> extends AbstractConfiguredProxyStorage<T,
     @Override
     public void onRemovedFromComposite(final ParentComposite<T> parentComposite) {
         parents.remove(parentComposite);
+        final ExternalStorage<T> delegate = getUnsafeDelegate();
         if (delegate != null) {
             delegate.onRemovedFromComposite(parentComposite);
         }
@@ -65,15 +71,20 @@ public class ExposedExternalStorage<T> extends AbstractConfiguredProxyStorage<T,
 
     @Override
     public void clearDelegate() {
+        final ExternalStorage<T> delegate = getDelegate();
         parents.forEach(parent -> {
-            parent.onSourceRemovedFromChild(Objects.requireNonNull(delegate));
+            parent.onSourceRemovedFromChild(delegate);
             delegate.onRemovedFromComposite(parent);
         });
         super.clearDelegate();
     }
 
     public boolean detectChanges() {
-        return delegate != null && delegate.detectChanges();
+        final ExternalStorage<T> delegate = getUnsafeDelegate();
+        if (delegate == null) {
+            return false;
+        }
+        return delegate.detectChanges();
     }
 
     @Override

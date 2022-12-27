@@ -40,8 +40,7 @@ public class InterfaceNetworkNode<T> extends AbstractNetworkNode {
 
     private boolean isStorageAnExternalStorageProviderThatReferencesMe(final Storage<T> storage) {
         return storage instanceof ExposedExternalStorage<T> proxy
-            && proxy.getDelegate() != null
-            && proxy.getDelegate().getProvider() instanceof InterfaceExternalStorageProvider<T> interfaceProvider
+            && proxy.getExternalStorageProvider() instanceof InterfaceExternalStorageProvider<T> interfaceProvider
             && interfaceProvider.getInterface() == this;
     }
 
