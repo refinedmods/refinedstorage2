@@ -11,7 +11,6 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorage;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -26,7 +25,7 @@ class ExposedStorage<T> extends AbstractConfiguredProxyStorage<T, Storage<T>>
     @Override
     public Optional<TrackedResource> findTrackedResourceByActorType(final T resource,
                                                                     final Class<? extends Actor> actorType) {
-        return delegate instanceof TrackedStorage<T> trackedStorage
+        return getUnsafeDelegate() instanceof TrackedStorage<T> trackedStorage
             ? trackedStorage.findTrackedResourceByActorType(resource, actorType)
             : Optional.empty();
     }
@@ -42,7 +41,7 @@ class ExposedStorage<T> extends AbstractConfiguredProxyStorage<T, Storage<T>>
     }
 
     public long getCapacity() {
-        return delegate instanceof LimitedStorage<?> limitedStorage
+        return getUnsafeDelegate() instanceof LimitedStorage<?> limitedStorage
             ? limitedStorage.getCapacity()
             : 0L;
     }
@@ -55,7 +54,8 @@ class ExposedStorage<T> extends AbstractConfiguredProxyStorage<T, Storage<T>>
 
     @Override
     public void clearDelegate() {
-        parents.forEach(parent -> parent.onSourceRemovedFromChild(Objects.requireNonNull(delegate)));
+        final Storage<T> delegate = getDelegate();
+        parents.forEach(parent -> parent.onSourceRemovedFromChild(delegate));
         super.clearDelegate();
     }
 }
