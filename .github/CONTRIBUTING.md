@@ -22,6 +22,12 @@ with the version number of the new Minecraft version.
 
 Commit messages must adhere to [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+We use [Commitlint](https://commitlint.js.org/) in PR pipelines to validate commit messages.
+
+It is recommended to install
+the [Conventional Commit IntelliJ plugin](https://plugins.jetbrains.com/plugin/13389-conventional-commit) to make it
+easier to write commit messages.
+
 ## Changelog
 
 The changelog is kept in `CHANGELOG.md`.
@@ -49,7 +55,10 @@ Documentation must be kept up to date when adding functionality or changing docu
 
 We use [Checkstyle](https://checkstyle.sourceforge.io/) in our build pipeline to validate coding style.
 
-It is recommended to import the `checkstyle.xml` config into your IDE and/or install a Checkstyle plugin.
+It is recommended to import the `checkstyle.xml` config into your IDE, so that formatting rules are respected.
+
+Moreover, the [CheckStyle-IDEA](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea) plugin can be used to check
+if there are no style violations.
 
 ## Architecture
 
@@ -67,6 +76,8 @@ at all times.
 
 They ensure that there are no regressions, act as general documentation for the codebase,
 and ensure that the project can be evolved over time.
+
+To avoid brittle tests, tests need to validate behavior. A test cannot rely on the internal code structure.
 
 ### Test coverage
 
