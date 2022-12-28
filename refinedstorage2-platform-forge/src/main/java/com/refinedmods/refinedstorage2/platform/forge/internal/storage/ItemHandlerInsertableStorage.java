@@ -8,8 +8,6 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toItemStack;
-
 public class ItemHandlerInsertableStorage implements InsertableStorage<ItemResource> {
     private final InteractionCoordinates interactionCoordinates;
 
@@ -20,7 +18,7 @@ public class ItemHandlerInsertableStorage implements InsertableStorage<ItemResou
     @Override
     public long insert(final ItemResource resource, final long amount, final Action action, final Actor actor) {
         return interactionCoordinates.getItemHandler().map(itemHandler -> {
-            final ItemStack stack = toItemStack(resource, amount);
+            final ItemStack stack = resource.toItemStack(amount);
             final ItemStack remainder = ItemHandlerHelper.insertItem(
                 itemHandler,
                 stack,

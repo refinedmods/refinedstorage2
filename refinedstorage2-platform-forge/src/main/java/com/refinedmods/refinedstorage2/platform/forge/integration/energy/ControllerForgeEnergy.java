@@ -39,7 +39,7 @@ public class ControllerForgeEnergy extends EnergyStorageImpl implements IEnergyS
 
     @Override
     public int receiveEnergy(final int maxReceive, final boolean simulate) {
-        return (int) this.receive(maxReceive, simulate ? Action.SIMULATE : Action.EXECUTE);
+        return (int) receive(maxReceive, simulate ? Action.SIMULATE : Action.EXECUTE);
     }
 
     @Override
@@ -49,12 +49,12 @@ public class ControllerForgeEnergy extends EnergyStorageImpl implements IEnergyS
 
     @Override
     public int getEnergyStored() {
-        return (int) this.getStored();
+        return (int) getStored();
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return (int) this.getCapacity();
+        return (int) getCapacity();
     }
 
     @Override

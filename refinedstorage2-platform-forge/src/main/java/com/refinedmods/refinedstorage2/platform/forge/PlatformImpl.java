@@ -156,8 +156,7 @@ public final class PlatformImpl extends AbstractPlatform {
                                     final long amount,
                                     final Action action) {
         final InvWrapper wrapper = new InvWrapper(container);
-        final ItemStack stack = itemResource.toItemStack();
-        stack.setCount((int) amount);
+        final ItemStack stack = itemResource.toItemStack(amount);
         final ItemStack remainder = ItemHandlerHelper.insertItem(wrapper, stack, action == Action.SIMULATE);
         return amount - remainder.getCount();
     }
