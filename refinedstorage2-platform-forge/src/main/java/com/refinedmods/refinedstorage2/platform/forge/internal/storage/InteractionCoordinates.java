@@ -15,8 +15,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import static com.refinedmods.refinedstorage2.platform.api.resource.ItemResource.ofItemStack;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.ofFluidStack;
-import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.ofItemStack;
 
 public interface InteractionCoordinates {
     default LazyOptional<IItemHandler> getItemHandler() {

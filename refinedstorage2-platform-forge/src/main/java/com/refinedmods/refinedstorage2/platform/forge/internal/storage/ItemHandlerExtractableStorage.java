@@ -7,8 +7,6 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 
 import net.minecraft.world.item.ItemStack;
 
-import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toItemStack;
-
 public class ItemHandlerExtractableStorage implements ExtractableStorage<ItemResource> {
     private final InteractionCoordinates interactionCoordinates;
 
@@ -19,7 +17,7 @@ public class ItemHandlerExtractableStorage implements ExtractableStorage<ItemRes
     @Override
     public long extract(final ItemResource resource, final long amount, final Action action, final Actor actor) {
         return interactionCoordinates.getItemHandler().map(itemHandler -> {
-            final ItemStack toExtractStack = toItemStack(resource, amount);
+            final ItemStack toExtractStack = resource.toItemStack(amount);
             long extracted = 0;
             for (int slot = 0; slot < itemHandler.getSlots(); ++slot) {
                 final boolean relevant = isSame(itemHandler.getStackInSlot(slot), toExtractStack);

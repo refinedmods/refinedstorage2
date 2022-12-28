@@ -12,8 +12,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public record ItemResource(Item item, @Nullable CompoundTag tag) implements FuzzyModeNormalizer<ItemResource> {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private static final String TAG_TAG = "tag";
     private static final String TAG_ID = "id";
     private static final String TAG_AMOUNT = "amount";
@@ -29,10 +33,23 @@ public record ItemResource(Item item, @Nullable CompoundTag tag) implements Fuzz
         return itemStack;
     }
 
+    public ItemStack toItemStack(final long amount) {
+        if (amount > Integer.MAX_VALUE) {
+            LOGGER.warn("Truncating too large amount for {} to fit into ItemStack {}", this, amount);
+        }
+        final ItemStack stack = toItemStack();
+        stack.setCount((int) amount);
+        return stack;
+    }
+
     // TODO: This is kinda bad for perf. should just do comparisons instead.
     @Override
     public ItemResource normalize() {
         return new ItemResource(item, null);
+    }
+
+    public static ItemResource ofItemStack(final ItemStack itemStack) {
+        return new ItemResource(itemStack.getItem(), itemStack.getTag());
     }
 
     public static CompoundTag toTag(final ItemResource itemResource) {

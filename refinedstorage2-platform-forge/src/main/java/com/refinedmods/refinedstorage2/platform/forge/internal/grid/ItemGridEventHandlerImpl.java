@@ -18,7 +18,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.items.wrapper.RangedWrapper;
 
-import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.ofItemStack;
+import static com.refinedmods.refinedstorage2.platform.api.resource.ItemResource.ofItemStack;
 
 public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     private final AbstractContainerMenu containerMenu;

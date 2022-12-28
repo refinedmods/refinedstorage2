@@ -191,8 +191,7 @@ public class InterfaceBlockEntity
 
     @Override
     public void setCurrentlyExported(final int index, final ItemResource resource, final long amount) {
-        final ItemStack stack = resource.toItemStack();
-        stack.setCount((int) amount);
+        final ItemStack stack = resource.toItemStack(amount);
         exportedItems.setItem(index, stack);
     }
 

@@ -117,10 +117,9 @@ public class ExternalStorageBlockEntity
     public void doWork() {
         super.doWork();
         if (workRate.canDoWork()) {
-            // TODO: some blocks constantly have changes ?!
             final boolean hasChanges = getNode().detectChanges();
-            LOGGER.info("Detecting changes for external storage {}, changes = {}", worldPosition, hasChanges);
             if (hasChanges) {
+                LOGGER.info("External storage @ {} has changed!", worldPosition);
                 workRate.faster();
             } else {
                 workRate.slower();
