@@ -10,11 +10,17 @@ with the version number of the new Minecraft version.
 
 ## Pull requests
 
+### General guidelines
+
 - Keep your PR as small as possible, this makes reviewing easier.
 - Commits serve a clear purpose and have a fitting commit message.
 - Branches are kept up to date by rebasing, preferably.
-- PRs are merged by rebasing the commits on top of the target branch.
+- PRs are merged by *rebasing* the commits on top of the target branch.
 - Remember to add your changes in `CHANGELOG.md`.
+
+### Commit messages
+
+Commit messages must adhere to [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
 ## Changelog
 
@@ -74,8 +80,7 @@ harder to test.
 ### Mutation testing
 
 We also have [Pitest mutation testing](https://pitest.org/), which requires a minimum test coverage percentage of 80%
-and a minimum mutation
-percentage of 90%.
+and a minimum mutation percentage of 90%.
 
 ## Releasing
 
