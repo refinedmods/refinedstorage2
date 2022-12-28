@@ -1,8 +1,5 @@
 # Contributing to Refined Storage
 
-> This project won't accept any code contributions at this time. The repository has been made public for
-> transparency, but it's too early to contribute for now.
-
 ## Versioning
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -35,7 +32,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 This project uses [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
 
-We use [support branches](https://groups.google.com/g/gitflow-users/c/I9sErOSzYzE/m/AwVH06CuKT0J) for supporting different major/minor versions at the same time.
+We use [support branches](https://groups.google.com/g/gitflow-users/c/I9sErOSzYzE/m/AwVH06CuKT0J) for supporting
+different major/minor versions at the same time.
 
 ## Documentation
 
@@ -46,6 +44,12 @@ Documentation must be kept up to date when adding functionality or changing docu
 We use [Checkstyle](https://checkstyle.sourceforge.io/) in our build pipeline to validate coding style.
 
 It is recommended to import the `checkstyle.xml` config into your IDE and/or install a Checkstyle plugin.
+
+## Architecture
+
+### Architecture Decision Records
+
+The ADRs of this project can be found under [doc/architecture/decision](../doc/architecture/decision).
 
 ## Testing
 
@@ -108,16 +112,15 @@ After that, a Discord and Twitter notification is sent.
 
 ## Modules
 
-Refined Storage 2 is modularized. That means that the project is split up into various modules.
+Refined Storage 2 is modularized, the project is split up into various modules.
 
-Important to note is that most modules aren't dependent on Minecraft or a mod loader. Only modules that start
+Most modules aren't dependent on Minecraft or a mod loader. Only modules that start
 with `refinedstorage2-platform-*` have dependencies on Minecraft.
 
 | Name                              | Use in addons | Description                                                                           |
 |-----------------------------------|---------------|---------------------------------------------------------------------------------------|
 | `refinedstorage2-core-api`        | ✔️            | Contains some utility classes and enums.                                              |
 | `refinedstorage2-grid-api`        | ✔️            | Contains Grid related functionality.                                                  |
-| `refinedstorage2-network-api`     | ✔️            | Contains storage network related functionality.                                       |
 | `refinedstorage2-network-api`     | ✔️            | Contains storage network related functionality.                                       |
 | `refinedstorage2-network-test`    | ✔️            | JUnit extension which helps with setting up a network and a network node for testing. |
 | `refinedstorage2-query-parser`    | ✔️            | A query parser, contains a lexer and parser. Only used for Grid query parsing.        |
