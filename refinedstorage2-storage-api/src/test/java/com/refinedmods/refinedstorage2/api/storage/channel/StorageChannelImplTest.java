@@ -14,7 +14,6 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -262,7 +261,7 @@ class StorageChannelImplTest {
         assertThat(resource).isEmpty();
     }
 
-    @RepeatedTest(100) // TODO: Remove
+    @Test
     void shouldSortSources() {
         // Arrange
         final PrioritizedStorage<String> storage1 = new PrioritizedStorage<>(0, new LimitedStorageImpl<>(10));
