@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -53,12 +52,13 @@ class GridViewImplTest {
         );
     }
 
-    @RepeatedTest(100) // TODO: Remove
+    @Test
     void shouldPreserveOrderWhenSortingAndTwoResourcesHaveTheSameQuantity() {
         // Arrange
         final GridView<String> view = viewBuilder.build();
 
         view.setSortingDirection(GridSortingDirection.DESCENDING);
+        view.setSortingType(GridSortingType.QUANTITY);
 
         // Act & assert
         view.onChange("A", 10, null);
