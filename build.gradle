@@ -67,6 +67,7 @@ subprojects {
     tasks.withType(JavaCompile).configureEach {
         it.options.encoding = 'UTF-8'
         it.options.release.set(17)
+        it.options.deprecation = true
     }
 
     processResources {
