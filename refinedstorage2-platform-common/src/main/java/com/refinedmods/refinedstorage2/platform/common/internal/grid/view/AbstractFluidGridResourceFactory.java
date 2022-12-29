@@ -26,6 +26,7 @@ public abstract class AbstractFluidGridResourceFactory
         return new FluidGridResource(resourceAmount, name, modId, modName, tags, tooltip);
     }
 
+    @SuppressWarnings("deprecation") // forge deprecates Registry access
     private Set<String> getTags(final Fluid fluid) {
         return Registry.FLUID.getResourceKey(fluid)
             .flatMap(Registry.FLUID::getHolder)
@@ -35,6 +36,7 @@ public abstract class AbstractFluidGridResourceFactory
             .collect(Collectors.toSet());
     }
 
+    @SuppressWarnings("deprecation") // forge deprecates Registry access
     private String getModId(final FluidResource fluid) {
         return Registry.FLUID.getKey(fluid.fluid()).getNamespace();
     }

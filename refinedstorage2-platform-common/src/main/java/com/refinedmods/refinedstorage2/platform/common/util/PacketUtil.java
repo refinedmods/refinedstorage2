@@ -46,17 +46,20 @@ public final class PacketUtil {
         );
     }
 
+    @SuppressWarnings("deprecation") // forge deprecates Registry access
     public static void writeFluidResource(final FriendlyByteBuf buf, final FluidResource itemResource) {
         buf.writeVarInt(Registry.FLUID.getId(itemResource.fluid()));
         buf.writeNbt(itemResource.tag());
     }
 
+    @SuppressWarnings("deprecation") // forge deprecates Registry access
     public static FluidResource readFluidResource(final FriendlyByteBuf buf) {
         final int id = buf.readVarInt();
         final CompoundTag nbt = buf.readNbt();
         return new FluidResource(Registry.FLUID.byId(id), nbt);
     }
 
+    @SuppressWarnings("deprecation") // forge deprecates Registry access
     public static void writeFluidResourceAmount(final FriendlyByteBuf buf,
                                                 final com.refinedmods.refinedstorage2.api.resource
                                                     .ResourceAmount<FluidResource> resourceAmount) {
@@ -65,6 +68,7 @@ public final class PacketUtil {
         buf.writeNbt(resourceAmount.getResource().tag());
     }
 
+    @SuppressWarnings("deprecation") // forge deprecates Registry access
     public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<FluidResource> readFluidResourceAmount(
         final FriendlyByteBuf buf
     ) {

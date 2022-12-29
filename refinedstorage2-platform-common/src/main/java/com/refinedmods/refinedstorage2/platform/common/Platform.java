@@ -26,9 +26,13 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 public interface Platform {
     Platform INSTANCE = new PlatformProxy();
@@ -75,4 +79,6 @@ public interface Platform {
     TransferManager createTransferManager(AbstractContainerMenu containerMenu);
 
     long insertIntoContainer(Container container, ItemResource itemResource, long amount, Action action);
+
+    ItemStack getCloneItemStack(BlockState state, Level level, BlockHitResult hitResult, Player player);
 }

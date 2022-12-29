@@ -52,6 +52,7 @@ public record ItemResource(Item item, @Nullable CompoundTag tag) implements Fuzz
         return new ItemResource(itemStack.getItem(), itemStack.getTag());
     }
 
+    @SuppressWarnings("deprecation") // forge deprecates Registry access
     public static CompoundTag toTag(final ItemResource itemResource) {
         final CompoundTag tag = new CompoundTag();
         if (itemResource.tag() != null) {
@@ -67,6 +68,7 @@ public record ItemResource(Item item, @Nullable CompoundTag tag) implements Fuzz
         return tag;
     }
 
+    @SuppressWarnings("deprecation") // forge deprecates Registry access
     public static Optional<ItemResource> fromTag(final CompoundTag tag) {
         final ResourceLocation id = new ResourceLocation(tag.getString(TAG_ID));
         final Item item = Registry.ITEM.get(id);
