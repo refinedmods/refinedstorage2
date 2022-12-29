@@ -44,13 +44,13 @@ jobs:
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-            -   name: Mutation testing
-                run: ./gradlew pitest
             -   name: Publish test report
                 uses: mikepenz/action-junit-report@v3
                 if: always() # always run even if the previous step fails
                 with:
                     report_paths: '**/build/test-results/test/TEST-*.xml'
+            -   name: Mutation testing
+                run: ./gradlew pitest
             -   name: Upload build artifacts
                 if: ${{ runner.os == 'Linux' }}
                 uses: actions/upload-artifact@v3
