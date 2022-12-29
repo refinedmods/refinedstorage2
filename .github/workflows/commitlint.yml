@@ -1,6 +1,5 @@
 name: Lint Commit Messages
 on: [pull_request]
-
 jobs:
   commitlint:
     runs-on: ubuntu-latest
