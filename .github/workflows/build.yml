@@ -48,8 +48,6 @@ jobs:
                 if: always() # always run even if the previous step fails
                 with:
                     report_paths: '**/build/test-results/test/TEST-*.xml'
-            -   name: Checkstyle
-                run: ./gradlew checkstyleMain checkstyleTest
             -   name: Upload build artifacts
                 if: ${{ runner.os == 'Linux' }}
                 uses: actions/upload-artifact@v2
