@@ -25,11 +25,13 @@ jobs:
                 if: ${{ runner.os != 'Windows' }}
                 run: chmod +x ./gradlew
             -   name: Build, test and analyze
-                run: ./gradlew build pitest codeCoverageReport sonarqube
+                run: ./gradlew build codeCoverageReport sonarqube
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
                     RELEASE: ${{ steps.tagName.outputs.tag }}
+            -   name: Mutation testing
+                run: ./gradlew pitest
             -   name: Checkstyle
                 run: ./gradlew checkstyleMain checkstyleTest
             -   name: Build documentation

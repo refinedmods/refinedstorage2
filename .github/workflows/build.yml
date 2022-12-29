@@ -32,17 +32,19 @@ jobs:
                 run: chmod +x ./gradlew
             -   name: Build, test and analyze
                 if: ${{ github.event.pull_request.head.repo.fork }}
-                run: ./gradlew build pitest codeCoverageReport
+                run: ./gradlew build codeCoverageReport
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
             # TODO: We have to disable Sonar for now on forked PR builds as the analyze fails due to permission issues.
             -   name: Build, test and analyze (including SonarQube)
                 if: ${{ !github.event.pull_request.head.repo.fork }}
-                run: ./gradlew build pitest codeCoverageReport sonarqube
+                run: ./gradlew build codeCoverageReport sonarqube
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            -   name: Mutation testing
+                run: ./gradlew pitest
             -   name: Publish test report
                 uses: mikepenz/action-junit-report@v3
                 if: always() # always run even if the previous step fails
