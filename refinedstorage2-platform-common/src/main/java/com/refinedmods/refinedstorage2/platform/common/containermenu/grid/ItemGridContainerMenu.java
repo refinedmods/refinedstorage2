@@ -45,10 +45,16 @@ public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResourc
         super(Menus.INSTANCE.getGrid(), syncId, playerInventory, grid, createViewBuilder());
         final GridService<ItemResource> gridService = grid.getNode().createService(
             new PlayerActor(playerInventory.player),
-            itemResource -> (long) itemResource.item().getMaxStackSize(),
+            ItemGridContainerMenu::getMaxStackSize,
             1
         );
         this.itemGridEventHandler = Platform.INSTANCE.createItemGridEventHandler(this, gridService, playerInventory);
+    }
+
+    @SuppressWarnings("deprecation")
+    // Forge wants us to use the ItemStack sensitive version - but no way that we will be creating ItemStacks here.
+    private static long getMaxStackSize(final ItemResource itemResource) {
+        return itemResource.item().getMaxStackSize();
     }
 
     private static GridViewBuilder<ItemResource> createViewBuilder() {

@@ -96,6 +96,7 @@ class StorageChannelImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
+    @SuppressWarnings("unchecked")
     void shouldCallListenerOnInsertion(final Action action) {
         // Arrange
         sut.addSource(new LimitedStorageImpl<>(10));
@@ -124,6 +125,7 @@ class StorageChannelImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
+    @SuppressWarnings("unchecked")
     void shouldCallListenerOnExtraction(final Action action) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(10);
@@ -154,6 +156,7 @@ class StorageChannelImplTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void shouldRemoveListener() {
         // Arrange
         sut.addSource(new LimitedStorageImpl<>(10));

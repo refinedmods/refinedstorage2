@@ -51,9 +51,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toItemVariant;
 
@@ -168,6 +172,14 @@ public final class PlatformImpl extends AbstractPlatform {
             }
             return inserted;
         }
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(final BlockState state,
+                                       final Level level,
+                                       final BlockHitResult hitResult,
+                                       final Player player) {
+        return state.getBlock().getCloneItemStack(level, hitResult.getBlockPos(), state);
     }
 
     private Optional<FluidResource> convertNonEmptyToFluid(final ItemStack stack) {

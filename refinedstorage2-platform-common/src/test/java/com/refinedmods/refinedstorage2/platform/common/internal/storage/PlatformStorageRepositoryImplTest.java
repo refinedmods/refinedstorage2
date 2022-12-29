@@ -134,6 +134,7 @@ class PlatformStorageRepositoryImplTest {
     }
 
     @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
     void shouldSerializeAndDeserialize() {
         // Arrange
         final InMemoryTrackedStorageRepository<ItemResource> repository = new InMemoryTrackedStorageRepository<>();
