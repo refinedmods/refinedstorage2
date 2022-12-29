@@ -8,18 +8,19 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Get tag name
-                uses: olegtarasov/get-tag@v2.1
+                uses: olegtarasov/get-tag@v2.1.2
                 id: tagName
             -   name: Validate semver
                 run: |
                     echo $GIT_TAG_NAME | grep -oP '^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
             -   name: Checkout repository
-                uses: actions/checkout@v2
+                uses: actions/checkout@v3
             -   name: Validate Gradle wrapper
                 uses: gradle/wrapper-validation-action@v1
             -   name: Setup JDK 17
-                uses: actions/setup-java@v1
+                uses: actions/setup-java@v3.9.0
                 with:
+                    distribution: 'temurin'
                     java-version: 17
             -   name: Make Gradle wrapper executable
                 if: ${{ runner.os != 'Windows' }}
@@ -32,33 +33,30 @@ jobs:
                     RELEASE: ${{ steps.tagName.outputs.tag }}
             -   name: Mutation testing
                 run: ./gradlew pitest
-            -   name: Checkstyle
-                run: ./gradlew checkstyleMain checkstyleTest
             -   name: Build documentation
                 run: ./gradlew allJavadoc
                 env:
                     RELEASE: ${{ steps.tagName.outputs.tag }}
             -   name: Publish documentation
-                uses: JamesIves/github-pages-deploy-action@4.1.5
+                uses: JamesIves/github-pages-deploy-action@4.4.1
                 with:
                     branch: gh-pages
                     folder: build/docs/javadoc
-# TODO: re-enable
-#           -   name: Publish
-#               run: ./gradlew publish
-#               env:
-#                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#                   CREEPERHOST_MAVEN_USERNAME: ${{ secrets.CREEPERHOST_MAVEN_USERNAME }}
-#                   CREEPERHOST_MAVEN_TOKEN: ${{ secrets.CREEPERHOST_MAVEN_TOKEN }}
-#                   RELEASE: ${{ steps.tagName.outputs.tag }}
+            -   name: Publish
+                run: ./gradlew publish
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                    CREEPERHOST_MAVEN_USERNAME: ${{ secrets.CREEPERHOST_MAVEN_USERNAME }}
+                    CREEPERHOST_MAVEN_TOKEN: ${{ secrets.CREEPERHOST_MAVEN_TOKEN }}
+                    RELEASE: ${{ steps.tagName.outputs.tag }}
             -   name: Retrieve changelog
                 id: changelog_reader
-                uses: mindsers/changelog-reader-action@v2
+                uses: mindsers/changelog-reader-action@v2.2.2
                 with:
                     version: 'Unreleased'
                     path: ./CHANGELOG.md
             -   name: Release on GitHub
-                uses: softprops/action-gh-release@v1
+                uses: softprops/action-gh-release@v0.1.15
                 id: ghRelease
                 with:
                     body: ${{ steps.changelog_reader.outputs.changes }}
