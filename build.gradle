@@ -1,8 +1,8 @@
 plugins {
     id 'maven-publish'
-    id 'org.sonarqube' version '3.3'
+    alias(libs.plugins.sonarqube)
     id 'checkstyle'
-    id 'info.solidsoft.pitest' version '1.7.4'
+    alias(libs.plugins.pitest)
 }
 
 allprojects {
@@ -40,7 +40,7 @@ subprojects {
     apply plugin: 'checkstyle'
 
     checkstyle {
-        toolVersion = project.checkstyleVersion
+        toolVersion = libs.versions.checkstyle.get()
     }
 
     if (!(project.name in [
@@ -106,8 +106,8 @@ subprojects {
     }
 
     dependencies {
-        implementation "org.apiguardian:apiguardian-api:${project.apiGuardianVersion}"
-        implementation "com.google.code.findbugs:jsr305:${project.jsr305Version}"
+        implementation libs.apiguardian
+        implementation libs.jsr305
     }
 }
 

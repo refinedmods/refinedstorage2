@@ -9,9 +9,9 @@ dependencies {
     implementation project(':refinedstorage2-storage-api')
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-core-api')
-    implementation "org.junit.jupiter:junit-jupiter-api:${project.junitVersion}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
-    testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
+    implementation testLibs.junit.api
+    testRuntimeOnly testLibs.junit.engine
+    testImplementation testLibs.assertJ
 }
 
 test {
