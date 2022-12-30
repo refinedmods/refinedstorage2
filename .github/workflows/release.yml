@@ -36,6 +36,12 @@ jobs:
                 if: always() # always run even if the previous step fails
                 with:
                     report_paths: '**/build/test-results/test/TEST-*.xml'
+            -   name: Publish Checkstyle report
+                uses: Juuxel/publish-checkstyle-report@v1
+                if: ${{ failure() }}
+                with:
+                    reports: |
+                        **/build/reports/checkstyle/*.xml
             -   name: Mutation testing
                 run: ./gradlew pitest
             -   name: Upload build artifacts
