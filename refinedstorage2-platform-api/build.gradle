@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
+    alias(libs.plugins.mixin)
 }
 
 repositories {
@@ -13,22 +13,22 @@ repositories {
 archivesBaseName = 'refinedstorage2-platform-api'
 
 minecraft {
-    version(project.minecraftVersion)
+    version(libs.versions.minecraft.get())
 }
 
 dependencies {
-    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.4'
+    compileOnly libs.mixin
     implementation project(':refinedstorage2-core-api')
     implementation project(':refinedstorage2-storage-api')
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-network-api')
     implementation project(':refinedstorage2-grid-api')
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${project.junitVersion}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
-    testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:${project.junitVersion}"
+    testImplementation testLibs.junit.api
+    testImplementation testLibs.junit.params
+    testRuntimeOnly testLibs.junit.engine
+    testImplementation testLibs.assertJ
     testImplementation project(':refinedstorage2-platform-test')
-    testImplementation "nl.jqno.equalsverifier:equalsverifier:${project.equalsverifierVersion}"
+    testImplementation testLibs.equalsverifier
 }
 
 test {

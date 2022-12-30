@@ -1,13 +1,13 @@
 archivesBaseName = 'refinedstorage2-network-api'
 
 dependencies {
-    implementation "org.apache.logging.log4j:log4j-api:${project.log4jVersion}"
-    testImplementation "org.apache.logging.log4j:log4j-core:${project.log4jVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${project.junitVersion}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junitVersion}"
-    testImplementation "org.assertj:assertj-core:${project.assertJVersion}"
-    testImplementation "org.mockito:mockito-core:${project.mockitoVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:${project.junitVersion}"
+    implementation libs.log4j.api
+    testImplementation libs.log4j.core
+    testImplementation testLibs.junit.api
+    testImplementation testLibs.junit.params
+    testRuntimeOnly testLibs.junit.engine
+    testImplementation testLibs.assertJ
+    testImplementation testLibs.mockito
     testImplementation project(':refinedstorage2-network-test')
     implementation project(':refinedstorage2-core-api')
     implementation project(':refinedstorage2-resource-api')
