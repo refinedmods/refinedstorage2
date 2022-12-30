@@ -91,7 +91,7 @@ harder to test.
 ### Mutation testing
 
 We also have [Pitest mutation testing](https://pitest.org/), which requires a minimum test coverage percentage of 80%
-and a minimum mutation percentage of 90%.
+and a minimum mutation coverage percentage of 90%.
 
 ## Releasing
 
