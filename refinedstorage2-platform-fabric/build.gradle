@@ -50,6 +50,8 @@ dependencies {
         implementation project(it)
     }
 
+    implementation libs.apiguardian // mandatory as it's imported through platform-api
+
     modImplementation(fabric.cloth.config) {
         exclude(group: 'net.fabricmc.fabric-api')
     }

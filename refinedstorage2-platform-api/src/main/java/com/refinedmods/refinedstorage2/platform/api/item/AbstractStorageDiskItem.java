@@ -16,9 +16,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.apiguardian.api.API;
 
 // TODO: Immunity for despawning
 // TODO: Tags/ore dict in recipes
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public abstract class AbstractStorageDiskItem extends Item implements StorageDiskItem {
     protected AbstractStorageDiskItem(final Properties properties) {
         super(properties);

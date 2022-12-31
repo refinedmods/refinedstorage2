@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.api.grid;
+package com.refinedmods.refinedstorage2.platform.common.internal.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;

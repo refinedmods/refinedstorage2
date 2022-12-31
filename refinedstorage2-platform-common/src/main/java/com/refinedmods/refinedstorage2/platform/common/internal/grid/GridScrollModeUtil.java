@@ -1,7 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.grid;
 
-import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
-
 import net.minecraft.network.FriendlyByteBuf;
 
 public final class GridScrollModeUtil {

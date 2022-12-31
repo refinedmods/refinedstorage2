@@ -8,7 +8,9 @@ import java.util.function.LongFunction;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
 public final class StorageTooltipHelper {
     private StorageTooltipHelper() {
     }

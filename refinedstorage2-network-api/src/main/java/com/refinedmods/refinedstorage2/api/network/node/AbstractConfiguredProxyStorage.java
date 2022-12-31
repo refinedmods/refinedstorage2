@@ -13,6 +13,9 @@ import java.util.Collections;
 import java.util.Objects;
 import javax.annotation.Nullable;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
 public abstract class AbstractConfiguredProxyStorage<T, S extends Storage<T>> implements Storage<T>, Priority {
     @Nullable
     private S delegate;
