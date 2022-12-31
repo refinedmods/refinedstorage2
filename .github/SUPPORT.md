@@ -1,10 +1,10 @@
 # Support
 
-If you have a problem and need help, we offer various channels where you can ask help.
+If you have a problem and need help, we offer various channels where you can ask for help.
 
 ## I have a question
 
-General questions can be asked on [Discord](https://discordapp.com/invite/VYzsydb).
+Questions can be asked on [Discord](https://discordapp.com/invite/VYzsydb).
 
 ## I have found a bug
 
