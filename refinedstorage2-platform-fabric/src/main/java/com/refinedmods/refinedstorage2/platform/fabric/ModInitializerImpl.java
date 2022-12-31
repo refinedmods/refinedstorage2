@@ -110,8 +110,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import team.reborn.energy.api.EnergyStorage;
 
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CABLE;
@@ -147,7 +147,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ModInitializerImpl extends AbstractModInitializer implements ModInitializer {
-    private static final Logger LOGGER = LogManager.getLogger(ModInitializerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModInitializerImpl.class);
     private static final String BLOCK_TRANSLATION_CATEGORY = "block";
     private static final CreativeModeTab CREATIVE_MODE_TAB = FabricItemGroupBuilder.build(
         createIdentifier("general"),

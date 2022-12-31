@@ -17,13 +17,13 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.saveddata.SavedData;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PlatformStorageRepositoryImpl extends SavedData implements PlatformStorageRepository {
     public static final String NAME = "refinedstorage2_storages";
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlatformStorageRepositoryImpl.class);
 
     private static final String TAG_STORAGES = "storages";
     private static final String TAG_STORAGE_ID = "id";

@@ -88,10 +88,10 @@ dependencyResolutionManagement {
             plugin('forgeGradle', 'net.minecraftforge.gradle').version('5.1.+')
         }
         libs {
-            // Use the same Log4j API as MC to not break logging in the development environment.
-            def log4j = version("log4j", "2.17.0")
-            library("log4j-api", "org.apache.logging.log4j", "log4j-api").versionRef(log4j)
-            library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef(log4j)
+            // Use the same slf4j API as MC to not break logging in the development environment.
+            def slf4j = version("slf4j", "1.8.0-beta4")
+            library("slf4j-api", "org.slf4j", "slf4j-api").versionRef(slf4j)
+            library("slf4j-impl", "org.slf4j", "slf4j-simple").versionRef(slf4j)
             def mixin = version("mixin", "0.8.4")
             library("mixin", "org.spongepowered", "mixin").versionRef(mixin)
             plugin("mixin", "org.spongepowered.gradle.vanilla").version("0.2.1-SNAPSHOT")

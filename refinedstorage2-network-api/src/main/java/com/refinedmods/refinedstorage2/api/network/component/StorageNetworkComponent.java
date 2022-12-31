@@ -8,13 +8,13 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apiguardian.api.API;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.1")
 public class StorageNetworkComponent implements NetworkComponent {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(StorageNetworkComponent.class);
 
     private final Map<StorageChannelType<?>, StorageChannel<?>> channels = new HashMap<>();
 

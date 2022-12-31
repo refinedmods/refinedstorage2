@@ -1,8 +1,8 @@
 archivesBaseName = 'refinedstorage2-network-api'
 
 dependencies {
-    implementation libs.log4j.api
-    testImplementation libs.log4j.core
+    implementation libs.slf4j.api
+    testRuntimeOnly libs.slf4j.impl
     testImplementation testLibs.junit.api
     testImplementation testLibs.junit.params
     testRuntimeOnly testLibs.junit.engine

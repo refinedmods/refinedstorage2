@@ -12,11 +12,11 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import com.google.common.util.concurrent.RateLimiter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClientStorageRepository implements PlatformStorageRepository {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientStorageRepository.class);
 
     private final Map<UUID, StorageInfo> info = new HashMap<>();
     private final RateLimiter rateLimiter = RateLimiter.create(2);

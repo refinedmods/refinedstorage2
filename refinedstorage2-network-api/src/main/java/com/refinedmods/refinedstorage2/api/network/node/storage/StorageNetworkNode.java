@@ -11,11 +11,11 @@ import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StorageNetworkNode<T> extends AbstractStorageNetworkNode implements StorageProvider {
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LoggerFactory.getLogger(StorageNetworkNode.class);
 
     private final long energyUsage;
     private final StorageChannelType<?> type;

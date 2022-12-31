@@ -17,11 +17,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DiskDriveNetworkNode extends AbstractStorageNetworkNode implements StorageProvider {
-    private static final Logger LOGGER = LogManager.getLogger(DiskDriveNetworkNode.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DiskDriveNetworkNode.class);
 
     @Nullable
     private StorageRepository storageRepository;
