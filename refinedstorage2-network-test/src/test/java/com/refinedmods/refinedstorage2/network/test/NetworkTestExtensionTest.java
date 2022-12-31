@@ -2,12 +2,12 @@ package com.refinedmods.refinedstorage2.network.test;
 
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.node.SimpleNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.AbstractNetworkNodeFactory;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.DiskDriveNetworkNodeFactory;
@@ -112,9 +112,11 @@ class NetworkTestExtensionTest {
     ) {
         // Assert
         assertThat(storageChannelA).isSameAs(
-            a.getComponent(StorageNetworkComponent.class).getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+            a.getComponent(StorageNetworkComponent.class)
+                .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
         assertThat(storageChannelB).isSameAs(
-            b.getComponent(StorageNetworkComponent.class).getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
+            b.getComponent(StorageNetworkComponent.class)
+                .getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE));
     }
 
     @Test

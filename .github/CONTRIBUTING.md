@@ -180,6 +180,7 @@ with `refinedstorage2-platform-*` have dependencies on Minecraft.
 | `refinedstorage2-core-api`        | ✔️            | Contains some utility classes and enums.                                              |
 | `refinedstorage2-grid-api`        | ✔️            | Contains Grid related functionality.                                                  |
 | `refinedstorage2-network-api`     | ✔️            | Contains storage network related functionality.                                       |
+| `refinedstorage2-network`         | ❌             | Contains implementations of `refinedstorage2-network-api`.                            |
 | `refinedstorage2-network-test`    | ✔️            | JUnit extension which helps with setting up a network and a network node for testing. |
 | `refinedstorage2-query-parser`    | ✔️            | A query parser, contains a lexer and parser. Only used for Grid query parsing.        |
 | `refinedstorage2-resource-api`    | ✔️            | Contains API for handling resources.                                                  |

@@ -1,0 +1,21 @@
+archivesBaseName = 'refinedstorage2-network-api'
+
+dependencies {
+    implementation libs.slf4j.api
+    testRuntimeOnly libs.slf4j.impl
+    testImplementation testLibs.junit.api
+    testImplementation testLibs.junit.params
+    testRuntimeOnly testLibs.junit.engine
+    testImplementation testLibs.assertJ
+    testImplementation testLibs.mockito
+    testImplementation project(':refinedstorage2-network-test')
+    implementation project(':refinedstorage2-core-api')
+    implementation project(':refinedstorage2-network-api')
+    implementation project(':refinedstorage2-resource-api')
+    implementation project(':refinedstorage2-storage-api')
+    implementation project(':refinedstorage2-grid-api')
+}
+
+test {
+    useJUnitPlatform()
+}

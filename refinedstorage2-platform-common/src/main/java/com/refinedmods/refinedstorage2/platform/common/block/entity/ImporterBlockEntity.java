@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.core.filter.FilterMode;
-import com.refinedmods.refinedstorage2.api.network.node.importer.CompositeImporterTransferStrategy;
-import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.importer.CompositeImporterTransferStrategy;
+import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterTransferStrategy;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;

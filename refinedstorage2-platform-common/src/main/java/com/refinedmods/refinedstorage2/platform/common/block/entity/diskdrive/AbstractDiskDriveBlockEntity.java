@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
+import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveListener;
+import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveState;
+import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.StorageDiskState;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;

@@ -5,9 +5,11 @@ import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistryImpl;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.impl.component.EnergyNetworkComponentImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.impl.component.StorageNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
@@ -19,10 +21,18 @@ public final class NetworkTestFixtures {
         new ComponentMapFactory<>();
 
     static {
-        NETWORK_COMPONENT_MAP_FACTORY.addFactory(EnergyNetworkComponent.class, network -> new EnergyNetworkComponent());
-        NETWORK_COMPONENT_MAP_FACTORY.addFactory(GraphNetworkComponent.class, GraphNetworkComponent::new);
-        NETWORK_COMPONENT_MAP_FACTORY.addFactory(StorageNetworkComponent.class,
-            network -> new StorageNetworkComponent(STORAGE_CHANNEL_TYPE_REGISTRY));
+        NETWORK_COMPONENT_MAP_FACTORY.addFactory(
+            EnergyNetworkComponent.class,
+            network -> new EnergyNetworkComponentImpl()
+        );
+        NETWORK_COMPONENT_MAP_FACTORY.addFactory(
+            GraphNetworkComponent.class,
+            GraphNetworkComponent::new
+        );
+        NETWORK_COMPONENT_MAP_FACTORY.addFactory(
+            StorageNetworkComponent.class,
+            network -> new StorageNetworkComponentImpl(STORAGE_CHANNEL_TYPE_REGISTRY)
+        );
     }
 
     private NetworkTestFixtures() {

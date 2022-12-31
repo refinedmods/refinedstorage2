@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;

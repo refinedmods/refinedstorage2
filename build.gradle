@@ -26,6 +26,7 @@ subprojects {
             ':refinedstorage2-resource-api',
             ':refinedstorage2-storage-api',
             ':refinedstorage2-network-api',
+            ':refinedstorage2-network',
             ':refinedstorage2-grid-api',
             ':refinedstorage2-query-parser'
     ]

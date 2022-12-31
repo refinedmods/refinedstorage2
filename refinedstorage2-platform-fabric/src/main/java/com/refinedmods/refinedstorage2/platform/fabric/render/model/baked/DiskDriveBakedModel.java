@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked;
 
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
+import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveState;
+import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.StorageDiskState;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;

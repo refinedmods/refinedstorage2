@@ -20,6 +20,7 @@ dependencies {
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-storage-api')
     implementation project(':refinedstorage2-network-api')
+    implementation project(':refinedstorage2-network')
     implementation project(':refinedstorage2-query-parser')
     implementation project(':refinedstorage2-grid-api')
     testImplementation testLibs.junit.api
