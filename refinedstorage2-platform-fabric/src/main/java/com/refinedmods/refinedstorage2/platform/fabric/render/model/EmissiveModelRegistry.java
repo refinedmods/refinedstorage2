@@ -10,13 +10,13 @@ import javax.annotation.Nullable;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class EmissiveModelRegistry {
     public static final EmissiveModelRegistry INSTANCE = new EmissiveModelRegistry();
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmissiveModelRegistry.class);
 
     private final Map<ResourceLocation, Function<BakedModel, EmissiveBakedModel>> factories = new HashMap<>();
 

@@ -22,11 +22,11 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GridNetworkNode<T> extends AbstractNetworkNode {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(GridNetworkNode.class);
 
     private final Set<GridWatcher<T>> watchers = new HashSet<>();
     private final Map<GridWatcher<T>, ResourceListListener<T>> associatedResourceListeners = new HashMap<>();

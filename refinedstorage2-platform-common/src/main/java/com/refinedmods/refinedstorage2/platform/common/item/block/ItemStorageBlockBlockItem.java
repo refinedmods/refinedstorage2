@@ -24,11 +24,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ItemStorageBlockBlockItem extends AbstractStorageBlockBlockItem {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemStorageBlockBlockItem.class);
 
     private final ItemStorageType.Variant variant;
     private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions =

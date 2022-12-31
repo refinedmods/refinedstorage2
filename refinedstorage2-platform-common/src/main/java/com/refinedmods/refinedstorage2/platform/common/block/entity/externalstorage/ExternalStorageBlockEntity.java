@@ -29,15 +29,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ExternalStorageBlockEntity
     extends AbstractInternalNetworkNodeContainerBlockEntity<ExternalStorageNetworkNode>
     implements ExtendedMenuProvider {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalStorageBlockEntity.class);
     private static final String TAG_TRACKED_RESOURCES = "tr";
 
     private final FilterWithFuzzyMode filter;

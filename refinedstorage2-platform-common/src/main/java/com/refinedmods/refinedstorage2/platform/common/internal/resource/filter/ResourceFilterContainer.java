@@ -17,11 +17,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResourceFilterContainer {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceFilterContainer.class);
 
     private final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry;
     private final FilteredResource[] items;

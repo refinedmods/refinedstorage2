@@ -37,14 +37,14 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<R>> extends AbstractBaseScreen<T> {
-    private static final Logger LOGGER = LogManager.getLogger(AbstractGridScreen.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGridScreen.class);
 
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/grid.png");
 

@@ -22,13 +22,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractStorageBlockBlockEntity<T>
     extends AbstractInternalNetworkNodeContainerBlockEntity<StorageNetworkNode<T>>
     implements ExtendedMenuProvider {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStorageBlockBlockEntity.class);
 
     private static final String TAG_STORAGE_ID = "sid";
 
