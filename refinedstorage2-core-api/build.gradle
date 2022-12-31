@@ -1,6 +1,7 @@
 archivesBaseName = 'refinedstorage2-core-api'
 
 dependencies {
+    implementation libs.apiguardian
     testImplementation testLibs.junit.api
     testImplementation testLibs.junit.params
     testRuntimeOnly testLibs.junit.engine

@@ -107,7 +107,6 @@ subprojects {
     }
 
     dependencies {
-        implementation libs.apiguardian
         implementation libs.jsr305
     }
 }
