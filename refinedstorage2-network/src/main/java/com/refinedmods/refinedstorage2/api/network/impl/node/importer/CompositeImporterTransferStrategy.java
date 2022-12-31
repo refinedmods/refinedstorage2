@@ -8,9 +8,6 @@ import com.refinedmods.refinedstorage2.api.storage.Actor;
 import java.util.Collections;
 import java.util.List;
 
-import org.apiguardian.api.API;
-
-@API(status = API.Status.STABLE, since = "2.0.0-milestone.2.1")
 public class CompositeImporterTransferStrategy implements ImporterTransferStrategy {
     private final List<ImporterTransferStrategy> strategies;
 

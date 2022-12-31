@@ -10,11 +10,9 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apiguardian.api.API;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.1")
 public class StorageNetworkComponentImpl implements StorageNetworkComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageNetworkComponentImpl.class);
 

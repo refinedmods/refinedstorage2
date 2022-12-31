@@ -18,6 +18,7 @@ minecraft {
 
 dependencies {
     compileOnly libs.mixin
+    implementation libs.apiguardian
     implementation project(':refinedstorage2-core-api')
     implementation project(':refinedstorage2-storage-api')
     implementation project(':refinedstorage2-resource-api')

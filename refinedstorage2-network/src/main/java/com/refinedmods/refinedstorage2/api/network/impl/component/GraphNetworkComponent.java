@@ -8,11 +8,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apiguardian.api.API;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.1")
 public class GraphNetworkComponent implements NetworkComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphNetworkComponent.class);
 

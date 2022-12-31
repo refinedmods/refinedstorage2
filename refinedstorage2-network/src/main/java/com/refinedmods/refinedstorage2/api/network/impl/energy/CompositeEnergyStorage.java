@@ -6,9 +6,6 @@ import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apiguardian.api.API;
-
-@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class CompositeEnergyStorage implements EnergyStorage {
     private final List<EnergyStorage> sources = new ArrayList<>();
 
