@@ -12,9 +12,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.apiguardian.api.API;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public record ItemResource(Item item, @Nullable CompoundTag tag) implements FuzzyModeNormalizer<ItemResource> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ItemResource.class);
 

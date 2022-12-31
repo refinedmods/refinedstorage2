@@ -15,7 +15,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.2.2")
 public abstract class AbstractUpgradeItem extends Item {
     private final UpgradeRegistry registry;
 

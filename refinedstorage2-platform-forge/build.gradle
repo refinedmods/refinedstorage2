@@ -76,6 +76,8 @@ dependencies {
         implementation project(it)
     }
 
+    implementation libs.apiguardian // mandatory as it's imported through platform-api
+
     compileOnly fg.deobf(forge.jei.common.api.get())
     compileOnly fg.deobf(forge.jei.forge.api.get())
     // We test with JEI on Forge.

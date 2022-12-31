@@ -15,7 +15,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
 public abstract class AbstractStorageBlockBlockItem extends BlockItem {
     protected AbstractStorageBlockBlockItem(final Block block, final Properties properties) {
         super(block, properties);

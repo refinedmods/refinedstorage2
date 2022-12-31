@@ -8,14 +8,14 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientItemGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import javax.annotation.Nullable;

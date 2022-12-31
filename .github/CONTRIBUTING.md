@@ -57,6 +57,11 @@ Documentation must be kept up to date when adding or changing functionality.
 
 Javadoc is available after every release on https://refinedmods.com/refinedstorage2/.
 
+### API annotations
+
+Public APIs must be annotated with an `@API` annotation
+from [API Guardian](https://github.com/apiguardian-team/apiguardian).
+
 ## Code style
 
 We use [Checkstyle](https://checkstyle.sourceforge.io/) in our build pipeline to validate coding style.

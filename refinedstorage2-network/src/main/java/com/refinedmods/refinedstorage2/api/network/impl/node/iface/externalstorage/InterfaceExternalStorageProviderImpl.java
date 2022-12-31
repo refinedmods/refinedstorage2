@@ -67,7 +67,7 @@ public class InterfaceExternalStorageProviderImpl<T> implements InterfaceExterna
 
     private boolean isAnotherInterfaceActingAsExternalStorage(final Actor actor) {
         return actor instanceof NetworkNodeActor networkNodeActor
-            && networkNodeActor.getNetworkNode() instanceof InterfaceNetworkNode<?> actingInterface
+            && networkNodeActor.networkNode() instanceof InterfaceNetworkNode<?> actingInterface
             && actingInterface.isActingAsExternalStorage();
     }
 

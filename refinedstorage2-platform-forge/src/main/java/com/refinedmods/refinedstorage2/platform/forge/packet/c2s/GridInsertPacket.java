@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.FluidGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
 
 import java.util.function.Supplier;
 

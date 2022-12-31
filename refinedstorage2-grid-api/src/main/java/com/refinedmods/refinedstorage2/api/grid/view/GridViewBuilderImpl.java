@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.function.Function;
 import javax.annotation.Nullable;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
 public class GridViewBuilderImpl<T> implements GridViewBuilder<T> {
     private final Function<ResourceAmount<T>, AbstractGridResource<T>> gridResourceFactory;
     private final ResourceList<T> backingList = new ResourceListImpl<>();

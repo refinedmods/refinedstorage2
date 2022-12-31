@@ -21,7 +21,9 @@ import java.util.Set;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public interface PlatformApi {
     PlatformApi INSTANCE = new PlatformApiProxy();
 
