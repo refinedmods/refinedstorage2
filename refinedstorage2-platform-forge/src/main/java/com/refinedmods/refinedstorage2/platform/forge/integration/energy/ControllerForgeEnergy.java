@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.integration.energy;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.energy.EnergyStorageImpl;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 
 import net.minecraftforge.energy.IEnergyStorage;

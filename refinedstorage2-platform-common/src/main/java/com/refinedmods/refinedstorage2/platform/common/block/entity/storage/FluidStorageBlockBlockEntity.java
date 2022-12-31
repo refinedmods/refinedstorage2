@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.storage;
 
-import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;

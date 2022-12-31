@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage;
 
-import com.refinedmods.refinedstorage2.api.network.node.externalstorage.ExternalStorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage.ExternalStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.externalstorage.ExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;

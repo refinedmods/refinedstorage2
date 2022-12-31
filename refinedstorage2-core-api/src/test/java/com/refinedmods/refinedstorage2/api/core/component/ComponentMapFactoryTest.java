@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ComponentMapFactoryTest {
     @Test
-    void shouldRegisterFactoryAndBuildComponentMap() {
+    void shouldRegisterFactoryAndBuildComponentMapForConcreteClasses() {
         // Arrange
         final ComponentMapFactory<TestComponent, String> sut = new ComponentMapFactory<>();
         sut.addFactory(TestComponent1.class, TestComponent1::new);
@@ -23,6 +23,19 @@ class ComponentMapFactoryTest {
             new TestComponent1("TEST"),
             new TestComponent3("TEST")
         );
+    }
+
+    @Test
+    void shouldRegisterFactoryAndBuildComponentMapForInterfaces() {
+        // Arrange
+        final ComponentMapFactory<TestComponent, String> sut = new ComponentMapFactory<>();
+        sut.addFactory(AnInterface.class, ctx -> new AnImplementation());
+
+        // Act
+        final ComponentMap<TestComponent> map = sut.buildComponentMap("TEST");
+
+        // Assert
+        assertThat(map.getComponent(AnInterface.class)).isInstanceOf(AnImplementation.class);
     }
 
     @Test
@@ -68,6 +81,13 @@ class ComponentMapFactoryTest {
     }
 
     private interface TestComponent {
+    }
+
+
+    private interface AnInterface extends TestComponent {
+    }
+
+    private static class AnImplementation implements AnInterface {
     }
 
     private abstract static class AbstractTestComponent implements TestComponent {

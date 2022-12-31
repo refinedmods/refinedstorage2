@@ -6,6 +6,7 @@ archivesBaseName = 'refinedstorage2-network-test'
 
 dependencies {
     implementation project(':refinedstorage2-network-api')
+    implementation project(':refinedstorage2-network')
     implementation project(':refinedstorage2-storage-api')
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-core-api')

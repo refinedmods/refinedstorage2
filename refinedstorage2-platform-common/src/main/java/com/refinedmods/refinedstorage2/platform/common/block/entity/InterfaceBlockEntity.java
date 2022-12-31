@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.network.node.iface.InterfaceExportState;
-import com.refinedmods.refinedstorage2.api.network.node.iface.InterfaceNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.iface.externalstorage.InterfaceExternalStorageProvider;
-import com.refinedmods.refinedstorage2.api.network.node.iface.externalstorage.InterfaceExternalStorageProviderImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceExportState;
+import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.iface.externalstorage.InterfaceExternalStorageProvider;
+import com.refinedmods.refinedstorage2.api.network.impl.node.iface.externalstorage.InterfaceExternalStorageProviderImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;

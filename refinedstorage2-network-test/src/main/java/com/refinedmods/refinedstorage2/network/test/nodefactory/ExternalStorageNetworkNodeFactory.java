@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.network.test.nodefactory;
 
-import com.refinedmods.refinedstorage2.api.network.node.externalstorage.ExternalStorageNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.externalstorage.TrackedStorageRepositoryProvider;
+import com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage.ExternalStorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage.TrackedStorageRepositoryProvider;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;

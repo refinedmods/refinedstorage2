@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.block.entity;
 
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
+import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveState;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 
 import javax.annotation.Nonnull;

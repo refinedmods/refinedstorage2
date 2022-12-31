@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.exporter;
 
 import com.refinedmods.refinedstorage2.api.core.util.Randomizer;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.ExporterNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.strategy.CompositeExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.scheduling.ExporterSchedulingMode;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.CompositeExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
