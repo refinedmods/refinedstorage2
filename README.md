@@ -33,6 +33,10 @@ Clone the repository and import the Gradle project.
 
 See [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 
+## Support
+
+See [SUPPORT.md](.github/SUPPORT.md).
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md).
