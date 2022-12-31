@@ -123,7 +123,7 @@ We have a few pipelines:
 - Release (push of a tag)
 - Changelog Checker (PRs)
     - To validate if `CHANGELOG.md` is updated. Not every pull request needs a changelog change, so
-      the `skio-changelog` label can be added to the pull request to ignore this.
+      the `skip-changelog` label can be added to the pull request to ignore this.
 - Commitlint (PRs)
     - Validates whether the commits on a pull request
       respect [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
