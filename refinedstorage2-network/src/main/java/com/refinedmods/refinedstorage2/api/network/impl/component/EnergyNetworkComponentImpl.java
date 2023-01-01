@@ -23,14 +23,17 @@ public class EnergyNetworkComponentImpl implements EnergyNetworkComponent {
         }
     }
 
+    @Override
     public long getStored() {
         return energyStorage.getStored();
     }
 
+    @Override
     public long getCapacity() {
         return energyStorage.getCapacity();
     }
 
+    @Override
     public long extract(final long amount) {
         return energyStorage.extract(amount, Action.EXECUTE);
     }
