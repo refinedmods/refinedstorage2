@@ -1,4 +1,4 @@
-archivesBaseName = 'refinedstorage2-network-api'
+archivesBaseName = 'refinedstorage2-network'
 
 dependencies {
     implementation libs.slf4j.api
