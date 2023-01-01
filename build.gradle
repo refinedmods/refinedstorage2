@@ -51,7 +51,8 @@ subprojects {
             // These projects don't have tests or JUnit, so omit these to avoid failing
             'refinedstorage2-platform-fabric',
             'refinedstorage2-platform-forge',
-            'refinedstorage2-platform-test'
+            'refinedstorage2-platform-test',
+            'refinedstorage2-network-api' // only contains interfaces
     ])) {
         apply plugin: 'info.solidsoft.pitest'
         pitest {
