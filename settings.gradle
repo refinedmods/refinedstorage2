@@ -103,6 +103,9 @@ dependencyResolutionManagement {
             def jsr305 = version("jsr305", "3.0.2")
             library("jsr305", "com.google.code.findbugs", "jsr305").versionRef(jsr305)
             version("minecraft", minecraftVersion)
+
+            def jei = version("jei", jeiVersion)
+            library("jei-common-api", "mezz.jei", "jei-${minecraftVersion}-common-api").versionRef(jei)
         }
         testLibs {
             def junit5 = version("junit5", "5.9.0")

@@ -1,6 +1,6 @@
 @ParametersAreNonnullByDefault
 @FieldsAndMethodsAreNonnullByDefault
-package com.refinedmods.refinedstorage2.platform.fabric.integration.jei;
+package com.refinedmods.refinedstorage2.platform.common.integration.jei;
 
 import com.refinedmods.refinedstorage2.api.core.FieldsAndMethodsAreNonnullByDefault;
 

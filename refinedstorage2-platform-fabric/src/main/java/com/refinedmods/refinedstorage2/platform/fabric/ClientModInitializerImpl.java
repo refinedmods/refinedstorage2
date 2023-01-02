@@ -7,6 +7,8 @@ import com.refinedmods.refinedstorage2.platform.common.content.ColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
+import com.refinedmods.refinedstorage2.platform.common.integration.jei.JeiGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.common.integration.jei.JeiProxy;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
@@ -19,8 +21,6 @@ import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockSc
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiGridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAccessor;
