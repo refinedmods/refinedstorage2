@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSid
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -216,5 +217,12 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
             minecraft.setScreen(new ResourceAmountScreen(this, playerInventory, (ResourceFilterSlot) slot));
         }
         return canChangeAmount;
+    }
+
+    @Nullable
+    public FilteredResource<?> getFilteredResource() {
+        return hoveredSlot instanceof ResourceFilterSlot resourceFilterSlot
+            ? resourceFilterSlot.getFilteredResource()
+            : null;
     }
 }

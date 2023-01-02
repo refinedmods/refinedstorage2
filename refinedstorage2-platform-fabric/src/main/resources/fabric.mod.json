@@ -26,7 +26,7 @@
       "com.refinedmods.refinedstorage2.platform.fabric.integration.ModMenuIntegration"
     ],
     "jei_mod_plugin": [
-      "com.refinedmods.refinedstorage2.platform.common.integration.jei.RefinedStorageModPlugin"
+      "com.refinedmods.refinedstorage2.platform.common.integration.recipemod.jei.RefinedStorageJeiModPlugin"
     ]
   },
   "custom": {

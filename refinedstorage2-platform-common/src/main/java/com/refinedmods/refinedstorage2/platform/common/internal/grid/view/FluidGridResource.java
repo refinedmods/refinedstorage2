@@ -39,6 +39,10 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
         this.fluidResource = resourceAmount.getResource();
     }
 
+    public FluidResource getFluidResource() {
+        return fluidResource;
+    }
+
     @Override
     public int getRegistryId() {
         return id;

@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.integration.jei;
+package com.refinedmods.refinedstorage2.platform.common.integration.recipemod.jei;
 
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.AbstractGridSynchronizer;
 
