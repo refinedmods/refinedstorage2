@@ -5,8 +5,6 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.integration.jei.JeiGridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.common.integration.jei.JeiProxy;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
@@ -104,22 +102,7 @@ public final class ClientModInitializer {
         // This means that both JEI + REI support would be activated. We only want REI in that case.
         if (list.isLoaded("roughlyenoughitems")) {
             registerReiGridSynchronizers();
-        } else if (list.isLoaded("jei")) {
-            registerJeiGridSynchronizers();
         }
-    }
-
-    private static void registerJeiGridSynchronizers() {
-        LOGGER.info("Activating JEI grid synchronizers");
-        final JeiProxy jeiProxy = new JeiProxy();
-        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
-            createIdentifier("jei"),
-            new JeiGridSynchronizer(jeiProxy, false)
-        );
-        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
-            createIdentifier("jei_two_way"),
-            new JeiGridSynchronizer(jeiProxy, true)
-        );
     }
 
     private static void registerReiGridSynchronizers() {

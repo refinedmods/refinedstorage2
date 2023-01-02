@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -21,6 +22,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
+import com.refinedmods.refinedstorage2.platform.common.integration.recipemod.CompositeIngredientConverter;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
@@ -36,6 +38,7 @@ import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -75,6 +78,8 @@ public class PlatformApiImpl implements PlatformApi {
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
     private final Map<StorageChannelType<?>, Set<PlatformExternalStorageProviderFactory>>
         externalStorageProviderFactories = new HashMap<>();
+    private final Set<IngredientConverter> converters = new HashSet<>();
+    private final IngredientConverter compositeConverter = new CompositeIngredientConverter(converters);
     private final StorageContainerHelper storageContainerHelper = new StorageContainerHelperImpl();
 
     @Override
@@ -193,5 +198,15 @@ public class PlatformApiImpl implements PlatformApi {
     public void requestNetworkNodeUpdate(final NetworkNodeContainer container, final Level level) {
         final LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
         networkBuilder.update(container, connectionProvider);
+    }
+
+    @Override
+    public void registerIngredientConverter(final IngredientConverter converter) {
+        this.converters.add(converter);
+    }
+
+    @Override
+    public IngredientConverter getIngredientConverter() {
+        return compositeConverter;
     }
 }

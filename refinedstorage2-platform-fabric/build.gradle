@@ -68,7 +68,8 @@ dependencies {
     // We test with REI on Fabric.
     modRuntimeOnly fabric.bundles.rei.runtime
 
-    modImplementation fabric.jei.common.api
+    modCompileOnly fabric.jei.common.api
+    testCompileOnly fabric.jei.common.api
 //    modRuntimeOnly fabric.jei.fabric.impl
 
     modImplementation fabric.modmenu

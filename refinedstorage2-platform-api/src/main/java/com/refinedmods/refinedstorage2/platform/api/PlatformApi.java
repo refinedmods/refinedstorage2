@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -63,4 +64,8 @@ public interface PlatformApi {
     void requestNetworkNodeRemoval(NetworkNodeContainer container, Level level);
 
     void requestNetworkNodeUpdate(NetworkNodeContainer container, Level level);
+
+    void registerIngredientConverter(IngredientConverter converter);
+
+    IngredientConverter getIngredientConverter();
 }

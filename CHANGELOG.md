@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   Support for using the R/U keys in JEI on Grid slots and filtering slots
+
 ## [2.0.0-milestone.2.5] - 2023-01-11
 
 ### Fixed

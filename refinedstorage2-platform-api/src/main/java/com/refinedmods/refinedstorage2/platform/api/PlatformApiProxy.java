@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -119,6 +120,16 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public void requestNetworkNodeUpdate(final NetworkNodeContainer container, final Level level) {
         ensureLoaded().requestNetworkNodeUpdate(container, level);
+    }
+
+    @Override
+    public void registerIngredientConverter(final IngredientConverter converter) {
+        ensureLoaded().registerIngredientConverter(converter);
+    }
+
+    @Override
+    public IngredientConverter getIngredientConverter() {
+        return ensureLoaded().getIngredientConverter();
     }
 
     private PlatformApi ensureLoaded() {
