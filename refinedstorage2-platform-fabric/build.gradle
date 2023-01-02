@@ -39,7 +39,8 @@ dependencies {
             artifactType("zip")
         }
     }
-    modImplementation fabric.bundles.fabric
+    modImplementation fabric.fabric.loader
+    modImplementation fabric.fabric.api
 
     project.ext.apis.collect {
         implementation project(it)
@@ -67,7 +68,8 @@ dependencies {
     // We test with REI on Fabric.
     modRuntimeOnly fabric.bundles.rei.runtime
 
-    modCompileOnly fabric.bundles.jei
+    modImplementation fabric.jei.common.api
+//    modRuntimeOnly fabric.jei.fabric.impl
 
     modImplementation fabric.modmenu
 
