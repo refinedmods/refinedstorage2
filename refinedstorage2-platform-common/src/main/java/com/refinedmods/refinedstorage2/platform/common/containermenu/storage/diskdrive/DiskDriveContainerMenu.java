@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.di
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItem;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
-import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ValidatedSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
@@ -92,7 +92,7 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
     private Slot createDiskSlot(final SimpleContainer diskInventory, final int i) {
         final int x = DISK_SLOT_X + ((i % 2) * 18);
         final int y = DISK_SLOT_Y + Math.floorDiv(i, 2) * 18;
-        return new ValidatedSlot(diskInventory, i, x, y, stack -> stack.getItem() instanceof StorageDiskItem);
+        return new ValidatedSlot(diskInventory, i, x, y, stack -> stack.getItem() instanceof StorageContainerItem);
     }
 
     private boolean hasCapacity() {

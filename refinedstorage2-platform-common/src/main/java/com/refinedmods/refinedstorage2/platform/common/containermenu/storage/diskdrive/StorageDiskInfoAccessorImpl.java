@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
+import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItem;
 
 import java.util.Optional;
 
@@ -17,16 +17,16 @@ public class StorageDiskInfoAccessorImpl implements StorageDiskInfoAccessor {
 
     @Override
     public Optional<StorageInfo> getInfo(final ItemStack stack) {
-        if (stack.getItem() instanceof StorageDiskItem storageDiskItem) {
-            return storageDiskItem.getInfo(level, stack);
+        if (stack.getItem() instanceof StorageContainerItem storageContainerItem) {
+            return storageContainerItem.getInfo(level, stack);
         }
         return Optional.empty();
     }
 
     @Override
     public boolean hasStacking(final ItemStack stack) {
-        if (stack.getItem() instanceof StorageDiskItem storageDiskItem) {
-            return storageDiskItem.hasStacking();
+        if (stack.getItem() instanceof StorageContainerItem storageContainerItem) {
+            return storageContainerItem.hasStacking();
         }
         return false;
     }
