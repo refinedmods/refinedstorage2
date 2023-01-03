@@ -25,30 +25,30 @@ class PriorityDiskDriveNetworkNodeTest {
     @AddNetworkNode
     DiskDriveNetworkNode b;
 
-    FakeStorageProviderRepository storageProviderRepository;
+    StorageDiskProviderImpl provider;
 
     @BeforeEach
     void setUp() {
-        storageProviderRepository = new FakeStorageProviderRepository();
+        provider = new StorageDiskProviderImpl();
     }
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void shouldRespectPriority(final boolean diskDriveAHasPriority,
-                               @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    void shouldRespectPriority(
+        final boolean diskDriveAHasPriority,
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
         final Storage<String> storage1 = new LimitedStorageImpl<>(100);
-        final FakeStorageProviderRepository repo1 = new FakeStorageProviderRepository();
-        repo1.setInSlot(1, storage1);
-        a.setDiskProvider(repo1);
-        a.initialize(repo1);
+        final StorageDiskProviderImpl provider1 = new StorageDiskProviderImpl();
+        provider1.setInSlot(1, storage1);
+        a.setDiskProvider(provider1);
         a.setActive(true);
 
         final Storage<String> storage2 = new LimitedStorageImpl<>(100);
-        final FakeStorageProviderRepository repo2 = new FakeStorageProviderRepository();
-        repo2.setInSlot(1, storage2);
-        b.setDiskProvider(repo2);
-        b.initialize(repo2);
+        final StorageDiskProviderImpl provider2 = new StorageDiskProviderImpl();
+        provider2.setInSlot(1, storage2);
+        b.setDiskProvider(provider2);
         b.setActive(true);
 
         if (diskDriveAHasPriority) {

@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.Arrays;
@@ -23,8 +22,6 @@ import org.slf4j.LoggerFactory;
 public class DiskDriveNetworkNode extends AbstractStorageNetworkNode implements StorageProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(DiskDriveNetworkNode.class);
 
-    @Nullable
-    private StorageRepository storageRepository;
     @Nullable
     private StorageDiskProvider diskProvider;
     @Nullable
@@ -60,13 +57,13 @@ public class DiskDriveNetworkNode extends AbstractStorageNetworkNode implements 
         return new DiskDriveCompositeStorage<>(this);
     }
 
-    public void initialize(final StorageRepository newStorageRepository) {
+    public void setDiskProvider(final StorageDiskProvider provider) {
+        this.diskProvider = provider;
         // Avoid initializing multiple times, this causes problems with already initialized storages going out of sync
         // with the composite storage (object reference changes).
         if (diskCount > 0) {
             return;
         }
-        this.storageRepository = newStorageRepository;
         for (int i = 0; i < disks.length; ++i) {
             initializeDiskInSlot(i);
         }
@@ -91,11 +88,10 @@ public class DiskDriveNetworkNode extends AbstractStorageNetworkNode implements 
             results.add(new DiskChange(true, removedStorage, disks[slot]));
         }
 
-        if (diskProvider != null && storageRepository != null) {
+        if (diskProvider != null) {
             diskProvider.getStorageChannelType(slot).ifPresentOrElse(type -> {
                 disks[slot] = diskProvider
-                    .getDiskId(slot)
-                    .flatMap(storageRepository::get)
+                    .resolve(slot)
                     .map(storage -> new DiskDriveDiskStorage(storage, type, listener))
                     .orElse(null);
 
@@ -156,10 +152,6 @@ public class DiskDriveNetworkNode extends AbstractStorageNetworkNode implements 
                 composite.addSource((DiskDriveDiskStorage) disk);
             }
         }
-    }
-
-    public void setDiskProvider(final StorageDiskProvider diskProvider) {
-        this.diskProvider = diskProvider;
     }
 
     public void setListener(final DiskDriveListener listener) {

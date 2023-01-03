@@ -1,21 +1,29 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.StorageDiskProvider;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
+import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
 
 import java.util.Optional;
-import java.util.UUID;
+import javax.annotation.Nullable;
 
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
 public class DiskDriveInventory extends SimpleContainer implements StorageDiskProvider {
     private final AbstractDiskDriveBlockEntity diskDrive;
+    @Nullable
+    private StorageRepository storageRepository;
 
     public DiskDriveInventory(final AbstractDiskDriveBlockEntity diskDrive, final int diskCount) {
         super(diskCount);
         this.diskDrive = diskDrive;
+    }
+
+    public void setStorageRepository(@Nullable final StorageRepository storageRepository) {
+        this.storageRepository = storageRepository;
     }
 
     @Override
@@ -46,13 +54,19 @@ public class DiskDriveInventory extends SimpleContainer implements StorageDiskPr
     }
 
     @Override
-    public Optional<UUID> getDiskId(final int slot) {
-        return validateAndGetStack(slot).flatMap(stack -> ((StorageDiskItem) stack.getItem()).getDiskId(stack));
+    public Optional<Storage<?>> resolve(final int slot) {
+        if (storageRepository == null) {
+            return Optional.empty();
+        }
+        return validateAndGetStack(slot)
+            .flatMap(stack -> ((StorageDiskItem) stack.getItem()).getDiskId(stack))
+            .flatMap(storageRepository::get);
     }
 
     @Override
     public Optional<StorageChannelType<?>> getStorageChannelType(final int slot) {
-        return validateAndGetStack(slot).flatMap(stack -> ((StorageDiskItem) stack.getItem()).getType(stack));
+        return validateAndGetStack(slot)
+            .flatMap(stack -> ((StorageDiskItem) stack.getItem()).getType(stack));
     }
 
     private Optional<ItemStack> validateAndGetStack(final int slot) {

@@ -33,7 +33,7 @@ public interface StorageRepository {
      * @param <T> the resource type
      * @return the removed storage, if it existed and was empty
      */
-    <T> Optional<Storage<T>> disassemble(UUID id);
+    <T> Optional<Storage<T>> disassemble(UUID id); // TODO: Rename to removeIfEmpty
 
     /**
      * Retrieves info for a given storage ID.

@@ -28,14 +28,14 @@ class ListenerDiskDriveNetworkNodeTest {
     DiskDriveNetworkNode sut;
 
     DiskDriveListener listener;
-    FakeStorageProviderRepository storageProviderRepository;
+    StorageDiskProviderImpl provider;
 
     @BeforeEach
     void setUp() {
         listener = mock(DiskDriveListener.class);
         sut.setListener(listener);
-        storageProviderRepository = new FakeStorageProviderRepository();
-        sut.setDiskProvider(storageProviderRepository);
+        provider = new StorageDiskProviderImpl();
+        sut.setDiskProvider(provider);
     }
 
     @ParameterizedTest
@@ -47,7 +47,7 @@ class ListenerDiskDriveNetworkNodeTest {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 75, Action.EXECUTE, EmptyActor.INSTANCE);
-        storageProviderRepository.setInSlot(1, storage);
+        provider.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
         // Act
@@ -68,7 +68,7 @@ class ListenerDiskDriveNetworkNodeTest {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 74, Action.EXECUTE, EmptyActor.INSTANCE);
-        storageProviderRepository.setInSlot(1, storage);
+        provider.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
         // Act
@@ -87,7 +87,7 @@ class ListenerDiskDriveNetworkNodeTest {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 76, Action.EXECUTE, EmptyActor.INSTANCE);
-        storageProviderRepository.setInSlot(1, storage);
+        provider.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
         // Act
@@ -103,7 +103,7 @@ class ListenerDiskDriveNetworkNodeTest {
     ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storageProviderRepository.setInSlot(1, storage);
+        provider.setInSlot(1, storage);
         initializeDiskDriveAndActivate();
 
         // Act
@@ -114,7 +114,7 @@ class ListenerDiskDriveNetworkNodeTest {
     }
 
     private void initializeDiskDriveAndActivate() {
-        sut.initialize(storageProviderRepository);
+        sut.setDiskProvider(provider);
         sut.setActive(true);
     }
 }

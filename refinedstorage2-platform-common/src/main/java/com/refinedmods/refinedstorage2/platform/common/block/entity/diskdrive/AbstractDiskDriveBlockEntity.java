@@ -115,16 +115,8 @@ public abstract class AbstractDiskDriveBlockEntity
     public void setLevel(final Level level) {
         super.setLevel(level);
         if (!level.isClientSide()) {
-            getNode().initialize(PlatformApi.INSTANCE.getStorageRepository(level));
+            initialize(level);
         }
-    }
-
-    @Override
-    public void activenessChanged(final BlockState state,
-                                  final boolean newActive,
-                                  @Nullable final BooleanProperty activenessProperty) {
-        super.activenessChanged(state, newActive, activenessProperty);
-        LevelUtil.updateBlock(level, worldPosition, getBlockState());
     }
 
     /**
@@ -142,8 +134,21 @@ public abstract class AbstractDiskDriveBlockEntity
     public void setChanged() {
         super.setChanged();
         if (level != null && !level.isClientSide()) {
-            getNode().initialize(PlatformApi.INSTANCE.getStorageRepository(level));
+            initialize(level);
         }
+    }
+
+    private void initialize(final Level level) {
+        diskInventory.setStorageRepository(PlatformApi.INSTANCE.getStorageRepository(level));
+        getNode().setDiskProvider(diskInventory);
+    }
+
+    @Override
+    public void activenessChanged(final BlockState state,
+                                  final boolean newActive,
+                                  @Nullable final BooleanProperty activenessProperty) {
+        super.activenessChanged(state, newActive, activenessProperty);
+        LevelUtil.updateBlock(level, worldPosition, getBlockState());
     }
 
     @Override
