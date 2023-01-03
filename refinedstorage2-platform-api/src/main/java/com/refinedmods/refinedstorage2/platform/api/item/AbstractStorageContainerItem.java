@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
-import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -24,10 +23,10 @@ import org.apiguardian.api.API;
 // TODO: Immunity for despawning
 // TODO: Tags/ore dict in recipes
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public abstract class AbstractStorageDiskItem<T> extends Item implements StorageDiskItem {
+public abstract class AbstractStorageContainerItem<T> extends Item implements StorageContainerItem {
     private final StorageChannelType<T> type;
 
-    protected AbstractStorageDiskItem(final Properties properties, final StorageChannelType<T> type) {
+    protected AbstractStorageContainerItem(final Properties properties, final StorageChannelType<T> type) {
         super(properties);
         this.type = type;
     }

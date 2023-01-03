@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.api.storage.item;
+package com.refinedmods.refinedstorage2.platform.api.item;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
@@ -10,9 +10,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.apiguardian.api.API;
 
-// TODO: Rename to StorageContainerItem
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public interface StorageDiskItem {
+public interface StorageContainerItem {
     Optional<TypedStorage<?>> resolve(StorageRepository storageRepository, ItemStack stack);
 
     Optional<StorageInfo> getInfo(Level level, ItemStack stack);

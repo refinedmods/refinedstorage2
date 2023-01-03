@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveProvider;
 import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
+import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItem;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
-import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -27,7 +27,7 @@ public class DiskDriveInventory extends SimpleContainer implements DiskDriveProv
 
     @Override
     public boolean canPlaceItem(final int slot, final ItemStack stack) {
-        return stack.getItem() instanceof StorageDiskItem;
+        return stack.getItem() instanceof StorageContainerItem;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class DiskDriveInventory extends SimpleContainer implements DiskDriveProv
         if (storageRepository == null) {
             return Optional.empty();
         }
-        return validateAndGetStack(slot).flatMap(stack -> ((StorageDiskItem) stack.getItem()).resolve(
+        return validateAndGetStack(slot).flatMap(stack -> ((StorageContainerItem) stack.getItem()).resolve(
             storageRepository,
             stack
         ));
@@ -65,7 +65,7 @@ public class DiskDriveInventory extends SimpleContainer implements DiskDriveProv
 
     private Optional<ItemStack> validateAndGetStack(final int slot) {
         final ItemStack stack = getItem(slot);
-        if (stack.isEmpty() || !(stack.getItem() instanceof StorageDiskItem)) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof StorageContainerItem)) {
             return Optional.empty();
         }
         return Optional.of(stack);
