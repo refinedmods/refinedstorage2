@@ -89,17 +89,12 @@ public class DiskDriveNetworkNode extends AbstractStorageNetworkNode implements 
         }
 
         if (diskProvider != null) {
-            diskProvider.getStorageChannelType(slot).ifPresentOrElse(type -> {
-                disks[slot] = diskProvider
-                    .resolve(slot)
-                    .map(storage -> new DiskDriveDiskStorage(storage, type, listener))
-                    .orElse(null);
-
-                if (disks[slot] != null) {
-                    final StorageChannelType<?> addedStorageChannelType = disks[slot].getStorageChannelType();
-                    final DiskDriveCompositeStorage<?> addedStorage = compositeStorages.get(addedStorageChannelType);
-                    results.add(new DiskChange(false, addedStorage, disks[slot]));
-                }
+            diskProvider.resolve(slot).ifPresentOrElse(resolved -> {
+                disks[slot] = new DiskDriveDiskStorage(resolved.storage(), resolved.storageChannelType(), listener);
+                final DiskDriveCompositeStorage<?> relevantComposite = compositeStorages.get(
+                    resolved.storageChannelType()
+                );
+                results.add(new DiskChange(false, relevantComposite, disks[slot]));
             }, () -> disks[slot] = null);
         }
 

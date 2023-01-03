@@ -24,6 +24,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.apiguardian.api.API;
 
+// TODO: Move to helper iface.
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public final class StorageItemHelper {
     private static final String TAG_ID = "id";
