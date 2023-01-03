@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveProvider;
+import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageProvider;
 import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItem;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
-public class DiskDriveInventory extends SimpleContainer implements DiskDriveProvider {
+public class DiskDriveInventory extends SimpleContainer implements MultiStorageProvider {
     private final AbstractDiskDriveBlockEntity diskDrive;
     @Nullable
     private StorageRepository storageRepository;
@@ -53,11 +53,11 @@ public class DiskDriveInventory extends SimpleContainer implements DiskDriveProv
     }
 
     @Override
-    public Optional<TypedStorage<?>> resolve(final int slot) {
+    public Optional<TypedStorage<?>> resolve(final int index) {
         if (storageRepository == null) {
             return Optional.empty();
         }
-        return validateAndGetStack(slot).flatMap(stack -> ((StorageContainerItem) stack.getItem()).resolve(
+        return validateAndGetStack(index).flatMap(stack -> ((StorageContainerItem) stack.getItem()).resolve(
             storageRepository,
             stack
         ));

@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive;
+package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
 
 import com.refinedmods.refinedstorage2.api.network.node.AbstractImmutableConfiguredProxyStorage;
 import com.refinedmods.refinedstorage2.api.network.node.StorageConfiguration;
@@ -14,15 +14,15 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import java.util.List;
 import java.util.Optional;
 
-class DiskDriveCompositeStorage<T> extends AbstractImmutableConfiguredProxyStorage<T, CompositeStorageImpl<T>>
+class MultiStorageExposedStorage<T> extends AbstractImmutableConfiguredProxyStorage<T, CompositeStorageImpl<T>>
     implements CompositeStorage<T>, CompositeAwareChild<T> {
-    protected DiskDriveCompositeStorage(final StorageConfiguration config) {
+    protected MultiStorageExposedStorage(final StorageConfiguration config) {
         super(config, new CompositeStorageImpl<>(new ResourceListImpl<>()));
     }
 
     @Override
     public void sortSources() {
-        // no-op: cannot sort individual disks.
+        // no-op: cannot sort individual storages.
     }
 
     @Override

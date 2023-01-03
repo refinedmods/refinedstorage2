@@ -1,6 +1,6 @@
 @ParametersAreNonnullByDefault
 @FieldsAndMethodsAreNonnullByDefault
-package com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive;
+package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
 
 import com.refinedmods.refinedstorage2.api.core.FieldsAndMethodsAreNonnullByDefault;
 

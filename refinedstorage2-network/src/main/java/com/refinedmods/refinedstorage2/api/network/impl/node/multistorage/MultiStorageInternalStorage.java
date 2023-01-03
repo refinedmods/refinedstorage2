@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive;
+package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
@@ -13,18 +13,18 @@ import java.util.Collection;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
-    private static final double DISK_NEAR_CAPACITY_THRESHOLD = .75;
+public class MultiStorageInternalStorage<T> implements TrackedStorage<T> {
+    private static final double NEAR_CAPACITY_THRESHOLD = .75;
 
     private final Storage<T> delegate;
     private final StorageChannelType<T> storageChannelType;
     @Nullable
-    private final DiskDriveListener listener;
-    private StorageDiskState state;
+    private final MultiStorageListener listener;
+    private MultiStorageStorageState state;
 
-    public DiskDriveDiskStorage(final Storage<T> delegate,
-                                final StorageChannelType<T> storageChannelType,
-                                @Nullable final DiskDriveListener listener) {
+    public MultiStorageInternalStorage(final Storage<T> delegate,
+                                       final StorageChannelType<T> storageChannelType,
+                                       @Nullable final MultiStorageListener listener) {
         this.delegate = delegate;
         this.storageChannelType = storageChannelType;
         this.listener = listener;
@@ -35,36 +35,35 @@ public class DiskDriveDiskStorage<T> implements TrackedStorage<T> {
         return storageChannelType;
     }
 
-    public StorageDiskState getState() {
+    public MultiStorageStorageState getState() {
         if (delegate instanceof LimitedStorage<?> limitedStorage) {
             return getStateWithCapacity(limitedStorage.getCapacity());
         }
-        return StorageDiskState.NORMAL;
+        return MultiStorageStorageState.NORMAL;
     }
 
-    private StorageDiskState getStateWithCapacity(final long capacity) {
+    private MultiStorageStorageState getStateWithCapacity(final long capacity) {
         final double fullness = (double) delegate.getStored() / capacity;
-
         if (fullness >= 1D) {
-            return StorageDiskState.FULL;
-        } else if (fullness >= DISK_NEAR_CAPACITY_THRESHOLD) {
-            return StorageDiskState.NEAR_CAPACITY;
+            return MultiStorageStorageState.FULL;
+        } else if (fullness >= NEAR_CAPACITY_THRESHOLD) {
+            return MultiStorageStorageState.NEAR_CAPACITY;
         } else {
-            return StorageDiskState.NORMAL;
+            return MultiStorageStorageState.NORMAL;
         }
     }
 
     private void checkStateChanged() {
-        final StorageDiskState currentDiskState = getState();
-        if (state != currentDiskState) {
-            this.state = currentDiskState;
+        final MultiStorageStorageState currentState = getState();
+        if (state != currentState) {
+            this.state = currentState;
             notifyListener();
         }
     }
 
     private void notifyListener() {
         if (listener != null) {
-            listener.onDiskChanged();
+            listener.onStorageChanged();
         }
     }
 

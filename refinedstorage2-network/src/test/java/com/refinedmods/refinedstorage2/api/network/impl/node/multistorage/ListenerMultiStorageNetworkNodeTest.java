@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive;
+package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
@@ -23,32 +23,32 @@ import static org.mockito.Mockito.verify;
 
 @NetworkTest
 @SetupNetwork
-class ListenerDiskDriveNetworkNodeTest {
+class ListenerMultiStorageNetworkNodeTest {
     @AddNetworkNode
-    DiskDriveNetworkNode sut;
+    MultiStorageNetworkNode sut;
 
-    DiskDriveListener listener;
-    DiskDriveProviderImpl provider;
+    MultiStorageListener listener;
+    MultiStorageProviderImpl provider;
 
     @BeforeEach
     void setUp() {
-        listener = mock(DiskDriveListener.class);
+        listener = mock(MultiStorageListener.class);
         sut.setListener(listener);
-        provider = new DiskDriveProviderImpl();
-        sut.setDiskProvider(provider);
+        provider = new MultiStorageProviderImpl();
+        sut.setProvider(provider);
     }
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void shouldCallDiskStateChangeListenerWhenExtracting(
+    void shouldCallStateChangeListenerWhenExtracting(
         final Action action,
         @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
     ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 75, Action.EXECUTE, EmptyActor.INSTANCE);
-        provider.setInSlot(1, storage);
-        initializeDiskDriveAndActivate();
+        provider.set(1, storage);
+        initializeAndActivate();
 
         // Act
         networkStorage.extract("A", 1, action, EmptyActor.INSTANCE);
@@ -56,20 +56,20 @@ class ListenerDiskDriveNetworkNodeTest {
 
         // Assert
         final VerificationMode expectedTimes = action == Action.EXECUTE ? times(1) : never();
-        verify(listener, expectedTimes).onDiskChanged();
+        verify(listener, expectedTimes).onStorageChanged();
     }
 
     @ParameterizedTest
     @EnumSource(Action.class)
-    void shouldCallDiskStateChangeListenerWhenInserting(
+    void shouldCallStateChangeListenerWhenInserting(
         final Action action,
         @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
     ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 74, Action.EXECUTE, EmptyActor.INSTANCE);
-        provider.setInSlot(1, storage);
-        initializeDiskDriveAndActivate();
+        provider.set(1, storage);
+        initializeAndActivate();
 
         // Act
         networkStorage.insert("A", 1, action, EmptyActor.INSTANCE);
@@ -77,44 +77,44 @@ class ListenerDiskDriveNetworkNodeTest {
 
         // Assert
         final VerificationMode expectedTimes = action == Action.EXECUTE ? times(1) : never();
-        verify(listener, expectedTimes).onDiskChanged();
+        verify(listener, expectedTimes).onStorageChanged();
     }
 
     @Test
-    void shouldNotCallDiskStateChangeListenerWhenUnnecessaryOnExtracting(
+    void shouldNotCallStateChangeListenerWhenUnnecessaryOnExtracting(
         @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
     ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 76, Action.EXECUTE, EmptyActor.INSTANCE);
-        provider.setInSlot(1, storage);
-        initializeDiskDriveAndActivate();
+        provider.set(1, storage);
+        initializeAndActivate();
 
         // Act
         networkStorage.extract("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
-        verify(listener, never()).onDiskChanged();
+        verify(listener, never()).onStorageChanged();
     }
 
     @Test
-    void shouldNotCallDiskStateChangeListenerWhenUnnecessaryOnInserting(
+    void shouldNotCallStateChangeListenerWhenUnnecessaryOnInserting(
         @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
     ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        provider.setInSlot(1, storage);
-        initializeDiskDriveAndActivate();
+        provider.set(1, storage);
+        initializeAndActivate();
 
         // Act
         networkStorage.insert("A", 74, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
-        verify(listener, never()).onDiskChanged();
+        verify(listener, never()).onStorageChanged();
     }
 
-    private void initializeDiskDriveAndActivate() {
-        sut.setDiskProvider(provider);
+    private void initializeAndActivate() {
+        sut.setProvider(provider);
         sut.setActive(true);
     }
 }

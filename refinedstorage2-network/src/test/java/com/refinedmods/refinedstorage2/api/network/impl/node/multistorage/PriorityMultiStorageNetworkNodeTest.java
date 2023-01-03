@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive;
+package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
@@ -18,40 +18,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @NetworkTest
 @SetupNetwork
-class PriorityDiskDriveNetworkNodeTest {
+class PriorityMultiStorageNetworkNodeTest {
     @AddNetworkNode
-    DiskDriveNetworkNode a;
+    MultiStorageNetworkNode a;
 
     @AddNetworkNode
-    DiskDriveNetworkNode b;
+    MultiStorageNetworkNode b;
 
-    DiskDriveProviderImpl provider;
+    MultiStorageProviderImpl provider;
 
     @BeforeEach
     void setUp() {
-        provider = new DiskDriveProviderImpl();
+        provider = new MultiStorageProviderImpl();
     }
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void shouldRespectPriority(
-        final boolean diskDriveAHasPriority,
+        final boolean multiStorageAHasPriority,
         @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
     ) {
         // Arrange
         final Storage<String> storage1 = new LimitedStorageImpl<>(100);
-        final DiskDriveProviderImpl provider1 = new DiskDriveProviderImpl();
-        provider1.setInSlot(1, storage1);
-        a.setDiskProvider(provider1);
+        final MultiStorageProviderImpl provider1 = new MultiStorageProviderImpl();
+        provider1.set(1, storage1);
+        a.setProvider(provider1);
         a.setActive(true);
 
         final Storage<String> storage2 = new LimitedStorageImpl<>(100);
-        final DiskDriveProviderImpl provider2 = new DiskDriveProviderImpl();
-        provider2.setInSlot(1, storage2);
-        b.setDiskProvider(provider2);
+        final MultiStorageProviderImpl provider2 = new MultiStorageProviderImpl();
+        provider2.set(1, storage2);
+        b.setProvider(provider2);
         b.setActive(true);
 
-        if (diskDriveAHasPriority) {
+        if (multiStorageAHasPriority) {
             a.setPriority(5);
             b.setPriority(2);
         } else {
@@ -63,7 +63,7 @@ class PriorityDiskDriveNetworkNodeTest {
         networkStorage.insert("A", 1, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
-        if (diskDriveAHasPriority) {
+        if (multiStorageAHasPriority) {
             assertThat(storage1.getAll()).isNotEmpty();
             assertThat(storage2.getAll()).isEmpty();
         } else {
