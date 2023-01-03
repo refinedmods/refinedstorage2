@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.StorageDiskProvider;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
 
 import java.util.Optional;

@@ -4,7 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetw
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
@@ -66,7 +66,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         if (level.isClientSide()) {
             return;
         }
-        final PlatformStorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
+        final StorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
         if (storageId == null) {
             // We are a new block entity, or:
             // - We are placed through NBT
@@ -123,7 +123,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         // We got placed through NBT (#setLevel(Level) -> #load(CompoundTag)), or,
         // we got placed with an existing storage ID (#setLevel(Level) -> modifyStorageAfterAlreadyInitialized(UUID)).
         // Clean up the storage created earlier in #setLevel(Level).
-        final PlatformStorageRepository storageRepository = PlatformApi.INSTANCE
+        final StorageRepository storageRepository = PlatformApi.INSTANCE
             .getStorageRepository(Objects.requireNonNull(level));
         storageRepository.disassemble(Objects.requireNonNull(storageId)).ifPresentOrElse(
             storage -> LOGGER.debug("Unneeded storage {} successfully removed", storageId),
