@@ -41,7 +41,9 @@ public interface StorageContainerHelper {
                          boolean showCapacityAndProgress,
                          boolean showStackingInfo);
 
+    // TODO: remove - leaky abstraction
     Optional<UUID> getId(ItemStack stack);
 
+    // TODO: remove - leaky abstraction
     void setId(ItemStack stack, UUID id);
 }

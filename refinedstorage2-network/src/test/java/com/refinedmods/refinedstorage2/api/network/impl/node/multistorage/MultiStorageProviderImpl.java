@@ -8,8 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-// TODO: make pkg private
-public class MultiStorageProviderImpl implements MultiStorageProvider {
+class MultiStorageProviderImpl implements MultiStorageProvider {
     private final Map<Integer, Storage<String>> storages = new HashMap<>();
 
     @Override

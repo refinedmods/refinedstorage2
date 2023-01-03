@@ -3,9 +3,7 @@ package com.refinedmods.refinedstorage2.api.network.impl.component;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkImpl;
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageListener;
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageProviderImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
@@ -20,36 +18,29 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 class StorageNetworkComponentImplTest {
     private StorageNetworkComponent sut;
 
-    private MultiStorageNetworkNode storage1;
+    private StorageNetworkNode<String> storage1;
     private NetworkNodeContainer storage1Container;
 
-    private MultiStorageNetworkNode storage2;
+    private StorageNetworkNode<String> storage2;
     private NetworkNodeContainer storage2Container;
 
     @BeforeEach
     void setUp() {
         sut = new StorageNetworkComponentImpl(NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY);
 
-        final MultiStorageProviderImpl provider1 = new MultiStorageProviderImpl();
-        provider1.set(0, new LimitedStorageImpl<>(100));
-        storage1 = new MultiStorageNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY, 9);
+        storage1 = new StorageNetworkNode<>(0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
         storage1.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
-        storage1.setListener(mock(MultiStorageListener.class));
-        storage1.setProvider(provider1);
+        storage1.setStorage(new LimitedStorageImpl<>(100));
         storage1.setActive(true);
         storage1Container = () -> storage1;
 
-        final MultiStorageProviderImpl provider2 = new MultiStorageProviderImpl();
-        provider2.set(0, new LimitedStorageImpl<>(100));
-        storage2 = new MultiStorageNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY, 9);
+        storage2 = new StorageNetworkNode<>(0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
         storage2.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
-        storage2.setListener(mock(MultiStorageListener.class));
-        storage2.setProvider(provider2);
+        storage2.setStorage(new LimitedStorageImpl<>(100));
         storage2.setActive(true);
         storage2Container = () -> storage2;
     }
