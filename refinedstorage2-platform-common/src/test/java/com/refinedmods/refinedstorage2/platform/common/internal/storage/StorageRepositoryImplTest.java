@@ -6,7 +6,6 @@ import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
@@ -25,20 +24,38 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static com.refinedmods.refinedstorage2.platform.test.TagHelper.createDummyTag;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SetupMinecraft
-class PlatformStorageRepositoryImplTest {
-    StorageRepositoryImpl delegate;
-    PlatformStorageRepositoryImpl sut;
+class StorageRepositoryImplTest {
+    StorageRepositoryImpl sut;
 
     @BeforeEach
     void setUp() {
-        delegate = new StorageRepositoryImpl();
-        sut = new PlatformStorageRepositoryImpl(delegate, PlatformTestFixtures.STORAGE_TYPE_REGISTRY);
+        sut = new StorageRepositoryImpl(PlatformTestFixtures.STORAGE_TYPE_REGISTRY);
+    }
+
+    private PlatformStorage<ItemResource> createSerializableStorage(final Storage<ItemResource> storage) {
+        if (storage instanceof LimitedStorageImpl<ItemResource> limitedStorage) {
+            return new LimitedPlatformStorage<>(
+                limitedStorage,
+                ItemStorageType.INSTANCE,
+                new InMemoryTrackedStorageRepository<>(),
+                () -> {
+                }
+            );
+        }
+        return new PlatformStorage<>(
+            storage,
+            ItemStorageType.INSTANCE,
+            new InMemoryTrackedStorageRepository<>(),
+            () -> {
+            }
+        );
     }
 
     @Test
@@ -48,16 +65,16 @@ class PlatformStorageRepositoryImplTest {
     }
 
     @Test
-    void shouldSetStorage() {
+    void shouldNotRetrieveNonExistentStorage() {
+        // Assert
+        assertThat(sut.get(UUID.randomUUID())).isEmpty();
+    }
+
+    @Test
+    void shouldBeAbleToSetAndRetrieveStorage() {
         // Arrange
         final UUID id = UUID.randomUUID();
-        final Storage<ItemResource> storage = new PlatformStorage<>(
-            new InMemoryStorageImpl<>(),
-            ItemStorageType.INSTANCE,
-            new InMemoryTrackedStorageRepository<>(),
-            () -> {
-            }
-        );
+        final Storage<ItemResource> storage = createSerializableStorage(new InMemoryStorageImpl<>());
         storage.insert(new ItemResource(Items.DIRT, null), 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
@@ -70,16 +87,53 @@ class PlatformStorageRepositoryImplTest {
     }
 
     @Test
-    void shouldDisassemble() {
+    void shouldNotBeAbleToSetStorageWithExistingId() {
         // Arrange
         final UUID id = UUID.randomUUID();
-        final Storage<ItemResource> storage = new PlatformStorage<>(
-            new InMemoryStorageImpl<>(),
-            ItemStorageType.INSTANCE,
-            new InMemoryTrackedStorageRepository<>(),
-            () -> {
-            }
-        );
+        sut.set(id, createSerializableStorage(new InMemoryStorageImpl<>()));
+
+        // Act
+        final Executable action = () -> sut.set(id, createSerializableStorage(new InMemoryStorageImpl<>()));
+
+        // Assert
+        assertThrows(IllegalArgumentException.class, action);
+    }
+
+    @Test
+    void shouldNotBeAbleToSetUnserializableStorage() {
+        // Arrange
+        final UUID id = UUID.randomUUID();
+        final InMemoryStorageImpl<String> storage = new InMemoryStorageImpl<>();
+
+        // Act & assert
+        assertThrows(IllegalArgumentException.class, () -> sut.set(id, storage));
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void shouldNotBeAbleToSetWithInvalidId() {
+        // Arrange
+        final Storage<ItemResource> storage = createSerializableStorage(new InMemoryStorageImpl<>());
+
+        // Act & assert
+        assertThrows(NullPointerException.class, () -> sut.set(null, storage));
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void shouldNotBeAbleToSetWithInvalidStorage() {
+        // Arrange
+        final UUID id = UUID.randomUUID();
+
+        // Act & assert
+        assertThrows(NullPointerException.class, () -> sut.set(id, null));
+    }
+
+    @Test
+    void shouldDisassembleEmptyStorage() {
+        // Arrange
+        final UUID id = UUID.randomUUID();
+        final Storage<ItemResource> storage = createSerializableStorage(new InMemoryStorageImpl<>());
         sut.set(id, storage);
         sut.setDirty(false);
 
@@ -87,21 +141,16 @@ class PlatformStorageRepositoryImplTest {
         final Optional<Storage<ItemResource>> result = sut.disassemble(id);
 
         // Assert
-        assertThat(result).isNotEmpty();
+        assertThat(result).get().isEqualTo(storage);
         assertThat(sut.isDirty()).isTrue();
+        assertThat(sut.get(id)).isEmpty();
     }
 
     @Test
-    void shouldNotDisassembleWhenNotPossible() {
+    void shouldNotDisassembleNonEmptyStorage() {
         // Arrange
         final UUID id = UUID.randomUUID();
-        final Storage<ItemResource> storage = new PlatformStorage<>(
-            new InMemoryStorageImpl<>(),
-            ItemStorageType.INSTANCE,
-            new InMemoryTrackedStorageRepository<>(),
-            () -> {
-            }
-        );
+        final Storage<ItemResource> storage = createSerializableStorage(new InMemoryStorageImpl<>());
         storage.insert(new ItemResource(Items.DIRT, null), 10, Action.EXECUTE, EmptyActor.INSTANCE);
         sut.set(id, storage);
         sut.setDirty(false);
@@ -112,6 +161,16 @@ class PlatformStorageRepositoryImplTest {
         // Assert
         assertThat(result).isEmpty();
         assertThat(sut.isDirty()).isFalse();
+        assertThat(sut.get(id)).isPresent();
+    }
+
+    @Test
+    void shouldNotDisassembleNonExistentStorage() {
+        // Act
+        final Optional<Storage<String>> disassembled = sut.disassemble(UUID.randomUUID());
+
+        // Assert
+        assertThat(disassembled).isEmpty();
     }
 
     @Test
@@ -124,13 +183,47 @@ class PlatformStorageRepositoryImplTest {
     }
 
     @Test
-    void shouldNotBeAbleToSerializeUnserializableStorage() {
+    void shouldRetrieveInfoFromLimitedStorage() {
         // Arrange
         final UUID id = UUID.randomUUID();
-        final InMemoryStorageImpl<String> storage = new InMemoryStorageImpl<>();
+        final Storage<ItemResource> storage = createSerializableStorage(new LimitedStorageImpl<>(10));
+        storage.insert(new ItemResource(Items.DIRT, null), 5, Action.EXECUTE, EmptyActor.INSTANCE);
 
-        // Act & assert
-        assertThrows(IllegalArgumentException.class, () -> sut.set(id, storage));
+        // Act
+        sut.set(id, storage);
+
+        // Assert
+        final StorageInfo info = sut.getInfo(id);
+
+        assertThat(info.capacity()).isEqualTo(10);
+        assertThat(info.stored()).isEqualTo(5);
+    }
+
+    @Test
+    void shouldRetrieveInfoFromRegularStorage() {
+        // Arrange
+        final UUID id = UUID.randomUUID();
+        final Storage<ItemResource> storage = createSerializableStorage(new InMemoryStorageImpl<>());
+        storage.insert(new ItemResource(Items.DIRT, null), 5, Action.EXECUTE, EmptyActor.INSTANCE);
+
+        // Act
+        sut.set(id, storage);
+
+        // Assert
+        final StorageInfo info = sut.getInfo(id);
+
+        assertThat(info.capacity()).isZero();
+        assertThat(info.stored()).isEqualTo(5);
+    }
+
+    @Test
+    void shouldRetrieveInfoFromNonExistentStorage() {
+        // Act
+        final StorageInfo info = sut.getInfo(UUID.randomUUID());
+
+        // Assert
+        assertThat(info.capacity()).isZero();
+        assertThat(info.stored()).isZero();
     }
 
     @Test
@@ -150,23 +243,19 @@ class PlatformStorageRepositoryImplTest {
             new InMemoryTrackedStorageRepository<>(),
             sut::markAsChanged
         );
-        final InMemoryStorageImpl<ItemResource> c = new InMemoryStorageImpl<>();
 
         final UUID aId = UUID.randomUUID();
         final UUID bId = UUID.randomUUID();
-        final UUID cId = UUID.randomUUID();
 
         sut.set(aId, a);
         sut.set(bId, b);
-        delegate.set(cId, c); // Set through delegate to bypass serializable checks
 
         a.insert(new ItemResource(Items.DIRT, createDummyTag()), 10, Action.EXECUTE, new PlayerActor("A"));
         b.insert(new ItemResource(Items.GLASS, null), 20, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         final CompoundTag serialized = sut.save(new CompoundTag());
-        sut =
-            new PlatformStorageRepositoryImpl(new StorageRepositoryImpl(), PlatformTestFixtures.STORAGE_TYPE_REGISTRY);
+        sut = new StorageRepositoryImpl(PlatformTestFixtures.STORAGE_TYPE_REGISTRY);
         sut.read(serialized);
 
         // Assert
@@ -189,6 +278,5 @@ class PlatformStorageRepositoryImplTest {
         assertThat(sut.get(bId).get().getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>(new ItemResource(Items.GLASS, null), 20)
         );
-        assertThat(sut.get(cId)).isEmpty();
     }
 }

@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.internal.storage;
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,7 @@ import com.google.common.util.concurrent.RateLimiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClientStorageRepository implements PlatformStorageRepository {
+public class ClientStorageRepository implements StorageRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientStorageRepository.class);
 
     private final Map<UUID, StorageInfo> info = new HashMap<>();
