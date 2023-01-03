@@ -29,14 +29,13 @@ public interface StorageRepository {
     <T> void set(UUID id, Storage<T> storage);
 
     /**
-     * Tries to disassemble the storage.
-     * If the storage exists, and is empty, it must remove the storage from the repository.
+     * If the storage exists, and is empty, it will remove the storage from the repository.
      *
      * @param id  the id
      * @param <T> the resource type
      * @return the removed storage, if it existed and was empty
      */
-    <T> Optional<Storage<T>> disassemble(UUID id); // TODO: Rename to removeIfEmpty
+    <T> Optional<Storage<T>> removeIfEmpty(UUID id);
 
     /**
      * Retrieves info for a given storage ID.

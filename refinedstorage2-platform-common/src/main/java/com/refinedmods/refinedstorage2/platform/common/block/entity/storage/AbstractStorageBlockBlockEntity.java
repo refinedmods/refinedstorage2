@@ -125,7 +125,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         // Clean up the storage created earlier in #setLevel(Level).
         final StorageRepository storageRepository = PlatformApi.INSTANCE
             .getStorageRepository(Objects.requireNonNull(level));
-        storageRepository.disassemble(Objects.requireNonNull(storageId)).ifPresentOrElse(
+        storageRepository.removeIfEmpty(Objects.requireNonNull(storageId)).ifPresentOrElse(
             storage -> LOGGER.debug("Unneeded storage {} successfully removed", storageId),
             () -> LOGGER.warn("Unneeded storage {} could not be removed", storageId)
         );
