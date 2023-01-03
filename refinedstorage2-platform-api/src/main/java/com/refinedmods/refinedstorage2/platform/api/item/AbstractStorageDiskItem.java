@@ -2,7 +2,10 @@ package com.refinedmods.refinedstorage2.platform.api.item;
 
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
+import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
 
 import java.util.Optional;
@@ -21,14 +24,20 @@ import org.apiguardian.api.API;
 // TODO: Immunity for despawning
 // TODO: Tags/ore dict in recipes
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public abstract class AbstractStorageDiskItem extends Item implements StorageDiskItem {
-    protected AbstractStorageDiskItem(final Properties properties) {
+public abstract class AbstractStorageDiskItem<T> extends Item implements StorageDiskItem {
+    private final StorageChannelType<T> type;
+
+    protected AbstractStorageDiskItem(final Properties properties, final StorageChannelType<T> type) {
         super(properties);
+        this.type = type;
     }
 
     @Override
-    public Optional<UUID> getDiskId(final ItemStack stack) {
-        return StorageItemHelper.getStorageId(stack);
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Optional<TypedStorage<?>> resolve(final StorageRepository storageRepository, final ItemStack stack) {
+        return StorageItemHelper.getStorageId(stack)
+            .flatMap(storageRepository::get)
+            .map(storage -> new TypedStorage(storage, type));
     }
 
     @Override
@@ -58,7 +67,7 @@ public abstract class AbstractStorageDiskItem extends Item implements StorageDis
         }
     }
 
-    protected abstract Storage<?> createStorage(Level level);
+    protected abstract Storage<T> createStorage(Level level);
 
     protected abstract ItemStack createPrimaryDisassemblyByproduct(int count);
 

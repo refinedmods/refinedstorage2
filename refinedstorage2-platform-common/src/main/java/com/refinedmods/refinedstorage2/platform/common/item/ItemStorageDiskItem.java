@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.item;
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
@@ -21,7 +20,6 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.Ite
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 
@@ -32,13 +30,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-public class ItemStorageDiskItem extends AbstractStorageDiskItem {
+public class ItemStorageDiskItem extends AbstractStorageDiskItem<ItemResource> {
     private final ItemStorageType.Variant variant;
     private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions =
         EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
     public ItemStorageDiskItem(final CreativeModeTab tab, final ItemStorageType.Variant variant) {
-        super(new Item.Properties().tab(tab).stacksTo(1).fireResistant());
+        super(new Item.Properties().tab(tab).stacksTo(1).fireResistant(), StorageChannelTypes.ITEM);
         this.variant = variant;
         this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.STACK_INFO);
         if (variant != ItemStorageType.Variant.CREATIVE) {
@@ -64,17 +62,12 @@ public class ItemStorageDiskItem extends AbstractStorageDiskItem {
     }
 
     @Override
-    public Optional<StorageChannelType<?>> getType(final ItemStack stack) {
-        return Optional.of(StorageChannelTypes.ITEM);
-    }
-
-    @Override
     public boolean hasStacking() {
         return true;
     }
 
     @Override
-    protected Storage<?> createStorage(final Level level) {
+    protected Storage<ItemResource> createStorage(final Level level) {
         final TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
             final TrackedStorageImpl<ItemResource> delegate = new TrackedStorageImpl<>(

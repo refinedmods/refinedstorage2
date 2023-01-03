@@ -1,8 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.StorageDiskProvider;
-import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
 
@@ -54,19 +53,14 @@ public class DiskDriveInventory extends SimpleContainer implements StorageDiskPr
     }
 
     @Override
-    public Optional<Storage<?>> resolve(final int slot) {
+    public Optional<TypedStorage<?>> resolve(final int slot) {
         if (storageRepository == null) {
             return Optional.empty();
         }
-        return validateAndGetStack(slot)
-            .flatMap(stack -> ((StorageDiskItem) stack.getItem()).getDiskId(stack))
-            .flatMap(storageRepository::get);
-    }
-
-    @Override
-    public Optional<StorageChannelType<?>> getStorageChannelType(final int slot) {
-        return validateAndGetStack(slot)
-            .flatMap(stack -> ((StorageDiskItem) stack.getItem()).getType(stack));
+        return validateAndGetStack(slot).flatMap(stack -> ((StorageDiskItem) stack.getItem()).resolve(
+            storageRepository,
+            stack
+        ));
     }
 
     private Optional<ItemStack> validateAndGetStack(final int slot) {

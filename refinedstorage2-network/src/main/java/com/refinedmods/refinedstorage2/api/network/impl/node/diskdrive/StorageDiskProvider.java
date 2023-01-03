@@ -1,13 +1,11 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
 
 import java.util.Optional;
 
 // TODO: Rename to DiskDriveProvider
+@FunctionalInterface
 public interface StorageDiskProvider {
-    Optional<Storage<?>> resolve(int slot);
-
-    Optional<StorageChannelType<?>> getStorageChannelType(int slot);
+    Optional<TypedStorage<?>> resolve(int slot);
 }
