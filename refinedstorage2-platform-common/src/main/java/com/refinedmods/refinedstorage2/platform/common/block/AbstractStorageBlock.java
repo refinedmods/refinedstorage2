@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
-import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.AbstractStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
@@ -65,7 +65,7 @@ public abstract class AbstractStorageBlock<T extends AbstractStorageBlockBlockEn
             final UUID storageId = storageBlockEntity.getStorageId();
             if (storageId != null) {
                 LOGGER.info("Transferred storage {} at {} to stack", storageId, storageBlockEntity.getBlockPos());
-                StorageItemHelper.setStorageId(stack, storageId);
+                PlatformApi.INSTANCE.getStorageContainerHelper().setId(stack, storageId);
             } else {
                 LOGGER.warn("Storage block {} has no associated storage ID!", storageBlockEntity.getBlockPos());
             }

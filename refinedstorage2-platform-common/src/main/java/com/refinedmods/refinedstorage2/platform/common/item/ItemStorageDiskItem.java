@@ -9,18 +9,15 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractStorageContainerItem;
-import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
@@ -32,16 +29,14 @@ import net.minecraft.world.level.Level;
 
 public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResource> {
     private final ItemStorageType.Variant variant;
-    private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions =
-        EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
     public ItemStorageDiskItem(final CreativeModeTab tab, final ItemStorageType.Variant variant) {
-        super(new Item.Properties().tab(tab).stacksTo(1).fireResistant(), StorageChannelTypes.ITEM);
+        super(
+            new Item.Properties().tab(tab).stacksTo(1).fireResistant(),
+            StorageChannelTypes.ITEM,
+            PlatformApi.INSTANCE.getStorageContainerHelper()
+        );
         this.variant = variant;
-        this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.STACK_INFO);
-        if (variant != ItemStorageType.Variant.CREATIVE) {
-            this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
-        }
     }
 
     @Override
@@ -50,14 +45,20 @@ public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResour
                                 final List<Component> tooltip,
                                 final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
-        StorageItemHelper.appendToTooltip(
+        if (level == null) {
+            return;
+        }
+        final StorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
+        final boolean showCapacityAndProgress = variant != ItemStorageType.Variant.CREATIVE;
+        helper.appendToTooltip(
             stack,
-            level,
+            storageRepository,
             tooltip,
             context,
             QuantityFormatter::formatWithUnits,
             QuantityFormatter::format,
-            tooltipOptions
+            showCapacityAndProgress,
+            true
         );
     }
 
@@ -67,7 +68,7 @@ public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResour
     }
 
     @Override
-    protected Storage<ItemResource> createStorage(final Level level) {
+    protected Storage<ItemResource> createStorage(final StorageRepository storageRepository) {
         final TrackedStorageRepository<ItemResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
             final TrackedStorageImpl<ItemResource> delegate = new TrackedStorageImpl<>(
@@ -79,7 +80,7 @@ public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResour
                 delegate,
                 ItemStorageType.INSTANCE,
                 trackingRepository,
-                PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
+                storageRepository::markAsChanged
             );
         }
         final LimitedStorageImpl<ItemResource> delegate = new LimitedStorageImpl<>(
@@ -90,7 +91,7 @@ public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResour
             delegate,
             ItemStorageType.INSTANCE,
             trackingRepository,
-            PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
+            storageRepository::markAsChanged
         );
     }
 

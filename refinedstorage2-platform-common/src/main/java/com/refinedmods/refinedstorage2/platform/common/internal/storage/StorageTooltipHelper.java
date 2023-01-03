@@ -1,23 +1,15 @@
-package com.refinedmods.refinedstorage2.platform.api.storage;
+package com.refinedmods.refinedstorage2.platform.common.internal.storage;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 
 import java.util.List;
-import java.util.Set;
 import java.util.function.LongFunction;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import org.apiguardian.api.API;
 
-@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
 public final class StorageTooltipHelper {
     private StorageTooltipHelper() {
-    }
-
-    public enum TooltipOption {
-        CAPACITY_AND_PROGRESS,
-        STACK_INFO
     }
 
     public static void appendToTooltip(final List<Component> tooltip,
@@ -25,20 +17,21 @@ public final class StorageTooltipHelper {
                                        final long capacity,
                                        final LongFunction<String> quantityFormatter,
                                        final LongFunction<String> stackInfoQuantityFormatter,
-                                       final Set<TooltipOption> options) {
-        if (!options.contains(TooltipOption.CAPACITY_AND_PROGRESS)) {
+                                       final boolean showCapacityAndProgress,
+                                       final boolean showStackingInfo) {
+        if (!showCapacityAndProgress) {
             addAmountStoredWithoutCapacity(tooltip, stored, quantityFormatter);
         } else {
             addAmountStoredWithCapacity(tooltip, stored, capacity, quantityFormatter);
         }
-        if (options.contains(TooltipOption.STACK_INFO)) {
-            if (!options.contains(TooltipOption.CAPACITY_AND_PROGRESS)) {
+        if (showStackingInfo) {
+            if (!showCapacityAndProgress) {
                 addAmountOfStacksWithoutCapacity(tooltip, stackInfoQuantityFormatter, stored);
             } else {
                 addAmountOfStacksWithCapacity(tooltip, stackInfoQuantityFormatter, stored, capacity);
             }
         }
-        if (options.contains(TooltipOption.CAPACITY_AND_PROGRESS)) {
+        if (showCapacityAndProgress) {
             addProgress(tooltip, stored, capacity);
         }
     }
