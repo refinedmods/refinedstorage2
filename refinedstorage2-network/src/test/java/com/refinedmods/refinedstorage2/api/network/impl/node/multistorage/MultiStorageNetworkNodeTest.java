@@ -52,7 +52,9 @@ class MultiStorageNetworkNodeTest {
     }
 
     @Test
-    void shouldInitialize(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    void shouldInitializeButNotShowResourcesYet(
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -65,6 +67,52 @@ class MultiStorageNetworkNodeTest {
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_STORAGE);
         assertThat(networkStorage.getAll()).isEmpty();
         assertThat(networkStorage.getStored()).isZero();
+    }
+
+    @Test
+    void shouldInitializeAndShowResourcesAfterEnabling(
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
+        // Arrange
+        final Storage<String> storage = new LimitedStorageImpl<>(100);
+        storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        storage.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
+        provider.set(1, storage);
+
+        // Act
+        sut.setProvider(provider);
+        sut.setActive(true);
+
+        // Assert
+        assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 50),
+            new ResourceAmount<>("B", 50)
+        );
+    }
+
+    @Test
+    void shouldInitializeMultipleTimes(
+        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+    ) {
+        // Arrange
+        final Storage<String> storage1 = new LimitedStorageImpl<>(10);
+        storage1.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        provider.set(8, storage1);
+        sut.setProvider(provider);
+        sut.setActive(true);
+
+        final Storage<String> storage2 = new LimitedStorageImpl<>(10);
+        storage2.insert("B", 5, Action.EXECUTE, EmptyActor.INSTANCE);
+        provider.set(8, storage2);
+
+        // Act
+        sut.setProvider(provider);
+
+        // Assert
+        assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_STORAGE);
+        assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            new ResourceAmount<>("B", 5)
+        );
     }
 
     @Test
@@ -132,10 +180,10 @@ class MultiStorageNetworkNodeTest {
 
         final Storage<String> storage = new LimitedStorageImpl<>(10);
         storage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
-        provider.set(7, storage);
+        provider.set(8, storage);
 
         // Act
-        sut.onStorageChanged(7);
+        sut.onStorageChanged(8);
 
         // Assert
         assertThat(sut.getEnergyUsage()).isEqualTo(BASE_USAGE + USAGE_PER_STORAGE);
@@ -149,16 +197,16 @@ class MultiStorageNetworkNodeTest {
         // Arrange
         final Storage<String> originalStorage = new LimitedStorageImpl<>(10);
         originalStorage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
-        provider.set(7, originalStorage);
+        provider.set(0, originalStorage);
         initializeAndActivate();
 
         final Storage<String> replacedStorage = new LimitedStorageImpl<>(10);
         replacedStorage.insert("B", 2, Action.EXECUTE, EmptyActor.INSTANCE);
-        provider.set(7, replacedStorage);
+        provider.set(0, replacedStorage);
 
         // Act
         final Collection<ResourceAmount<String>> preChanging = new HashSet<>(networkStorage.getAll());
-        sut.onStorageChanged(7);
+        sut.onStorageChanged(0);
         final Collection<ResourceAmount<String>> postChanging = networkStorage.getAll();
 
         // Assert
@@ -570,25 +618,6 @@ class MultiStorageNetworkNodeTest {
         // Assert
         assertThat(preInactiveness).isNotEmpty();
         assertThat(postInactiveness).isEmpty();
-    }
-
-    @Test
-    void shouldShowOnNetworkWhenActive(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
-        // Arrange
-        final Storage<String> storage = new LimitedStorageImpl<>(100);
-        storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
-        storage.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
-        provider.set(1, storage);
-        sut.setProvider(provider);
-
-        // Act
-        sut.setActive(true);
-
-        // Assert
-        assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
-            new ResourceAmount<>("A", 50),
-            new ResourceAmount<>("B", 50)
-        );
     }
 
     @Test
