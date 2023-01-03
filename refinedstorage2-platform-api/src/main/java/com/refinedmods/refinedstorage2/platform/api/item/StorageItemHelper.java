@@ -90,7 +90,7 @@ public final class StorageItemHelper {
         }
 
         return storageId
-            .flatMap(id -> PlatformApi.INSTANCE.getStorageRepository(level).disassemble(id))
+            .flatMap(id -> PlatformApi.INSTANCE.getStorageRepository(level).removeIfEmpty(id))
             .map(disk -> returnByproducts(level, player, primaryByproduct, secondaryByproduct))
             .orElseGet(() -> InteractionResultHolder.fail(stack));
     }

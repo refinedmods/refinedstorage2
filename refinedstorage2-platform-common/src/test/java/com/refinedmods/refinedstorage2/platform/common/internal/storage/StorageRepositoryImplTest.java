@@ -130,7 +130,7 @@ class StorageRepositoryImplTest {
     }
 
     @Test
-    void shouldDisassembleEmptyStorage() {
+    void shouldRemoveIfEmpty() {
         // Arrange
         final UUID id = UUID.randomUUID();
         final Storage<ItemResource> storage = createSerializableStorage(new InMemoryStorageImpl<>());
@@ -138,7 +138,7 @@ class StorageRepositoryImplTest {
         sut.setDirty(false);
 
         // Act
-        final Optional<Storage<ItemResource>> result = sut.disassemble(id);
+        final Optional<Storage<ItemResource>> result = sut.removeIfEmpty(id);
 
         // Assert
         assertThat(result).get().isEqualTo(storage);
@@ -147,7 +147,7 @@ class StorageRepositoryImplTest {
     }
 
     @Test
-    void shouldNotDisassembleNonEmptyStorage() {
+    void shouldNotRemoveIfEmptyIfNotEmpty() {
         // Arrange
         final UUID id = UUID.randomUUID();
         final Storage<ItemResource> storage = createSerializableStorage(new InMemoryStorageImpl<>());
@@ -156,7 +156,7 @@ class StorageRepositoryImplTest {
         sut.setDirty(false);
 
         // Act
-        final Optional<Storage<String>> result = sut.disassemble(id);
+        final Optional<Storage<String>> result = sut.removeIfEmpty(id);
 
         // Assert
         assertThat(result).isEmpty();
@@ -165,12 +165,13 @@ class StorageRepositoryImplTest {
     }
 
     @Test
-    void shouldNotDisassembleNonExistentStorage() {
+    void shouldNotRemoveIfEmptyIfNotExists() {
         // Act
-        final Optional<Storage<String>> disassembled = sut.disassemble(UUID.randomUUID());
+        final Optional<Storage<String>> disassembled = sut.removeIfEmpty(UUID.randomUUID());
 
         // Assert
         assertThat(disassembled).isEmpty();
+        assertThat(sut.isDirty()).isFalse();
     }
 
     @Test

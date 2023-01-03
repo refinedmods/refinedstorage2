@@ -63,7 +63,7 @@ public class StorageRepositoryImpl extends SavedData implements StorageRepositor
     }
 
     @Override
-    public <T> Optional<Storage<T>> disassemble(final UUID id) {
+    public <T> Optional<Storage<T>> removeIfEmpty(final UUID id) {
         return this.<T>get(id).map(storage -> {
             if (storage.getStored() == 0) {
                 entries.remove(id);

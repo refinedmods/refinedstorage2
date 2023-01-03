@@ -40,7 +40,7 @@ public class ClientStorageRepository implements StorageRepository {
     }
 
     @Override
-    public <T> Optional<Storage<T>> disassemble(final UUID id) {
+    public <T> Optional<Storage<T>> removeIfEmpty(final UUID id) {
         throw new UnsupportedOperationException();
     }
 
