@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.storage;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
@@ -59,6 +60,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
     protected abstract PlatformStorage<T> createStorage(Runnable listener);
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setLevel(final Level level) {
         super.setLevel(level);
         if (level.isClientSide()) {
@@ -73,14 +75,15 @@ public abstract class AbstractStorageBlockBlockEntity<T>
             //   (#setLevel(Level) -> #modifyStorageAfterAlreadyInitialized(UUID)).
             // In both cases listed above we need to clean up the storage we create here.
             storageId = UUID.randomUUID();
-            getNode().initializeNewStorage(
-                storageRepository,
-                createStorage(storageRepository::markAsChanged),
-                storageId
-            );
+            final Storage<T> storage = createStorage(storageRepository::markAsChanged);
+            storageRepository.set(storageId, storage);
+            getNode().setStorage(storage);
         } else {
             // The existing block entity got loaded in the level (#load(CompoundTag) -> #setLevel(Level)).
-            getNode().initializeExistingStorage(storageRepository, storageId);
+            storageRepository.get(storageId).ifPresentOrElse(
+                storage -> getNode().setStorage((Storage<T>) storage),
+                () -> LOGGER.warn("Storage with {} could not be resolved!", storageId)
+            );
         }
     }
 
@@ -115,6 +118,7 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         super.load(tag);
     }
 
+    @SuppressWarnings("unchecked")
     private void cleanupUnneededInitialStorageAndReinitialize(final UUID actualStorageId) {
         // We got placed through NBT (#setLevel(Level) -> #load(CompoundTag)), or,
         // we got placed with an existing storage ID (#setLevel(Level) -> modifyStorageAfterAlreadyInitialized(UUID)).
@@ -125,7 +129,10 @@ public abstract class AbstractStorageBlockBlockEntity<T>
             storage -> LOGGER.debug("Unneeded storage {} successfully removed", storageId),
             () -> LOGGER.warn("Unneeded storage {} could not be removed", storageId)
         );
-        getNode().initializeExistingStorage(storageRepository, actualStorageId);
+        storageRepository.get(actualStorageId).ifPresentOrElse(
+            storage -> getNode().setStorage((Storage<T>) storage),
+            () -> LOGGER.warn("Actual storage ID {} could not be resolved!", actualStorageId)
+        );
     }
 
     private boolean isPlacedThroughNbtPlacement(final UUID otherStorageId) {

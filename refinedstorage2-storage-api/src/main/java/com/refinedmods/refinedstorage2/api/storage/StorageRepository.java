@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.apiguardian.api.API;
 
+// TODO: Move to platform api.
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
 public interface StorageRepository {
     /**

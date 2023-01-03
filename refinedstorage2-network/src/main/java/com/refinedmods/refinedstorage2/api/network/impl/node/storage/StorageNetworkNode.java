@@ -3,12 +3,10 @@ package com.refinedmods.refinedstorage2.api.network.impl.node.storage;
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
@@ -29,23 +27,9 @@ public class StorageNetworkNode<T> extends AbstractStorageNetworkNode implements
         this.type = type;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public void initializeExistingStorage(final StorageRepository storageRepository, final UUID storageId) {
-        storageRepository.get(storageId).ifPresentOrElse(
-            existingStorage -> {
-                LOGGER.info("Loaded existing storage {}", storageId);
-                this.internalStorage = (Storage) existingStorage;
-            },
-            () -> LOGGER.warn("Storage {} was not found, ignoring", storageId)
-        );
-    }
-
-    public void initializeNewStorage(final StorageRepository storageRepository,
-                                     final Storage<T> newStorage,
-                                     final UUID storageId) {
-        LOGGER.info("Loaded new storage {}", storageId);
-        storageRepository.set(storageId, newStorage);
-        this.internalStorage = newStorage;
+    public void setStorage(final Storage<T> storage) {
+        LOGGER.info("Loading storage {}", storage);
+        this.internalStorage = storage;
     }
 
     @Override

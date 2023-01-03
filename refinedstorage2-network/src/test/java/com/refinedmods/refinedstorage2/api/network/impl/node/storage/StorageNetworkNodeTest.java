@@ -6,8 +6,6 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.AccessMode;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.StorageRepository;
-import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorage;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
@@ -19,9 +17,7 @@ import com.refinedmods.refinedstorage2.network.test.SetupNetwork;
 import com.refinedmods.refinedstorage2.network.test.util.FakeActor;
 
 import java.util.Set;
-import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,13 +36,6 @@ class StorageNetworkNodeTest {
         @AddNetworkNode.Property(key = PROPERTY_ENERGY_USAGE, longValue = ENERGY_USAGE)
     })
     StorageNetworkNode<String> sut;
-
-    StorageRepository storageRepository;
-
-    @BeforeEach
-    void setUp() {
-        storageRepository = new StorageRepositoryImpl();
-    }
 
     @Test
     void testInitialState(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
@@ -68,36 +57,13 @@ class StorageNetworkNodeTest {
     }
 
     @Test
-    void shouldInitializeNewStorage(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+    void shouldInitialize(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final LimitedStorage<String> limitedStorage = new LimitedStorageImpl<>(100);
         limitedStorage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
-        final UUID storageId = UUID.randomUUID();
 
         // Act
-        sut.initializeNewStorage(storageRepository, limitedStorage, storageId);
-        activateStorage();
-
-        // Assert
-        assertThat(sut.getStored()).isEqualTo(50L);
-        assertThat(sut.getCapacity()).isEqualTo(100L);
-        assertThat(storageRepository.get(storageId)).isNotEmpty();
-        assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            new ResourceAmount<>("A", 50L)
-        );
-    }
-
-    @Test
-    void shouldInitializeExistingStorage(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
-        // Arrange
-        final LimitedStorage<String> limitedStorage = new LimitedStorageImpl<>(100);
-        limitedStorage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
-        final UUID storageId = UUID.randomUUID();
-        storageRepository.set(storageId, limitedStorage);
-
-        // Act
-        sut.initializeExistingStorage(storageRepository, storageId);
-        activateStorage();
+        activateStorage(limitedStorage);
 
         // Assert
         assertThat(sut.getStored()).isEqualTo(50L);
@@ -105,27 +71,13 @@ class StorageNetworkNodeTest {
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new ResourceAmount<>("A", 50L)
         );
-    }
-
-    @Test
-    void shouldNotInitializeNonExistentStorage(
-        @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
-        // Act
-        sut.initializeExistingStorage(storageRepository, UUID.randomUUID());
-        activateStorage();
-
-        // Assert
-        assertThat(sut.getStored()).isZero();
-        assertThat(sut.getCapacity()).isZero();
-        assertThat(networkStorage.getAll()).isEmpty();
     }
 
     @Test
     void shouldInsert(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
-        activateStorage();
+        activateStorage(storage);
 
         // Act
         final long inserted = networkStorage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -146,8 +98,7 @@ class StorageNetworkNodeTest {
         final Storage<String> storage = new LimitedStorageImpl<>(200);
         storage.insert("A", 100, Action.EXECUTE, EmptyActor.INSTANCE);
         storage.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
-        sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
-        activateStorage();
+        activateStorage(storage);
 
         // Act
         final long extracted = networkStorage.extract("A", 30, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -171,8 +122,7 @@ class StorageNetworkNodeTest {
         sut.setFilterTemplates(Set.of("A", "B"));
 
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
-        activateStorage();
+        activateStorage(storage);
 
         // Act
         final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -193,8 +143,7 @@ class StorageNetworkNodeTest {
         sut.setFilterTemplates(Set.of());
 
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
-        activateStorage();
+        activateStorage(storage);
 
         // Act
         final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -214,8 +163,7 @@ class StorageNetworkNodeTest {
         sut.setFilterTemplates(Set.of("A", "B"));
 
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
-        activateStorage();
+        activateStorage(storage);
 
         // Act
         final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -236,8 +184,7 @@ class StorageNetworkNodeTest {
         sut.setFilterTemplates(Set.of());
 
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
-        activateStorage();
+        activateStorage(storage);
 
         // Act
         final long inserted1 = networkStorage.insert("A", 12, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -259,8 +206,7 @@ class StorageNetworkNodeTest {
         sut.setAccessMode(accessMode);
 
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
-        activateStorage();
+        activateStorage(storage);
 
         // Act
         final long inserted = networkStorage.insert("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -282,8 +228,7 @@ class StorageNetworkNodeTest {
 
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 20, Action.EXECUTE, EmptyActor.INSTANCE);
-        sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
-        activateStorage();
+        activateStorage(storage);
 
         // Act
         final long extracted = networkStorage.extract("A", 5, Action.EXECUTE, EmptyActor.INSTANCE);
@@ -299,9 +244,7 @@ class StorageNetworkNodeTest {
     void shouldNotInsertWhenInactive(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
-        activateStorage();
-
+        activateStorage(storage);
         sut.setActive(false);
 
         // Act
@@ -315,8 +258,7 @@ class StorageNetworkNodeTest {
     void shouldNotExtractWhenInactive(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(100);
-        sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
-        activateStorage();
+        activateStorage(storage);
 
         sut.setActive(false);
 
@@ -335,8 +277,7 @@ class StorageNetworkNodeTest {
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
         storage.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
-        sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
-        activateStorage();
+        activateStorage(storage);
 
         // Act
         sut.setActive(false);
@@ -351,10 +292,9 @@ class StorageNetworkNodeTest {
         final Storage<String> storage = new LimitedStorageImpl<>(100);
         storage.insert("A", 50, Action.EXECUTE, EmptyActor.INSTANCE);
         storage.insert("B", 50, Action.EXECUTE, EmptyActor.INSTANCE);
-        sut.initializeNewStorage(storageRepository, storage, UUID.randomUUID());
 
         // Act
-        sut.setActive(true);
+        activateStorage(storage);
 
         // Assert
         assertThat(networkStorage.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
@@ -366,12 +306,7 @@ class StorageNetworkNodeTest {
     @Test
     void shouldTrackChanges(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
         // Arrange
-        sut.initializeNewStorage(
-            storageRepository,
-            new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L),
-            UUID.randomUUID()
-        );
-        activateStorage();
+        activateStorage(new TrackedStorageImpl<>(new LimitedStorageImpl<>(100), () -> 0L));
 
         // Act
         final long inserted = networkStorage.insert("A", 10, Action.EXECUTE, FakeActor.INSTANCE);
@@ -381,7 +316,8 @@ class StorageNetworkNodeTest {
         assertThat(networkStorage.findTrackedResourceByActorType("A", FakeActor.class)).isNotEmpty();
     }
 
-    private void activateStorage() {
+    private void activateStorage(final Storage<String> storage) {
+        sut.setStorage(storage);
         sut.setActive(true);
     }
 
@@ -392,15 +328,17 @@ class StorageNetworkNodeTest {
 
         @ParameterizedTest
         @ValueSource(booleans = {true, false})
-        void shouldRespectPriority(final boolean oneHasPriority,
-                                   @InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
+        void shouldRespectPriority(
+            final boolean oneHasPriority,
+            @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
+        ) {
             // Arrange
             final LimitedStorageImpl<String> storage1 = new LimitedStorageImpl<>(100);
-            sut.initializeNewStorage(storageRepository, storage1, UUID.randomUUID());
+            sut.setStorage(storage1);
             sut.setActive(true);
 
             final LimitedStorageImpl<String> storage2 = new LimitedStorageImpl<>(100);
-            otherStorage.initializeNewStorage(storageRepository, storage2, UUID.randomUUID());
+            otherStorage.setStorage(storage2);
             otherStorage.setActive(true);
 
             if (oneHasPriority) {
