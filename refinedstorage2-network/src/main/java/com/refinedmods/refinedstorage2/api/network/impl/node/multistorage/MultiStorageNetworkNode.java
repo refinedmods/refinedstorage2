@@ -6,8 +6,10 @@ import com.refinedmods.refinedstorage2.api.network.node.AbstractStorageNetworkNo
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -59,13 +61,14 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
 
     public void setProvider(final MultiStorageProvider provider) {
         this.provider = provider;
-        // Avoid initializing multiple times, this causes problems with already initialized storages going out of sync
-        // with the composite internalStorage (object reference changes).
-        if (activeStorages > 0) {
-            return; // TODO: Test?
-        }
+        final List<StorageChange> changes = new ArrayList<>();
         for (int i = 0; i < cache.length; ++i) {
-            initializeStorage(i);
+            changes.addAll(initializeStorage(i));
+        }
+        // If we are already initialized, update all the storages to keep the exposed storages in sync.
+        // If we are not initialized, update nothing as we have to wait for an activeness update.
+        if (activeStorages > 0) {
+            changes.forEach(this::processStorageChange);
         }
         updateActiveStorageCount();
     }
