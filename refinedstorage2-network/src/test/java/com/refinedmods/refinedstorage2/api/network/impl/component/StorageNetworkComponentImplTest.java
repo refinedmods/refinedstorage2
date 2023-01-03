@@ -5,8 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.FakeStorageProviderRepository;
-import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.StorageDiskProviderImpl;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
@@ -16,7 +15,6 @@ import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,31 +25,33 @@ import static org.mockito.Mockito.mock;
 class StorageNetworkComponentImplTest {
     private StorageNetworkComponent sut;
 
-    private DiskDriveNetworkNode diskDrive;
-    private NetworkNodeContainer diskDriveContainer;
+    private DiskDriveNetworkNode storage1;
+    private NetworkNodeContainer storage1Container;
 
-    private StorageNetworkNode<String> storage;
-    private NetworkNodeContainer storageContainer;
+    private DiskDriveNetworkNode storage2;
+    private NetworkNodeContainer storage2Container;
 
     @BeforeEach
     void setUp() {
         sut = new StorageNetworkComponentImpl(NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY);
 
-        final FakeStorageProviderRepository storageProviderRepository = new FakeStorageProviderRepository();
-        storageProviderRepository.setInSlot(0, new LimitedStorageImpl<>(100));
-        diskDrive = new DiskDriveNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY, 9);
-        diskDrive.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
-        diskDrive.setListener(mock(DiskDriveListener.class));
-        diskDrive.setDiskProvider(storageProviderRepository);
-        diskDrive.initialize(storageProviderRepository);
-        diskDrive.setActive(true);
-        diskDriveContainer = () -> diskDrive;
+        final StorageDiskProviderImpl diskProvider1 = new StorageDiskProviderImpl();
+        diskProvider1.setInSlot(0, new LimitedStorageImpl<>(100));
+        storage1 = new DiskDriveNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY, 9);
+        storage1.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
+        storage1.setListener(mock(DiskDriveListener.class));
+        storage1.setDiskProvider(diskProvider1);
+        storage1.setActive(true);
+        storage1Container = () -> storage1;
 
-        storage = new StorageNetworkNode<>(0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
-        storage.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
-        storage.initializeNewStorage(storageProviderRepository, new LimitedStorageImpl<>(100), UUID.randomUUID());
-        storage.setActive(true);
-        storageContainer = () -> storage;
+        final StorageDiskProviderImpl diskProvider2 = new StorageDiskProviderImpl();
+        diskProvider2.setInSlot(0, new LimitedStorageImpl<>(100));
+        storage2 = new DiskDriveNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY, 9);
+        storage2.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
+        storage2.setListener(mock(DiskDriveListener.class));
+        storage2.setDiskProvider(diskProvider2);
+        storage2.setActive(true);
+        storage2Container = () -> storage2;
     }
 
     @Test
@@ -72,7 +72,7 @@ class StorageNetworkComponentImplTest {
 
         // Act
         final long insertedPre = storageChannel.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
-        sut.onContainerAdded(diskDriveContainer);
+        sut.onContainerAdded(storage1Container);
         final long insertedPost = storageChannel.insert("A", 10, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Assert
@@ -86,16 +86,16 @@ class StorageNetworkComponentImplTest {
         // Arrange
         final StorageChannel<String> storageChannel = sut.getStorageChannel(NetworkTestFixtures.STORAGE_CHANNEL_TYPE);
 
-        sut.onContainerAdded(diskDriveContainer);
-        sut.onContainerAdded(storageContainer);
+        sut.onContainerAdded(storage1Container);
+        sut.onContainerAdded(storage2Container);
 
         // Ensure that we fill our 2 containers.
         storageChannel.insert("A", 200, Action.EXECUTE, EmptyActor.INSTANCE);
 
         // Act
         final Collection<ResourceAmount<String>> resourcesPre = new HashSet<>(storageChannel.getAll());
-        sut.onContainerRemoved(diskDriveContainer);
-        sut.onContainerRemoved(storageContainer);
+        sut.onContainerRemoved(storage1Container);
+        sut.onContainerRemoved(storage2Container);
         final Collection<ResourceAmount<String>> resourcesPost = storageChannel.getAll();
 
         // Assert
