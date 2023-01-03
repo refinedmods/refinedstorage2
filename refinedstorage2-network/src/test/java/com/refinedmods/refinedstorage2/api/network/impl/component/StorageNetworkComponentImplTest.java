@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkCompo
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkImpl;
 import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveListener;
 import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.StorageDiskProviderImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveProviderImpl;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
@@ -35,7 +35,7 @@ class StorageNetworkComponentImplTest {
     void setUp() {
         sut = new StorageNetworkComponentImpl(NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY);
 
-        final StorageDiskProviderImpl diskProvider1 = new StorageDiskProviderImpl();
+        final DiskDriveProviderImpl diskProvider1 = new DiskDriveProviderImpl();
         diskProvider1.setInSlot(0, new LimitedStorageImpl<>(100));
         storage1 = new DiskDriveNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY, 9);
         storage1.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
@@ -44,7 +44,7 @@ class StorageNetworkComponentImplTest {
         storage1.setActive(true);
         storage1Container = () -> storage1;
 
-        final StorageDiskProviderImpl diskProvider2 = new StorageDiskProviderImpl();
+        final DiskDriveProviderImpl diskProvider2 = new DiskDriveProviderImpl();
         diskProvider2.setInSlot(0, new LimitedStorageImpl<>(100));
         storage2 = new DiskDriveNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY, 9);
         storage2.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));

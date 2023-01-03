@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.StorageDiskProvider;
+import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveProvider;
 import com.refinedmods.refinedstorage2.api.storage.TypedStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.item.StorageDiskItem;
@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
-public class DiskDriveInventory extends SimpleContainer implements StorageDiskProvider {
+public class DiskDriveInventory extends SimpleContainer implements DiskDriveProvider {
     private final AbstractDiskDriveBlockEntity diskDrive;
     @Nullable
     private StorageRepository storageRepository;

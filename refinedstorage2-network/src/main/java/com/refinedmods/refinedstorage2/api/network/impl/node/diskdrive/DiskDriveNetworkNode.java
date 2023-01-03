@@ -23,7 +23,7 @@ public class DiskDriveNetworkNode extends AbstractStorageNetworkNode implements 
     private static final Logger LOGGER = LoggerFactory.getLogger(DiskDriveNetworkNode.class);
 
     @Nullable
-    private StorageDiskProvider diskProvider;
+    private DiskDriveProvider diskProvider;
     @Nullable
     private DiskDriveListener listener;
 
@@ -57,7 +57,7 @@ public class DiskDriveNetworkNode extends AbstractStorageNetworkNode implements 
         return new DiskDriveCompositeStorage<>(this);
     }
 
-    public void setDiskProvider(final StorageDiskProvider provider) {
+    public void setDiskProvider(final DiskDriveProvider provider) {
         this.diskProvider = provider;
         // Avoid initializing multiple times, this causes problems with already initialized storages going out of sync
         // with the composite storage (object reference changes).

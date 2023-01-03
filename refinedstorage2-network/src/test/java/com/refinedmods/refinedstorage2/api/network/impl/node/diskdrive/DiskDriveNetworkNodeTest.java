@@ -44,11 +44,11 @@ class DiskDriveNetworkNodeTest {
     })
     DiskDriveNetworkNode sut;
 
-    StorageDiskProviderImpl provider;
+    DiskDriveProviderImpl provider;
 
     @BeforeEach
     void setUp() {
-        provider = new StorageDiskProviderImpl();
+        provider = new DiskDriveProviderImpl();
     }
 
     @Test
