@@ -84,7 +84,6 @@ public abstract class AbstractDiskDriveBlockEntity
             this::getRedstoneMode,
             this::setRedstoneMode
         );
-        // TODO: REMOVE! getNode().setProvider(diskInventory);
         getNode().setListener(this);
         getNode().setNormalizer(filter.createNormalizer());
     }
