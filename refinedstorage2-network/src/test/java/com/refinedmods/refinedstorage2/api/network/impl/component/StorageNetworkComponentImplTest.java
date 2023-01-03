@@ -3,9 +3,9 @@ package com.refinedmods.refinedstorage2.api.network.impl.component;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.NetworkImpl;
-import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveListener;
-import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveProviderImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageListener;
+import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageProviderImpl;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
@@ -25,31 +25,31 @@ import static org.mockito.Mockito.mock;
 class StorageNetworkComponentImplTest {
     private StorageNetworkComponent sut;
 
-    private DiskDriveNetworkNode storage1;
+    private MultiStorageNetworkNode storage1;
     private NetworkNodeContainer storage1Container;
 
-    private DiskDriveNetworkNode storage2;
+    private MultiStorageNetworkNode storage2;
     private NetworkNodeContainer storage2Container;
 
     @BeforeEach
     void setUp() {
         sut = new StorageNetworkComponentImpl(NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY);
 
-        final DiskDriveProviderImpl diskProvider1 = new DiskDriveProviderImpl();
-        diskProvider1.setInSlot(0, new LimitedStorageImpl<>(100));
-        storage1 = new DiskDriveNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY, 9);
+        final MultiStorageProviderImpl provider1 = new MultiStorageProviderImpl();
+        provider1.set(0, new LimitedStorageImpl<>(100));
+        storage1 = new MultiStorageNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY, 9);
         storage1.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
-        storage1.setListener(mock(DiskDriveListener.class));
-        storage1.setDiskProvider(diskProvider1);
+        storage1.setListener(mock(MultiStorageListener.class));
+        storage1.setProvider(provider1);
         storage1.setActive(true);
         storage1Container = () -> storage1;
 
-        final DiskDriveProviderImpl diskProvider2 = new DiskDriveProviderImpl();
-        diskProvider2.setInSlot(0, new LimitedStorageImpl<>(100));
-        storage2 = new DiskDriveNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY, 9);
+        final MultiStorageProviderImpl provider2 = new MultiStorageProviderImpl();
+        provider2.set(0, new LimitedStorageImpl<>(100));
+        storage2 = new MultiStorageNetworkNode(0, 0, NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY, 9);
         storage2.setNetwork(new NetworkImpl(NetworkTestFixtures.NETWORK_COMPONENT_MAP_FACTORY));
-        storage2.setListener(mock(DiskDriveListener.class));
-        storage2.setDiskProvider(diskProvider2);
+        storage2.setListener(mock(MultiStorageListener.class));
+        storage2.setProvider(provider2);
         storage2.setActive(true);
         storage2Container = () -> storage2;
     }

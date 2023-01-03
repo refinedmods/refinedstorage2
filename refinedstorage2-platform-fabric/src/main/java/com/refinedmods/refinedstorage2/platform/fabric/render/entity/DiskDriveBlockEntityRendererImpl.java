@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.fabric.render.entity;
 
-import com.refinedmods.refinedstorage2.api.network.impl.node.diskdrive.DiskDriveState;
+import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageState;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.render.entity.AbstractDiskDriveBlockEntityRenderer;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
@@ -30,11 +30,11 @@ public class DiskDriveBlockEntityRendererImpl<T extends AbstractDiskDriveBlockEn
     }
 
     @Override
-    protected DiskDriveState getDriveState(final AbstractDiskDriveBlockEntity blockEntity) {
+    protected MultiStorageState getDriveState(final AbstractDiskDriveBlockEntity blockEntity) {
         if (!(blockEntity instanceof FabricDiskDriveBlockEntity fabricDiskDriveBlockEntity)) {
             return null;
         }
-        if (fabricDiskDriveBlockEntity.getRenderAttachmentData() instanceof DiskDriveState driveState) {
+        if (fabricDiskDriveBlockEntity.getRenderAttachmentData() instanceof MultiStorageState driveState) {
             return driveState;
         }
         return null;
