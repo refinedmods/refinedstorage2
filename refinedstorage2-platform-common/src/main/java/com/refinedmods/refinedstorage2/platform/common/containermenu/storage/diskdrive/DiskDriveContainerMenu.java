@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.di
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItem;
-import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ValidatedSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
@@ -13,10 +12,8 @@ import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -40,7 +37,9 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
     public DiskDriveContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getDiskDrive(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry());
 
-        this.storageInfoAccessor = new StorageDiskInfoAccessorImpl(playerInventory.player.getCommandSenderWorld());
+        this.storageInfoAccessor = new StorageDiskInfoAccessorImpl(PlatformApi.INSTANCE.getStorageRepository(
+            playerInventory.player.getLevel()
+        ));
 
         addSlots(
             playerInventory.player,
@@ -108,16 +107,13 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
     }
 
     @Override
-    public Set<StorageTooltipHelper.TooltipOption> getTooltipOptions() {
-        final Set<StorageTooltipHelper.TooltipOption> options =
-            EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
-        if (hasCapacity()) {
-            options.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
-        }
-        if (getDiskStacks().allMatch(storageInfoAccessor::hasStacking)) {
-            options.add(StorageTooltipHelper.TooltipOption.STACK_INFO);
-        }
-        return options;
+    public boolean showCapacityAndProgress() {
+        return hasCapacity();
+    }
+
+    @Override
+    public boolean showStackingInfo() {
+        return getDiskStacks().allMatch(storageInfoAccessor::hasStacking);
     }
 
     @Override

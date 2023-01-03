@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
@@ -21,6 +22,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStor
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientStorageRepository;
@@ -73,6 +75,7 @@ public class PlatformApiImpl implements PlatformApi {
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
     private final Map<StorageChannelType<?>, Set<PlatformExternalStorageProviderFactory>>
         externalStorageProviderFactories = new HashMap<>();
+    private final StorageContainerHelper storageContainerHelper = new StorageContainerHelperImpl();
 
     @Override
     public OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry() {
@@ -92,6 +95,11 @@ public class PlatformApiImpl implements PlatformApi {
                 this::createStorageRepository,
                 StorageRepositoryImpl.NAME
             );
+    }
+
+    @Override
+    public StorageContainerHelper getStorageContainerHelper() {
+        return storageContainerHelper;
     }
 
     private StorageRepositoryImpl createStorageRepository(final CompoundTag tag) {

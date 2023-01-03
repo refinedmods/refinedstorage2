@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.item.block;
 
-import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -18,15 +18,22 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.4")
-public abstract class AbstractStorageBlockBlockItem extends BlockItem {
-    protected AbstractStorageBlockBlockItem(final Block block, final Properties properties) {
+public abstract class AbstractStorageContainerBlockItem extends BlockItem {
+    protected final StorageContainerHelper helper;
+
+    protected AbstractStorageContainerBlockItem(
+        final Block block,
+        final Properties properties,
+        final StorageContainerHelper helper
+    ) {
         super(block, properties);
+        this.helper = helper;
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack stack = player.getItemInHand(hand);
-        return StorageItemHelper.tryDisassembly(
+        return helper.tryDisassembly(
             level,
             player,
             stack,
@@ -50,8 +57,7 @@ public abstract class AbstractStorageBlockBlockItem extends BlockItem {
     private void updateBlockEntityTag(final BlockPos pos,
                                       final Level level,
                                       final ItemStack stack) {
-        StorageItemHelper.getStorageId(stack).ifPresent(id ->
-            updateBlockEntityWithStorageId(pos, level.getBlockEntity(pos), id));
+        helper.getId(stack).ifPresent(id -> updateBlockEntityWithStorageId(pos, level.getBlockEntity(pos), id));
     }
 
     protected abstract ItemStack createPrimaryDisassemblyByproduct(int count);
