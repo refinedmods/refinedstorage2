@@ -25,11 +25,11 @@ class PriorityDiskDriveNetworkNodeTest {
     @AddNetworkNode
     DiskDriveNetworkNode b;
 
-    StorageDiskProviderImpl provider;
+    DiskDriveProviderImpl provider;
 
     @BeforeEach
     void setUp() {
-        provider = new StorageDiskProviderImpl();
+        provider = new DiskDriveProviderImpl();
     }
 
     @ParameterizedTest
@@ -40,13 +40,13 @@ class PriorityDiskDriveNetworkNodeTest {
     ) {
         // Arrange
         final Storage<String> storage1 = new LimitedStorageImpl<>(100);
-        final StorageDiskProviderImpl provider1 = new StorageDiskProviderImpl();
+        final DiskDriveProviderImpl provider1 = new DiskDriveProviderImpl();
         provider1.setInSlot(1, storage1);
         a.setDiskProvider(provider1);
         a.setActive(true);
 
         final Storage<String> storage2 = new LimitedStorageImpl<>(100);
-        final StorageDiskProviderImpl provider2 = new StorageDiskProviderImpl();
+        final DiskDriveProviderImpl provider2 = new DiskDriveProviderImpl();
         provider2.setInSlot(1, storage2);
         b.setDiskProvider(provider2);
         b.setActive(true);

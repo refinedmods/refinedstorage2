@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 // TODO: make pkg private
-public class StorageDiskProviderImpl implements StorageDiskProvider {
+public class DiskDriveProviderImpl implements DiskDriveProvider {
     private final Map<Integer, Storage<String>> storages = new HashMap<>();
 
     @Override

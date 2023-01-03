@@ -28,13 +28,13 @@ class ListenerDiskDriveNetworkNodeTest {
     DiskDriveNetworkNode sut;
 
     DiskDriveListener listener;
-    StorageDiskProviderImpl provider;
+    DiskDriveProviderImpl provider;
 
     @BeforeEach
     void setUp() {
         listener = mock(DiskDriveListener.class);
         sut.setListener(listener);
-        provider = new StorageDiskProviderImpl();
+        provider = new DiskDriveProviderImpl();
         sut.setDiskProvider(provider);
     }
 
