@@ -18,8 +18,9 @@ import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiGridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiProxy;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.RefinedStorageREIClientPlugin;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.ReiGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEnergyInfoPacket;
@@ -185,6 +186,9 @@ public class ClientModInitializerImpl implements ClientModInitializer {
 
     private void registerReiGridSynchronizers() {
         LOGGER.info("Activating REI grid synchronizers");
+        // This is so the ingredient converters are only registered once
+        // see https://github.com/refinedmods/refinedstorage2/pull/302#discussion_r1070015672
+        RefinedStorageREIClientPlugin.registerIngredientConverters();
         final ReiProxy reiProxy = new ReiProxy();
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
             createIdentifier("rei"),

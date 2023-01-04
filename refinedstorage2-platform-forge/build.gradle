@@ -82,6 +82,11 @@ dependencies {
     runtimeOnly fg.deobf(forge.jei.forge.impl.get())
 
     compileOnly fg.deobf(forge.rei.forge.get())
+    compileOnly fg.deobf(forge.rei.architectury.get())
+    compileOnly fg.deobf(forge.rei.cloth.math.get())
+//    runtimeOnly fg.deobf(forge.rei.forge.get())
+//    runtimeOnly fg.deobf(forge.rei.architectury.get())
+//    runtimeOnly fg.deobf(forge.rei.cloth.config.get())
 }
 
 processResources {

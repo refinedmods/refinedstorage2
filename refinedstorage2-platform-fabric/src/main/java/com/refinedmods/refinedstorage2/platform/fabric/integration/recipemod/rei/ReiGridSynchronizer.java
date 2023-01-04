@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.forge.integration.rei;
+package com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei;
 
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.AbstractGridSynchronizer;
 
