@@ -23,6 +23,8 @@ dependencyResolutionManagement {
         def jeiVersion = "11.2.0.256"
         // https://www.curseforge.com/minecraft/mc-mods/roughly-enough-items/files
         def reiVersion = "9.1.530"
+        def architecturyVersion = "6.2.43" // dependency of rei
+        def clothMathVersion = "0.6.1" // dependency of rei
         fabric {
             def minecraft = version("minecraft", minecraftVersion)
             library("minecraft", "com.mojang", "minecraft").versionRef(minecraft)
@@ -48,7 +50,7 @@ dependencyResolutionManagement {
 
             // https://www.curseforge.com/minecraft/mc-mods/roughly-enough-items/files
             def rei = version("rei", reiVersion)
-            def architectury = version("architectury", "6.2.43") // dependency of rei
+            def architectury = version("architectury", architecturyVersion) // dependency of rei
             library("rei-api", "me.shedaniel", "RoughlyEnoughItems-api").versionRef(rei)
             library("architectury", "dev.architectury", "architectury-fabric").versionRef(architectury)
             library("rei-fabric", "me.shedaniel", "RoughlyEnoughItems-fabric").versionRef(rei)
@@ -84,6 +86,8 @@ dependencyResolutionManagement {
 
             def rei = version("rei", reiVersion)
             library("rei-forge", "me.shedaniel", "RoughlyEnoughItems-forge").versionRef(rei)
+            library("architectury", "dev.architectury", "architectury-forge").version(architecturyVersion)
+            library("cloth-math", "me.shedaniel.cloth", "basic-math").version(clothMathVersion)
 
             plugin('forgeGradle', 'net.minecraftforge.gradle').version('5.1.+')
         }
@@ -106,6 +110,7 @@ dependencyResolutionManagement {
 
             def jei = version("jei", jeiVersion)
             library("jei-common-api", "mezz.jei", "jei-${minecraftVersion}-common-api").versionRef(jei)
+            library("rei-api", "me.shedaniel", "RoughlyEnoughItems-api").version(reiVersion)
         }
         testLibs {
             def junit5 = version("junit5", "5.9.0")

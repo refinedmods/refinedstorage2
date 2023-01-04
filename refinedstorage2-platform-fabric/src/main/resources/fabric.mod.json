@@ -27,6 +27,9 @@
     ],
     "jei_mod_plugin": [
       "com.refinedmods.refinedstorage2.platform.common.integration.jei.RefinedStorageModPlugin"
+    ],
+    "rei_client": [
+      "com.refinedmods.refinedstorage2.platform.fabric.integration.rei.RefinedStorageModPlugin"
     ]
   },
   "custom": {
