@@ -29,4 +29,17 @@ public interface PlatformNetworkNodeContainer extends NetworkNodeContainer {
      * @return whether the node can accept an incoming connection
      */
     boolean canAcceptIncomingConnection(Direction direction);
+
+    /**
+     * returns whether the node can connect to another node. This is useful if you want a node only to connect to a
+     * special node, or disallow connection to i.e. other colored nodes.
+     * If the return value ever changes, call {@link
+     * com.refinedmods.refinedstorage2.platform.api.PlatformApi#requestNetworkNodeUpdate(NetworkNodeContainer, Level)}.
+     *
+     * @param other the neighboring node
+     * @return whether the node is allowed to connect to the neighbor
+     */
+    default boolean canConnectTo(PlatformNetworkNodeContainer other) {
+        return true;
+    }
 }

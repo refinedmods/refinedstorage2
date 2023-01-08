@@ -12,6 +12,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fixed IO loops caused by Interfaces stealing from each other.
 - Fixed storages from an External Storage not reporting when a resource has last changed.
 
+### Added
+
+- Support for different colors of cable, that only connect to same colored cable and other RS parts
+
 ### Changed
 
 - An Interface that is acting as External Storage can no longer extract or insert from other Interfaces (and itself)

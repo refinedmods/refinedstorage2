@@ -24,12 +24,11 @@ import javax.annotation.Nullable;
 public final class Blocks {
     public static final Blocks INSTANCE = new Blocks();
 
+    private final BlockColorMap<CableBlock> cable = new BlockColorMap<>();
     private final BlockColorMap<ItemGridBlock> grid = new BlockColorMap<>();
     private final BlockColorMap<FluidGridBlock> fluidGrid = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
-    @Nullable
-    private Supplier<CableBlock> cable;
     @Nullable
     private Supplier<SimpleBlock> quartzEnrichedIronBlock;
     @Nullable
@@ -52,8 +51,8 @@ public final class Blocks {
     private Blocks() {
     }
 
-    public CableBlock getCable() {
-        return Objects.requireNonNull(cable).get();
+    public BlockColorMap<CableBlock> getCable() {
+        return cable;
     }
 
     public SimpleBlock getQuartzEnrichedIronBlock() {
@@ -82,10 +81,6 @@ public final class Blocks {
 
     public BlockColorMap<ControllerBlock> getCreativeController() {
         return creativeController;
-    }
-
-    public void setCable(final Supplier<CableBlock> cableSupplier) {
-        this.cable = cableSupplier;
     }
 
     public void setQuartzEnrichedIronBlock(final Supplier<SimpleBlock> quartzEnrichedIronBlockSupplier) {

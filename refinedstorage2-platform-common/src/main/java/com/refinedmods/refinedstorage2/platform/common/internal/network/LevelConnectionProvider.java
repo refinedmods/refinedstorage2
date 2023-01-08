@@ -100,7 +100,8 @@ public class LevelConnectionProvider implements ConnectionProvider {
             }
             final BlockPos offsetPos = container.getBlockPos().relative(direction);
             if (getBlockEntity(offsetPos) instanceof AbstractNetworkNodeContainerBlockEntity<?> neighborContainer
-                && neighborContainer.canAcceptIncomingConnection(direction)) {
+                && neighborContainer.canAcceptIncomingConnection(direction)
+                && neighborContainer.canConnectTo(container)) {
                 containers.add(neighborContainer);
             }
         }

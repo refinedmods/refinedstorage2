@@ -58,6 +58,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.CableBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
@@ -104,6 +105,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -278,10 +280,17 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerBlocks() {
-        Blocks.INSTANCE.setCable(register(
+        Blocks.INSTANCE.getCable().putAll(color -> register(
             Registry.BLOCK,
-            CABLE,
-            new CableBlock()
+            Blocks.INSTANCE.getCable().getId(color, DyeColor.GRAY, CABLE),
+            new CableBlock(color, Blocks.INSTANCE.getCable().getName(
+                color,
+                DyeColor.GRAY,
+                createTranslation(
+                    BLOCK_TRANSLATION_CATEGORY,
+                    "cable"
+                )
+            ))
         ));
         Blocks.INSTANCE.setQuartzEnrichedIronBlock(register(
             Registry.BLOCK,
@@ -381,17 +390,13 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     private void registerItems() {
         registerSimpleItems();
         registerGridItems();
+        registerCableItems();
         registerControllerItems();
         registerStorageItems();
         registerUpgrades();
     }
 
     private void registerSimpleItems() {
-        register(
-            Registry.ITEM,
-            CABLE,
-            new SimpleBlockItem(Blocks.INSTANCE.getCable(), CREATIVE_MODE_TAB)
-        );
         register(
             Registry.ITEM,
             QUARTZ_ENRICHED_IRON,
@@ -451,6 +456,18 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 new ProcessorItem(CREATIVE_MODE_TAB)
             );
         }
+    }
+
+    private void registerCableItems() {
+        Blocks.INSTANCE.getCable().forEach((color, block) -> register(
+                Registry.ITEM,
+                Blocks.INSTANCE.getGrid().getId(color, DyeColor.GRAY, CABLE),
+                new CableBlockItem(block.get(), CREATIVE_MODE_TAB, Blocks.INSTANCE.getCable().getName(
+                    color,
+                    DyeColor.GRAY,
+                    createTranslation(BLOCK_TRANSLATION_CATEGORY, "cable")
+                ))
+        ));
     }
 
     private void registerGridItems() {
@@ -571,14 +588,15 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerBlockEntities() {
-        BlockEntities.INSTANCE.setCable(register(
-            Registry.BLOCK_ENTITY_TYPE,
-            CABLE,
-            FabricBlockEntityTypeBuilder.create(
-                CableBlockEntity::new,
-                Blocks.INSTANCE.getCable()
-            ).build())
-        );
+        BlockEntities.INSTANCE.getCable().putAll((color) -> register(
+                Registry.BLOCK_ENTITY_TYPE,
+                Blocks.INSTANCE.getCable().getId(color, DyeColor.GRAY, CABLE),
+                FabricBlockEntityTypeBuilder.create(
+                        (blockPos, blockState) ->
+                                new CableBlockEntity(color, blockPos, blockState),
+                        Blocks.INSTANCE.getCable().get(color)
+                ).build()
+        ));
         BlockEntities.INSTANCE.setDiskDrive(register(
             Registry.BLOCK_ENTITY_TYPE,
             DISK_DRIVE,

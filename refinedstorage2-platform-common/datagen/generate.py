@@ -21,8 +21,8 @@ def to_json(data):
     return json.dumps(data, indent=2)
 
 
-def get_color_key(color, name):
-    if color == 'light_blue':
+def get_color_key(color, name, default_color = 'light_blue'):
+    if color == default_color:
         return name
     return color + '_' + name
 
@@ -92,6 +92,12 @@ def generate_controller_item(name, color):
 def generate_creative_controller_item(name, color):
         create_file(output_dir + '/assets/refinedstorage2/models/item/' + name + '.json', to_json({
           'parent': 'refinedstorage2:block/controller/' + color
+        }))
+
+
+def generate_cable_item(name):
+        create_file(output_dir + '/assets/refinedstorage2/models/item/' + name + '.json', to_json({
+          'parent': 'refinedstorage2:item/cable'
         }))
 
 
@@ -181,6 +187,74 @@ def generate_blockstate_for_each_bi_direction_and_active(name, model_factory):
                 name + '.json', to_json(result))
 
 
+def generate_blockstate_for_cable(name, core_block, ending_block):
+    result = {
+        'multipart': [
+            {
+                'apply': {
+                    'model': 'refinedstorage2:block/' + core_block
+                }
+            },
+            {
+                'when': {
+                    'north': True
+                },
+                'apply': {
+                    'model': 'refinedstorage2:block/' + ending_block
+                }
+            },
+            {
+                'when': {
+                    'east': True
+                },
+                'apply': {
+                    'model': 'refinedstorage2:block/' + ending_block,
+                    'y': 90
+                }
+            },
+            {
+                'when': {
+                    'south': True
+                },
+                'apply': {
+                    'model': 'refinedstorage2:block/' + ending_block,
+                    'x': 180
+                }
+            },
+            {
+                'when': {
+                    'west': True
+                },
+                'apply': {
+                    'model': 'refinedstorage2:block/' + ending_block,
+                    'y': 270
+                }
+            },
+            {
+                'when': {
+                    'up': True
+                },
+                'apply': {
+                    'model': 'refinedstorage2:block/' + ending_block,
+                    'x': 270
+                }
+            },
+            {
+                'when': {
+                    'down': True
+                },
+                'apply': {
+                    'model': 'refinedstorage2:block/' + ending_block,
+                    'x': 90
+                }
+            },
+        ]
+    }
+
+    create_file(output_dir + '/assets/refinedstorage2/blockstates/' +
+                name + '.json', to_json(result))
+
+
 def generate_recipe(name, data):
     create_file(output_dir + '/data/refinedstorage2/recipes/' +
                 name + '.json', to_json(data))
@@ -227,6 +301,8 @@ with open('colors.txt') as colors_file:
         generate_controller_blockstate(get_color_key(color, 'creative_controller'), color)
         generate_controller_item(get_color_key(color, 'controller'), color)
         generate_creative_controller_item(get_color_key(color, 'creative_controller'), color)
+        if color != 'gray':
+            generate_cable_item(get_color_key(color, 'cable', 'gray'))
 
         generate_north_cutout_block_model('grid/' + color, particle='refinedstorage2:block/grid/right', east='refinedstorage2:block/grid/right', south='refinedstorage2:block/grid/back', west='refinedstorage2:block/grid/left',
                                           up='refinedstorage2:block/grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/grid/front', cutout='refinedstorage2:block/grid/cutouts/' + color, emissive_cutout=True)
@@ -239,11 +315,13 @@ with open('colors.txt') as colors_file:
                                                   up='refinedstorage2:block/fluid_grid/top', down='refinedstorage2:block/bottom', north='refinedstorage2:block/fluid_grid/front', cutout='refinedstorage2:block/fluid_grid/cutouts/' + color, emissive_cutout=True)
         generate_referencing_item_model(get_color_key(color, 'fluid_grid'), 'refinedstorage2:block/fluid_grid/' + color)
         generate_blockstate_for_each_bi_direction_and_active(get_color_key(color, 'fluid_grid'), lambda direction, active: 'refinedstorage2:block/fluid_grid/' + color if active else 'refinedstorage2:block/fluid_grid/inactive')
+        generate_blockstate_for_cable(get_color_key(color, 'cable', 'gray'), 'cable_core', 'cable_extension')
 
         generate_simple_loot_table(get_color_key(color, 'grid'), 'refinedstorage2:' + get_color_key(color, 'grid'))
         generate_simple_loot_table(get_color_key(color, 'fluid_grid'), 'refinedstorage2:' + get_color_key(color, 'fluid_grid'))
         generate_simple_loot_table(get_color_key(color, 'controller'), 'refinedstorage2:' + get_color_key(color, 'controller'))
         generate_simple_loot_table(get_color_key(color, 'creative_controller'), 'refinedstorage2:' + get_color_key(color, 'creative_controller'))
+        generate_simple_loot_table(get_color_key(color, 'cable', 'gray'), 'refinedstorage2:' + get_color_key(color, 'cable', 'gray'))
 
         generate_recipe(get_color_key(color, 'fluid_grid'), {
             'type': 'minecraft:crafting_shapeless',
@@ -294,6 +372,22 @@ with open('colors.txt') as colors_file:
                 }
             })
 
+        cable_name = get_color_key(color, 'cable', 'gray')
+        generate_recipe('coloring/' + cable_name, {
+            'type': 'minecraft:crafting_shapeless',
+            'ingredients': [
+                {
+                    'tag': 'refinedstorage2:cables'
+                },
+                {
+                    'item': 'minecraft:' + dye
+                }
+            ],
+            'result': {
+                'item': 'refinedstorage2:' + cable_name
+            }
+        })
+
     generate_item_tag('grids', {
         'replace': False,
         'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'grid'), color_names))
@@ -302,6 +396,11 @@ with open('colors.txt') as colors_file:
     generate_item_tag('fluid_grids', {
         'replace': False,
         'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'fluid_grid'), color_names))
+    })
+
+    generate_item_tag('cables', {
+        'replace': False,
+        'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'cable', 'gray'), color_names))
     })
 
     generate_item_tag('storage_disks', {

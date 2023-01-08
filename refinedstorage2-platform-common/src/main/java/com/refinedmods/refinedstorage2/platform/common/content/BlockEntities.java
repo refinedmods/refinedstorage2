@@ -25,8 +25,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 public final class BlockEntities {
     public static final BlockEntities INSTANCE = new BlockEntities();
 
-    @Nullable
-    private Supplier<BlockEntityType<CableBlockEntity>> cable;
+    final private ColorMap<BlockEntityType<CableBlockEntity>> cable = new ColorMap<>();
     @Nullable
     private Supplier<BlockEntityType<? extends AbstractDiskDriveBlockEntity>> diskDrive;
     @Nullable
@@ -53,12 +52,8 @@ public final class BlockEntities {
     private BlockEntities() {
     }
 
-    public BlockEntityType<CableBlockEntity> getCable() {
-        return Objects.requireNonNull(cable).get();
-    }
-
-    public void setCable(final Supplier<BlockEntityType<CableBlockEntity>> supplier) {
-        this.cable = supplier;
+    public ColorMap<BlockEntityType<CableBlockEntity>> getCable() {
+        return cable;
     }
 
     public BlockEntityType<? extends AbstractDiskDriveBlockEntity> getDiskDrive() {

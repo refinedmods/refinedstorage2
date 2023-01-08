@@ -54,6 +54,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.CableBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
@@ -82,6 +83,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -235,7 +237,14 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerBlocks() {
-        Blocks.INSTANCE.setCable(blockRegistry.register(CABLE.getPath(), CableBlock::new));
+        Blocks.INSTANCE.getCable().putAll(color -> blockRegistry.register(
+                Blocks.INSTANCE.getCable().getId(color, DyeColor.GRAY, CABLE).getPath(),
+                () -> new CableBlock(color, Blocks.INSTANCE.getCable().getName(
+                        color,
+                        DyeColor.GRAY,
+                        createTranslation(BLOCK_TRANSLATION_CATEGORY, "cable"))
+                ))
+        );
         Blocks.INSTANCE.setQuartzEnrichedIronBlock(blockRegistry.register(
             QUARTZ_ENRICHED_IRON_BLOCK.getPath(),
             SimpleBlock::new
@@ -313,6 +322,7 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerItems() {
         registerSimpleItems();
         registerGridItems();
+        registerCableItems();
         registerControllerItems();
         registerStorageItems();
         registerUpgrades();
@@ -321,10 +331,6 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerSimpleItems() {
-        itemRegistry.register(
-            CABLE.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getCable(), CREATIVE_MODE_TAB)
-        );
         itemRegistry.register(
             QUARTZ_ENRICHED_IRON.getPath(),
             () -> new SimpleItem(CREATIVE_MODE_TAB)
@@ -382,6 +388,17 @@ public class ModInitializer extends AbstractModInitializer {
 
         itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
         itemRegistry.register(DESTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
+    }
+
+    private void registerCableItems() {
+        Blocks.INSTANCE.getCable().forEach((color, block) -> itemRegistry.register(
+                Blocks.INSTANCE.getCable().getId(color, DyeColor.GRAY, CABLE).getPath(),
+                () -> new CableBlockItem(block.get(), CREATIVE_MODE_TAB, Blocks.INSTANCE.getCable().getName(
+                    color,
+                    DyeColor.GRAY,
+                    createTranslation(BLOCK_TRANSLATION_CATEGORY, "cable")
+                ))
+        ));
     }
 
     private void registerGridItems() {
@@ -509,9 +526,13 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerBlockEntities() {
-        BlockEntities.INSTANCE.setCable(blockEntityTypeRegistry.register(
-            CABLE.getPath(),
-            () -> BlockEntityType.Builder.of(CableBlockEntity::new, Blocks.INSTANCE.getCable()).build(null)
+        BlockEntities.INSTANCE.getCable().putAll((color) -> blockEntityTypeRegistry.register(
+            Blocks.INSTANCE.getCable().getId(color, DyeColor.GRAY, CABLE).getPath(),
+                () -> BlockEntityType.Builder.of(
+                        (blockPos, blockState) ->
+                                new CableBlockEntity(color, blockPos, blockState),
+                        Blocks.INSTANCE.getCable().get(color)
+                ).build(null)
         ));
         BlockEntities.INSTANCE.setController(blockEntityTypeRegistry.register(
             CONTROLLER.getPath(),

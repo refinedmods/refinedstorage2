@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block;
 
 import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 
 import javax.annotation.Nullable;
 
@@ -105,6 +106,9 @@ final class CableBlockSupport {
         if (!(world.getBlockEntity(offsetPos) instanceof PlatformNetworkNodeContainer container)) {
             return false;
         }
-        return container.canAcceptIncomingConnection(direction);
+        if (!(world.getBlockEntity(pos) instanceof PlatformNetworkNodeContainer secondContainer)) {
+            return false;
+        }
+        return container.canAcceptIncomingConnection(direction) && container.canConnectTo(secondContainer);
     }
 }

@@ -3,12 +3,17 @@ package com.refinedmods.refinedstorage2.platform.common.block;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
+import com.refinedmods.refinedstorage2.platform.common.content.ColorMap;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -28,12 +33,22 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class CableBlock extends AbstractBaseBlock implements SimpleWaterloggedBlock, EntityBlock {
-    private static final AbstractBlockEntityTicker<CableBlockEntity> TICKER =
-        new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getCable);
+public class CableBlock extends AbstractBaseBlock
+    implements ColorableBlock<CableBlock>, SimpleWaterloggedBlock, EntityBlock {
+    private static final ColorMap<AbstractBlockEntityTicker<CableBlockEntity>> TICKER = new ColorMap<>();
+    static {
+        TICKER.putAll(color -> () ->
+                new NetworkNodeBlockEntityTicker<>(() -> BlockEntities.INSTANCE.getCable().get(color))
+        );
+    }
 
-    public CableBlock() {
+    private final DyeColor color;
+    private final MutableComponent name;
+
+    public CableBlock(final DyeColor color, final MutableComponent name) {
         super(BlockConstants.CABLE_PROPERTIES);
+        this.color = color;
+        this.name = name;
     }
 
     @Override
@@ -96,7 +111,7 @@ public class CableBlock extends AbstractBaseBlock implements SimpleWaterloggedBl
 
     @Override
     public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
-        return new CableBlockEntity(pos, state);
+        return new CableBlockEntity(this.color, pos, state);
     }
 
     @Nullable
@@ -104,6 +119,16 @@ public class CableBlock extends AbstractBaseBlock implements SimpleWaterloggedBl
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(final Level level,
                                                                   final BlockState blockState,
                                                                   final BlockEntityType<T> type) {
-        return TICKER.get(level, type);
+        return TICKER.get(color).get(level, type);
+    }
+
+    @Override
+    public BlockColorMap<CableBlock> getBlockColorMap() {
+        return Blocks.INSTANCE.getCable();
+    }
+
+    @Override
+    public MutableComponent getName() {
+        return name;
     }
 }

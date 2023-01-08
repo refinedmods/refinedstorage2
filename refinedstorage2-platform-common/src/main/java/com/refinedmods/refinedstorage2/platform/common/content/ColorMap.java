@@ -24,21 +24,36 @@ public class ColorMap<T> {
         }
     }
 
-    public ResourceLocation getId(final DyeColor color, final ResourceLocation id) {
-        return generateId(color, id.getNamespace(), id.getPath());
+    public ResourceLocation getId(final DyeColor color,  final ResourceLocation id) {
+        return getId(color, NORMAL_COLOR, id);
+    }
+
+    public ResourceLocation getId(final DyeColor color, final DyeColor defaultColor, final ResourceLocation id) {
+        return generateId(color, defaultColor, id.getNamespace(), id.getPath());
     }
 
     public static ResourceLocation generateId(final DyeColor color,
                                               final String namespace,
                                               final String path) {
-        if (color == NORMAL_COLOR) {
+        return generateId(color, NORMAL_COLOR, namespace, path);
+    }
+
+    public static ResourceLocation generateId(final DyeColor color,
+                                              final DyeColor defaultColor,
+                                              final String namespace,
+                                              final String path) {
+        if (color == defaultColor) {
             return new ResourceLocation(namespace, path);
         }
         return new ResourceLocation(namespace, color.getName() + "_" + path);
     }
 
-    public MutableComponent getName(final DyeColor color, final MutableComponent name) {
-        if (color != NORMAL_COLOR) {
+    public MutableComponent getName(final DyeColor color,  final MutableComponent name) {
+        return getName(color, NORMAL_COLOR, name);
+    }
+
+    public MutableComponent getName(final DyeColor color, final DyeColor defaultColor, final MutableComponent name) {
+        if (color != defaultColor) {
             return Component.translatable("color.minecraft." + color.getName()).append(" ").append(name);
         } else {
             return name;
