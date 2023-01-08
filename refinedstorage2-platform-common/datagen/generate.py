@@ -263,36 +263,50 @@ with open('colors.txt') as colors_file:
             }
         })
 
-        if color != 'light_blue':
-            generate_recipe('coloring/' + color + '_grid', {
-                'type': 'minecraft:crafting_shapeless',
-                'ingredients': [
-                    {
-                        'tag': 'refinedstorage2:grids'
-                    },
-                    {
-                        'item': 'minecraft:' + dye
-                    }
-                ],
-                'result': {
-                    'item': 'refinedstorage2:' + color + '_grid'
+        generate_recipe('coloring/' + get_color_key(color, 'grid'), {
+            'type': 'minecraft:crafting_shapeless',
+            'ingredients': [
+                {
+                    'tag': 'refinedstorage2:grids'
+                },
+                {
+                    'item': 'minecraft:' + dye
                 }
-            })
+            ],
+            'result': {
+                'item': 'refinedstorage2:' + get_color_key(color, 'grid')
+            }
+        })
 
-            generate_recipe('coloring/' + color + '_controller', {
-                'type': 'minecraft:crafting_shapeless',
-                'ingredients': [
-                    {
-                        'tag': 'refinedstorage2:controllers'
-                    },
-                    {
-                        'item': 'minecraft:' + dye
-                    }
-                ],
-                'result': {
-                    'item': 'refinedstorage2:' + color + '_controller'
+        generate_recipe('coloring/' + get_color_key(color, 'fluid_grid'), {
+            'type': 'minecraft:crafting_shapeless',
+            'ingredients': [
+                {
+                    'tag': 'refinedstorage2:fluid_grids'
+                },
+                {
+                    'item': 'minecraft:' + dye
                 }
-            })
+            ],
+            'result': {
+                'item': 'refinedstorage2:' + get_color_key(color, 'fluid_grid')
+            }
+        })
+
+        generate_recipe('coloring/' + get_color_key(color, 'controller'), {
+            'type': 'minecraft:crafting_shapeless',
+            'ingredients': [
+                {
+                    'tag': 'refinedstorage2:controllers'
+                },
+                {
+                    'item': 'minecraft:' + dye
+                }
+            ],
+            'result': {
+                'item': 'refinedstorage2:' + get_color_key(color, 'controller')
+            }
+        })
 
     generate_item_tag('grids', {
         'replace': False,
