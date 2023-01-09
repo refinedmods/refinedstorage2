@@ -1,9 +1,6 @@
 name: Draft release
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - build/GH-264/gitflow-actions
 jobs:
   draft:
     runs-on: ubuntu-latest
