@@ -1,0 +1,15 @@
+name: 'Setup Java'
+runs:
+  using: "composite"
+  steps:
+    - name: Validate Gradle wrapper
+      uses: gradle/wrapper-validation-action@v1
+    - name: Setup JDK 17
+      uses: actions/setup-java@v3.9.0
+      with:
+        distribution: 'temurin'
+        java-version: 17
+    - name: Make Gradle wrapper executable
+      if: ${{ runner.os != 'Windows' }}
+      shell: 'bash'
+      run: chmod +x ./gradlew
