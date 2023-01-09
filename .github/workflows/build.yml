@@ -6,10 +6,19 @@ on:
             - main
     pull_request:
         types: [ opened, synchronize, reopened ]
+    workflow_call:
+        inputs:
+            version:
+                required: false
+                type: string
 jobs:
     build:
         runs-on: ubuntu-latest
         steps:
+            - name: Set version number (if necessary)
+              if: "${{ github.event.inputs.version != '' }}"
+              run: |
+                  echo "RELEASE_VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
             -   name: Checkout repository
                 uses: actions/checkout@v3
                 with:

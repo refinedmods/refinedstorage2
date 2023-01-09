@@ -1,0 +1,107 @@
+name: Publish release
+on:
+  pull_request:
+    branches:
+      - main
+      - releasetargettest
+    types:
+      - closed
+jobs:
+  extract-version-number:
+    name: Extract version number
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ env.RELEASE_VERSION }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Extract version from branch name (for release branches)
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#release/}
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Extract version from branch name (for hotfix branches)
+        if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          VERSION=${BRANCH_NAME#hotfix/}
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+
+  build:
+    name: Build
+    needs: extract-version-number
+    uses: refinedmods/refinedstorage2/.github/workflows/build.yml@releasetargettest
+    with:
+      version: ${{ needs.extract-version-number.version }}
+    secrets: inherit
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      RELEASE_VERSION: ${{ needs.extract-version-number.version }}
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: Artifacts
+      - name: Build documentation
+        run: ./gradlew allJavadoc
+      #      - name: Publish
+      #        run: ./gradlew publish
+      #        env:
+      #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #          CREEPERHOST_MAVEN_USERNAME: ${{ secrets.CREEPERHOST_MAVEN_USERNAME }}
+      #          CREEPERHOST_MAVEN_TOKEN: ${{ secrets.CREEPERHOST_MAVEN_TOKEN }}
+      - name: Publish documentation
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
+        with:
+          branch: gh-pages
+          folder: build/docs/javadoc
+      - name: Retrieve changelog
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2.2.2
+        with:
+          version: ${{ env.RELEASE_VERSION }}
+          path: ./CHANGELOG.md
+      - name: Release on GitHub
+        uses: softprops/action-gh-release@v0.1.15
+        id: ghRelease
+        with:
+          body: ${{ steps.changelog_reader.outputs.changes }}
+          name: 'v${{ env.RELEASE_VERSION }}'
+          tag_name: 'v${{ env.RELEASE_VERSION }}'
+          target_commitish: ${{ github.event.pull_request.merge_commit_sha }}
+          files: |
+            **/build/libs/*.jar
+      - name: Create PR for merging main back into develop
+        uses: thomaseizinger/create-pull-request@1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          head: main
+          base: develop
+          title: Merge main into develop branch
+          body: |
+            This PR merges the main branch back into develop.
+            This is to ensure that the updates that happened on the release branch, i.e. CHANGELOG and version updates are also present on the develop branch.
+      # This is necessary because the Discord action doesn't support GH actions variable expansion?
+      - name: Set release URL
+        run: |
+          echo "RELEASE_URL=${{ steps.ghRelease.outputs.url }}" >> $GITHUB_ENV
+      - name: Notify Discord
+        uses: Ilshidur/action-discord@0.3.2
+        with:
+          args: 'Refined Storage v{{ RELEASE_VERSION }} has been released! {{ RELEASE_URL }}'
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Notify Twitter
+        uses: ethomson/send-tweet-action@v1
+        with:
+          status: Refined Storage v${{ env.RELEASE_VERSION }} has been released! ${{ env.RELEASE_URL }}
+          consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+          consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
+          access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
