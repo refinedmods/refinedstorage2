@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - main
+      - releasetargettest
     types:
       - closed
 jobs:

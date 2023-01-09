@@ -65,7 +65,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           head: release/${{ steps.version.outputs.group1 }}
-          base: main
+          base: releasetargettest
           title: Release v${{ steps.version.outputs.group1 }}
           reviewers: ${{ github.actor }}
           body: |
