@@ -17,8 +17,8 @@ subprojects {
         version += '+' + System.getenv('GITHUB_SHA').substring(0, 7)
     }
 
-    if (System.getenv('RELEASE') != null) {
-        version = System.getenv('RELEASE').substring(1) // remove 'v'
+    if (System.getenv('RELEASE_VERSION') != null) {
+        version = System.getenv('RELEASE_VERSION')
     }
 
     project.ext.apis = [
@@ -89,14 +89,6 @@ subprojects {
                 credentials {
                     username = System.getenv("GITHUB_ACTOR")
                     password = System.getenv("GITHUB_TOKEN")
-                }
-            }
-            maven {
-                name = "CreeperHost"
-                url = uri("https://maven.creeperhost.net/release")
-                credentials {
-                    username = System.getenv("CREEPERHOST_MAVEN_USERNAME")
-                    password = System.getenv("CREEPERHOST_MAVEN_TOKEN")
                 }
             }
         }
