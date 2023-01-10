@@ -102,8 +102,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.0.0-milestone.2.0] - 2022-07-05
 
-Device inventories and disks created in v2.0.0-milestone.1.4 will be lost.
-
 ### Changed
 
 - Ported to Minecraft 1.19.
@@ -118,9 +116,6 @@ Device inventories and disks created in v2.0.0-milestone.1.4 will be lost.
 - Fixed resource filter container updates not arriving properly on Forge.
 
 ## [2.0.0-milestone.1.4] - 2022-06-22
-
-All device inventories (most notably the Disk Drive inventory) will be empty after upgrading. Make sure to move all
-disks, etc. to intermediate storage like a chest.
 
 ### Added
 
@@ -165,9 +160,6 @@ disks, etc. to intermediate storage like a chest.
 - Any block can be rotated now if the item tag matches `c:wrenches`.
 
 ## [2.0.0-milestone.1.2] - 2021-12-23
-
-Storage Disks from the previous version are no longer valid. Please move all your items into another storage medium
-before updating.
 
 ### Added
 
@@ -229,11 +221,6 @@ before updating.
 - Implemented a new networking system.
 
 ## [2.0.0-milestone.1.0] - 2021-05-21
-
-Currently, this version only works on Fabric.
-
-This is milestone release, this release could be very unstable, could break worlds and might not be compatible when
-upgrading to a later version.
 
 ### Added
 
