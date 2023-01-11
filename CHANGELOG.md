@@ -7,7 +7,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [2.0.0-milestone.2.5] - 2023-01-11
+## [v2.0.0-milestone.2.5] - 2023-01-11
 
 ### Fixed
 
@@ -19,7 +19,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   An Interface that is acting as External Storage can no longer extract or insert from other Interfaces (and itself)
     that are acting as External Storage.
 
-## [2.0.0-milestone.2.4] - 2022-11-01
+## [v2.0.0-milestone.2.4] - 2022-11-01
 
 ### Fixed
 
@@ -44,7 +44,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The External Storage now supports multiple resource types at the same time.
 -   The External Storage no longer checks for external changes every tick, but rather has a cooldown system.
 
-## [2.0.0-milestone.2.3] - 2022-08-26
+## [v2.0.0-milestone.2.3] - 2022-08-26
 
 ### Changed
 
@@ -58,7 +58,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   NoIndium mod is now packaged with the mod on Fabric to avoid launching Sodium without Indium.
 
-## [2.0.0-milestone.2.2] - 2022-08-06
+## [v2.0.0-milestone.2.2] - 2022-08-06
 
 ### Changed
 
@@ -79,7 +79,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Speed Upgrade
 -   Stack Upgrade
 
-## [2.0.0-milestone.2.1] - 2022-07-30
+## [v2.0.0-milestone.2.1] - 2022-07-30
 
 ### Changed
 
@@ -102,7 +102,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Importer.
 -   Emissive rendering.
 
-## [2.0.0-milestone.2.0] - 2022-07-05
+## [v2.0.0-milestone.2.0] - 2022-07-05
 
 ### Changed
 
@@ -117,7 +117,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Fixed resource filter container updates not arriving properly on Forge.
 
-## [2.0.0-milestone.1.4] - 2022-06-22
+## [v2.0.0-milestone.1.4] - 2022-06-22
 
 ### Added
 
@@ -151,7 +151,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Removed the Patchouli integration.
 
-## [2.0.0-milestone.1.3] - 2022-02-12
+## [v2.0.0-milestone.1.3] - 2022-02-12
 
 ### Added
 
@@ -161,7 +161,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Any block can be rotated now if the item tag matches `c:wrenches`.
 
-## [2.0.0-milestone.1.2] - 2021-12-23
+## [v2.0.0-milestone.1.2] - 2021-12-23
 
 ### Added
 
@@ -205,7 +205,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   LibBlockAttributes is no longer used and thus no longer bundled with Refined Storage 2.
 
-## [2.0.0-milestone.1.1] - 2021-08-16
+## [v2.0.0-milestone.1.1] - 2021-08-16
 
 ### Added
 
@@ -222,7 +222,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Ported to Minecraft 1.17.1.
 -   Implemented a new networking system.
 
-## [2.0.0-milestone.1.0] - 2021-05-21
+## [v2.0.0-milestone.1.0] - 2021-05-21
 
 ### Added
 
@@ -267,26 +267,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/2.0.0-milestone.2.5...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.5...HEAD
 
-[2.0.0-milestone.2.5]: https://github.com/refinedmods/refinedstorage2/compare/2.0.0-milestone.2.4...2.0.0-milestone.2.5
+[v2.0.0-milestone.2.5]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.4...v2.0.0-milestone.2.5
 
-[2.0.0-milestone.2.4]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.3...v2.0.0-milestone.2.4
+[v2.0.0-milestone.2.4]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.3...v2.0.0-milestone.2.4
 
-[2.0.0-milestone.2.3]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.2...v2.0.0-milestone.2.3
+[v2.0.0-milestone.2.3]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.2...v2.0.0-milestone.2.3
 
-[2.0.0-milestone.2.2]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.1...v2.0.0-milestone.2.2
+[v2.0.0-milestone.2.2]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.1...v2.0.0-milestone.2.2
 
-[2.0.0-milestone.2.1]: https://github.com/refinedmods/refinedstorage2/compare/2.0.0-milestone.2.0...v2.0.0-milestone.2.1
+[v2.0.0-milestone.2.1]: https://github.com/refinedmods/refinedstorage2/compare/2.0.0-milestone.2.0...v2.0.0-milestone.2.1
 
-[2.0.0-milestone.2.0]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.1.4...v2.0.0-milestone.2.0
+[v2.0.0-milestone.2.0]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.1.4...v2.0.0-milestone.2.0
 
-[2.0.0-milestone.1.4]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.1.3...v2.0.0-milestone.1.4
+[v2.0.0-milestone.1.4]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.1.3...v2.0.0-milestone.1.4
 
-[2.0.0-milestone.1.3]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.1.2...v2.0.0-milestone.1.3
+[v2.0.0-milestone.1.3]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.1.2...v2.0.0-milestone.1.3
 
-[2.0.0-milestone.1.2]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.1.1...v2.0.0-milestone.1.2
+[v2.0.0-milestone.1.2]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.1.1...v2.0.0-milestone.1.2
 
-[2.0.0-milestone.1.1]: https://github.com/refinedmods/refinedstorage2/compare/2.0.0-milestone.1.0...v2.0.0-milestone.1.1
+[v2.0.0-milestone.1.1]: https://github.com/refinedmods/refinedstorage2/compare/2.0.0-milestone.1.0...v2.0.0-milestone.1.1
 
-[2.0.0-milestone.1.0]: https://github.com/raoulvdberge/refinedstorage2/releases/tag/v2.0.0-milestone.1.0
+[v2.0.0-milestone.1.0]: https://github.com/raoulvdberge/refinedstorage2/releases/tag/v2.0.0-milestone.1.0
