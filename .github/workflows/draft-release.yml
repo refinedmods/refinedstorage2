@@ -46,7 +46,7 @@ jobs:
       - name: Update changelog
         uses: thomaseizinger/keep-a-changelog-new-release@1.1.0
         with:
-          version: ${{ env.VERSION }}
+          version: v${{ env.VERSION }}
       - name: Commit and push changes
         uses: EndBug/add-and-commit@v9
         with:
