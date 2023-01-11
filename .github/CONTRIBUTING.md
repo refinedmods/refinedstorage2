@@ -205,8 +205,8 @@ This workflow takes care of the following:
 
 ### Publish release
 
-The "publish release" workflow is triggered when a PR is merged to `main`. Usually, this will be the PR created earlier
-in the draft release workflow.
+The "publish release" workflow is triggered when a release or hotfix PR is merged to `main`. Usually, this will be the
+PR created earlier in the "Draft release" workflow.
 
 The workflow takes care of the following:
 

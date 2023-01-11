@@ -9,6 +9,8 @@ jobs:
   extract-version-number:
     name: Extract version number
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true &&
+      (startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
     outputs:
       version: ${{ env.RELEASE_VERSION }}
     steps:
@@ -142,6 +144,8 @@ jobs:
   sync-develop:
     name: Sync develop
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true &&
+      (startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
     steps:
       - name: Create PR for merging main back into develop
         uses: thomaseizinger/create-pull-request@1.0.0
