@@ -1,9 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.storage;
 
-import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
@@ -22,13 +23,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractStorageBlockBlockEntity<T>
     extends AbstractInternalNetworkNodeContainerBlockEntity<StorageNetworkNode<T>>
     implements ExtendedMenuProvider {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStorageBlockBlockEntity.class);
 
     private static final String TAG_STORAGE_ID = "sid";
 
@@ -59,12 +60,13 @@ public abstract class AbstractStorageBlockBlockEntity<T>
     protected abstract PlatformStorage<T> createStorage(Runnable listener);
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setLevel(final Level level) {
         super.setLevel(level);
         if (level.isClientSide()) {
             return;
         }
-        final PlatformStorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
+        final StorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
         if (storageId == null) {
             // We are a new block entity, or:
             // - We are placed through NBT
@@ -73,14 +75,15 @@ public abstract class AbstractStorageBlockBlockEntity<T>
             //   (#setLevel(Level) -> #modifyStorageAfterAlreadyInitialized(UUID)).
             // In both cases listed above we need to clean up the storage we create here.
             storageId = UUID.randomUUID();
-            getNode().initializeNewStorage(
-                storageRepository,
-                createStorage(storageRepository::markAsChanged),
-                storageId
-            );
+            final Storage<T> storage = createStorage(storageRepository::markAsChanged);
+            storageRepository.set(storageId, storage);
+            getNode().setStorage(storage);
         } else {
             // The existing block entity got loaded in the level (#load(CompoundTag) -> #setLevel(Level)).
-            getNode().initializeExistingStorage(storageRepository, storageId);
+            storageRepository.get(storageId).ifPresentOrElse(
+                storage -> getNode().setStorage((Storage<T>) storage),
+                () -> LOGGER.warn("Storage with {} could not be resolved!", storageId)
+            );
         }
     }
 
@@ -115,17 +118,21 @@ public abstract class AbstractStorageBlockBlockEntity<T>
         super.load(tag);
     }
 
+    @SuppressWarnings("unchecked")
     private void cleanupUnneededInitialStorageAndReinitialize(final UUID actualStorageId) {
         // We got placed through NBT (#setLevel(Level) -> #load(CompoundTag)), or,
         // we got placed with an existing storage ID (#setLevel(Level) -> modifyStorageAfterAlreadyInitialized(UUID)).
         // Clean up the storage created earlier in #setLevel(Level).
-        final PlatformStorageRepository storageRepository = PlatformApi.INSTANCE
+        final StorageRepository storageRepository = PlatformApi.INSTANCE
             .getStorageRepository(Objects.requireNonNull(level));
-        storageRepository.disassemble(Objects.requireNonNull(storageId)).ifPresentOrElse(
+        storageRepository.removeIfEmpty(Objects.requireNonNull(storageId)).ifPresentOrElse(
             storage -> LOGGER.debug("Unneeded storage {} successfully removed", storageId),
             () -> LOGGER.warn("Unneeded storage {} could not be removed", storageId)
         );
-        getNode().initializeExistingStorage(storageRepository, actualStorageId);
+        storageRepository.get(actualStorageId).ifPresentOrElse(
+            storage -> getNode().setStorage((Storage<T>) storage),
+            () -> LOGGER.warn("Actual storage ID {} could not be resolved!", actualStorageId)
+        );
     }
 
     private boolean isPlacedThroughNbtPlacement(final UUID otherStorageId) {

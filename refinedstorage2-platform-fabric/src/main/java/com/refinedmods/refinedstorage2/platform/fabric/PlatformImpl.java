@@ -1,19 +1,20 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
+import com.refinedmods.refinedstorage2.api.network.impl.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
-import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.FluidGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
@@ -36,9 +37,11 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.impl.transfer.context.InitialContentsContainerItemContext;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -46,10 +49,17 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+
+import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toItemVariant;
 
 public final class PlatformImpl extends AbstractPlatform {
     private static final TagKey<Item> WRENCH_TAG = TagKey.create(
@@ -146,6 +156,30 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public TransferManager createTransferManager(final AbstractContainerMenu containerMenu) {
         return new TransferManager(containerMenu, ContainerTransferDestination::new);
+    }
+
+    @Override
+    public long insertIntoContainer(final Container container,
+                                    final ItemResource itemResource,
+                                    final long amount,
+                                    final Action action) {
+        try (Transaction tx = Transaction.openOuter()) {
+            final long inserted = InventoryStorage
+                .of(container, null)
+                .insert(toItemVariant(itemResource), amount, tx);
+            if (action == Action.EXECUTE) {
+                tx.commit();
+            }
+            return inserted;
+        }
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(final BlockState state,
+                                       final Level level,
+                                       final BlockHitResult hitResult,
+                                       final Player player) {
+        return state.getBlock().getCloneItemStack(level, hitResult.getBlockPos(), state);
     }
 
     private Optional<FluidResource> convertNonEmptyToFluid(final ItemStack stack) {

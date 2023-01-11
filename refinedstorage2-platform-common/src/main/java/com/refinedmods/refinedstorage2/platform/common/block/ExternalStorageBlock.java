@@ -9,17 +9,23 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExternalStorageBlock extends AbstractDirectionalCableBlock implements EntityBlock {
     private static final AbstractBlockEntityTicker<ExternalStorageBlockEntity> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getExternalStorage);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalStorageBlock.class);
 
     public ExternalStorageBlock() {
         super(BlockConstants.CABLE_PROPERTIES);
@@ -36,6 +42,22 @@ public class ExternalStorageBlock extends AbstractDirectionalCableBlock implemen
                                                                   final BlockState blockState,
                                                                   final BlockEntityType<T> type) {
         return TICKER.get(level, type);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void neighborChanged(final BlockState state,
+                                final Level level,
+                                final BlockPos pos,
+                                final Block block,
+                                final BlockPos fromPos,
+                                final boolean moving) {
+        super.neighborChanged(state, level, pos, block, fromPos, moving);
+        if (level instanceof ServerLevel serverLevel
+            && level.getBlockEntity(pos) instanceof ExternalStorageBlockEntity blockEntity) {
+            LOGGER.info("External storage neighbor has changed, reloading {}", pos);
+            blockEntity.loadStorage(serverLevel);
+        }
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
-import com.refinedmods.refinedstorage2.api.network.component.GraphNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.impl.component.EnergyNetworkComponentImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.component.GraphNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.impl.component.StorageNetworkComponentImpl;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApiProxy;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid.FluidResourceType;
@@ -44,7 +46,7 @@ public abstract class AbstractModInitializer {
     protected void registerNetworkComponents() {
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
             EnergyNetworkComponent.class,
-            network -> new EnergyNetworkComponent()
+            network -> new EnergyNetworkComponentImpl()
         );
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
             GraphNetworkComponent.class,
@@ -52,7 +54,7 @@ public abstract class AbstractModInitializer {
         );
         PlatformApi.INSTANCE.getNetworkComponentMapFactory().addFactory(
             StorageNetworkComponent.class,
-            network -> new StorageNetworkComponent(PlatformApi.INSTANCE.getStorageChannelTypeRegistry())
+            network -> new StorageNetworkComponentImpl(PlatformApi.INSTANCE.getStorageChannelTypeRegistry())
         );
     }
 

@@ -9,6 +9,9 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
 public abstract class AbstractStorageNetworkNode extends AbstractNetworkNode implements StorageConfiguration {
     private final Filter filter = new Filter();
     private int priority;

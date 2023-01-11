@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 
-import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridScrollModeUtil;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import java.util.function.Supplier;

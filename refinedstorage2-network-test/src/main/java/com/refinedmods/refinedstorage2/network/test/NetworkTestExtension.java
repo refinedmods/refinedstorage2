@@ -2,13 +2,13 @@ package com.refinedmods.refinedstorage2.network.test;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.network.Network;
-import com.refinedmods.refinedstorage2.api.network.NetworkImpl;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorageImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.NetworkImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.energy.EnergyStorageImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.network.node.NetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.network.test.nodefactory.NetworkNodeFactory;
 

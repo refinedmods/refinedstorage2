@@ -214,12 +214,14 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerExternalStorageProviderFactories() {
-        PlatformApi.INSTANCE.setExternalStorageProviderFactory(
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
             StorageChannelTypes.ITEM,
+            0,
             new ItemHandlerPlatformExternalStorageProviderFactory()
         );
-        PlatformApi.INSTANCE.setExternalStorageProviderFactory(
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
             StorageChannelTypes.FLUID,
+            0,
             new FluidHandlerPlatformExternalStorageProviderFactory()
         );
     }

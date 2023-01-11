@@ -3,9 +3,9 @@ package com.refinedmods.refinedstorage2.platform.forge.internal.grid;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.InteractionCoordinates;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.ItemHandlerExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.ItemHandlerInsertableStorage;
@@ -18,7 +18,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.items.wrapper.RangedWrapper;
 
-import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.ofItemStack;
+import static com.refinedmods.refinedstorage2.platform.api.resource.ItemResource.ofItemStack;
 
 public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     private final AbstractContainerMenu containerMenu;

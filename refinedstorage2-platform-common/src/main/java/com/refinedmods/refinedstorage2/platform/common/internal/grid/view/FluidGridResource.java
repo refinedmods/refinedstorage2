@@ -12,6 +12,7 @@ import net.minecraft.core.Registry;
 public class FluidGridResource extends AbstractGridResource<FluidResource> {
     private final int id;
 
+    @SuppressWarnings("deprecation") // forge deprecates Registry access
     public FluidGridResource(final ResourceAmount<FluidResource> resourceAmount,
                              final String name,
                              final String modId,

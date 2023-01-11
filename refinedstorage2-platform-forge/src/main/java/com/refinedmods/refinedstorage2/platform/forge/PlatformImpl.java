@@ -1,19 +1,20 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.network.energy.InfiniteEnergyStorage;
+import com.refinedmods.refinedstorage2.api.network.impl.energy.InfiniteEnergyStorage;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
-import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.FluidGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.forge.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage2.platform.forge.integration.energy.ControllerForgeEnergy;
@@ -36,14 +37,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public final class PlatformImpl extends AbstractPlatform {
@@ -144,5 +152,24 @@ public final class PlatformImpl extends AbstractPlatform {
     @Override
     public TransferManager createTransferManager(final AbstractContainerMenu containerMenu) {
         return new TransferManager(containerMenu, ContainerTransferDestination::new);
+    }
+
+    @Override
+    public long insertIntoContainer(final Container container,
+                                    final ItemResource itemResource,
+                                    final long amount,
+                                    final Action action) {
+        final InvWrapper wrapper = new InvWrapper(container);
+        final ItemStack stack = itemResource.toItemStack(amount);
+        final ItemStack remainder = ItemHandlerHelper.insertItem(wrapper, stack, action == Action.SIMULATE);
+        return amount - remainder.getCount();
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(final BlockState state,
+                                       final Level level,
+                                       final BlockHitResult hitResult,
+                                       final Player player) {
+        return state.getCloneItemStack(hitResult, level, hitResult.getBlockPos(), player);
     }
 }

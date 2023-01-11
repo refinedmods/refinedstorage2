@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.ex
 import com.refinedmods.refinedstorage2.api.storage.external.ExternalStorageProvider;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
@@ -26,16 +27,16 @@ public class StoragePlatformExternalStorageProviderFactory<T, P> implements Plat
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E> ExternalStorageProvider<E> create(final ServerLevel level,
-                                                 final BlockPos pos,
-                                                 final Direction direction) {
-        return (ExternalStorageProvider<E>) new StorageExternalStorageProvider<>(
+    public <E> Optional<ExternalStorageProvider<E>> create(final ServerLevel level,
+                                                           final BlockPos pos,
+                                                           final Direction direction) {
+        return Optional.of((ExternalStorageProvider<E>) new StorageExternalStorageProvider<>(
             lookup,
             fromPlatformMapper,
             toPlatformMapper,
             level,
             pos,
             direction
-        );
+        ));
     }
 }

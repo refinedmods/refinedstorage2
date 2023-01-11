@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.12-SNAPSHOT'
+    alias(fabric.plugins.fabric.loom)
 }
 
 archivesBaseName = 'refinedstorage2-platform-fabric'
@@ -32,13 +32,15 @@ repositories {
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraftVersion}"
+    minecraft fabric.minecraft
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${project.minecraftVersion}:${project.parchmentVersion}@zip")
+        // TODO: the parchment function is unable to take a version catalog (https://github.com/FabricMC/fabric-loom/issues/782)
+        def minecraftVersion = fabric.versions.minecraft.get()
+        def parchmentVersion = fabric.versions.parchment.get()
+        parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${parchmentVersion}@zip")
     }
-    modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricApiVersion}"
+    modImplementation fabric.bundles.fabric
 
     project.ext.apis.collect {
         implementation project(it)
@@ -48,33 +50,32 @@ dependencies {
         implementation project(it)
     }
 
-    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.clothConfigVersion}") {
+    implementation libs.apiguardian // mandatory as it's imported through platform-api
+
+    modImplementation(fabric.cloth.config) {
         exclude(group: 'net.fabricmc.fabric-api')
     }
-    include "me.shedaniel.cloth:cloth-config-fabric:${project.clothConfigVersion}"
+    include fabric.cloth.config
 
-    modImplementation("teamreborn:energy:${project.energyVersion}") {
+    modImplementation(fabric.teamreborn.energy) {
         exclude(group: 'net.fabricmc.fabric-api')
     }
-    include "teamreborn:energy:${project.energyVersion}"
+    include fabric.teamreborn.energy
 
-    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${project.reiVersion}") {
+    modCompileOnly(fabric.rei.api) {
         exclude(group: 'me.shedaniel.cloth')
     }
     // We test with REI on Fabric.
-    modRuntimeOnly "dev.architectury:architectury-fabric:6.2.43" // For REI
-    modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.reiVersion}")
+    modRuntimeOnly fabric.bundles.rei.runtime
 
-    modCompileOnly "mezz.jei:jei-${project.minecraftVersion}-common-api:${project.jeiVersion}"
-    modCompileOnly "mezz.jei:jei-${project.minecraftVersion}-fabric-api:${project.jeiVersion}"
-    // modRuntimeOnly "mezz.jei:jei-${project.minecraftVersion}-fabric:${project.jeiVersion}"
+    modCompileOnly fabric.bundles.jei
 
-    modImplementation "com.terraformersmc:modmenu:${project.modMenuVersion}"
+    modImplementation fabric.modmenu
 
-    modRuntimeOnly("mcp.mobius.waila:wthit:fabric-${project.wthitVersion}")
+    modRuntimeOnly fabric.wthit
 
-    modImplementation "me.luligabi:NoIndium:${project.noIndiumVersion}"
-    include "me.luligabi:NoIndium:${project.noIndiumVersion}"
+    modImplementation fabric.noIndium
+    include fabric.noIndium
 }
 
 loom {

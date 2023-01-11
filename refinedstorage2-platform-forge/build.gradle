@@ -4,9 +4,10 @@ buildscript {
             url = 'https://maven.minecraftforge.net'
         }
     }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-    }
+}
+
+plugins {
+    alias(forge.plugins.forgeGradle)
 }
 
 repositories {
@@ -20,12 +21,10 @@ repositories {
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-
 archivesBaseName = 'refinedstorage2-platform-forge'
 
 minecraft {
-    mappings channel: 'official', version: project.minecraftVersion
+    mappings channel: 'official', version: forge.versions.minecraft.get()
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
@@ -68,7 +67,7 @@ minecraft {
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${project.minecraftVersion}-${project.forgeVersion}"
+    minecraft forge.minecraft
 
     project.ext.apis.collect {
         implementation project(it)
@@ -77,12 +76,14 @@ dependencies {
         implementation project(it)
     }
 
-    compileOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}-common-api:${project.jeiVersion}")
-    compileOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}-forge-api:${project.jeiVersion}")
-    // We test with JEI on Forge.
-    runtimeOnly fg.deobf("mezz.jei:jei-${project.minecraftVersion}-forge:${project.jeiVersion}")
+    implementation libs.apiguardian // mandatory as it's imported through platform-api
 
-    compileOnly fg.deobf("me.shedaniel:RoughlyEnoughItems-forge:${project.reiVersion}")
+    compileOnly fg.deobf(forge.jei.common.api.get())
+    compileOnly fg.deobf(forge.jei.forge.api.get())
+    // We test with JEI on Forge.
+    runtimeOnly fg.deobf(forge.jei.forge.impl.get())
+
+    compileOnly fg.deobf(forge.rei.forge.get())
 }
 
 processResources {

@@ -8,14 +8,14 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.api.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientItemGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import javax.annotation.Nullable;
@@ -26,11 +26,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResource> implements ItemGridEventHandler {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemGridContainerMenu.class);
 
     private final ItemGridEventHandler itemGridEventHandler;
 
@@ -45,10 +45,16 @@ public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResourc
         super(Menus.INSTANCE.getGrid(), syncId, playerInventory, grid, createViewBuilder());
         final GridService<ItemResource> gridService = grid.getNode().createService(
             new PlayerActor(playerInventory.player),
-            itemResource -> (long) itemResource.item().getMaxStackSize(),
+            ItemGridContainerMenu::getMaxStackSize,
             1
         );
         this.itemGridEventHandler = Platform.INSTANCE.createItemGridEventHandler(this, gridService, playerInventory);
+    }
+
+    @SuppressWarnings("deprecation")
+    // Forge wants us to use the ItemStack sensitive version - but no way that we will be creating ItemStacks here.
+    private static long getMaxStackSize(final ItemResource itemResource) {
+        return itemResource.item().getMaxStackSize();
     }
 
     private static GridViewBuilder<ItemResource> createViewBuilder() {

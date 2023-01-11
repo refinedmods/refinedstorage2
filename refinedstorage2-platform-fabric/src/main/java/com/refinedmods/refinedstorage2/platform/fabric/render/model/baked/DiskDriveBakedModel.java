@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked;
 
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
+import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageState;
+import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageStorageState;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
@@ -101,7 +101,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
 
         if (blockView instanceof RenderAttachedBlockView renderAttachedBlockView) {
             final Object renderAttachment = renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
-            if (renderAttachment instanceof DiskDriveState states) {
+            if (renderAttachment instanceof MultiStorageState states) {
                 emitDiskQuads(context, states);
             }
         }
@@ -109,9 +109,9 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
         context.popTransform();
     }
 
-    private void emitDiskQuads(final RenderContext context, final DiskDriveState states) {
+    private void emitDiskQuads(final RenderContext context, final MultiStorageState states) {
         for (int i = 0; i < TRANSLATORS.length; ++i) {
-            if (states.getState(i) == StorageDiskState.NONE) {
+            if (states.getState(i) == MultiStorageStorageState.NONE) {
                 continue;
             }
             context.pushTransform(TRANSLATORS[i]);

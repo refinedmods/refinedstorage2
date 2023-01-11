@@ -7,15 +7,17 @@ import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 
-import java.util.Optional;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.MutableComponent;
@@ -39,12 +41,17 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public PlatformStorageRepository getStorageRepository(final Level level) {
+    public StorageRepository getStorageRepository(final Level level) {
         return ensureLoaded().getStorageRepository(level);
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, StorageChannelType<?>> getStorageChannelTypeRegistry() {
+    public StorageContainerHelper getStorageContainerHelper() {
+        return ensureLoaded().getStorageContainerHelper();
+    }
+
+    @Override
+    public OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> getStorageChannelTypeRegistry() {
         return ensureLoaded().getStorageChannelTypeRegistry();
     }
 
@@ -59,16 +66,17 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public <T> void setExternalStorageProviderFactory(final StorageChannelType<T> channelType,
+    public <T> void addExternalStorageProviderFactory(final StorageChannelType<T> channelType,
+                                                      final int priority,
                                                       final PlatformExternalStorageProviderFactory factory) {
-        ensureLoaded().setExternalStorageProviderFactory(channelType, factory);
+        ensureLoaded().addExternalStorageProviderFactory(channelType, priority, factory);
     }
 
     @Override
-    public <T> Optional<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactory(
+    public <T> Set<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories(
         final StorageChannelType<T> channelType
     ) {
-        return ensureLoaded().getExternalStorageProviderFactory(channelType);
+        return ensureLoaded().getExternalStorageProviderFactories(channelType);
     }
 
     @Override

@@ -1,14 +1,14 @@
 package com.refinedmods.refinedstorage2.network.test;
 
-import com.refinedmods.refinedstorage2.api.network.node.SimpleNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.controller.ControllerNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.exporter.ExporterNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.externalstorage.ExternalStorageNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.grid.GridNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.iface.InterfaceNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.importer.ImporterNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.storage.StorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.controller.ControllerNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.ExporterNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage.ExternalStorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.iface.InterfaceNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.importer.ImporterNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,7 @@ class NetworkNodeFactoryTest {
     @AddNetworkNode
     ControllerNetworkNode controller;
     @AddNetworkNode
-    DiskDriveNetworkNode diskDrive;
+    MultiStorageNetworkNode multiStorage;
     @AddNetworkNode
     ExporterNetworkNode exporter;
     @AddNetworkNode
@@ -40,7 +40,7 @@ class NetworkNodeFactoryTest {
     void testInitialization() {
         // Assert
         assertThat(controller).isNotNull();
-        assertThat(diskDrive).isNotNull();
+        assertThat(multiStorage).isNotNull();
         assertThat(exporter).isNotNull();
         assertThat(grid).isNotNull();
         assertThat(importer).isNotNull();

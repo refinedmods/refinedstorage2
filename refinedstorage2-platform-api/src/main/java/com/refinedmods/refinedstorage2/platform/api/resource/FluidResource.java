@@ -11,7 +11,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements FuzzyModeNormalizer<FluidResource> {
     private static final String TAG_TAG = "tag";
     private static final String TAG_ID = "id";
@@ -27,6 +29,7 @@ public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements F
         return new FluidResource(fluid, null);
     }
 
+    @SuppressWarnings("deprecation") // forge deprecates Registry access
     public static CompoundTag toTag(final FluidResource fluidResource) {
         final CompoundTag tag = new CompoundTag();
         if (fluidResource.tag() != null) {
@@ -42,6 +45,7 @@ public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements F
         return tag;
     }
 
+    @SuppressWarnings("deprecation") // forge deprecates Registry access
     public static Optional<FluidResource> fromTag(final CompoundTag tag) {
         final ResourceLocation id = new ResourceLocation(tag.getString(TAG_ID));
         final Fluid fluid = Registry.FLUID.get(id);

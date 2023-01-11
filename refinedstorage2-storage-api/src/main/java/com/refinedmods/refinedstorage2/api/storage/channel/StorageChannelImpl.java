@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.apiguardian.api.API;
 
@@ -44,6 +45,11 @@ public class StorageChannelImpl<T> implements StorageChannel<T> {
     @Override
     public void removeSource(final Storage<T> source) {
         storage.removeSource(source);
+    }
+
+    @Override
+    public boolean hasSource(final Predicate<Storage<T>> matcher) {
+        return storage.getSources().stream().anyMatch(matcher);
     }
 
     @Override

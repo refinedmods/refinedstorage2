@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
-import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBaseContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.StorageTooltipHelper;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AccessModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.FilterModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.FuzzyModeSideButtonWidget;
@@ -83,7 +83,8 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
             menu.getCapacity(),
             this::formatQuantity,
             QuantityFormatter::format,
-            menu.getTooltipOptions()
+            menu.showCapacityAndProgress(),
+            menu.showStackingInfo()
         );
         return tooltip;
     }

@@ -5,36 +5,41 @@ import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistryImpl;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.NetworkBuilder;
-import com.refinedmods.refinedstorage2.api.network.NetworkBuilderImpl;
-import com.refinedmods.refinedstorage2.api.network.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.impl.NetworkBuilderImpl;
+import com.refinedmods.refinedstorage2.api.network.impl.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
-import com.refinedmods.refinedstorage2.api.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientStorageRepository;
-import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorageRepositoryImpl;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeRegistryImpl;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
@@ -47,7 +52,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public class PlatformApiImpl implements PlatformApi {
     private static final String ITEM_REGISTRY_KEY = "item";
 
-    private final PlatformStorageRepository clientStorageRepository =
+    private final StorageRepository clientStorageRepository =
         new ClientStorageRepository(Platform.INSTANCE.getClientToServerCommunications()::sendStorageInfoRequest);
     private final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry =
         new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemResourceType.INSTANCE);
@@ -57,7 +62,7 @@ public class PlatformApiImpl implements PlatformApi {
         new NetworkBuilderImpl(new NetworkFactory(networkComponentMapFactory));
     private final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry =
         new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemStorageType.INSTANCE);
-    private final OrderedRegistry<ResourceLocation, StorageChannelType<?>> storageChannelTypeRegistry =
+    private final OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> storageChannelTypeRegistry =
         new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), StorageChannelTypes.ITEM);
     private final OrderedRegistry<ResourceLocation, GridSynchronizer> gridSynchronizerRegistry =
         new OrderedRegistryImpl<>(createIdentifier("off"), new NoOpGridSynchronizer());
@@ -68,8 +73,9 @@ public class PlatformApiImpl implements PlatformApi {
         new OrderedRegistryImpl<>(createIdentifier("noop"),
             (level, pos, direction, hasStackUpgrade, fuzzyMode) -> (resource, actor, network) -> false);
     private final UpgradeRegistry upgradeRegistry = new UpgradeRegistryImpl();
-    private final Map<StorageChannelType<?>, PlatformExternalStorageProviderFactory> externalStorageProviderFactories =
-        new HashMap<>();
+    private final Map<StorageChannelType<?>, Set<PlatformExternalStorageProviderFactory>>
+        externalStorageProviderFactories = new HashMap<>();
+    private final StorageContainerHelper storageContainerHelper = new StorageContainerHelperImpl();
 
     @Override
     public OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry() {
@@ -77,7 +83,7 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public PlatformStorageRepository getStorageRepository(final Level level) {
+    public StorageRepository getStorageRepository(final Level level) {
         if (level.getServer() == null) {
             return clientStorageRepository;
         }
@@ -87,22 +93,27 @@ public class PlatformApiImpl implements PlatformApi {
             .computeIfAbsent(
                 this::createStorageRepository,
                 this::createStorageRepository,
-                PlatformStorageRepositoryImpl.NAME
+                StorageRepositoryImpl.NAME
             );
     }
 
-    private PlatformStorageRepositoryImpl createStorageRepository(final CompoundTag tag) {
-        final PlatformStorageRepositoryImpl manager = createStorageRepository();
-        manager.read(tag);
-        return manager;
+    @Override
+    public StorageContainerHelper getStorageContainerHelper() {
+        return storageContainerHelper;
     }
 
-    private PlatformStorageRepositoryImpl createStorageRepository() {
-        return new PlatformStorageRepositoryImpl(new StorageRepositoryImpl(), storageTypeRegistry);
+    private StorageRepositoryImpl createStorageRepository(final CompoundTag tag) {
+        final StorageRepositoryImpl repository = createStorageRepository();
+        repository.read(tag);
+        return repository;
+    }
+
+    private StorageRepositoryImpl createStorageRepository() {
+        return new StorageRepositoryImpl(storageTypeRegistry);
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, StorageChannelType<?>> getStorageChannelTypeRegistry() {
+    public OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> getStorageChannelTypeRegistry() {
         return storageChannelTypeRegistry;
     }
 
@@ -117,19 +128,23 @@ public class PlatformApiImpl implements PlatformApi {
     }
 
     @Override
-    public <T> void setExternalStorageProviderFactory(final StorageChannelType<T> channelType,
+    public <T> void addExternalStorageProviderFactory(final StorageChannelType<T> channelType,
+                                                      final int priority,
                                                       final PlatformExternalStorageProviderFactory factory) {
-        if (externalStorageProviderFactories.containsKey(channelType)) {
-            throw new IllegalArgumentException(channelType + " is already registered");
-        }
-        externalStorageProviderFactories.put(channelType, factory);
+        final Set<PlatformExternalStorageProviderFactory> factories = externalStorageProviderFactories.computeIfAbsent(
+            channelType,
+            k -> new TreeSet<>(
+                Comparator.comparingInt(PlatformExternalStorageProviderFactory::getPriority)
+            )
+        );
+        factories.add(factory);
     }
 
     @Override
-    public <T> Optional<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactory(
+    public <T> Set<PlatformExternalStorageProviderFactory> getExternalStorageProviderFactories(
         final StorageChannelType<T> channelType
     ) {
-        return Optional.ofNullable(externalStorageProviderFactories.get(channelType));
+        return externalStorageProviderFactories.getOrDefault(channelType, Collections.emptySet());
     }
 
     @Override

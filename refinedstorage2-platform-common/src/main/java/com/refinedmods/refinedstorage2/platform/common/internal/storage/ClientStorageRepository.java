@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.internal.storage;
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
-import com.refinedmods.refinedstorage2.platform.api.storage.PlatformStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,11 +12,11 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import com.google.common.util.concurrent.RateLimiter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ClientStorageRepository implements PlatformStorageRepository {
-    private static final Logger LOGGER = LogManager.getLogger();
+public class ClientStorageRepository implements StorageRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientStorageRepository.class);
 
     private final Map<UUID, StorageInfo> info = new HashMap<>();
     private final RateLimiter rateLimiter = RateLimiter.create(2);
@@ -40,7 +40,7 @@ public class ClientStorageRepository implements PlatformStorageRepository {
     }
 
     @Override
-    public <T> Optional<Storage<T>> disassemble(final UUID id) {
+    public <T> Optional<Storage<T>> removeIfEmpty(final UUID id) {
         throw new UnsupportedOperationException();
     }
 

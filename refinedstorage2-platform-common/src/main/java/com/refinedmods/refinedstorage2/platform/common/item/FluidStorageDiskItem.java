@@ -2,16 +2,14 @@ package com.refinedmods.refinedstorage2.platform.common.item;
 
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.InMemoryTrackedStorageRepository;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.item.AbstractStorageDiskItem;
-import com.refinedmods.refinedstorage2.platform.api.item.StorageItemHelper;
+import com.refinedmods.refinedstorage2.platform.api.item.AbstractStorageContainerItem;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.storage.StorageTooltipHelper;
+import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.LimitedPlatformStorage;
@@ -19,10 +17,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.Platform
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
@@ -32,17 +27,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-public class FluidStorageDiskItem extends AbstractStorageDiskItem {
+public class FluidStorageDiskItem extends AbstractStorageContainerItem<FluidResource> {
     private final FluidStorageType.Variant variant;
-    private final Set<StorageTooltipHelper.TooltipOption> tooltipOptions =
-        EnumSet.noneOf(StorageTooltipHelper.TooltipOption.class);
 
     public FluidStorageDiskItem(final CreativeModeTab tab, final FluidStorageType.Variant variant) {
-        super(new Item.Properties().tab(tab).stacksTo(1).fireResistant());
+        super(
+            new Item.Properties().tab(tab).stacksTo(1).fireResistant(),
+            StorageChannelTypes.FLUID,
+            PlatformApi.INSTANCE.getStorageContainerHelper()
+        );
         this.variant = variant;
-        if (variant != FluidStorageType.Variant.CREATIVE) {
-            this.tooltipOptions.add(StorageTooltipHelper.TooltipOption.CAPACITY_AND_PROGRESS);
-        }
     }
 
     @Override
@@ -51,20 +45,21 @@ public class FluidStorageDiskItem extends AbstractStorageDiskItem {
                                 final List<Component> tooltip,
                                 final TooltipFlag context) {
         super.appendHoverText(stack, level, tooltip, context);
-        StorageItemHelper.appendToTooltip(
+        if (level == null) {
+            return;
+        }
+        final StorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
+        final boolean showCapacityAndProgress = variant != FluidStorageType.Variant.CREATIVE;
+        helper.appendToTooltip(
             stack,
-            level,
+            storageRepository,
             tooltip,
             context,
             Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits,
             Platform.INSTANCE.getBucketQuantityFormatter()::format,
-            tooltipOptions
+            showCapacityAndProgress,
+            false
         );
-    }
-
-    @Override
-    public Optional<StorageChannelType<?>> getType(final ItemStack stack) {
-        return Optional.of(StorageChannelTypes.FLUID);
     }
 
     @Override
@@ -73,7 +68,7 @@ public class FluidStorageDiskItem extends AbstractStorageDiskItem {
     }
 
     @Override
-    protected Storage<?> createStorage(final Level level) {
+    protected Storage<FluidResource> createStorage(final StorageRepository storageRepository) {
         final TrackedStorageRepository<FluidResource> trackingRepository = new InMemoryTrackedStorageRepository<>();
         if (!variant.hasCapacity()) {
             final TrackedStorageImpl<FluidResource> delegate = new TrackedStorageImpl<>(
@@ -85,7 +80,7 @@ public class FluidStorageDiskItem extends AbstractStorageDiskItem {
                 delegate,
                 FluidStorageType.INSTANCE,
                 trackingRepository,
-                PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
+                storageRepository::markAsChanged
             );
         }
         final LimitedStorageImpl<FluidResource> delegate = new LimitedStorageImpl<>(
@@ -96,7 +91,7 @@ public class FluidStorageDiskItem extends AbstractStorageDiskItem {
             delegate,
             FluidStorageType.INSTANCE,
             trackingRepository,
-            PlatformApi.INSTANCE.getStorageRepository(level)::markAsChanged
+            storageRepository::markAsChanged
         );
     }
 

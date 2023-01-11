@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive;
 
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveListener;
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveNetworkNode;
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.DiskDriveState;
-import com.refinedmods.refinedstorage2.api.network.node.diskdrive.StorageDiskState;
+import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageListener;
+import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageNetworkNode;
+import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageState;
+import com.refinedmods.refinedstorage2.api.network.impl.node.multistorage.MultiStorageStorageState;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
@@ -42,15 +42,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public abstract class AbstractDiskDriveBlockEntity
-    extends AbstractInternalNetworkNodeContainerBlockEntity<DiskDriveNetworkNode>
-    implements BlockEntityWithDrops, DiskDriveListener, ExtendedMenuProvider {
-    private static final Logger LOGGER = LogManager.getLogger();
+    extends AbstractInternalNetworkNodeContainerBlockEntity<MultiStorageNetworkNode>
+    implements BlockEntityWithDrops, MultiStorageListener, ExtendedMenuProvider {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDiskDriveBlockEntity.class);
 
     private static final int AMOUNT_OF_DISKS = 9;
 
@@ -58,7 +58,7 @@ public abstract class AbstractDiskDriveBlockEntity
     private static final String TAG_STATES = "states";
 
     @Nullable
-    protected DiskDriveState driveState;
+    protected MultiStorageState driveState;
 
     private final DiskDriveInventory diskInventory;
     private final FilterWithFuzzyMode filter;
@@ -68,13 +68,13 @@ public abstract class AbstractDiskDriveBlockEntity
     private boolean syncRequested;
 
     protected AbstractDiskDriveBlockEntity(final BlockPos pos, final BlockState state) {
-        super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new DiskDriveNetworkNode(
+        super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new MultiStorageNetworkNode(
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
             AMOUNT_OF_DISKS
         ));
-        this.diskInventory = new DiskDriveInventory(this, getNode().getAmountOfDiskSlots());
+        this.diskInventory = new DiskDriveInventory(this, getNode().getSize());
         this.filter = new FilterWithFuzzyMode(this::setChanged, getNode()::setFilterTemplates, value -> {
         });
         this.configContainer = new StorageConfigurationContainerImpl(
@@ -84,7 +84,6 @@ public abstract class AbstractDiskDriveBlockEntity
             this::getRedstoneMode,
             this::setRedstoneMode
         );
-        getNode().setDiskProvider(diskInventory);
         getNode().setListener(this);
         getNode().setNormalizer(filter.createNormalizer());
     }
@@ -115,16 +114,8 @@ public abstract class AbstractDiskDriveBlockEntity
     public void setLevel(final Level level) {
         super.setLevel(level);
         if (!level.isClientSide()) {
-            getNode().initialize(PlatformApi.INSTANCE.getStorageRepository(level));
+            initialize(level);
         }
-    }
-
-    @Override
-    public void activenessChanged(final BlockState state,
-                                  final boolean newActive,
-                                  @Nullable final BooleanProperty activenessProperty) {
-        super.activenessChanged(state, newActive, activenessProperty);
-        LevelUtil.updateBlock(level, worldPosition, getBlockState());
     }
 
     /**
@@ -142,8 +133,21 @@ public abstract class AbstractDiskDriveBlockEntity
     public void setChanged() {
         super.setChanged();
         if (level != null && !level.isClientSide()) {
-            getNode().initialize(PlatformApi.INSTANCE.getStorageRepository(level));
+            initialize(level);
         }
+    }
+
+    private void initialize(final Level level) {
+        diskInventory.setStorageRepository(PlatformApi.INSTANCE.getStorageRepository(level));
+        getNode().setProvider(diskInventory);
+    }
+
+    @Override
+    public void activenessChanged(final BlockState state,
+                                  final boolean newActive,
+                                  @Nullable final BooleanProperty activenessProperty) {
+        super.activenessChanged(state, newActive, activenessProperty);
+        LevelUtil.updateBlock(level, worldPosition, getBlockState());
     }
 
     @Override
@@ -173,13 +177,13 @@ public abstract class AbstractDiskDriveBlockEntity
     }
 
     void onDiskChanged(final int slot) {
-        getNode().onDiskChanged(slot);
+        getNode().onStorageChanged(slot);
         LevelUtil.updateBlock(level, worldPosition, this.getBlockState());
         setChanged();
     }
 
     @Override
-    public void onDiskChanged() {
+    public void onStorageChanged() {
         this.syncRequested = true;
     }
 
@@ -198,13 +202,13 @@ public abstract class AbstractDiskDriveBlockEntity
 
         final ListTag statesList = tag.getList(TAG_STATES, Tag.TAG_BYTE);
 
-        driveState = DiskDriveState.of(
+        driveState = MultiStorageState.of(
             statesList.size(),
             idx -> {
                 final int ordinal = ((ByteTag) statesList.get(idx)).getAsInt();
-                final StorageDiskState[] values = StorageDiskState.values();
+                final MultiStorageStorageState[] values = MultiStorageStorageState.values();
                 if (ordinal < 0 || ordinal >= values.length) {
-                    return StorageDiskState.NONE;
+                    return MultiStorageStorageState.NONE;
                 }
                 return values[ordinal];
             }
@@ -230,7 +234,7 @@ public abstract class AbstractDiskDriveBlockEntity
             return tag;
         }
         final ListTag statesList = new ListTag();
-        for (final StorageDiskState state : getNode().createState().getStates()) {
+        for (final MultiStorageStorageState state : getNode().createState().getStates()) {
             statesList.add(ByteTag.valueOf((byte) state.ordinal()));
         }
         tag.put(TAG_STATES, statesList);

@@ -48,6 +48,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.content.Sounds;
+import com.refinedmods.refinedstorage2.platform.common.internal.network.node.iface.externalstorage.InterfacePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
@@ -109,8 +110,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import team.reborn.energy.api.EnergyStorage;
 
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CABLE;
@@ -146,7 +147,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ModInitializerImpl extends AbstractModInitializer implements ModInitializer {
-    private static final Logger LOGGER = LogManager.getLogger(ModInitializerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModInitializerImpl.class);
     private static final String BLOCK_TRANSLATION_CATEGORY = "block";
     private static final CreativeModeTab CREATIVE_MODE_TAB = FabricItemGroupBuilder.build(
         createIdentifier("general"),
@@ -236,16 +237,23 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerExternalStorageProviderFactories() {
-        PlatformApi.INSTANCE.setExternalStorageProviderFactory(
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
             StorageChannelTypes.ITEM,
+            1,
+            new InterfacePlatformExternalStorageProviderFactory()
+        );
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
+            StorageChannelTypes.ITEM,
+            0,
             new StoragePlatformExternalStorageProviderFactory<>(
                 ItemStorage.SIDED,
                 VariantUtil::ofItemVariant,
                 VariantUtil::toItemVariant
             )
         );
-        PlatformApi.INSTANCE.setExternalStorageProviderFactory(
+        PlatformApi.INSTANCE.addExternalStorageProviderFactory(
             StorageChannelTypes.FLUID,
+            0,
             new StoragePlatformExternalStorageProviderFactory<>(
                 FluidStorage.SIDED,
                 VariantUtil::ofFluidVariant,

@@ -18,13 +18,13 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apiguardian.api.API;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
 public class GridViewImpl<T> implements GridView<T> {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(GridViewImpl.class);
 
     private final ResourceList<T> backingList;
     private final Comparator<AbstractGridResource<?>> identitySort;

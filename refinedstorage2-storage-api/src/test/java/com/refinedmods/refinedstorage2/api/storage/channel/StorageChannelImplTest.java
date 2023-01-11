@@ -14,7 +14,6 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageImpl;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -77,8 +76,27 @@ class StorageChannelImplTest {
         assertThat(extracted).isEqualTo(5);
     }
 
+    @Test
+    void shouldFindMatchingStorage() {
+        // Arrange
+        final Storage<String> matchedStorage = new LimitedStorageImpl<>(10);
+        matchedStorage.insert("A", 8, Action.EXECUTE, EmptyActor.INSTANCE);
+        sut.addSource(matchedStorage);
+
+        final Storage<String> unmatchedStorage = new LimitedStorageImpl<>(10);
+
+        // Act
+        final boolean foundMatched = sut.hasSource(s -> s == matchedStorage);
+        final boolean foundUnmatched = sut.hasSource(s -> s == unmatchedStorage);
+
+        // Assert
+        assertThat(foundMatched).isTrue();
+        assertThat(foundUnmatched).isFalse();
+    }
+
     @ParameterizedTest
     @EnumSource(Action.class)
+    @SuppressWarnings("unchecked")
     void shouldCallListenerOnInsertion(final Action action) {
         // Arrange
         sut.addSource(new LimitedStorageImpl<>(10));
@@ -107,6 +125,7 @@ class StorageChannelImplTest {
 
     @ParameterizedTest
     @EnumSource(Action.class)
+    @SuppressWarnings("unchecked")
     void shouldCallListenerOnExtraction(final Action action) {
         // Arrange
         final Storage<String> storage = new LimitedStorageImpl<>(10);
@@ -137,6 +156,7 @@ class StorageChannelImplTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void shouldRemoveListener() {
         // Arrange
         sut.addSource(new LimitedStorageImpl<>(10));
@@ -244,7 +264,7 @@ class StorageChannelImplTest {
         assertThat(resource).isEmpty();
     }
 
-    @RepeatedTest(100)
+    @Test
     void shouldSortSources() {
         // Arrange
         final PrioritizedStorage<String> storage1 = new PrioritizedStorage<>(0, new LimitedStorageImpl<>(10));

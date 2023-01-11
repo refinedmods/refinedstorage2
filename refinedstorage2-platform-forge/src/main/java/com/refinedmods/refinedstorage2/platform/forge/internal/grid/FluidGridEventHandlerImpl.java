@@ -7,9 +7,9 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
-import com.refinedmods.refinedstorage2.platform.api.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.FluidGridEventHandler;
 
 import javax.annotation.Nullable;
 
@@ -28,7 +28,6 @@ import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.ofFluidStack;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidAction;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidStack;
-import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toItemStack;
 
 public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     private static final ItemResource BUCKET_ITEM_RESOURCE = new ItemResource(Items.BUCKET, null);
@@ -118,7 +117,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
                          final GridExtractMode mode,
                          final boolean cursor,
                          final boolean bucketFromInventory) {
-        final IFluidHandlerItem destination = getFluidStorage(toItemStack(BUCKET_ITEM_RESOURCE, 1));
+        final IFluidHandlerItem destination = getFluidStorage(BUCKET_ITEM_RESOURCE.toItemStack());
         if (destination == null) {
             return; // shouldn't happen
         }
@@ -171,7 +170,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     }
 
     private boolean extractBucket(final IItemHandler source, final Action action) {
-        final ItemStack toExtractStack = toItemStack(BUCKET_ITEM_RESOURCE, 1);
+        final ItemStack toExtractStack = BUCKET_ITEM_RESOURCE.toItemStack();
         for (int slot = 0; slot < source.getSlots(); ++slot) {
             final boolean relevant = isSame(source.getStackInSlot(slot), toExtractStack);
             if (!relevant) {

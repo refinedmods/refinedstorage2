@@ -1,0 +1,19 @@
+name: Validate changelog
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review, labeled, unlabeled ]
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Validate if changelog is valid
+        uses: mindsers/changelog-reader-action@v2.2.2
+        with:
+          path: ./CHANGELOG.md
+          validation_level: 'error'
+      - name: Validate if changelog is updated
+        uses: dangoslen/changelog-enforcer@v3
+        with:
+          skipLabels: 'skip-changelog'

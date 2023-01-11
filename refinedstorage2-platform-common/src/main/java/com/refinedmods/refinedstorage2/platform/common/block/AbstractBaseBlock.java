@@ -39,6 +39,7 @@ public abstract class AbstractBaseBlock extends Block {
         return getStateDefinition().any();
     }
 
+    @SuppressWarnings("deprecation")
     private static boolean rotate(final BlockState state, final Level level, final BlockPos pos) {
         final BlockState rotated = state.rotate(Rotation.CLOCKWISE_90);
         level.setBlockAndUpdate(pos, rotated);
@@ -105,8 +106,8 @@ public abstract class AbstractBaseBlock extends Block {
         if (state.getBlock() != newState.getBlock()
             && !state.getBlock().getClass().equals(newState.getBlock().getClass())) {
             final BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof BlockEntityWithDrops drops) {
-                Containers.dropContents(level, pos, drops.getDrops());
+            if (blockEntity instanceof BlockEntityWithDrops blockEntityDrops) {
+                Containers.dropContents(level, pos, blockEntityDrops.getDrops());
                 level.updateNeighbourForOutputSignal(pos, this);
             }
             super.onRemove(state, level, pos, newState, moved);
@@ -174,7 +175,7 @@ public abstract class AbstractBaseBlock extends Block {
                                              final BlockHitResult hitResult,
                                              final Player player) {
         if (player.isCrouching()) {
-            dismantle(state, level, hitResult);
+            dismantle(state, level, hitResult, player);
             return true;
         } else {
             return rotate(state, level, hitResult.getBlockPos());
@@ -185,8 +186,11 @@ public abstract class AbstractBaseBlock extends Block {
         return item.is(Platform.INSTANCE.getWrenchTag());
     }
 
-    private static void dismantle(final BlockState state, final Level level, final BlockHitResult hitResult) {
-        final ItemStack stack = state.getBlock().getCloneItemStack(level, hitResult.getBlockPos(), state);
+    private static void dismantle(final BlockState state,
+                                  final Level level,
+                                  final BlockHitResult hitResult,
+                                  final Player player) {
+        final ItemStack stack = Platform.INSTANCE.getCloneItemStack(state, level, hitResult, player);
         final BlockEntity blockEntity = level.getBlockEntity(hitResult.getBlockPos());
         if (blockEntity != null) {
             blockEntity.saveToItem(stack);
