@@ -264,3 +264,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The Priority screen now has a "Reset" button.
 - The Grid can now use smooth scrolling.
 - The Grid now has syntax highlighting for the search query.
+
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.4...HEAD
+
+[2.0.0-milestone.2.4]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.3...v2.0.0-milestone.2.4
+
+[2.0.0-milestone.2.3]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.2...v2.0.0-milestone.2.3
+
+[2.0.0-milestone.2.2]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.1...v2.0.0-milestone.2.2
+
+[2.0.0-milestone.2.1]: https://github.com/refinedmods/refinedstorage2/compare/2.0.0-milestone.2.0...v2.0.0-milestone.2.1
+
+[2.0.0-milestone.2.0]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.1.4...v2.0.0-milestone.2.0
+
+[2.0.0-milestone.1.4]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.1.3...v2.0.0-milestone.1.4
+
+[2.0.0-milestone.1.3]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.1.2...v2.0.0-milestone.1.3
+
+[2.0.0-milestone.1.2]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.1.1...v2.0.0-milestone.1.2
+
+[2.0.0-milestone.1.1]: https://github.com/refinedmods/refinedstorage2/compare/2.0.0-milestone.1.0...v2.0.0-milestone.1.1
+
+[2.0.0-milestone.1.0]: https://github.com/raoulvdberge/refinedstorage2/releases/tag/v2.0.0-milestone.1.0
