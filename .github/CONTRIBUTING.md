@@ -30,9 +30,26 @@ easier to write commit messages.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-When porting to a new (binary-breaking) Minecraft version, the minor version number needs to be incremented.
-That way, we can still keep maintaining the previous Minecraft version if necessary without being in conflict
-with the version number of the new Minecraft version.
+### Version metadata
+
+The code doesn't contain version metadata: `build.gradle` specifies a version of `0.0.0`. The versioning information is
+entirely contained in Git by using tags.
+
+Per [Semantic Versioning](https://semver.org/spec/v2.0.0.html), the version number being released depends on the changes
+in that release. We usually can't predict those
+changes at the start of a release cycle, so we can't bump the version at the start of a release cycle. That means that
+the version number being released is determined at release time.
+
+Because the version number is determined at release time, we can't store any versioning metadata in the
+code (`build.gradle`). If we did, `build.gradle` would have the version number of the latest released version during the
+release cycle of the new version, which isn't correct.
+
+### Dealing with Minecraft
+
+Whenever we port to a new Minecraft version, at least the minor version should be incremented.
+
+This is needed so that we can still support older Minecraft versions without the Refined Storage version numbers
+conflicting.
 
 ## Changelog
 
@@ -113,16 +130,18 @@ coverage percentage of 90%.
 
 The release process is automated and follows Gitflow.
 
-Before running the "Draft release" workflow to start the release process:
+Before running the "Draft release" workflow to start the release process make sure `CHANGELOG.md` contains all the
+unreleased changes.
 
-- Make sure the version number in `build.gradle` is correct.
-- Make sure `CHANGELOG.md` contains all the unreleased changes.
+To determine the version number to be released, the workflow will ask you which release type this is (major, minor,
+patch).
+The latest version from `CHANGELOG.md` will be used as a base, and that will be incremented
+depending on the release type.
 
-The "Draft release" workflow will update the `CHANGELOG.md` and bump the version number in `build.gradle`.
-You can review these changes in the PR created by this workflow.
+`CHANGELOG.md` will be updated by this workflow, you can review this in the resulting release PR.
 
-If you merge the PR, the "Publish release" workflow will automatically publish the release. An additional PR will be
-created to merge the changes in `CHANGELOG.md` and `build.gradle` back into `develop`.
+If you merge the release PR, the "Publish release" workflow will automatically publish the release. An additional PR
+will be created to merge the changes in `CHANGELOG.md` back into `develop`.
 
 ## Hotfix process
 
@@ -175,13 +194,13 @@ The build workflow takes care of the following:
 
 The draft release workflow is a manual workflow which will create a release branch from `develop`.
 
-It will extract the version from `build.gradle` to know which version is being released.
+To determine the version number to be released, it will extract the latest version number from `CHANGELOG.md` and
+increment it depending on the release type selected.
 
 This workflow takes care of the following:
 
 - Creating the release branch.
 - Updating the changelog on this release branch.
-- Updating the version number in `build.gradle` to the next Semver version number on this release branch.
 - Creating a pull request merging the release branch into `main`.
 
 ### Publish release
@@ -191,7 +210,7 @@ in the draft release workflow.
 
 The workflow takes care of the following:
 
-- Extracting the version number from the release or hotfix branch that is merged in the PR.
+- Extracting the version number from the release or hotfix branch name that is merged in the PR.
 - Extracting the changelog entry for this version number.
 - Running a build.
 - Publishing on [GitHub packages](https://github.com/refinedmods/refinedstorage2/packages) and
