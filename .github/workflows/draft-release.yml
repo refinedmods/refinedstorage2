@@ -44,26 +44,26 @@ jobs:
         run: |
           echo "VERSION=${{ github.event.inputs.version-number }}" >> $GITHUB_ENV
       - name: Update changelog
-        uses: thomaseizinger/keep-a-changelog-new-release@1.1.0
+        uses: thomaseizinger/keep-a-changelog-new-release@1.3.0
         with:
-          version: v${{ env.VERSION }}
+          version: ${{ env.VERSION }}
+          tag: v${{ env.VERSION }}
       - name: Commit and push changes
         uses: EndBug/add-and-commit@v9
         with:
           add: 'CHANGELOG.md'
-          default_author: github_actions
+          default_author: github_actor
           message: 'chore: prepare release v${{ env.VERSION }}'
           new_branch: 'release/${{ env.VERSION }}'
           push: true
       - name: Create pull request for release
         uses: thomaseizinger/create-pull-request@1.3.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITFLOW_PUSH_TOKEN }}
         with:
           head: release/${{ env.VERSION }}
           base: main
           title: Release v${{ env.VERSION }}
-          reviewers: ${{ github.actor }}
           body: |
             Hi @${{ github.actor }}!
             This PR was created in response to a manual trigger of the release workflow here: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}.
