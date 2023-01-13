@@ -189,6 +189,7 @@ We have a few GitHub workflows:
 - Validate branch names (PRs)
 - Issue for unsupported version (issues)
     - Posts a message on a GitHub issue if the issue is about an unsupported version.
+- Lock resolved issues and PRs (every night)
 
 ### Build
 
