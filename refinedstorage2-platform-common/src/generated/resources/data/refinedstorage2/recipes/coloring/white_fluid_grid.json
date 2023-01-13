@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "tag": "refinedstorage2:fluid_grids"
+    },
+    {
+      "item": "minecraft:white_dye"
+    }
+  ],
+  "result": {
+    "item": "refinedstorage2:white_fluid_grid"
+  }
+}
