@@ -150,7 +150,7 @@ jobs:
       - name: Create PR for merging main back into develop
         uses: thomaseizinger/create-pull-request@1.0.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITFLOW_PUSH_TOKEN }}
         with:
           head: main
           base: develop
