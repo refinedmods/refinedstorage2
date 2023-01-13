@@ -26,6 +26,22 @@ It is recommended to install
 the [Conventional Commit plugin](https://plugins.jetbrains.com/plugin/13389-conventional-commit) to make it
 easier to write commit messages.
 
+### Branch names
+
+Because we use merge commits when merging a PR, branch names will be part of the history of the repository. That is why
+branch names must follow a certain standard.
+
+The format is `{category}/GH-{issue number}/{lowercase-description}` and a branch name can be maximum 50 characters of
+length.
+
+Category must match a
+category [used in our Commitlint config](https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional#type-enum).
+
+Valid examples are:
+
+- `fix/GH-123/add-branch-linting`
+- `docs/GH-123/cleanup`
+
 ## Versioning
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -170,6 +186,7 @@ We have a few GitHub workflows:
       respect [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
     - We use
       the [conventional configuration](https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional).
+- Validate branch names (PRs)
 - Issue for unsupported version (issues)
     - Posts a message on a GitHub issue if the issue is about an unsupported version.
 
