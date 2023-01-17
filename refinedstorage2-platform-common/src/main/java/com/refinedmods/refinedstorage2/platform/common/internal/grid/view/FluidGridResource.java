@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class FluidGridResource extends AbstractGridResource<FluidResource> {
     private final int id;
@@ -25,7 +25,7 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
             GridResourceAttributeKeys.TAGS, tags,
             GridResourceAttributeKeys.TOOLTIP, Set.of(tooltip)
         ));
-        this.id = Registry.FLUID.getId(getResourceAmount().getResource().fluid());
+        this.id = BuiltInRegistries.FLUID.getId(getResourceAmount().getResource().fluid());
     }
 
     @Override

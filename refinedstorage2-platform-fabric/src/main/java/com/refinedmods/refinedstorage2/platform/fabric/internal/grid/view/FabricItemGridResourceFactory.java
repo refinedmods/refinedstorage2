@@ -7,7 +7,7 @@ import java.util.Optional;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
 
 public class FabricItemGridResourceFactory extends AbstractItemGridResourceFactory {
@@ -22,6 +22,6 @@ public class FabricItemGridResourceFactory extends AbstractItemGridResourceFacto
 
     @Override
     public String getModId(final ItemStack itemStack) {
-        return Registry.ITEM.getKey(itemStack.getItem()).getNamespace();
+        return BuiltInRegistries.ITEM.getKey(itemStack.getItem()).getNamespace();
     }
 }

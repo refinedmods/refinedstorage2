@@ -56,8 +56,8 @@ subprojects {
     ])) {
         apply plugin: 'info.solidsoft.pitest'
         pitest {
-            junit5PluginVersion = '1.0.0'
-            pitestVersion = '1.9.0'
+            junit5PluginVersion = libs.versions.pitestJUnit5Plugin
+            pitestVersion = libs.versions.pitest
             outputFormats.set(['HTML'])
             mutationThreshold.set(90)
             coverageThreshold.set(80)

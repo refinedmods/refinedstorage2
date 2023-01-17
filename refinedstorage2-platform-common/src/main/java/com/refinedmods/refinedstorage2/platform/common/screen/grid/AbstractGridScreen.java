@@ -103,8 +103,8 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
                 new History(SEARCH_FIELD_HISTORY)
             );
         } else {
-            searchField.x = leftPos + 80 + 1;
-            searchField.y = topPos + 6 + 1;
+            searchField.setX(leftPos + 80 + 1);
+            searchField.setY(topPos + 6 + 1);
         }
         getMenu().setSearchBox(searchField);
 

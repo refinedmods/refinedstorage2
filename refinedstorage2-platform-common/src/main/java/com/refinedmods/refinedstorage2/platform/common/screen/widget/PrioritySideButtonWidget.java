@@ -10,7 +10,6 @@ import java.util.List;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -47,7 +46,7 @@ public class PrioritySideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
+    public void onTooltip(final PoseStack poseStack, final int mouseX, final int mouseY) {
         final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "priority"));
         lines.add(Component.literal(String.valueOf(property.getValue())).withStyle(ChatFormatting.GRAY));

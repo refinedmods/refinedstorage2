@@ -14,7 +14,8 @@ public class ResourceFilterButtonWidget extends Button {
             WIDTH,
             15,
             resourceTypeAccessor.getCurrentResourceTypeName(),
-            createPressAction(resourceTypeAccessor)
+            createPressAction(resourceTypeAccessor),
+            DEFAULT_NARRATION
         );
     }
 

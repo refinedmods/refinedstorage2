@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
@@ -35,7 +35,7 @@ public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements F
         if (fluidResource.tag() != null) {
             tag.put(TAG_TAG, fluidResource.tag());
         }
-        tag.putString(TAG_ID, Registry.FLUID.getKey(fluidResource.fluid()).toString());
+        tag.putString(TAG_ID, BuiltInRegistries.FLUID.getKey(fluidResource.fluid()).toString());
         return tag;
     }
 
@@ -48,7 +48,7 @@ public record FluidResource(Fluid fluid, @Nullable CompoundTag tag) implements F
     @SuppressWarnings("deprecation") // forge deprecates Registry access
     public static Optional<FluidResource> fromTag(final CompoundTag tag) {
         final ResourceLocation id = new ResourceLocation(tag.getString(TAG_ID));
-        final Fluid fluid = Registry.FLUID.get(id);
+        final Fluid fluid = BuiltInRegistries.FLUID.get(id);
         if (fluid == Fluids.EMPTY) {
             return Optional.empty();
         }

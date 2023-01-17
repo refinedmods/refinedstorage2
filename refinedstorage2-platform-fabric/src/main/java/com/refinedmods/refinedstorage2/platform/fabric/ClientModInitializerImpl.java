@@ -41,11 +41,11 @@ import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import org.lwjgl.glfw.GLFW;
@@ -145,8 +145,10 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void registerBlockEntityRenderers() {
-        BlockEntityRendererRegistry.register(BlockEntities.INSTANCE.getDiskDrive(),
-            ctx -> new DiskDriveBlockEntityRendererImpl<>());
+        BlockEntityRenderers.register(
+            BlockEntities.INSTANCE.getDiskDrive(),
+            ctx -> new DiskDriveBlockEntityRendererImpl<>()
+        );
     }
 
     private void registerCustomModels() {
@@ -184,7 +186,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void registerModelPredicates() {
-        Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemPropertiesAccessor.register(
+        Items.INSTANCE.getRegularControllers().forEach(controllerBlockItem -> ItemPropertiesAccessor.register(
             controllerBlockItem.get(),
             createIdentifier("stored_in_controller"),
             new ControllerModelPredicateProvider()

@@ -164,8 +164,8 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     public void addSideButton(final AbstractSideButtonWidget button) {
-        button.x = leftPos - button.getWidth() - 2;
-        button.y = topPos + sideButtonY;
+        button.setX(leftPos - button.getWidth() - 2);
+        button.setY(topPos + sideButtonY);
 
         sideButtonY += button.getHeight() + 2;
 
