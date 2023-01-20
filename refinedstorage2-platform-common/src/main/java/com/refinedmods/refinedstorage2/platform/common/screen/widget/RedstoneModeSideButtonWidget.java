@@ -13,7 +13,6 @@ import java.util.Map;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
@@ -58,7 +57,7 @@ public class RedstoneModeSideButtonWidget extends AbstractSideButtonWidget {
     }
 
     @Override
-    public void onTooltip(final Button button, final PoseStack poseStack, final int mouseX, final int mouseY) {
+    public void onTooltip(final PoseStack poseStack, final int mouseX, final int mouseY) {
         tooltipRenderer.render(poseStack, tooltips.get(property.getValue()), mouseX, mouseY);
     }
 }

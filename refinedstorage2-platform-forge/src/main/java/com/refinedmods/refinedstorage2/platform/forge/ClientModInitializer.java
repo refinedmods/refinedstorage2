@@ -56,7 +56,7 @@ public final class ClientModInitializer {
     }
 
     private static void registerModelPredicates() {
-        Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemProperties.register(
+        Items.INSTANCE.getRegularControllers().forEach(controllerBlockItem -> ItemProperties.register(
             controllerBlockItem.get(),
             createIdentifier("stored_in_controller"),
             new ControllerModelPredicateProvider()

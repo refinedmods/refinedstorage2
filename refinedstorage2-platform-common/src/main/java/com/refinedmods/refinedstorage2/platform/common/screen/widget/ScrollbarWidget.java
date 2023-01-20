@@ -2,27 +2,20 @@ package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Widget;
-import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
-public class ScrollbarWidget extends GuiComponent implements GuiEventListener, Widget, NarratableEntry {
+public class ScrollbarWidget extends AbstractWidget {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/widgets.png");
     private static final int SCROLLER_HEIGHT = 15;
 
     private static final int ANIMATION_SCROLL_DURATION_IN_TICKS = 10;
     private static final double ANIMATION_SCROLL_HEIGHT_IN_PIXELS = 30;
-
-    private final int x;
-    private final int y;
-    private final int width;
-    private final int height;
 
     private double offset;
     private double maxOffset;
@@ -36,10 +29,7 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
     private int animationSpeed;
 
     public ScrollbarWidget(final int x, final int y, final int width, final int height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        super(x, y, width, height, Component.empty());
     }
 
     public boolean isScrollAnimation() {
@@ -67,7 +57,15 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
         final int enabledU = clicked ? 220 : 232;
         final int u = enabled ? enabledU : 244;
 
-        blit(poseStack, x, y + (int) ((float) offset / (float) maxOffset * (height - SCROLLER_HEIGHT)), u, 0, 12, 15);
+        blit(
+            poseStack,
+            getX(),
+            getY() + (int) ((float) offset / (float) maxOffset * (height - SCROLLER_HEIGHT)),
+            u,
+            0,
+            12,
+            15
+        );
     }
 
     private boolean isAnimatingScroll() {
@@ -99,7 +97,10 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
 
     @Override
     public void mouseMoved(final double mouseX, final double mouseY) {
-        final boolean inBounds = mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
+        final boolean inBounds = mouseX >= getX()
+            && mouseY >= getY()
+            && mouseX <= getX() + width
+            && mouseY <= getY() + height;
         if (clicked && inBounds) {
             updateOffset(mouseY);
         }
@@ -107,7 +108,10 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
 
     @Override
     public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
-        final boolean inBounds = mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
+        final boolean inBounds = mouseX >= getX()
+            && mouseY >= getY()
+            && mouseX <= getX() + width
+            && mouseY <= getY() + height;
         if (button == 0 && inBounds) {
             updateOffset(mouseY);
             clicked = true;
@@ -166,16 +170,11 @@ public class ScrollbarWidget extends GuiComponent implements GuiEventListener, W
     }
 
     private void updateOffset(final double mouseY) {
-        setOffset(Math.floor((mouseY - y) / (height - SCROLLER_HEIGHT) * maxOffset));
+        setOffset(Math.floor((mouseY - getY()) / (height - SCROLLER_HEIGHT) * maxOffset));
     }
 
     @Override
-    public NarrationPriority narrationPriority() {
-        return NarrationPriority.NONE;
-    }
-
-    @Override
-    public void updateNarration(final NarrationElementOutput builder) {
+    protected void updateWidgetNarration(final NarrationElementOutput narrationElementOutput) {
         // intentionally empty
     }
 }

@@ -42,11 +42,11 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.fabricmc.fabric.impl.transfer.context.InitialContentsContainerItemContext;
+import net.fabricmc.fabric.impl.transfer.context.ConstantContainerItemContext;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
@@ -63,7 +63,7 @@ import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.t
 
 public final class PlatformImpl extends AbstractPlatform {
     private static final TagKey<Item> WRENCH_TAG = TagKey.create(
-        Registry.ITEM.key(),
+        BuiltInRegistries.ITEM.key(),
         new ResourceLocation("c", "wrenches")
     );
 
@@ -185,7 +185,7 @@ public final class PlatformImpl extends AbstractPlatform {
     private Optional<FluidResource> convertNonEmptyToFluid(final ItemStack stack) {
         final Storage<FluidVariant> storage = FluidStorage.ITEM.find(
             stack,
-            new InitialContentsContainerItemContext(ItemVariant.of(stack), 1)
+            new ConstantContainerItemContext(ItemVariant.of(stack), 1)
         );
         return Optional
             .ofNullable(StorageUtil.findExtractableResource(storage, null))

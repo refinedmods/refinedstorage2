@@ -7,7 +7,7 @@ archivesBaseName = 'refinedstorage2-platform-fabric'
 repositories {
     maven {
         name = 'JEI'
-        url = "https://dvs1.progwml6.com/files/maven/"
+        url = "https://maven.blamejared.com/"
     }
     maven {
         name = 'ModMenu'
@@ -92,6 +92,13 @@ loom {
             setConfigName("Fabric Server")
             ideConfigGenerated(true)
             runDir("run")
+        }
+    }
+    mixin {
+        showMessageTypes = true
+        messages {
+            // silence the warning from shadowing a synthetic field in AbstractModelBakerImplMixin
+            TARGET_ELEMENT_NOT_FOUND = 'disabled'
         }
     }
 }

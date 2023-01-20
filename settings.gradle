@@ -17,38 +17,37 @@ dependencyResolutionManagement {
         mavenCentral()
     }
     versionCatalogs {
-        def minecraftVersion = "1.19.2"
+        def minecraftVersion = "1.19.3"
 
         // https://www.curseforge.com/minecraft/mc-mods/jei/files
-        def jeiVersion = "11.2.0.256"
+        def jeiVersion = "12.0.2.2"
         // https://www.curseforge.com/minecraft/mc-mods/roughly-enough-items/files
-        def reiVersion = "9.1.530"
+        def reiVersion = "10.0.581"
         fabric {
             def minecraft = version("minecraft", minecraftVersion)
             library("minecraft", "com.mojang", "minecraft").versionRef(minecraft)
 
             plugin("fabric-loom", "fabric-loom").version("1.0-SNAPSHOT")
 
-            def fabricLoader = version("fabric-loader", "0.14.9")
+            def fabricLoader = version("fabric-loader", "0.14.12")
             library("fabric-loader", "net.fabricmc", "fabric-loader").versionRef(fabricLoader)
-            def fabricApi = version("fabric-api", "0.60.0+1.19.2")
+            def fabricApi = version("fabric-api", "0.72.0+1.19.3")
             library("fabric-api", "net.fabricmc.fabric-api", "fabric-api").versionRef(fabricApi)
             bundle("fabric", ["fabric-loader", "fabric-api"])
 
-            def parchment = version("parchment", "2022.08.21")
+            def parchment = version("parchment", "2022.12.18")
             library("parchment", "org.parchmentmc.data", "parchment-${minecraftVersion}").versionRef(parchment)
 
             // https://www.curseforge.com/minecraft/mc-mods/cloth-config/files
-            def clothConfig = version("clothConfig", "8.0.75")
+            def clothConfig = version("clothConfig", "9.0.94")
             library("cloth-config", "me.shedaniel.cloth", "cloth-config-fabric").versionRef(clothConfig)
 
             // https://github.com/TechReborn/Energy
             def energy = version("teamreborn-energy", "2.1.0")
             library("teamreborn-energy", "teamreborn", "energy").versionRef(energy)
 
-            // https://www.curseforge.com/minecraft/mc-mods/roughly-enough-items/files
             def rei = version("rei", reiVersion)
-            def architectury = version("architectury", "6.2.43") // dependency of rei
+            def architectury = version("architectury", "7.0.63") // dependency of rei
             library("rei-api", "me.shedaniel", "RoughlyEnoughItems-api").versionRef(rei)
             library("architectury", "dev.architectury", "architectury-fabric").versionRef(architectury)
             library("rei-fabric", "me.shedaniel", "RoughlyEnoughItems-fabric").versionRef(rei)
@@ -61,11 +60,11 @@ dependencyResolutionManagement {
             bundle("jei", ["jei-common-api", "jei-fabric-api"])
 
             // https://www.curseforge.com/minecraft/mc-mods/modmenu/files
-            def modmenu = version("modmenu", "4.0.6")
+            def modmenu = version("modmenu", "5.0.2")
             library("modmenu", "com.terraformersmc", "modmenu").versionRef(modmenu)
 
             // https://www.curseforge.com/minecraft/mc-mods/wthit/files
-            def wthit = version("wthit", "fabric-5.11.3")
+            def wthit = version("wthit", "fabric-6.1.2")
             library("wthit", "mcp.mobius.waila", "wthit").versionRef(wthit)
 
             // https://www.curseforge.com/minecraft/mc-mods/no-indium/files
@@ -74,7 +73,7 @@ dependencyResolutionManagement {
         }
         forge {
             version("minecraft", minecraftVersion)
-            def minecraft = version("minecraftForge", "${minecraftVersion}-43.1.3")
+            def minecraft = version("minecraftForge", "${minecraftVersion}-44.1.5")
             library("minecraft", "net.minecraftforge", "forge").versionRef(minecraft)
 
             def jei = version("jei", jeiVersion)
@@ -89,15 +88,17 @@ dependencyResolutionManagement {
         }
         libs {
             // Use the same slf4j API as MC to not break logging in the development environment.
-            def slf4j = version("slf4j", "1.8.0-beta4")
+            def slf4j = version("slf4j", "2.0.1")
             library("slf4j-api", "org.slf4j", "slf4j-api").versionRef(slf4j)
             library("slf4j-impl", "org.slf4j", "slf4j-simple").versionRef(slf4j)
             def mixin = version("mixin", "0.8.4")
             library("mixin", "org.spongepowered", "mixin").versionRef(mixin)
             plugin("mixin", "org.spongepowered.gradle.vanilla").version("0.2.1-SNAPSHOT")
-            plugin("pitest", "info.solidsoft.pitest").version("1.7.4")
+            plugin("pitest", "info.solidsoft.pitest").version("1.9.11")
+            version("pitest", "1.10.4")
+            version("pitestJUnit5Plugin", "1.1.2")
             plugin("sonarqube", "org.sonarqube").version("3.3")
-            version("checkstyle", "10.3.2")
+            version("checkstyle", "10.6.0")
             def apiGuardian = version("apiGuardian", "1.1.2")
             library("apiguardian", "org.apiguardian", "apiguardian-api").versionRef(apiGuardian)
             def jsr305 = version("jsr305", "3.0.2")
@@ -105,18 +106,18 @@ dependencyResolutionManagement {
             version("minecraft", minecraftVersion)
         }
         testLibs {
-            def junit5 = version("junit5", "5.9.0")
+            def junit5 = version("junit5", "5.9.2")
             library("junit-api", "org.junit.jupiter", "junit-jupiter-api").versionRef(junit5)
             library("junit-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef(junit5)
             library("junit-params", "org.junit.jupiter", "junit-jupiter-params").versionRef(junit5)
 
-            def assertJ = version("assertJ", "3.23.1")
+            def assertJ = version("assertJ", "3.24.1")
             library("assertJ", "org.assertj", "assertj-core").versionRef(assertJ)
 
-            def mockito = version("mockito", "4.7.0")
+            def mockito = version("mockito", "5.0.0")
             library("mockito", "org.mockito", "mockito-core").versionRef(mockito)
 
-            def equalsVerifier = version("equalsverifier", "3.10.1")
+            def equalsVerifier = version("equalsverifier", "3.12.3")
             library("equalsverifier", "nl.jqno.equalsverifier", "equalsverifier").versionRef(equalsVerifier)
         }
     }
@@ -136,4 +137,3 @@ include 'refinedstorage2-platform-forge'
 include 'refinedstorage2-platform-common'
 include 'refinedstorage2-platform-test'
 include 'refinedstorage2-network-test'
-

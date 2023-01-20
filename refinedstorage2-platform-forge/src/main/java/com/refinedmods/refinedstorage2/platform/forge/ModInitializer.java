@@ -41,6 +41,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.blo
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.diskdrive.DiskDriveContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
+import com.refinedmods.refinedstorage2.platform.common.content.CreativeModeTabItems;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
@@ -78,10 +79,11 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -98,6 +100,7 @@ import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -108,6 +111,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CABLE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTION_CORE;
@@ -147,12 +151,6 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 @Mod(IdentifierUtil.MOD_ID)
 public class ModInitializer extends AbstractModInitializer {
     private static final String BLOCK_TRANSLATION_CATEGORY = "block";
-    private static final CreativeModeTab CREATIVE_MODE_TAB = new CreativeModeTab(IdentifierUtil.MOD_ID + ".general") {
-        @Override
-        public ItemStack makeIcon() {
-            return new ItemStack(Blocks.INSTANCE.getController().getNormal());
-        }
-    };
 
     private final DeferredRegister<Block> blockRegistry =
         DeferredRegister.create(ForgeRegistries.BLOCKS, IdentifierUtil.MOD_ID);
@@ -160,8 +158,6 @@ public class ModInitializer extends AbstractModInitializer {
         DeferredRegister.create(ForgeRegistries.ITEMS, IdentifierUtil.MOD_ID);
     private final DeferredRegister<BlockEntityType<?>> blockEntityTypeRegistry =
         DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, IdentifierUtil.MOD_ID);
-    private final DeferredRegister<LootItemFunctionType> lootFunctionTypeRegistry =
-        DeferredRegister.create(Registry.LOOT_FUNCTION_REGISTRY, IdentifierUtil.MOD_ID);
     private final DeferredRegister<MenuType<?>> menuTypeRegistry =
         DeferredRegister.create(ForgeRegistries.MENU_TYPES, IdentifierUtil.MOD_ID);
     private final DeferredRegister<SoundEvent> soundEventRegistry =
@@ -187,6 +183,8 @@ public class ModInitializer extends AbstractModInitializer {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientModInitializer::onRegisterKeyMappings);
         });
 
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegister);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterCreativeModeTab);
         MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerCapabilities);
     }
@@ -231,7 +229,6 @@ public class ModInitializer extends AbstractModInitializer {
         registerItems();
         registerBlockEntities();
         registerMenus();
-        registerLootFunctions();
     }
 
     private void registerBlocks() {
@@ -323,65 +320,68 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerSimpleItems() {
         itemRegistry.register(
             CABLE.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getCable(), CREATIVE_MODE_TAB)
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getCable())
         );
-        itemRegistry.register(
+        Items.INSTANCE.setQuartzEnrichedIron(itemRegistry.register(
             QUARTZ_ENRICHED_IRON.getPath(),
-            () -> new SimpleItem(CREATIVE_MODE_TAB)
-        );
+            SimpleItem::new
+        ));
         itemRegistry.register(
             QUARTZ_ENRICHED_IRON_BLOCK.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock(), CREATIVE_MODE_TAB)
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock())
         );
-        itemRegistry.register(
+        Items.INSTANCE.setSilicon(itemRegistry.register(
             SILICON.getPath(),
-            () -> new SimpleItem(CREATIVE_MODE_TAB)
-        );
-        itemRegistry.register(
+            SimpleItem::new
+        ));
+        Items.INSTANCE.setProcessorBinding(itemRegistry.register(
             PROCESSOR_BINDING.getPath(),
-            () -> new SimpleItem(CREATIVE_MODE_TAB)
-        );
+            SimpleItem::new
+        ));
         itemRegistry.register(
             DISK_DRIVE.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getDiskDrive(), CREATIVE_MODE_TAB)
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getDiskDrive())
         );
-        itemRegistry.register(
+        Items.INSTANCE.setWrench(itemRegistry.register(
             WRENCH.getPath(),
-            () -> new WrenchItem(CREATIVE_MODE_TAB)
-        );
+            WrenchItem::new
+        ));
 
         Items.INSTANCE.setStorageHousing(itemRegistry.register(
             STORAGE_HOUSING.getPath(),
-            () -> new SimpleItem(CREATIVE_MODE_TAB)
+            SimpleItem::new
         ));
         itemRegistry.register(
             MACHINE_CASING.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing(), CREATIVE_MODE_TAB)
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing())
         );
 
         for (final ProcessorItem.Type type : ProcessorItem.Type.values()) {
-            itemRegistry.register(forProcessor(type).getPath(), () -> new ProcessorItem(CREATIVE_MODE_TAB));
+            Items.INSTANCE.setProcessor(
+                type,
+                itemRegistry.register(forProcessor(type).getPath(), ProcessorItem::new)
+            );
         }
 
         itemRegistry.register(
             IMPORTER.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getImporter(), CREATIVE_MODE_TAB)
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getImporter())
         );
         itemRegistry.register(
             EXPORTER.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getExporter(), CREATIVE_MODE_TAB)
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getExporter())
         );
         itemRegistry.register(
             INTERFACE.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getInterface(), CREATIVE_MODE_TAB)
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getInterface())
         );
         itemRegistry.register(
             EXTERNAL_STORAGE.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getExternalStorage(), CREATIVE_MODE_TAB)
+            () -> new SimpleBlockItem(Blocks.INSTANCE.getExternalStorage())
         );
 
-        itemRegistry.register(CONSTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
-        itemRegistry.register(DESTRUCTION_CORE.getPath(), () -> new SimpleItem(CREATIVE_MODE_TAB));
+        Items.INSTANCE.setConstructionCore(itemRegistry.register(CONSTRUCTION_CORE.getPath(), SimpleItem::new));
+        Items.INSTANCE.setDestructionCore(itemRegistry.register(DESTRUCTION_CORE.getPath(), SimpleItem::new));
     }
 
     private void registerGridItems() {
@@ -389,7 +389,6 @@ public class ModInitializer extends AbstractModInitializer {
             Blocks.INSTANCE.getGrid().getId(color, GRID).getPath(),
             () -> new GridBlockItem(
                 block.get(),
-                CREATIVE_MODE_TAB,
                 Blocks.INSTANCE.getGrid().getName(color, createTranslation(
                     BLOCK_TRANSLATION_CATEGORY,
                     "grid"
@@ -400,7 +399,6 @@ public class ModInitializer extends AbstractModInitializer {
             Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID).getPath(),
             () -> new GridBlockItem(
                 block.get(),
-                CREATIVE_MODE_TAB,
                 Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(
                     BLOCK_TRANSLATION_CATEGORY,
                     "fluid_grid"
@@ -410,99 +408,98 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerControllerItems() {
-        Blocks.INSTANCE.getController().forEach((c, block) -> Items.INSTANCE.getControllers().add(itemRegistry.register(
+        Blocks.INSTANCE.getController().forEach((c, block) -> Items.INSTANCE.addRegularController(itemRegistry.register(
             Blocks.INSTANCE.getController().getId(c, CONTROLLER).getPath(),
             () -> new ControllerBlockItem(
                 block.get(),
-                CREATIVE_MODE_TAB,
                 Blocks.INSTANCE.getController().getName(c, createTranslation(
                     BLOCK_TRANSLATION_CATEGORY,
                     "controller"
                 ))
             )
         )));
-        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> itemRegistry.register(
-            Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER).getPath(),
-            () -> new CreativeControllerBlockItem(
-                block.get(),
-                CREATIVE_MODE_TAB,
-                Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(
-                    BLOCK_TRANSLATION_CATEGORY,
-                    "creative_controller"
-                ))
+        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> Items.INSTANCE.addController(
+            itemRegistry.register(
+                Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER).getPath(),
+                () -> new CreativeControllerBlockItem(
+                    block.get(),
+                    Blocks.INSTANCE.getCreativeController().getName(color, createTranslation(
+                        BLOCK_TRANSLATION_CATEGORY,
+                        "creative_controller"
+                    ))
+                )
             )
         ));
     }
 
     private void registerStorageItems() {
         for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            if (variant != ItemStorageType.Variant.CREATIVE) {
-                Items.INSTANCE.setItemStoragePart(variant, itemRegistry.register(
-                    forItemStoragePart(variant).getPath(),
-                    () -> new SimpleItem(CREATIVE_MODE_TAB)
-                ));
-            }
+            registerItemStorageItems(variant);
         }
-
         for (final FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            if (variant != FluidStorageType.Variant.CREATIVE) {
-                Items.INSTANCE.setFluidStoragePart(variant, itemRegistry.register(
-                    forFluidStoragePart(variant).getPath(),
-                    () -> new SimpleItem(CREATIVE_MODE_TAB)
-                ));
-            }
-        }
-
-        for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            itemRegistry.register(
-                forStorageDisk(variant).getPath(),
-                () -> new ItemStorageDiskItem(CREATIVE_MODE_TAB, variant)
-            );
-        }
-
-        for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            itemRegistry.register(
-                forItemStorageBlock(variant).getPath(),
-                () -> new ItemStorageBlockBlockItem(
-                    Blocks.INSTANCE.getItemStorageBlock(variant),
-                    CREATIVE_MODE_TAB,
-                    variant
-                )
-            );
-        }
-
-        for (final FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            itemRegistry.register(
-                forFluidStorageDisk(variant).getPath(),
-                () -> new FluidStorageDiskItem(CREATIVE_MODE_TAB, variant)
-            );
-        }
-
-        for (final FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            itemRegistry.register(
-                forFluidStorageBlock(variant).getPath(),
-                () -> new FluidStorageBlockBlockItem(
-                    Blocks.INSTANCE.getFluidStorageBlock(variant),
-                    CREATIVE_MODE_TAB,
-                    variant
-                )
-            );
+            registerFluidStorageItems(variant);
         }
     }
 
-    private void registerUpgrades() {
-        itemRegistry.register(
-            UPGRADE.getPath(),
-            () -> new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+    private void registerItemStorageItems(final ItemStorageType.Variant variant) {
+        if (variant != ItemStorageType.Variant.CREATIVE) {
+            Items.INSTANCE.setItemStoragePart(variant, itemRegistry.register(
+                forItemStoragePart(variant).getPath(),
+                SimpleItem::new
+            ));
+        }
+        Items.INSTANCE.setItemStorageDisk(
+            variant,
+            itemRegistry.register(
+                forStorageDisk(variant).getPath(),
+                () -> new ItemStorageDiskItem(variant)
+            )
         );
+        itemRegistry.register(
+            forItemStorageBlock(variant).getPath(),
+            () -> new ItemStorageBlockBlockItem(
+                Blocks.INSTANCE.getItemStorageBlock(variant),
+                variant
+            )
+        );
+    }
+
+    private void registerFluidStorageItems(final FluidStorageType.Variant variant) {
+        if (variant != FluidStorageType.Variant.CREATIVE) {
+            Items.INSTANCE.setFluidStoragePart(variant, itemRegistry.register(
+                forFluidStoragePart(variant).getPath(),
+                SimpleItem::new
+            ));
+        }
+        Items.INSTANCE.setFluidStorageDisk(
+            variant,
+            itemRegistry.register(
+                forFluidStorageDisk(variant).getPath(),
+                () -> new FluidStorageDiskItem(variant)
+            )
+        );
+        itemRegistry.register(
+            forFluidStorageBlock(variant).getPath(),
+            () -> new FluidStorageBlockBlockItem(
+                Blocks.INSTANCE.getFluidStorageBlock(variant),
+                variant
+            )
+        );
+    }
+
+    private void registerUpgrades() {
+        Items.INSTANCE.setUpgrade(itemRegistry.register(
+            UPGRADE.getPath(),
+            () -> new SimpleUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry())
+        ));
         final Supplier<Item> speedUpgrade = itemRegistry.register(
             SPEED_UPGRADE.getPath(),
-            () -> new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+            () -> new SimpleUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry())
         );
         Items.INSTANCE.setSpeedUpgrade(speedUpgrade);
         final Supplier<Item> stackUpgrade = itemRegistry.register(
             STACK_UPGRADE.getPath(),
-            () -> new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+            () -> new SimpleUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry())
         );
         Items.INSTANCE.setStackUpgrade(stackUpgrade);
         addApplicableUpgrades(speedUpgrade, stackUpgrade);
@@ -637,23 +634,43 @@ public class ModInitializer extends AbstractModInitializer {
         menuTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
-    private void registerLootFunctions() {
-        LootFunctions.INSTANCE.setStorageBlock(lootFunctionTypeRegistry.register(
-            STORAGE_BLOCK.getPath(),
-            () -> new LootItemFunctionType(new AbstractStorageBlock.StorageBlockLootItemFunctionSerializer())
-        ));
-
-        lootFunctionTypeRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
-    }
-
     private void registerSounds() {
-        Sounds.INSTANCE.setWrench(soundEventRegistry.register(WRENCH.getPath(), () -> new SoundEvent(WRENCH)));
+        Sounds.INSTANCE.setWrench(soundEventRegistry.register(
+            WRENCH.getPath(),
+            () -> SoundEvent.createVariableRangeEvent(WRENCH)
+        ));
 
         soundEventRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void registerTickHandler() {
         MinecraftForge.EVENT_BUS.addListener(this::onServerTick);
+    }
+
+    @SubscribeEvent
+    public void onRegister(final RegisterEvent e) {
+        e.register(Registries.LOOT_FUNCTION_TYPE, helper -> {
+            // We don't use the helper here as we need the return value.
+            final LootItemFunctionType storageBlockLootItemFunction = Registry.register(
+                BuiltInRegistries.LOOT_FUNCTION_TYPE,
+                STORAGE_BLOCK,
+                new LootItemFunctionType(new AbstractStorageBlock.StorageBlockLootItemFunctionSerializer())
+            );
+            LootFunctions.INSTANCE.setStorageBlock(() -> storageBlockLootItemFunction);
+        });
+    }
+
+    @SubscribeEvent
+    public void onRegisterCreativeModeTab(final CreativeModeTabEvent.Register e) {
+        e.registerCreativeModeTab(
+            createIdentifier("general"),
+            builder -> builder
+                .title(createTranslation("itemGroup", "general"))
+                .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getNormal()))
+                .displayItems((enabledFeatures, entries, operatorEnabled)
+                    -> CreativeModeTabItems.append(entries::accept))
+                .build()
+        );
     }
 
     @SubscribeEvent

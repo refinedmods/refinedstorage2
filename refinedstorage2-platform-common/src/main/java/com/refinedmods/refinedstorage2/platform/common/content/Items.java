@@ -2,9 +2,11 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
+import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +23,29 @@ public final class Items {
         = new EnumMap<>(ItemStorageType.Variant.class);
     private final Map<FluidStorageType.Variant, Supplier<Item>> fluidStorageParts
         = new EnumMap<>(FluidStorageType.Variant.class);
-    private final List<Supplier<ControllerBlockItem>> controllers = new ArrayList<>();
+    private final Map<ItemStorageType.Variant, Supplier<Item>> itemStorageDisks
+        = new EnumMap<>(ItemStorageType.Variant.class);
+    private final Map<FluidStorageType.Variant, Supplier<Item>> fluidStorageDisks
+        = new EnumMap<>(FluidStorageType.Variant.class);
+    private final List<Supplier<ControllerBlockItem>> regularControllers = new ArrayList<>();
+    private final List<Supplier<? extends Item>> allControllers = new ArrayList<>();
+    @Nullable
+    private Supplier<Item> quartzEnrichedIron;
+    @Nullable
+    private Supplier<Item> silicon;
+    @Nullable
+    private Supplier<Item> processorBinding;
+    @Nullable
+    private Supplier<Item> wrench;
+    private final Map<ProcessorItem.Type, Supplier<Item>> processors = new EnumMap<>(ProcessorItem.Type.class);
+    @Nullable
+    private Supplier<Item> constructionCore;
+    @Nullable
+    private Supplier<Item> destructionCore;
     @Nullable
     private Supplier<Item> storageHousing;
+    @Nullable
+    private Supplier<Item> upgrade;
     @Nullable
     private Supplier<Item> speedUpgrade;
     @Nullable
@@ -40,6 +62,14 @@ public final class Items {
         itemStorageParts.put(variant, supplier);
     }
 
+    public Item getItemStorageDisk(final ItemStorageType.Variant variant) {
+        return itemStorageDisks.get(variant).get();
+    }
+
+    public void setItemStorageDisk(final ItemStorageType.Variant variant, final Supplier<Item> supplier) {
+        itemStorageDisks.put(variant, supplier);
+    }
+
     public Item getFluidStoragePart(final FluidStorageType.Variant type) {
         return fluidStorageParts.get(type).get();
     }
@@ -48,8 +78,85 @@ public final class Items {
         fluidStorageParts.put(variant, supplier);
     }
 
-    public List<Supplier<ControllerBlockItem>> getControllers() {
-        return controllers;
+    public Item getFluidStorageDisk(final FluidStorageType.Variant variant) {
+        return fluidStorageDisks.get(variant).get();
+    }
+
+    public void setFluidStorageDisk(final FluidStorageType.Variant variant, final Supplier<Item> supplier) {
+        fluidStorageDisks.put(variant, supplier);
+    }
+
+    public void setQuartzEnrichedIron(final Supplier<Item> supplier) {
+        this.quartzEnrichedIron = supplier;
+    }
+
+    public Item getQuartzEnrichedIron() {
+        return Objects.requireNonNull(quartzEnrichedIron).get();
+    }
+
+    public void setSilicon(final Supplier<Item> supplier) {
+        this.silicon = supplier;
+    }
+
+    public Item getSilicon() {
+        return Objects.requireNonNull(silicon).get();
+    }
+
+    public void setProcessorBinding(final Supplier<Item> supplier) {
+        this.processorBinding = supplier;
+    }
+
+    public Item getProcessorBinding() {
+        return Objects.requireNonNull(processorBinding).get();
+    }
+
+    public void setWrench(final Supplier<Item> supplier) {
+        this.wrench = supplier;
+    }
+
+    public Item getWrench() {
+        return Objects.requireNonNull(wrench).get();
+    }
+
+    public void setProcessor(final ProcessorItem.Type type, final Supplier<Item> supplier) {
+        this.processors.put(type, supplier);
+    }
+
+    public Item getProcessor(final ProcessorItem.Type type) {
+        return Objects.requireNonNull(processors.get(type)).get();
+    }
+
+    public void setConstructionCore(final Supplier<Item> supplier) {
+        this.constructionCore = supplier;
+    }
+
+    public Item getConstructionCore() {
+        return Objects.requireNonNull(constructionCore).get();
+    }
+
+    public void setDestructionCore(final Supplier<Item> supplier) {
+        this.destructionCore = supplier;
+    }
+
+    public Item getDestructionCore() {
+        return Objects.requireNonNull(destructionCore).get();
+    }
+
+    public void addController(final Supplier<? extends Item> supplier) {
+        allControllers.add(supplier);
+    }
+
+    public List<Supplier<? extends Item>> getAllControllers() {
+        return Collections.unmodifiableList(allControllers);
+    }
+
+    public void addRegularController(final Supplier<ControllerBlockItem> supplier) {
+        addController(supplier);
+        regularControllers.add(supplier);
+    }
+
+    public List<Supplier<ControllerBlockItem>> getRegularControllers() {
+        return Collections.unmodifiableList(regularControllers);
     }
 
     public Item getStorageHousing() {
@@ -58,6 +165,14 @@ public final class Items {
 
     public void setStorageHousing(final Supplier<Item> supplier) {
         this.storageHousing = supplier;
+    }
+
+    public void setUpgrade(final Supplier<Item> supplier) {
+        this.upgrade = supplier;
+    }
+
+    public Item getUpgrade() {
+        return Objects.requireNonNull(upgrade).get();
     }
 
     public Item getSpeedUpgrade() {

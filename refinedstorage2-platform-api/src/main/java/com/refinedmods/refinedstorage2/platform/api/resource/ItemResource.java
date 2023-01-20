@@ -6,7 +6,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -60,7 +60,7 @@ public record ItemResource(Item item, @Nullable CompoundTag tag) implements Fuzz
         if (itemResource.tag() != null) {
             tag.put(TAG_TAG, itemResource.tag());
         }
-        tag.putString(TAG_ID, Registry.ITEM.getKey(itemResource.item()).toString());
+        tag.putString(TAG_ID, BuiltInRegistries.ITEM.getKey(itemResource.item()).toString());
         return tag;
     }
 
@@ -73,7 +73,7 @@ public record ItemResource(Item item, @Nullable CompoundTag tag) implements Fuzz
     @SuppressWarnings("deprecation") // forge deprecates Registry access
     public static Optional<ItemResource> fromTag(final CompoundTag tag) {
         final ResourceLocation id = new ResourceLocation(tag.getString(TAG_ID));
-        final Item item = Registry.ITEM.get(id);
+        final Item item = BuiltInRegistries.ITEM.get(id);
         if (item == Items.AIR) {
             return Optional.empty();
         }

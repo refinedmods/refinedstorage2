@@ -18,7 +18,6 @@ public class SearchFieldWidget extends EditBox {
                              final int width,
                              final History history) {
         super(textRenderer, x, y, width, textRenderer.lineHeight, Component.empty());
-
         this.history = history;
         this.setBordered(false);
         this.setMaxLength(256);
@@ -28,7 +27,10 @@ public class SearchFieldWidget extends EditBox {
     public boolean mouseClicked(final double mouseX, final double mouseY, final int mouseButton) {
         final boolean wasFocused = isFocused();
         final boolean result = super.mouseClicked(mouseX, mouseY, mouseButton);
-        final boolean clickedWidget = mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
+        final boolean clickedWidget = mouseX >= getX()
+            && mouseX < getX() + width
+            && mouseY >= getY()
+            && mouseY < getY() + height;
 
         if (clickedWidget && mouseButton == 1) {
             setValue("");

@@ -6,7 +6,6 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -18,6 +17,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
@@ -79,30 +79,18 @@ public abstract class AbstractAmountScreen extends AbstractBaseScreen<AbstractCo
     private void addActionButtons() {
         final Vector3f pos = configuration.getActionButtonsStartPosition();
 
-        addRenderableWidget(new Button(
-            leftPos + (int) pos.x(),
-            topPos + (int) pos.y(),
-            ACTION_BUTTON_WIDTH,
-            20,
-            RESET_TEXT,
-            btn -> reset()
-        ));
-        confirmButton = addRenderableWidget(new Button(
-            leftPos + (int) pos.x(),
-            topPos + (int) pos.y() + 24,
-            ACTION_BUTTON_WIDTH,
-            20,
-            SET_TEXT,
-            btn -> tryConfirm()
-        ));
-        addRenderableWidget(new Button(
-            leftPos + (int) pos.x(),
-            topPos + (int) pos.y() + 48,
-            ACTION_BUTTON_WIDTH,
-            20,
-            CANCEL_TEXT,
-            btn -> close()
-        ));
+        addRenderableWidget(Button.builder(RESET_TEXT, btn -> reset())
+            .pos(leftPos + (int) pos.x(), topPos + (int) pos.y())
+            .size(ACTION_BUTTON_WIDTH, 20)
+            .build());
+        confirmButton = addRenderableWidget(Button.builder(SET_TEXT, btn -> tryConfirm())
+            .pos(leftPos + (int) pos.x(), topPos + (int) pos.y() + 24)
+            .size(ACTION_BUTTON_WIDTH, 20)
+            .build());
+        addRenderableWidget(Button.builder(CANCEL_TEXT, btn -> close())
+            .pos(leftPos + (int) pos.x(), topPos + (int) pos.y() + 48)
+            .size(ACTION_BUTTON_WIDTH, 20)
+            .build());
     }
 
     private void addAmountField() {
@@ -135,10 +123,17 @@ public abstract class AbstractAmountScreen extends AbstractBaseScreen<AbstractCo
     private void addIncrementButtons(final int[] increments, final int x, final int y) {
         for (int i = 0; i < increments.length; ++i) {
             final int increment = increments[i];
-            final Component text = Component.literal((increment > 0 ? "+" : "") + increment);
             final int xx = x + ((INCREMENT_BUTTON_WIDTH + 3) * i);
-            addRenderableWidget(new Button(xx, y, INCREMENT_BUTTON_WIDTH, 20, text, btn -> changeAmount(increment)));
+            addRenderableWidget(createIncrementButton(xx, y, increment));
         }
+    }
+
+    private Button createIncrementButton(final int x, final int y, final int increment) {
+        final Component text = Component.literal((increment > 0 ? "+" : "") + increment);
+        return Button.builder(text, btn -> changeAmount(increment))
+            .pos(x, y)
+            .size(INCREMENT_BUTTON_WIDTH, 20)
+            .build();
     }
 
     private void changeAmount(final int delta) {

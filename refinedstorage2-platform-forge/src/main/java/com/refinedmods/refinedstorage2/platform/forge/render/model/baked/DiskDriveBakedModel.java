@@ -21,7 +21,6 @@ import javax.annotation.Nullable;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -36,6 +35,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.data.ModelData;
+import org.joml.Vector3f;
 
 public class DiskDriveBakedModel extends BakedModelWrapper<BakedModel> {
     private static final Vector3f[] TRANSLATORS = new Vector3f[8];

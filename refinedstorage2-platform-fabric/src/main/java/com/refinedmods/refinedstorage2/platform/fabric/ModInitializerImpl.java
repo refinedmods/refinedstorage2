@@ -44,6 +44,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.dis
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.ContentIds;
+import com.refinedmods.refinedstorage2.platform.common.content.CreativeModeTabItems;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.LootFunctions;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
@@ -88,9 +89,9 @@ import java.util.function.Supplier;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
@@ -99,11 +100,11 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -149,10 +150,6 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public class ModInitializerImpl extends AbstractModInitializer implements ModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ModInitializerImpl.class);
     private static final String BLOCK_TRANSLATION_CATEGORY = "block";
-    private static final CreativeModeTab CREATIVE_MODE_TAB = FabricItemGroupBuilder.build(
-        createIdentifier("general"),
-        () -> new ItemStack(Blocks.INSTANCE.getController().getNormal())
-    );
 
     @Override
     public void onInitialize() {
@@ -167,6 +164,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerExporterTransferStrategyFactories();
         registerExternalStorageProviderFactories();
         registerContent();
+        registerCreativeModeTab();
         registerPackets();
         registerSounds();
         registerSidedHandlers();
@@ -279,28 +277,28 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerBlocks() {
         Blocks.INSTANCE.setCable(register(
-            Registry.BLOCK,
+            BuiltInRegistries.BLOCK,
             CABLE,
             new CableBlock()
         ));
         Blocks.INSTANCE.setQuartzEnrichedIronBlock(register(
-            Registry.BLOCK,
+            BuiltInRegistries.BLOCK,
             QUARTZ_ENRICHED_IRON_BLOCK,
             new SimpleBlock()
         ));
         Blocks.INSTANCE.setDiskDrive(register(
-            Registry.BLOCK,
+            BuiltInRegistries.BLOCK,
             DISK_DRIVE,
             new DiskDriveBlock(FabricDiskDriveBlockEntity::new)
         ));
         Blocks.INSTANCE.setMachineCasing(register(
-            Registry.BLOCK,
+            BuiltInRegistries.BLOCK,
             MACHINE_CASING,
             new SimpleBlock()
         ));
 
         Blocks.INSTANCE.getGrid().putAll(color -> register(
-            Registry.BLOCK,
+            BuiltInRegistries.BLOCK,
             Blocks.INSTANCE.getGrid().getId(color, GRID),
             new ItemGridBlock(Blocks.INSTANCE.getGrid().getName(color, createTranslation(
                 BLOCK_TRANSLATION_CATEGORY,
@@ -308,7 +306,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             )))
         ));
         Blocks.INSTANCE.getFluidGrid().putAll(color -> register(
-            Registry.BLOCK,
+            BuiltInRegistries.BLOCK,
             Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID),
             new FluidGridBlock(Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(
                 BLOCK_TRANSLATION_CATEGORY,
@@ -316,7 +314,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             )))
         ));
         Blocks.INSTANCE.getController().putAll(color -> register(
-            Registry.BLOCK,
+            BuiltInRegistries.BLOCK,
             Blocks.INSTANCE.getController().getId(color, CONTROLLER),
             new ControllerBlock(
                 ControllerType.NORMAL,
@@ -328,7 +326,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             )
         ));
         Blocks.INSTANCE.getCreativeController().putAll(color -> register(
-            Registry.BLOCK,
+            BuiltInRegistries.BLOCK,
             Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER),
             new ControllerBlock(
                 ControllerType.CREATIVE,
@@ -342,7 +340,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
         for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
             Blocks.INSTANCE.setItemStorageBlock(variant, register(
-                Registry.BLOCK,
+                BuiltInRegistries.BLOCK,
                 forItemStorageBlock(variant),
                 new ItemStorageBlock(variant)
             ));
@@ -350,29 +348,29 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
         for (final FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
             Blocks.INSTANCE.setFluidStorageBlock(variant, register(
-                Registry.BLOCK,
+                BuiltInRegistries.BLOCK,
                 forFluidStorageBlock(variant),
                 new FluidStorageBlock(variant)
             ));
         }
 
         Blocks.INSTANCE.setImporter(register(
-            Registry.BLOCK,
+            BuiltInRegistries.BLOCK,
             IMPORTER,
             new ImporterBlock()
         ));
         Blocks.INSTANCE.setExporter(register(
-            Registry.BLOCK,
+            BuiltInRegistries.BLOCK,
             EXPORTER,
             new ExporterBlock()
         ));
         Blocks.INSTANCE.setInterface(register(
-            Registry.BLOCK,
+            BuiltInRegistries.BLOCK,
             INTERFACE,
             new InterfaceBlock()
         ));
         Blocks.INSTANCE.setExternalStorage(register(
-            Registry.BLOCK,
+            BuiltInRegistries.BLOCK,
             EXTERNAL_STORAGE,
             new ExternalStorageBlock()
         ));
@@ -388,84 +386,87 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerSimpleItems() {
         register(
-            Registry.ITEM,
+            BuiltInRegistries.ITEM,
             CABLE,
-            new SimpleBlockItem(Blocks.INSTANCE.getCable(), CREATIVE_MODE_TAB)
+            new SimpleBlockItem(Blocks.INSTANCE.getCable())
         );
-        register(
-            Registry.ITEM,
+        Items.INSTANCE.setQuartzEnrichedIron(register(
+            BuiltInRegistries.ITEM,
             QUARTZ_ENRICHED_IRON,
-            new SimpleItem(CREATIVE_MODE_TAB)
-        );
-        register(
-            Registry.ITEM,
-            QUARTZ_ENRICHED_IRON_BLOCK,
-            new SimpleBlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock(), CREATIVE_MODE_TAB)
-        );
-        register(
-            Registry.ITEM,
-            SILICON,
-            new SimpleItem(CREATIVE_MODE_TAB)
-        );
-        register(
-            Registry.ITEM,
-            PROCESSOR_BINDING,
-            new SimpleItem(CREATIVE_MODE_TAB)
-        );
-        register(
-            Registry.ITEM,
-            DISK_DRIVE,
-            new SimpleBlockItem(Blocks.INSTANCE.getDiskDrive(), CREATIVE_MODE_TAB)
-        );
-        register(
-            Registry.ITEM,
-            WRENCH,
-            new WrenchItem(CREATIVE_MODE_TAB)
-        );
-        Items.INSTANCE.setStorageHousing(register(
-            Registry.ITEM,
-            STORAGE_HOUSING,
-            new SimpleItem(CREATIVE_MODE_TAB))
-        );
-        register(
-            Registry.ITEM,
-            MACHINE_CASING,
-            new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing(), CREATIVE_MODE_TAB)
-        );
-
-        register(Registry.ITEM, IMPORTER, new SimpleBlockItem(Blocks.INSTANCE.getImporter(), CREATIVE_MODE_TAB));
-        register(Registry.ITEM, EXPORTER, new SimpleBlockItem(Blocks.INSTANCE.getExporter(), CREATIVE_MODE_TAB));
-        register(Registry.ITEM, INTERFACE, new SimpleBlockItem(Blocks.INSTANCE.getInterface(), CREATIVE_MODE_TAB));
-        register(Registry.ITEM, EXTERNAL_STORAGE, new SimpleBlockItem(
-            Blocks.INSTANCE.getExternalStorage(),
-            CREATIVE_MODE_TAB
+            new SimpleItem()
         ));
+        register(
+            BuiltInRegistries.ITEM,
+            QUARTZ_ENRICHED_IRON_BLOCK,
+            new SimpleBlockItem(Blocks.INSTANCE.getQuartzEnrichedIronBlock())
+        );
+        Items.INSTANCE.setSilicon(register(
+            BuiltInRegistries.ITEM,
+            SILICON,
+            new SimpleItem()
+        ));
+        Items.INSTANCE.setProcessorBinding(register(
+            BuiltInRegistries.ITEM,
+            PROCESSOR_BINDING,
+            new SimpleItem()
+        ));
+        register(
+            BuiltInRegistries.ITEM,
+            DISK_DRIVE,
+            new SimpleBlockItem(Blocks.INSTANCE.getDiskDrive())
+        );
+        Items.INSTANCE.setWrench(register(
+            BuiltInRegistries.ITEM,
+            WRENCH,
+            new WrenchItem()
+        ));
+        Items.INSTANCE.setStorageHousing(register(
+            BuiltInRegistries.ITEM,
+            STORAGE_HOUSING,
+            new SimpleItem())
+        );
+        register(
+            BuiltInRegistries.ITEM,
+            MACHINE_CASING,
+            new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing())
+        );
 
-        register(Registry.ITEM, CONSTRUCTION_CORE, new SimpleItem(CREATIVE_MODE_TAB));
-        register(Registry.ITEM, DESTRUCTION_CORE, new SimpleItem(CREATIVE_MODE_TAB));
+        register(BuiltInRegistries.ITEM, IMPORTER,
+            new SimpleBlockItem(Blocks.INSTANCE.getImporter()));
+        register(BuiltInRegistries.ITEM, EXPORTER,
+            new SimpleBlockItem(Blocks.INSTANCE.getExporter()));
+        register(BuiltInRegistries.ITEM, INTERFACE,
+            new SimpleBlockItem(Blocks.INSTANCE.getInterface()));
+        register(BuiltInRegistries.ITEM, EXTERNAL_STORAGE, new SimpleBlockItem(Blocks.INSTANCE.getExternalStorage()));
+
+        Items.INSTANCE.setConstructionCore(register(BuiltInRegistries.ITEM, CONSTRUCTION_CORE, new SimpleItem()));
+        Items.INSTANCE.setDestructionCore(register(BuiltInRegistries.ITEM, DESTRUCTION_CORE, new SimpleItem()));
 
         for (final ProcessorItem.Type type : ProcessorItem.Type.values()) {
-            register(
-                Registry.ITEM,
-                forProcessor(type),
-                new ProcessorItem(CREATIVE_MODE_TAB)
+            Items.INSTANCE.setProcessor(
+                type,
+                register(
+                    BuiltInRegistries.ITEM,
+                    forProcessor(type),
+                    new ProcessorItem()
+                )
             );
         }
     }
 
     private void registerGridItems() {
         Blocks.INSTANCE.getGrid().forEach((color, block) -> register(
-            Registry.ITEM,
+            BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getGrid().getId(color, GRID),
-            new GridBlockItem(block.get(), CREATIVE_MODE_TAB, Blocks.INSTANCE.getGrid().getName(
+            new GridBlockItem(block.get(), Blocks.INSTANCE.getGrid().getName(
                 color,
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")
             ))
         ));
         Blocks.INSTANCE.getFluidGrid().forEach((color, block) -> register(
-            Registry.ITEM,
+            BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID),
-            new GridBlockItem(block.get(), CREATIVE_MODE_TAB, Blocks.INSTANCE.getFluidGrid().getName(
+            new GridBlockItem(block.get(), Blocks.INSTANCE.getFluidGrid().getName(
                 color,
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")
             ))
@@ -473,98 +474,92 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerControllerItems() {
-        Blocks.INSTANCE.getController().forEach((color, block) -> Items.INSTANCE.getControllers().add(register(
-            Registry.ITEM,
+        Blocks.INSTANCE.getController().forEach((color, block) -> Items.INSTANCE.addRegularController(register(
+            BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getController().getId(color, CONTROLLER),
-            new ControllerBlockItem(block.get(), CREATIVE_MODE_TAB, Blocks.INSTANCE.getController().getName(
+            new ControllerBlockItem(block.get(), Blocks.INSTANCE.getController().getName(
                 color,
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")
             ))
         )));
-        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> register(
-            Registry.ITEM,
+        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> Items.INSTANCE.addController(register(
+            BuiltInRegistries.ITEM,
             Blocks.INSTANCE.getCreativeController().getId(color, CREATIVE_CONTROLLER),
             new CreativeControllerBlockItem(
                 block.get(),
-                CREATIVE_MODE_TAB,
                 Blocks.INSTANCE.getCreativeController().getName(
                     color,
                     createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")
                 )
             )
-        ));
+        )));
     }
 
     private void registerStorageItems() {
         for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            if (variant != ItemStorageType.Variant.CREATIVE) {
-                Items.INSTANCE.setItemStoragePart(variant, register(
-                    Registry.ITEM,
-                    forItemStoragePart(variant),
-                    new SimpleItem(CREATIVE_MODE_TAB))
-                );
-            }
+            registerItemStorageItems(variant);
         }
-
         for (final FluidStorageType.Variant variant : FluidStorageType.Variant.values()) {
-            if (variant != FluidStorageType.Variant.CREATIVE) {
-                Items.INSTANCE.setFluidStoragePart(variant, register(
-                    Registry.ITEM,
-                    forFluidStoragePart(variant),
-                    new SimpleItem(CREATIVE_MODE_TAB))
-                );
-            }
-        }
-
-        for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
-            register(
-                Registry.ITEM,
-                forStorageDisk(variant),
-                new ItemStorageDiskItem(CREATIVE_MODE_TAB, variant)
-            );
-        }
-
-        for (final ItemStorageType.Variant v : ItemStorageType.Variant.values()) {
-            register(
-                Registry.ITEM,
-                forItemStorageBlock(v),
-                new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlock(v), CREATIVE_MODE_TAB, v)
-            );
-        }
-
-        for (final FluidStorageType.Variant v : FluidStorageType.Variant.values()) {
-            register(
-                Registry.ITEM,
-                forFluidStorageDisk(v),
-                new FluidStorageDiskItem(CREATIVE_MODE_TAB, v)
-            );
-        }
-
-        for (final FluidStorageType.Variant v : FluidStorageType.Variant.values()) {
-            register(
-                Registry.ITEM,
-                forFluidStorageBlock(v),
-                new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlock(v), CREATIVE_MODE_TAB, v)
-            );
+            registerFluidStorageItems(variant);
         }
     }
 
-    private void registerUpgrades() {
+    private void registerItemStorageItems(final ItemStorageType.Variant variant) {
+        if (variant != ItemStorageType.Variant.CREATIVE) {
+            Items.INSTANCE.setItemStoragePart(variant, register(
+                BuiltInRegistries.ITEM,
+                forItemStoragePart(variant),
+                new SimpleItem())
+            );
+        }
+        Items.INSTANCE.setItemStorageDisk(variant, register(
+            BuiltInRegistries.ITEM,
+            forStorageDisk(variant),
+            new ItemStorageDiskItem(variant)
+        ));
         register(
-            Registry.ITEM,
-            ContentIds.UPGRADE,
-            new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+            BuiltInRegistries.ITEM,
+            forItemStorageBlock(variant),
+            new ItemStorageBlockBlockItem(Blocks.INSTANCE.getItemStorageBlock(variant), variant)
         );
+    }
+
+    private void registerFluidStorageItems(final FluidStorageType.Variant variant) {
+        if (variant != FluidStorageType.Variant.CREATIVE) {
+            Items.INSTANCE.setFluidStoragePart(variant, register(
+                BuiltInRegistries.ITEM,
+                forFluidStoragePart(variant),
+                new SimpleItem())
+            );
+        }
+        Items.INSTANCE.setFluidStorageDisk(variant, register(
+            BuiltInRegistries.ITEM,
+            forFluidStorageDisk(variant),
+            new FluidStorageDiskItem(variant)
+        ));
+        register(
+            BuiltInRegistries.ITEM,
+            forFluidStorageBlock(variant),
+            new FluidStorageBlockBlockItem(Blocks.INSTANCE.getFluidStorageBlock(variant), variant)
+        );
+    }
+
+    private void registerUpgrades() {
+        Items.INSTANCE.setUpgrade(register(
+            BuiltInRegistries.ITEM,
+            ContentIds.UPGRADE,
+            new SimpleUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry())
+        ));
         final Supplier<Item> speedUpgrade = register(
-            Registry.ITEM,
+            BuiltInRegistries.ITEM,
             ContentIds.SPEED_UPGRADE,
-            new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+            new SimpleUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry())
         );
         Items.INSTANCE.setSpeedUpgrade(speedUpgrade);
         final Supplier<Item> stackUpgrade = register(
-            Registry.ITEM,
+            BuiltInRegistries.ITEM,
             ContentIds.STACK_UPGRADE,
-            new SimpleUpgradeItem(CREATIVE_MODE_TAB, PlatformApi.INSTANCE.getUpgradeRegistry())
+            new SimpleUpgradeItem(PlatformApi.INSTANCE.getUpgradeRegistry())
         );
         Items.INSTANCE.setStackUpgrade(stackUpgrade);
         addApplicableUpgrades(speedUpgrade, stackUpgrade);
@@ -572,7 +567,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerBlockEntities() {
         BlockEntities.INSTANCE.setCable(register(
-            Registry.BLOCK_ENTITY_TYPE,
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
             CABLE,
             FabricBlockEntityTypeBuilder.create(
                 CableBlockEntity::new,
@@ -580,7 +575,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ).build())
         );
         BlockEntities.INSTANCE.setDiskDrive(register(
-            Registry.BLOCK_ENTITY_TYPE,
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
             DISK_DRIVE,
             FabricBlockEntityTypeBuilder.create(
                 FabricDiskDriveBlockEntity::new,
@@ -588,7 +583,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ).build()
         ));
         BlockEntities.INSTANCE.setGrid(register(
-            Registry.BLOCK_ENTITY_TYPE,
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
             GRID,
             FabricBlockEntityTypeBuilder.create(
                 ItemGridBlockEntity::new,
@@ -596,7 +591,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ).build()
         ));
         BlockEntities.INSTANCE.setFluidGrid(register(
-            Registry.BLOCK_ENTITY_TYPE,
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
             FLUID_GRID,
             FabricBlockEntityTypeBuilder.create(
                 FluidGridBlockEntity::new,
@@ -604,7 +599,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ).build()
         ));
         BlockEntities.INSTANCE.setController(register(
-            Registry.BLOCK_ENTITY_TYPE,
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
             CONTROLLER,
             FabricBlockEntityTypeBuilder.create(
                 (pos, state) -> new ControllerBlockEntity(ControllerType.NORMAL, pos, state),
@@ -612,7 +607,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ).build()
         ));
         BlockEntities.INSTANCE.setCreativeController(register(
-            Registry.BLOCK_ENTITY_TYPE,
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
             CREATIVE_CONTROLLER,
             FabricBlockEntityTypeBuilder.create(
                 (pos, state) -> new ControllerBlockEntity(ControllerType.CREATIVE, pos, state),
@@ -627,7 +622,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ).build();
             BlockEntities.INSTANCE.setItemStorageBlock(
                 variant,
-                register(Registry.BLOCK_ENTITY_TYPE, forItemStorageBlock(variant), blockEntityType)
+                register(BuiltInRegistries.BLOCK_ENTITY_TYPE, forItemStorageBlock(variant), blockEntityType)
             );
         }
 
@@ -638,12 +633,12 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ).build();
             BlockEntities.INSTANCE.setFluidStorageBlock(
                 variant,
-                register(Registry.BLOCK_ENTITY_TYPE, forFluidStorageBlock(variant), blockEntityType)
+                register(BuiltInRegistries.BLOCK_ENTITY_TYPE, forFluidStorageBlock(variant), blockEntityType)
             );
         }
 
         BlockEntities.INSTANCE.setImporter(register(
-            Registry.BLOCK_ENTITY_TYPE,
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
             IMPORTER,
             FabricBlockEntityTypeBuilder.create(
                 ImporterBlockEntity::new,
@@ -651,7 +646,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ).build()
         ));
         BlockEntities.INSTANCE.setExporter(register(
-            Registry.BLOCK_ENTITY_TYPE,
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
             EXPORTER,
             FabricBlockEntityTypeBuilder.create(
                 ExporterBlockEntity::new,
@@ -659,7 +654,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ).build()
         ));
         BlockEntities.INSTANCE.setInterface(register(
-            Registry.BLOCK_ENTITY_TYPE,
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
             INTERFACE,
             FabricBlockEntityTypeBuilder.create(
                 InterfaceBlockEntity::new,
@@ -667,7 +662,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ).build()
         ));
         BlockEntities.INSTANCE.setExternalStorage(register(
-            Registry.BLOCK_ENTITY_TYPE,
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
             EXTERNAL_STORAGE,
             FabricBlockEntityTypeBuilder.create(
                 ExternalStorageBlockEntity::new,
@@ -678,52 +673,52 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerMenus() {
         Menus.INSTANCE.setDiskDrive(register(
-            Registry.MENU,
+            BuiltInRegistries.MENU,
             DISK_DRIVE,
             new ExtendedScreenHandlerType<>(DiskDriveContainerMenu::new)
         ));
         Menus.INSTANCE.setGrid(register(
-            Registry.MENU,
+            BuiltInRegistries.MENU,
             GRID,
             new ExtendedScreenHandlerType<>(ItemGridContainerMenu::new)
         ));
         Menus.INSTANCE.setFluidGrid(register(
-            Registry.MENU,
+            BuiltInRegistries.MENU,
             FLUID_GRID,
             new ExtendedScreenHandlerType<>(FluidGridContainerMenu::new)
         ));
         Menus.INSTANCE.setController(register(
-            Registry.MENU,
+            BuiltInRegistries.MENU,
             CONTROLLER,
             new ExtendedScreenHandlerType<>(ControllerContainerMenu::new)
         ));
         Menus.INSTANCE.setItemStorage(register(
-            Registry.MENU,
+            BuiltInRegistries.MENU,
             ITEM_STORAGE_BLOCK,
             new ExtendedScreenHandlerType<>(ItemStorageBlockContainerMenu::new)
         ));
         Menus.INSTANCE.setFluidStorage(register(
-            Registry.MENU,
+            BuiltInRegistries.MENU,
             FLUID_STORAGE_BLOCK,
             new ExtendedScreenHandlerType<>(FluidStorageBlockContainerMenu::new)
         ));
         Menus.INSTANCE.setImporter(register(
-            Registry.MENU,
+            BuiltInRegistries.MENU,
             IMPORTER,
             new ExtendedScreenHandlerType<>(ImporterContainerMenu::new)
         ));
         Menus.INSTANCE.setExporter(register(
-            Registry.MENU,
+            BuiltInRegistries.MENU,
             EXPORTER,
             new ExtendedScreenHandlerType<>(ExporterContainerMenu::new)
         ));
         Menus.INSTANCE.setInterface(register(
-            Registry.MENU,
+            BuiltInRegistries.MENU,
             INTERFACE,
             new ExtendedScreenHandlerType<>(InterfaceContainerMenu::new)
         ));
         Menus.INSTANCE.setExternalStorage(register(
-            Registry.MENU,
+            BuiltInRegistries.MENU,
             EXTERNAL_STORAGE,
             new ExtendedScreenHandlerType<>(ExternalStorageContainerMenu::new)
         ));
@@ -731,10 +726,18 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
     private void registerLootFunctions() {
         LootFunctions.INSTANCE.setStorageBlock(register(
-            Registry.LOOT_FUNCTION_TYPE,
+            BuiltInRegistries.LOOT_FUNCTION_TYPE,
             STORAGE_BLOCK,
             new LootItemFunctionType(new AbstractStorageBlock.StorageBlockLootItemFunctionSerializer())
         ));
+    }
+
+    private void registerCreativeModeTab() {
+        FabricItemGroup.builder(createIdentifier("general"))
+            .title(createTranslation("itemGroup", "general"))
+            .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getNormal()))
+            .displayItems((enabledFeatures, entries, operatorEnabled) -> CreativeModeTabItems.append(entries::accept))
+            .build();
     }
 
     private void registerPackets() {
@@ -751,7 +754,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerSounds() {
-        Sounds.INSTANCE.setWrench(register(Registry.SOUND_EVENT, WRENCH, new SoundEvent(WRENCH)));
+        Sounds.INSTANCE.setWrench(register(
+            BuiltInRegistries.SOUND_EVENT,
+            WRENCH,
+            SoundEvent.createVariableRangeEvent(WRENCH)
+        ));
     }
 
     private void registerSidedHandlers() {

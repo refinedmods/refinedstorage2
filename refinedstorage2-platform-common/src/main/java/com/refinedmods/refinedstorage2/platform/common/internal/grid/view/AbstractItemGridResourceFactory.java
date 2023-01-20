@@ -10,7 +10,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -43,8 +43,8 @@ public abstract class AbstractItemGridResourceFactory
 
     @SuppressWarnings("deprecation") // forge deprecates Registry access
     private Set<String> getTags(final Item item) {
-        return Registry.ITEM.getResourceKey(item)
-            .flatMap(Registry.ITEM::getHolder)
+        return BuiltInRegistries.ITEM.getResourceKey(item)
+            .flatMap(BuiltInRegistries.ITEM::getHolder)
             .stream()
             .flatMap(Holder::tags)
             .map(tagKey -> tagKey.location().getPath())

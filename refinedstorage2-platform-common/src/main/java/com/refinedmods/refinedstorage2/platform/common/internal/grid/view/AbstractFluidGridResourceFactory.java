@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.material.Fluid;
 
 public abstract class AbstractFluidGridResourceFactory
@@ -28,8 +28,8 @@ public abstract class AbstractFluidGridResourceFactory
 
     @SuppressWarnings("deprecation") // forge deprecates Registry access
     private Set<String> getTags(final Fluid fluid) {
-        return Registry.FLUID.getResourceKey(fluid)
-            .flatMap(Registry.FLUID::getHolder)
+        return BuiltInRegistries.FLUID.getResourceKey(fluid)
+            .flatMap(BuiltInRegistries.FLUID::getHolder)
             .stream()
             .flatMap(Holder::tags)
             .map(tagKey -> tagKey.location().getPath())
@@ -38,7 +38,7 @@ public abstract class AbstractFluidGridResourceFactory
 
     @SuppressWarnings("deprecation") // forge deprecates Registry access
     private String getModId(final FluidResource fluid) {
-        return Registry.FLUID.getKey(fluid.fluid()).getNamespace();
+        return BuiltInRegistries.FLUID.getKey(fluid.fluid()).getNamespace();
     }
 
     protected abstract String getModName(String modId);

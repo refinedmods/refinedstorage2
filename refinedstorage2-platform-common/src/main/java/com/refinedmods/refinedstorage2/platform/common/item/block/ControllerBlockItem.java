@@ -10,7 +10,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -19,8 +18,8 @@ import net.minecraft.world.level.block.Block;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class ControllerBlockItem extends CreativeControllerBlockItem {
-    public ControllerBlockItem(final Block block, final CreativeModeTab tab, final Component displayName) {
-        super(block, tab, displayName);
+    public ControllerBlockItem(final Block block, final Component displayName) {
+        super(block, displayName);
     }
 
     public static float getPercentFull(final ItemStack stack) {

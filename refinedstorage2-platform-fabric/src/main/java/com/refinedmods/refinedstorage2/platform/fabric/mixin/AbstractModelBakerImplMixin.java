@@ -5,22 +5,20 @@ import com.refinedmods.refinedstorage2.platform.fabric.render.model.EmissiveMode
 
 import java.util.Map;
 
-import com.mojang.math.Transformation;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.commons.lang3.tuple.Triple;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ModelBakery.class)
-public class ModelBakeryMixin {
-    @Shadow
-    private Map<Triple<ResourceLocation, Transformation, Boolean>, BakedModel> bakedCache;
+@Mixin(ModelBakery.ModelBakerImpl.class)
+public abstract class AbstractModelBakerImplMixin {
+    @Shadow(remap = false)
+    private ModelBakery field_40571;
 
     @Inject(method = "bake", at = @At("RETURN"), cancellable = true)
     public void onBake(final ResourceLocation resourceLocation,
@@ -36,12 +34,14 @@ public class ModelBakeryMixin {
         if (emissive == null) {
             return;
         }
-        final Triple<ResourceLocation, Transformation, Boolean> triple = Triple.of(
+        final ModelBakery.BakedCacheKey cacheKey = new ModelBakery.BakedCacheKey(
             resourceLocation,
             modelState.getRotation(),
             modelState.isUvLocked()
         );
-        bakedCache.put(triple, emissive);
+        final Map<ModelBakery.BakedCacheKey, BakedModel> bakedCache = ((ModelBakeryAccessor) field_40571)
+            .getBakedCache();
+        bakedCache.put(cacheKey, emissive);
         returnable.setReturnValue(emissive);
     }
 }

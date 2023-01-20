@@ -21,7 +21,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -30,9 +29,9 @@ import net.minecraft.world.level.Level;
 public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResource> {
     private final ItemStorageType.Variant variant;
 
-    public ItemStorageDiskItem(final CreativeModeTab tab, final ItemStorageType.Variant variant) {
+    public ItemStorageDiskItem(final ItemStorageType.Variant variant) {
         super(
-            new Item.Properties().tab(tab).stacksTo(1).fireResistant(),
+            new Item.Properties().stacksTo(1).fireResistant(),
             StorageChannelTypes.ITEM,
             PlatformApi.INSTANCE.getStorageContainerHelper()
         );
