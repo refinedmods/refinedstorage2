@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.grid.AbstractPlatformGridResource;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
@@ -62,7 +63,7 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
     @Nullable
     private ScrollbarWidget scrollbar;
     @Nullable
-    private GridSearchBoxWidget<R> searchField;
+    private GridSearchBoxWidget searchField;
     private int totalRows;
     private int visibleRows;
     private int gridSlotNumber;
@@ -88,14 +89,14 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         super.init();
 
         if (searchField == null) {
-            searchField = new GridSearchBoxWidget<>(
+            searchField = new GridSearchBoxWidget(
                 font,
                 leftPos + 80 + 1,
                 topPos + 6 + 1,
                 88 - 6,
                 new SyntaxHighlighter(SyntaxHighlighterColors.DEFAULT_COLORS),
                 menu.getView(),
-                new GridQueryParserImpl<>(
+                new GridQueryParserImpl(
                     LexerTokenMappings.DEFAULT_MAPPINGS,
                     ParserOperatorMappings.DEFAULT_MAPPINGS,
                     GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING
@@ -278,12 +279,12 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
                                    final int rowY,
                                    final int idx,
                                    final int column) {
-        final GridView<R> view = getMenu().getView();
+        final GridView view = getMenu().getView();
 
         final int slotX = rowX + 1 + (column * 18);
         final int slotY = rowY + 1;
 
-        AbstractGridResource<R> resource = null;
+        AbstractGridResource resource = null;
         if (idx < view.getAll().size()) {
             resource = view.getAll().get(idx);
             renderResourceWithAmount(poseStack, slotX, slotY, resource);
@@ -307,16 +308,21 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
     private void renderResourceWithAmount(final PoseStack poseStack,
                                           final int slotX,
                                           final int slotY,
-                                          final AbstractGridResource<R> resource) {
-        renderResource(poseStack, slotX, slotY, resource);
+                                          final AbstractGridResource resource) {
+        if (resource instanceof AbstractPlatformGridResource platformResource) {
+            platformResource.render(poseStack, slotX, slotY);
+        }
         renderAmount(poseStack, slotX, slotY, resource);
     }
 
     private void renderAmount(final PoseStack poseStack,
                               final int slotX,
                               final int slotY,
-                              final AbstractGridResource<R> resource) {
-        final String text = getAmount(resource);
+                              final AbstractGridResource resource) {
+        if (!(resource instanceof AbstractPlatformGridResource platformResource)) {
+            return;
+        }
+        final String text = resource.isZeroed() ? "0" : platformResource.getAmount();
         final int color = resource.isZeroed()
             ? Objects.requireNonNullElse(ChatFormatting.RED.getColor(), 15)
             : Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15);
@@ -324,12 +330,6 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
             || Platform.INSTANCE.getConfig().getGrid().isLargeFont();
         renderAmount(poseStack, slotX, slotY, text, color, large);
     }
-
-    protected abstract void renderResource(PoseStack poseStack, int slotX, int slotY, AbstractGridResource<R> resource);
-
-    protected abstract String getAmount(AbstractGridResource<R> resource);
-
-    protected abstract String getAmountInTooltip(AbstractGridResource<R> resource);
 
     private void renderDisabledSlot(final PoseStack poseStack, final int slotX, final int slotY) {
         RenderSystem.disableDepthTest();
@@ -348,10 +348,13 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
     }
 
     private void renderTooltipWithMaybeSmallLines(final PoseStack poseStack, final int mouseX, final int mouseY) {
-        final GridView<R> view = getMenu().getView();
-        final AbstractGridResource<R> resource = view.getAll().get(gridSlotNumber);
+        final GridView view = getMenu().getView();
+        final AbstractGridResource resource = view.getAll().get(gridSlotNumber);
+        if (!(resource instanceof AbstractPlatformGridResource platformResource)) {
+            return;
+        }
 
-        final List<FormattedCharSequence> lines = getTooltip(resource)
+        final List<FormattedCharSequence> lines = platformResource.getTooltip()
             .stream()
             .map(Component::getVisualOrderText)
             .toList();
@@ -360,7 +363,9 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
             renderTooltip(poseStack, lines, mouseX, mouseY);
         } else {
             final List<FormattedCharSequence> smallLines = new ArrayList<>();
-            smallLines.add(createTranslation("misc", "total", getAmountInTooltip(resource))
+
+            final String amountInTooltip = platformResource.isZeroed() ? "0" : platformResource.getAmountInTooltip();
+            smallLines.add(createTranslation("misc", "total", amountInTooltip)
                 .withStyle(ChatFormatting.GRAY).getVisualOrderText());
 
             view.getTrackedResource(resource.getResourceAmount().getResource()).ifPresent(entry -> smallLines.add(
@@ -380,8 +385,6 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
             );
         }
     }
-
-    protected abstract List<Component> getTooltip(AbstractGridResource<R> resource);
 
     private MutableComponent getLastModifiedText(final TrackedResource trackedResource) {
         final LastModified lastModified = LastModified.calculate(trackedResource.getTime(), System.currentTimeMillis());
@@ -443,7 +446,7 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
 
     protected abstract void mouseClickedInGrid(int clickedButton);
 
-    protected abstract void mouseClickedInGrid(int clickedButton, AbstractGridResource<R> resource);
+    protected abstract void mouseClickedInGrid(int clickedButton, AbstractGridResource resource);
 
     @Override
     public void mouseMoved(final double mx, final double my) {
@@ -481,11 +484,11 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
 
     private void mouseScrolledInGrid(final boolean up) {
         getMenu().getView().setPreventSorting(true);
-        final AbstractGridResource<R> resource = getMenu().getView().getAll().get(gridSlotNumber);
+        final AbstractGridResource resource = getMenu().getView().getAll().get(gridSlotNumber);
         mouseScrolledInGrid(up, resource);
     }
 
-    protected abstract void mouseScrolledInGrid(boolean up, AbstractGridResource<R> resource);
+    protected abstract void mouseScrolledInGrid(boolean up, AbstractGridResource resource);
 
     @Override
     public boolean charTyped(final char unknown1, final int unknown2) {

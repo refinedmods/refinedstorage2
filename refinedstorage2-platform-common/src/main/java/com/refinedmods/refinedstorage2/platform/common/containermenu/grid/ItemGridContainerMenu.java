@@ -57,8 +57,8 @@ public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResourc
         return itemResource.item().getMaxStackSize();
     }
 
-    private static GridViewBuilder<ItemResource> createViewBuilder() {
-        return new GridViewBuilderImpl<>(Platform.INSTANCE.getItemGridResourceFactory());
+    private static GridViewBuilder createViewBuilder() {
+        return new GridViewBuilderImpl(Platform.INSTANCE.getItemGridResourceFactory());
     }
 
     @Override

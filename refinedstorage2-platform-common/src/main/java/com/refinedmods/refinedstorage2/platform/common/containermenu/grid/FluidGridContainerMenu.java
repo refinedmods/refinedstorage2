@@ -58,8 +58,8 @@ public class FluidGridContainerMenu extends AbstractGridContainerMenu<FluidResou
         );
     }
 
-    private static GridViewBuilder<FluidResource> createViewBuilder() {
-        return new GridViewBuilderImpl<>(Platform.INSTANCE.getFluidGridResourceFactory());
+    private static GridViewBuilder createViewBuilder() {
+        return new GridViewBuilderImpl(Platform.INSTANCE.getFluidGridResourceFactory());
     }
 
     @Override

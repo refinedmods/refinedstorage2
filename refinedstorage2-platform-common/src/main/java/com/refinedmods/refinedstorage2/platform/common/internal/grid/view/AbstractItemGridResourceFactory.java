@@ -1,12 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.grid.view;
 
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import net.minecraft.core.Holder;
@@ -16,21 +16,29 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
-public abstract class AbstractItemGridResourceFactory
-    implements Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> {
+public abstract class AbstractItemGridResourceFactory implements GridResourceFactory {
     @Override
-    public AbstractGridResource<ItemResource> apply(final ResourceAmount<ItemResource> resourceAmount) {
-        final Item item = resourceAmount.getResource().item();
-        final ItemStack itemStack = resourceAmount.getResource().toItemStack();
-
+    @SuppressWarnings("unchecked")
+    public Optional<AbstractGridResource> apply(final ResourceAmount<?> resourceAmount) {
+        if (!(resourceAmount.getResource() instanceof ItemResource itemResource)) {
+            return Optional.empty();
+        }
+        final Item item = itemResource.item();
+        final ItemStack itemStack = itemResource.toItemStack();
         final String name = item.getDescription().getString();
         final String modId = getModId(itemStack);
         final String modName = getModName(modId).orElse("");
-
         final Set<String> tags = getTags(item);
         final String tooltip = getTooltip(itemStack);
-
-        return new ItemGridResource(resourceAmount, itemStack, name, modId, modName, tags, tooltip);
+        return Optional.of(new ItemGridResource(
+            (ResourceAmount<ItemResource>) resourceAmount,
+            itemStack,
+            name,
+            modId,
+            modName,
+            tags,
+            tooltip
+        ));
     }
 
     private String getTooltip(final ItemStack itemStack) {

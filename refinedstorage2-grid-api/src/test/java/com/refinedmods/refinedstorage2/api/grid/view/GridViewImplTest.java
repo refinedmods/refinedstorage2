@@ -20,11 +20,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 class GridViewImplTest {
-    private GridViewBuilder<String> viewBuilder;
+    private GridViewBuilder viewBuilder;
 
     @BeforeEach
     void setUp() {
-        viewBuilder = new GridViewBuilderImpl<>(FakeGridResource::new);
+        viewBuilder = new GridViewBuilderImpl(resourceAmount -> Optional.of(new FakeGridResource(resourceAmount)));
     }
 
     @Test
@@ -34,8 +34,10 @@ class GridViewImplTest {
         // in the view, but actually isn't because it has a different identity.
 
         // Arrange
-        final GridViewBuilder<ResourceWithMetadata> builder = new GridViewBuilderImpl<>(GridResourceWithMetadata::new);
-        final GridView<ResourceWithMetadata> view = builder.build();
+        final GridViewBuilder builder = new GridViewBuilderImpl(resourceAmount -> Optional.of(
+            new GridResourceWithMetadata(resourceAmount)
+        ));
+        final GridView view = builder.build();
 
         // Act
         view.onChange(new ResourceWithMetadata("A", 1), 1, null);
@@ -55,7 +57,7 @@ class GridViewImplTest {
     @Test
     void shouldPreserveOrderWhenSortingAndTwoResourcesHaveTheSameQuantity() {
         // Arrange
-        final GridView<String> view = viewBuilder.build();
+        final GridView view = viewBuilder.build();
 
         view.setSortingDirection(GridSortingDirection.DESCENDING);
         view.setSortingType(GridSortingType.QUANTITY);
@@ -89,7 +91,7 @@ class GridViewImplTest {
     @EnumSource(GridSortingType.class)
     void testSortingAscending(final GridSortingType sortingType) {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("A", 10, null)
             .withResource("A", 5, new TrackedResource("Raoul", 3))
             .withResource("B", 1, new TrackedResource("VdB", 2))
@@ -133,7 +135,7 @@ class GridViewImplTest {
     @EnumSource(GridSortingType.class)
     void testSortingDescending(final GridSortingType sortingType) {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("A", 10, null)
             .withResource("A", 5, new TrackedResource("Raoul", 3))
             .withResource("B", 1, new TrackedResource("VDB", 2))
@@ -176,7 +178,7 @@ class GridViewImplTest {
     @Test
     void shouldLoadResourcesAndRetrieveTrackedResourcesProperly() {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("A", 1, new TrackedResource("Raoul", 1))
             .withResource("A", 1, new TrackedResource("RaoulA", 2))
             .withResource("B", 1, new TrackedResource("VDB", 3))
@@ -198,7 +200,7 @@ class GridViewImplTest {
     @Test
     void shouldInsertNewResource() {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("B", 15, null)
             .withResource("D", 10, null)
             .build();
@@ -223,7 +225,7 @@ class GridViewImplTest {
     @Test
     void shouldNotInsertNewResourceWhenFilteringProhibitsIt() {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("B", 15, null)
             .withResource("D", 10, null)
             .build();
@@ -247,7 +249,7 @@ class GridViewImplTest {
     @Test
     void shouldCallListenerWhenSorting() {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("B", 6, null)
             .withResource("A", 15, null)
             .withResource("D", 10, null)
@@ -267,7 +269,7 @@ class GridViewImplTest {
     @Test
     void shouldUpdateExistingResource() {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("B", 6, null)
             .withResource("A", 15, null)
             .withResource("D", 10, null)
@@ -293,7 +295,7 @@ class GridViewImplTest {
     @Test
     void shouldNotUpdateExistingResourceWhenFilteringProhibitsIt() {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("B", 6, null)
             .withResource("A", 15, null)
             .withResource("D", 10, null)
@@ -318,7 +320,7 @@ class GridViewImplTest {
     @Test
     void shouldNotReorderExistingResourceWhenPreventingSorting() {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("B", 6, null)
             .withResource("A", 15, null)
             .withResource("D", 10, null)
@@ -364,7 +366,7 @@ class GridViewImplTest {
     @Test
     void shouldUpdateTrackedResourceAfterReceivingChange() {
         // Act
-        final GridView<String> view = viewBuilder.build();
+        final GridView view = viewBuilder.build();
 
         view.onChange("A", 1, new TrackedResource("Raoul", 1));
         view.onChange("A", 1, new TrackedResource("RaoulA", 2));
@@ -387,7 +389,7 @@ class GridViewImplTest {
     @Test
     void shouldUpdateExistingResourceWhenPerformingPartialRemoval() {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("B", 20, null)
             .withResource("A", 15, null)
             .withResource("D", 10, null)
@@ -413,7 +415,7 @@ class GridViewImplTest {
     @Test
     void shouldNotUpdateExistingResourceWhenPerformingPartialRemovalAndFilteringProhibitsIt() {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("B", 20, null)
             .withResource("A", 15, null)
             .withResource("D", 10, null)
@@ -438,7 +440,7 @@ class GridViewImplTest {
     @Test
     void shouldNotReorderExistingResourceWhenPerformingPartialRemovalAndPreventingSorting() {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("B", 20, null)
             .withResource("A", 15, null)
             .withResource("D", 10, null)
@@ -480,7 +482,7 @@ class GridViewImplTest {
     @Test
     void shouldRemoveExistingResourceCompletely() {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("B", 20, null)
             .withResource("A", 15, null)
             .withResource("D", 10, null)
@@ -505,7 +507,7 @@ class GridViewImplTest {
     @Test
     void shouldNotReorderWhenRemovingExistingResourceCompletelyAndPreventingSorting() {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("A", 15, null)
             .withResource("B", 20, null)
             .withResource("D", 10, null)
@@ -545,7 +547,7 @@ class GridViewImplTest {
     @Test
     void shouldReuseExistingResourceWhenPreventingSortingAndRemovingExistingResourceCompletelyAndThenReinserting() {
         // Arrange
-        final GridView<String> view = viewBuilder
+        final GridView view = viewBuilder
             .withResource("A", 15, null)
             .withResource("B", 20, null)
             .withResource("D", 10, null)
@@ -598,9 +600,9 @@ class GridViewImplTest {
     private record ResourceWithMetadata(String name, int metadata) {
     }
 
-    private static class GridResourceWithMetadata extends AbstractGridResource<ResourceWithMetadata> {
-        GridResourceWithMetadata(final ResourceAmount<ResourceWithMetadata> resourceAmount) {
-            super(resourceAmount, resourceAmount.getResource().name(), Map.of());
+    private static class GridResourceWithMetadata extends AbstractGridResource {
+        GridResourceWithMetadata(final ResourceAmount<?> resourceAmount) {
+            super(resourceAmount, ((ResourceWithMetadata) resourceAmount.getResource()).name(), Map.of());
         }
 
         @Override

@@ -41,7 +41,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     private static String lastSearchQuery = "";
 
     protected final Inventory playerInventory;
-    protected final GridView<T> view;
+    protected final GridView view;
     @Nullable
     protected AbstractGridBlockEntity<T> grid;
     @Nullable
@@ -58,7 +58,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
                                         final int syncId,
                                         final Inventory playerInventory,
                                         final FriendlyByteBuf buf,
-                                        final GridViewBuilder<T> viewBuilder) {
+                                        final GridViewBuilder viewBuilder) {
         super(type, syncId);
 
         this.playerInventory = playerInventory;
@@ -88,7 +88,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
                                         final int syncId,
                                         final Inventory playerInventory,
                                         final AbstractGridBlockEntity<T> grid,
-                                        final GridViewBuilder<T> viewBuilder) {
+                                        final GridViewBuilder viewBuilder) {
         super(type, syncId);
 
         this.view = viewBuilder.build();
@@ -176,7 +176,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         addPlayerInventory(playerInventory, 8, playerInventoryY);
     }
 
-    public GridView<T> getView() {
+    public GridView getView() {
         return view;
     }
 

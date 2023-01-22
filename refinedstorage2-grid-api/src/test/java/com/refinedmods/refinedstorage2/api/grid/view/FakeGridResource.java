@@ -5,7 +5,7 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import java.util.Map;
 import java.util.Set;
 
-public class FakeGridResource extends AbstractGridResource<String> {
+public class FakeGridResource extends AbstractGridResource {
     public FakeGridResource(final String name, final long amount) {
         this(new ResourceAmount<>(name, amount));
     }
@@ -14,13 +14,13 @@ public class FakeGridResource extends AbstractGridResource<String> {
         this(new ResourceAmount<>(name, 1));
     }
 
-    public FakeGridResource(final ResourceAmount<String> resourceAmount) {
+    public FakeGridResource(final ResourceAmount<?> resourceAmount) {
         super(
             resourceAmount,
-            resourceAmount.getResource(),
+            (String) resourceAmount.getResource(),
             Map.of(
-                FakeGridResourceAttributeKeys.MOD_ID, Set.of(resourceAmount.getResource()),
-                FakeGridResourceAttributeKeys.MOD_NAME, Set.of(resourceAmount.getResource())
+                FakeGridResourceAttributeKeys.MOD_ID, Set.of((String) resourceAmount.getResource()),
+                FakeGridResourceAttributeKeys.MOD_NAME, Set.of((String) resourceAmount.getResource())
             )
         );
     }

@@ -2,10 +2,9 @@ package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.energy.InfiniteEnergyStorage;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -29,7 +28,6 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ServerToClientC
 import com.refinedmods.refinedstorage2.platform.forge.render.FluidStackFluidRenderer;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
@@ -117,12 +115,12 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> getItemGridResourceFactory() {
+    public GridResourceFactory getItemGridResourceFactory() {
         return new ForgeItemGridResourceFactory();
     }
 
     @Override
-    public Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> getFluidGridResourceFactory() {
+    public GridResourceFactory getFluidGridResourceFactory() {
         return new ForgeFluidGridResourceFactory();
     }
 

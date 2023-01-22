@@ -2,10 +2,9 @@ package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.energy.InfiniteEnergyStorage;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -31,7 +30,6 @@ import com.refinedmods.refinedstorage2.platform.fabric.render.FluidVariantFluidR
 import com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
@@ -121,12 +119,12 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> getItemGridResourceFactory() {
+    public GridResourceFactory getItemGridResourceFactory() {
         return new FabricItemGridResourceFactory();
     }
 
     @Override
-    public Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> getFluidGridResourceFactory() {
+    public GridResourceFactory getFluidGridResourceFactory() {
         return new FabricFluidGridResourceFactory();
     }
 

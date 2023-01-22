@@ -1,42 +1,36 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
-public class GridViewBuilderImpl<T> implements GridViewBuilder<T> {
-    private final Function<ResourceAmount<T>, AbstractGridResource<T>> gridResourceFactory;
-    private final ResourceList<T> backingList = new ResourceListImpl<>();
-    private final Map<T, TrackedResource> trackedResources = new HashMap<>();
+public class GridViewBuilderImpl implements GridViewBuilder {
+    private final GridResourceFactory resourceFactory;
+    private final ResourceList<Object> backingList = new ResourceListImpl<>();
+    private final Map<Object, TrackedResource> trackedResources = new HashMap<>();
 
-    public GridViewBuilderImpl(final Function<ResourceAmount<T>, AbstractGridResource<T>> gridResourceFactory) {
-        this.gridResourceFactory = gridResourceFactory;
+    public GridViewBuilderImpl(final GridResourceFactory resourceFactory) {
+        this.resourceFactory = resourceFactory;
     }
 
     @Override
-    public GridViewBuilder<T> withResource(final T resource,
-                                           final long amount,
-                                           @Nullable final TrackedResource trackedResource) {
+    public <T> GridViewBuilder withResource(final T resource,
+                                            final long amount,
+                                            @Nullable final TrackedResource trackedResource) {
         backingList.add(resource, amount);
         trackedResources.put(resource, trackedResource);
         return this;
     }
 
     @Override
-    public GridView<T> build() {
-        return new GridViewImpl<>(
-            gridResourceFactory,
-            backingList,
-            trackedResources
-        );
+    public GridView build() {
+        return new GridViewImpl(resourceFactory, backingList, trackedResources);
     }
 }

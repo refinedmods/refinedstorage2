@@ -1,29 +1,38 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.grid.view;
 
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 
+import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.material.Fluid;
 
-public abstract class AbstractFluidGridResourceFactory
-    implements Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> {
+public abstract class AbstractFluidGridResourceFactory implements GridResourceFactory {
     @Override
-    public AbstractGridResource<FluidResource> apply(final ResourceAmount<FluidResource> resourceAmount) {
-        final String name = getName(resourceAmount.getResource());
-        final String modId = getModId(resourceAmount.getResource());
+    @SuppressWarnings("unchecked")
+    public Optional<AbstractGridResource> apply(final ResourceAmount<?> resourceAmount) {
+        if (!(resourceAmount.getResource() instanceof FluidResource fluidResource)) {
+            return Optional.empty();
+        }
+        final String name = getName(fluidResource);
+        final String modId = getModId(fluidResource);
         final String modName = getModName(modId);
-
-        final Set<String> tags = getTags(resourceAmount.getResource().fluid());
-        final String tooltip = getTooltip(resourceAmount.getResource());
-
-        return new FluidGridResource(resourceAmount, name, modId, modName, tags, tooltip);
+        final Set<String> tags = getTags(fluidResource.fluid());
+        final String tooltip = getTooltip(fluidResource);
+        return Optional.of(new FluidGridResource(
+            (ResourceAmount<FluidResource>) resourceAmount,
+            name,
+            modId,
+            modName,
+            tags,
+            tooltip
+        ));
     }
 
     @SuppressWarnings("deprecation") // forge deprecates Registry access

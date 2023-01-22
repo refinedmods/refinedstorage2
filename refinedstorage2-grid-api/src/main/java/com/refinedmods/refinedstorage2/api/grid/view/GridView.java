@@ -15,11 +15,9 @@ import org.apiguardian.api.API;
  * The backing list is the logical view of the grid without any filtering or sorting applied. It's the source of truth.
  * The view list has filtering and sorting rules applied and is in sync with the backing list (depending on the view
  * being in "prevent sorting" mode).
- *
- * @param <T> the resource type
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public interface GridView<T> {
+public interface GridView {
     /**
      * Sets a listener that is called when the grid view changes.
      *
@@ -37,7 +35,7 @@ public interface GridView<T> {
     /**
      * @param predicate the filter
      */
-    void setFilterAndSort(Predicate<AbstractGridResource<T>> predicate);
+    void setFilterAndSort(Predicate<AbstractGridResource> predicate);
 
     /**
      * Preventing sorting means that the changes will still arrive at the backing list and view list, but,
@@ -58,10 +56,11 @@ public interface GridView<T> {
     void setSortingDirection(GridSortingDirection sortingDirection);
 
     /**
+     * @param <T>      the resource type
      * @param resource the resource
      * @return the tracked resource, if present
      */
-    Optional<TrackedResource> getTrackedResource(T resource);
+    <T> Optional<TrackedResource> getTrackedResource(T resource);
 
     /**
      * Sorts the view list.
@@ -73,14 +72,15 @@ public interface GridView<T> {
      * Applies a change to a resource. Will update the backing list, and will also update the view list (depending
      * if the view is preventing sorting).
      *
+     * @param <T>             the resource type
      * @param resource        the resource
      * @param amount          the amount, can be negative or positive
      * @param trackedResource the tracked resource, can be null
      */
-    void onChange(T resource, long amount, @Nullable TrackedResource trackedResource);
+    <T> void onChange(T resource, long amount, @Nullable TrackedResource trackedResource);
 
     /**
      * @return the view list
      */
-    List<AbstractGridResource<T>> getAll();
+    List<AbstractGridResource> getAll();
 }

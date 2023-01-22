@@ -2,9 +2,8 @@ package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -19,7 +18,6 @@ import com.refinedmods.refinedstorage2.platform.common.render.FluidRenderer;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.EditBox;
@@ -64,9 +62,9 @@ public interface Platform {
                                                       Inventory playerInventory,
                                                       ExtractableStorage<ItemResource> bucketStorage);
 
-    Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> getItemGridResourceFactory();
+    GridResourceFactory getItemGridResourceFactory();
 
-    Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> getFluidGridResourceFactory();
+    GridResourceFactory getFluidGridResourceFactory();
 
     FluidRenderer getFluidRenderer();
 

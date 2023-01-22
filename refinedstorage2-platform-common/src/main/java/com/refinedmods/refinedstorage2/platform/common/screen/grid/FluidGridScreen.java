@@ -4,12 +4,8 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
 
-import java.util.List;
-
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -35,52 +31,21 @@ public class FluidGridScreen extends AbstractGridScreen<FluidResource, FluidGrid
     }
 
     @Override
-    protected void renderResource(final PoseStack poseStack,
-                                  final int slotX,
-                                  final int slotY,
-                                  final AbstractGridResource<FluidResource> resource) {
-        Platform.INSTANCE.getFluidRenderer().render(
-            poseStack,
-            slotX,
-            slotY,
-            getBlitOffset(),
-            resource.getResourceAmount().getResource()
-        );
-    }
-
-    @Override
-    protected String getAmount(final AbstractGridResource<FluidResource> resource) {
-        if (resource.isZeroed()) {
-            return "0";
-        }
-        return Platform.INSTANCE.getBucketQuantityFormatter().formatWithUnits(resource.getResourceAmount().getAmount());
-    }
-
-    @Override
-    protected String getAmountInTooltip(final AbstractGridResource<FluidResource> resource) {
-        if (resource.isZeroed()) {
-            return "0";
-        }
-        return Platform.INSTANCE.getBucketQuantityFormatter().format(resource.getResourceAmount().getAmount());
-    }
-
-    @Override
-    protected List<Component> getTooltip(final AbstractGridResource<FluidResource> resource) {
-        return Platform.INSTANCE.getFluidRenderer().getTooltip(resource.getResourceAmount().getResource());
-    }
-
-    @Override
     protected void mouseClickedInGrid(final int clickedButton) {
         getMenu().onInsert(getInsertMode(clickedButton));
     }
 
     @Override
-    protected void mouseClickedInGrid(final int clickedButton, final AbstractGridResource<FluidResource> resource) {
+    protected void mouseClickedInGrid(final int clickedButton, final AbstractGridResource resource) {
         getMenu().onExtract(
-            resource.getResourceAmount().getResource(),
+            getFluidResource(resource),
             getExtractMode(clickedButton),
             shouldExtractToCursor()
         );
+    }
+
+    private FluidResource getFluidResource(final AbstractGridResource resource) {
+        return (FluidResource) resource.getResourceAmount().getResource();
     }
 
     @Override
@@ -89,7 +54,7 @@ public class FluidGridScreen extends AbstractGridScreen<FluidResource, FluidGrid
     }
 
     @Override
-    protected void mouseScrolledInGrid(final boolean up, final AbstractGridResource<FluidResource> resource) {
+    protected void mouseScrolledInGrid(final boolean up, final AbstractGridResource resource) {
         // no op
     }
 }

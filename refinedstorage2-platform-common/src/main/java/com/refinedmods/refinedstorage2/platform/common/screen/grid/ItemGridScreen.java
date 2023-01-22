@@ -1,18 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
-import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.ItemGridResource;
 
-import java.util.List;
 import javax.annotation.Nullable;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -74,45 +70,14 @@ public class ItemGridScreen extends AbstractGridScreen<ItemResource, ItemGridCon
     }
 
     @Override
-    protected void renderResource(final PoseStack poseStack,
-                                  final int slotX,
-                                  final int slotY,
-                                  final AbstractGridResource<ItemResource> resource) {
-        final ItemStack itemStack = ((ItemGridResource) resource).getItemStack();
-        itemRenderer.renderGuiItem(itemStack, slotX, slotY);
-        itemRenderer.renderGuiItemDecorations(font, itemStack, slotX, slotY, null);
-    }
-
-    @Override
-    protected String getAmount(final AbstractGridResource<ItemResource> resource) {
-        if (resource.isZeroed()) {
-            return "0";
-        }
-        return QuantityFormatter.formatWithUnits(resource.getResourceAmount().getAmount());
-    }
-
-    @Override
-    protected String getAmountInTooltip(final AbstractGridResource<ItemResource> resource) {
-        if (resource.isZeroed()) {
-            return "0";
-        }
-        return QuantityFormatter.format(resource.getResourceAmount().getAmount());
-    }
-
-    @Override
-    protected List<Component> getTooltip(final AbstractGridResource<ItemResource> resource) {
-        return getTooltipFromItem(((ItemGridResource) resource).getItemStack());
-    }
-
-    @Override
     protected void mouseClickedInGrid(final int clickedButton) {
         getMenu().onInsert(getInsertMode(clickedButton));
     }
 
     @Override
-    protected void mouseClickedInGrid(final int clickedButton, final AbstractGridResource<ItemResource> resource) {
+    protected void mouseClickedInGrid(final int clickedButton, final AbstractGridResource resource) {
         getMenu().onExtract(
-            resource.getResourceAmount().getResource(),
+            getItemResource(resource),
             getExtractMode(clickedButton),
             shouldExtractToCursor()
         );
@@ -128,11 +93,15 @@ public class ItemGridScreen extends AbstractGridScreen<ItemResource, ItemGridCon
     }
 
     @Override
-    protected void mouseScrolledInGrid(final boolean up, final AbstractGridResource<ItemResource> resource) {
+    protected void mouseScrolledInGrid(final boolean up, final AbstractGridResource resource) {
         final GridScrollMode scrollMode = getScrollModeWhenScrollingOnGridArea(up);
         if (scrollMode == null) {
             return;
         }
-        getMenu().onScroll(resource.getResourceAmount().getResource(), scrollMode, -1);
+        getMenu().onScroll(getItemResource(resource), scrollMode, -1);
+    }
+
+    private ItemResource getItemResource(final AbstractGridResource resource) {
+        return (ItemResource) resource.getResourceAmount().getResource();
     }
 }

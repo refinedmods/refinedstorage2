@@ -23,9 +23,9 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 
-public class GridSearchBoxWidget<T> extends SearchFieldWidget implements GridSearchBox {
-    private final GridView<T> view;
-    private final GridQueryParser<T> queryParser;
+public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
+    private final GridView view;
+    private final GridQueryParser queryParser;
     private final Set<Consumer<String>> listeners = new HashSet<>();
 
     private boolean valid = true;
@@ -35,8 +35,8 @@ public class GridSearchBoxWidget<T> extends SearchFieldWidget implements GridSea
                                final int y,
                                final int width,
                                final SyntaxHighlighter syntaxHighlighter,
-                               final GridView<T> view,
-                               final GridQueryParser<T> queryParser,
+                               final GridView view,
+                               final GridQueryParser queryParser,
                                final History history) {
         super(textRenderer, x, y, width, history);
 
