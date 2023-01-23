@@ -1,6 +1,5 @@
-package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item;
+package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid;
 
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid.FluidFilteredResource;
 import com.refinedmods.refinedstorage2.platform.test.SetupMinecraft;
 
 import net.minecraft.world.level.material.Fluid;

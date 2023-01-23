@@ -26,26 +26,6 @@ public final class PacketUtil {
         return new ItemResource(Item.byId(id), nbt);
     }
 
-    public static void writeItemResourceAmount(final FriendlyByteBuf buf,
-                                               final com.refinedmods.refinedstorage2.api.resource
-                                                   .ResourceAmount<ItemResource> resourceAmount) {
-        buf.writeVarInt(Item.getId(resourceAmount.getResource().item()));
-        buf.writeLong(resourceAmount.getAmount());
-        buf.writeNbt(resourceAmount.getResource().tag());
-    }
-
-    public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<ItemResource> readItemResourceAmount(
-        final FriendlyByteBuf buf
-    ) {
-        final int id = buf.readVarInt();
-        final long amount = buf.readLong();
-        final CompoundTag nbt = buf.readNbt();
-        return new com.refinedmods.refinedstorage2.api.resource.ResourceAmount<>(
-            new ItemResource(Item.byId(id), nbt),
-            amount
-        );
-    }
-
     @SuppressWarnings("deprecation") // forge deprecates Registry access
     public static void writeFluidResource(final FriendlyByteBuf buf, final FluidResource itemResource) {
         buf.writeVarInt(BuiltInRegistries.FLUID.getId(itemResource.fluid()));
@@ -57,28 +37,6 @@ public final class PacketUtil {
         final int id = buf.readVarInt();
         final CompoundTag nbt = buf.readNbt();
         return new FluidResource(BuiltInRegistries.FLUID.byId(id), nbt);
-    }
-
-    @SuppressWarnings("deprecation") // forge deprecates Registry access
-    public static void writeFluidResourceAmount(final FriendlyByteBuf buf,
-                                                final com.refinedmods.refinedstorage2.api.resource
-                                                    .ResourceAmount<FluidResource> resourceAmount) {
-        buf.writeVarInt(BuiltInRegistries.FLUID.getId(resourceAmount.getResource().fluid()));
-        buf.writeLong(resourceAmount.getAmount());
-        buf.writeNbt(resourceAmount.getResource().tag());
-    }
-
-    @SuppressWarnings("deprecation") // forge deprecates Registry access
-    public static com.refinedmods.refinedstorage2.api.resource.ResourceAmount<FluidResource> readFluidResourceAmount(
-        final FriendlyByteBuf buf
-    ) {
-        final int id = buf.readVarInt();
-        final long amount = buf.readLong();
-        final CompoundTag nbt = buf.readNbt();
-        return new com.refinedmods.refinedstorage2.api.resource.ResourceAmount<>(
-            new FluidResource(BuiltInRegistries.FLUID.byId(id), nbt),
-            amount
-        );
     }
 
     public static void writeTrackedResource(final FriendlyByteBuf buf,

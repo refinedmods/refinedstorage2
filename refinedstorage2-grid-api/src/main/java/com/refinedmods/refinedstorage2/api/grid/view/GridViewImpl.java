@@ -95,8 +95,8 @@ public class GridViewImpl implements GridView {
             .getAll()
             .stream()
             .flatMap(resourceAmount -> resourceFactory.apply(resourceAmount).stream())
-            .sorted(getComparator())
             .filter(filter)
+            .sorted(getComparator())
             .collect(Collectors.toList());
 
         viewList.forEach(resource -> viewListIndex.put(resource.getResourceAmount().getResource(), resource));

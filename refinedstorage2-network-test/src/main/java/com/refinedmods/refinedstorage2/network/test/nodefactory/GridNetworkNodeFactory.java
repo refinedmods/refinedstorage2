@@ -11,7 +11,8 @@ public class GridNetworkNodeFactory extends AbstractNetworkNodeFactory<GridNetwo
     protected GridNetworkNode<String> innerCreate(final AddNetworkNode ctx, final Map<String, Object> properties) {
         return new GridNetworkNode<>(
             getEnergyUsage(properties),
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY
         );
     }
 }

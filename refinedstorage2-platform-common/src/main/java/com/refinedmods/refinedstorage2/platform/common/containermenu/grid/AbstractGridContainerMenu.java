@@ -6,11 +6,14 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilder;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
@@ -19,6 +22,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.property.Cl
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.CompositeGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
@@ -34,8 +38,7 @@ import net.minecraft.world.inventory.MenuType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainerMenu
-    implements GridWatcher<T> {
+public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainerMenu implements GridWatcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGridContainerMenu.class);
 
     private static String lastSearchQuery = "";
@@ -54,12 +57,11 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     @Nullable
     private GridSearchBox searchBox;
 
-    protected AbstractGridContainerMenu(final MenuType<?> type,
+    protected AbstractGridContainerMenu(final MenuType<?> menuType,
                                         final int syncId,
                                         final Inventory playerInventory,
-                                        final FriendlyByteBuf buf,
-                                        final GridViewBuilder viewBuilder) {
-        super(type, syncId);
+                                        final FriendlyByteBuf buf) {
+        super(menuType, syncId);
 
         this.playerInventory = playerInventory;
 
@@ -67,11 +69,15 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
 
         this.active = buf.readBoolean();
 
-        final int amountOfResources = buf.readInt();
-        for (int i = 0; i < amountOfResources; ++i) {
-            final ResourceAmount<T> resourceAmount = readResourceAmount(buf);
-            final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
-            viewBuilder.withResource(resourceAmount.getResource(), resourceAmount.getAmount(), trackedResource);
+        final GridViewBuilder viewBuilder = createViewBuilder();
+        final int amountOfStorageChannels = buf.readInt();
+        for (int i = 0; i < amountOfStorageChannels; ++i) {
+            final ResourceLocation id = buf.readResourceLocation();
+            final PlatformStorageChannelType<?> storageChannelType = PlatformApi.INSTANCE
+                .getStorageChannelTypeRegistry()
+                .get(id)
+                .orElseThrow();
+            readStorageChannelFromBuffer(storageChannelType, buf, viewBuilder);
         }
         this.view = viewBuilder.build();
         this.view.setSortingDirection(Platform.INSTANCE.getConfig().getGrid().getSortingDirection());
@@ -87,11 +93,10 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     protected AbstractGridContainerMenu(final MenuType<?> type,
                                         final int syncId,
                                         final Inventory playerInventory,
-                                        final AbstractGridBlockEntity<T> grid,
-                                        final GridViewBuilder viewBuilder) {
+                                        final AbstractGridBlockEntity<T> grid) {
         super(type, syncId);
 
-        this.view = viewBuilder.build();
+        this.view = createViewBuilder().build();
 
         registerProperty(new ServerProperty<>(
             PropertyTypes.REDSTONE_MODE,
@@ -108,9 +113,15 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         this.synchronizer = PlatformApi.INSTANCE.getGridSynchronizerRegistry().getDefault();
     }
 
-    protected abstract ResourceAmount<T> readResourceAmount(FriendlyByteBuf buf);
+    private static GridViewBuilder createViewBuilder() {
+        return new GridViewBuilderImpl(new CompositeGridResourceFactory(
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
+        ));
+    }
 
-    public void onResourceUpdate(final T template, final long amount, @Nullable final TrackedResource trackedResource) {
+    public <T> void onResourceUpdate(final T template,
+                                     final long amount,
+                                     @Nullable final TrackedResource trackedResource) {
         LOGGER.debug("{} got updated with {}", template, amount);
         view.onChange(template, amount, trackedResource);
     }
@@ -188,6 +199,26 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         }
     }
 
+    @Override
+    public <T> void onChanged(
+        final StorageChannelType<T> storageChannelType,
+        final ResourceListOperationResult<T> change,
+        @Nullable final TrackedResource trackedResource
+    ) {
+        if (!(storageChannelType instanceof PlatformStorageChannelType<T> platformStorageChannelType)) {
+            return;
+        }
+        final T resource = change.resourceAmount().getResource();
+        LOGGER.debug("Received a change of {} for {}", change.change(), resource);
+        Platform.INSTANCE.getServerToClientCommunications().sendGridUpdate(
+            (ServerPlayer) playerInventory.player,
+            platformStorageChannelType,
+            resource,
+            change.change(),
+            trackedResource
+        );
+    }
+
     public boolean isActive() {
         return active;
     }
@@ -235,5 +266,17 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         }
 
         this.synchronizer = newSynchronizer;
+    }
+
+    private static <T> void readStorageChannelFromBuffer(final PlatformStorageChannelType<T> type,
+                                                         final FriendlyByteBuf buf,
+                                                         final GridViewBuilder viewBuilder) {
+        final int size = buf.readInt();
+        for (int i = 0; i < size; ++i) {
+            final T resource = type.fromBuffer(buf);
+            final long amount = buf.readLong();
+            final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
+            viewBuilder.withResource(resource, amount, trackedResource);
+        }
     }
 }
