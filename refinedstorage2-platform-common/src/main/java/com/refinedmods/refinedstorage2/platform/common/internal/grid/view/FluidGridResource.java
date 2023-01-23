@@ -51,13 +51,13 @@ public class FluidGridResource extends AbstractPlatformGridResource {
     }
 
     @Override
-    public String getAmount() {
-        return Platform.INSTANCE.getBucketQuantityFormatter().formatWithUnits(getResourceAmount().getAmount());
+    public String getDisplayedAmount() {
+        return Platform.INSTANCE.getBucketQuantityFormatter().formatWithUnits(getAmount());
     }
 
     @Override
     public String getAmountInTooltip() {
-        return Platform.INSTANCE.getBucketQuantityFormatter().format(getResourceAmount().getAmount());
+        return Platform.INSTANCE.getBucketQuantityFormatter().format(getAmount());
     }
 
     @Override

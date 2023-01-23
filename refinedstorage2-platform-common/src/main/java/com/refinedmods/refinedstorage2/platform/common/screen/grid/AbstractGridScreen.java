@@ -322,7 +322,7 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         if (!(resource instanceof AbstractPlatformGridResource platformResource)) {
             return;
         }
-        final String text = resource.isZeroed() ? "0" : platformResource.getAmount();
+        final String text = resource.isZeroed() ? "0" : platformResource.getDisplayedAmount();
         final int color = resource.isZeroed()
             ? Objects.requireNonNullElse(ChatFormatting.RED.getColor(), 15)
             : Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15);
@@ -368,7 +368,7 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
             smallLines.add(createTranslation("misc", "total", amountInTooltip)
                 .withStyle(ChatFormatting.GRAY).getVisualOrderText());
 
-            view.getTrackedResource(resource.getResourceAmount().getResource()).ifPresent(entry -> smallLines.add(
+            resource.getTrackedResource(view).ifPresent(entry -> smallLines.add(
                 getLastModifiedText(entry).withStyle(ChatFormatting.GRAY).getVisualOrderText()
             ));
 

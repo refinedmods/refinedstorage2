@@ -230,7 +230,7 @@ class GridViewImplTest {
             .withResource("D", 10, null)
             .build();
 
-        view.setFilterAndSort(resource -> !resource.getResourceAmount().getResource().equals("A"));
+        view.setFilterAndSort(resource -> !resource.getName().equals("A"));
 
         final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
@@ -301,7 +301,7 @@ class GridViewImplTest {
             .withResource("D", 10, null)
             .build();
 
-        view.setFilterAndSort(resource -> !resource.getResourceAmount().getResource().equals("B"));
+        view.setFilterAndSort(resource -> !resource.getName().equals("B"));
 
         final Runnable listener = mock(Runnable.class);
         view.setListener(listener);
@@ -421,7 +421,7 @@ class GridViewImplTest {
             .withResource("D", 10, null)
             .build();
 
-        view.setFilterAndSort(resource -> !resource.getResourceAmount().getResource().equals("B"));
+        view.setFilterAndSort(resource -> !resource.getName().equals("B"));
 
         final Runnable listener = mock(Runnable.class);
         view.setListener(listener);

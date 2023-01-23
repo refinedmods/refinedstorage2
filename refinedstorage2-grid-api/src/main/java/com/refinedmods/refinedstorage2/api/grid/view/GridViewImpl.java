@@ -99,7 +99,7 @@ public class GridViewImpl implements GridView {
             .sorted(getComparator())
             .collect(Collectors.toList());
 
-        viewList.forEach(resource -> viewListIndex.put(resource.getResourceAmount().getResource(), resource));
+        viewList.forEach(resource -> resource.populateInViewListIndex(viewListIndex));
 
         notifyListener();
     }

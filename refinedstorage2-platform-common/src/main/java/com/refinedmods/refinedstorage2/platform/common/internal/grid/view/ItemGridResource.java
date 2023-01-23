@@ -53,13 +53,13 @@ public class ItemGridResource extends AbstractPlatformGridResource {
     }
 
     @Override
-    public String getAmount() {
-        return QuantityFormatter.formatWithUnits(getResourceAmount().getAmount());
+    public String getDisplayedAmount() {
+        return QuantityFormatter.formatWithUnits(getAmount());
     }
 
     @Override
     public String getAmountInTooltip() {
-        return QuantityFormatter.format(getResourceAmount().getAmount());
+        return QuantityFormatter.format(getAmount());
     }
 
     @Override

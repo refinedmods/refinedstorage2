@@ -22,7 +22,7 @@ public abstract class AbstractPlatformGridResource extends AbstractGridResource 
 
     public abstract void render(PoseStack poseStack, int slotX, int slotY);
 
-    public abstract String getAmount();
+    public abstract String getDisplayedAmount();
 
     public abstract String getAmountInTooltip();
 

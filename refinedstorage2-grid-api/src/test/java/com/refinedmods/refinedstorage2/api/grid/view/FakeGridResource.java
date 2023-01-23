@@ -53,6 +53,6 @@ public class FakeGridResource extends AbstractGridResource {
 
     @Override
     public String toString() {
-        return super.getResourceAmount().toString();
+        return resourceAmount.toString();
     }
 }

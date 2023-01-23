@@ -162,7 +162,7 @@ public class GridQueryParserImpl implements GridQueryParser {
 
         final long wantedCount = Long.parseLong(((LiteralNode) node).token().content());
 
-        return resource -> predicate.test(resource.getResourceAmount().getAmount(), wantedCount);
+        return resource -> predicate.test(resource.getAmount(), wantedCount);
     }
 
     private static Predicate<AbstractGridResource> attributeMatch(final Set<GridResourceAttributeKey> keys,
