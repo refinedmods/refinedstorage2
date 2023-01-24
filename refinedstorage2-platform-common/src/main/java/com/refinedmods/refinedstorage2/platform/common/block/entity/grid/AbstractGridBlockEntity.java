@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
-import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
@@ -25,17 +24,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public abstract class AbstractGridBlockEntity<T>
-    extends AbstractInternalNetworkNodeContainerBlockEntity<GridNetworkNode<T>>
+    extends AbstractInternalNetworkNodeContainerBlockEntity<GridNetworkNode>
     implements ExtendedMenuProvider {
     private final OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> storageChannelTypeRegistry;
 
     protected AbstractGridBlockEntity(final BlockEntityType<?> type,
                                       final BlockPos pos,
                                       final BlockState state,
-                                      final OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> str,
-                                      final StorageChannelType<T> storageChannelType) {
-        super(type, pos, state,
-            new GridNetworkNode<>(Platform.INSTANCE.getConfig().getGrid().getEnergyUsage(), storageChannelType, str));
+                                      final OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> str) {
+        super(type, pos, state, new GridNetworkNode(
+            Platform.INSTANCE.getConfig().getGrid().getEnergyUsage(),
+            str
+        ));
         this.storageChannelTypeRegistry = str;
     }
 

@@ -2,10 +2,13 @@ package com.refinedmods.refinedstorage2.platform.api;
 
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
+import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
@@ -21,6 +24,8 @@ import java.util.Set;
 
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import org.apiguardian.api.API;
 
@@ -63,4 +68,10 @@ public interface PlatformApi {
     void requestNetworkNodeRemoval(NetworkNodeContainer container, Level level);
 
     void requestNetworkNodeUpdate(NetworkNodeContainer container, Level level);
+
+    GridInsertionStrategy createGridInsertionStrategy(AbstractContainerMenu containerMenu,
+                                                      Player player,
+                                                      GridServiceFactory serviceFactory);
+
+    void addGridInsertionStrategyFactory(GridInsertionStrategyFactory insertionStrategyFactory);
 }

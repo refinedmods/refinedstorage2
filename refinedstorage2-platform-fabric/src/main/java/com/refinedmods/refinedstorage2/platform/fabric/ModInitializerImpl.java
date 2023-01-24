@@ -68,6 +68,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockIte
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.fabric.block.entity.FabricDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.exporter.StorageExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.externalstorage.StoragePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.importer.StorageImporterTransferStrategyFactory;
@@ -159,6 +160,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         initializePlatformApi();
         registerAdditionalStorageTypes();
         registerAdditionalStorageChannelTypes();
+        registerAdditionalGridInsertionStrategyFactories();
         registerNetworkComponents();
         registerImporterTransferStrategyFactories();
         registerExporterTransferStrategyFactories();
@@ -182,6 +184,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 .or(() -> AbstractBaseBlock.tryUpdateColor(state, level, hitResult.getBlockPos(), player, hand))
                 .orElse(InteractionResult.PASS);
         });
+    }
+
+    private void registerAdditionalGridInsertionStrategyFactories() {
+        PlatformApi.INSTANCE.addGridInsertionStrategyFactory(FluidGridInsertionStrategy::new);
     }
 
     private void registerImporterTransferStrategyFactories() {

@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
+import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
@@ -11,6 +12,7 @@ import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationRe
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
@@ -21,6 +23,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBas
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.CompositeGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridSearchBox;
@@ -35,10 +38,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainerMenu implements GridWatcher {
+public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainerMenu
+    implements GridWatcher, GridInsertionStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGridContainerMenu.class);
 
     private static String lastSearchQuery = "";
@@ -47,12 +53,15 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     protected final GridView view;
     @Nullable
     protected AbstractGridBlockEntity<T> grid;
+    protected final GridInsertionStrategy insertionStrategy;
+
     @Nullable
     private Runnable sizeChangedListener;
 
     private GridSynchronizer synchronizer;
     private boolean autoSelected;
     private boolean active;
+
 
     @Nullable
     private GridSearchBox searchBox;
@@ -87,6 +96,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         addSlots(0);
 
         this.synchronizer = loadSynchronizer();
+        this.insertionStrategy = new ClientGridInsertionStrategy();
         this.autoSelected = loadAutoSelected();
     }
 
@@ -111,6 +121,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         addSlots(0);
 
         this.synchronizer = PlatformApi.INSTANCE.getGridSynchronizerRegistry().getDefault();
+        this.insertionStrategy = PlatformApi.INSTANCE.createGridInsertionStrategy(this, playerInventory.player, grid.getNode());
     }
 
     private static GridViewBuilder createViewBuilder() {
@@ -266,6 +277,27 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         }
 
         this.synchronizer = newSynchronizer;
+    }
+
+    @Override
+    public boolean onInsert(final GridInsertMode insertMode, final boolean tryAlternatives) {
+        return insertionStrategy.onInsert(insertMode, tryAlternatives);
+    }
+
+    @Override
+    public boolean onTransfer(final int slotIndex) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ItemStack quickMoveStack(final Player playerEntity, final int slotIndex) {
+        if (!playerEntity.level.isClientSide()) {
+            final Slot slot = getSlot(slotIndex);
+            if (slot.hasItem()) {
+                insertionStrategy.onTransfer(slot.getContainerSlot());
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     private static <T> void readStorageChannelFromBuffer(final PlatformStorageChannelType<T> type,

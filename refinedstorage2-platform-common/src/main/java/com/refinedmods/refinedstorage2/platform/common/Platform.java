@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
@@ -53,10 +54,12 @@ public interface Platform {
 
     boolean isKeyDown(KeyMapping keyMapping);
 
+    // TODO: Remove.
     ItemGridEventHandler createItemGridEventHandler(AbstractContainerMenu containerMenu,
                                                     GridService<ItemResource> gridService,
                                                     Inventory playerInventory);
 
+    // TODO: Remove.
     FluidGridEventHandler createFluidGridEventHandler(AbstractContainerMenu containerMenu,
                                                       GridService<FluidResource> gridService,
                                                       Inventory playerInventory,
@@ -65,6 +68,8 @@ public interface Platform {
     GridResourceFactory getItemGridResourceFactory();
 
     GridResourceFactory getFluidGridResourceFactory();
+
+    GridInsertionStrategyFactory getDefaultGridInsertionStrategyFactory();
 
     FluidRenderer getFluidRenderer();
 

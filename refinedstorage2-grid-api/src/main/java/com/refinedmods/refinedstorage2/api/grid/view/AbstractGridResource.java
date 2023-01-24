@@ -33,6 +33,7 @@ public abstract class AbstractGridResource {
         return resourceAmount;
     }
 
+    // TODO - Remove.
     public void populateInViewListIndex(final Map<Object, AbstractGridResource> viewListIndex) {
         viewListIndex.put(resourceAmount.getResource(), this);
     }

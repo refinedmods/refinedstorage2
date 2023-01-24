@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ContainerTr
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridEventHandlerImpl;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricFluidGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricItemGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.menu.MenuOpenerImpl;
@@ -71,7 +72,8 @@ public final class PlatformImpl extends AbstractPlatform {
             new ClientToServerCommunicationsImpl(),
             new MenuOpenerImpl(),
             new BucketQuantityFormatter(FluidConstants.BUCKET),
-            new FluidVariantFluidRenderer()
+            new FluidVariantFluidRenderer(),
+            ItemGridInsertionStrategy::new
         );
     }
 

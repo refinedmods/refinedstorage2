@@ -11,18 +11,14 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEve
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
 
-import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.ofItemVariant;
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toItemVariant;
 
 public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
-    private final AbstractContainerMenu containerMenu;
     private final GridService<ItemResource> gridService;
     private final PlayerInventoryStorage playerInventoryStorage;
     private final SingleSlotStorage<ItemVariant> playerCursorStorage;
@@ -30,49 +26,9 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     public ItemGridEventHandlerImpl(final AbstractContainerMenu containerMenu,
                                     final GridService<ItemResource> gridService,
                                     final Inventory playerInventory) {
-        this.containerMenu = containerMenu;
         this.gridService = gridService;
         this.playerInventoryStorage = PlayerInventoryStorage.of(playerInventory);
         this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(containerMenu);
-    }
-
-    @Override
-    public void onInsert(final GridInsertMode insertMode) {
-        final ItemStack carried = containerMenu.getCarried();
-        if (carried.isEmpty()) {
-            return;
-        }
-        final ItemResource itemResource = new ItemResource(carried.getItem(), carried.getTag());
-        gridService.insert(itemResource, insertMode, (resource, amount, action, source) -> {
-            try (Transaction tx = Transaction.openOuter()) {
-                final ItemVariant itemVariant = toItemVariant(resource);
-                final long extracted = playerCursorStorage.extract(itemVariant, amount, tx);
-                if (action == Action.EXECUTE) {
-                    tx.commit();
-                }
-                return extracted;
-            }
-        });
-    }
-
-    @Override
-    public void onTransfer(final int slotIndex) {
-        final SingleSlotStorage<ItemVariant> storage = playerInventoryStorage.getSlot(slotIndex);
-        final ItemVariant itemVariantInSlot = StorageUtil.findExtractableResource(storage, null);
-        if (itemVariantInSlot == null) {
-            return;
-        }
-        final ItemResource itemResource = ofItemVariant(itemVariantInSlot);
-        gridService.insert(itemResource, GridInsertMode.ENTIRE_RESOURCE, (resource, amount, action, source) -> {
-            try (Transaction tx = Transaction.openOuter()) {
-                final ItemVariant itemVariant = toItemVariant(resource);
-                final long extracted = storage.extract(itemVariant, amount, tx);
-                if (action == Action.EXECUTE) {
-                    tx.commit();
-                }
-                return extracted;
-            }
-        });
     }
 
     @Override

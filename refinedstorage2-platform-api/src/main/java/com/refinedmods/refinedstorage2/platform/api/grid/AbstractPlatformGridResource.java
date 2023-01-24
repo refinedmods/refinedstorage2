@@ -10,7 +10,9 @@ import java.util.Set;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
+import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE, since = "2.0.0-milestone.2.6")
 public abstract class AbstractPlatformGridResource extends AbstractGridResource {
     protected AbstractPlatformGridResource(
         final ResourceAmount<?> resourceAmount,

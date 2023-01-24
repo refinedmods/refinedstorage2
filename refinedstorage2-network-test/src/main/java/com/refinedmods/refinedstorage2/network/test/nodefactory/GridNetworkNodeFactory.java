@@ -6,12 +6,11 @@ import com.refinedmods.refinedstorage2.network.test.NetworkTestFixtures;
 
 import java.util.Map;
 
-public class GridNetworkNodeFactory extends AbstractNetworkNodeFactory<GridNetworkNode<String>> {
+public class GridNetworkNodeFactory extends AbstractNetworkNodeFactory<GridNetworkNode> {
     @Override
-    protected GridNetworkNode<String> innerCreate(final AddNetworkNode ctx, final Map<String, Object> properties) {
-        return new GridNetworkNode<>(
+    protected GridNetworkNode innerCreate(final AddNetworkNode ctx, final Map<String, Object> properties) {
+        return new GridNetworkNode(
             getEnergyUsage(properties),
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY
         );
     }

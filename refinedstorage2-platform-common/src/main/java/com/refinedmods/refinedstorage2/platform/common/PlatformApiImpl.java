@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common;
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistryImpl;
+import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.NetworkBuilder;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
@@ -11,6 +12,8 @@ import com.refinedmods.refinedstorage2.api.network.impl.NetworkFactory;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
@@ -21,6 +24,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
@@ -33,9 +37,11 @@ import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeR
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -45,6 +51,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
@@ -76,6 +84,7 @@ public class PlatformApiImpl implements PlatformApi {
     private final Map<StorageChannelType<?>, Set<PlatformExternalStorageProviderFactory>>
         externalStorageProviderFactories = new HashMap<>();
     private final StorageContainerHelper storageContainerHelper = new StorageContainerHelperImpl();
+    private final List<GridInsertionStrategyFactory> gridInsertionStrategyFactories = new ArrayList<>();
 
     @Override
     public OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry() {
@@ -193,5 +202,20 @@ public class PlatformApiImpl implements PlatformApi {
     public void requestNetworkNodeUpdate(final NetworkNodeContainer container, final Level level) {
         final LevelConnectionProvider connectionProvider = new LevelConnectionProvider(level);
         networkBuilder.update(container, connectionProvider);
+    }
+
+    @Override
+    public GridInsertionStrategy createGridInsertionStrategy(final AbstractContainerMenu containerMenu,
+                                                             final Player player,
+                                                             final GridServiceFactory serviceFactory) {
+        return new CompositeGridInsertionStrategy(
+            Platform.INSTANCE.getDefaultGridInsertionStrategyFactory().create(containerMenu, player, serviceFactory),
+            gridInsertionStrategyFactories.stream().map(f -> f.create(containerMenu, player, serviceFactory)).toList()
+        );
+    }
+
+    @Override
+    public void addGridInsertionStrategyFactory(final GridInsertionStrategyFactory insertionStrategyFactory) {
+        this.gridInsertionStrategyFactories.add(insertionStrategyFactory);
     }
 }

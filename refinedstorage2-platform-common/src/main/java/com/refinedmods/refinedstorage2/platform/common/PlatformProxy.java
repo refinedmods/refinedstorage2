@@ -5,6 +5,7 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
@@ -112,6 +113,11 @@ public class PlatformProxy implements Platform {
     @Override
     public GridResourceFactory getFluidGridResourceFactory() {
         return ensureLoaded().getFluidGridResourceFactory();
+    }
+
+    @Override
+    public GridInsertionStrategyFactory getDefaultGridInsertionStrategyFactory() {
+        return ensureLoaded().getDefaultGridInsertionStrategyFactory();
     }
 
     @Override

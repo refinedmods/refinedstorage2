@@ -2,10 +2,13 @@ package com.refinedmods.refinedstorage2.platform.api;
 
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
+import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
@@ -22,6 +25,8 @@ import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 
 public class PlatformApiProxy implements PlatformApi {
@@ -119,6 +124,18 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public void requestNetworkNodeUpdate(final NetworkNodeContainer container, final Level level) {
         ensureLoaded().requestNetworkNodeUpdate(container, level);
+    }
+
+    @Override
+    public GridInsertionStrategy createGridInsertionStrategy(final AbstractContainerMenu containerMenu,
+                                                             final Player player,
+                                                             final GridServiceFactory serviceFactory) {
+        return ensureLoaded().createGridInsertionStrategy(containerMenu, player, serviceFactory);
+    }
+
+    @Override
+    public void addGridInsertionStrategyFactory(final GridInsertionStrategyFactory insertionStrategyFactory) {
+        ensureLoaded().addGridInsertionStrategyFactory(insertionStrategyFactory);
     }
 
     private PlatformApi ensureLoaded() {

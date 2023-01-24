@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
+import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.grid.service.GridServiceImpl;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
@@ -22,19 +23,16 @@ import java.util.Set;
 import java.util.function.Function;
 import javax.annotation.Nullable;
 
-public class GridNetworkNode<T> extends AbstractNetworkNode {
+public class GridNetworkNode extends AbstractNetworkNode implements GridServiceFactory {
     private final OrderedRegistry<?, ? extends StorageChannelType<?>> storageChannelTypeRegistry;
     private final Set<GridWatcher> watchers = new HashSet<>();
-    private final StorageChannelType<T> tempType; // TODO: Remove!
     private final Map<GridWatcher, Map<StorageChannelType<?>, ResourceListListener<?>>> storageChannelListeners =
         new HashMap<>();
     private final long energyUsage;
 
     public GridNetworkNode(final long energyUsage,
-                           final StorageChannelType<T> tempType,
                            final OrderedRegistry<?, ? extends StorageChannelType<?>> storageChannelTypeRegistry) {
         this.energyUsage = energyUsage;
-        this.tempType = tempType;
         this.storageChannelTypeRegistry = storageChannelTypeRegistry;
     }
 
@@ -102,16 +100,21 @@ public class GridNetworkNode<T> extends AbstractNetworkNode {
         storageChannel.removeListener(listener);
     }
 
-    public GridService<T> createService(final Actor actor,
-                                        final Function<T, Long> maxAmountProvider,
-                                        final long singleAmount) {
-        return new GridServiceImpl<>(getStorageChannel(tempType), actor, maxAmountProvider, singleAmount);
-    }
-
     @Override
     protected void onActiveChanged(final boolean newActive) {
         super.onActiveChanged(newActive);
         watchers.forEach(watcher -> watcher.onActiveChanged(newActive));
+    }
+
+    @Override
+    public <T> GridService<T> create(
+        final StorageChannelType<T> storageChannelType,
+        final Actor actor,
+        final Function<T, Long> maxAmountProvider,
+        final long singleAmount
+    ) {
+        final StorageChannel<T> storageChannel = getStorageChannel(storageChannelType);
+        return new GridServiceImpl<>(storageChannel, actor, maxAmountProvider, singleAmount);
     }
 
     public record GridResource<T>(

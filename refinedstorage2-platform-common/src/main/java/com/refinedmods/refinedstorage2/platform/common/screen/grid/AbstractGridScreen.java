@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.History;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.core.util.LastModified;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
+import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
@@ -444,7 +445,13 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         return super.mouseClicked(mouseX, mouseY, clickedButton);
     }
 
-    protected abstract void mouseClickedInGrid(int clickedButton);
+    private void mouseClickedInGrid(final int clickedButton) {
+        final GridInsertMode mode = clickedButton == 1
+            ? GridInsertMode.SINGLE_RESOURCE
+            : GridInsertMode.ENTIRE_RESOURCE;
+        final boolean tryAlternatives = clickedButton == 1; // TODO - Add help icon in gui for this
+        getMenu().onInsert(mode, tryAlternatives);
+    }
 
     protected abstract void mouseClickedInGrid(int clickedButton, AbstractGridResource resource);
 

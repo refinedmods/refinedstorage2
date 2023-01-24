@@ -22,8 +22,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class FluidGridBlockEntity extends AbstractGridBlockEntity<FluidResource> {
     public FluidGridBlockEntity(final BlockPos pos, final BlockState state) {
-        super(BlockEntities.INSTANCE.getFluidGrid(), pos, state, PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
-            StorageChannelTypes.FLUID);
+        super(BlockEntities.INSTANCE.getFluidGrid(), pos, state, PlatformApi.INSTANCE.getStorageChannelTypeRegistry());
     }
 
     @Override

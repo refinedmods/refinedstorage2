@@ -43,8 +43,11 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendGridInsert(final GridInsertMode mode) {
-        sendToServer(PacketIds.GRID_INSERT, buf -> buf.writeBoolean(mode == GridInsertMode.SINGLE_RESOURCE));
+    public void sendGridInsert(final GridInsertMode mode, final boolean tryAlternatives) {
+        sendToServer(PacketIds.GRID_INSERT, buf -> {
+            buf.writeBoolean(mode == GridInsertMode.SINGLE_RESOURCE);
+            buf.writeBoolean(tryAlternatives);
+        });
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
-import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
@@ -15,10 +14,6 @@ public class FluidGridScreen extends AbstractGridScreen<FluidResource, FluidGrid
         super(menu, inventory, title);
     }
 
-    private static GridInsertMode getInsertMode(final int clickedButton) {
-        return clickedButton == 1 ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
-    }
-
     private static GridExtractMode getExtractMode(final int clickedButton) {
         if (clickedButton == 1) {
             return GridExtractMode.HALF_RESOURCE;
@@ -28,11 +23,6 @@ public class FluidGridScreen extends AbstractGridScreen<FluidResource, FluidGrid
 
     private static boolean shouldExtractToCursor() {
         return !hasShiftDown();
-    }
-
-    @Override
-    protected void mouseClickedInGrid(final int clickedButton) {
-        getMenu().onInsert(getInsertMode(clickedButton));
     }
 
     @Override

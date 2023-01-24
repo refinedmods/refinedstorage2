@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
-import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
@@ -16,10 +15,6 @@ import net.minecraft.world.item.ItemStack;
 public class ItemGridScreen extends AbstractGridScreen<ItemResource, ItemGridContainerMenu> {
     public ItemGridScreen(final ItemGridContainerMenu menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title);
-    }
-
-    private static GridInsertMode getInsertMode(final int clickedButton) {
-        return clickedButton == 1 ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
     }
 
     private static GridExtractMode getExtractMode(final int clickedButton) {
@@ -67,11 +62,6 @@ public class ItemGridScreen extends AbstractGridScreen<ItemResource, ItemGridCon
             }
         }
         return null;
-    }
-
-    @Override
-    protected void mouseClickedInGrid(final int clickedButton) {
-        getMenu().onInsert(getInsertMode(clickedButton));
     }
 
     @Override

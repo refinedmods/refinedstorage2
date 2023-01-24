@@ -15,7 +15,7 @@ public interface ClientToServerCommunications {
 
     void sendGridFluidExtract(FluidResource fluidResource, GridExtractMode mode, boolean cursor);
 
-    void sendGridInsert(GridInsertMode mode);
+    void sendGridInsert(GridInsertMode mode, boolean tryAlternatives);
 
     void sendGridScroll(ItemResource itemResource, GridScrollMode mode, int slotIndex);
 

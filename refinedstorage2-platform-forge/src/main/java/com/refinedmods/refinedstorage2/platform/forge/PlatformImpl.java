@@ -19,6 +19,7 @@ import com.refinedmods.refinedstorage2.platform.forge.containermenu.ContainerTra
 import com.refinedmods.refinedstorage2.platform.forge.integration.energy.ControllerForgeEnergy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridEventHandlerImpl;
+import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.view.ForgeFluidGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.view.ForgeItemGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.forge.menu.MenuOpenerImpl;
@@ -66,7 +67,8 @@ public final class PlatformImpl extends AbstractPlatform {
             new ClientToServerCommunicationsImpl(networkManager),
             new MenuOpenerImpl(),
             new BucketQuantityFormatter(FluidType.BUCKET_VOLUME),
-            new FluidStackFluidRenderer()
+            new FluidStackFluidRenderer(),
+            ItemGridInsertionStrategy::new
         );
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getSpec());
     }

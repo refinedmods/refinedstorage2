@@ -1,8 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.FluidGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -20,14 +19,12 @@ public class GridInsertPacket implements ServerPlayNetworking.PlayChannelHandler
                         final FriendlyByteBuf buf,
                         final PacketSender responseSender) {
         final boolean single = buf.readBoolean();
-
+        final boolean tryAlternatives = buf.readBoolean();
         server.execute(() -> {
             final AbstractContainerMenu menu = player.containerMenu;
-            final GridInsertMode mode = single ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
-            if (menu instanceof ItemGridEventHandler itemGridEventHandler) {
-                itemGridEventHandler.onInsert(mode);
-            } else if (menu instanceof FluidGridEventHandler fluidGridEventHandler) {
-                fluidGridEventHandler.onInsert(mode);
+            if (menu instanceof GridInsertionStrategy strategy) {
+                final GridInsertMode mode = single ? GridInsertMode.SINGLE_RESOURCE : GridInsertMode.ENTIRE_RESOURCE;
+                strategy.onInsert(mode, tryAlternatives);
             }
         });
     }

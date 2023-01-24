@@ -24,7 +24,7 @@ class NetworkNodeFactoryTest {
     @AddNetworkNode
     ExporterNetworkNode exporter;
     @AddNetworkNode
-    GridNetworkNode<String> grid;
+    GridNetworkNode grid;
     @AddNetworkNode
     ImporterNetworkNode importer;
     @AddNetworkNode

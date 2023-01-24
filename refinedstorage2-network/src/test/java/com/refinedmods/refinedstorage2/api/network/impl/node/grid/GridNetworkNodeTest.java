@@ -42,7 +42,7 @@ class GridNetworkNodeTest {
     @AddNetworkNode(properties = {
         @AddNetworkNode.Property(key = AbstractNetworkNodeFactory.PROPERTY_ENERGY_USAGE, longValue = 5)
     })
-    GridNetworkNode<String> sut;
+    GridNetworkNode sut;
 
     @BeforeEach
     void setUp(@InjectNetworkStorageChannel final StorageChannel<String> networkStorage) {
@@ -161,7 +161,8 @@ class GridNetworkNodeTest {
         @InjectNetworkStorageChannel final StorageChannel<String> networkStorage
     ) {
         // Arrange
-        final GridService<String> service = sut.createService(
+        final GridService<String> service = sut.create(
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPE,
             FakeActor.INSTANCE,
             r -> 5L,
             1

@@ -64,6 +64,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockIte
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.FluidHandlerExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.ItemHandlerExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.externalstorage.FluidHandlerPlatformExternalStorageProviderFactory;
@@ -168,6 +169,7 @@ public class ModInitializer extends AbstractModInitializer {
         initializePlatformApi();
         registerAdditionalStorageTypes();
         registerAdditionalStorageChannelTypes();
+        registerAdditionalGridInsertionStrategyFactories();
         registerNetworkComponents();
         registerImporterTransferStrategyFactories();
         registerExporterTransferStrategyFactories();
@@ -187,6 +189,10 @@ public class ModInitializer extends AbstractModInitializer {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterCreativeModeTab);
         MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::registerCapabilities);
+    }
+
+    private void registerAdditionalGridInsertionStrategyFactories() {
+        PlatformApi.INSTANCE.addGridInsertionStrategyFactory(FluidGridInsertionStrategy::new);
     }
 
     private void registerImporterTransferStrategyFactories() {

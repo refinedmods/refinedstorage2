@@ -33,8 +33,8 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendGridInsert(final GridInsertMode mode) {
-        networkManager.send(new GridInsertPacket(mode == GridInsertMode.SINGLE_RESOURCE));
+    public void sendGridInsert(final GridInsertMode mode, final boolean tryAlternatives) {
+        networkManager.send(new GridInsertPacket(mode == GridInsertMode.SINGLE_RESOURCE, tryAlternatives));
     }
 
     @Override

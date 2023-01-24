@@ -12,16 +12,12 @@ import com.refinedmods.refinedstorage2.platform.forge.internal.storage.ItemHandl
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.items.wrapper.RangedWrapper;
 
-import static com.refinedmods.refinedstorage2.platform.api.resource.ItemResource.ofItemStack;
-
 public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
-    private final AbstractContainerMenu containerMenu;
     private final GridService<ItemResource> gridService;
     private final Inventory playerInventory;
     private final PlayerMainInvWrapper playerInventoryStorage;
@@ -30,44 +26,10 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     public ItemGridEventHandlerImpl(final AbstractContainerMenu containerMenu,
                                     final GridService<ItemResource> gridService,
                                     final Inventory playerInventory) {
-        this.containerMenu = containerMenu;
         this.gridService = gridService;
         this.playerInventory = playerInventory;
         this.playerInventoryStorage = new PlayerMainInvWrapper(playerInventory);
         this.playerCursorStorage = new CursorStorage(containerMenu);
-    }
-
-    @Override
-    public void onInsert(final GridInsertMode insertMode) {
-        final ItemStack carried = containerMenu.getCarried();
-        if (carried.isEmpty()) {
-            return;
-        }
-        final ItemResource itemResource = new ItemResource(carried.getItem(), carried.getTag());
-        gridService.insert(
-            itemResource,
-            insertMode,
-            new ItemHandlerExtractableStorage(InteractionCoordinates.ofItemHandler(playerCursorStorage))
-        );
-    }
-
-    @Override
-    public void onTransfer(final int slotIndex) {
-        final RangedWrapper storage = new RangedWrapper(
-            new InvWrapper(playerInventory),
-            slotIndex,
-            slotIndex + 1
-        );
-        final ItemStack itemStackInSlot = storage.getStackInSlot(0);
-        if (itemStackInSlot.isEmpty()) {
-            return;
-        }
-        final ItemResource itemResource = ofItemStack(itemStackInSlot);
-        gridService.insert(
-            itemResource,
-            GridInsertMode.ENTIRE_RESOURCE,
-            new ItemHandlerExtractableStorage(InteractionCoordinates.ofItemHandler(storage))
-        );
     }
 
     @Override
