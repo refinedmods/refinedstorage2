@@ -12,6 +12,8 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
@@ -85,4 +87,10 @@ public interface PlatformApi {
                                                         ExtractableStorage<ItemResource> containerExtractionSource);
 
     void addGridExtractionStrategyFactory(GridExtractionStrategyFactory extractionStrategyFactory);
+
+    GridScrollingStrategy createGridScrollingStrategy(AbstractContainerMenu containerMenu,
+                                                      Player player,
+                                                      GridServiceFactory gridServiceFactory);
+
+    void addGridScrollingStrategyFactory(GridScrollingStrategyFactory scrollingStrategyFactory);
 }

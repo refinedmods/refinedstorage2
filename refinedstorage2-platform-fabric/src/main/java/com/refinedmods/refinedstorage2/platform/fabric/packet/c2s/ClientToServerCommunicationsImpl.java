@@ -3,14 +3,11 @@ package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyType;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridScrollModeUtil;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
-import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 
 import java.util.UUID;
@@ -39,19 +36,26 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
+    public <T> void sendGridScroll(final PlatformStorageChannelType<T> storageChannelType,
+                                   final T resource,
+                                   final GridScrollMode mode,
+                                   final int slotIndex) {
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresent(id -> sendToServer(
+            PacketIds.GRID_SCROLL,
+            buf -> {
+                buf.writeResourceLocation(id);
+                GridScrollPacket.writeMode(buf, mode);
+                buf.writeInt(slotIndex);
+                storageChannelType.toBuffer(resource, buf);
+            }
+        ));
+    }
+
+    @Override
     public void sendGridInsert(final GridInsertMode mode, final boolean tryAlternatives) {
         sendToServer(PacketIds.GRID_INSERT, buf -> {
             buf.writeBoolean(mode == GridInsertMode.SINGLE_RESOURCE);
             buf.writeBoolean(tryAlternatives);
-        });
-    }
-
-    @Override
-    public void sendGridScroll(final ItemResource itemResource, final GridScrollMode mode, final int slotIndex) {
-        sendToServer(PacketIds.GRID_SCROLL, buf -> {
-            PacketUtil.writeItemResource(buf, itemResource);
-            GridScrollModeUtil.writeMode(buf, mode);
-            buf.writeInt(slotIndex);
         });
     }
 

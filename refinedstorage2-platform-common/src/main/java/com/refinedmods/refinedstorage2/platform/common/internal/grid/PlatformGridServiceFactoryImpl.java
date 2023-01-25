@@ -28,6 +28,7 @@ public class PlatformGridServiceFactoryImpl implements PlatformGridServiceFactor
     }
 
     @Override
+    @SuppressWarnings("deprecation") // forge deprecates stack insensitive getMaxStackSize
     public GridService<ItemResource> createForItem(final Actor actor) {
         return create(
             StorageChannelTypes.ITEM,

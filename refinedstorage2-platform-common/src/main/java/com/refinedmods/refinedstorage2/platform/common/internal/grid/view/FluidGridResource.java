@@ -4,6 +4,8 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.grid.AbstractPlatformGridResource;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -52,6 +54,11 @@ public class FluidGridResource extends AbstractPlatformGridResource {
             extractMode,
             cursor
         );
+    }
+
+    @Override
+    public void onScroll(final GridScrollMode scrollMode, final GridScrollingStrategy scrollingStrategy) {
+        // no-op
     }
 
     @Override

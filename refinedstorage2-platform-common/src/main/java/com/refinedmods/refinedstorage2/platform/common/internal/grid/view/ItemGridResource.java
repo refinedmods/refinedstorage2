@@ -5,6 +5,8 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.grid.AbstractPlatformGridResource;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
@@ -56,6 +58,16 @@ public class ItemGridResource extends AbstractPlatformGridResource {
             ItemResource.ofItemStack(itemStack), // TODO: Use from parent
             extractMode,
             cursor
+        );
+    }
+
+    @Override
+    public void onScroll(final GridScrollMode scrollMode, final GridScrollingStrategy scrollingStrategy) {
+        scrollingStrategy.onScroll(
+            StorageChannelTypes.ITEM,
+            ItemResource.ofItemStack(itemStack), // TODO: use from parent
+            scrollMode,
+            -1
         );
     }
 

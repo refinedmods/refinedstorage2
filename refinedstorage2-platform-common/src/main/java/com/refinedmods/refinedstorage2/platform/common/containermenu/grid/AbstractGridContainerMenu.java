@@ -15,6 +15,8 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
@@ -27,6 +29,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.property.Pr
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.CompositeGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridSearchBox;
@@ -47,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainerMenu
-    implements GridWatcher, GridInsertionStrategy, GridExtractionStrategy {
+    implements GridWatcher, GridInsertionStrategy, GridExtractionStrategy, GridScrollingStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGridContainerMenu.class);
 
     private static String lastSearchQuery = "";
@@ -59,6 +62,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
 
     private final GridInsertionStrategy insertionStrategy;
     private final GridExtractionStrategy extractionStrategy;
+    private final GridScrollingStrategy scrollingStrategy;
 
     @Nullable
     private Runnable sizeChangedListener;
@@ -102,6 +106,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         this.synchronizer = loadSynchronizer();
         this.insertionStrategy = new ClientGridInsertionStrategy();
         this.extractionStrategy = new ClientGridExtractionStrategy();
+        this.scrollingStrategy = new ClientGridScrollingStrategy();
         this.autoSelected = loadAutoSelected();
     }
 
@@ -136,6 +141,11 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
             playerInventory.player,
             grid.getNode(),
             grid.getContainerExtractionSource()
+        );
+        this.scrollingStrategy = PlatformApi.INSTANCE.createGridScrollingStrategy(
+            this,
+            playerInventory.player,
+            grid.getNode()
         );
     }
 
@@ -305,6 +315,14 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
                                  final GridExtractMode extractMode,
                                  final boolean cursor) {
         return extractionStrategy.onExtract(storageChannelType, resource, extractMode, cursor);
+    }
+
+    @Override
+    public <T> boolean onScroll(final PlatformStorageChannelType<T> storageChannelType,
+                                final T resource,
+                                final GridScrollMode scrollMode,
+                                final int slotIndex) {
+        return scrollingStrategy.onScroll(storageChannelType, resource, scrollMode, slotIndex);
     }
 
     @Override

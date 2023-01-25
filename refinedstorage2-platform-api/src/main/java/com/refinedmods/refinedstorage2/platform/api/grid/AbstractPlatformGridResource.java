@@ -28,6 +28,9 @@ public abstract class AbstractPlatformGridResource extends AbstractGridResource 
                                    boolean cursor,
                                    GridExtractionStrategy extractionStrategy);
 
+    public abstract void onScroll(GridScrollMode scrollMode,
+                                  GridScrollingStrategy scrollingStrategy);
+
     public abstract void render(PoseStack poseStack, int slotX, int slotY);
 
     public abstract String getDisplayedAmount();

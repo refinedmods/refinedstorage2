@@ -11,11 +11,14 @@ import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.AbstractPlatformGridResource;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.GridResourceAttributeKeys;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.SmallTextTooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
@@ -507,15 +510,67 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         mouseScrolledInInventory(up, slot.getItem(), slotIndex);
     }
 
-    protected abstract void mouseScrolledInInventory(boolean up, ItemStack stack, int slotIndex);
+    private void mouseScrolledInInventory(final boolean up, final ItemStack stack, final int slotIndex) {
+        final GridScrollMode scrollMode = getScrollModeWhenScrollingOnInventoryArea(up);
+        if (scrollMode == null) {
+            return;
+        }
+        getMenu().onScroll(
+            StorageChannelTypes.ITEM,
+            ItemResource.ofItemStack(stack),
+            scrollMode,
+            slotIndex
+        );
+    }
 
     private void mouseScrolledInGrid(final boolean up) {
         getMenu().getView().setPreventSorting(true);
+        final GridScrollMode scrollMode = getScrollModeWhenScrollingOnGridArea(up);
+        if (scrollMode == null) {
+            return;
+        }
         final AbstractGridResource resource = getMenu().getView().getAll().get(gridSlotNumber);
-        mouseScrolledInGrid(up, resource);
+        if (!(resource instanceof AbstractPlatformGridResource platformGridResource)) {
+            return;
+        }
+        platformGridResource.onScroll(scrollMode, getMenu());
     }
 
-    protected abstract void mouseScrolledInGrid(boolean up, AbstractGridResource resource);
+    @Nullable
+    private static GridScrollMode getScrollModeWhenScrollingOnInventoryArea(final boolean up) {
+        if (hasShiftDown()) {
+            return up ? GridScrollMode.INVENTORY_TO_GRID : GridScrollMode.GRID_TO_INVENTORY;
+        }
+        return null;
+    }
+
+    @Nullable
+    private static GridScrollMode getScrollModeWhenScrollingOnGridArea(final boolean up) {
+        final boolean shift = hasShiftDown();
+        final boolean ctrl = hasControlDown();
+        if (shift && ctrl) {
+            return null;
+        }
+        return getScrollModeWhenScrollingOnGridArea(up, shift, ctrl);
+    }
+
+    @Nullable
+    private static GridScrollMode getScrollModeWhenScrollingOnGridArea(final boolean up,
+                                                                       final boolean shift,
+                                                                       final boolean ctrl) {
+        if (up) {
+            if (shift) {
+                return GridScrollMode.INVENTORY_TO_GRID;
+            }
+        } else {
+            if (shift) {
+                return GridScrollMode.GRID_TO_INVENTORY;
+            } else if (ctrl) {
+                return GridScrollMode.GRID_TO_CURSOR;
+            }
+        }
+        return null;
+    }
 
     @Override
     public boolean charTyped(final char unknown1, final int unknown2) {

@@ -67,6 +67,7 @@ import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriv
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.FluidHandlerExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.ItemHandlerExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.externalstorage.FluidHandlerPlatformExternalStorageProviderFactory;
@@ -173,6 +174,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerAdditionalStorageChannelTypes();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
+        registerGridScrollingStrategyFactories();
         registerNetworkComponents();
         registerImporterTransferStrategyFactories();
         registerExporterTransferStrategyFactories();
@@ -204,6 +206,10 @@ public class ModInitializer extends AbstractModInitializer {
                 new ItemGridExtractionStrategy(containerMenu, player, gridServiceFactory)
         );
         PlatformApi.INSTANCE.addGridExtractionStrategyFactory(FluidGridExtractionStrategy::new);
+    }
+
+    private void registerGridScrollingStrategyFactories() {
+        PlatformApi.INSTANCE.addGridScrollingStrategyFactory(ItemGridScrollingStrategy::new);
     }
 
     private void registerImporterTransferStrategyFactories() {

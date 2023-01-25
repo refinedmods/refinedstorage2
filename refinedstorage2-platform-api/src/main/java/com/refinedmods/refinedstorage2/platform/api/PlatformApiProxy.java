@@ -12,6 +12,8 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
@@ -159,6 +161,18 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public void addGridExtractionStrategyFactory(final GridExtractionStrategyFactory extractionStrategyFactory) {
         ensureLoaded().addGridExtractionStrategyFactory(extractionStrategyFactory);
+    }
+
+    @Override
+    public GridScrollingStrategy createGridScrollingStrategy(final AbstractContainerMenu containerMenu,
+                                                             final Player player,
+                                                             final GridServiceFactory gridServiceFactory) {
+        return ensureLoaded().createGridScrollingStrategy(containerMenu, player, gridServiceFactory);
+    }
+
+    @Override
+    public void addGridScrollingStrategyFactory(final GridScrollingStrategyFactory scrollingStrategyFactory) {
+        ensureLoaded().addGridScrollingStrategyFactory(scrollingStrategyFactory);
     }
 
     private PlatformApi ensureLoaded() {

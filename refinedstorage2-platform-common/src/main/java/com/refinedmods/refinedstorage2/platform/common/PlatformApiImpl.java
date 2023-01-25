@@ -17,6 +17,8 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
@@ -31,6 +33,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
 import com.refinedmods.refinedstorage2.platform.api.upgrade.UpgradeRegistry;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.CompositeGridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.PlatformGridServiceFactoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerHelperImpl;
@@ -93,6 +96,7 @@ public class PlatformApiImpl implements PlatformApi {
     private final StorageContainerHelper storageContainerHelper = new StorageContainerHelperImpl();
     private final List<GridInsertionStrategyFactory> gridInsertionStrategyFactories = new ArrayList<>();
     private final List<GridExtractionStrategyFactory> gridExtractionStrategyFactories = new ArrayList<>();
+    private final List<GridScrollingStrategyFactory> gridScrollingStrategyFactories = new ArrayList<>();
 
     @Override
     public OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry() {
@@ -257,5 +261,24 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public void addGridExtractionStrategyFactory(final GridExtractionStrategyFactory extractionStrategyFactory) {
         gridExtractionStrategyFactories.add(extractionStrategyFactory);
+    }
+
+    @Override
+    public GridScrollingStrategy createGridScrollingStrategy(final AbstractContainerMenu containerMenu,
+                                                             final Player player,
+                                                             final GridServiceFactory gridServiceFactory) {
+        final PlatformGridServiceFactory platformGridServiceFactory = new PlatformGridServiceFactoryImpl(
+            gridServiceFactory
+        );
+        final List<GridScrollingStrategy> strategies = gridScrollingStrategyFactories
+            .stream()
+            .map(f -> f.create(containerMenu, player, platformGridServiceFactory))
+            .toList();
+        return new CompositeGridScrollingStrategy(strategies);
+    }
+
+    @Override
+    public void addGridScrollingStrategyFactory(final GridScrollingStrategyFactory scrollingStrategyFactory) {
+        gridScrollingStrategyFactories.add(scrollingStrategyFactory);
     }
 }

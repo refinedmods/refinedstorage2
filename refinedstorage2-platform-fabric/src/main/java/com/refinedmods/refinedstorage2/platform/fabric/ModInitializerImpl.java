@@ -71,6 +71,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.Contro
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.exporter.StorageExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.externalstorage.StoragePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.importer.StorageImporterTransferStrategyFactory;
@@ -164,6 +165,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerAdditionalStorageChannelTypes();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
+        registerGridScrollingStrategyFactories();
         registerNetworkComponents();
         registerImporterTransferStrategyFactories();
         registerExporterTransferStrategyFactories();
@@ -199,6 +201,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 new ItemGridExtractionStrategy(containerMenu, player, gridServiceFactory)
         );
         PlatformApi.INSTANCE.addGridExtractionStrategyFactory(FluidGridExtractionStrategy::new);
+    }
+
+    private void registerGridScrollingStrategyFactories() {
+        PlatformApi.INSTANCE.addGridScrollingStrategyFactory(ItemGridScrollingStrategy::new);
     }
 
     private void registerImporterTransferStrategyFactories() {
