@@ -3,9 +3,9 @@ package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyType;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
@@ -21,15 +21,19 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendGridItemExtract(final ItemResource itemResource, final GridExtractMode mode, final boolean cursor) {
-        networkManager.send(new GridExtractPacket(mode, cursor, itemResource));
-    }
-
-    @Override
-    public void sendGridFluidExtract(final FluidResource fluidResource,
-                                     final GridExtractMode mode,
-                                     final boolean cursor) {
-        networkManager.send(new GridExtractPacket(mode, cursor, fluidResource));
+    public <T> void sendGridExtract(final PlatformStorageChannelType<T> storageChannelType,
+                                    final T resource,
+                                    final GridExtractMode mode,
+                                    final boolean cursor) {
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
+            .getId(storageChannelType)
+            .ifPresent(id -> networkManager.send(new GridExtractPacket<>(
+                storageChannelType,
+                id,
+                resource,
+                mode,
+                cursor
+            )));
     }
 
     @Override

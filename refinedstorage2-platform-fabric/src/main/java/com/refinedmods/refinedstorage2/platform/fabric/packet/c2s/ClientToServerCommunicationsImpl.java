@@ -3,9 +3,9 @@ package com.refinedmods.refinedstorage2.platform.fabric.packet.c2s;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyType;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridScrollModeUtil;
@@ -23,23 +23,19 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ClientToServerCommunicationsImpl implements ClientToServerCommunications {
     @Override
-    public void sendGridItemExtract(final ItemResource itemResource, final GridExtractMode mode, final boolean cursor) {
-        sendToServer(PacketIds.GRID_EXTRACT, buf -> {
-            GridExtractPacket.writeMode(buf, mode);
-            buf.writeBoolean(cursor);
-            PacketUtil.writeItemResource(buf, itemResource);
-        });
-    }
-
-    @Override
-    public void sendGridFluidExtract(final FluidResource fluidResource,
-                                     final GridExtractMode mode,
-                                     final boolean cursor) {
-        sendToServer(PacketIds.GRID_EXTRACT, buf -> {
-            GridExtractPacket.writeMode(buf, mode);
-            buf.writeBoolean(cursor);
-            PacketUtil.writeFluidResource(buf, fluidResource);
-        });
+    public <T> void sendGridExtract(final PlatformStorageChannelType<T> storageChannelType,
+                                    final T resource,
+                                    final GridExtractMode mode,
+                                    final boolean cursor) {
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresent(id -> sendToServer(
+            PacketIds.GRID_EXTRACT,
+            buf -> {
+                buf.writeResourceLocation(id);
+                GridExtractPacket.writeMode(buf, mode);
+                buf.writeBoolean(cursor);
+                storageChannelType.toBuffer(resource, buf);
+            }
+        ));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.grid;
 
+import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceAttributeKey;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
@@ -13,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.6")
+// TODO: Convert to interface
 public abstract class AbstractPlatformGridResource extends AbstractGridResource {
     protected AbstractPlatformGridResource(
         final ResourceAmount<?> resourceAmount,
@@ -21,6 +23,10 @@ public abstract class AbstractPlatformGridResource extends AbstractGridResource 
     ) {
         super(resourceAmount, name, attributes);
     }
+
+    public abstract void onExtract(GridExtractMode extractMode,
+                                   boolean cursor,
+                                   GridExtractionStrategy extractionStrategy);
 
     public abstract void render(PoseStack poseStack, int slotX, int slotY);
 

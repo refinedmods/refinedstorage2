@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
@@ -39,11 +38,6 @@ public class ItemGridContainerMenu extends AbstractGridContainerMenu<ItemResourc
     // TODO - Remove!
     private static long getMaxStackSize(final ItemResource itemResource) {
         return itemResource.item().getMaxStackSize();
-    }
-
-    @Override
-    public void onExtract(final ItemResource itemResource, final GridExtractMode mode, final boolean cursor) {
-        itemGridEventHandler.onExtract(itemResource, mode, cursor);
     }
 
     @Override

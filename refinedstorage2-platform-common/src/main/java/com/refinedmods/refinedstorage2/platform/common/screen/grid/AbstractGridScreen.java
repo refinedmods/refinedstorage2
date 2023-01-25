@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.core.History;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.core.util.LastModified;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
+import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
@@ -453,7 +454,26 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         getMenu().onInsert(mode, tryAlternatives);
     }
 
-    protected abstract void mouseClickedInGrid(int clickedButton, AbstractGridResource resource);
+    protected void mouseClickedInGrid(final int clickedButton, final AbstractGridResource resource) {
+        if (resource instanceof AbstractPlatformGridResource platformGridResource) {
+            platformGridResource.onExtract(
+                getExtractMode(clickedButton),
+                shouldExtractToCursor(),
+                getMenu()
+            );
+        }
+    }
+
+    private static GridExtractMode getExtractMode(final int clickedButton) {
+        if (clickedButton == 1) {
+            return GridExtractMode.HALF_RESOURCE;
+        }
+        return GridExtractMode.ENTIRE_RESOURCE;
+    }
+
+    private static boolean shouldExtractToCursor() {
+        return !hasShiftDown();
+    }
 
     @Override
     public void mouseMoved(final double mx, final double my) {

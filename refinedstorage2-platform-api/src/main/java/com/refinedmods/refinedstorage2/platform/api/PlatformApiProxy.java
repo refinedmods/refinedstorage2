@@ -6,7 +6,10 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeContainer;
+import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
@@ -14,6 +17,7 @@ import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
@@ -129,13 +133,32 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public GridInsertionStrategy createGridInsertionStrategy(final AbstractContainerMenu containerMenu,
                                                              final Player player,
-                                                             final GridServiceFactory serviceFactory) {
-        return ensureLoaded().createGridInsertionStrategy(containerMenu, player, serviceFactory);
+                                                             final GridServiceFactory gridServiceFactory) {
+        return ensureLoaded().createGridInsertionStrategy(containerMenu, player, gridServiceFactory);
     }
 
     @Override
     public void addGridInsertionStrategyFactory(final GridInsertionStrategyFactory insertionStrategyFactory) {
         ensureLoaded().addGridInsertionStrategyFactory(insertionStrategyFactory);
+    }
+
+    @Override
+    public GridExtractionStrategy createGridExtractionStrategy(final AbstractContainerMenu containerMenu,
+                                                               final Player player,
+                                                               final GridServiceFactory gridServiceFactory,
+                                                               final ExtractableStorage<ItemResource>
+                                                                   containerExtractionSource) {
+        return ensureLoaded().createGridExtractionStrategy(
+            containerMenu,
+            player,
+            gridServiceFactory,
+            containerExtractionSource
+        );
+    }
+
+    @Override
+    public void addGridExtractionStrategyFactory(final GridExtractionStrategyFactory extractionStrategyFactory) {
+        ensureLoaded().addGridExtractionStrategyFactory(extractionStrategyFactory);
     }
 
     private PlatformApi ensureLoaded() {

@@ -33,16 +33,6 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     }
 
     @Override
-    public void onExtract(final ItemResource itemResource, final GridExtractMode mode, final boolean cursor) {
-        final IItemHandler handler = cursor ? playerCursorStorage : playerInventoryStorage;
-        gridService.extract(
-            itemResource,
-            mode,
-            new ItemHandlerInsertableStorage(InteractionCoordinates.ofItemHandler(handler))
-        );
-    }
-
-    @Override
     public void onScroll(final ItemResource itemResource, final GridScrollMode mode, final int slotIndex) {
         final IItemHandler playerStorage = slotIndex >= 0
             ? new RangedWrapper(new InvWrapper(playerInventory), slotIndex, slotIndex + 1)

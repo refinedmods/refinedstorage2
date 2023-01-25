@@ -1,9 +1,12 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.grid.view;
 
+import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.grid.AbstractPlatformGridResource;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
 import java.util.List;
 import java.util.Map;
@@ -37,6 +40,18 @@ public class FluidGridResource extends AbstractPlatformGridResource {
     @Override
     public int getId() {
         return id;
+    }
+
+    @Override
+    public void onExtract(final GridExtractMode extractMode,
+                          final boolean cursor,
+                          final GridExtractionStrategy extractionStrategy) {
+        extractionStrategy.onExtract(
+            StorageChannelTypes.FLUID,
+            fluidResource,
+            extractMode,
+            cursor
+        );
     }
 
     @Override

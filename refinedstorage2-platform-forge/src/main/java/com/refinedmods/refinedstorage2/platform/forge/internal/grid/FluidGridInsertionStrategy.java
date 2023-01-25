@@ -3,9 +3,10 @@ package com.refinedmods.refinedstorage2.platform.forge.internal.grid;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.AbstractFluidGridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 
 import javax.annotation.Nullable;
 
@@ -20,15 +21,15 @@ import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.of
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidAction;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidStack;
 
-public class FluidGridInsertionStrategy extends AbstractFluidGridInsertionStrategy {
+public class FluidGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu menu;
     private final GridService<FluidResource> gridService;
 
     public FluidGridInsertionStrategy(final AbstractContainerMenu menu,
                                       final Player player,
-                                      final GridServiceFactory serviceFactory) {
+                                      final PlatformGridServiceFactory serviceFactory) {
         this.menu = menu;
-        this.gridService = createGridService(player, serviceFactory);
+        this.gridService = serviceFactory.createForFluid(new PlayerActor(player));
     }
 
     @Override

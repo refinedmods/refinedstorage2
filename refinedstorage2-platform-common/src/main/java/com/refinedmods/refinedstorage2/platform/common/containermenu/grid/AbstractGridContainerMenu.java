@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
+import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
@@ -12,6 +13,7 @@ import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationRe
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
@@ -23,6 +25,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBas
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.CompositeGridResourceFactory;
@@ -44,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainerMenu
-    implements GridWatcher, GridInsertionStrategy {
+    implements GridWatcher, GridInsertionStrategy, GridExtractionStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGridContainerMenu.class);
 
     private static String lastSearchQuery = "";
@@ -53,7 +56,9 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     protected final GridView view;
     @Nullable
     protected AbstractGridBlockEntity<T> grid;
-    protected final GridInsertionStrategy insertionStrategy;
+
+    private final GridInsertionStrategy insertionStrategy;
+    private final GridExtractionStrategy extractionStrategy;
 
     @Nullable
     private Runnable sizeChangedListener;
@@ -61,7 +66,6 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     private GridSynchronizer synchronizer;
     private boolean autoSelected;
     private boolean active;
-
 
     @Nullable
     private GridSearchBox searchBox;
@@ -97,6 +101,7 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
 
         this.synchronizer = loadSynchronizer();
         this.insertionStrategy = new ClientGridInsertionStrategy();
+        this.extractionStrategy = new ClientGridExtractionStrategy();
         this.autoSelected = loadAutoSelected();
     }
 
@@ -121,7 +126,17 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         addSlots(0);
 
         this.synchronizer = PlatformApi.INSTANCE.getGridSynchronizerRegistry().getDefault();
-        this.insertionStrategy = PlatformApi.INSTANCE.createGridInsertionStrategy(this, playerInventory.player, grid.getNode());
+        this.insertionStrategy = PlatformApi.INSTANCE.createGridInsertionStrategy(
+            this,
+            playerInventory.player,
+            grid.getNode()
+        );
+        this.extractionStrategy = PlatformApi.INSTANCE.createGridExtractionStrategy(
+            this,
+            playerInventory.player,
+            grid.getNode(),
+            grid.getContainerExtractionSource()
+        );
     }
 
     private static GridViewBuilder createViewBuilder() {
@@ -282,6 +297,14 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     @Override
     public boolean onInsert(final GridInsertMode insertMode, final boolean tryAlternatives) {
         return insertionStrategy.onInsert(insertMode, tryAlternatives);
+    }
+
+    @Override
+    public <T> boolean onExtract(final PlatformStorageChannelType<T> storageChannelType,
+                                 final T resource,
+                                 final GridExtractMode extractMode,
+                                 final boolean cursor) {
+        return extractionStrategy.onExtract(storageChannelType, resource, extractMode, cursor);
     }
 
     @Override

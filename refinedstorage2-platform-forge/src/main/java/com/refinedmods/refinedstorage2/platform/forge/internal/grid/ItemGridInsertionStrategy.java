@@ -2,9 +2,10 @@ package com.refinedmods.refinedstorage2.platform.forge.internal.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.AbstractItemGridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.InteractionCoordinates;
 import com.refinedmods.refinedstorage2.platform.forge.internal.storage.ItemHandlerExtractableStorage;
 
@@ -17,7 +18,7 @@ import net.minecraftforge.items.wrapper.RangedWrapper;
 
 import static com.refinedmods.refinedstorage2.platform.api.resource.ItemResource.ofItemStack;
 
-public class ItemGridInsertionStrategy extends AbstractItemGridInsertionStrategy {
+public class ItemGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu containerMenu;
     private final GridService<ItemResource> gridService;
     private final Inventory playerInventory;
@@ -25,9 +26,9 @@ public class ItemGridInsertionStrategy extends AbstractItemGridInsertionStrategy
 
     public ItemGridInsertionStrategy(final AbstractContainerMenu containerMenu,
                                      final Player player,
-                                     final GridServiceFactory gridServiceFactory) {
+                                     final PlatformGridServiceFactory gridServiceFactory) {
         this.containerMenu = containerMenu;
-        this.gridService = createGridService(player, gridServiceFactory);
+        this.gridService = gridServiceFactory.createForItem(new PlayerActor(player));
         this.playerInventory = player.getInventory();
         this.playerCursorStorage = new CursorStorage(containerMenu);
     }

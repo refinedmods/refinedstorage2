@@ -2,16 +2,21 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity.grid;
 
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
+import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
+import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -37,6 +42,12 @@ public abstract class AbstractGridBlockEntity<T>
             str
         ));
         this.storageChannelTypeRegistry = str;
+    }
+
+    public ExtractableStorage<ItemResource> getContainerExtractionSource() {
+        return Objects.requireNonNull(getNode().getNetwork())
+            .getComponent(StorageNetworkComponent.class)
+            .getStorageChannel(StorageChannelTypes.ITEM);
     }
 
     @Override

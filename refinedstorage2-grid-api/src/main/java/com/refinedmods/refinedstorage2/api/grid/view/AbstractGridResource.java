@@ -14,6 +14,7 @@ import org.apiguardian.api.API;
  * Represents a resource in the grid.
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
+// TODO: Convert to interface
 public abstract class AbstractGridResource {
     protected final ResourceAmount<?> resourceAmount;
     private final String name;

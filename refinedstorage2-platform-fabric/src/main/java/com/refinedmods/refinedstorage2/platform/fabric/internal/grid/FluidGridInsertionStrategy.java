@@ -3,9 +3,10 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.grid;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.AbstractFluidGridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 
 import javax.annotation.Nullable;
 
@@ -24,7 +25,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.ofFluidVariant;
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toFluidVariant;
 
-public class FluidGridInsertionStrategy extends AbstractFluidGridInsertionStrategy {
+public class FluidGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu containerMenu;
     private final GridService<FluidResource> gridService;
     private final Player player;
@@ -32,9 +33,9 @@ public class FluidGridInsertionStrategy extends AbstractFluidGridInsertionStrate
 
     public FluidGridInsertionStrategy(final AbstractContainerMenu containerMenu,
                                       final Player player,
-                                      final GridServiceFactory gridServiceFactory) {
+                                      final PlatformGridServiceFactory gridServiceFactory) {
         this.containerMenu = containerMenu;
-        this.gridService = createGridService(player, gridServiceFactory);
+        this.gridService = gridServiceFactory.createForFluid(new PlayerActor(player));
         this.player = player;
         this.playerInventoryStorage = PlayerInventoryStorage.of(player.getInventory());
     }

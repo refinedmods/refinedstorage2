@@ -4,13 +4,11 @@ import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.menu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
@@ -95,14 +93,6 @@ public class PlatformProxy implements Platform {
                                                            final GridService<ItemResource> gridService,
                                                            final Inventory playerInventory) {
         return ensureLoaded().createItemGridEventHandler(containerMenu, gridService, playerInventory);
-    }
-
-    @Override
-    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu,
-                                                             final GridService<FluidResource> gridService,
-                                                             final Inventory playerInventory,
-                                                             final ExtractableStorage<ItemResource> bucketStorage) {
-        return ensureLoaded().createFluidGridEventHandler(containerMenu, gridService, playerInventory, bucketStorage);
     }
 
     @Override

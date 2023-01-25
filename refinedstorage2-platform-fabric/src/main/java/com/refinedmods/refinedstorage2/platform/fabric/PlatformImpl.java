@@ -5,19 +5,16 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.energy.InfiniteEnergyStorage;
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.FluidGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
-import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.FluidGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridEventHandlerImpl;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.view.FabricFluidGridResourceFactory;
@@ -110,14 +107,6 @@ public final class PlatformImpl extends AbstractPlatform {
                                                            final GridService<ItemResource> gridService,
                                                            final Inventory playerInventory) {
         return new ItemGridEventHandlerImpl(containerMenu, gridService, playerInventory);
-    }
-
-    @Override
-    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu,
-                                                             final GridService<FluidResource> gridService,
-                                                             final Inventory playerInventory,
-                                                             final ExtractableStorage<ItemResource> bucketStorage) {
-        return new FluidGridEventHandlerImpl(containerMenu, gridService, playerInventory, bucketStorage);
     }
 
     @Override

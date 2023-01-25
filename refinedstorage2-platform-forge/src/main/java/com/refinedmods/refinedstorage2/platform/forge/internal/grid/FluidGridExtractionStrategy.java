@@ -6,14 +6,18 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.EmptyActor;
 import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.FluidGridEventHandler;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -26,41 +30,48 @@ import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidAction;
 import static com.refinedmods.refinedstorage2.platform.forge.util.VariantUtil.toFluidStack;
 
-public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
+public class FluidGridExtractionStrategy implements GridExtractionStrategy {
     private static final ItemResource BUCKET_ITEM_RESOURCE = new ItemResource(Items.BUCKET, null);
 
     private final AbstractContainerMenu menu;
     private final Inventory playerInventory;
     private final GridService<FluidResource> gridService;
     private final PlayerMainInvWrapper playerInventoryStorage;
-    private final ExtractableStorage<ItemResource> bucketStorage;
+    private final ExtractableStorage<ItemResource> containerExtractionSource;
 
-    public FluidGridEventHandlerImpl(final AbstractContainerMenu menu,
-                                     final Inventory playerInventory,
-                                     final GridService<FluidResource> gridService,
-                                     final ExtractableStorage<ItemResource> bucketStorage) {
-        this.menu = menu;
-        this.playerInventory = playerInventory;
-        this.gridService = gridService;
+    public FluidGridExtractionStrategy(final AbstractContainerMenu containerMenu,
+                                       final Player player,
+                                       final PlatformGridServiceFactory gridServiceFactory,
+                                       final ExtractableStorage<ItemResource> containerExtractionSource) {
+        this.menu = containerMenu;
+        this.playerInventory = player.getInventory();
+        this.gridService = gridServiceFactory.createForFluid(new PlayerActor(player));
         this.playerInventoryStorage = new PlayerMainInvWrapper(playerInventory);
-        this.bucketStorage = bucketStorage;
+        this.containerExtractionSource = containerExtractionSource;
+    }
+
+    @Override
+    public <T> boolean onExtract(final PlatformStorageChannelType<T> storageChannelType,
+                                 final T resource,
+                                 final GridExtractMode extractMode,
+                                 final boolean cursor) {
+        if (resource instanceof FluidResource fluidResource) {
+            final boolean bucketInInventory = hasBucketInInventory();
+            final boolean bucketInStorageChannel = hasBucketInStorage();
+            if (bucketInInventory) {
+                extract(fluidResource, extractMode, cursor, true);
+            } else if (bucketInStorageChannel) {
+                extract(fluidResource, extractMode, cursor, false);
+            }
+            return true;
+        }
+        return false;
     }
 
     @SuppressWarnings("ConstantConditions")
     @Nullable
     private IFluidHandlerItem getFluidStorage(final ItemStack stack) {
         return stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null).orElse(null);
-    }
-
-    @Override
-    public void onExtract(final FluidResource fluidResource, final GridExtractMode mode, final boolean cursor) {
-        final boolean bucketInInventory = hasBucketInInventory();
-        final boolean bucketInStorageChannel = hasBucketInStorage();
-        if (bucketInInventory) {
-            extract(fluidResource, mode, cursor, true);
-        } else if (bucketInStorageChannel) {
-            extract(fluidResource, mode, cursor, false);
-        }
     }
 
     private void extract(final FluidResource fluidResource,
@@ -85,7 +96,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
         if (bucketFromInventory) {
             extractBucket(playerInventoryStorage, Action.EXECUTE);
         } else {
-            bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, actor);
+            containerExtractionSource.extract(BUCKET_ITEM_RESOURCE, 1, Action.EXECUTE, actor);
         }
     }
 
@@ -112,7 +123,7 @@ public class FluidGridEventHandlerImpl implements FluidGridEventHandler {
     }
 
     private boolean hasBucketInStorage() {
-        return bucketStorage.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE, EmptyActor.INSTANCE) == 1;
+        return containerExtractionSource.extract(BUCKET_ITEM_RESOURCE, 1, Action.SIMULATE, EmptyActor.INSTANCE) == 1;
     }
 
     private boolean hasBucketInInventory() {

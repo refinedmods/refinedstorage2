@@ -64,7 +64,9 @@ import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockIte
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
 import com.refinedmods.refinedstorage2.platform.forge.block.entity.ForgeDiskDriveBlockEntity;
+import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.FluidHandlerExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.exporter.ItemHandlerExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.network.node.externalstorage.FluidHandlerPlatformExternalStorageProviderFactory;
@@ -170,6 +172,7 @@ public class ModInitializer extends AbstractModInitializer {
         registerAdditionalStorageTypes();
         registerAdditionalStorageChannelTypes();
         registerAdditionalGridInsertionStrategyFactories();
+        registerGridExtractionStrategyFactories();
         registerNetworkComponents();
         registerImporterTransferStrategyFactories();
         registerExporterTransferStrategyFactories();
@@ -193,6 +196,14 @@ public class ModInitializer extends AbstractModInitializer {
 
     private void registerAdditionalGridInsertionStrategyFactories() {
         PlatformApi.INSTANCE.addGridInsertionStrategyFactory(FluidGridInsertionStrategy::new);
+    }
+
+    private void registerGridExtractionStrategyFactories() {
+        PlatformApi.INSTANCE.addGridExtractionStrategyFactory(
+            (containerMenu, player, gridServiceFactory, containerExtractionSource) ->
+                new ItemGridExtractionStrategy(containerMenu, player, gridServiceFactory)
+        );
+        PlatformApi.INSTANCE.addGridExtractionStrategyFactory(FluidGridExtractionStrategy::new);
     }
 
     private void registerImporterTransferStrategyFactories() {

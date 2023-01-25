@@ -3,9 +3,10 @@ package com.refinedmods.refinedstorage2.platform.fabric.internal.grid;
 import com.refinedmods.refinedstorage2.api.core.Action;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.AbstractItemGridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
@@ -19,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.ofItemVariant;
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.toItemVariant;
 
-public class ItemGridInsertionStrategy extends AbstractItemGridInsertionStrategy {
+public class ItemGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu containerMenu;
     private final GridService<ItemResource> gridService;
     private final PlayerInventoryStorage playerInventoryStorage;
@@ -27,9 +28,9 @@ public class ItemGridInsertionStrategy extends AbstractItemGridInsertionStrategy
 
     public ItemGridInsertionStrategy(final AbstractContainerMenu containerMenu,
                                      final Player player,
-                                     final GridServiceFactory gridServiceFactory) {
+                                     final PlatformGridServiceFactory gridServiceFactory) {
         this.containerMenu = containerMenu;
-        this.gridService = createGridService(player, gridServiceFactory);
+        this.gridService = gridServiceFactory.createForItem(new PlayerActor(player));
         this.playerInventoryStorage = PlayerInventoryStorage.of(player.getInventory());
         this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(containerMenu);
     }

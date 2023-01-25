@@ -32,20 +32,6 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
     }
 
     @Override
-    public void onExtract(final ItemResource itemResource, final GridExtractMode mode, final boolean cursor) {
-        gridService.extract(itemResource, mode, (resource, amount, action, source) -> {
-            final ItemVariant itemVariant = toItemVariant(resource);
-            try (Transaction tx = Transaction.openOuter()) {
-                final long inserted = insert(itemVariant, amount, tx, cursor);
-                if (action == Action.EXECUTE) {
-                    tx.commit();
-                }
-                return inserted;
-            }
-        });
-    }
-
-    @Override
     public void onScroll(final ItemResource itemResource, final GridScrollMode mode, final int slotIndex) {
         final Storage<ItemVariant> playerStorage = slotIndex >= 0
             ? playerInventoryStorage.getSlot(slotIndex)
@@ -83,10 +69,5 @@ public class ItemGridEventHandlerImpl implements ItemGridEventHandler {
                 return inserted;
             }
         });
-    }
-
-    private long insert(final ItemVariant itemVariant, final long amount, final Transaction tx, final boolean cursor) {
-        final Storage<ItemVariant> relevantStorage = cursor ? playerCursorStorage : playerInventoryStorage;
-        return relevantStorage.insert(itemVariant, amount, tx);
     }
 }
