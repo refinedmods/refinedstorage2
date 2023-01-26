@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api.storage.channel;
 
-import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
@@ -22,5 +22,5 @@ public interface PlatformStorageChannelType<T> extends StorageChannelType<T> {
 
     T fromBuffer(FriendlyByteBuf buf);
 
-    Optional<AbstractGridResource> toGridResource(ResourceAmount<?> resourceAmount);
+    Optional<GridResource> toGridResource(ResourceAmount<?> resourceAmount);
 }

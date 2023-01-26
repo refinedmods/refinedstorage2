@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.storage.channel;
 
-import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
@@ -40,7 +40,7 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidRe
     }
 
     @Override
-    public Optional<AbstractGridResource> toGridResource(final ResourceAmount<?> resourceAmount) {
+    public Optional<GridResource> toGridResource(final ResourceAmount<?> resourceAmount) {
         return Platform.INSTANCE.getFluidGridResourceFactory().apply(resourceAmount);
     }
 

@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
@@ -25,16 +25,16 @@ public class GridViewImpl implements GridView {
     private static final Logger LOGGER = LoggerFactory.getLogger(GridViewImpl.class);
 
     private final ResourceList<Object> backingList;
-    private final Comparator<AbstractGridResource> identitySort;
+    private final Comparator<GridResource> identitySort;
     private final GridResourceFactory resourceFactory;
     private final Map<Object, TrackedResource> trackedResources = new HashMap<>();
 
-    private List<AbstractGridResource> viewList = new ArrayList<>();
-    private final Map<Object, AbstractGridResource> viewListIndex = new HashMap<>();
+    private List<GridResource> viewList = new ArrayList<>();
+    private final Map<Object, GridResource> viewListIndex = new HashMap<>();
 
     private GridSortingType sortingType = GridSortingType.QUANTITY;
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
-    private Predicate<AbstractGridResource> filter = resource -> true;
+    private Predicate<GridResource> filter = resource -> true;
     @Nullable
     private Runnable listener;
     private boolean preventSorting;
@@ -64,7 +64,7 @@ public class GridViewImpl implements GridView {
     }
 
     @Override
-    public void setFilterAndSort(final Predicate<AbstractGridResource> predicate) {
+    public void setFilterAndSort(final Predicate<GridResource> predicate) {
         this.filter = predicate;
         sort();
     }
@@ -91,15 +91,18 @@ public class GridViewImpl implements GridView {
         LOGGER.info("Sorting grid view");
 
         viewListIndex.clear();
-        viewList = backingList
-            .getAll()
-            .stream()
-            .flatMap(resourceAmount -> resourceFactory.apply(resourceAmount).stream())
-            .filter(filter)
-            .sorted(getComparator())
-            .collect(Collectors.toList());
 
-        viewList.forEach(resource -> resource.populateInViewListIndex(viewListIndex));
+        final List<GridResource> newViewList = new ArrayList<>();
+        for (final ResourceAmount<?> backingListItem : backingList.getAll()) {
+            resourceFactory.apply(backingListItem).ifPresent(gridResource -> {
+                if (filter.test(gridResource)) {
+                    newViewList.add(gridResource);
+                    viewListIndex.put(backingListItem.getResource(), gridResource);
+                }
+            });
+        }
+        newViewList.sort(getComparator());
+        viewList = newViewList;
 
         notifyListener();
     }
@@ -110,7 +113,7 @@ public class GridViewImpl implements GridView {
 
         updateOrRemoveTrackedResource(resource, trackedResource);
 
-        final AbstractGridResource gridResource = viewListIndex.get(resource);
+        final GridResource gridResource = viewListIndex.get(resource);
         if (gridResource != null) {
             LOGGER.debug("{} was already found in the view list", resource);
             if (gridResource.isZeroed()) {
@@ -142,9 +145,9 @@ public class GridViewImpl implements GridView {
 
     private <T> void reinsertZeroedResourceIntoViewList(final T resource,
                                                         final ResourceListOperationResult<?> operationResult,
-                                                        final AbstractGridResource oldGridResource) {
+                                                        final GridResource oldGridResource) {
         LOGGER.debug("{} was zeroed, unzeroing", resource);
-        final AbstractGridResource newResource = resourceFactory.apply(operationResult.resourceAmount()).orElseThrow();
+        final GridResource newResource = resourceFactory.apply(operationResult.resourceAmount()).orElseThrow();
         viewListIndex.put(resource, newResource);
         final int index = CoreValidations.validateNotNegative(
             viewList.indexOf(oldGridResource),
@@ -155,7 +158,7 @@ public class GridViewImpl implements GridView {
 
     private <T> void handleChangeForExistingResource(final T resource,
                                                      final ResourceListOperationResult<?> operationResult,
-                                                     final AbstractGridResource gridResource) {
+                                                     final GridResource gridResource) {
         final boolean noLongerAvailable = !operationResult.available();
         final boolean canBeSorted = !preventSorting;
         if (canBeSorted) {
@@ -170,7 +173,7 @@ public class GridViewImpl implements GridView {
     }
 
     private <T> void updateExistingResourceInViewList(final T resource,
-                                                      final AbstractGridResource gridResource,
+                                                      final GridResource gridResource,
                                                       final boolean noLongerAvailable) {
         viewList.remove(gridResource);
         if (noLongerAvailable) {
@@ -184,7 +187,7 @@ public class GridViewImpl implements GridView {
 
     private <T> void handleChangeForNewResource(final T resource,
                                                 final ResourceListOperationResult<?> operationResult) {
-        final AbstractGridResource gridResource = resourceFactory.apply(operationResult.resourceAmount()).orElseThrow();
+        final GridResource gridResource = resourceFactory.apply(operationResult.resourceAmount()).orElseThrow();
         if (filter.test(gridResource)) {
             LOGGER.debug("Filter allowed, actually adding {}", resource);
             viewListIndex.put(resource, gridResource);
@@ -193,7 +196,7 @@ public class GridViewImpl implements GridView {
         }
     }
 
-    private void addIntoView(final AbstractGridResource resource) {
+    private void addIntoView(final GridResource resource) {
         // Calculate the position according to sorting rules.
         final int wouldBePosition = Collections.binarySearch(viewList, resource, getComparator());
         // Most of the time, the "would be" position is negative, indicating that the resource wasn't found yet in the
@@ -218,10 +221,10 @@ public class GridViewImpl implements GridView {
         }
     }
 
-    private Comparator<AbstractGridResource> getComparator() {
+    private Comparator<GridResource> getComparator() {
         // An identity sort is necessary so the order of items is preserved in quantity sorting mode.
         // If two grid resources have the same quantity, their order would otherwise not be preserved.
-        final Comparator<AbstractGridResource> comparator =
+        final Comparator<GridResource> comparator =
             sortingType.getComparator().apply(this).thenComparing(identitySort);
         if (sortingDirection == GridSortingDirection.ASCENDING) {
             return comparator;
@@ -230,7 +233,7 @@ public class GridViewImpl implements GridView {
     }
 
     @Override
-    public List<AbstractGridResource> getAll() {
+    public List<GridResource> getAll() {
         return viewList;
     }
 }

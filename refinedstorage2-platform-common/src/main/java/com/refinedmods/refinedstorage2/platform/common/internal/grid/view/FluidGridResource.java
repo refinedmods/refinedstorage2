@@ -2,7 +2,6 @@ package com.refinedmods.refinedstorage2.platform.common.internal.grid.view;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.platform.api.grid.AbstractPlatformGridResource;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
@@ -18,7 +17,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 
-public class FluidGridResource extends AbstractPlatformGridResource {
+public class FluidGridResource extends AbstractGridResource<FluidResource> {
     private final FluidResource fluidResource;
     private final int id;
 

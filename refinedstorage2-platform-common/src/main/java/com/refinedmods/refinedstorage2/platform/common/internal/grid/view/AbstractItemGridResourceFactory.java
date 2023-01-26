@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.grid.view;
 
-import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
@@ -19,7 +19,7 @@ import net.minecraft.world.item.TooltipFlag;
 public abstract class AbstractItemGridResourceFactory implements GridResourceFactory {
     @Override
     @SuppressWarnings("unchecked")
-    public Optional<AbstractGridResource> apply(final ResourceAmount<?> resourceAmount) {
+    public Optional<GridResource> apply(final ResourceAmount<?> resourceAmount) {
         if (!(resourceAmount.getResource() instanceof ItemResource itemResource)) {
             return Optional.empty();
         }

@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.internal.grid.view;
 import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.platform.api.grid.AbstractPlatformGridResource;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
@@ -23,7 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
-public class ItemGridResource extends AbstractPlatformGridResource {
+public class ItemGridResource extends AbstractGridResource<ItemResource> {
     private final int id;
     private final ItemStack itemStack;
 
@@ -55,7 +54,7 @@ public class ItemGridResource extends AbstractPlatformGridResource {
                           final GridExtractionStrategy extractionStrategy) {
         extractionStrategy.onExtract(
             StorageChannelTypes.ITEM,
-            ItemResource.ofItemStack(itemStack), // TODO: Use from parent
+            resourceAmount.getResource(),
             extractMode,
             cursor
         );
@@ -65,7 +64,7 @@ public class ItemGridResource extends AbstractPlatformGridResource {
     public void onScroll(final GridScrollMode scrollMode, final GridScrollingStrategy scrollingStrategy) {
         scrollingStrategy.onScroll(
             StorageChannelTypes.ITEM,
-            ItemResource.ofItemStack(itemStack), // TODO: use from parent
+            resourceAmount.getResource(),
             scrollMode,
             -1
         );

@@ -6,13 +6,13 @@ import com.refinedmods.refinedstorage2.api.core.util.LastModified;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
-import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.grid.AbstractPlatformGridResource;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
@@ -289,7 +289,7 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         final int slotX = rowX + 1 + (column * 18);
         final int slotY = rowY + 1;
 
-        AbstractGridResource resource = null;
+        GridResource resource = null;
         if (idx < view.getAll().size()) {
             resource = view.getAll().get(idx);
             renderResourceWithAmount(poseStack, slotX, slotY, resource);
@@ -313,8 +313,8 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
     private void renderResourceWithAmount(final PoseStack poseStack,
                                           final int slotX,
                                           final int slotY,
-                                          final AbstractGridResource resource) {
-        if (resource instanceof AbstractPlatformGridResource platformResource) {
+                                          final GridResource resource) {
+        if (resource instanceof PlatformGridResource platformResource) {
             platformResource.render(poseStack, slotX, slotY);
         }
         renderAmount(poseStack, slotX, slotY, resource);
@@ -323,8 +323,8 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
     private void renderAmount(final PoseStack poseStack,
                               final int slotX,
                               final int slotY,
-                              final AbstractGridResource resource) {
-        if (!(resource instanceof AbstractPlatformGridResource platformResource)) {
+                              final GridResource resource) {
+        if (!(resource instanceof PlatformGridResource platformResource)) {
             return;
         }
         final String text = resource.isZeroed() ? "0" : platformResource.getDisplayedAmount();
@@ -354,8 +354,8 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
 
     private void renderTooltipWithMaybeSmallLines(final PoseStack poseStack, final int mouseX, final int mouseY) {
         final GridView view = getMenu().getView();
-        final AbstractGridResource resource = view.getAll().get(gridSlotNumber);
-        if (!(resource instanceof AbstractPlatformGridResource platformResource)) {
+        final GridResource resource = view.getAll().get(gridSlotNumber);
+        if (!(resource instanceof PlatformGridResource platformResource)) {
             return;
         }
 
@@ -457,8 +457,8 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         getMenu().onInsert(mode, tryAlternatives);
     }
 
-    protected void mouseClickedInGrid(final int clickedButton, final AbstractGridResource resource) {
-        if (resource instanceof AbstractPlatformGridResource platformGridResource) {
+    protected void mouseClickedInGrid(final int clickedButton, final GridResource resource) {
+        if (resource instanceof PlatformGridResource platformGridResource) {
             platformGridResource.onExtract(
                 getExtractMode(clickedButton),
                 shouldExtractToCursor(),
@@ -529,8 +529,8 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
         if (scrollMode == null) {
             return;
         }
-        final AbstractGridResource resource = getMenu().getView().getAll().get(gridSlotNumber);
-        if (!(resource instanceof AbstractPlatformGridResource platformGridResource)) {
+        final GridResource resource = getMenu().getView().getAll().get(gridSlotNumber);
+        if (!(resource instanceof PlatformGridResource platformGridResource)) {
             return;
         }
         platformGridResource.onScroll(scrollMode, getMenu());
