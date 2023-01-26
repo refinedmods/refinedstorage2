@@ -2,10 +2,9 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
@@ -23,9 +22,7 @@ public final class Menus {
     @Nullable
     private Supplier<MenuType<DiskDriveContainerMenu>> diskDrive;
     @Nullable
-    private Supplier<MenuType<ItemGridContainerMenu>> grid;
-    @Nullable
-    private Supplier<MenuType<FluidGridContainerMenu>> fluidGrid;
+    private Supplier<MenuType<GridContainerMenu>> grid;
     @Nullable
     private Supplier<MenuType<ControllerContainerMenu>> controller;
     @Nullable
@@ -48,12 +45,8 @@ public final class Menus {
         return Objects.requireNonNull(diskDrive).get();
     }
 
-    public MenuType<ItemGridContainerMenu> getGrid() {
+    public MenuType<GridContainerMenu> getGrid() {
         return Objects.requireNonNull(grid).get();
-    }
-
-    public MenuType<FluidGridContainerMenu> getFluidGrid() {
-        return Objects.requireNonNull(fluidGrid).get();
     }
 
     public MenuType<ControllerContainerMenu> getController() {
@@ -64,12 +57,8 @@ public final class Menus {
         this.diskDrive = supplier;
     }
 
-    public void setGrid(final Supplier<MenuType<ItemGridContainerMenu>> supplier) {
+    public void setGrid(final Supplier<MenuType<GridContainerMenu>> supplier) {
         this.grid = supplier;
-    }
-
-    public void setFluidGrid(final Supplier<MenuType<FluidGridContainerMenu>> supplier) {
-        this.fluidGrid = supplier;
     }
 
     public void setController(final Supplier<MenuType<ControllerContainerMenu>> supplier) {

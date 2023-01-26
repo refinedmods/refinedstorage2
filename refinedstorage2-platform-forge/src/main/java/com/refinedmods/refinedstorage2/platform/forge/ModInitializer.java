@@ -10,31 +10,28 @@ import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.FluidGridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.ItemGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
@@ -125,7 +122,6 @@ import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXPORTER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.EXTERNAL_STORAGE;
-import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.FLUID_STORAGE_BLOCK;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.IMPORTER;
@@ -270,16 +266,9 @@ public class ModInitializer extends AbstractModInitializer {
         ));
         Blocks.INSTANCE.getGrid().putAll(color -> blockRegistry.register(
             Blocks.INSTANCE.getGrid().getId(color, GRID).getPath(),
-            () -> new ItemGridBlock(Blocks.INSTANCE.getGrid().getName(
+            () -> new GridBlock(Blocks.INSTANCE.getGrid().getName(
                 color,
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")
-            ))
-        ));
-        Blocks.INSTANCE.getFluidGrid().putAll(color -> blockRegistry.register(
-            Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID).getPath(),
-            () -> new FluidGridBlock(Blocks.INSTANCE.getFluidGrid().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "fluid_grid")
             ))
         ));
         Blocks.INSTANCE.getController().putAll(color -> blockRegistry.register(
@@ -418,16 +407,6 @@ public class ModInitializer extends AbstractModInitializer {
                 ))
             )
         ));
-        Blocks.INSTANCE.getFluidGrid().forEach((color, block) -> itemRegistry.register(
-            Blocks.INSTANCE.getFluidGrid().getId(color, FLUID_GRID).getPath(),
-            () -> new GridBlockItem(
-                block.get(),
-                Blocks.INSTANCE.getFluidGrid().getName(color, createTranslation(
-                    BLOCK_TRANSLATION_CATEGORY,
-                    "fluid_grid"
-                ))
-            )
-        ));
     }
 
     private void registerControllerItems() {
@@ -557,15 +536,8 @@ public class ModInitializer extends AbstractModInitializer {
         BlockEntities.INSTANCE.setGrid(blockEntityTypeRegistry.register(
             GRID.getPath(),
             () -> BlockEntityType.Builder.of(
-                ItemGridBlockEntity::new,
+                GridBlockEntity::new,
                 Blocks.INSTANCE.getGrid().toArray()
-            ).build(null)
-        ));
-        BlockEntities.INSTANCE.setFluidGrid(blockEntityTypeRegistry.register(
-            FLUID_GRID.getPath(),
-            () -> BlockEntityType.Builder.of(
-                FluidGridBlockEntity::new,
-                Blocks.INSTANCE.getFluidGrid().toArray()
             ).build(null)
         ));
 
@@ -623,11 +595,7 @@ public class ModInitializer extends AbstractModInitializer {
         ));
         Menus.INSTANCE.setGrid(menuTypeRegistry.register(
             GRID.getPath(),
-            () -> IForgeMenuType.create(ItemGridContainerMenu::new)
-        ));
-        Menus.INSTANCE.setFluidGrid(menuTypeRegistry.register(
-            FLUID_GRID.getPath(),
-            () -> IForgeMenuType.create(FluidGridContainerMenu::new)
+            () -> IForgeMenuType.create(GridContainerMenu::new)
         ));
         Menus.INSTANCE.setItemStorage(menuTypeRegistry.register(
             ITEM_STORAGE_BLOCK.getPath(),

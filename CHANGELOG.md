@@ -15,6 +15,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   You can no longer insert fluids straight from the player slots, you have to insert the fluid while holding the
     fluid container item.
 
+### Removed
+
+-   Removed the Fluid Grid, which has been combined into the regular Grid.
+
 ## [2.0.0-milestone.2.6] - 2023-01-13
 
 ### Fixed

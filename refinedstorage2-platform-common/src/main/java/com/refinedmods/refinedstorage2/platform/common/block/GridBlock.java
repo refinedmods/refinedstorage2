@@ -2,12 +2,18 @@ package com.refinedmods.refinedstorage2.platform.common.block;
 
 import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionType;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.AbstractBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -18,16 +24,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-public abstract class AbstractGridBlock<T extends AbstractGridBlockEntity<?>>
-    extends AbstractDirectionalBlock<BiDirection>
-    implements EntityBlock {
-    protected static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+public class GridBlock extends AbstractDirectionalBlock<BiDirection> implements EntityBlock, ColorableBlock<GridBlock> {
+    private static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+    private static final AbstractBlockEntityTicker<GridBlockEntity> TICKER = new NetworkNodeBlockEntityTicker<>(
+        BlockEntities.INSTANCE::getGrid,
+        ACTIVE
+    );
 
-    private final AbstractBlockEntityTicker<T> ticker;
+    private final MutableComponent name;
 
-    protected AbstractGridBlock(final Properties properties, final AbstractBlockEntityTicker<T> ticker) {
-        super(properties);
-        this.ticker = ticker;
+    public GridBlock(final MutableComponent name) {
+        super(BlockConstants.PROPERTIES);
+        this.name = name;
     }
 
     @Override
@@ -46,11 +54,27 @@ public abstract class AbstractGridBlock<T extends AbstractGridBlockEntity<?>>
         builder.add(ACTIVE);
     }
 
+    @Override
+    public MutableComponent getName() {
+        return this.name;
+    }
+
+    @Override
+    public BlockColorMap<GridBlock> getBlockColorMap() {
+        return Blocks.INSTANCE.getGrid();
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(final BlockPos pos, final BlockState state) {
+        return new GridBlockEntity(pos, state);
+    }
+
     @Nullable
     @Override
     public <O extends BlockEntity> BlockEntityTicker<O> getTicker(final Level level,
                                                                   final BlockState blockState,
                                                                   final BlockEntityType<O> type) {
-        return ticker.get(level, type);
+        return TICKER.get(level, type);
     }
 }

@@ -15,7 +15,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -49,8 +49,8 @@ import org.slf4j.LoggerFactory;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<R>> extends AbstractBaseScreen<T> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGridScreen.class);
+public class GridScreen extends AbstractBaseScreen<GridContainerMenu> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GridScreen.class);
 
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/grid.png");
 
@@ -73,7 +73,7 @@ public abstract class AbstractGridScreen<R, T extends AbstractGridContainerMenu<
     private int visibleRows;
     private int gridSlotNumber;
 
-    protected AbstractGridScreen(final T menu, final Inventory inventory, final Component title) {
+    public GridScreen(final GridContainerMenu menu, final Inventory inventory, final Component title) {
         super(menu, inventory, title);
 
         menu.setSizeChangedListener(this::init);

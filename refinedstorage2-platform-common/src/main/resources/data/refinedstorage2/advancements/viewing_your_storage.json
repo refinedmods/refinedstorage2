@@ -4,10 +4,10 @@
       "item": "refinedstorage2:grid"
     },
     "title": {
-      "translate": "advancements.refinedstorage2.viewing_items"
+      "translate": "advancements.refinedstorage2.viewing_your_storage"
     },
     "description": {
-      "translate": "advancements.refinedstorage2.viewing_items.description"
+      "translate": "advancements.refinedstorage2.viewing_your_storage.description"
     }
   },
   "parent": "refinedstorage2:storing_items",

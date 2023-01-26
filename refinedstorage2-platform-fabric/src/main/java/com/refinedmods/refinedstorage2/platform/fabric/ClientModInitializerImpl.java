@@ -16,8 +16,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockS
 import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiProxy;
@@ -77,8 +76,6 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(Blocks.INSTANCE.getExternalStorage(), RenderType.cutout());
         Blocks.INSTANCE.getGrid().values().forEach(block ->
             BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
-        Blocks.INSTANCE.getFluidGrid().values().forEach(block ->
-            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
         Blocks.INSTANCE.getController().values().forEach(block ->
             BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
         Blocks.INSTANCE.getCreativeController().values().forEach(block ->
@@ -89,7 +86,6 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         for (final DyeColor color : DyeColor.values()) {
             registerEmissiveControllerModels(color);
             registerEmissiveGridModels(color);
-            registerEmissiveFluidGridModels(color);
         }
     }
 
@@ -119,17 +115,6 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         EmissiveModelRegistry.INSTANCE.register(
             ColorMap.generateId(color, IdentifierUtil.MOD_ID, "grid"),
             createIdentifier("block/grid/cutouts/" + color.getName())
-        );
-    }
-
-    private void registerEmissiveFluidGridModels(final DyeColor color) {
-        EmissiveModelRegistry.INSTANCE.register(
-            createIdentifier("block/fluid_grid/" + color.getName()),
-            createIdentifier("block/fluid_grid/cutouts/" + color.getName())
-        );
-        EmissiveModelRegistry.INSTANCE.register(
-            ColorMap.generateId(color, IdentifierUtil.MOD_ID, "fluid_grid"),
-            createIdentifier("block/fluid_grid/cutouts/" + color.getName())
         );
     }
 
@@ -163,8 +148,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
 
     private void registerScreens() {
         MenuScreens.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getGrid(), ItemGridScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getFluidGrid(), FluidGridScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getGrid(), GridScreen::new);
         MenuScreens.register(Menus.INSTANCE.getController(), ControllerScreen::new);
         MenuScreens.register(Menus.INSTANCE.getItemStorage(), ItemStorageBlockScreen::new);
         MenuScreens.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);

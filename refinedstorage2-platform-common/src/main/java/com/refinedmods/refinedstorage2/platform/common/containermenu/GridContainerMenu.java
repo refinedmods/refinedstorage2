@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
+package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
@@ -22,11 +22,11 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBaseContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
+import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridScrollingStrategy;
@@ -43,22 +43,21 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainerMenu
+public class GridContainerMenu extends AbstractBaseContainerMenu
     implements GridWatcher, GridInsertionStrategy, GridExtractionStrategy, GridScrollingStrategy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGridContainerMenu.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GridContainerMenu.class);
 
     private static String lastSearchQuery = "";
 
     protected final Inventory playerInventory;
     protected final GridView view;
     @Nullable
-    protected AbstractGridBlockEntity<T> grid;
+    protected GridBlockEntity grid;
 
     private final GridInsertionStrategy insertionStrategy;
     private final GridExtractionStrategy extractionStrategy;
@@ -74,11 +73,8 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
     @Nullable
     private GridSearchBox searchBox;
 
-    protected AbstractGridContainerMenu(final MenuType<?> menuType,
-                                        final int syncId,
-                                        final Inventory playerInventory,
-                                        final FriendlyByteBuf buf) {
-        super(menuType, syncId);
+    public GridContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
+        super(Menus.INSTANCE.getGrid(), syncId);
 
         this.playerInventory = playerInventory;
 
@@ -110,11 +106,10 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         this.autoSelected = loadAutoSelected();
     }
 
-    protected AbstractGridContainerMenu(final MenuType<?> type,
-                                        final int syncId,
-                                        final Inventory playerInventory,
-                                        final AbstractGridBlockEntity<T> grid) {
-        super(type, syncId);
+    public GridContainerMenu(final int syncId,
+                             final Inventory playerInventory,
+                             final GridBlockEntity grid) {
+        super(Menus.INSTANCE.getGrid(), syncId);
 
         this.view = createViewBuilder().build();
 
@@ -202,12 +197,12 @@ public abstract class AbstractGridContainerMenu<T> extends AbstractBaseContainer
         searchBox.setAutoSelected(isAutoSelected());
         if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
             searchBox.setValue(lastSearchQuery);
-            searchBox.addListener(AbstractGridContainerMenu::updateLastSearchQuery);
+            searchBox.addListener(GridContainerMenu::updateLastSearchQuery);
         }
     }
 
     private static void updateLastSearchQuery(final String text) {
-        AbstractGridContainerMenu.lastSearchQuery = text;
+        GridContainerMenu.lastSearchQuery = text;
     }
 
     @Override
