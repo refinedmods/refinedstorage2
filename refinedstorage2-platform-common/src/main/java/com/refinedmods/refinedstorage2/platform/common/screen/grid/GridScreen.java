@@ -17,7 +17,6 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.SmallTextTooltipRenderer;
@@ -104,7 +103,7 @@ public class GridScreen extends AbstractBaseScreen<GridContainerMenu> {
                 new GridQueryParserImpl(
                     LexerTokenMappings.DEFAULT_MAPPINGS,
                     ParserOperatorMappings.DEFAULT_MAPPINGS,
-                    GridResourceAttributeKeys.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING
+                    GridSearchBoxWidget.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING
                 ),
                 new History(SEARCH_FIELD_HISTORY)
             );

@@ -3,7 +3,9 @@ package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 import com.refinedmods.refinedstorage2.api.core.History;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParser;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserException;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResourceAttributeKey;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.SearchFieldWidget;
 import com.refinedmods.refinedstorage2.query.lexer.Lexer;
 import com.refinedmods.refinedstorage2.query.lexer.LexerException;
@@ -14,6 +16,7 @@ import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -24,6 +27,12 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 
 public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
+    public static final Map<String, Set<GridResourceAttributeKey>> UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING = Map.of(
+        "@", Set.of(GridResourceAttributeKeys.MOD_ID, GridResourceAttributeKeys.MOD_NAME),
+        "$", Set.of(GridResourceAttributeKeys.TAGS),
+        "#", Set.of(GridResourceAttributeKeys.TOOLTIP)
+    );
+
     private final GridView view;
     private final GridQueryParser queryParser;
     private final Set<Consumer<String>> listeners = new HashSet<>();
