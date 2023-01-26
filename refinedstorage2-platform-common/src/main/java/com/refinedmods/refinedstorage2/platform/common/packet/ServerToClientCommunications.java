@@ -2,8 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.packet;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
 import java.util.UUID;
@@ -16,13 +15,9 @@ public interface ServerToClientCommunications {
 
     void sendGridActiveness(ServerPlayer player, boolean active);
 
-    void sendGridFluidUpdate(ServerPlayer player,
-                             FluidResource fluidResource,
-                             long change,
-                             @Nullable TrackedResource trackedResource);
-
-    void sendGridItemUpdate(ServerPlayer player,
-                            ItemResource itemResource,
+    <T> void sendGridUpdate(ServerPlayer player,
+                            PlatformStorageChannelType<T> storageChannelType,
+                            T resource,
                             long change,
                             @Nullable TrackedResource trackedResource);
 

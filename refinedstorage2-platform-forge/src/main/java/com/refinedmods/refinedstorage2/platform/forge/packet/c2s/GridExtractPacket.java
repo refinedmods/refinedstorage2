@@ -1,80 +1,73 @@
 package com.refinedmods.refinedstorage2.platform.forge.packet.c2s;
 
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
-import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.FluidGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 
-import java.util.Objects;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent;
 
-public class GridExtractPacket {
+public class GridExtractPacket<T> {
+    private final PlatformStorageChannelType<T> storageChannelType;
+    private final ResourceLocation storageChannelTypeId;
+    private final T resource;
     private final GridExtractMode mode;
     private final boolean cursor;
-    @Nullable
-    private final ItemResource itemResource;
-    @Nullable
-    private final FluidResource fluidResource;
-    @Nullable
-    private final FriendlyByteBuf buf;
 
-    public GridExtractPacket(final GridExtractMode mode, final boolean cursor, final FriendlyByteBuf buf) {
+    public GridExtractPacket(
+        final PlatformStorageChannelType<T> storageChannelType,
+        final ResourceLocation storageChannelTypeId,
+        final T resource,
+        final GridExtractMode mode,
+        final boolean cursor
+    ) {
+        this.storageChannelType = storageChannelType;
+        this.storageChannelTypeId = storageChannelTypeId;
+        this.resource = resource;
         this.mode = mode;
         this.cursor = cursor;
-        this.itemResource = null;
-        this.fluidResource = null;
-        this.buf = buf;
     }
 
-    public GridExtractPacket(final GridExtractMode mode, final boolean cursor, final ItemResource itemResource) {
-        this.mode = mode;
-        this.cursor = cursor;
-        this.itemResource = itemResource;
-        this.fluidResource = null;
-        this.buf = null;
+    @SuppressWarnings("unchecked")
+    public static GridExtractPacket<?> decode(final FriendlyByteBuf buf) {
+        final ResourceLocation storageChannelTypeId = buf.readResourceLocation();
+        final PlatformStorageChannelType<?> storageChannelType = PlatformApi.INSTANCE
+            .getStorageChannelTypeRegistry()
+            .get(storageChannelTypeId)
+            .orElseThrow();
+        final GridExtractMode mode = getMode(buf.readByte());
+        final boolean cursor = buf.readBoolean();
+        final Object resource = storageChannelType.fromBuffer(buf);
+        return new GridExtractPacket<>(
+            (PlatformStorageChannelType<? super Object>) storageChannelType,
+            storageChannelTypeId,
+            resource,
+            mode,
+            cursor
+        );
     }
 
-    public GridExtractPacket(final GridExtractMode mode, final boolean cursor, final FluidResource fluidResource) {
-        this.mode = mode;
-        this.cursor = cursor;
-        this.itemResource = null;
-        this.fluidResource = fluidResource;
-        this.buf = null;
-    }
-
-    public static GridExtractPacket decode(final FriendlyByteBuf buf) {
-        return new GridExtractPacket(getMode(buf.readByte()), buf.readBoolean(), buf);
-    }
-
-    public static void encode(final GridExtractPacket packet, final FriendlyByteBuf buf) {
+    public static <T> void encode(final GridExtractPacket<T> packet, final FriendlyByteBuf buf) {
+        buf.writeResourceLocation(packet.storageChannelTypeId);
         writeMode(buf, packet.mode);
         buf.writeBoolean(packet.cursor);
-        if (packet.itemResource != null) {
-            PacketUtil.writeItemResource(buf, packet.itemResource);
-        } else if (packet.fluidResource != null) {
-            PacketUtil.writeFluidResource(buf, packet.fluidResource);
-        }
+        packet.storageChannelType.toBuffer(packet.resource, buf);
     }
 
-    public static void handle(final GridExtractPacket packet, final Supplier<NetworkEvent.Context> ctx) {
+    public static <T> void handle(final GridExtractPacket<T> packet, final Supplier<NetworkEvent.Context> ctx) {
         final ServerPlayer player = ctx.get().getSender();
-        if (player != null) {
-            final AbstractContainerMenu menu = player.containerMenu;
-            if (menu instanceof ItemGridEventHandler itemGridEventHandler) {
-                final ItemResource itemResource = PacketUtil.readItemResource(Objects.requireNonNull(packet.buf));
-                ctx.get().enqueueWork(() -> itemGridEventHandler.onExtract(itemResource, packet.mode, packet.cursor));
-            } else if (menu instanceof FluidGridEventHandler fluidGridEventHandler) {
-                final FluidResource fluidResource = PacketUtil.readFluidResource(Objects.requireNonNull(packet.buf));
-                ctx.get().enqueueWork(() -> fluidGridEventHandler.onExtract(fluidResource, packet.mode, packet.cursor));
-            }
+        if (player != null && player.containerMenu instanceof GridExtractionStrategy strategy) {
+            strategy.onExtract(
+                packet.storageChannelType,
+                packet.resource,
+                packet.mode,
+                packet.cursor
+            );
         }
         ctx.get().setPacketHandled(true);
     }

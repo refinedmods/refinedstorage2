@@ -1,17 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.FluidGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.menu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
 import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
@@ -19,14 +15,12 @@ import com.refinedmods.refinedstorage2.platform.common.render.FluidRenderer;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
 
 import java.util.Optional;
-import java.util.function.Function;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
@@ -92,28 +86,18 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public ItemGridEventHandler createItemGridEventHandler(final AbstractContainerMenu containerMenu,
-                                                           final GridService<ItemResource> gridService,
-                                                           final Inventory playerInventory) {
-        return ensureLoaded().createItemGridEventHandler(containerMenu, gridService, playerInventory);
-    }
-
-    @Override
-    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu,
-                                                             final GridService<FluidResource> gridService,
-                                                             final Inventory playerInventory,
-                                                             final ExtractableStorage<ItemResource> bucketStorage) {
-        return ensureLoaded().createFluidGridEventHandler(containerMenu, gridService, playerInventory, bucketStorage);
-    }
-
-    @Override
-    public Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> getItemGridResourceFactory() {
+    public GridResourceFactory getItemGridResourceFactory() {
         return ensureLoaded().getItemGridResourceFactory();
     }
 
     @Override
-    public Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> getFluidGridResourceFactory() {
+    public GridResourceFactory getFluidGridResourceFactory() {
         return ensureLoaded().getFluidGridResourceFactory();
+    }
+
+    @Override
+    public GridInsertionStrategyFactory getDefaultGridInsertionStrategyFactory() {
+        return ensureLoaded().getDefaultGridInsertionStrategyFactory();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.grid;
 
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import javax.annotation.Nullable;
@@ -11,7 +12,7 @@ import org.apiguardian.api.API;
  * A grid listener.
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public interface GridWatcher<T> {
+public interface GridWatcher {
     /**
      * Called when the activeness state of the grid has changed.
      *
@@ -22,8 +23,12 @@ public interface GridWatcher<T> {
     /**
      * Called when a resource is changed.
      *
-     * @param change          the change
-     * @param trackedResource the tracked resource, if present
+     * @param <T>                the resource type
+     * @param storageChannelType the relevant storage channel type
+     * @param change             the change
+     * @param trackedResource    the tracked resource, if present
      */
-    void onChanged(ResourceListOperationResult<T> change, @Nullable TrackedResource trackedResource);
+    <T> void onChanged(StorageChannelType<T> storageChannelType,
+                       ResourceListOperationResult<T> change,
+                       @Nullable TrackedResource trackedResource);
 }

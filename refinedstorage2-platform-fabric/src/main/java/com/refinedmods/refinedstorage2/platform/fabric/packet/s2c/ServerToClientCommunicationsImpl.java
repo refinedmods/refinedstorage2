@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
@@ -34,27 +34,21 @@ public class ServerToClientCommunicationsImpl implements ServerToClientCommunica
     }
 
     @Override
-    public void sendGridFluidUpdate(final ServerPlayer player,
-                                    final FluidResource fluidResource,
-                                    final long change,
-                                    @Nullable final TrackedResource trackerEntry) {
-        sendToPlayer(player, PacketIds.GRID_FLUID_UPDATE, buf -> {
-            PacketUtil.writeFluidResource(buf, fluidResource);
-            buf.writeLong(change);
-            PacketUtil.writeTrackedResource(buf, trackerEntry);
-        });
-    }
-
-    @Override
-    public void sendGridItemUpdate(final ServerPlayer player,
-                                   final ItemResource itemResource,
+    public <T> void sendGridUpdate(final ServerPlayer player,
+                                   final PlatformStorageChannelType<T> storageChannelType,
+                                   final T resource,
                                    final long change,
-                                   @Nullable final TrackedResource trackerEntry) {
-        sendToPlayer(player, PacketIds.GRID_ITEM_UPDATE, buf -> {
-            PacketUtil.writeItemResource(buf, itemResource);
-            buf.writeLong(change);
-            PacketUtil.writeTrackedResource(buf, trackerEntry);
-        });
+                                   @Nullable final TrackedResource trackedResource) {
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresent(id -> sendToPlayer(
+            player,
+            PacketIds.GRID_UPDATE,
+            buf -> {
+                buf.writeResourceLocation(id);
+                storageChannelType.toBuffer(resource, buf);
+                buf.writeLong(change);
+                PacketUtil.writeTrackedResource(buf, trackedResource);
+            }
+        ));
     }
 
     @Override

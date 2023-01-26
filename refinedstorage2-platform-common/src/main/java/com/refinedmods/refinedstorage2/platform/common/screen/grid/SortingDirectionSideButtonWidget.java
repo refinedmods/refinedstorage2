@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
@@ -19,11 +19,11 @@ import net.minecraft.network.chat.Component;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class SortingDirectionSideButtonWidget extends AbstractSideButtonWidget {
-    private final AbstractGridContainerMenu<?> menu;
+    private final GridContainerMenu menu;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSortingDirection, List<Component>> tooltips = new EnumMap<>(GridSortingDirection.class);
 
-    public SortingDirectionSideButtonWidget(final AbstractGridContainerMenu<?> menu,
+    public SortingDirectionSideButtonWidget(final GridContainerMenu menu,
                                             final TooltipRenderer tooltipRenderer) {
         super(createPressAction(menu));
         this.menu = menu;
@@ -31,7 +31,7 @@ public class SortingDirectionSideButtonWidget extends AbstractSideButtonWidget {
         Arrays.stream(GridSortingDirection.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
-    private static OnPress createPressAction(final AbstractGridContainerMenu<?> menu) {
+    private static OnPress createPressAction(final GridContainerMenu menu) {
         return btn -> menu.setSortingDirection(toggle(menu.getSortingDirection()));
     }
 

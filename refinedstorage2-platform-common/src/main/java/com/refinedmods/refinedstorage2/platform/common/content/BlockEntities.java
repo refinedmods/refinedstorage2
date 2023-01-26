@@ -2,13 +2,12 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.FluidGridBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.ItemGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
@@ -30,9 +29,7 @@ public final class BlockEntities {
     @Nullable
     private Supplier<BlockEntityType<? extends AbstractDiskDriveBlockEntity>> diskDrive;
     @Nullable
-    private Supplier<BlockEntityType<ItemGridBlockEntity>> grid;
-    @Nullable
-    private Supplier<BlockEntityType<FluidGridBlockEntity>> fluidGrid;
+    private Supplier<BlockEntityType<GridBlockEntity>> grid;
     @Nullable
     private Supplier<BlockEntityType<ControllerBlockEntity>> controller;
     @Nullable
@@ -69,20 +66,12 @@ public final class BlockEntities {
         this.diskDrive = supplier;
     }
 
-    public BlockEntityType<ItemGridBlockEntity> getGrid() {
+    public BlockEntityType<GridBlockEntity> getGrid() {
         return Objects.requireNonNull(grid).get();
     }
 
-    public void setGrid(final Supplier<BlockEntityType<ItemGridBlockEntity>> supplier) {
+    public void setGrid(final Supplier<BlockEntityType<GridBlockEntity>> supplier) {
         this.grid = supplier;
-    }
-
-    public BlockEntityType<FluidGridBlockEntity> getFluidGrid() {
-        return Objects.requireNonNull(fluidGrid).get();
-    }
-
-    public void setFluidGrid(final Supplier<BlockEntityType<FluidGridBlockEntity>> supplier) {
-        this.fluidGrid = supplier;
     }
 
     public BlockEntityType<ControllerBlockEntity> getController() {

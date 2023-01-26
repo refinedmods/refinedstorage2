@@ -1,17 +1,13 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.FluidGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.menu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
 import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
@@ -19,13 +15,11 @@ import com.refinedmods.refinedstorage2.platform.common.render.FluidRenderer;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
@@ -55,18 +49,11 @@ public interface Platform {
 
     boolean isKeyDown(KeyMapping keyMapping);
 
-    ItemGridEventHandler createItemGridEventHandler(AbstractContainerMenu containerMenu,
-                                                    GridService<ItemResource> gridService,
-                                                    Inventory playerInventory);
+    GridResourceFactory getItemGridResourceFactory();
 
-    FluidGridEventHandler createFluidGridEventHandler(AbstractContainerMenu containerMenu,
-                                                      GridService<FluidResource> gridService,
-                                                      Inventory playerInventory,
-                                                      ExtractableStorage<ItemResource> bucketStorage);
+    GridResourceFactory getFluidGridResourceFactory();
 
-    Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> getItemGridResourceFactory();
-
-    Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> getFluidGridResourceFactory();
+    GridInsertionStrategyFactory getDefaultGridInsertionStrategyFactory();
 
     FluidRenderer getFluidRenderer();
 

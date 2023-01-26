@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
@@ -18,11 +18,11 @@ import net.minecraft.resources.ResourceLocation;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
 public class SynchronizationSideButtonWidget extends AbstractSideButtonWidget {
-    private final AbstractGridContainerMenu<?> menu;
+    private final GridContainerMenu menu;
     private final TooltipRenderer tooltipRenderer;
     private final Map<GridSynchronizer, List<Component>> tooltips = new HashMap<>();
 
-    public SynchronizationSideButtonWidget(final AbstractGridContainerMenu<?> menu,
+    public SynchronizationSideButtonWidget(final GridContainerMenu menu,
                                            final TooltipRenderer tooltipRenderer,
                                            final List<GridSynchronizer> synchronizers) {
         super(createPressAction(menu));
@@ -31,7 +31,7 @@ public class SynchronizationSideButtonWidget extends AbstractSideButtonWidget {
         synchronizers.forEach(synchronizer -> tooltips.put(synchronizer, calculateTooltip(synchronizer)));
     }
 
-    private static OnPress createPressAction(final AbstractGridContainerMenu<?> menu) {
+    private static OnPress createPressAction(final GridContainerMenu menu) {
         return btn -> menu.toggleSynchronizer();
     }
 

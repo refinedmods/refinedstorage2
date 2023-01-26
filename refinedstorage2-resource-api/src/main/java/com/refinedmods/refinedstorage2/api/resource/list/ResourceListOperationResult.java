@@ -16,6 +16,8 @@ import org.apiguardian.api.API;
  * @param available      whether this resource is still available in the list, or if it was removed
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.2")
-public record ResourceListOperationResult<T>(ResourceAmount<T> resourceAmount, long change, UUID id,
+public record ResourceListOperationResult<T>(ResourceAmount<T> resourceAmount,
+                                             long change,
+                                             UUID id,
                                              boolean available) {
 }
