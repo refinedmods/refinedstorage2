@@ -19,7 +19,7 @@ public abstract class AbstractPlatformStorageChannelType<T> implements PlatformS
     private final String name;
     private final StorageChannelType<T> delegate;
 
-    public AbstractPlatformStorageChannelType(final String name, final StorageChannelType<T> delegate) {
+    protected AbstractPlatformStorageChannelType(final String name, final StorageChannelType<T> delegate) {
         this.name = name;
         this.delegate = CoreValidations.validateNotNull(delegate, "Delegate cannot be null");
     }

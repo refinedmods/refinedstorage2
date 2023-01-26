@@ -7,7 +7,7 @@ import com.refinedmods.refinedstorage2.api.storage.InsertableStorage;
 import com.refinedmods.refinedstorage2.api.storage.TransferHelper;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 
-import java.util.function.Function;
+import java.util.function.ToLongFunction;
 
 import org.apiguardian.api.API;
 
@@ -15,7 +15,7 @@ import org.apiguardian.api.API;
 public class GridServiceImpl<T> implements GridService<T> {
     private final StorageChannel<T> storageChannel;
     private final Actor actor;
-    private final Function<T, Long> maxAmountProvider;
+    private final ToLongFunction<T> maxAmountProvider;
     private final long singleAmount;
 
     /**
@@ -27,7 +27,7 @@ public class GridServiceImpl<T> implements GridService<T> {
      */
     public GridServiceImpl(final StorageChannel<T> storageChannel,
                            final Actor actor,
-                           final Function<T, Long> maxAmountProvider,
+                           final ToLongFunction<T> maxAmountProvider,
                            final long singleAmount) {
         this.storageChannel = storageChannel;
         this.actor = actor;
@@ -51,7 +51,7 @@ public class GridServiceImpl<T> implements GridService<T> {
 
     private long getExtractableAmount(final T resource) {
         final long totalSize = storageChannel.get(resource).map(ResourceAmount::getAmount).orElse(0L);
-        final long maxAmount = maxAmountProvider.apply(resource);
+        final long maxAmount = maxAmountProvider.applyAsLong(resource);
         return Math.min(totalSize, maxAmount);
     }
 
@@ -67,7 +67,7 @@ public class GridServiceImpl<T> implements GridService<T> {
     @Override
     public void insert(final T resource, final GridInsertMode insertMode, final ExtractableStorage<T> source) {
         final long amount = switch (insertMode) {
-            case ENTIRE_RESOURCE -> maxAmountProvider.apply(resource);
+            case ENTIRE_RESOURCE -> maxAmountProvider.applyAsLong(resource);
             case SINGLE_RESOURCE -> singleAmount;
         };
         TransferHelper.transfer(resource, amount, actor, source, storageChannel, null);

@@ -94,7 +94,7 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
         final Minecraft minecraft = Minecraft.getInstance();
         return itemStack.getTooltipLines(
             minecraft.player,
-            minecraft.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL
+            minecraft.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL
         );
     }
 }

@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
-import java.util.function.Function;
+import java.util.function.ToLongFunction;
 
 public class PlatformGridServiceFactoryImpl implements PlatformGridServiceFactory {
     private final GridServiceFactory delegate;
@@ -22,7 +22,7 @@ public class PlatformGridServiceFactoryImpl implements PlatformGridServiceFactor
     @Override
     public <T> GridService<T> create(final StorageChannelType<T> storageChannelType,
                                      final Actor actor,
-                                     final Function<T, Long> maxAmountProvider,
+                                     final ToLongFunction<T> maxAmountProvider,
                                      final long singleAmount) {
         return delegate.create(storageChannelType, actor, maxAmountProvider, singleAmount);
     }
@@ -33,7 +33,7 @@ public class PlatformGridServiceFactoryImpl implements PlatformGridServiceFactor
         return create(
             StorageChannelTypes.ITEM,
             actor,
-            itemResource -> (long) itemResource.item().getMaxStackSize(),
+            itemResource -> itemResource.item().getMaxStackSize(),
             1
         );
     }

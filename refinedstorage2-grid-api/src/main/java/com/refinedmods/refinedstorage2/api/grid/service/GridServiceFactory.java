@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.api.grid.service;
 import com.refinedmods.refinedstorage2.api.storage.Actor;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
-import java.util.function.Function;
+import java.util.function.ToLongFunction;
 
 import org.apiguardian.api.API;
 
@@ -12,7 +12,7 @@ public interface GridServiceFactory {
     <T> GridService<T> create(
         StorageChannelType<T> storageChannelType,
         Actor actor,
-        Function<T, Long> maxAmountProvider,
+        ToLongFunction<T> maxAmountProvider,
         long singleAmount
     );
 }

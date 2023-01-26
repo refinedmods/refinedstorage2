@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.ToLongFunction;
 import javax.annotation.Nullable;
 
 public class GridNetworkNode extends AbstractNetworkNode implements GridServiceFactory {
@@ -110,7 +110,7 @@ public class GridNetworkNode extends AbstractNetworkNode implements GridServiceF
     public <T> GridService<T> create(
         final StorageChannelType<T> storageChannelType,
         final Actor actor,
-        final Function<T, Long> maxAmountProvider,
+        final ToLongFunction<T> maxAmountProvider,
         final long singleAmount
     ) {
         final StorageChannel<T> storageChannel = getStorageChannel(storageChannelType);

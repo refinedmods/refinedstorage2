@@ -92,8 +92,8 @@ class GridNetworkNodeTest {
         sut.setActive(false);
 
         // Assert
-        verify(watcher).onActiveChanged(eq(true));
-        verify(watcher).onActiveChanged(eq(false));
+        verify(watcher).onActiveChanged(true);
+        verify(watcher).onActiveChanged(false);
         verifyNoMoreInteractions(watcher);
     }
 
