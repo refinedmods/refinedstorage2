@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.api.core.registry;
 
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
 
@@ -61,8 +62,19 @@ public interface OrderedRegistry<I, T> {
      * Returns the next value in the ordered list.
      * If the value is not found, it will return the default value.
      *
-     * @param value the value
+     * @param value the given value
      * @return the next value after the given value
      */
     T next(T value);
+
+    /**
+     * Returns the next value in the ordered list.
+     * If the value is not found, it will the default value.
+     * If the value is the last value in the ordered list, it will return null.
+     *
+     * @param value the given value
+     * @return the next value after the given value, or null if it's the last value
+     */
+    @Nullable
+    T nextOrNullIfLast(T value);
 }

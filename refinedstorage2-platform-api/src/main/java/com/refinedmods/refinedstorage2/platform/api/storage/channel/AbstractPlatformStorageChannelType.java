@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.MutableComponent;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.4")
@@ -18,10 +19,14 @@ public abstract class AbstractPlatformStorageChannelType<T> implements PlatformS
 
     private final String name;
     private final StorageChannelType<T> delegate;
+    private final MutableComponent title;
 
-    protected AbstractPlatformStorageChannelType(final String name, final StorageChannelType<T> delegate) {
+    protected AbstractPlatformStorageChannelType(final String name,
+                                                 final StorageChannelType<T> delegate,
+                                                 final MutableComponent title) {
         this.name = name;
         this.delegate = CoreValidations.validateNotNull(delegate, "Delegate cannot be null");
+        this.title = title;
     }
 
     @Override
@@ -48,6 +53,11 @@ public abstract class AbstractPlatformStorageChannelType<T> implements PlatformS
     @Override
     public StorageChannel<T> create() {
         return delegate.create();
+    }
+
+    @Override
+    public MutableComponent getTitle() {
+        return title;
     }
 
     @Override

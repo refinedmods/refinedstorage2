@@ -122,6 +122,11 @@ public class GridScreen extends AbstractBaseScreen<GridContainerMenu> {
         addSideButton(new SortingTypeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new SizeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new AutoSelectedSideButtonWidget(getMenu(), this::renderComponentTooltip));
+        addSideButton(new StorageChannelTypeSideButtonWidget(
+            getMenu(),
+            this::renderComponentTooltip,
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll()
+        ));
 
         final OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry =
             PlatformApi.INSTANCE.getGridSynchronizerRegistry();

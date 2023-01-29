@@ -69,6 +69,12 @@ public interface Config {
         GridSize getSize();
 
         void setSize(GridSize size);
+
+        Optional<ResourceLocation> getStorageChannelType();
+
+        void setStorageChannelType(ResourceLocation storageChannelTypeId);
+
+        void clearStorageChannelType();
     }
 
     interface DiskDriveEntry extends SimpleEnergyUsageEntry {

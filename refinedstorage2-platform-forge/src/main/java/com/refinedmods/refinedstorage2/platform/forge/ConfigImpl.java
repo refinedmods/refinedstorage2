@@ -174,6 +174,7 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.BooleanValue smoothScrolling;
         private final ForgeConfigSpec.BooleanValue autoSelected;
         private final ForgeConfigSpec.ConfigValue<String> synchronizer;
+        private final ForgeConfigSpec.ConfigValue<String> storageChannelType;
         private final ForgeConfigSpec.EnumValue<GridSortingDirection> sortingDirection;
         private final ForgeConfigSpec.EnumValue<GridSortingTypes> sortingType;
         private final ForgeConfigSpec.EnumValue<GridSize> size;
@@ -207,6 +208,9 @@ public class ConfigImpl implements Config {
             synchronizer = builder
                 .comment("The synchronization type of the Grid search box")
                 .define("synchronizer", "");
+            storageChannelType = builder
+                .comment("The storage channel type to be shown")
+                .define("storageChannelType", "");
             sortingDirection = builder
                 .comment("The sorting direction")
                 .defineEnum("sortingDirection", GridSortingDirection.ASCENDING);
@@ -310,6 +314,24 @@ public class ConfigImpl implements Config {
         @Override
         public void setSize(final GridSize size) {
             this.size.set(size);
+        }
+
+        @Override
+        public Optional<ResourceLocation> getStorageChannelType() {
+            if (storageChannelType == null || storageChannelType.get().trim().isBlank()) {
+                return Optional.empty();
+            }
+            return Optional.of(storageChannelType.get()).map(ResourceLocation::new);
+        }
+
+        @Override
+        public void setStorageChannelType(final ResourceLocation storageChannelTypeId) {
+            this.storageChannelType.set(storageChannelTypeId.toString());
+        }
+
+        @Override
+        public void clearStorageChannelType() {
+            this.storageChannelType.set("");
         }
     }
 

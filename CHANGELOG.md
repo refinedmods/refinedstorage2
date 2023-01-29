@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-   Added a "Storage channel" filter in the Grid that determines which resource type is shown. Defaults to "All".
+
 ### Changed
 
 -   Ported to Minecraft 1.19.3.
