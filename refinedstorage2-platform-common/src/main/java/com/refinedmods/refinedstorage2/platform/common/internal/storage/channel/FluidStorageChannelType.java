@@ -18,7 +18,6 @@ import java.util.Optional;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
@@ -31,7 +30,10 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidRe
                 final FuzzyResourceList<FluidResource> fuzzyList = new FuzzyResourceListImpl<>(list);
                 return new FuzzyStorageChannelImpl<>(fuzzyList);
             },
-            createTranslation("misc", "storage_channel_type.fluid")
+            createTranslation("misc", "storage_channel_type.fluid"),
+            AbstractSideButtonWidget.DEFAULT_TEXTURE,
+            16,
+            128
         );
     }
 
@@ -53,21 +55,6 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidRe
     @Override
     public boolean isGridResourceBelonging(final GridResource gridResource) {
         return gridResource instanceof FluidGridResource;
-    }
-
-    @Override
-    public ResourceLocation getTextureIdentifier() {
-        return AbstractSideButtonWidget.DEFAULT_TEXTURE;
-    }
-
-    @Override
-    public int getXTexture() {
-        return 16;
-    }
-
-    @Override
-    public int getYTexture() {
-        return 128;
     }
 
     @Override
