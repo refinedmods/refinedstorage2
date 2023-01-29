@@ -2,6 +2,8 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
+import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserException;
+import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
@@ -14,6 +16,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
@@ -35,7 +38,11 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.Compos
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
+import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
+import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
+import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -51,6 +58,15 @@ import org.slf4j.LoggerFactory;
 public class GridContainerMenu extends AbstractBaseContainerMenu
     implements GridWatcher, GridInsertionStrategy, GridExtractionStrategy, GridScrollingStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(GridContainerMenu.class);
+    private static final GridQueryParserImpl QUERY_PARSER = new GridQueryParserImpl(
+        LexerTokenMappings.DEFAULT_MAPPINGS,
+        ParserOperatorMappings.DEFAULT_MAPPINGS,
+        Map.of(
+            "@", Set.of(GridResourceAttributeKeys.MOD_ID, GridResourceAttributeKeys.MOD_NAME),
+            "$", Set.of(GridResourceAttributeKeys.TAGS),
+            "#", Set.of(GridResourceAttributeKeys.TOOLTIP)
+        )
+    );
 
     private static String lastSearchQuery = "";
 
@@ -196,10 +212,32 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
 
     public void setSearchBox(final GridSearchBox searchBox) {
         this.searchBox = searchBox;
-        searchBox.setAutoSelected(isAutoSelected());
+        registerViewUpdatingListener(searchBox);
+        configureSearchBox(searchBox);
+    }
+
+    private void registerViewUpdatingListener(final GridSearchBox theSearchBox) {
+        theSearchBox.addListener(text -> {
+            final boolean valid = onSearchTextChanged(text);
+            theSearchBox.setValid(valid);
+        });
+    }
+
+    private boolean onSearchTextChanged(final String text) {
+        try {
+            view.setFilterAndSort(QUERY_PARSER.parse(text));
+            return true;
+        } catch (GridQueryParserException e) {
+            view.setFilterAndSort(resource -> false);
+            return false;
+        }
+    }
+
+    private void configureSearchBox(final GridSearchBox theSearchBox) {
+        theSearchBox.setAutoSelected(isAutoSelected());
         if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
-            searchBox.setValue(lastSearchQuery);
-            searchBox.addListener(GridContainerMenu::updateLastSearchQuery);
+            theSearchBox.setValue(lastSearchQuery);
+            theSearchBox.addListener(GridContainerMenu::updateLastSearchQuery);
         }
     }
 
