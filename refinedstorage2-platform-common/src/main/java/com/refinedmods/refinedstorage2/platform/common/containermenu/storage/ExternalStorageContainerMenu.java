@@ -1,7 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage;
 
-import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.ResourceTypeAccessor;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
@@ -11,18 +9,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 
-public class ExternalStorageContainerMenu extends AbstractStorageContainerMenu implements ResourceTypeAccessor {
+public class ExternalStorageContainerMenu extends AbstractStorageContainerMenu {
     private static final int FILTER_SLOT_X = 8;
     private static final int FILTER_SLOT_Y = 20;
 
     public ExternalStorageContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
-        super(Menus.INSTANCE.getExternalStorage(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry());
-
-        addSlots(
-            playerInventory.player,
-            new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9)
-        );
-
+        super(Menus.INSTANCE.getExternalStorage(), syncId);
+        addSlots(playerInventory.player, new ResourceFilterContainer(9));
         initializeResourceFilterSlots(buf);
     }
 
@@ -30,15 +23,7 @@ public class ExternalStorageContainerMenu extends AbstractStorageContainerMenu i
                                         final Player player,
                                         final ResourceFilterContainer resourceFilterContainer,
                                         final StorageConfigurationContainer configContainer) {
-        super(
-            Menus.INSTANCE.getExternalStorage(),
-            syncId,
-            PlatformApi.INSTANCE.getResourceTypeRegistry(),
-            player,
-            configContainer,
-            resourceFilterContainer
-        );
-
+        super(Menus.INSTANCE.getExternalStorage(), syncId, player, configContainer);
         addSlots(player, resourceFilterContainer);
     }
 

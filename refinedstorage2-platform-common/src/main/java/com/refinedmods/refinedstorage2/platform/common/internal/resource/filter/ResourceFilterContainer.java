@@ -1,15 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter;
 
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
+import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nullable;
 
@@ -17,41 +16,31 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ResourceFilterContainer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceFilterContainer.class);
-
-    private final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry;
-    private final FilteredResource[] items;
+    private final FilteredResource<?>[] items;
     private final Runnable listener;
     private final long maxAmount;
 
-    public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
-                                   final int size,
+    public ResourceFilterContainer(final int size,
                                    final long maxAmount) {
-        this(resourceTypeRegistry, size, () -> {
+        this(size, () -> {
         }, maxAmount);
     }
 
-    public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
-                                   final int size) {
-        this(resourceTypeRegistry, size, () -> {
+    public ResourceFilterContainer(final int size) {
+        this(size, () -> {
         }, -1);
     }
 
-    public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
-                                   final int size,
+    public ResourceFilterContainer(final int size,
                                    final Runnable listener) {
-        this(resourceTypeRegistry, size, listener, -1);
+        this(size, listener, -1);
     }
 
-    public ResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
-                                   final int size,
+    public ResourceFilterContainer(final int size,
                                    final Runnable listener,
                                    final long maxAmount) {
-        this.resourceTypeRegistry = resourceTypeRegistry;
         this.items = new FilteredResource[size];
         this.listener = listener;
         this.maxAmount = maxAmount;
@@ -61,16 +50,20 @@ public class ResourceFilterContainer {
         return maxAmount >= 0;
     }
 
-    public void set(final int index, final FilteredResource resource) {
+    public void set(final int index, final FilteredResource<?> resource) {
         setSilently(index, resource);
         listener.run();
+    }
+
+    private void setSilently(final int index, final FilteredResource<?> resource) {
+        items[index] = resource;
     }
 
     public void setAmount(final int index, final long amount) {
         if (!supportsAmount()) {
             return;
         }
-        final FilteredResource filteredResource = get(index);
+        final FilteredResource<?> filteredResource = get(index);
         if (filteredResource == null) {
             return;
         }
@@ -80,10 +73,6 @@ public class ResourceFilterContainer {
             Math.min(maxAmount, filteredResource.getMaxAmount())
         );
         set(index, filteredResource.withAmount(newAmount));
-    }
-
-    private void setSilently(final int index, final FilteredResource resource) {
-        items[index] = resource;
     }
 
     public void remove(final int index) {
@@ -100,7 +89,7 @@ public class ResourceFilterContainer {
     }
 
     @Nullable
-    public FilteredResource get(final int index) {
+    public FilteredResource<?> get(final int index) {
         return items[index];
     }
 
@@ -114,7 +103,7 @@ public class ResourceFilterContainer {
 
     private <C extends Collection<Object>> C getTemplates(final C result) {
         for (int i = 0; i < size(); ++i) {
-            final FilteredResource item = items[i];
+            final FilteredResource<?> item = items[i];
             if (item == null) {
                 continue;
             }
@@ -123,40 +112,26 @@ public class ResourceFilterContainer {
         return result;
     }
 
-    public ResourceType determineDefaultType() {
-        final List<ResourceType> distinctTypes = Arrays.stream(items)
-            .filter(Objects::nonNull)
-            .map(FilteredResource::getType)
-            .distinct()
-            .toList();
-        if (distinctTypes.size() == 1) {
-            return distinctTypes.get(0);
-        }
-        return resourceTypeRegistry.getDefault();
-    }
-
     public void writeToUpdatePacket(final FriendlyByteBuf buf) {
-        buf.writeResourceLocation(resourceTypeRegistry.getId(determineDefaultType())
-            .orElseThrow(() -> new IllegalStateException("Default resource type not registered")));
         for (int index = 0; index < items.length; ++index) {
-            writeToUpdatePacket(index, buf);
+            final FilteredResource<?> item = items[index];
+            if (item == null) {
+                buf.writeBoolean(false);
+                continue;
+            }
+            writeToUpdatePacket(buf, item);
         }
     }
 
-    public void writeToUpdatePacket(final int index, final FriendlyByteBuf buf) {
-        final FilteredResource item = items[index];
-        if (item == null) {
-            buf.writeBoolean(false);
-            return;
-        }
-        resourceTypeRegistry.getId(item.getType()).ifPresentOrElse(
-            id -> {
-                buf.writeBoolean(true);
-                buf.writeResourceLocation(id);
-                item.writeToPacket(buf);
-            },
-            () -> buf.writeBoolean(false)
-        );
+    private <T> void writeToUpdatePacket(final FriendlyByteBuf buf,
+                                         final FilteredResource<T> item) {
+        final PlatformStorageChannelType<T> storageChannelType = item.getStorageChannelType();
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresentOrElse(id -> {
+            buf.writeBoolean(true);
+            buf.writeResourceLocation(id);
+            storageChannelType.toBuffer(item.getValue(), buf);
+            buf.writeLong(item.getAmount());
+        }, () -> buf.writeBoolean(false));
     }
 
     public void readFromUpdatePacket(final int index, final FriendlyByteBuf buf) {
@@ -166,58 +141,78 @@ public class ResourceFilterContainer {
             return;
         }
         final ResourceLocation id = buf.readResourceLocation();
-        resourceTypeRegistry.get(id).ifPresentOrElse(
-            type -> setSilently(index, type.fromPacket(buf)),
-            () -> LOGGER.warn("Resource type {} is not registered on the client, cannot read from packet", id)
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().get(id).ifPresent(
+            storageChannelType -> readFromUpdatePacket(index, buf, storageChannelType)
+        );
+    }
+
+    private <T> void readFromUpdatePacket(final int index,
+                                          final FriendlyByteBuf buf,
+                                          final PlatformStorageChannelType<T> storageChannelType) {
+        final T resource = storageChannelType.fromBuffer(buf);
+        final long amount = buf.readLong();
+        storageChannelType.toFilteredResource(new ResourceAmount<>(resource, amount)).ifPresent(
+            filteredResource -> setSilently(index, filteredResource)
         );
     }
 
     public CompoundTag toTag() {
         final CompoundTag tag = new CompoundTag();
         for (int i = 0; i < size(); ++i) {
-            final FilteredResource item = items[i];
+            final FilteredResource<?> item = items[i];
             if (item == null) {
                 continue;
             }
-            final int index = i;
-            resourceTypeRegistry.getId(item.getType()).ifPresentOrElse(
-                id -> addToTag(tag, index, item, id),
-                () -> LOGGER.warn("Resource type {} is not registered, cannot serialize", item.getType())
-            );
+            addToTag(tag, i, item);
         }
         return tag;
     }
 
-    private void addToTag(final CompoundTag tag,
-                          final int index,
-                          final FilteredResource item,
-                          final ResourceLocation typeId) {
+    private <T> void addToTag(final CompoundTag tag,
+                              final int index,
+                              final FilteredResource<T> item) {
+        final PlatformStorageChannelType<T> storageChannelType = item.getStorageChannelType();
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getId(storageChannelType).ifPresent(
+            storageChannelTypeId -> addToTag(tag, index, item, storageChannelType, storageChannelTypeId)
+        );
+    }
+
+    private <T> void addToTag(final CompoundTag tag,
+                              final int index,
+                              final FilteredResource<T> filteredResource,
+                              final PlatformStorageChannelType<T> storageChannelType,
+                              final ResourceLocation storageChannelTypeId) {
         final CompoundTag serialized = new CompoundTag();
-        serialized.putString("t", typeId.toString());
-        serialized.put("v", item.toTag());
+        serialized.putString("t", storageChannelTypeId.toString());
+        serialized.put("v", storageChannelType.toTag(filteredResource.getValue()));
+        serialized.putLong("a", filteredResource.getAmount());
         tag.put("s" + index, serialized);
     }
 
-    public void load(final CompoundTag tag) {
+    public void fromTag(final CompoundTag tag) {
         for (int i = 0; i < size(); ++i) {
             final String key = "s" + i;
             if (!tag.contains(key)) {
                 continue;
             }
             final CompoundTag item = tag.getCompound(key);
-            load(i, item);
+            fromTag(i, item);
         }
     }
 
-    private void load(final int index, final CompoundTag item) {
-        final ResourceLocation typeId = new ResourceLocation(item.getString("t"));
-        resourceTypeRegistry.get(typeId).ifPresentOrElse(
-            type -> load(index, item, type),
-            () -> LOGGER.warn("Resource type {} is not registered, cannot deserialize", typeId)
+    private void fromTag(final int index, final CompoundTag tag) {
+        final ResourceLocation storageChannelTypeId = new ResourceLocation(tag.getString("t"));
+        PlatformApi.INSTANCE.getStorageChannelTypeRegistry().get(storageChannelTypeId).ifPresent(
+            storageChannelType -> fromTag(index, tag, storageChannelType)
         );
     }
 
-    private void load(final int index, final CompoundTag item, final ResourceType type) {
-        type.fromTag(item.getCompound("v")).ifPresent(resource -> setSilently(index, resource));
+    private <T> void fromTag(final int index,
+                             final CompoundTag tag,
+                             final PlatformStorageChannelType<T> storageChannelType) {
+        final long amount = tag.getLong("a");
+        storageChannelType.fromTag(tag.getCompound("v"))
+            .flatMap(resource -> storageChannelType.toFilteredResource(new ResourceAmount<>(resource, amount)))
+            .ifPresent(filteredResource -> setSilently(index, filteredResource));
     }
 }

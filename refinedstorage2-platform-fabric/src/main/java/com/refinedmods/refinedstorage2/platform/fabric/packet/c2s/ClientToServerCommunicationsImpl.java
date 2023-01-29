@@ -4,7 +4,6 @@ import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyType;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
@@ -68,15 +67,16 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
-    public void sendResourceTypeChange(final ResourceType type) {
-        PlatformApi.INSTANCE.getResourceTypeRegistry()
-            .getId(type)
-            .ifPresent(id -> sendToServer(PacketIds.RESOURCE_TYPE_CHANGE, buf -> buf.writeResourceLocation(id)));
+    public void sendStorageInfoRequest(final UUID storageId) {
+        sendToServer(PacketIds.STORAGE_INFO_REQUEST, buf -> buf.writeUUID(storageId));
     }
 
     @Override
-    public void sendStorageInfoRequest(final UUID storageId) {
-        sendToServer(PacketIds.STORAGE_INFO_REQUEST, buf -> buf.writeUUID(storageId));
+    public void sendResourceFilterSlotChange(final int slotIndex, final boolean tryAlternatives) {
+        sendToServer(PacketIds.RESOURCE_FILTER_SLOT_CHANGE, buf -> {
+            buf.writeInt(slotIndex);
+            buf.writeBoolean(tryAlternatives);
+        });
     }
 
     @Override

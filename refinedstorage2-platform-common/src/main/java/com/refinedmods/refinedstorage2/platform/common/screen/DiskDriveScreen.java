@@ -20,11 +20,6 @@ public class DiskDriveScreen extends AbstractStorageScreen<DiskDriveContainerMen
     }
 
     @Override
-    protected boolean isResourceFilterButtonActive() {
-        return true;
-    }
-
-    @Override
     protected ResourceLocation getTexture() {
         return TEXTURE;
     }

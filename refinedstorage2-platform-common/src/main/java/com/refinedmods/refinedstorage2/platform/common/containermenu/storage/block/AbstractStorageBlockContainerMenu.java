@@ -1,8 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block;
 
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
-import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
@@ -11,7 +9,6 @@ import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -26,30 +23,22 @@ public abstract class AbstractStorageBlockContainerMenu extends AbstractStorageC
 
     protected AbstractStorageBlockContainerMenu(final MenuType<?> type,
                                                 final int syncId,
-                                                final OrderedRegistry<ResourceLocation, ResourceType> resourceRegistry,
                                                 final Player player,
                                                 final FriendlyByteBuf buf,
-                                                final ResourceType resourceType) {
-        super(type, syncId, resourceRegistry);
-
+                                                final PlatformStorageChannelType<?> storageChannelType) {
+        super(type, syncId);
         this.stored = buf.readLong();
         this.capacity = buf.readLong();
-
-        addSlots(
-            player,
-            new FilteredResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9, resourceType)
-        );
-
+        addSlots(player, new FilteredResourceFilterContainer(9, storageChannelType));
         initializeResourceFilterSlots(buf);
     }
 
     protected AbstractStorageBlockContainerMenu(final MenuType<?> type,
                                                 final int syncId,
-                                                final OrderedRegistry<ResourceLocation, ResourceType> rtr,
                                                 final Player player,
                                                 final ResourceFilterContainer resourceFilterContainer,
                                                 final StorageConfigurationContainer configContainer) {
-        super(type, syncId, rtr, player, configContainer, resourceFilterContainer);
+        super(type, syncId, player, configContainer);
         addSlots(player, resourceFilterContainer);
     }
 

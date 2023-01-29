@@ -18,7 +18,7 @@ public interface PlatformGridResource extends GridResource {
     void onScroll(GridScrollMode scrollMode,
                   GridScrollingStrategy scrollingStrategy);
 
-    void render(PoseStack poseStack, int slotX, int slotY);
+    void render(PoseStack poseStack, int x, int y);
 
     String getDisplayedAmount();
 

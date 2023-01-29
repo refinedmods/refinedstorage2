@@ -26,7 +26,6 @@ public class InterfaceScreen extends AbstractBaseScreen<InterfaceContainerMenu> 
     @Override
     protected void init() {
         super.init();
-
         addSideButton(new RedstoneModeSideButtonWidget(
             getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
             this::renderComponentTooltip
@@ -35,11 +34,6 @@ public class InterfaceScreen extends AbstractBaseScreen<InterfaceContainerMenu> 
             getMenu().getProperty(PropertyTypes.FUZZY_MODE),
             this::renderComponentTooltip
         ));
-    }
-
-    @Override
-    protected boolean isResourceFilterButtonVisible() {
-        return false;
     }
 
     @Override

@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractRes
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.screen.amount.ResourceAmountScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
-import com.refinedmods.refinedstorage2.platform.common.screen.widget.ResourceFilterButtonWidget;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,7 +18,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 
 public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
@@ -39,35 +37,6 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         clearWidgets();
         super.init();
         sideButtonY = 6;
-        tryAddResourceFilterButton();
-    }
-
-    private void tryAddResourceFilterButton() {
-        if (!(menu instanceof AbstractResourceFilterContainerMenu resourceFilterMenu)) {
-            return;
-        }
-        if (!isResourceFilterButtonVisible()) {
-            return;
-        }
-        final ResourceFilterButtonWidget resourceFilterButton = new ResourceFilterButtonWidget(
-            getResourceFilterButtonX(),
-            topPos + 4,
-            resourceFilterMenu
-        );
-        resourceFilterButton.active = isResourceFilterButtonActive();
-        addRenderableWidget(resourceFilterButton);
-    }
-
-    protected int getResourceFilterButtonX() {
-        return leftPos + imageWidth - ResourceFilterButtonWidget.WIDTH - 7;
-    }
-
-    protected boolean isResourceFilterButtonVisible() {
-        return true;
-    }
-
-    protected boolean isResourceFilterButtonActive() {
-        return true;
     }
 
     protected abstract ResourceLocation getTexture();
@@ -107,7 +76,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         if (!(slot instanceof ResourceFilterSlot resourceFilterSlot)) {
             return;
         }
-        final FilteredResource filteredResource = resourceFilterSlot.getFilteredResource();
+        final FilteredResource<?> filteredResource = resourceFilterSlot.getFilteredResource();
         if (filteredResource == null) {
             return;
         }
@@ -125,7 +94,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
                                           final int x,
                                           final int y,
                                           final int z,
-                                          final FilteredResource filteredResource,
+                                          final FilteredResource<?> filteredResource,
                                           final boolean supportsAmount) {
         filteredResource.render(poseStack, x, y, z);
         if (supportsAmount) {
@@ -136,12 +105,12 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     protected void renderResourceFilterSlotAmount(final PoseStack poseStack,
                                                   final int x,
                                                   final int y,
-                                                  final FilteredResource filteredResource) {
+                                                  final FilteredResource<?> filteredResource) {
         renderAmount(
             poseStack,
             x,
             y,
-            filteredResource.getFormattedAmount(),
+            filteredResource.getDisplayedAmount(),
             Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15),
             true
         );
@@ -190,7 +159,7 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
         if (minecraft != null
             && menu.getCarried().isEmpty()
             && hoveredSlot instanceof ResourceFilterSlot resourceFilterSlot) {
-            final List<Component> lines = resourceFilterSlot.getTooltipLines(minecraft.player);
+            final List<Component> lines = resourceFilterSlot.getTooltip();
             if (!lines.isEmpty()) {
                 this.renderComponentTooltip(poseStack, lines, x, y);
             }
@@ -198,22 +167,27 @@ public abstract class AbstractBaseScreen<T extends AbstractContainerMenu> extend
     }
 
     @Override
-    protected void slotClicked(final Slot slot, final int slotId, final int mouseButton, final ClickType type) {
-        if (!tryOpenResourceFilterAmountScreen(slot, type)) {
-            super.slotClicked(slot, slotId, mouseButton, type);
+    public boolean mouseClicked(final double mouseX, final double mouseY, final int clickedButton) {
+        if (hoveredSlot instanceof ResourceFilterSlot
+            && getMenu() instanceof AbstractResourceFilterContainerMenu containerMenu) {
+            if (!tryOpenResourceFilterAmountScreen(hoveredSlot)) {
+                containerMenu.sendResourceFilterSlotChange(hoveredSlot.index, clickedButton == 1);
+            }
+            return true;
         }
+        return super.mouseClicked(mouseX, mouseY, clickedButton);
     }
 
-    protected boolean tryOpenResourceFilterAmountScreen(final Slot slot, final ClickType type) {
+    protected boolean tryOpenResourceFilterAmountScreen(final Slot slot) {
         final boolean isFilterSlot = slot instanceof ResourceFilterSlot filterSlot
             && filterSlot.getFilteredResource() != null;
         final boolean doesFilterSlotSupportAmount = isFilterSlot && ((ResourceFilterSlot) slot).supportsAmount();
-        final boolean isRegularClick = type != ClickType.QUICK_MOVE;
+        final boolean isNotTryingToRemoveFilter = !hasShiftDown();
         final boolean isNotCarryingItem = getMenu().getCarried().isEmpty();
         final boolean canChangeAmount =
-            isFilterSlot && doesFilterSlotSupportAmount && isRegularClick && isNotCarryingItem;
+            isFilterSlot && doesFilterSlotSupportAmount && isNotTryingToRemoveFilter && isNotCarryingItem;
         if (canChangeAmount && minecraft != null) {
-            minecraft.setScreen(new ResourceAmountScreen(this, playerInventory, ((ResourceFilterSlot) slot)));
+            minecraft.setScreen(new ResourceAmountScreen(this, playerInventory, (ResourceFilterSlot) slot));
         }
         return canChangeAmount;
     }

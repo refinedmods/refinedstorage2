@@ -5,12 +5,14 @@ import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.list.FuzzyResourceList;
 import com.refinedmods.refinedstorage2.platform.api.resource.list.FuzzyResourceListImpl;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.AbstractPlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorageChannelImpl;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.FluidGridResource;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid.FluidFilteredResource;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
@@ -53,17 +55,25 @@ class FluidStorageChannelType extends AbstractPlatformStorageChannelType<FluidRe
     }
 
     @Override
+    public Optional<FilteredResource<FluidResource>> toFilteredResource(final ResourceAmount<?> resourceAmount) {
+        if (resourceAmount.getResource() instanceof FluidResource fluidResource) {
+            return Optional.of(new FluidFilteredResource(fluidResource, resourceAmount.getAmount()));
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public boolean isGridResourceBelonging(final GridResource gridResource) {
         return gridResource instanceof FluidGridResource;
     }
 
     @Override
-    protected CompoundTag toTag(final FluidResource resource) {
+    public CompoundTag toTag(final FluidResource resource) {
         return FluidResource.toTag(resource);
     }
 
     @Override
-    protected Optional<FluidResource> fromTag(final CompoundTag tag) {
+    public Optional<FluidResource> fromTag(final CompoundTag tag) {
         return FluidResource.fromTag(tag);
     }
 }

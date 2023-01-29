@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
-import java.util.Optional;
 import java.util.function.BiConsumer;
 
 import net.minecraft.nbt.CompoundTag;
@@ -47,8 +46,6 @@ public abstract class AbstractPlatformStorageChannelType<T> implements PlatformS
         return tag;
     }
 
-    protected abstract CompoundTag toTag(T resource);
-
     @Override
     public void fromTag(final CompoundTag tag, final BiConsumer<T, TrackedResource> acceptor) {
         fromTag(tag).ifPresent(resource -> {
@@ -57,8 +54,6 @@ public abstract class AbstractPlatformStorageChannelType<T> implements PlatformS
             acceptor.accept(resource, new TrackedResource(changedBy, changedAt));
         });
     }
-
-    protected abstract Optional<T> fromTag(CompoundTag tag);
 
     @Override
     public StorageChannel<T> create() {

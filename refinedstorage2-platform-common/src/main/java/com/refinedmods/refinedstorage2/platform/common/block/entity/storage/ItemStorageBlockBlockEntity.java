@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -37,7 +36,7 @@ public class ItemStorageBlockBlockEntity extends AbstractStorageBlockBlockEntity
             pos,
             state,
             new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.ITEM),
-            ItemResourceType.INSTANCE
+            StorageChannelTypes.ITEM
         );
         this.variant = variant;
         this.displayName = createTranslation("block", String.format("%s_storage_block", variant.getName()));

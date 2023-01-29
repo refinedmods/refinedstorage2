@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.slot;
 
+import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
@@ -27,7 +27,7 @@ public class ResourceFilterSlot extends Slot {
     private final ResourceFilterContainer resourceFilterContainer;
     private final int containerIndex;
     @Nullable
-    private FilteredResource cachedResource;
+    private FilteredResource<?> cachedResource;
 
     public ResourceFilterSlot(final ResourceFilterContainer resourceFilterContainer,
                               final int index,
@@ -48,7 +48,7 @@ public class ResourceFilterSlot extends Slot {
     }
 
     @Nullable
-    public FilteredResource getFilteredResource() {
+    public FilteredResource<?> getFilteredResource() {
         return resourceFilterContainer.get(containerIndex);
     }
 
@@ -56,40 +56,64 @@ public class ResourceFilterSlot extends Slot {
         return new SimpleContainer(1);
     }
 
-    public void change(final ItemStack stack, final ResourceType type) {
-        type.translate(stack).ifPresentOrElse(
-            resource -> resourceFilterContainer.set(containerIndex, resource),
+    public void change(final ItemStack stack, final boolean tryAlternatives) {
+        PlatformApi.INSTANCE.getFilteredResourceFactory().create(stack, tryAlternatives).ifPresentOrElse(
+            translated -> resourceFilterContainer.set(containerIndex, translated),
             () -> resourceFilterContainer.remove(containerIndex)
         );
     }
 
-    public boolean changeIfEmpty(final ItemStack stack, final ResourceType type) {
-        final FilteredResource existing = resourceFilterContainer.get(containerIndex);
+    public <T> void change(@Nullable final FilteredResource<T> filteredResource) {
+        if (filteredResource == null) {
+            resourceFilterContainer.remove(containerIndex);
+        } else {
+            resourceFilterContainer.set(containerIndex, filteredResource);
+        }
+    }
+
+    public boolean changeIfEmpty(final ItemStack stack) {
+        final FilteredResource<?> existing = resourceFilterContainer.get(containerIndex);
         if (existing != null) {
             return false;
         }
-        change(stack, type);
+        PlatformApi.INSTANCE.getFilteredResourceFactory().create(stack, false).ifPresent(this::change);
         return true;
     }
 
-    public boolean contains(final ItemStack stack, final ResourceType type) {
-        final Optional<FilteredResource> translated = type.translate(stack);
-        final Optional<FilteredResource> current = Optional.ofNullable(resourceFilterContainer.get(containerIndex));
-        return translated.equals(current);
+    public void changeAmount(final long amount) {
+        resourceFilterContainer.setAmount(containerIndex, amount);
+    }
+
+    public void changeAmountOnClient(final long amount) {
+        Platform.INSTANCE.getClientToServerCommunications().sendResourceFilterSlotAmountChange(index, amount);
+    }
+
+    public boolean contains(final ItemStack stack) {
+        final Optional<FilteredResource<?>> converted = PlatformApi.INSTANCE.getFilteredResourceFactory().create(
+            stack,
+            false
+        );
+        final Optional<FilteredResource<?>> current = Optional.ofNullable(resourceFilterContainer.get(containerIndex));
+        return converted.equals(current);
     }
 
     public void broadcastChanges(final Player player) {
-        final FilteredResource currentResource = resourceFilterContainer.get(containerIndex);
+        final FilteredResource<?> currentResource = resourceFilterContainer.get(containerIndex);
         if (!Objects.equals(currentResource, cachedResource)) {
             LOGGER.info("Resource filter slot {} has changed", containerIndex);
             this.cachedResource = currentResource;
-            Platform.INSTANCE.getServerToClientCommunications().sendResourceFilterSlotUpdate(
-                (ServerPlayer) player,
-                resourceFilterContainer,
-                index,
-                containerIndex
-            );
+            broadcastChange((ServerPlayer) player, currentResource);
         }
+    }
+
+    private <T> void broadcastChange(final ServerPlayer player, @Nullable final FilteredResource<T> filteredResource) {
+        Platform.INSTANCE.getServerToClientCommunications().sendResourceFilterSlotUpdate(
+            player,
+            filteredResource == null ? null : filteredResource.getStorageChannelType(),
+            filteredResource == null ? null : filteredResource.getValue(),
+            filteredResource == null ? 0 : filteredResource.getAmount(),
+            index
+        );
     }
 
     public void readFromUpdatePacket(final FriendlyByteBuf buf) {
@@ -101,22 +125,16 @@ public class ResourceFilterSlot extends Slot {
         return false;
     }
 
-    public List<Component> getTooltipLines(@Nullable final Player player) {
-        final FilteredResource filteredResource = resourceFilterContainer.get(containerIndex);
+    @Override
+    public boolean mayPlace(final ItemStack stack) {
+        return false;
+    }
+
+    public List<Component> getTooltip() {
+        final FilteredResource<?> filteredResource = resourceFilterContainer.get(containerIndex);
         if (filteredResource == null) {
             return Collections.emptyList();
         }
-        return filteredResource.getTooltipLines(player);
-    }
-
-    public void changeAmount(final long amount) {
-        resourceFilterContainer.setAmount(containerIndex, amount);
-    }
-
-    public void changeAmountOnClient(final long amount) {
-        Platform.INSTANCE.getClientToServerCommunications().sendResourceFilterSlotAmountChange(
-            index,
-            amount
-        );
+        return filteredResource.getTooltip();
     }
 }

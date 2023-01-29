@@ -9,25 +9,25 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
-public class ResourceFilterSlotAmountChangePacket {
+public class ResourceFilterSlotChangePacket {
     private final int slotIndex;
-    private final long amount;
+    private final boolean tryAlternatives;
 
-    public ResourceFilterSlotAmountChangePacket(final int slotIndex, final long amount) {
+    public ResourceFilterSlotChangePacket(final int slotIndex, final boolean tryAlternatives) {
         this.slotIndex = slotIndex;
-        this.amount = amount;
+        this.tryAlternatives = tryAlternatives;
     }
 
-    public static ResourceFilterSlotAmountChangePacket decode(final FriendlyByteBuf buf) {
-        return new ResourceFilterSlotAmountChangePacket(buf.readInt(), buf.readLong());
+    public static ResourceFilterSlotChangePacket decode(final FriendlyByteBuf buf) {
+        return new ResourceFilterSlotChangePacket(buf.readInt(), buf.readBoolean());
     }
 
-    public static void encode(final ResourceFilterSlotAmountChangePacket packet, final FriendlyByteBuf buf) {
+    public static void encode(final ResourceFilterSlotChangePacket packet, final FriendlyByteBuf buf) {
         buf.writeInt(packet.slotIndex);
-        buf.writeLong(packet.amount);
+        buf.writeBoolean(packet.tryAlternatives);
     }
 
-    public static void handle(final ResourceFilterSlotAmountChangePacket packet,
+    public static void handle(final ResourceFilterSlotChangePacket packet,
                               final Supplier<NetworkEvent.Context> ctx) {
         final ServerPlayer player = ctx.get().getSender();
         if (player != null) {
@@ -36,9 +36,9 @@ public class ResourceFilterSlotAmountChangePacket {
         ctx.get().setPacketHandled(true);
     }
 
-    private static void handle(final ResourceFilterSlotAmountChangePacket packet, final Player player) {
+    private static void handle(final ResourceFilterSlotChangePacket packet, final Player player) {
         if (player.containerMenu instanceof AbstractResourceFilterContainerMenu containerMenu) {
-            containerMenu.handleResourceFilterSlotAmountChange(packet.slotIndex, packet.amount);
+            containerMenu.handleResourceFilterSlotChange(packet.slotIndex, packet.tryAlternatives);
         }
     }
 }

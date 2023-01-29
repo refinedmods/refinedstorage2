@@ -20,7 +20,7 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.Export
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
@@ -96,11 +96,6 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, ResourceType> getResourceTypeRegistry() {
-        return ensureLoaded().getResourceTypeRegistry();
-    }
-
-    @Override
     public ComponentMapFactory<NetworkComponent, Network> getNetworkComponentMapFactory() {
         return ensureLoaded().getNetworkComponentMapFactory();
     }
@@ -173,6 +168,16 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public void addGridScrollingStrategyFactory(final GridScrollingStrategyFactory scrollingStrategyFactory) {
         ensureLoaded().addGridScrollingStrategyFactory(scrollingStrategyFactory);
+    }
+
+    @Override
+    public void addFilteredResourceFactory(final FilteredResourceFactory factory) {
+        ensureLoaded().addFilteredResourceFactory(factory);
+    }
+
+    @Override
+    public FilteredResourceFactory getFilteredResourceFactory() {
+        return ensureLoaded().getFilteredResourceFactory();
     }
 
     private PlatformApi ensureLoaded() {
