@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
-import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.content.DefaultEnergyUsage;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
 
 import java.util.Optional;
 
@@ -174,8 +174,9 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.BooleanValue smoothScrolling;
         private final ForgeConfigSpec.BooleanValue autoSelected;
         private final ForgeConfigSpec.ConfigValue<String> synchronizer;
+        private final ForgeConfigSpec.ConfigValue<String> storageChannelType;
         private final ForgeConfigSpec.EnumValue<GridSortingDirection> sortingDirection;
-        private final ForgeConfigSpec.EnumValue<GridSortingType> sortingType;
+        private final ForgeConfigSpec.EnumValue<GridSortingTypes> sortingType;
         private final ForgeConfigSpec.EnumValue<GridSize> size;
 
         GridEntryImpl() {
@@ -207,12 +208,15 @@ public class ConfigImpl implements Config {
             synchronizer = builder
                 .comment("The synchronization type of the Grid search box")
                 .define("synchronizer", "");
+            storageChannelType = builder
+                .comment("The storage channel type to be shown")
+                .define("storageChannelType", "");
             sortingDirection = builder
                 .comment("The sorting direction")
                 .defineEnum("sortingDirection", GridSortingDirection.ASCENDING);
             sortingType = builder
                 .comment("The sorting type")
-                .defineEnum("sortingType", GridSortingType.QUANTITY);
+                .defineEnum("sortingType", GridSortingTypes.QUANTITY);
             size = builder
                 .comment("The size")
                 .defineEnum("size", GridSize.STRETCH);
@@ -293,12 +297,12 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public GridSortingType getSortingType() {
+        public GridSortingTypes getSortingType() {
             return sortingType.get();
         }
 
         @Override
-        public void setSortingType(final GridSortingType sortingType) {
+        public void setSortingType(final GridSortingTypes sortingType) {
             this.sortingType.set(sortingType);
         }
 
@@ -310,6 +314,24 @@ public class ConfigImpl implements Config {
         @Override
         public void setSize(final GridSize size) {
             this.size.set(size);
+        }
+
+        @Override
+        public Optional<ResourceLocation> getStorageChannelType() {
+            if (storageChannelType == null || storageChannelType.get().trim().isBlank()) {
+                return Optional.empty();
+            }
+            return Optional.of(storageChannelType.get()).map(ResourceLocation::new);
+        }
+
+        @Override
+        public void setStorageChannelType(final ResourceLocation storageChannelTypeId) {
+            this.storageChannelType.set(storageChannelTypeId.toString());
+        }
+
+        @Override
+        public void clearStorageChannelType() {
+            this.storageChannelType.set("");
         }
     }
 

@@ -2,10 +2,12 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
+import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserException;
+import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
-import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilder;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
@@ -15,6 +17,7 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategy;
+import com.refinedmods.refinedstorage2.platform.api.grid.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
@@ -31,11 +34,17 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridE
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.CompositeGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
+import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
+import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -51,6 +60,15 @@ import org.slf4j.LoggerFactory;
 public class GridContainerMenu extends AbstractBaseContainerMenu
     implements GridWatcher, GridInsertionStrategy, GridExtractionStrategy, GridScrollingStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(GridContainerMenu.class);
+    private static final GridQueryParserImpl QUERY_PARSER = new GridQueryParserImpl(
+        LexerTokenMappings.DEFAULT_MAPPINGS,
+        ParserOperatorMappings.DEFAULT_MAPPINGS,
+        Map.of(
+            "@", Set.of(GridResourceAttributeKeys.MOD_ID, GridResourceAttributeKeys.MOD_NAME),
+            "$", Set.of(GridResourceAttributeKeys.TAGS),
+            "#", Set.of(GridResourceAttributeKeys.TOOLTIP)
+        )
+    );
 
     private static String lastSearchQuery = "";
 
@@ -67,6 +85,8 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
     private Runnable sizeChangedListener;
 
     private GridSynchronizer synchronizer;
+    @Nullable
+    private PlatformStorageChannelType<?> storageChannelTypeFilter;
     private boolean autoSelected;
     private boolean active;
 
@@ -95,11 +115,12 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
         this.view = viewBuilder.build();
         this.view.setSortingDirection(Platform.INSTANCE.getConfig().getGrid().getSortingDirection());
         this.view.setSortingType(Platform.INSTANCE.getConfig().getGrid().getSortingType());
-        this.view.sort();
+        this.view.setFilterAndSort(filterStorageChannel());
 
         addSlots(0);
 
         this.synchronizer = loadSynchronizer();
+        this.storageChannelTypeFilter = loadStorageChannelType();
         this.insertionStrategy = new ClientGridInsertionStrategy();
         this.extractionStrategy = new ClientGridExtractionStrategy();
         this.scrollingStrategy = new ClientGridScrollingStrategy();
@@ -144,10 +165,24 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
         );
     }
 
+    private Predicate<GridResource> filterStorageChannel() {
+        return gridResource -> Platform.INSTANCE
+            .getConfig()
+            .getGrid()
+            .getStorageChannelType()
+            .flatMap(storageChannelTypeId -> PlatformApi.INSTANCE
+                .getStorageChannelTypeRegistry()
+                .get(storageChannelTypeId)
+                .map(type -> type.isGridResourceBelonging(gridResource))
+            ).orElse(true);
+    }
+
     private static GridViewBuilder createViewBuilder() {
-        return new GridViewBuilderImpl(new CompositeGridResourceFactory(
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
-        ));
+        return new GridViewBuilderImpl(
+            new CompositeGridResourceFactory(PlatformApi.INSTANCE.getStorageChannelTypeRegistry()),
+            GridSortingTypes.NAME,
+            GridSortingTypes.QUANTITY
+        );
     }
 
     public <T> void onResourceUpdate(final T template,
@@ -171,11 +206,11 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
         view.sort();
     }
 
-    public GridSortingType getSortingType() {
+    public GridSortingTypes getSortingType() {
         return Platform.INSTANCE.getConfig().getGrid().getSortingType();
     }
 
-    public void setSortingType(final GridSortingType sortingType) {
+    public void setSortingType(final GridSortingTypes sortingType) {
         Platform.INSTANCE.getConfig().getGrid().setSortingType(sortingType);
         view.setSortingType(sortingType);
         view.sort();
@@ -194,10 +229,32 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
 
     public void setSearchBox(final GridSearchBox searchBox) {
         this.searchBox = searchBox;
-        searchBox.setAutoSelected(isAutoSelected());
+        registerViewUpdatingListener(searchBox);
+        configureSearchBox(searchBox);
+    }
+
+    private void registerViewUpdatingListener(final GridSearchBox theSearchBox) {
+        theSearchBox.addListener(text -> {
+            final boolean valid = onSearchTextChanged(text);
+            theSearchBox.setValid(valid);
+        });
+    }
+
+    private boolean onSearchTextChanged(final String text) {
+        try {
+            view.setFilterAndSort(QUERY_PARSER.parse(text).and(filterStorageChannel()));
+            return true;
+        } catch (GridQueryParserException e) {
+            view.setFilterAndSort(resource -> false);
+            return false;
+        }
+    }
+
+    private void configureSearchBox(final GridSearchBox theSearchBox) {
+        theSearchBox.setAutoSelected(isAutoSelected());
         if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
-            searchBox.setValue(lastSearchQuery);
-            searchBox.addListener(GridContainerMenu::updateLastSearchQuery);
+            theSearchBox.setValue(lastSearchQuery);
+            theSearchBox.addListener(GridContainerMenu::updateLastSearchQuery);
         }
     }
 
@@ -279,24 +336,52 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
             .orElse(PlatformApi.INSTANCE.getGridSynchronizerRegistry().getDefault());
     }
 
+    @Nullable
+    private PlatformStorageChannelType<?> loadStorageChannelType() {
+        return Platform.INSTANCE
+            .getConfig()
+            .getGrid()
+            .getStorageChannelType()
+            .flatMap(id -> PlatformApi.INSTANCE.getStorageChannelTypeRegistry().get(id))
+            .orElse(null);
+    }
+
     public GridSynchronizer getSynchronizer() {
         return synchronizer;
     }
 
+    @Nullable
+    public PlatformStorageChannelType<?> getStorageChannelType() {
+        return storageChannelTypeFilter;
+    }
+
     public void toggleSynchronizer() {
-        final OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry =
+        final OrderedRegistry<ResourceLocation, GridSynchronizer> registry =
             PlatformApi.INSTANCE.getGridSynchronizerRegistry();
         final Config.GridEntry config = Platform.INSTANCE.getConfig().getGrid();
-
-        final GridSynchronizer newSynchronizer = synchronizerRegistry.next(getSynchronizer());
-
-        if (newSynchronizer == synchronizerRegistry.getDefault()) {
+        final GridSynchronizer newSynchronizer = registry.next(getSynchronizer());
+        if (newSynchronizer == registry.getDefault()) {
             config.clearSynchronizer();
         } else {
-            synchronizerRegistry.getId(newSynchronizer).ifPresent(config::setSynchronizer);
+            registry.getId(newSynchronizer).ifPresent(config::setSynchronizer);
         }
-
         this.synchronizer = newSynchronizer;
+    }
+
+    public void toggleStorageChannelType() {
+        final OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> registry =
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry();
+        final Config.GridEntry config = Platform.INSTANCE.getConfig().getGrid();
+        final PlatformStorageChannelType<?> newStorageChannelType = storageChannelTypeFilter == null
+            ? registry.getDefault()
+            : registry.nextOrNullIfLast(storageChannelTypeFilter);
+        if (newStorageChannelType == null) {
+            config.clearStorageChannelType();
+        } else {
+            registry.getId(newStorageChannelType).ifPresent(config::setStorageChannelType);
+        }
+        this.storageChannelTypeFilter = newStorageChannelType;
+        this.view.sort();
     }
 
     @Override

@@ -25,4 +25,6 @@ public interface PlatformGridResource extends GridResource {
     String getAmountInTooltip();
 
     List<Component> getTooltip();
+
+    int getRegistryId();
 }

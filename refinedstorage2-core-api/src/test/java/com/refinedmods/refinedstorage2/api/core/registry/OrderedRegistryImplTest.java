@@ -26,7 +26,9 @@ class OrderedRegistryImplTest {
         assertThat(sut.getId(10)).get().isEqualTo("A");
         assertThat(sut.getId(20)).isEmpty();
         assertThat(sut.next(10)).isEqualTo(10);
+        assertThat(sut.nextOrNullIfLast(10)).isNull();
         assertThat(sut.next(20)).isEqualTo(10);
+        assertThat(sut.nextOrNullIfLast(20)).isEqualTo(10);
         assertThat(sut.isEmpty()).isTrue();
     }
 
@@ -53,7 +55,9 @@ class OrderedRegistryImplTest {
         assertThat(sut.getId(10)).get().isEqualTo("A");
         assertThat(sut.getId(20)).get().isEqualTo("B");
         assertThat(sut.next(10)).isEqualTo(20);
+        assertThat(sut.nextOrNullIfLast(10)).isEqualTo(20);
         assertThat(sut.next(20)).isEqualTo(10);
+        assertThat(sut.nextOrNullIfLast(20)).isNull();
         assertThat(sut.isEmpty()).isFalse();
     }
 
@@ -99,6 +103,7 @@ class OrderedRegistryImplTest {
     @SuppressWarnings("ConstantConditions")
     void testInvalidNextValues() {
         assertThrows(NullPointerException.class, () -> sut.next(null));
+        assertThrows(NullPointerException.class, () -> sut.nextOrNullIfLast(null));
     }
 
     @Test

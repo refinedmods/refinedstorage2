@@ -40,7 +40,7 @@ public class FluidGridResource extends AbstractGridResource<FluidResource> {
     }
 
     @Override
-    public int getId() {
+    public int getRegistryId() {
         return id;
     }
 

@@ -10,6 +10,8 @@ import java.util.function.BiConsumer;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.5")
@@ -23,4 +25,14 @@ public interface PlatformStorageChannelType<T> extends StorageChannelType<T> {
     T fromBuffer(FriendlyByteBuf buf);
 
     Optional<GridResource> toGridResource(ResourceAmount<?> resourceAmount);
+
+    boolean isGridResourceBelonging(GridResource gridResource);
+
+    MutableComponent getTitle();
+
+    ResourceLocation getTextureIdentifier();
+
+    int getXTexture();
+
+    int getYTexture();
 }

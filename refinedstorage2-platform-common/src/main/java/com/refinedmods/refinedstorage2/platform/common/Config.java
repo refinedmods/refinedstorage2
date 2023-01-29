@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.common;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
-import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
 
 import java.util.Optional;
 
@@ -62,13 +62,19 @@ public interface Config {
 
         void setSortingDirection(GridSortingDirection sortingDirection);
 
-        GridSortingType getSortingType();
+        GridSortingTypes getSortingType();
 
-        void setSortingType(GridSortingType sortingType);
+        void setSortingType(GridSortingTypes sortingType);
 
         GridSize getSize();
 
         void setSize(GridSize size);
+
+        Optional<ResourceLocation> getStorageChannelType();
+
+        void setStorageChannelType(ResourceLocation storageChannelTypeId);
+
+        void clearStorageChannelType();
     }
 
     interface DiskDriveEntry extends SimpleEnergyUsageEntry {

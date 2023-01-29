@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 import com.refinedmods.refinedstorage2.api.core.History;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.core.util.LastModified;
-import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
@@ -22,10 +21,8 @@ import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen
 import com.refinedmods.refinedstorage2.platform.common.screen.SmallTextTooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ScrollbarWidget;
-import com.refinedmods.refinedstorage2.query.lexer.LexerTokenMappings;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighterColors;
-import com.refinedmods.refinedstorage2.query.parser.ParserOperatorMappings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,12 +96,6 @@ public class GridScreen extends AbstractBaseScreen<GridContainerMenu> {
                 topPos + 6 + 1,
                 88 - 6,
                 new SyntaxHighlighter(SyntaxHighlighterColors.DEFAULT_COLORS),
-                menu.getView(),
-                new GridQueryParserImpl(
-                    LexerTokenMappings.DEFAULT_MAPPINGS,
-                    ParserOperatorMappings.DEFAULT_MAPPINGS,
-                    GridSearchBoxWidget.UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING
-                ),
                 new History(SEARCH_FIELD_HISTORY)
             );
         } else {
@@ -131,6 +122,11 @@ public class GridScreen extends AbstractBaseScreen<GridContainerMenu> {
         addSideButton(new SortingTypeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new SizeSideButtonWidget(getMenu(), this::renderComponentTooltip));
         addSideButton(new AutoSelectedSideButtonWidget(getMenu(), this::renderComponentTooltip));
+        addSideButton(new StorageChannelTypeSideButtonWidget(
+            getMenu(),
+            this::renderComponentTooltip,
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll()
+        ));
 
         final OrderedRegistry<ResourceLocation, GridSynchronizer> synchronizerRegistry =
             PlatformApi.INSTANCE.getGridSynchronizerRegistry();

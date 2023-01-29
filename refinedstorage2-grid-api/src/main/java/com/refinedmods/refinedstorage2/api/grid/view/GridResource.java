@@ -16,8 +16,6 @@ public interface GridResource {
 
     long getAmount();
 
-    int getId();
-
     String getName();
 
     Set<String> getAttribute(GridResourceAttributeKey key);

@@ -1,11 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.api.core.History;
-import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParser;
-import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserException;
-import com.refinedmods.refinedstorage2.api.grid.view.GridResourceAttributeKey;
-import com.refinedmods.refinedstorage2.api.grid.view.GridView;
-import com.refinedmods.refinedstorage2.platform.api.grid.GridResourceAttributeKeys;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.SearchFieldWidget;
 import com.refinedmods.refinedstorage2.query.lexer.Lexer;
 import com.refinedmods.refinedstorage2.query.lexer.LexerException;
@@ -16,7 +11,6 @@ import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -27,16 +21,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 
 public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
-    public static final Map<String, Set<GridResourceAttributeKey>> UNARY_OPERATOR_TO_ATTRIBUTE_KEY_MAPPING = Map.of(
-        "@", Set.of(GridResourceAttributeKeys.MOD_ID, GridResourceAttributeKeys.MOD_NAME),
-        "$", Set.of(GridResourceAttributeKeys.TAGS),
-        "#", Set.of(GridResourceAttributeKeys.TOOLTIP)
-    );
-
-    private final GridView view;
-    private final GridQueryParser queryParser;
     private final Set<Consumer<String>> listeners = new HashSet<>();
-
     private boolean valid = true;
 
     public GridSearchBoxWidget(final Font textRenderer,
@@ -44,34 +29,24 @@ public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearch
                                final int y,
                                final int width,
                                final SyntaxHighlighter syntaxHighlighter,
-                               final GridView view,
-                               final GridQueryParser queryParser,
                                final History history) {
         super(textRenderer, x, y, width, history);
+        setFormatter((text, firstCharacterIndex) -> format(syntaxHighlighter, text));
+        setResponder(text -> listeners.forEach(l -> l.accept(text)));
+    }
 
-        setFormatter((text, firstCharacterIndex) -> {
-            if (!valid) {
-                return invalidText(text);
-            }
-
-            final Lexer lexer = createLexer(text);
-            try {
-                lexer.scan();
-            } catch (LexerException e) {
-                return invalidText(text);
-            }
-
-            final List<SyntaxHighlightedCharacter> characters = syntaxHighlighter.highlight(text, lexer.getTokens());
-            return convertCharactersToOrderedText(characters);
-        });
-
-        setResponder(text -> {
-            listeners.forEach(l -> l.accept(text));
-            setValid(onTextChanged(text));
-        });
-
-        this.view = view;
-        this.queryParser = queryParser;
+    private FormattedCharSequence format(final SyntaxHighlighter syntaxHighlighter, final String text) {
+        if (!valid) {
+            return invalidText(text);
+        }
+        final Lexer lexer = createLexer(text);
+        try {
+            lexer.scan();
+        } catch (LexerException e) {
+            return invalidText(text);
+        }
+        final List<SyntaxHighlightedCharacter> characters = syntaxHighlighter.highlight(text, lexer.getTokens());
+        return convertCharactersToOrderedText(characters);
     }
 
     private FormattedCharSequence invalidText(final String text) {
@@ -101,22 +76,13 @@ public class GridSearchBoxWidget extends SearchFieldWidget implements GridSearch
         setCanLoseFocus(!autoSelected);
     }
 
-    private boolean onTextChanged(final String text) {
-        try {
-            view.setFilterAndSort(queryParser.parse(text));
-            return true;
-        } catch (GridQueryParserException e) {
-            view.setFilterAndSort(resource -> false);
-            return false;
-        }
-    }
-
     @Override
     public void addListener(final Consumer<String> listener) {
         this.listeners.add(listener);
     }
 
-    private void setValid(final boolean valid) {
+    @Override
+    public void setValid(final boolean valid) {
         this.valid = valid;
         setTextColor(valid
             ? Objects.requireNonNullElse(ChatFormatting.WHITE.getColor(), 15)
