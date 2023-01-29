@@ -1,10 +1,10 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
-import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.content.DefaultEnergyUsage;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
 
 import java.util.Optional;
 
@@ -175,7 +175,7 @@ public class ConfigImpl implements Config {
         private final ForgeConfigSpec.BooleanValue autoSelected;
         private final ForgeConfigSpec.ConfigValue<String> synchronizer;
         private final ForgeConfigSpec.EnumValue<GridSortingDirection> sortingDirection;
-        private final ForgeConfigSpec.EnumValue<GridSortingType> sortingType;
+        private final ForgeConfigSpec.EnumValue<GridSortingTypes> sortingType;
         private final ForgeConfigSpec.EnumValue<GridSize> size;
 
         GridEntryImpl() {
@@ -212,7 +212,7 @@ public class ConfigImpl implements Config {
                 .defineEnum("sortingDirection", GridSortingDirection.ASCENDING);
             sortingType = builder
                 .comment("The sorting type")
-                .defineEnum("sortingType", GridSortingType.QUANTITY);
+                .defineEnum("sortingType", GridSortingTypes.QUANTITY);
             size = builder
                 .comment("The size")
                 .defineEnum("size", GridSize.STRETCH);
@@ -293,12 +293,12 @@ public class ConfigImpl implements Config {
         }
 
         @Override
-        public GridSortingType getSortingType() {
+        public GridSortingTypes getSortingType() {
             return sortingType.get();
         }
 
         @Override
-        public void setSortingType(final GridSortingType sortingType) {
+        public void setSortingType(final GridSortingTypes sortingType) {
             this.sortingType.set(sortingType);
         }
 

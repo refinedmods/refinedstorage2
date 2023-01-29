@@ -45,7 +45,7 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
     }
 
     @Override
-    public int getId() {
+    public int getRegistryId() {
         return id;
     }
 

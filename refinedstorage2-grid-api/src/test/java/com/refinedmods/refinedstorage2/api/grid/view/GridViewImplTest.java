@@ -3,15 +3,13 @@ package com.refinedmods.refinedstorage2.api.grid.view;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
+import java.util.Comparator;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -23,7 +21,11 @@ class GridViewImplTest {
 
     @BeforeEach
     void setUp() {
-        viewBuilder = new GridViewBuilderImpl(resourceAmount -> Optional.of(new GridResourceImpl(resourceAmount)));
+        viewBuilder = new GridViewBuilderImpl(
+            resourceAmount -> Optional.of(new GridResourceImpl(resourceAmount)),
+            (view) -> Comparator.comparing(GridResource::getName),
+            (view) -> Comparator.comparing(GridResource::getAmount)
+        );
     }
 
     @Test
@@ -33,9 +35,11 @@ class GridViewImplTest {
         // in the view, but actually isn't because it has a different identity.
 
         // Arrange
-        final GridViewBuilder builder = new GridViewBuilderImpl(resourceAmount -> Optional.of(
-            new GridResourceWithMetadata(resourceAmount)
-        ));
+        final GridViewBuilder builder = new GridViewBuilderImpl(
+            resourceAmount -> Optional.of(new GridResourceWithMetadata(resourceAmount)),
+            (view) -> Comparator.comparing(GridResource::getName),
+            (view) -> Comparator.comparing(GridResource::getAmount)
+        );
         final GridView view = builder.build();
 
         // Act
@@ -57,9 +61,7 @@ class GridViewImplTest {
     void shouldPreserveOrderWhenSortingAndTwoResourcesHaveTheSameQuantity() {
         // Arrange
         final GridView view = viewBuilder.build();
-
         view.setSortingDirection(GridSortingDirection.DESCENDING);
-        view.setSortingType(GridSortingType.QUANTITY);
 
         // Act & assert
         view.onChange("A", 10, null);
@@ -84,94 +86,6 @@ class GridViewImplTest {
             new GridResourceImpl("A", 15),
             new GridResourceImpl("C", 2)
         );
-    }
-
-    @ParameterizedTest
-    @EnumSource(GridSortingType.class)
-    void testSortingAscending(final GridSortingType sortingType) {
-        // Arrange
-        final GridView view = viewBuilder
-            .withResource("A", 10, null)
-            .withResource("A", 5, new TrackedResource("Raoul", 3))
-            .withResource("B", 1, new TrackedResource("VdB", 2))
-            .withResource("C", 2, null)
-            .build();
-
-        view.setSortingType(sortingType);
-        view.setSortingDirection(GridSortingDirection.ASCENDING);
-
-        // Act
-        view.sort();
-
-        // Assert
-        switch (sortingType) {
-            case QUANTITY -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new GridResourceImpl("B", 1),
-                new GridResourceImpl("C", 2),
-                new GridResourceImpl("A", 15)
-            );
-            case NAME -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new GridResourceImpl("A", 15),
-                new GridResourceImpl("B", 1),
-                new GridResourceImpl("C", 2)
-            );
-            case ID -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new GridResourceImpl("A", 15),
-                new GridResourceImpl("B", 1),
-                new GridResourceImpl("C", 2)
-            );
-            case LAST_MODIFIED ->
-                assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new GridResourceImpl("C", 2),
-                    new GridResourceImpl("B", 1),
-                    new GridResourceImpl("A", 15)
-                );
-            default -> fail();
-        }
-    }
-
-    @ParameterizedTest
-    @EnumSource(GridSortingType.class)
-    void testSortingDescending(final GridSortingType sortingType) {
-        // Arrange
-        final GridView view = viewBuilder
-            .withResource("A", 10, null)
-            .withResource("A", 5, new TrackedResource("Raoul", 3))
-            .withResource("B", 1, new TrackedResource("VDB", 2))
-            .withResource("C", 2, null)
-            .build();
-
-        view.setSortingType(sortingType);
-        view.setSortingDirection(GridSortingDirection.DESCENDING);
-
-        // Act
-        view.sort();
-
-        // Assert
-        switch (sortingType) {
-            case QUANTITY -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new GridResourceImpl("A", 15),
-                new GridResourceImpl("C", 2),
-                new GridResourceImpl("B", 1)
-            );
-            case NAME -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new GridResourceImpl("C", 2),
-                new GridResourceImpl("B", 1),
-                new GridResourceImpl("A", 15)
-            );
-            case ID -> assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                new GridResourceImpl("C", 2),
-                new GridResourceImpl("B", 1),
-                new GridResourceImpl("A", 15)
-            );
-            case LAST_MODIFIED ->
-                assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
-                    new GridResourceImpl("A", 15),
-                    new GridResourceImpl("B", 1),
-                    new GridResourceImpl("C", 2)
-                );
-            default -> fail();
-        }
     }
 
     @Test

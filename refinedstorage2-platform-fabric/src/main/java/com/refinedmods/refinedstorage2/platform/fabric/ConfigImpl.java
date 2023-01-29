@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
-import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.platform.common.content.DefaultEnergyUsage;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 
 import java.util.Optional;
@@ -132,7 +132,7 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
 
-        private GridSortingType sortingType = GridSortingType.QUANTITY;
+        private GridSortingTypes sortingType = GridSortingTypes.QUANTITY;
 
         private GridSize size = GridSize.STRETCH;
 
@@ -214,12 +214,12 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
 
         @Override
-        public GridSortingType getSortingType() {
+        public GridSortingTypes getSortingType() {
             return sortingType;
         }
 
         @Override
-        public void setSortingType(final GridSortingType sortingType) {
+        public void setSortingType(final GridSortingTypes sortingType) {
             this.sortingType = sortingType;
             save();
         }

@@ -32,7 +32,7 @@ public class GridViewImpl implements GridView {
     private List<GridResource> viewList = new ArrayList<>();
     private final Map<Object, GridResource> viewListIndex = new HashMap<>();
 
-    private GridSortingType sortingType = GridSortingType.QUANTITY;
+    private GridSortingType sortingType;
     private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
     private Predicate<GridResource> filter = resource -> true;
     @Nullable
@@ -43,12 +43,17 @@ public class GridViewImpl implements GridView {
      * @param resourceFactory         a factory that transforms a resource amount to a grid resource
      * @param backingList             the backing list
      * @param initialTrackedResources initial tracked resources state
+     * @param identitySortingType     a sorting type required to keep a consistent sorting order with quantity sorting
+     * @param defaultSortingType      the default sorting type
      */
     public GridViewImpl(final GridResourceFactory resourceFactory,
                         final ResourceList<Object> backingList,
-                        final Map<Object, TrackedResource> initialTrackedResources) {
+                        final Map<Object, TrackedResource> initialTrackedResources,
+                        final GridSortingType identitySortingType,
+                        final GridSortingType defaultSortingType) {
         this.resourceFactory = resourceFactory;
-        this.identitySort = GridSortingType.NAME.getComparator().apply(this);
+        this.identitySort = identitySortingType.apply(this);
+        this.sortingType = defaultSortingType;
         this.backingList = backingList;
         this.trackedResources.putAll(initialTrackedResources);
     }
@@ -224,8 +229,7 @@ public class GridViewImpl implements GridView {
     private Comparator<GridResource> getComparator() {
         // An identity sort is necessary so the order of items is preserved in quantity sorting mode.
         // If two grid resources have the same quantity, their order would otherwise not be preserved.
-        final Comparator<GridResource> comparator =
-            sortingType.getComparator().apply(this).thenComparing(identitySort);
+        final Comparator<GridResource> comparator = sortingType.apply(this).thenComparing(identitySort);
         if (sortingDirection == GridSortingDirection.ASCENDING) {
             return comparator;
         }

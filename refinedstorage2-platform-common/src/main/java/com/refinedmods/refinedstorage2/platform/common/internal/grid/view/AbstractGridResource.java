@@ -54,4 +54,14 @@ public abstract class AbstractGridResource<T> implements PlatformGridResource {
     public void setZeroed(final boolean zeroed) {
         this.zeroed = zeroed;
     }
+
+    @Override
+    public String toString() {
+        return "AbstractGridResource{"
+            + "resourceAmount=" + resourceAmount
+            + ", name='" + name + '\''
+            + ", attributes=" + attributes
+            + ", zeroed=" + zeroed
+            + '}';
+    }
 }

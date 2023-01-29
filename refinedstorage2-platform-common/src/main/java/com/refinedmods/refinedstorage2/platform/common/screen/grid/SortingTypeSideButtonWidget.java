@@ -1,7 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
-import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
@@ -21,29 +21,29 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 public class SortingTypeSideButtonWidget extends AbstractSideButtonWidget {
     private final GridContainerMenu menu;
     private final TooltipRenderer tooltipRenderer;
-    private final Map<GridSortingType, List<Component>> tooltips = new EnumMap<>(GridSortingType.class);
+    private final Map<GridSortingTypes, List<Component>> tooltips = new EnumMap<>(GridSortingTypes.class);
 
     public SortingTypeSideButtonWidget(final GridContainerMenu menu, final TooltipRenderer tooltipRenderer) {
         super(createPressAction(menu));
         this.menu = menu;
         this.tooltipRenderer = tooltipRenderer;
-        Arrays.stream(GridSortingType.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
+        Arrays.stream(GridSortingTypes.values()).forEach(type -> tooltips.put(type, calculateTooltip(type)));
     }
 
     private static OnPress createPressAction(final GridContainerMenu menu) {
         return btn -> menu.setSortingType(toggle(menu.getSortingType()));
     }
 
-    private static GridSortingType toggle(final GridSortingType sortingType) {
+    private static GridSortingTypes toggle(final GridSortingTypes sortingType) {
         return switch (sortingType) {
-            case QUANTITY -> GridSortingType.NAME;
-            case NAME -> GridSortingType.ID;
-            case ID -> GridSortingType.LAST_MODIFIED;
-            case LAST_MODIFIED -> GridSortingType.QUANTITY;
+            case QUANTITY -> GridSortingTypes.NAME;
+            case NAME -> GridSortingTypes.ID;
+            case ID -> GridSortingTypes.LAST_MODIFIED;
+            case LAST_MODIFIED -> GridSortingTypes.QUANTITY;
         };
     }
 
-    private List<Component> calculateTooltip(final GridSortingType type) {
+    private List<Component> calculateTooltip(final GridSortingTypes type) {
         final List<Component> lines = new ArrayList<>();
         lines.add(createTranslation("gui", "grid.sorting.type"));
         lines.add(createTranslation(
@@ -65,7 +65,7 @@ public class SortingTypeSideButtonWidget extends AbstractSideButtonWidget {
 
     @Override
     protected int getYTexture() {
-        return menu.getSortingType() == GridSortingType.LAST_MODIFIED ? 48 : 32;
+        return menu.getSortingType() == GridSortingTypes.LAST_MODIFIED ? 48 : 32;
     }
 
     @Override

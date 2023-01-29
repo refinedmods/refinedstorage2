@@ -58,11 +58,6 @@ public class GridResourceImpl implements GridResource {
     }
 
     @Override
-    public int getId() {
-        return 0;
-    }
-
-    @Override
     public String getName() {
         return resourceAmount.getResource().toString();
     }

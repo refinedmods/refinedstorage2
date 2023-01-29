@@ -15,9 +15,15 @@ public class GridViewBuilderImpl implements GridViewBuilder {
     private final GridResourceFactory resourceFactory;
     private final ResourceList<Object> backingList = new ResourceListImpl<>();
     private final Map<Object, TrackedResource> trackedResources = new HashMap<>();
+    private final GridSortingType identitySortingType;
+    private final GridSortingType defaultSortingType;
 
-    public GridViewBuilderImpl(final GridResourceFactory resourceFactory) {
+    public GridViewBuilderImpl(final GridResourceFactory resourceFactory,
+                               final GridSortingType identitySortingType,
+                               final GridSortingType defaultSortingType) {
         this.resourceFactory = resourceFactory;
+        this.identitySortingType = identitySortingType;
+        this.defaultSortingType = defaultSortingType;
     }
 
     @Override
@@ -31,6 +37,12 @@ public class GridViewBuilderImpl implements GridViewBuilder {
 
     @Override
     public GridView build() {
-        return new GridViewImpl(resourceFactory, backingList, trackedResources);
+        return new GridViewImpl(
+            resourceFactory,
+            backingList,
+            trackedResources,
+            identitySortingType,
+            defaultSortingType
+        );
     }
 }

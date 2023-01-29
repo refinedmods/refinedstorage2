@@ -5,7 +5,6 @@ import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
-import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.api.grid.view.GridView;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilder;
 import com.refinedmods.refinedstorage2.api.grid.view.GridViewBuilderImpl;
@@ -31,6 +30,7 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridE
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.CompositeGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridSearchBox;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
@@ -145,9 +145,11 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
     }
 
     private static GridViewBuilder createViewBuilder() {
-        return new GridViewBuilderImpl(new CompositeGridResourceFactory(
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry()
-        ));
+        return new GridViewBuilderImpl(
+            new CompositeGridResourceFactory(PlatformApi.INSTANCE.getStorageChannelTypeRegistry()),
+            GridSortingTypes.NAME,
+            GridSortingTypes.QUANTITY
+        );
     }
 
     public <T> void onResourceUpdate(final T template,
@@ -171,11 +173,11 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
         view.sort();
     }
 
-    public GridSortingType getSortingType() {
+    public GridSortingTypes getSortingType() {
         return Platform.INSTANCE.getConfig().getGrid().getSortingType();
     }
 
-    public void setSortingType(final GridSortingType sortingType) {
+    public void setSortingType(final GridSortingTypes sortingType) {
         Platform.INSTANCE.getConfig().getGrid().setSortingType(sortingType);
         view.setSortingType(sortingType);
         view.sort();
