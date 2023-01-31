@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.screen.TextureIds;
 import com.refinedmods.refinedstorage2.platform.common.screen.TooltipRenderer;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
 
@@ -55,7 +56,7 @@ public class StorageChannelTypeSideButtonWidget extends AbstractSideButtonWidget
     protected ResourceLocation getTextureIdentifier() {
         final PlatformStorageChannelType<?> storageChannelType = menu.getStorageChannelType();
         if (storageChannelType == null) {
-            return AbstractSideButtonWidget.DEFAULT_TEXTURE;
+            return TextureIds.ICONS;
         }
         return storageChannelType.getTextureIdentifier();
     }
