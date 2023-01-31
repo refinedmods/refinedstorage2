@@ -13,7 +13,7 @@ import com.refinedmods.refinedstorage2.platform.api.storage.channel.FuzzyStorage
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.ItemGridResource;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResource;
-import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
+import com.refinedmods.refinedstorage2.platform.common.screen.TextureIds;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import java.util.Optional;
@@ -33,7 +33,7 @@ class ItemStorageChannelType extends AbstractPlatformStorageChannelType<ItemReso
                 return new FuzzyStorageChannelImpl<>(fuzzyList);
             },
             createTranslation("misc", "storage_channel_type.item"),
-            AbstractSideButtonWidget.DEFAULT_TEXTURE,
+            TextureIds.ICONS,
             0,
             128
         );

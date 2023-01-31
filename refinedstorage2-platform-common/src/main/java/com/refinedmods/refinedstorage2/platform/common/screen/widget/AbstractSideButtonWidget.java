@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
+import com.refinedmods.refinedstorage2.platform.common.screen.TextureIds;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
@@ -8,11 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
-
 public abstract class AbstractSideButtonWidget extends Button {
-    public static final ResourceLocation DEFAULT_TEXTURE = createIdentifier("textures/icons.png");
-
     private static final int WIDTH = 18;
     private static final int HEIGHT = 18;
 
@@ -25,7 +23,7 @@ public abstract class AbstractSideButtonWidget extends Button {
     protected abstract int getYTexture();
 
     protected ResourceLocation getTextureIdentifier() {
-        return DEFAULT_TEXTURE;
+        return TextureIds.ICONS;
     }
 
     @Override

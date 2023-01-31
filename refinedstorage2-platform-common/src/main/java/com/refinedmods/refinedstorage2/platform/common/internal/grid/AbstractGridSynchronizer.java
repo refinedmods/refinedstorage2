@@ -1,14 +1,14 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.grid;
 
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.common.screen.widget.AbstractSideButtonWidget;
+import com.refinedmods.refinedstorage2.platform.common.screen.TextureIds;
 
 import net.minecraft.resources.ResourceLocation;
 
 public abstract class AbstractGridSynchronizer implements GridSynchronizer {
     @Override
     public ResourceLocation getTextureIdentifier() {
-        return AbstractSideButtonWidget.DEFAULT_TEXTURE;
+        return TextureIds.ICONS;
     }
 
     @Override
