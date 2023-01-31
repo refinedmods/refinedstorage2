@@ -168,6 +168,7 @@ public class ModInitializer extends AbstractModInitializer {
         initializePlatformApi();
         registerAdditionalStorageTypes();
         registerAdditionalStorageChannelTypes();
+        registerAdditionalFilteredResourceFactories();
         registerAdditionalGridInsertionStrategyFactories();
         registerGridExtractionStrategyFactories();
         registerGridScrollingStrategyFactories();
@@ -177,7 +178,6 @@ public class ModInitializer extends AbstractModInitializer {
         registerExternalStorageProviderFactories();
         registerContent();
         registerSounds();
-        registerAdditionalResourceTypes();
         registerTickHandler();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {

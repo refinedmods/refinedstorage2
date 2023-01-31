@@ -2,47 +2,29 @@ package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter
 
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
 
-public record FluidFilteredResource(FluidResource value, long amount) implements FilteredResource {
-    private static final String TAG_AMOUNT = "amt";
-
-    public static long getAmountFromTag(final CompoundTag tag) {
-        return tag.getLong(TAG_AMOUNT);
-    }
-
-    @Override
-    public void writeToPacket(final FriendlyByteBuf buf) {
-        PacketUtil.writeFluidResource(buf, value);
-        buf.writeLong(amount);
-    }
-
-    @Override
-    public CompoundTag toTag() {
-        final CompoundTag tag = FluidResource.toTag(value);
-        tag.putLong(TAG_AMOUNT, amount);
-        return tag;
-    }
-
+public record FluidFilteredResource(FluidResource value, long amount) implements FilteredResource<FluidResource> {
     @Override
     public void render(final PoseStack poseStack, final int x, final int y, final int z) {
         Platform.INSTANCE.getFluidRenderer().render(poseStack, x, y, z, value);
     }
 
     @Override
-    public Object getValue() {
+    public FluidResource getValue() {
         return value;
+    }
+
+    @Override
+    public FilteredResource<FluidResource> withAmount(final long newAmount) {
+        return new FluidFilteredResource(value, newAmount);
     }
 
     @Override
@@ -51,27 +33,22 @@ public record FluidFilteredResource(FluidResource value, long amount) implements
     }
 
     @Override
-    public FilteredResource withAmount(final long newAmount) {
-        return new FluidFilteredResource(value, newAmount);
-    }
-
-    @Override
     public long getMaxAmount() {
         return Long.MAX_VALUE;
     }
 
     @Override
-    public String getFormattedAmount() {
+    public String getDisplayedAmount() {
         return Platform.INSTANCE.getBucketQuantityFormatter().formatWithUnits(amount);
     }
 
     @Override
-    public ResourceType getType() {
-        return FluidResourceType.INSTANCE;
+    public List<Component> getTooltip() {
+        return Platform.INSTANCE.getFluidRenderer().getTooltip(value);
     }
 
     @Override
-    public List<Component> getTooltipLines(@Nullable final Player player) {
-        return Platform.INSTANCE.getFluidRenderer().getTooltip(value);
+    public PlatformStorageChannelType<FluidResource> getStorageChannelType() {
+        return StorageChannelTypes.FLUID;
     }
 }

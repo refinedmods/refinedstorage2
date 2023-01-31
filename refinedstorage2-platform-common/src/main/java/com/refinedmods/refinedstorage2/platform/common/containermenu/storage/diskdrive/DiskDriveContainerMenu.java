@@ -35,18 +35,11 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
     private final List<Slot> diskSlots = new ArrayList<>();
 
     public DiskDriveContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
-        super(Menus.INSTANCE.getDiskDrive(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry());
-
+        super(Menus.INSTANCE.getDiskDrive(), syncId);
         this.storageInfoAccessor = new StorageDiskInfoAccessorImpl(PlatformApi.INSTANCE.getStorageRepository(
             playerInventory.player.getLevel()
         ));
-
-        addSlots(
-            playerInventory.player,
-            new SimpleContainer(9),
-            new ResourceFilterContainer(PlatformApi.INSTANCE.getResourceTypeRegistry(), 9)
-        );
-
+        addSlots(playerInventory.player, new SimpleContainer(9), new ResourceFilterContainer(9));
         initializeResourceFilterSlots(buf);
     }
 
@@ -56,14 +49,7 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
                                   final ResourceFilterContainer resourceFilterContainer,
                                   final StorageConfigurationContainer configContainer,
                                   final StorageDiskInfoAccessor storageInfoAccessor) {
-        super(
-            Menus.INSTANCE.getDiskDrive(),
-            syncId,
-            PlatformApi.INSTANCE.getResourceTypeRegistry(),
-            player,
-            configContainer,
-            resourceFilterContainer
-        );
+        super(Menus.INSTANCE.getDiskDrive(), syncId, player, configContainer);
         this.storageInfoAccessor = storageInfoAccessor;
         addSlots(player, diskInventory, resourceFilterContainer);
     }

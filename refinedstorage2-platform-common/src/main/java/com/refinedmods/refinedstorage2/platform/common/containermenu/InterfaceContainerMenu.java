@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
-import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
@@ -9,7 +8,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.Resour
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemResourceType;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -29,15 +28,8 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
                                   final InterfaceBlockEntity blockEntity,
                                   final ResourceFilterContainer exportConfig,
                                   final Container exportedItems) {
-        super(
-            Menus.INSTANCE.getInterface(),
-            syncId,
-            PlatformApi.INSTANCE.getResourceTypeRegistry(),
-            player,
-            exportConfig
-        );
+        super(Menus.INSTANCE.getInterface(), syncId, player);
         addSlots(player, exportConfig, exportedItems);
-
         registerProperty(new ServerProperty<>(
             PropertyTypes.FUZZY_MODE,
             blockEntity::isFuzzyMode,
@@ -51,19 +43,13 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
     }
 
     public InterfaceContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
-        super(Menus.INSTANCE.getInterface(), syncId, PlatformApi.INSTANCE.getResourceTypeRegistry());
+        super(Menus.INSTANCE.getInterface(), syncId);
         addSlots(
             playerInventory.player,
-            new FilteredResourceFilterContainer(
-                PlatformApi.INSTANCE.getResourceTypeRegistry(),
-                9,
-                ItemResourceType.INSTANCE,
-                64
-            ),
+            new FilteredResourceFilterContainer(9, StorageChannelTypes.ITEM, 64),
             new SimpleContainer(9)
         );
         initializeResourceFilterSlots(buf);
-
         registerProperty(new ClientProperty<>(PropertyTypes.FUZZY_MODE, false));
         registerProperty(new ClientProperty<>(PropertyTypes.REDSTONE_MODE, RedstoneMode.IGNORE));
     }
@@ -77,9 +63,7 @@ public class InterfaceContainerMenu extends AbstractResourceFilterContainerMenu 
         for (int i = 0; i < exportedItems.getContainerSize(); ++i) {
             addSlot(createExportedItemSlot(exportedItems, i));
         }
-
         addPlayerInventory(player.getInventory(), 8, 100);
-
         transferManager.addBiTransfer(exportedItems, player.getInventory());
         transferManager.addFilterTransfer(player.getInventory());
     }

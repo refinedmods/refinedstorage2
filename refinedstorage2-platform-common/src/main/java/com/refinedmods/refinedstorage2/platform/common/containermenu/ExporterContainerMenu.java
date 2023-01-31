@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
-import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.UpgradeContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterSchedulingModeSettings;
@@ -16,13 +15,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
-public class ExporterContainerMenu extends AbstractSimpleFilterContainerMenu<ExporterBlockEntity>
-    implements ResourceTypeAccessor {
+public class ExporterContainerMenu extends AbstractSimpleFilterContainerMenu<ExporterBlockEntity> {
     public ExporterContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(
             Menus.INSTANCE.getExporter(),
             syncId,
-            PlatformApi.INSTANCE.getResourceTypeRegistry(),
             playerInventory.player,
             buf,
             UpgradeDestinations.EXPORTER
@@ -37,7 +34,6 @@ public class ExporterContainerMenu extends AbstractSimpleFilterContainerMenu<Exp
         super(
             Menus.INSTANCE.getExporter(),
             syncId,
-            PlatformApi.INSTANCE.getResourceTypeRegistry(),
             player,
             resourceFilterContainer,
             upgradeContainer,

@@ -3,7 +3,6 @@ package com.refinedmods.refinedstorage2.platform.common.packet;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -21,10 +20,11 @@ public interface ServerToClientCommunications {
                             long change,
                             @Nullable TrackedResource trackedResource);
 
-    void sendResourceFilterSlotUpdate(ServerPlayer player,
-                                      ResourceFilterContainer resourceFilterContainer,
-                                      int slotIndex,
-                                      int containerIndex);
+    <T> void sendResourceFilterSlotUpdate(ServerPlayer player,
+                                          @Nullable PlatformStorageChannelType<T> storageChannelType,
+                                          @Nullable T resource,
+                                          long amount,
+                                          int slotIndex);
 
     void sendStorageInfoResponse(ServerPlayer player, UUID id, StorageInfo storageInfo);
 }

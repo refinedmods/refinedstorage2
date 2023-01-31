@@ -26,7 +26,7 @@ import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.Export
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
@@ -38,7 +38,8 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.NoOpGridSyn
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.PlatformGridServiceFactoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.item.StorageContainerHelperImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.network.LevelConnectionProvider;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemResourceType;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.CompositeFilteredResourceFactory;
+import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResourceFactory;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.ClientStorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.StorageRepositoryImpl;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -72,8 +73,6 @@ public class PlatformApiImpl implements PlatformApi {
 
     private final StorageRepository clientStorageRepository =
         new ClientStorageRepository(Platform.INSTANCE.getClientToServerCommunications()::sendStorageInfoRequest);
-    private final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry =
-        new OrderedRegistryImpl<>(createIdentifier(ITEM_REGISTRY_KEY), ItemResourceType.INSTANCE);
     private final ComponentMapFactory<NetworkComponent, Network> networkComponentMapFactory =
         new ComponentMapFactory<>();
     private final NetworkBuilder networkBuilder =
@@ -97,6 +96,9 @@ public class PlatformApiImpl implements PlatformApi {
     private final List<GridInsertionStrategyFactory> gridInsertionStrategyFactories = new ArrayList<>();
     private final List<GridExtractionStrategyFactory> gridExtractionStrategyFactories = new ArrayList<>();
     private final List<GridScrollingStrategyFactory> gridScrollingStrategyFactories = new ArrayList<>();
+    private final CompositeFilteredResourceFactory filteredResourceFactory = new CompositeFilteredResourceFactory(
+        new ItemFilteredResourceFactory()
+    );
 
     @Override
     public OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry() {
@@ -171,11 +173,6 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public MutableComponent createTranslation(final String category, final String value, final Object... args) {
         return IdentifierUtil.createTranslation(category, value, args);
-    }
-
-    @Override
-    public OrderedRegistry<ResourceLocation, ResourceType> getResourceTypeRegistry() {
-        return resourceTypeRegistry;
     }
 
     @Override
@@ -280,5 +277,15 @@ public class PlatformApiImpl implements PlatformApi {
     @Override
     public void addGridScrollingStrategyFactory(final GridScrollingStrategyFactory scrollingStrategyFactory) {
         gridScrollingStrategyFactories.add(scrollingStrategyFactory);
+    }
+
+    @Override
+    public void addFilteredResourceFactory(final FilteredResourceFactory factory) {
+        filteredResourceFactory.addAlternativeFactory(factory);
+    }
+
+    @Override
+    public FilteredResourceFactory getFilteredResourceFactory() {
+        return filteredResourceFactory;
     }
 }

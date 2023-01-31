@@ -15,9 +15,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 -   Ported to Minecraft 1.19.3.
 -   The regular Grid now shows fluids as well.
--   You can insert fluids in the Grid by right-clicking a fluid container item in the Grid slots.
--   You can no longer insert fluids straight from the player slots, you have to insert the fluid while holding the
-    fluid container item.
+-   You can insert fluids in the Grid by right-clicking a fluid container in the Grid slots.
+-   You no longer have to explicitly select a resource type for the filter configuration slots. You can set a fluid
+    by right-clicking a fluid container in the filter slots.
+-   You can no longer insert fluids into the Grid or filter slots straight from the player inventory slots, you have to
+    insert the fluid while holding the fluid container.
 
 ### Removed
 
