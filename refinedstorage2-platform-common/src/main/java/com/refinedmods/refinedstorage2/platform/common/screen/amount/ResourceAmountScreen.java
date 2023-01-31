@@ -4,21 +4,19 @@ import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredReso
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Vector3f;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-// TODO check parity with RS 1.
 public class ResourceAmountScreen extends AbstractAmountScreen {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/resource_amount.png");
     private static final MutableComponent TITLE = createTranslation("gui", "amount");
@@ -68,7 +66,7 @@ public class ResourceAmountScreen extends AbstractAmountScreen {
     }
 
     @Override
-    protected boolean tryOpenResourceFilterAmountScreen(final Slot clickedSlot, final ClickType type) {
+    protected boolean tryOpenResourceFilterAmountScreen(final Slot clickedSlot) {
         return false;
     }
 
@@ -76,7 +74,7 @@ public class ResourceAmountScreen extends AbstractAmountScreen {
     protected void renderResourceFilterSlotAmount(final PoseStack poseStack,
                                                   final int x,
                                                   final int y,
-                                                  final FilteredResource filteredResource) {
+                                                  final FilteredResource<?> filteredResource) {
         // should not render amount here
     }
 

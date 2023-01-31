@@ -1,25 +1,19 @@
 package com.refinedmods.refinedstorage2.platform.forge;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.grid.service.GridService;
-import com.refinedmods.refinedstorage2.api.grid.view.AbstractGridResource;
+import com.refinedmods.refinedstorage2.api.grid.view.GridResourceFactory;
 import com.refinedmods.refinedstorage2.api.network.energy.EnergyStorage;
 import com.refinedmods.refinedstorage2.api.network.impl.energy.InfiniteEnergyStorage;
-import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage2.api.storage.ExtractableStorage;
 import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.FluidGridEventHandler;
-import com.refinedmods.refinedstorage2.platform.common.internal.grid.ItemGridEventHandler;
 import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.forge.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage2.platform.forge.integration.energy.ControllerForgeEnergy;
-import com.refinedmods.refinedstorage2.platform.forge.internal.grid.FluidGridEventHandlerImpl;
-import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridEventHandlerImpl;
+import com.refinedmods.refinedstorage2.platform.forge.internal.grid.ItemGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.view.ForgeFluidGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.forge.internal.grid.view.ForgeItemGridResourceFactory;
 import com.refinedmods.refinedstorage2.platform.forge.menu.MenuOpenerImpl;
@@ -29,7 +23,6 @@ import com.refinedmods.refinedstorage2.platform.forge.packet.s2c.ServerToClientC
 import com.refinedmods.refinedstorage2.platform.forge.render.FluidStackFluidRenderer;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
@@ -38,7 +31,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
@@ -68,7 +60,8 @@ public final class PlatformImpl extends AbstractPlatform {
             new ClientToServerCommunicationsImpl(networkManager),
             new MenuOpenerImpl(),
             new BucketQuantityFormatter(FluidType.BUCKET_VOLUME),
-            new FluidStackFluidRenderer()
+            new FluidStackFluidRenderer(),
+            ItemGridInsertionStrategy::new
         );
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getSpec());
     }
@@ -102,27 +95,12 @@ public final class PlatformImpl extends AbstractPlatform {
     }
 
     @Override
-    public ItemGridEventHandler createItemGridEventHandler(final AbstractContainerMenu containerMenu,
-                                                           final GridService<ItemResource> gridService,
-                                                           final Inventory playerInventory) {
-        return new ItemGridEventHandlerImpl(containerMenu, gridService, playerInventory);
-    }
-
-    @Override
-    public FluidGridEventHandler createFluidGridEventHandler(final AbstractContainerMenu containerMenu,
-                                                             final GridService<FluidResource> gridService,
-                                                             final Inventory playerInventory,
-                                                             final ExtractableStorage<ItemResource> bucketStorage) {
-        return new FluidGridEventHandlerImpl(containerMenu, playerInventory, gridService, bucketStorage);
-    }
-
-    @Override
-    public Function<ResourceAmount<ItemResource>, AbstractGridResource<ItemResource>> getItemGridResourceFactory() {
+    public GridResourceFactory getItemGridResourceFactory() {
         return new ForgeItemGridResourceFactory();
     }
 
     @Override
-    public Function<ResourceAmount<FluidResource>, AbstractGridResource<FluidResource>> getFluidGridResourceFactory() {
+    public GridResourceFactory getFluidGridResourceFactory() {
         return new ForgeFluidGridResourceFactory();
     }
 

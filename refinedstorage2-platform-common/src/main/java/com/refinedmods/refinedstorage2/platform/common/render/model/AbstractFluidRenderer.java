@@ -18,7 +18,7 @@ public abstract class AbstractFluidRenderer implements FluidRenderer {
                           final int z,
                           final int packedRgb,
                           final TextureAtlasSprite sprite) {
-        RenderSystem.setShaderTexture(0, sprite.atlas().getId());
+        RenderSystem.setShaderTexture(0, sprite.atlasLocation());
 
         final int r = packedRgb >> 16 & 255;
         final int g = packedRgb >> 8 & 255;

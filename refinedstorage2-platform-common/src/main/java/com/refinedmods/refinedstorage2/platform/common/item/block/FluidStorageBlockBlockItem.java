@@ -15,7 +15,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -30,12 +29,10 @@ public class FluidStorageBlockBlockItem extends AbstractStorageContainerBlockIte
 
     private final FluidStorageType.Variant variant;
 
-    public FluidStorageBlockBlockItem(final Block block,
-                                      final CreativeModeTab tab,
-                                      final FluidStorageType.Variant variant) {
+    public FluidStorageBlockBlockItem(final Block block, final FluidStorageType.Variant variant) {
         super(
             block,
-            new Item.Properties().tab(tab).stacksTo(1).fireResistant(),
+            new Item.Properties().stacksTo(1).fireResistant(),
             PlatformApi.INSTANCE.getStorageContainerHelper()
         );
         this.variant = variant;

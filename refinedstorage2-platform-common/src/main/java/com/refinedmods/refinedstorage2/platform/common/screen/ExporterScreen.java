@@ -25,7 +25,6 @@ public class ExporterScreen extends AbstractBaseScreen<ExporterContainerMenu> {
     @Override
     protected void init() {
         super.init();
-
         addSideButton(new RedstoneModeSideButtonWidget(
             getMenu().getProperty(PropertyTypes.REDSTONE_MODE),
             this::renderComponentTooltip
@@ -38,11 +37,6 @@ public class ExporterScreen extends AbstractBaseScreen<ExporterContainerMenu> {
             getMenu().getProperty(PropertyTypes.EXPORTER_SCHEDULING_MODE),
             this::renderComponentTooltip
         ));
-    }
-
-    @Override
-    protected int getResourceFilterButtonX() {
-        return super.getResourceFilterButtonX() - 34;
     }
 
     @Override

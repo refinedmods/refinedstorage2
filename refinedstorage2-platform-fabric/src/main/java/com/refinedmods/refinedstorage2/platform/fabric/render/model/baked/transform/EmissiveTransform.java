@@ -31,7 +31,7 @@ public class EmissiveTransform implements RenderContext.QuadTransform {
         if (sprite == null) {
             return;
         }
-        if (!emissiveSprite.equals(sprite.getName())) {
+        if (!emissiveSprite.equals(sprite.contents().name())) {
             return;
         }
         applyLightmap(quad);

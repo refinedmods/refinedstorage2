@@ -16,8 +16,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockS
 import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.jei.JeiProxy;
@@ -27,8 +26,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAcces
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEnergyInfoPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridActivePacket;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridFluidUpdatePacket;
-import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridItemUpdatePacket;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.GridUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ResourceFilterSlotUpdatePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.StorageInfoResponsePacket;
 import com.refinedmods.refinedstorage2.platform.fabric.render.entity.DiskDriveBlockEntityRendererImpl;
@@ -41,11 +39,11 @@ import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import org.lwjgl.glfw.GLFW;
@@ -78,8 +76,6 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(Blocks.INSTANCE.getExternalStorage(), RenderType.cutout());
         Blocks.INSTANCE.getGrid().values().forEach(block ->
             BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
-        Blocks.INSTANCE.getFluidGrid().values().forEach(block ->
-            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
         Blocks.INSTANCE.getController().values().forEach(block ->
             BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
         Blocks.INSTANCE.getCreativeController().values().forEach(block ->
@@ -90,7 +86,6 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         for (final DyeColor color : DyeColor.values()) {
             registerEmissiveControllerModels(color);
             registerEmissiveGridModels(color);
-            registerEmissiveFluidGridModels(color);
         }
     }
 
@@ -123,21 +118,9 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         );
     }
 
-    private void registerEmissiveFluidGridModels(final DyeColor color) {
-        EmissiveModelRegistry.INSTANCE.register(
-            createIdentifier("block/fluid_grid/" + color.getName()),
-            createIdentifier("block/fluid_grid/cutouts/" + color.getName())
-        );
-        EmissiveModelRegistry.INSTANCE.register(
-            ColorMap.generateId(color, IdentifierUtil.MOD_ID, "fluid_grid"),
-            createIdentifier("block/fluid_grid/cutouts/" + color.getName())
-        );
-    }
-
     private void registerPackets() {
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.STORAGE_INFO_RESPONSE, new StorageInfoResponsePacket());
-        ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ITEM_UPDATE, new GridItemUpdatePacket());
-        ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_FLUID_UPDATE, new GridFluidUpdatePacket());
+        ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_UPDATE, new GridUpdatePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.GRID_ACTIVE, new GridActivePacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.CONTROLLER_ENERGY_INFO, new ControllerEnergyInfoPacket());
         ClientPlayNetworking.registerGlobalReceiver(PacketIds.RESOURCE_FILTER_SLOT_UPDATE,
@@ -145,8 +128,10 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void registerBlockEntityRenderers() {
-        BlockEntityRendererRegistry.register(BlockEntities.INSTANCE.getDiskDrive(),
-            ctx -> new DiskDriveBlockEntityRendererImpl<>());
+        BlockEntityRenderers.register(
+            BlockEntities.INSTANCE.getDiskDrive(),
+            ctx -> new DiskDriveBlockEntityRendererImpl<>()
+        );
     }
 
     private void registerCustomModels() {
@@ -163,8 +148,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
 
     private void registerScreens() {
         MenuScreens.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getGrid(), ItemGridScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getFluidGrid(), FluidGridScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getGrid(), GridScreen::new);
         MenuScreens.register(Menus.INSTANCE.getController(), ControllerScreen::new);
         MenuScreens.register(Menus.INSTANCE.getItemStorage(), ItemStorageBlockScreen::new);
         MenuScreens.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);
@@ -184,7 +168,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void registerModelPredicates() {
-        Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemPropertiesAccessor.register(
+        Items.INSTANCE.getRegularControllers().forEach(controllerBlockItem -> ItemPropertiesAccessor.register(
             controllerBlockItem.get(),
             createIdentifier("stored_in_controller"),
             new ControllerModelPredicateProvider()

@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
-import com.refinedmods.refinedstorage2.api.grid.view.GridSortingType;
 import com.refinedmods.refinedstorage2.platform.common.content.DefaultEnergyUsage;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 
 import java.util.Optional;
@@ -130,9 +130,11 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
 
         private String synchronizer = "";
 
+        private String storageChannelType = "";
+
         private GridSortingDirection sortingDirection = GridSortingDirection.ASCENDING;
 
-        private GridSortingType sortingType = GridSortingType.QUANTITY;
+        private GridSortingTypes sortingType = GridSortingTypes.QUANTITY;
 
         private GridSize size = GridSize.STRETCH;
 
@@ -214,12 +216,12 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         }
 
         @Override
-        public GridSortingType getSortingType() {
+        public GridSortingTypes getSortingType() {
             return sortingType;
         }
 
         @Override
-        public void setSortingType(final GridSortingType sortingType) {
+        public void setSortingType(final GridSortingTypes sortingType) {
             this.sortingType = sortingType;
             save();
         }
@@ -232,6 +234,26 @@ public class ConfigImpl implements ConfigData, com.refinedmods.refinedstorage2.p
         @Override
         public void setSize(final GridSize size) {
             this.size = size;
+            save();
+        }
+
+        @Override
+        public Optional<ResourceLocation> getStorageChannelType() {
+            if (storageChannelType == null || storageChannelType.trim().isBlank()) {
+                return Optional.empty();
+            }
+            return Optional.of(storageChannelType).map(ResourceLocation::new);
+        }
+
+        @Override
+        public void setStorageChannelType(final ResourceLocation storageChannelTypeId) {
+            this.storageChannelType = storageChannelTypeId.toString();
+            save();
+        }
+
+        @Override
+        public void clearStorageChannelType() {
+            this.storageChannelType = "";
             save();
         }
 

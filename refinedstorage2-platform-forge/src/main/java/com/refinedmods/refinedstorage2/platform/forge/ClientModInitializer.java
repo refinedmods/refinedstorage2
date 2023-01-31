@@ -14,8 +14,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockS
 import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.FluidGridScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.ItemGridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.forge.integration.jei.JeiGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.forge.integration.jei.JeiProxy;
 import com.refinedmods.refinedstorage2.platform.forge.integration.rei.ReiGridSynchronizer;
@@ -56,7 +55,7 @@ public final class ClientModInitializer {
     }
 
     private static void registerModelPredicates() {
-        Items.INSTANCE.getControllers().forEach(controllerBlockItem -> ItemProperties.register(
+        Items.INSTANCE.getRegularControllers().forEach(controllerBlockItem -> ItemProperties.register(
             controllerBlockItem.get(),
             createIdentifier("stored_in_controller"),
             new ControllerModelPredicateProvider()
@@ -66,8 +65,7 @@ public final class ClientModInitializer {
     private static void registerScreens() {
         MenuScreens.register(Menus.INSTANCE.getController(), ControllerScreen::new);
         MenuScreens.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getGrid(), ItemGridScreen::new);
-        MenuScreens.register(Menus.INSTANCE.getFluidGrid(), FluidGridScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getGrid(), GridScreen::new);
         MenuScreens.register(Menus.INSTANCE.getItemStorage(), ItemStorageBlockScreen::new);
         MenuScreens.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);
         MenuScreens.register(Menus.INSTANCE.getImporter(), ImporterScreen::new);

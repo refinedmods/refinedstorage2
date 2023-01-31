@@ -7,6 +7,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.7] - 2023-01-31
+
+### Added
+
+-   Added a "Storage channel" filter in the Grid that determines which resource type is shown. Defaults to "All".
+
+### Changed
+
+-   Ported to Minecraft 1.19.3.
+-   The regular Grid now shows fluids as well.
+-   You can insert fluids in the Grid by right-clicking a fluid container in the Grid slots.
+-   You no longer have to explicitly select a resource type for the filter configuration slots. You can set a fluid
+    by right-clicking a fluid container in the filter slots.
+-   You can no longer insert fluids into the Grid or filter slots straight from the player inventory slots, you have to
+    insert the fluid while holding the fluid container.
+
+### Removed
+
+-   Removed the Fluid Grid, which has been combined into the regular Grid.
+
 ## [2.0.0-milestone.2.6] - 2023-01-13
 
 ### Fixed
@@ -274,7 +294,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.6...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.7...HEAD
+
+[2.0.0-milestone.2.7]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.6...v2.0.0-milestone.2.7
 
 [2.0.0-milestone.2.6]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.5...v2.0.0-milestone.2.6
 

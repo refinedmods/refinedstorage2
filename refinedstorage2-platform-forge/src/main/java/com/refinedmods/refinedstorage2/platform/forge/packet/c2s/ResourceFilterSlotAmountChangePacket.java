@@ -37,8 +37,8 @@ public class ResourceFilterSlotAmountChangePacket {
     }
 
     private static void handle(final ResourceFilterSlotAmountChangePacket packet, final Player player) {
-        if (player.containerMenu instanceof AbstractResourceFilterContainerMenu resourceFilterable) {
-            resourceFilterable.handleResourceFilterSlotAmountChange(packet.slotIndex, packet.amount);
+        if (player.containerMenu instanceof AbstractResourceFilterContainerMenu containerMenu) {
+            containerMenu.handleResourceFilterSlotAmountChange(packet.slotIndex, packet.amount);
         }
     }
 }

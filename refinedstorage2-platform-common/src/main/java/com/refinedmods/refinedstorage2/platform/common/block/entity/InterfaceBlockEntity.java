@@ -15,7 +15,6 @@ import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemFilteredResource;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item.ItemResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 
@@ -63,7 +62,7 @@ public class InterfaceBlockEntity
         getNode().setExportState(this);
         getNode().setTransferQuota(64);
         this.filter = new FilterWithFuzzyMode(
-            ItemResourceType.INSTANCE,
+            StorageChannelTypes.ITEM,
             this::setChanged,
             value -> {
             },
@@ -158,7 +157,7 @@ public class InterfaceBlockEntity
     @Nullable
     @Override
     public ItemResource getRequestedResource(final int index) {
-        final FilteredResource filteredResource = filter.getFilterContainer().get(index);
+        final FilteredResource<?> filteredResource = filter.getFilterContainer().get(index);
         if (!(filteredResource instanceof ItemFilteredResource itemFilteredResource)) {
             return null;
         }
@@ -167,7 +166,7 @@ public class InterfaceBlockEntity
 
     @Override
     public long getRequestedResourceAmount(final int index) {
-        final FilteredResource filteredResource = filter.getFilterContainer().get(index);
+        final FilteredResource<?> filteredResource = filter.getFilterContainer().get(index);
         if (filteredResource == null) {
             return 0;
         }

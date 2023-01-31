@@ -5,11 +5,10 @@ import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.FluidGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.ItemGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
@@ -24,8 +23,7 @@ import javax.annotation.Nullable;
 public final class Blocks {
     public static final Blocks INSTANCE = new Blocks();
 
-    private final BlockColorMap<ItemGridBlock> grid = new BlockColorMap<>();
-    private final BlockColorMap<FluidGridBlock> fluidGrid = new BlockColorMap<>();
+    private final BlockColorMap<GridBlock> grid = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
     @Nullable
@@ -68,12 +66,8 @@ public final class Blocks {
         return Objects.requireNonNull(machineCasing).get();
     }
 
-    public BlockColorMap<ItemGridBlock> getGrid() {
+    public BlockColorMap<GridBlock> getGrid() {
         return grid;
-    }
-
-    public BlockColorMap<FluidGridBlock> getFluidGrid() {
-        return fluidGrid;
     }
 
     public BlockColorMap<ControllerBlock> getController() {

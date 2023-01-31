@@ -19,7 +19,6 @@ public final class ContentIds {
     public static final ResourceLocation WRENCH = createIdentifier("wrench");
     public static final ResourceLocation STORAGE_HOUSING = createIdentifier("storage_housing");
     public static final ResourceLocation GRID = createIdentifier("grid");
-    public static final ResourceLocation FLUID_GRID = createIdentifier("fluid_grid");
     public static final ResourceLocation CONTROLLER = createIdentifier("controller");
     public static final ResourceLocation CREATIVE_CONTROLLER = createIdentifier("creative_controller");
     public static final ResourceLocation CONSTRUCTION_CORE = createIdentifier("construction_core");

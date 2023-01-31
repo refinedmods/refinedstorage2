@@ -7,4 +7,6 @@
     <suppress checks="JavadocPackage" files="test[\\/].*.java"/>
     <!-- Mod initializer can be longer due to initialization logic -->
     <suppress checks="FileLength" files="ModInitializer.*.java"/>
+    <!-- Shadow target contains underscore -->
+    <suppress checks="MemberName" files="ModelBakerImplMixin.java"/>
 </suppressions>

@@ -2,9 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.packet;
 
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -16,20 +14,17 @@ public interface ServerToClientCommunications {
 
     void sendGridActiveness(ServerPlayer player, boolean active);
 
-    void sendGridFluidUpdate(ServerPlayer player,
-                             FluidResource fluidResource,
-                             long change,
-                             @Nullable TrackedResource trackedResource);
-
-    void sendGridItemUpdate(ServerPlayer player,
-                            ItemResource itemResource,
+    <T> void sendGridUpdate(ServerPlayer player,
+                            PlatformStorageChannelType<T> storageChannelType,
+                            T resource,
                             long change,
                             @Nullable TrackedResource trackedResource);
 
-    void sendResourceFilterSlotUpdate(ServerPlayer player,
-                                      ResourceFilterContainer resourceFilterContainer,
-                                      int slotIndex,
-                                      int containerIndex);
+    <T> void sendResourceFilterSlotUpdate(ServerPlayer player,
+                                          @Nullable PlatformStorageChannelType<T> storageChannelType,
+                                          @Nullable T resource,
+                                          long amount,
+                                          int slotIndex);
 
     void sendStorageInfoResponse(ServerPlayer player, UUID id, StorageInfo storageInfo);
 }

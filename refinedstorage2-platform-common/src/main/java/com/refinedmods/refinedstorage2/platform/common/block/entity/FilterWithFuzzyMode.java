@@ -1,8 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
-import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.resource.FuzzyModeNormalizer;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.FilteredResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 
@@ -24,32 +23,30 @@ public final class FilterWithFuzzyMode {
 
     private boolean fuzzyMode;
 
-    public FilterWithFuzzyMode(final ResourceType resourceType,
+    public FilterWithFuzzyMode(final PlatformStorageChannelType<?> storageChannelType,
                                final Runnable listener,
                                final Consumer<Set<Object>> templatesAcceptor,
                                final Consumer<List<Object>> orderedTemplatesAcceptor) {
         this.filterContainer = new FilteredResourceFilterContainer(
-            PlatformApi.INSTANCE.getResourceTypeRegistry(),
             9,
             this::filterContainerChanged,
-            resourceType
+            storageChannelType
         );
         this.listener = listener;
         this.templatesAcceptor = templatesAcceptor;
         this.orderedTemplatesAcceptor = orderedTemplatesAcceptor;
     }
 
-    public FilterWithFuzzyMode(final ResourceType resourceType,
+    public FilterWithFuzzyMode(final PlatformStorageChannelType<?> storageChannelType,
                                final Runnable listener,
                                final Consumer<Set<Object>> templatesAcceptor,
                                final Consumer<List<Object>> orderedTemplatesAcceptor,
                                final int size,
                                final long maxAmount) {
         this.filterContainer = new FilteredResourceFilterContainer(
-            PlatformApi.INSTANCE.getResourceTypeRegistry(),
             size,
             this::filterContainerChanged,
-            resourceType,
+            storageChannelType,
             maxAmount
         );
         this.listener = listener;
@@ -60,11 +57,7 @@ public final class FilterWithFuzzyMode {
     public FilterWithFuzzyMode(final Runnable listener,
                                final Consumer<Set<Object>> templatesAcceptor,
                                final Consumer<List<Object>> orderedTemplatesAcceptor) {
-        this.filterContainer = new ResourceFilterContainer(
-            PlatformApi.INSTANCE.getResourceTypeRegistry(),
-            9,
-            this::filterContainerChanged
-        );
+        this.filterContainer = new ResourceFilterContainer(9, this::filterContainerChanged);
         this.listener = listener;
         this.templatesAcceptor = templatesAcceptor;
         this.orderedTemplatesAcceptor = orderedTemplatesAcceptor;
@@ -91,7 +84,7 @@ public final class FilterWithFuzzyMode {
 
     public void load(final CompoundTag tag) {
         if (tag.contains(TAG_RESOURCE_FILTER)) {
-            filterContainer.load(tag.getCompound(TAG_RESOURCE_FILTER));
+            filterContainer.fromTag(tag.getCompound(TAG_RESOURCE_FILTER));
         }
         if (tag.contains(TAG_FUZZY_MODE)) {
             fuzzyMode = tag.getBoolean(TAG_FUZZY_MODE);

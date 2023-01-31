@@ -2,10 +2,11 @@ package com.refinedmods.refinedstorage2.platform.common.util;
 
 import java.util.Locale;
 
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 public enum BiDirection implements StringRepresentable {
     NORTH(new Vector3f(0, 0, 0)),
@@ -23,12 +24,16 @@ public enum BiDirection implements StringRepresentable {
 
     private final Vector3f vec;
     private final String name;
-    private final Quaternion quaternion;
+    private final Quaternionf quaternion;
 
     BiDirection(final Vector3f vec) {
         this.vec = vec;
         this.name = name().toLowerCase(Locale.ROOT);
-        this.quaternion = new Quaternion(vec.x(), vec.y(), vec.z(), true);
+        this.quaternion = new Quaternionf().rotateXYZ(
+            vec.x() * Mth.DEG_TO_RAD,
+            vec.y() * Mth.DEG_TO_RAD,
+            vec.z() * Mth.DEG_TO_RAD
+        );
     }
 
     public static BiDirection forHorizontal(final Direction horizontalDirection) {
@@ -87,7 +92,7 @@ public enum BiDirection implements StringRepresentable {
         return name;
     }
 
-    public Quaternion getQuaternion() {
+    public Quaternionf getQuaternion() {
         return quaternion;
     }
 }

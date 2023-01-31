@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
-import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.fluid.FluidResourceType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
@@ -37,7 +36,7 @@ public class FluidStorageBlockBlockEntity extends AbstractStorageBlockBlockEntit
             pos,
             state,
             new StorageNetworkNode<>(getEnergyUsage(variant), StorageChannelTypes.FLUID),
-            FluidResourceType.INSTANCE
+            StorageChannelTypes.FLUID
         );
         this.variant = variant;
         this.displayName = createTranslation(

@@ -65,7 +65,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
     public void emitItemQuads(final ItemStack stack,
                               final Supplier<RandomSource> randomSupplier,
                               final RenderContext context) {
-        context.fallbackConsumer().accept(wrapped);
+        context.bakedModelConsumer().accept(wrapped);
         final CompoundTag tag = BlockItem.getBlockEntityData(stack);
         if (tag == null) {
             return;
@@ -75,7 +75,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
                 continue;
             }
             context.pushTransform(TRANSLATORS[i]);
-            context.fallbackConsumer().accept(diskInactiveModel);
+            context.bakedModelConsumer().accept(diskInactiveModel);
             context.popTransform();
         }
     }
@@ -115,7 +115,7 @@ public class DiskDriveBakedModel extends ForwardingBakedModel {
                 continue;
             }
             context.pushTransform(TRANSLATORS[i]);
-            context.fallbackConsumer().accept(diskModel);
+            context.bakedModelConsumer().accept(diskModel);
             context.popTransform();
         }
     }

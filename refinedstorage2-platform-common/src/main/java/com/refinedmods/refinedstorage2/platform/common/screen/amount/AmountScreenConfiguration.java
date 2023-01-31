@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.amount;
 
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 
 public final class AmountScreenConfiguration {
     private final int initialAmount;
@@ -66,8 +66,8 @@ public final class AmountScreenConfiguration {
         private int initialAmount;
         private int[] incrementsTop = new int[] {};
         private int[] incrementsBottom = new int[] {};
-        private Vector3f amountFieldPosition = Vector3f.ZERO;
-        private Vector3f actionButtonsStartPosition = Vector3f.ZERO;
+        private Vector3f amountFieldPosition = new Vector3f(0, 0, 0);
+        private Vector3f actionButtonsStartPosition = new Vector3f(0, 0, 0);
         private int minAmount;
         private int maxAmount;
         private int resetAmount;

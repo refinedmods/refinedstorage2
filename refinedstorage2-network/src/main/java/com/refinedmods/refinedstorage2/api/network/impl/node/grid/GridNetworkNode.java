@@ -1,8 +1,10 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.grid;
 
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
+import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
+import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.grid.service.GridServiceImpl;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
@@ -15,47 +17,39 @@ import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.function.ToLongFunction;
+import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class GridNetworkNode<T> extends AbstractNetworkNode {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GridNetworkNode.class);
-
-    private final Set<GridWatcher<T>> watchers = new HashSet<>();
-    private final Map<GridWatcher<T>, ResourceListListener<T>> associatedResourceListeners = new HashMap<>();
+public class GridNetworkNode extends AbstractNetworkNode implements GridServiceFactory {
+    private final OrderedRegistry<?, ? extends StorageChannelType<?>> storageChannelTypeRegistry;
+    private final Set<GridWatcher> watchers = new HashSet<>();
+    private final Map<GridWatcher, Map<StorageChannelType<?>, ResourceListListener<?>>> storageChannelListeners =
+        new HashMap<>();
     private final long energyUsage;
-    private final StorageChannelType<T> type;
 
-    public GridNetworkNode(final long energyUsage, final StorageChannelType<T> type) {
+    public GridNetworkNode(final long energyUsage,
+                           final OrderedRegistry<?, ? extends StorageChannelType<?>> storageChannelTypeRegistry) {
         this.energyUsage = energyUsage;
-        this.type = type;
+        this.storageChannelTypeRegistry = storageChannelTypeRegistry;
     }
 
-    private StorageChannel<T> getStorageChannel() {
+    private <T> StorageChannel<T> getStorageChannel(final StorageChannelType<T> type) {
         if (network == null) {
             throw new IllegalStateException("Network must be present to retrieve storage channel");
         }
         return network.getComponent(StorageNetworkComponent.class).getStorageChannel(type);
     }
 
-    public int getResourceAmount() {
-        return getStorageChannel().getAll().size();
-    }
-
-    public void forEachResource(final BiConsumer<ResourceAmount<T>, Optional<TrackedResource>> consumer,
-                                final Class<? extends Actor> sourceType) {
-        final StorageChannel<T> storageChannel = getStorageChannel();
-        storageChannel.getAll().forEach(resourceAmount -> consumer.accept(
+    public <T> List<GridResource<T>> getResources(final StorageChannelType<T> type,
+                                                  final Class<? extends Actor> actorType) {
+        final StorageChannel<T> storageChannel = getStorageChannel(type);
+        return storageChannel.getAll().stream().map(resourceAmount -> new GridResource<>(
             resourceAmount,
-            storageChannel.findTrackedResourceByActorType(resourceAmount.getResource(), sourceType)
-        ));
+            storageChannel.findTrackedResourceByActorType(resourceAmount.getResource(), actorType).orElse(null)
+        )).toList();
     }
 
     @Override
@@ -63,12 +57,22 @@ public class GridNetworkNode<T> extends AbstractNetworkNode {
         return energyUsage;
     }
 
-    public void addWatcher(final GridWatcher<T> watcher,
-                           final Class<? extends Actor> actorType) {
+    public void addWatcher(final GridWatcher watcher, final Class<? extends Actor> actorType) {
         CoreValidations.validateNotContains(watchers, watcher, "Watcher is already registered");
+        storageChannelTypeRegistry.getAll().forEach(storageChannelType -> attachWatcherToStorageChannel(
+            watcher,
+            actorType,
+            storageChannelType
+        ));
         watchers.add(watcher);
-        final StorageChannel<T> storageChannel = getStorageChannel();
+    }
+
+    private <T> void attachWatcherToStorageChannel(final GridWatcher watcher,
+                                                   final Class<? extends Actor> actorType,
+                                                   final StorageChannelType<T> storageChannelType) {
+        final StorageChannel<T> storageChannel = getStorageChannel(storageChannelType);
         final ResourceListListener<T> listener = change -> watcher.onChanged(
+            storageChannelType,
             change,
             storageChannel.findTrackedResourceByActorType(
                 change.resourceAmount().getResource(),
@@ -76,28 +80,46 @@ public class GridNetworkNode<T> extends AbstractNetworkNode {
             ).orElse(null)
         );
         storageChannel.addListener(listener);
-        associatedResourceListeners.put(watcher, listener);
-        LOGGER.info("Watcher was added, new count is {}", watchers.size());
+        storageChannelListeners.computeIfAbsent(watcher, k -> new HashMap<>()).put(storageChannelType, listener);
     }
 
-    public void removeWatcher(final GridWatcher<T> watcher) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public void removeWatcher(final GridWatcher watcher) {
         CoreValidations.validateContains(watchers, watcher, "Watcher is not registered");
+        storageChannelListeners.get(watcher).forEach((type, listener) -> removeAttachedWatcherFromStorageChannel(
+            (StorageChannelType) type,
+            (ResourceListListener) listener
+        ));
+        storageChannelListeners.remove(watcher);
         watchers.remove(watcher);
-        final ResourceListListener<T> listener = Objects.requireNonNull(associatedResourceListeners.get(watcher));
-        getStorageChannel().removeListener(listener);
-        associatedResourceListeners.remove(watcher);
-        LOGGER.info("Watcher was removed, new count is {}", watchers.size());
     }
 
-    public GridService<T> createService(final Actor actor,
-                                        final Function<T, Long> maxAmountProvider,
-                                        final long singleAmount) {
-        return new GridServiceImpl<>(getStorageChannel(), actor, maxAmountProvider, singleAmount);
+    private <T> void removeAttachedWatcherFromStorageChannel(final StorageChannelType<T> type,
+                                                             final ResourceListListener<T> listener) {
+        final StorageChannel<T> storageChannel = getStorageChannel(type);
+        storageChannel.removeListener(listener);
     }
 
     @Override
     protected void onActiveChanged(final boolean newActive) {
         super.onActiveChanged(newActive);
         watchers.forEach(watcher -> watcher.onActiveChanged(newActive));
+    }
+
+    @Override
+    public <T> GridService<T> create(
+        final StorageChannelType<T> storageChannelType,
+        final Actor actor,
+        final ToLongFunction<T> maxAmountProvider,
+        final long singleAmount
+    ) {
+        final StorageChannel<T> storageChannel = getStorageChannel(storageChannelType);
+        return new GridServiceImpl<>(storageChannel, actor, maxAmountProvider, singleAmount);
+    }
+
+    public record GridResource<T>(
+        ResourceAmount<T> resourceAmount,
+        @Nullable TrackedResource trackedResource
+    ) {
     }
 }

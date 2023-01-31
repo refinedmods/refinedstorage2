@@ -2,16 +2,15 @@ package com.refinedmods.refinedstorage2.platform.common.screen.amount;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import org.joml.Vector3f;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-// TODO check parity with RS 1.
 public class PriorityScreen extends AbstractAmountScreen {
     private static final ResourceLocation TEXTURE = createIdentifier("textures/gui/priority.png");
     private static final MutableComponent PRIORITY_TEXT = createTranslation("gui", "priority");

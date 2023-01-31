@@ -3,8 +3,8 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity.storage;
 import com.refinedmods.refinedstorage2.api.network.impl.node.storage.StorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.FilterWithFuzzyMode;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.StorageConfigurationContainerImpl;
@@ -43,10 +43,14 @@ public abstract class AbstractStorageBlockBlockEntity<T>
                                               final BlockPos pos,
                                               final BlockState state,
                                               final StorageNetworkNode<T> node,
-                                              final ResourceType resourceType) {
+                                              final PlatformStorageChannelType<T> storageChannelType) {
         super(type, pos, state, node);
-        this.filter = new FilterWithFuzzyMode(resourceType, this::setChanged, getNode()::setFilterTemplates, value -> {
-        });
+        this.filter = new FilterWithFuzzyMode(
+            storageChannelType,
+            this::setChanged,
+            getNode()::setFilterTemplates, value -> {
+        }
+        );
         this.configContainer = new StorageConfigurationContainerImpl(
             getNode(),
             filter,

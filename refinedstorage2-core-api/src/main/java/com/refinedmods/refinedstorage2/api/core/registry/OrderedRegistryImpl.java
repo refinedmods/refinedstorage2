@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 import org.apiguardian.api.API;
 
@@ -66,11 +67,21 @@ public class OrderedRegistryImpl<I, T> implements OrderedRegistry<I, T> {
 
     @Override
     public T next(final T value) {
+        final T nextValue = nextOrNullIfLast(value);
+        if (nextValue == null) {
+            return order.get(0);
+        }
+        return nextValue;
+    }
+
+    @Nullable
+    @Override
+    public T nextOrNullIfLast(final T value) {
         CoreValidations.validateNotNull(value, VALUE_NOT_PRESENT_ERROR);
         final int index = order.indexOf(value);
         final int nextIndex = index + 1;
         if (nextIndex >= order.size()) {
-            return order.get(0);
+            return null;
         }
         return order.get(nextIndex);
     }

@@ -1,55 +1,43 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter;
 
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
-import com.refinedmods.refinedstorage2.platform.api.resource.filter.ResourceType;
-
-import net.minecraft.resources.ResourceLocation;
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 
 public class FilteredResourceFilterContainer extends ResourceFilterContainer {
-    private final ResourceType allowedType;
+    private final PlatformStorageChannelType<?> allowedType;
 
-    public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
-                                           final int size,
-                                           final ResourceType allowedType) {
-        this(resourceTypeRegistry, size, () -> {
+    public FilteredResourceFilterContainer(final int size,
+                                           final PlatformStorageChannelType<?> allowedType) {
+        this(size, () -> {
         }, allowedType, -1);
     }
 
-    public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
-                                           final int size,
-                                           final ResourceType allowedType,
+    public FilteredResourceFilterContainer(final int size,
+                                           final PlatformStorageChannelType<?> allowedType,
                                            final long maxAmount) {
-        this(resourceTypeRegistry, size, () -> {
+        this(size, () -> {
         }, allowedType, maxAmount);
     }
 
-    public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
-                                           final int size,
+    public FilteredResourceFilterContainer(final int size,
                                            final Runnable listener,
-                                           final ResourceType allowedType) {
-        this(resourceTypeRegistry, size, listener, allowedType, -1);
+                                           final PlatformStorageChannelType<?> allowedType) {
+        this(size, listener, allowedType, -1);
     }
 
-    public FilteredResourceFilterContainer(final OrderedRegistry<ResourceLocation, ResourceType> resourceTypeRegistry,
-                                           final int size,
+    public FilteredResourceFilterContainer(final int size,
                                            final Runnable listener,
-                                           final ResourceType allowedType,
+                                           final PlatformStorageChannelType<?> allowedType,
                                            final long maxAmount) {
-        super(resourceTypeRegistry, size, listener, maxAmount);
+        super(size, listener, maxAmount);
         this.allowedType = allowedType;
     }
 
     @Override
-    public void set(final int index, final FilteredResource resource) {
-        if (resource.getType() != allowedType) {
+    public void set(final int index, final FilteredResource<?> resource) {
+        if (resource.getStorageChannelType() != allowedType) {
             return;
         }
         super.set(index, resource);
-    }
-
-    @Override
-    public ResourceType determineDefaultType() {
-        return allowedType;
     }
 }

@@ -18,11 +18,6 @@ public abstract class AbstractStorageBlockScreen extends AbstractStorageScreen<A
     }
 
     @Override
-    protected boolean isResourceFilterButtonActive() {
-        return false;
-    }
-
-    @Override
     protected ResourceLocation getTexture() {
         return TEXTURE;
     }

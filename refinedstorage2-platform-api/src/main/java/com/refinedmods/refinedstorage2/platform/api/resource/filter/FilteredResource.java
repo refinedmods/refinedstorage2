@@ -1,34 +1,28 @@
 package com.refinedmods.refinedstorage2.platform.api.resource.filter;
 
+import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+
 import java.util.List;
-import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.0")
-public interface FilteredResource {
-    void writeToPacket(FriendlyByteBuf buf);
-
-    CompoundTag toTag();
-
+public interface FilteredResource<T> {
     void render(PoseStack poseStack, int x, int y, int z);
 
-    Object getValue();
+    T getValue();
+
+    FilteredResource<T> withAmount(long newAmount);
 
     long getAmount();
 
-    FilteredResource withAmount(long newAmount);
-
     long getMaxAmount();
 
-    String getFormattedAmount();
+    String getDisplayedAmount();
 
-    ResourceType getType();
+    List<Component> getTooltip();
 
-    List<Component> getTooltipLines(@Nullable Player player);
+    PlatformStorageChannelType<T> getStorageChannelType();
 }

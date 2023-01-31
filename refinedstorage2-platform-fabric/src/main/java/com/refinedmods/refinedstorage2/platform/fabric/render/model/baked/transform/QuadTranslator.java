@@ -1,8 +1,8 @@
 package com.refinedmods.refinedstorage2.platform.fabric.render.model.baked.transform;
 
-import com.mojang.math.Vector3f;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import org.joml.Vector3f;
 
 public class QuadTranslator implements RenderContext.QuadTransform {
     private final float x;
