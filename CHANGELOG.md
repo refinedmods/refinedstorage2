@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.7] - 2023-01-31
+
 ### Added
 
 -   Added a "Storage channel" filter in the Grid that determines which resource type is shown. Defaults to "All".
@@ -292,7 +294,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.6...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.7...HEAD
+
+[2.0.0-milestone.2.7]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.6...v2.0.0-milestone.2.7
 
 [2.0.0-milestone.2.6]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.5...v2.0.0-milestone.2.6
 
