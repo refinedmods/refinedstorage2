@@ -17,7 +17,7 @@ public class MultiStorageNetworkNodeFactory extends AbstractNetworkNodeFactory<M
         return new MultiStorageNetworkNode(
             getEnergyUsage(properties),
             energyUsagePerStorage,
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPES,
             size
         );
     }

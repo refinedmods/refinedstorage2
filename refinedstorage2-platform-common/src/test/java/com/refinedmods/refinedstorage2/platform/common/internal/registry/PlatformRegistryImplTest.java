@@ -1,19 +1,26 @@
-package com.refinedmods.refinedstorage2.api.core.registry;
+package com.refinedmods.refinedstorage2.platform.common.internal.registry;
+
+import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
 
 import java.util.List;
 
+import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class OrderedRegistryImplTest {
-    OrderedRegistry<String, Integer> sut;
+class PlatformRegistryImplTest {
+    private static final ResourceLocation A = new ResourceLocation("minecraft:a");
+    private static final ResourceLocation B = new ResourceLocation("minecraft:b");
+    private static final ResourceLocation C = new ResourceLocation("minecraft:c");
+
+    PlatformRegistry<Integer> sut;
 
     @BeforeEach
     void setUp() {
-        sut = new OrderedRegistryImpl<>("A", 10);
+        sut = new PlatformRegistryImpl<>(A, 10);
     }
 
     @Test
@@ -21,9 +28,9 @@ class OrderedRegistryImplTest {
         // Assert
         assertThat(sut.getDefault()).isEqualTo(10);
         assertThat(sut.getAll()).containsExactly(10);
-        assertThat(sut.get("A")).get().isEqualTo(10);
-        assertThat(sut.get("B")).isEmpty();
-        assertThat(sut.getId(10)).get().isEqualTo("A");
+        assertThat(sut.get(A)).get().isEqualTo(10);
+        assertThat(sut.get(B)).isEmpty();
+        assertThat(sut.getId(10)).get().isEqualTo(A);
         assertThat(sut.getId(20)).isEmpty();
         assertThat(sut.next(10)).isEqualTo(10);
         assertThat(sut.nextOrNullIfLast(10)).isNull();
@@ -44,16 +51,15 @@ class OrderedRegistryImplTest {
     @Test
     void shouldRegisterAndRetrieve() {
         // Act
-        sut.register("B", 20);
+        sut.register(B, 20);
 
         // Assert
         assertThat(sut.getDefault()).isEqualTo(10);
         assertThat(sut.getAll()).containsExactly(10, 20);
-        assertThat(sut.get("A")).get().isEqualTo(10);
-        assertThat(sut.get("B")).get().isEqualTo(20);
-        assertThat(sut.getOrElseDefault("C")).isEqualTo(10);
-        assertThat(sut.getId(10)).get().isEqualTo("A");
-        assertThat(sut.getId(20)).get().isEqualTo("B");
+        assertThat(sut.get(A)).get().isEqualTo(10);
+        assertThat(sut.get(B)).get().isEqualTo(20);
+        assertThat(sut.getId(10)).get().isEqualTo(A);
+        assertThat(sut.getId(20)).get().isEqualTo(B);
         assertThat(sut.next(10)).isEqualTo(20);
         assertThat(sut.nextOrNullIfLast(10)).isEqualTo(20);
         assertThat(sut.next(20)).isEqualTo(10);
@@ -64,20 +70,20 @@ class OrderedRegistryImplTest {
     @Test
     void shouldNotRegisterDuplicateId() {
         // Arrange
-        sut.register("B", 20);
+        sut.register(B, 20);
 
         // Act & assert
-        assertThrows(IllegalArgumentException.class, () -> sut.register("B", 20));
+        assertThrows(IllegalArgumentException.class, () -> sut.register(B, 20));
         assertThat(sut.getAll()).containsExactly(10, 20);
     }
 
     @Test
     void shouldNotRegisterDuplicateValue() {
         // Arrange
-        sut.register("B", 20);
+        sut.register(B, 20);
 
         // Act & assert
-        assertThrows(IllegalArgumentException.class, () -> sut.register("C", 20));
+        assertThrows(IllegalArgumentException.class, () -> sut.register(C, 20));
         assertThat(sut.getAll()).containsExactly(10, 20);
     }
 
@@ -86,7 +92,7 @@ class OrderedRegistryImplTest {
     void testInvalidRegistration() {
         // Act & assert
         assertThrows(NullPointerException.class, () -> sut.register(null, 20));
-        assertThrows(NullPointerException.class, () -> sut.register("B", null));
+        assertThrows(NullPointerException.class, () -> sut.register(B, null));
         assertThrows(NullPointerException.class, () -> sut.register(null, null));
     }
 
@@ -94,9 +100,9 @@ class OrderedRegistryImplTest {
     @SuppressWarnings("ConstantConditions")
     void testInvalidDefaults() {
         // Act & assert
-        assertThrows(NullPointerException.class, () -> new OrderedRegistryImpl<>(null, 20));
-        assertThrows(NullPointerException.class, () -> new OrderedRegistryImpl<>("B", null));
-        assertThrows(NullPointerException.class, () -> new OrderedRegistryImpl<>(null, null));
+        assertThrows(NullPointerException.class, () -> new PlatformRegistryImpl<>(null, 20));
+        assertThrows(NullPointerException.class, () -> new PlatformRegistryImpl<>(B, null));
+        assertThrows(NullPointerException.class, () -> new PlatformRegistryImpl<>(null, null));
     }
 
     @Test

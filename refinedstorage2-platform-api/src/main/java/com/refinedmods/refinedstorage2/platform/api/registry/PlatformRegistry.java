@@ -1,19 +1,17 @@
-package com.refinedmods.refinedstorage2.api.core.registry;
+package com.refinedmods.refinedstorage2.platform.api.registry;
 
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
+import net.minecraft.resources.ResourceLocation;
 import org.apiguardian.api.API;
 
 /**
- * Represents a registry that keeps track of the order of registered values.
- *
- * @param <I> the identifier type
  * @param <T> the value type
  */
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.0")
-public interface OrderedRegistry<I, T> {
+public interface PlatformRegistry<T> {
     /**
      * Registers a value in the registry, identified by the id.
      * Duplicate IDs or values are not allowed.
@@ -21,7 +19,7 @@ public interface OrderedRegistry<I, T> {
      * @param id    the id
      * @param value the value
      */
-    void register(I id, T value);
+    void register(ResourceLocation id, T value);
 
     /**
      * @return whether if there is any other value, ignoring any default value
@@ -32,21 +30,13 @@ public interface OrderedRegistry<I, T> {
      * @param value the value
      * @return the id of the value, if present
      */
-    Optional<I> getId(T value);
+    Optional<ResourceLocation> getId(T value);
 
     /**
      * @param id the id
      * @return the value, if present
      */
-    Optional<T> get(I id);
-
-    /**
-     * @param id the id
-     * @return the value, if present, otherwise the default
-     */
-    default T getOrElseDefault(I id) {
-        return get(id).orElseGet(this::getDefault);
-    }
+    Optional<T> get(ResourceLocation id);
 
     /**
      * @return the default value

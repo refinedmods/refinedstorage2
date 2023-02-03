@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage;
 
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.network.impl.node.externalstorage.TrackedStorageRepositoryProvider;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedStorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 
 import java.util.HashMap;
@@ -18,12 +18,12 @@ class ExternalStorageTrackedStorageRepositoryProvider implements TrackedStorageR
     private static final String TAG_TYPE = "type";
     private static final String TAG_ITEMS = "items";
 
-    private final OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> storageChannelTypeRegistry;
+    private final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry;
     private final Map<PlatformStorageChannelType<?>, ExternalStorageTrackedStorageRepository<?>> repositoryMap
         = new HashMap<>();
 
     ExternalStorageTrackedStorageRepositoryProvider(
-        final OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> storageChannelTypeRegistry,
+        final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry,
         final Runnable listener
     ) {
         this.storageChannelTypeRegistry = storageChannelTypeRegistry;

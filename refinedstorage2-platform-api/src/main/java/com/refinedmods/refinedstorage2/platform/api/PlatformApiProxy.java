@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.api;
 
 import com.refinedmods.refinedstorage2.api.core.component.ComponentMapFactory;
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
 import com.refinedmods.refinedstorage2.api.network.Network;
 import com.refinedmods.refinedstorage2.api.network.component.NetworkComponent;
@@ -19,6 +18,7 @@ import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.importer.ImporterTransferStrategyFactory;
+import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResourceFactory;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
@@ -30,7 +30,6 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
@@ -47,7 +46,7 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, StorageType<?>> getStorageTypeRegistry() {
+    public PlatformRegistry<StorageType<?>> getStorageTypeRegistry() {
         return ensureLoaded().getStorageTypeRegistry();
     }
 
@@ -62,17 +61,17 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> getStorageChannelTypeRegistry() {
+    public PlatformRegistry<PlatformStorageChannelType<?>> getStorageChannelTypeRegistry() {
         return ensureLoaded().getStorageChannelTypeRegistry();
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, ImporterTransferStrategyFactory> getImporterTransferStrategyRegistry() {
+    public PlatformRegistry<ImporterTransferStrategyFactory> getImporterTransferStrategyRegistry() {
         return ensureLoaded().getImporterTransferStrategyRegistry();
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry() {
+    public PlatformRegistry<ExporterTransferStrategyFactory> getExporterTransferStrategyRegistry() {
         return ensureLoaded().getExporterTransferStrategyRegistry();
     }
 
@@ -101,7 +100,7 @@ public class PlatformApiProxy implements PlatformApi {
     }
 
     @Override
-    public OrderedRegistry<ResourceLocation, GridSynchronizer> getGridSynchronizerRegistry() {
+    public PlatformRegistry<GridSynchronizer> getGridSynchronizerRegistry() {
         return ensureLoaded().getGridSynchronizerRegistry();
     }
 

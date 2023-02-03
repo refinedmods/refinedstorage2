@@ -58,7 +58,7 @@ public class ExternalStorageBlockEntity
         );
         getNode().setNormalizer(filter.createNormalizer());
         getNode().initialize(
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll(),
             System::currentTimeMillis,
             trackedStorageRepositoryProvider
         );

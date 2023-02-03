@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.storage;
 
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
+import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.api.storage.type.StorageType;
@@ -32,9 +32,9 @@ public class StorageRepositoryImpl extends SavedData implements StorageRepositor
     private static final String TAG_STORAGE_DATA = "data";
 
     private final Map<UUID, Storage<?>> entries = new HashMap<>();
-    private final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry;
+    private final PlatformRegistry<StorageType<?>> storageTypeRegistry;
 
-    public StorageRepositoryImpl(final OrderedRegistry<ResourceLocation, StorageType<?>> storageTypeRegistry) {
+    public StorageRepositoryImpl(final PlatformRegistry<StorageType<?>> storageTypeRegistry) {
         this.storageTypeRegistry = storageTypeRegistry;
     }
 

@@ -62,7 +62,7 @@ public abstract class AbstractStorageNetworkNode extends AbstractNetworkNode imp
         getRelevantStorageChannelTypes().forEach(type -> storage.getStorageChannel(type).sortSources());
     }
 
-    protected abstract Set<StorageChannelType<?>> getRelevantStorageChannelTypes();
+    protected abstract Set<? extends StorageChannelType<?>> getRelevantStorageChannelTypes();
 
     public void setFilterTemplates(final Set<Object> templates) {
         filter.setTemplates(templates);

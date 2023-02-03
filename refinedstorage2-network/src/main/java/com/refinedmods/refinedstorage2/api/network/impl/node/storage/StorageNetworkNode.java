@@ -60,7 +60,7 @@ public class StorageNetworkNode<T> extends AbstractStorageNetworkNode implements
     }
 
     @Override
-    protected Set<StorageChannelType<?>> getRelevantStorageChannelTypes() {
+    protected Set<? extends StorageChannelType<?>> getRelevantStorageChannelTypes() {
         return Set.of(type);
     }
 
