@@ -1,9 +1,6 @@
-package com.refinedmods.refinedstorage2.api.core.util;
+package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
-import org.apiguardian.api.API;
-
-@API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public record LastModified(Type type, long amount) {
+record LastModified(Type type, long amount) {
     private static final long SECOND = 1000;
     private static final long MINUTE = SECOND * 60;
     private static final long HOUR = MINUTE * 60;

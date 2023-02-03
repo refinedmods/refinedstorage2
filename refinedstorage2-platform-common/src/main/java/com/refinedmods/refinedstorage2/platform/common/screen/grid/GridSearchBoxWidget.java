@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
-import com.refinedmods.refinedstorage2.api.core.History;
+import com.refinedmods.refinedstorage2.platform.common.screen.widget.History;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.SearchFieldWidget;
 import com.refinedmods.refinedstorage2.query.lexer.Lexer;
 import com.refinedmods.refinedstorage2.query.lexer.LexerException;

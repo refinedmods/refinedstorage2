@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.core.util;
+package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

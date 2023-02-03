@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.core;
+package com.refinedmods.refinedstorage2.platform.common.screen.widget;
 
 import java.util.ArrayList;
 import java.util.List;

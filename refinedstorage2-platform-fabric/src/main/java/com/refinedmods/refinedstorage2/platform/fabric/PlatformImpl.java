@@ -10,7 +10,7 @@ import com.refinedmods.refinedstorage2.platform.common.AbstractPlatform;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerType;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.transfer.TransferManager;
-import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 import com.refinedmods.refinedstorage2.platform.fabric.containermenu.ContainerTransferDestination;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.energy.ControllerTeamRebornEnergy;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.grid.ItemGridInsertionStrategy;
@@ -64,7 +64,7 @@ public final class PlatformImpl extends AbstractPlatform {
             new ServerToClientCommunicationsImpl(),
             new ClientToServerCommunicationsImpl(),
             new MenuOpenerImpl(),
-            new BucketQuantityFormatter(FluidConstants.BUCKET),
+            new BucketAmountFormatting(FluidConstants.BUCKET),
             new FluidVariantFluidRenderer(),
             ItemGridInsertionStrategy::new
         );

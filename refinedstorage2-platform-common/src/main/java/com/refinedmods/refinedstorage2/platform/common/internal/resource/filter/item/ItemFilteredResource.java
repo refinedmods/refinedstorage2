@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.item;
 
-import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
+import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public record ItemFilteredResource(ItemResource value, long amount) implements F
         if (amount == 1) {
             return "";
         }
-        return QuantityFormatter.formatWithUnits(amount);
+        return AmountFormatting.formatWithUnits(amount);
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen.grid;
 
-import com.refinedmods.refinedstorage2.api.core.History;
 import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
-import com.refinedmods.refinedstorage2.api.core.util.LastModified;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.grid.service.GridInsertMode;
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
@@ -19,6 +17,7 @@ import com.refinedmods.refinedstorage2.platform.common.containermenu.property.Pr
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.SmallTextTooltipRenderer;
+import com.refinedmods.refinedstorage2.platform.common.screen.widget.History;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.RedstoneModeSideButtonWidget;
 import com.refinedmods.refinedstorage2.platform.common.screen.widget.ScrollbarWidget;
 import com.refinedmods.refinedstorage2.query.lexer.SyntaxHighlighter;

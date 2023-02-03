@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BucketQuantityFormatterTest {
+class BucketAmountFormattingTest {
     private static final long BUCKET_AMOUNT = 1000;
 
-    private final BucketQuantityFormatter sut = new BucketQuantityFormatter(BUCKET_AMOUNT);
+    private final BucketAmountFormatting sut = new BucketAmountFormatting(BUCKET_AMOUNT);
 
     @Test
     void shouldFormatWithUnitsForCompleteBuckets() {

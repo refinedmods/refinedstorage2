@@ -94,16 +94,16 @@ public class StorageContainerHelperImpl implements StorageContainerHelper {
                                 final StorageRepository storageRepository,
                                 final List<Component> tooltip,
                                 final TooltipFlag context,
-                                final LongFunction<String> quantityFormatter,
-                                final LongFunction<String> stackInfoQuantityFormatter,
+                                final LongFunction<String> amountFormatter,
+                                final LongFunction<String> stackInfoAmountFormatter,
                                 final boolean showCapacityAndProgress,
                                 final boolean showStackingInfo) {
         getInfo(storageRepository, stack).ifPresent(info -> StorageTooltipHelper.appendToTooltip(
             tooltip,
             info.stored(),
             info.capacity(),
-            quantityFormatter,
-            stackInfoQuantityFormatter,
+            amountFormatter,
+            stackInfoAmountFormatter,
             showCapacityAndProgress,
             showStackingInfo
         ));

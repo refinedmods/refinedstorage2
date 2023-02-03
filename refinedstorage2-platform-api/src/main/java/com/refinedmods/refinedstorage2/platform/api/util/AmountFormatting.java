@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.api.core;
+package com.refinedmods.refinedstorage2.platform.api.util;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -8,7 +8,7 @@ import java.util.Locale;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.1.0")
-public final class QuantityFormatter {
+public final class AmountFormatting {
     private static final DecimalFormat FORMATTER_WITH_UNITS = new DecimalFormat(
         "####0.#",
         DecimalFormatSymbols.getInstance(Locale.US)
@@ -22,7 +22,7 @@ public final class QuantityFormatter {
         FORMATTER_WITH_UNITS.setRoundingMode(RoundingMode.FLOOR);
     }
 
-    private QuantityFormatter() {
+    private AmountFormatting() {
     }
 
     public static String formatWithUnits(final long qty) {

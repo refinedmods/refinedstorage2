@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.exporter;
 
-import com.refinedmods.refinedstorage2.api.core.util.Randomizer;
 import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.scheduling.FirstAvailableExporterSchedulingMode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.scheduling.RandomExporterSchedulingMode;
 import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.scheduling.RoundRobinExporterSchedulingMode;
@@ -47,7 +46,7 @@ public enum ExporterSchedulingModeSettings {
     }
 
     public ExporterSchedulingMode create(@Nullable final CompoundTag tag,
-                                         final Randomizer randomizer,
+                                         final RandomExporterSchedulingMode.Randomizer randomizer,
                                          final Runnable dirtyCallback) {
         return switch (this) {
             case FIRST_AVAILABLE -> FirstAvailableExporterSchedulingMode.INSTANCE;
