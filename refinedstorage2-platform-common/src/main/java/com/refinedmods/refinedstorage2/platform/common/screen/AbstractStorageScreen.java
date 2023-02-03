@@ -1,6 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.screen;
 
-import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBaseContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.StorageAccessor;
@@ -82,7 +82,7 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
             menu.getStored(),
             menu.getCapacity(),
             this::formatQuantity,
-            QuantityFormatter::format,
+            AmountFormatting::format,
             menu.showCapacityAndProgress(),
             menu.showStackingInfo()
         );
@@ -90,7 +90,7 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
     }
 
     protected String formatQuantity(final long qty) {
-        return QuantityFormatter.format(qty);
+        return AmountFormatting.format(qty);
     }
 
     @Override

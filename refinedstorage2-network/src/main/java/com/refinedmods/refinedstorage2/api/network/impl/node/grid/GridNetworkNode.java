@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.grid;
 
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.service.GridService;
 import com.refinedmods.refinedstorage2.api.grid.service.GridServiceFactory;
@@ -15,6 +14,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
 import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,16 +24,16 @@ import java.util.function.ToLongFunction;
 import javax.annotation.Nullable;
 
 public class GridNetworkNode extends AbstractNetworkNode implements GridServiceFactory {
-    private final OrderedRegistry<?, ? extends StorageChannelType<?>> storageChannelTypeRegistry;
+    private final Collection<? extends StorageChannelType<?>> storageChannelTypes;
     private final Set<GridWatcher> watchers = new HashSet<>();
     private final Map<GridWatcher, Map<StorageChannelType<?>, ResourceListListener<?>>> storageChannelListeners =
         new HashMap<>();
     private final long energyUsage;
 
     public GridNetworkNode(final long energyUsage,
-                           final OrderedRegistry<?, ? extends StorageChannelType<?>> storageChannelTypeRegistry) {
+                           final Collection<? extends StorageChannelType<?>> storageChannelTypes) {
         this.energyUsage = energyUsage;
-        this.storageChannelTypeRegistry = storageChannelTypeRegistry;
+        this.storageChannelTypes = storageChannelTypes;
     }
 
     private <T> StorageChannel<T> getStorageChannel(final StorageChannelType<T> type) {
@@ -59,7 +59,7 @@ public class GridNetworkNode extends AbstractNetworkNode implements GridServiceF
 
     public void addWatcher(final GridWatcher watcher, final Class<? extends Actor> actorType) {
         CoreValidations.validateNotContains(watchers, watcher, "Watcher is already registered");
-        storageChannelTypeRegistry.getAll().forEach(storageChannelType -> attachWatcherToStorageChannel(
+        storageChannelTypes.forEach(storageChannelType -> attachWatcherToStorageChannel(
             watcher,
             actorType,
             storageChannelType

@@ -36,8 +36,8 @@ public interface StorageContainerHelper {
                          StorageRepository storageRepository,
                          List<Component> tooltip,
                          TooltipFlag context,
-                         LongFunction<String> quantityFormatter,
-                         LongFunction<String> stackInfoQuantityFormatter,
+                         LongFunction<String> amountFormatter,
+                         LongFunction<String> stackInfoAmountFormatter,
                          boolean showCapacityAndProgress,
                          boolean showStackingInfo);
 

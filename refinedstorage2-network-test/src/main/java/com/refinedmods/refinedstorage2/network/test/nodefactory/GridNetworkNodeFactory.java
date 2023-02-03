@@ -9,9 +9,6 @@ import java.util.Map;
 public class GridNetworkNodeFactory extends AbstractNetworkNodeFactory<GridNetworkNode> {
     @Override
     protected GridNetworkNode innerCreate(final AddNetworkNode ctx, final Map<String, Object> properties) {
-        return new GridNetworkNode(
-            getEnergyUsage(properties),
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY
-        );
+        return new GridNetworkNode(getEnergyUsage(properties), NetworkTestFixtures.STORAGE_CHANNEL_TYPES);
     }
 }

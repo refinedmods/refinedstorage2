@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.internal.grid.view;
 
-import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.api.grid.service.GridExtractMode;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridExtractionStrategy;
@@ -8,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridResourceAttributeKe
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 
 import java.util.List;
@@ -81,12 +81,12 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
 
     @Override
     public String getDisplayedAmount() {
-        return QuantityFormatter.formatWithUnits(getAmount());
+        return AmountFormatting.formatWithUnits(getAmount());
     }
 
     @Override
     public String getAmountInTooltip() {
-        return QuantityFormatter.format(getAmount());
+        return AmountFormatting.format(getAmount());
     }
 
     @Override

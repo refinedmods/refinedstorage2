@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.item;
 
-import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.api.storage.InMemoryStorageImpl;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
 import com.refinedmods.refinedstorage2.api.storage.limited.LimitedStorageImpl;
@@ -11,6 +10,7 @@ import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.AbstractStorageContainerItem;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.LimitedPlatformStorage;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.PlatformStorage;
@@ -54,8 +54,8 @@ public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResour
             storageRepository,
             tooltip,
             context,
-            QuantityFormatter::formatWithUnits,
-            QuantityFormatter::format,
+            AmountFormatting::formatWithUnits,
+            AmountFormatting::format,
             showCapacityAndProgress,
             true
         );

@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.multistorage;
 
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.network.component.StorageProvider;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractStorageNetworkNode;
 import com.refinedmods.refinedstorage2.api.storage.Storage;
@@ -8,6 +7,7 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,21 +38,21 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
 
     public MultiStorageNetworkNode(final long energyUsage,
                                    final long energyUsagePerStorage,
-                                   final OrderedRegistry<?, ? extends StorageChannelType<?>> storageChannelTypeRegistry,
+                                   final Collection<? extends StorageChannelType<?>> storageChannelTypes,
                                    final int size) {
         this.energyUsage = energyUsage;
         this.energyUsagePerStorage = energyUsagePerStorage;
-        this.exposedStorages = createExposedStorages(storageChannelTypeRegistry);
+        this.exposedStorages = createExposedStorages(storageChannelTypes);
         this.cache = new MultiStorageInternalStorage[size];
     }
 
     private Map<StorageChannelType<?>, MultiStorageExposedStorage<?>> createExposedStorages(
-        final OrderedRegistry<?, ? extends StorageChannelType<?>> storageChannelTypeRegistry
+        final Collection<? extends StorageChannelType<?>> storageChannelTypes
     ) {
-        return storageChannelTypeRegistry
-            .getAll()
-            .stream()
-            .collect(Collectors.toUnmodifiableMap(Function.identity(), this::createExposedStorage));
+        return storageChannelTypes.stream().collect(Collectors.toUnmodifiableMap(
+            Function.identity(),
+            this::createExposedStorage
+        ));
     }
 
     private MultiStorageExposedStorage<?> createExposedStorage(final StorageChannelType<?> type) {
@@ -179,7 +179,7 @@ public class MultiStorageNetworkNode extends AbstractStorageNetworkNode implemen
     }
 
     @Override
-    protected Set<StorageChannelType<?>> getRelevantStorageChannelTypes() {
+    protected Set<? extends StorageChannelType<?>> getRelevantStorageChannelTypes() {
         return exposedStorages.keySet();
     }
 

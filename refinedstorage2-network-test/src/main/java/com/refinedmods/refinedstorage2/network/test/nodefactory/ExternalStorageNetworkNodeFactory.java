@@ -15,7 +15,7 @@ public class ExternalStorageNetworkNodeFactory extends AbstractNetworkNodeFactor
     protected ExternalStorageNetworkNode innerCreate(final AddNetworkNode ctx, final Map<String, Object> properties) {
         final ExternalStorageNetworkNode node = new ExternalStorageNetworkNode(getEnergyUsage(properties));
         node.initialize(
-            NetworkTestFixtures.STORAGE_CHANNEL_TYPE_REGISTRY,
+            NetworkTestFixtures.STORAGE_CHANNEL_TYPES,
             () -> 0L,
             new TrackedStorageRepositoryProvider() {
                 @Override

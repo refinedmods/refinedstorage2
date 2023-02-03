@@ -71,7 +71,7 @@ public abstract class AbstractDiskDriveBlockEntity
         super(BlockEntities.INSTANCE.getDiskDrive(), pos, state, new MultiStorageNetworkNode(
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsage(),
             Platform.INSTANCE.getConfig().getDiskDrive().getEnergyUsagePerDisk(),
-            PlatformApi.INSTANCE.getStorageChannelTypeRegistry(),
+            PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll(),
             AMOUNT_OF_DISKS
         ));
         this.diskInventory = new DiskDriveInventory(this, getNode().getSize());

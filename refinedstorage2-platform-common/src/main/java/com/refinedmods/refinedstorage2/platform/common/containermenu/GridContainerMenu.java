@@ -1,6 +1,5 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu;
 
-import com.refinedmods.refinedstorage2.api.core.registry.OrderedRegistry;
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserException;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserImpl;
@@ -21,6 +20,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridResourceAttributeKe
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollMode;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Config;
@@ -356,8 +356,7 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
     }
 
     public void toggleSynchronizer() {
-        final OrderedRegistry<ResourceLocation, GridSynchronizer> registry =
-            PlatformApi.INSTANCE.getGridSynchronizerRegistry();
+        final PlatformRegistry<GridSynchronizer> registry = PlatformApi.INSTANCE.getGridSynchronizerRegistry();
         final Config.GridEntry config = Platform.INSTANCE.getConfig().getGrid();
         final GridSynchronizer newSynchronizer = registry.next(getSynchronizer());
         if (newSynchronizer == registry.getDefault()) {
@@ -369,7 +368,7 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
     }
 
     public void toggleStorageChannelType() {
-        final OrderedRegistry<ResourceLocation, PlatformStorageChannelType<?>> registry =
+        final PlatformRegistry<PlatformStorageChannelType<?>> registry =
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry();
         final Config.GridEntry config = Platform.INSTANCE.getConfig().getGrid();
         final PlatformStorageChannelType<?> newStorageChannelType = storageChannelTypeFilter == null

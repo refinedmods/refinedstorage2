@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.api.network.impl.node.exporter;
 
 import com.refinedmods.refinedstorage2.api.core.Action;
-import com.refinedmods.refinedstorage2.api.core.util.Randomizer;
 import com.refinedmods.refinedstorage2.api.network.impl.node.exporter.scheduling.RandomExporterSchedulingMode;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.scheduling.ExporterSchedulingMode;
 import com.refinedmods.refinedstorage2.api.network.node.exporter.strategy.ExporterTransferStrategy;
@@ -21,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RandomExporterNetworkNodeTest extends AbstractExporterNetworkNodeTest {
     @Override
     protected ExporterSchedulingMode createSchedulingMode() {
-        return new RandomExporterSchedulingMode(new Randomizer() {
+        return new RandomExporterSchedulingMode(new RandomExporterSchedulingMode.Randomizer() {
             @Override
             @SuppressWarnings("unchecked")
             public <T> void shuffle(final List<T> list) {

@@ -12,7 +12,7 @@ import com.refinedmods.refinedstorage2.platform.common.menu.MenuOpener;
 import com.refinedmods.refinedstorage2.platform.common.packet.ClientToServerCommunications;
 import com.refinedmods.refinedstorage2.platform.common.packet.ServerToClientCommunications;
 import com.refinedmods.refinedstorage2.platform.common.render.FluidRenderer;
-import com.refinedmods.refinedstorage2.platform.common.util.BucketQuantityFormatter;
+import com.refinedmods.refinedstorage2.platform.common.util.BucketAmountFormatting;
 
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -66,7 +66,7 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public BucketQuantityFormatter getBucketQuantityFormatter() {
+    public BucketAmountFormatting getBucketQuantityFormatter() {
         return ensureLoaded().getBucketQuantityFormatter();
     }
 

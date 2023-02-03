@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.common.item.block;
 
-import com.refinedmods.refinedstorage2.api.core.QuantityFormatter;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.block.AbstractStorageContainerBlockItem;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
+import com.refinedmods.refinedstorage2.platform.api.util.AmountFormatting;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.AbstractStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
@@ -54,8 +54,8 @@ public class ItemStorageBlockBlockItem extends AbstractStorageContainerBlockItem
             storageRepository,
             tooltip,
             context,
-            QuantityFormatter::formatWithUnits,
-            QuantityFormatter::format,
+            AmountFormatting::formatWithUnits,
+            AmountFormatting::format,
             showCapacityAndProgress,
             true
         );
