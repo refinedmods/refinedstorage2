@@ -80,29 +80,36 @@ subprojects {
         }
     }
 
-    apply plugin: "maven-publish"
-    publishing {
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage2")
-                credentials {
-                    username = System.getenv("GITHUB_ACTOR")
-                    password = System.getenv("GITHUB_TOKEN")
+    if (!(project.name in [
+            'refinedstorage2-platform-common',
+            'refinedstorage2-platform-fabric',
+            'refinedstorage2-platform-forge',
+            'refinedstorage2-network'
+    ])) {
+        apply plugin: "maven-publish"
+        publishing {
+            repositories {
+                maven {
+                    name = "GitHubPackages"
+                    url = uri("https://maven.pkg.github.com/refinedmods/refinedstorage2")
+                    credentials {
+                        username = System.getenv("GITHUB_ACTOR")
+                        password = System.getenv("GITHUB_TOKEN")
+                    }
+                }
+                maven {
+                    name = "CreeperHost"
+                    url = uri("https://maven.creeperhost.net/release")
+                    credentials {
+                        username = System.getenv("CREEPERHOST_MAVEN_USERNAME")
+                        password = System.getenv("CREEPERHOST_MAVEN_TOKEN")
+                    }
                 }
             }
-            maven {
-                name = "CreeperHost"
-                url = uri("https://maven.creeperhost.net/release")
-                credentials {
-                    username = System.getenv("CREEPERHOST_MAVEN_USERNAME")
-                    password = System.getenv("CREEPERHOST_MAVEN_TOKEN")
+            publications {
+                gpr(MavenPublication) {
+                    from(components.java)
                 }
-            }
-        }
-        publications {
-            gpr(MavenPublication) {
-                from(components.java)
             }
         }
     }
@@ -113,8 +120,14 @@ subprojects {
 }
 
 task allJavadoc(type: Javadoc) {
-    source subprojects*.sourceSets.main.allJava
-    classpath += files(subprojects*.sourceSets.main.compileClasspath)
+    // platform modules (besides API) doesn't need Javadoc.
+    // For Fabric it even fails due to a mixin target being private.
+    def projects = getSubprojects()
+            .stream()
+            .filter { p -> p.name != "refinedstorage2-platform-fabric" && p.name != "refinedstorage2-platform-forge" && p.name != "refinedstorage2-platform-common" }
+            .toList()
+    source projects*.sourceSets.main.allJava
+    classpath += files(projects*.sourceSets.main.compileClasspath)
     destinationDir = file("build/docs/javadoc")
 }
 
