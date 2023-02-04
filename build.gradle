@@ -113,8 +113,14 @@ subprojects {
 }
 
 task allJavadoc(type: Javadoc) {
-    source subprojects*.sourceSets.main.allJava
-    classpath += files(subprojects*.sourceSets.main.compileClasspath)
+    // platform modules (besides API) doesn't need Javadoc.
+    // For Fabric it even fails due to a mixin target being private.
+    def projects = getSubprojects()
+            .stream()
+            .filter { p -> p.name != "refinedstorage2-platform-fabric" && p.name != "refinedstorage2-platform-forge" && p.name != "refinedstorage2-platform-common" }
+            .toList()
+    source projects*.sourceSets.main.allJava
+    classpath += files(projects*.sourceSets.main.compileClasspath)
     destinationDir = file("build/docs/javadoc")
 }
 
