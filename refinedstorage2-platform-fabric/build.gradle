@@ -35,10 +35,9 @@ dependencies {
     minecraft fabric.minecraft
     mappings loom.layered() {
         officialMojangMappings()
-        // TODO: the parchment function is unable to take a version catalog (https://github.com/FabricMC/fabric-loom/issues/782)
-        def minecraftVersion = fabric.versions.minecraft.get()
-        def parchmentVersion = fabric.versions.parchment.get()
-        parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${parchmentVersion}@zip")
+        parchment variantOf(fabric.parchment) {
+            artifactType("zip")
+        }
     }
     modImplementation fabric.bundles.fabric
 
