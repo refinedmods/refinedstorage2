@@ -27,11 +27,11 @@ dependencyResolutionManagement {
             def minecraft = version("minecraft", minecraftVersion)
             library("minecraft", "com.mojang", "minecraft").versionRef(minecraft)
 
-            plugin("fabric-loom", "fabric-loom").version("1.0-SNAPSHOT")
+            plugin("fabric-loom", "fabric-loom").version("1.1-SNAPSHOT")
 
-            def fabricLoader = version("fabric-loader", "0.14.12")
+            def fabricLoader = version("fabric-loader", "0.14.14")
             library("fabric-loader", "net.fabricmc", "fabric-loader").versionRef(fabricLoader)
-            def fabricApi = version("fabric-api", "0.72.0+1.19.3")
+            def fabricApi = version("fabric-api", "0.73.2+1.19.3")
             library("fabric-api", "net.fabricmc.fabric-api", "fabric-api").versionRef(fabricApi)
             bundle("fabric", ["fabric-loader", "fabric-api"])
 
