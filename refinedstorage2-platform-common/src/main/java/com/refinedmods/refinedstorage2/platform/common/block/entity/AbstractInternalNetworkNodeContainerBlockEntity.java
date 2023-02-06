@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.block.entity;
 import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkComponent;
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.AbstractNetworkNodeContainerBlockEntity;
+import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectionalBlock;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
@@ -113,7 +114,7 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
     }
 
     @Override
-    public boolean canAcceptIncomingConnection(final Direction direction) {
+    public boolean canAcceptIncomingConnection(final Direction direction, final PlatformNetworkNodeContainer other) {
         final Direction myDirection = getDirection();
         if (myDirection == null) {
             return true;

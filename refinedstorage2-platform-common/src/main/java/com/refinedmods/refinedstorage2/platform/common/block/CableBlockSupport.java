@@ -105,6 +105,9 @@ final class CableBlockSupport {
         if (!(world.getBlockEntity(offsetPos) instanceof PlatformNetworkNodeContainer container)) {
             return false;
         }
-        return container.canAcceptIncomingConnection(direction);
+        if (!(world.getBlockEntity(pos) instanceof PlatformNetworkNodeContainer secondContainer)) {
+            return false;
+        }
+        return container.canAcceptIncomingConnection(direction, secondContainer);
     }
 }

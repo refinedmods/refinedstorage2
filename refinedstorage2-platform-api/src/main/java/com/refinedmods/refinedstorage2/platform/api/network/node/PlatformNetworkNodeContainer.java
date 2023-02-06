@@ -26,7 +26,8 @@ public interface PlatformNetworkNodeContainer extends NetworkNodeContainer {
      * com.refinedmods.refinedstorage2.platform.api.PlatformApi#requestNetworkNodeUpdate(NetworkNodeContainer, Level)}.
      *
      * @param direction the incoming direction
+     * @param other the neighboring node
      * @return whether the node can accept an incoming connection
      */
-    boolean canAcceptIncomingConnection(Direction direction);
+    boolean canAcceptIncomingConnection(Direction direction, PlatformNetworkNodeContainer other);
 }

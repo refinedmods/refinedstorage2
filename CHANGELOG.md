@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 -  The upgrade slots now show their supported upgrades.
+-  Different Cable colors. They only connect to same colored cables or the default cable.
 
 ### Removed
 

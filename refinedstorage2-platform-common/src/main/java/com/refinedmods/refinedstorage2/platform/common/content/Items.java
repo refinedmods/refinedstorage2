@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.CableBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public final class Items {
         = new EnumMap<>(FluidStorageType.Variant.class);
     private final List<Supplier<ControllerBlockItem>> regularControllers = new ArrayList<>();
     private final List<Supplier<? extends Item>> allControllers = new ArrayList<>();
+    private final List<Supplier<CableBlockItem>> allCables = new ArrayList<>();
     @Nullable
     private Supplier<Item> quartzEnrichedIron;
     @Nullable
@@ -157,6 +159,14 @@ public final class Items {
 
     public List<Supplier<ControllerBlockItem>> getRegularControllers() {
         return Collections.unmodifiableList(regularControllers);
+    }
+
+    public void addCable(final Supplier<CableBlockItem> supplier) {
+        allCables.add(supplier);
+    }
+
+    public List<Supplier<CableBlockItem>> getCables() {
+        return Collections.unmodifiableList(allCables);
     }
 
     public Item getStorageHousing() {

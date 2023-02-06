@@ -1,0 +1,62 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/core/cyan"
+      }
+    },
+    {
+      "when": {
+        "north": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/cyan"
+      }
+    },
+    {
+      "when": {
+        "east": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/cyan",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/cyan",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "west": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/cyan",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/cyan",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": true
+      },
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/cyan",
+        "x": 90
+      }
+    }
+  ]
+}

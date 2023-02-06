@@ -66,7 +66,7 @@ public abstract class AbstractNetworkNodeContainerBlockEntity<T extends NetworkN
     }
 
     @Override
-    public boolean canAcceptIncomingConnection(final Direction direction) {
+    public boolean canAcceptIncomingConnection(final Direction direction, final PlatformNetworkNodeContainer other) {
         return true;
     }
 
