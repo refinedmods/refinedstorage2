@@ -22,12 +22,4 @@ public class StorageDiskInfoAccessorImpl implements StorageDiskInfoAccessor {
         }
         return Optional.empty();
     }
-
-    @Override
-    public boolean hasStacking(final ItemStack stack) {
-        if (stack.getItem() instanceof StorageContainerItem storageContainerItem) {
-            return storageContainerItem.hasStacking();
-        }
-        return false;
-    }
 }

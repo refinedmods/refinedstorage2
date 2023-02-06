@@ -95,18 +95,23 @@ public class StorageContainerHelperImpl implements StorageContainerHelper {
                                 final List<Component> tooltip,
                                 final TooltipFlag context,
                                 final LongFunction<String> amountFormatter,
-                                final LongFunction<String> stackInfoAmountFormatter,
-                                final boolean showCapacityAndProgress,
-                                final boolean showStackingInfo) {
-        getInfo(storageRepository, stack).ifPresent(info -> StorageTooltipHelper.appendToTooltip(
-            tooltip,
-            info.stored(),
-            info.capacity(),
-            amountFormatter,
-            stackInfoAmountFormatter,
-            showCapacityAndProgress,
-            showStackingInfo
-        ));
+                                final boolean hasCapacity) {
+        getInfo(storageRepository, stack).ifPresent(info -> {
+            if (hasCapacity) {
+                StorageTooltipHelper.addAmountStoredWithCapacity(
+                    tooltip,
+                    info.stored(),
+                    info.capacity(),
+                    amountFormatter
+                );
+            } else {
+                StorageTooltipHelper.addAmountStoredWithoutCapacity(
+                    tooltip,
+                    info.stored(),
+                    amountFormatter
+                );
+            }
+        });
         if (context.isAdvanced()) {
             getId(stack).ifPresent(id -> {
                 final MutableComponent idComponent = Component.literal(id.toString()).withStyle(ChatFormatting.GRAY);

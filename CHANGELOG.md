@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Removed
+
+-   Removed amount of stacks and max stacks stored on item storage tooltips.
+
 ## [2.0.0-milestone.2.7] - 2023-01-31
 
 ### Added

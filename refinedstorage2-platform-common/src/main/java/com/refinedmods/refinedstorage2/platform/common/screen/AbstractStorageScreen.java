@@ -77,15 +77,16 @@ public abstract class AbstractStorageScreen<T extends AbstractBaseContainerMenu 
 
     private List<Component> createTooltip() {
         final List<Component> tooltip = new ArrayList<>();
-        StorageTooltipHelper.appendToTooltip(
-            tooltip,
-            menu.getStored(),
-            menu.getCapacity(),
-            this::formatQuantity,
-            AmountFormatting::format,
-            menu.showCapacityAndProgress(),
-            menu.showStackingInfo()
-        );
+        if (menu.hasCapacity()) {
+            StorageTooltipHelper.addAmountStoredWithCapacity(
+                tooltip,
+                menu.getStored(),
+                menu.getCapacity(),
+                this::formatQuantity
+            );
+        } else {
+            StorageTooltipHelper.addAmountStoredWithoutCapacity(tooltip, menu.getStored(), this::formatQuantity);
+        }
         return tooltip;
     }
 

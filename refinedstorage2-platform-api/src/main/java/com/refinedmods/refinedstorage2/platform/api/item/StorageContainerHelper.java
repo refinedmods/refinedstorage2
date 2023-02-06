@@ -37,9 +37,7 @@ public interface StorageContainerHelper {
                          List<Component> tooltip,
                          TooltipFlag context,
                          LongFunction<String> amountFormatter,
-                         LongFunction<String> stackInfoAmountFormatter,
-                         boolean showCapacityAndProgress,
-                         boolean showStackingInfo);
+                         boolean hasCapacity);
 
     // TODO: remove - leaky abstraction
     Optional<UUID> getId(ItemStack stack);

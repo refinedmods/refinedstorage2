@@ -48,22 +48,15 @@ public class FluidStorageDiskItem extends AbstractStorageContainerItem<FluidReso
             return;
         }
         final StorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
-        final boolean showCapacityAndProgress = variant != FluidStorageType.Variant.CREATIVE;
+        final boolean hasCapacity = variant != FluidStorageType.Variant.CREATIVE;
         helper.appendToTooltip(
             stack,
             storageRepository,
             tooltip,
             context,
-            Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits,
             Platform.INSTANCE.getBucketQuantityFormatter()::format,
-            showCapacityAndProgress,
-            false
+            hasCapacity
         );
-    }
-
-    @Override
-    public boolean hasStacking() {
-        return false;
     }
 
     @Override

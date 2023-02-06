@@ -48,16 +48,14 @@ public class FluidStorageBlockBlockItem extends AbstractStorageContainerBlockIte
             return;
         }
         final StorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
-        final boolean showCapacityAndProgress = variant != FluidStorageType.Variant.CREATIVE;
+        final boolean hasCapacity = variant != FluidStorageType.Variant.CREATIVE;
         helper.appendToTooltip(
             stack,
             storageRepository,
             tooltip,
             context,
-            Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits,
             Platform.INSTANCE.getBucketQuantityFormatter()::format,
-            showCapacityAndProgress,
-            false
+            hasCapacity
         );
     }
 

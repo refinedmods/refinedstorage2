@@ -48,22 +48,15 @@ public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResour
             return;
         }
         final StorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
-        final boolean showCapacityAndProgress = variant != ItemStorageType.Variant.CREATIVE;
+        final boolean hasCapacity = variant != ItemStorageType.Variant.CREATIVE;
         helper.appendToTooltip(
             stack,
             storageRepository,
             tooltip,
             context,
-            AmountFormatting::formatWithUnits,
             AmountFormatting::format,
-            showCapacityAndProgress,
-            true
+            hasCapacity
         );
-    }
-
-    @Override
-    public boolean hasStacking() {
-        return true;
     }
 
     @Override
