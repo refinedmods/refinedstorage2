@@ -67,6 +67,7 @@
   "gui.refinedstorage2.access_mode.insert_extract": "Insert and extract",
   "gui.refinedstorage2.access_mode.insert": "Insert only",
   "gui.refinedstorage2.access_mode.extract": "Extract only",
+  "gui.refinedstorage2.applicable_upgrades": "Applicable upgrades:",
   "item.refinedstorage2.quartz_enriched_iron": "Quartz Enriched Iron",
   "item.refinedstorage2.processor_binding": "Processor Binding",
   "item.refinedstorage2.silicon": "Silicon",

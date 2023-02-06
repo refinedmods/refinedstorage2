@@ -41,11 +41,9 @@ public abstract class AbstractUpgradeItem extends Item {
             "upgrade.supported_by"
         ).withStyle(ChatFormatting.WHITE));
         for (final UpgradeInDestination upgradeInDestination : destinations) {
-            final MutableComponent name =
-                upgradeInDestination.destination().getName().copy().withStyle(ChatFormatting.GRAY);
-            final MutableComponent amount =
-                Component.literal("(" + upgradeInDestination.maxAmount() + ")").withStyle(ChatFormatting.YELLOW);
-            lines.add(name.append(" ").append(amount));
+            final MutableComponent name = upgradeInDestination.destination().getName().copy();
+            final MutableComponent amount = Component.literal("(" + upgradeInDestination.maxAmount() + ")");
+            lines.add(name.append(" ").append(amount).withStyle(ChatFormatting.GRAY));
         }
     }
 }

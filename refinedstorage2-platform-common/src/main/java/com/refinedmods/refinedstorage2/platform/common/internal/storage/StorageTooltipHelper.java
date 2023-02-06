@@ -30,7 +30,7 @@ public final class StorageTooltipHelper {
             addAmountStoredWithoutCapacity(tooltip, stored, quantityFormatter);
             return;
         }
-        final int progress = (int) (stored / capacity * 100D);
+        final int progress = (int) ((double) stored / capacity * 100D);
         tooltip.add(PlatformApi.INSTANCE.createTranslation(
             "misc",
             "stored_with_capacity",

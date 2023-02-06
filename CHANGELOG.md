@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+-  The upgrade slots now show their supported upgrades.
+
 ### Removed
 
 -   Removed amount of stacks and max stacks stored on item storage tooltips.
