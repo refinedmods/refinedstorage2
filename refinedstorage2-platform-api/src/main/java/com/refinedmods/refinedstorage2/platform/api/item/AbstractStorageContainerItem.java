@@ -7,15 +7,18 @@ import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannelType;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 
+import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.apiguardian.api.API;
 
@@ -65,6 +68,23 @@ public abstract class AbstractStorageContainerItem<T> extends Item implements St
             helper.set(storageRepository, stack, createStorage(storageRepository));
         }
     }
+
+    @Override
+    public void appendHoverText(final ItemStack stack,
+                                @Nullable final Level level,
+                                final List<Component> tooltip,
+                                final TooltipFlag context) {
+        super.appendHoverText(stack, level, tooltip, context);
+        if (level == null) {
+            return;
+        }
+        final StorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
+        helper.appendToTooltip(stack, storageRepository, tooltip, context, this::formatAmount, hasCapacity());
+    }
+
+    protected abstract boolean hasCapacity();
+
+    protected abstract String formatAmount(long amount);
 
     protected abstract Storage<T> createStorage(StorageRepository storageRepository);
 
