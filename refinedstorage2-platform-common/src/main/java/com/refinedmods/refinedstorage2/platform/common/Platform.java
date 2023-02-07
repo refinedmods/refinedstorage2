@@ -41,7 +41,7 @@ public interface Platform {
 
     TagKey<Item> getWrenchTag();
 
-    BucketAmountFormatting getBucketQuantityFormatter();
+    BucketAmountFormatting getBucketAmountFormatter();
 
     Config getConfig();
 

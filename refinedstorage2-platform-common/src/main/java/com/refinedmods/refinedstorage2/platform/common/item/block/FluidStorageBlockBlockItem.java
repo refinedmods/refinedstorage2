@@ -2,23 +2,18 @@ package com.refinedmods.refinedstorage2.platform.common.item.block;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.block.AbstractStorageContainerBlockItem;
-import com.refinedmods.refinedstorage2.platform.api.storage.StorageRepository;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.AbstractStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 
-import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.slf4j.Logger;
@@ -39,26 +34,13 @@ public class FluidStorageBlockBlockItem extends AbstractStorageContainerBlockIte
     }
 
     @Override
-    public void appendHoverText(final ItemStack stack,
-                                @Nullable final Level level,
-                                final List<Component> tooltip,
-                                final TooltipFlag context) {
-        super.appendHoverText(stack, level, tooltip, context);
-        if (level == null) {
-            return;
-        }
-        final StorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
-        final boolean showCapacityAndProgress = variant != FluidStorageType.Variant.CREATIVE;
-        helper.appendToTooltip(
-            stack,
-            storageRepository,
-            tooltip,
-            context,
-            Platform.INSTANCE.getBucketQuantityFormatter()::formatWithUnits,
-            Platform.INSTANCE.getBucketQuantityFormatter()::format,
-            showCapacityAndProgress,
-            false
-        );
+    protected boolean hasCapacity() {
+        return variant.hasCapacity();
+    }
+
+    @Override
+    protected String formatAmount(final long amount) {
+        return Platform.INSTANCE.getBucketAmountFormatter().format(amount);
     }
 
     @Override

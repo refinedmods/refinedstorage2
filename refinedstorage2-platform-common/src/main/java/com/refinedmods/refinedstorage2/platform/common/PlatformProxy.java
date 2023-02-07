@@ -66,8 +66,8 @@ public class PlatformProxy implements Platform {
     }
 
     @Override
-    public BucketAmountFormatting getBucketQuantityFormatter() {
-        return ensureLoaded().getBucketQuantityFormatter();
+    public BucketAmountFormatting getBucketAmountFormatter() {
+        return ensureLoaded().getBucketAmountFormatter();
     }
 
     @Override

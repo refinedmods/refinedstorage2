@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.UpgradeContainer;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.UpgradeSlot;
 import com.refinedmods.refinedstorage2.platform.common.internal.resource.filter.ResourceFilterContainer;
 import com.refinedmods.refinedstorage2.platform.common.internal.upgrade.UpgradeDestinations;
 
@@ -54,7 +55,7 @@ public abstract class AbstractSimpleFilterContainerMenu<T extends BlockEntity>
             addSlot(createFilterSlot(resourceFilterContainer, i));
         }
         for (int i = 0; i < upgradeContainer.getContainerSize(); ++i) {
-            addSlot(new Slot(upgradeContainer, i, 187, 6 + (i * 18)));
+            addSlot(new UpgradeSlot(upgradeContainer, i, 187, 6 + (i * 18)));
         }
         addPlayerInventory(player.getInventory(), 8, 55);
 

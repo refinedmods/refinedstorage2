@@ -11,9 +11,4 @@ public class EmptyStorageDiskInfoAccessor implements StorageDiskInfoAccessor {
     public Optional<StorageInfo> getInfo(final ItemStack stack) {
         return Optional.empty();
     }
-
-    @Override
-    public boolean hasStacking(final ItemStack stack) {
-        return false;
-    }
 }

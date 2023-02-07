@@ -39,7 +39,7 @@ public record FluidFilteredResource(FluidResource value, long amount) implements
 
     @Override
     public String getDisplayedAmount() {
-        return Platform.INSTANCE.getBucketQuantityFormatter().formatWithUnits(amount);
+        return Platform.INSTANCE.getBucketAmountFormatter().formatWithUnits(amount);
     }
 
     @Override

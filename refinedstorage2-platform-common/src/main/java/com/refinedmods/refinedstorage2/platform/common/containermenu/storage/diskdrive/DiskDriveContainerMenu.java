@@ -80,7 +80,8 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
         return new ValidatedSlot(diskInventory, i, x, y, stack -> stack.getItem() instanceof StorageContainerItem);
     }
 
-    private boolean hasCapacity() {
+    @Override
+    public boolean hasCapacity() {
         return getStorageDiskInfo().allMatch(info -> info.capacity() > 0);
     }
 
@@ -90,16 +91,6 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
             return 0;
         }
         return (double) getStored() / (double) getCapacity();
-    }
-
-    @Override
-    public boolean showCapacityAndProgress() {
-        return hasCapacity();
-    }
-
-    @Override
-    public boolean showStackingInfo() {
-        return getDiskStacks().allMatch(storageInfoAccessor::hasStacking);
     }
 
     @Override

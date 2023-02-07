@@ -17,14 +17,10 @@ import com.refinedmods.refinedstorage2.platform.common.internal.storage.Platform
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
-import java.util.List;
 import javax.annotation.Nullable;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 
 public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResource> {
     private final ItemStorageType.Variant variant;
@@ -39,31 +35,13 @@ public class ItemStorageDiskItem extends AbstractStorageContainerItem<ItemResour
     }
 
     @Override
-    public void appendHoverText(final ItemStack stack,
-                                @Nullable final Level level,
-                                final List<Component> tooltip,
-                                final TooltipFlag context) {
-        super.appendHoverText(stack, level, tooltip, context);
-        if (level == null) {
-            return;
-        }
-        final StorageRepository storageRepository = PlatformApi.INSTANCE.getStorageRepository(level);
-        final boolean showCapacityAndProgress = variant != ItemStorageType.Variant.CREATIVE;
-        helper.appendToTooltip(
-            stack,
-            storageRepository,
-            tooltip,
-            context,
-            AmountFormatting::formatWithUnits,
-            AmountFormatting::format,
-            showCapacityAndProgress,
-            true
-        );
+    protected boolean hasCapacity() {
+        return variant.hasCapacity();
     }
 
     @Override
-    public boolean hasStacking() {
-        return true;
+    protected String formatAmount(final long amount) {
+        return AmountFormatting.format(amount);
     }
 
     @Override

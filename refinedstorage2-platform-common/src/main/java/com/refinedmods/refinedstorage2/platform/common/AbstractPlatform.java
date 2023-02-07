@@ -45,7 +45,7 @@ public abstract class AbstractPlatform implements Platform {
     }
 
     @Override
-    public BucketAmountFormatting getBucketQuantityFormatter() {
+    public BucketAmountFormatting getBucketAmountFormatter() {
         return bucketAmountFormatting;
     }
 
