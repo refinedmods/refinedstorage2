@@ -113,7 +113,7 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
     }
 
     @Override
-    public boolean canAcceptIncomingConnection(final Direction direction) {
+    public boolean canAcceptIncomingConnection(final Direction direction, final BlockState other) {
         final Direction myDirection = getDirection();
         if (myDirection == null) {
             return true;

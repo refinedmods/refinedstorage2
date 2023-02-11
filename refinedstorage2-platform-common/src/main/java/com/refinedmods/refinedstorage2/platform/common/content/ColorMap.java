@@ -14,9 +14,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 
 public class ColorMap<T> {
-    private static final DyeColor NORMAL_COLOR = DyeColor.LIGHT_BLUE;
-
     private final Map<DyeColor, Supplier<T>> map = new EnumMap<>(DyeColor.class);
+    private final DyeColor defaultColor;
+
+    public ColorMap(final DyeColor defaultColor) {
+        this.defaultColor = defaultColor;
+    }
 
     public void putAll(final Function<DyeColor, Supplier<T>> factory) {
         for (final DyeColor color : DyeColor.values()) {
@@ -25,20 +28,21 @@ public class ColorMap<T> {
     }
 
     public ResourceLocation getId(final DyeColor color, final ResourceLocation id) {
-        return generateId(color, id.getNamespace(), id.getPath());
+        return generateId(color, this.defaultColor, id.getNamespace(), id.getPath());
     }
 
     public static ResourceLocation generateId(final DyeColor color,
+                                              final DyeColor defaultColor,
                                               final String namespace,
                                               final String path) {
-        if (color == NORMAL_COLOR) {
+        if (color == defaultColor) {
             return new ResourceLocation(namespace, path);
         }
         return new ResourceLocation(namespace, color.getName() + "_" + path);
     }
 
     public MutableComponent getName(final DyeColor color, final MutableComponent name) {
-        if (color != NORMAL_COLOR) {
+        if (color != this.defaultColor) {
             return Component.translatable("color.minecraft." + color.getName()).append(" ").append(name);
         } else {
             return name;
@@ -53,8 +57,8 @@ public class ColorMap<T> {
         return map.get(color).get();
     }
 
-    public T getNormal() {
-        return get(NORMAL_COLOR);
+    public T getDefault() {
+        return get(this.defaultColor);
     }
 
     public Collection<T> values() {

@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.node.container.NetworkNodeCon
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE, since = "2.0.0-milestone.2.1")
@@ -26,7 +27,8 @@ public interface PlatformNetworkNodeContainer extends NetworkNodeContainer {
      * com.refinedmods.refinedstorage2.platform.api.PlatformApi#requestNetworkNodeUpdate(NetworkNodeContainer, Level)}.
      *
      * @param direction the incoming direction
+     * @param other     the state wanting to connect
      * @return whether the node can accept an incoming connection
      */
-    boolean canAcceptIncomingConnection(Direction direction);
+    boolean canAcceptIncomingConnection(Direction direction, BlockState other);
 }

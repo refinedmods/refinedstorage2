@@ -2,7 +2,7 @@
   "multipart": [
     {
       "apply": {
-        "model": "refinedstorage2:block/cable_core"
+        "model": "refinedstorage2:block/cable/core/green"
       }
     },
     {
@@ -10,7 +10,7 @@
         "north": true
       },
       "apply": {
-        "model": "refinedstorage2:block/cable_extension"
+        "model": "refinedstorage2:block/cable/extension/green"
       }
     },
     {
@@ -18,7 +18,7 @@
         "east": true
       },
       "apply": {
-        "model": "refinedstorage2:block/cable_extension",
+        "model": "refinedstorage2:block/cable/extension/green",
         "y": 90
       }
     },
@@ -27,7 +27,7 @@
         "south": true
       },
       "apply": {
-        "model": "refinedstorage2:block/cable_extension",
+        "model": "refinedstorage2:block/cable/extension/green",
         "x": 180
       }
     },
@@ -36,7 +36,7 @@
         "west": true
       },
       "apply": {
-        "model": "refinedstorage2:block/cable_extension",
+        "model": "refinedstorage2:block/cable/extension/green",
         "y": 270
       }
     },
@@ -45,7 +45,7 @@
         "up": true
       },
       "apply": {
-        "model": "refinedstorage2:block/cable_extension",
+        "model": "refinedstorage2:block/cable/extension/green",
         "x": 270
       }
     },
@@ -54,7 +54,7 @@
         "down": true
       },
       "apply": {
-        "model": "refinedstorage2:block/cable_extension",
+        "model": "refinedstorage2:block/cable/extension/green",
         "x": 90
       }
     }

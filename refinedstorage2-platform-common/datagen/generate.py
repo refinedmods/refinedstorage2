@@ -21,8 +21,8 @@ def to_json(data):
     return json.dumps(data, indent=2)
 
 
-def get_color_key(color, name):
-    if color == 'light_blue':
+def get_color_key(color, name, default_color = 'light_blue'):
+    if color == default_color:
         return name
     return color + '_' + name
 
@@ -93,6 +93,17 @@ def generate_creative_controller_item(name, color):
         create_file(output_dir + '/assets/refinedstorage2/models/item/' + name + '.json', to_json({
           'parent': 'refinedstorage2:block/controller/' + color
         }))
+
+
+def generate_cable_item(name, color):
+    result = {
+        "parent": "refinedstorage2:item/cable/base",
+        "textures": {
+            "cable": "refinedstorage2:block/cable/" + color
+        }
+    }
+
+    create_file(output_dir + '/assets/refinedstorage2/models/item/' + name + '.json', to_json(result))
 
 
 def generate_north_cutout_block_model(name, particle, north, east, south, west, up, down, cutout, emissive_cutout):
@@ -181,6 +192,98 @@ def generate_blockstate_for_each_bi_direction_and_active(name, model_factory):
                 name + '.json', to_json(result))
 
 
+def generate_cable_blockstate(name, color):
+    result = {
+        'multipart': [
+            {
+                'apply': {
+                    'model': 'refinedstorage2:block/cable/core/' + color
+                }
+            },
+            {
+                'when': {
+                    'north': True
+                },
+                'apply': {
+                    'model': 'refinedstorage2:block/cable/extension/' + color
+                }
+            },
+            {
+                'when': {
+                    'east': True
+                },
+                'apply': {
+                    'model': 'refinedstorage2:block/cable/extension/' + color,
+                    'y': 90
+                }
+            },
+            {
+                'when': {
+                    'south': True
+                },
+                'apply': {
+                    'model': 'refinedstorage2:block/cable/extension/' + color,
+                    'x': 180
+                }
+            },
+            {
+                'when': {
+                    'west': True
+                },
+                'apply': {
+                    'model': 'refinedstorage2:block/cable/extension/' + color,
+                    'y': 270
+                }
+            },
+            {
+                'when': {
+                    'up': True
+                },
+                'apply': {
+                    'model': 'refinedstorage2:block/cable/extension/' + color,
+                    'x': 270
+                }
+            },
+            {
+                'when': {
+                    'down': True
+                },
+                'apply': {
+                    'model': 'refinedstorage2:block/cable/extension/' + color,
+                    'x': 90
+                }
+            },
+        ]
+    }
+
+    create_file(output_dir + '/assets/refinedstorage2/blockstates/' +
+                name + '.json', to_json(result))
+
+
+def generate_cable_models(color):
+    result = {
+        "parent": "refinedstorage2:block/cable/core/base",
+        "textures": {
+            "cable": "refinedstorage2:block/cable/" + color,
+            "particle": "refinedstorage2:block/cable/" + color,
+        },
+    }
+
+    create_file(output_dir + '/assets/refinedstorage2/models/block/cable/core/' +
+                color + '.json', to_json(result))
+
+    result = {
+        "parent": "refinedstorage2:block/cable/extension/base",
+        "textures": {
+            "cable": "refinedstorage2:block/cable/" + color,
+            "particle": "refinedstorage2:block/cable/" + color,
+        },
+    }
+
+    create_file(output_dir + '/assets/refinedstorage2/models/block/cable/extension/' +
+                color + '.json', to_json(result))
+
+
 def generate_recipe(name, data):
     create_file(output_dir + '/data/refinedstorage2/recipes/' +
                 name + '.json', to_json(data))
@@ -235,9 +338,14 @@ with open('colors.txt') as colors_file:
         generate_blockstate_for_each_bi_direction_and_active(get_color_key(
             color, 'grid'), lambda direction, active: 'refinedstorage2:block/grid/' + color if active else 'refinedstorage2:block/grid/inactive')
 
+        generate_cable_item(get_color_key(color, 'cable', 'gray'), color)
+        generate_cable_blockstate(get_color_key(color, 'cable', 'gray'), color)
+        generate_cable_models(color)
+
         generate_simple_loot_table(get_color_key(color, 'grid'), 'refinedstorage2:' + get_color_key(color, 'grid'))
         generate_simple_loot_table(get_color_key(color, 'controller'), 'refinedstorage2:' + get_color_key(color, 'controller'))
         generate_simple_loot_table(get_color_key(color, 'creative_controller'), 'refinedstorage2:' + get_color_key(color, 'creative_controller'))
+        generate_simple_loot_table(get_color_key(color, 'cable', 'gray'), 'refinedstorage2:' + get_color_key(color, 'cable', 'gray'))
 
         generate_recipe('coloring/' + get_color_key(color, 'grid'), {
             'type': 'minecraft:crafting_shapeless',
@@ -269,9 +377,30 @@ with open('colors.txt') as colors_file:
             }
         })
 
+        cable_name = get_color_key(color, 'cable', 'gray')
+        generate_recipe('coloring/' + cable_name, {
+            'type': 'minecraft:crafting_shapeless',
+            'ingredients': [
+                {
+                    'tag': 'refinedstorage2:cables'
+                },
+                {
+                    'item': 'minecraft:' + dye
+                }
+            ],
+            'result': {
+                'item': 'refinedstorage2:' + cable_name
+            }
+        })
+
     generate_item_tag('grids', {
         'replace': False,
         'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'grid'), color_names))
+    })
+
+    generate_item_tag('cables', {
+        'replace': False,
+        'values': list(map(lambda color: 'refinedstorage2:' + get_color_key(color, 'cable', 'gray'), color_names))
     })
 
     generate_item_tag('storage_disks', {

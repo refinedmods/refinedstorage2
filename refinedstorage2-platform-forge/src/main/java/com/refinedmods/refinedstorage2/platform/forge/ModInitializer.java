@@ -52,6 +52,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.CableBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
@@ -251,7 +252,13 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerBlocks() {
-        Blocks.INSTANCE.setCable(blockRegistry.register(CABLE.getPath(), CableBlock::new));
+        Blocks.INSTANCE.getCable().putAll(color -> blockRegistry.register(
+            Blocks.INSTANCE.getCable().getId(color, CABLE).getPath(),
+            () -> new CableBlock(color, Blocks.INSTANCE.getCable().getName(
+                    color,
+                    createTranslation(BLOCK_TRANSLATION_CATEGORY, "cable"))
+            ))
+        );
         Blocks.INSTANCE.setQuartzEnrichedIronBlock(blockRegistry.register(
             QUARTZ_ENRICHED_IRON_BLOCK.getPath(),
             SimpleBlock::new
@@ -322,6 +329,7 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerItems() {
         registerSimpleItems();
         registerGridItems();
+        registerCableItems();
         registerControllerItems();
         registerStorageItems();
         registerUpgrades();
@@ -330,10 +338,6 @@ public class ModInitializer extends AbstractModInitializer {
     }
 
     private void registerSimpleItems() {
-        itemRegistry.register(
-            CABLE.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getCable())
-        );
         Items.INSTANCE.setQuartzEnrichedIron(itemRegistry.register(
             QUARTZ_ENRICHED_IRON.getPath(),
             SimpleItem::new
@@ -394,6 +398,16 @@ public class ModInitializer extends AbstractModInitializer {
 
         Items.INSTANCE.setConstructionCore(itemRegistry.register(CONSTRUCTION_CORE.getPath(), SimpleItem::new));
         Items.INSTANCE.setDestructionCore(itemRegistry.register(DESTRUCTION_CORE.getPath(), SimpleItem::new));
+    }
+
+    private void registerCableItems() {
+        Blocks.INSTANCE.getCable().forEach((color, block) -> Items.INSTANCE.addCable(itemRegistry.register(
+            Blocks.INSTANCE.getCable().getId(color, CABLE).getPath(),
+            () -> new CableBlockItem(block.get(), Blocks.INSTANCE.getCable().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "cable")
+            ))
+        )));
     }
 
     private void registerGridItems() {
@@ -510,7 +524,10 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerBlockEntities() {
         BlockEntities.INSTANCE.setCable(blockEntityTypeRegistry.register(
             CABLE.getPath(),
-            () -> BlockEntityType.Builder.of(CableBlockEntity::new, Blocks.INSTANCE.getCable()).build(null)
+            () -> BlockEntityType.Builder.of(
+                    CableBlockEntity::new,
+                    Blocks.INSTANCE.getCable().toArray()
+            ).build(null)
         ));
         BlockEntities.INSTANCE.setController(blockEntityTypeRegistry.register(
             CONTROLLER.getPath(),
@@ -657,7 +674,7 @@ public class ModInitializer extends AbstractModInitializer {
             createIdentifier("general"),
             builder -> builder
                 .title(createTranslation("itemGroup", "general"))
-                .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getNormal()))
+                .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getDefault()))
                 .displayItems((enabledFeatures, entries, operatorEnabled)
                     -> CreativeModeTabItems.append(entries::accept))
                 .build()

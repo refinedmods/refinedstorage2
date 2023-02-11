@@ -1,7 +1,7 @@
 {
   "render_type": "cutout",
   "textures": {
-    "border": "refinedstorage2:block/cable_part_border"
+    "border": "refinedstorage2:block/cable/part_border"
   },
   "elements": [
     {

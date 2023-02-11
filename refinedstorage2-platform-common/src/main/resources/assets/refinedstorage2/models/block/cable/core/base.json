@@ -1,9 +1,5 @@
 {
   "render_type": "cutout",
-  "textures": {
-    "cable": "refinedstorage2:block/cable",
-    "particle": "refinedstorage2:block/cable"
-  },
   "elements": [
     {
       "name": "Core",

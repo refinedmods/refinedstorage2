@@ -74,16 +74,18 @@ final class CableBlockSupport {
         return shape;
     }
 
-    static BlockState getState(final BlockState currentState,
-                               final LevelAccessor world,
-                               final BlockPos pos,
-                               @Nullable final Direction blacklistedDirection) {
-        final boolean north = hasVisualConnection(world, pos, Direction.NORTH, blacklistedDirection);
-        final boolean east = hasVisualConnection(world, pos, Direction.EAST, blacklistedDirection);
-        final boolean south = hasVisualConnection(world, pos, Direction.SOUTH, blacklistedDirection);
-        final boolean west = hasVisualConnection(world, pos, Direction.WEST, blacklistedDirection);
-        final boolean up = hasVisualConnection(world, pos, Direction.UP, blacklistedDirection);
-        final boolean down = hasVisualConnection(world, pos, Direction.DOWN, blacklistedDirection);
+    static BlockState getState(
+        final BlockState currentState,
+        final LevelAccessor world,
+        final BlockPos pos,
+        @Nullable final Direction blacklistedDirection
+    ) {
+        final boolean north = hasVisualConnection(currentState, world, pos, Direction.NORTH, blacklistedDirection);
+        final boolean east = hasVisualConnection(currentState, world, pos, Direction.EAST, blacklistedDirection);
+        final boolean south = hasVisualConnection(currentState, world, pos, Direction.SOUTH, blacklistedDirection);
+        final boolean west = hasVisualConnection(currentState, world, pos, Direction.WEST, blacklistedDirection);
+        final boolean up = hasVisualConnection(currentState, world, pos, Direction.UP, blacklistedDirection);
+        final boolean down = hasVisualConnection(currentState, world, pos, Direction.DOWN, blacklistedDirection);
 
         return currentState
             .setValue(NORTH, north)
@@ -94,17 +96,20 @@ final class CableBlockSupport {
             .setValue(DOWN, down);
     }
 
-    private static boolean hasVisualConnection(final LevelAccessor world,
-                                               final BlockPos pos,
-                                               final Direction direction,
-                                               @Nullable final Direction blacklistedDirection) {
+    private static boolean hasVisualConnection(
+        final BlockState blockState,
+        final LevelAccessor world,
+        final BlockPos pos,
+        final Direction direction,
+        @Nullable final Direction blacklistedDirection
+    ) {
         if (direction == blacklistedDirection) {
             return false;
         }
         final BlockPos offsetPos = pos.relative(direction);
-        if (!(world.getBlockEntity(offsetPos) instanceof PlatformNetworkNodeContainer container)) {
+        if (!(world.getBlockEntity(offsetPos) instanceof PlatformNetworkNodeContainer neighboringContainer)) {
             return false;
         }
-        return container.canAcceptIncomingConnection(direction);
+        return neighboringContainer.canAcceptIncomingConnection(direction, blockState);
     }
 }

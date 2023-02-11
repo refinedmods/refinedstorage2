@@ -55,6 +55,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class ClientModInitializerImpl implements ClientModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientModInitializerImpl.class);
+    private static final DyeColor DEFAULT_COLOR = DyeColor.LIGHT_BLUE;
 
     @Override
     public void onInitializeClient() {
@@ -70,10 +71,12 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void setRenderLayers() {
-        BlockRenderLayerMap.INSTANCE.putBlock(Blocks.INSTANCE.getCable(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(Blocks.INSTANCE.getImporter(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(Blocks.INSTANCE.getExporter(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(Blocks.INSTANCE.getExternalStorage(), RenderType.cutout());
+        Blocks.INSTANCE.getCable().values().forEach(block ->
+            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout())
+        );
         Blocks.INSTANCE.getGrid().values().forEach(block ->
             BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
         Blocks.INSTANCE.getController().values().forEach(block ->
@@ -98,11 +101,11 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         );
         // Item
         EmissiveModelRegistry.INSTANCE.register(
-            ColorMap.generateId(color, IdentifierUtil.MOD_ID, "controller"),
+            ColorMap.generateId(color, DEFAULT_COLOR, IdentifierUtil.MOD_ID, "controller"),
             spriteLocation
         );
         EmissiveModelRegistry.INSTANCE.register(
-            ColorMap.generateId(color, IdentifierUtil.MOD_ID, "creative_controller"),
+            ColorMap.generateId(color, DEFAULT_COLOR, IdentifierUtil.MOD_ID, "creative_controller"),
             spriteLocation
         );
     }
@@ -113,7 +116,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
             createIdentifier("block/grid/cutouts/" + color.getName())
         );
         EmissiveModelRegistry.INSTANCE.register(
-            ColorMap.generateId(color, IdentifierUtil.MOD_ID, "grid"),
+            ColorMap.generateId(color, DEFAULT_COLOR, IdentifierUtil.MOD_ID, "grid"),
             createIdentifier("block/grid/cutouts/" + color.getName())
         );
     }

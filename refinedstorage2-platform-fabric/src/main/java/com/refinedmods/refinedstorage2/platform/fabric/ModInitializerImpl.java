@@ -56,6 +56,7 @@ import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.CableBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
@@ -295,10 +296,16 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     }
 
     private void registerBlocks() {
-        Blocks.INSTANCE.setCable(register(
+        Blocks.INSTANCE.getCable().putAll(color -> register(
             BuiltInRegistries.BLOCK,
-            CABLE,
-            new CableBlock()
+            Blocks.INSTANCE.getCable().getId(color, CABLE),
+            new CableBlock(color, Blocks.INSTANCE.getCable().getName(
+                color,
+                createTranslation(
+                    BLOCK_TRANSLATION_CATEGORY,
+                    "cable"
+                )
+            ))
         ));
         Blocks.INSTANCE.setQuartzEnrichedIronBlock(register(
             BuiltInRegistries.BLOCK,
@@ -390,17 +397,13 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     private void registerItems() {
         registerSimpleItems();
         registerGridItems();
+        registerCableItems();
         registerControllerItems();
         registerStorageItems();
         registerUpgrades();
     }
 
     private void registerSimpleItems() {
-        register(
-            BuiltInRegistries.ITEM,
-            CABLE,
-            new SimpleBlockItem(Blocks.INSTANCE.getCable())
-        );
         Items.INSTANCE.setQuartzEnrichedIron(register(
             BuiltInRegistries.ITEM,
             QUARTZ_ENRICHED_IRON,
@@ -463,6 +466,17 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 )
             );
         }
+    }
+
+    private void registerCableItems() {
+        Blocks.INSTANCE.getCable().forEach((color, block) -> Items.INSTANCE.addCable(register(
+            BuiltInRegistries.ITEM,
+            Blocks.INSTANCE.getCable().getId(color, CABLE),
+            new CableBlockItem(block.get(), Blocks.INSTANCE.getCable().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "cable")
+            ))
+        )));
     }
 
     private void registerGridItems() {
@@ -573,10 +587,10 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             CABLE,
             FabricBlockEntityTypeBuilder.create(
-                CableBlockEntity::new,
-                Blocks.INSTANCE.getCable()
-            ).build())
-        );
+                    CableBlockEntity::new,
+                    Blocks.INSTANCE.getCable().toArray()
+            ).build()
+        ));
         BlockEntities.INSTANCE.setDiskDrive(register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             DISK_DRIVE,
@@ -725,7 +739,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
     private void registerCreativeModeTab() {
         FabricItemGroup.builder(createIdentifier("general"))
             .title(createTranslation("itemGroup", "general"))
-            .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getNormal()))
+            .icon(() -> new ItemStack(Blocks.INSTANCE.getController().getDefault()))
             .displayItems((enabledFeatures, entries, operatorEnabled) -> CreativeModeTabItems.append(entries::accept))
             .build();
     }

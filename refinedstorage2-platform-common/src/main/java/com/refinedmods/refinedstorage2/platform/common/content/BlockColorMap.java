@@ -16,6 +16,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 
 public class BlockColorMap<T extends Block> extends ColorMap<T> {
+    public BlockColorMap() {
+        this(DyeColor.LIGHT_BLUE);
+    }
+
+    public BlockColorMap(final DyeColor defaultColor) {
+        super(defaultColor);
+    }
+
+
     public Optional<InteractionResult> updateColor(final BlockState state,
                                                    final ItemStack heldItem,
                                                    final Level level,
