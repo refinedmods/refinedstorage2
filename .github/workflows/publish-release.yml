@@ -141,6 +141,18 @@ jobs:
           access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
           access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
 
+  announce-mastodon:
+    name: Announce to Mastodon
+    runs-on: ubuntu-latest
+    needs: [ deploy-github-releases, extract-version-number ]
+    steps:
+      - name: Announce to Mastodon
+        uses: rzr/fediverse-action@master
+        with:
+          access-token: ${{ secrets.MASTODON_TOKEN }}
+          host: 'anvil.social'
+          message: "Refined Storage v${{ needs.extract-version-number.outputs.version }} has been released! ${{ needs.deploy-github-releases.outputs.release-url }}"
+
   sync-develop:
     name: Sync develop
     runs-on: ubuntu-latest
