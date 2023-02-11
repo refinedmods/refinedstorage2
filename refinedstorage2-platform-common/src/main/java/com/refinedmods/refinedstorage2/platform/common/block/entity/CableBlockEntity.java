@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity;
 
 import com.refinedmods.refinedstorage2.api.network.impl.node.SimpleNetworkNode;
-import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
@@ -24,18 +23,18 @@ public class CableBlockEntity extends AbstractInternalNetworkNodeContainerBlockE
     }
 
     @Override
-    public boolean canAcceptIncomingConnection(final Direction direction, final PlatformNetworkNodeContainer other) {
-        if (other instanceof CableBlockEntity otherCable) {
+    public boolean canAcceptIncomingConnection(final Direction direction, final BlockState other) {
+        if (other.getBlock() instanceof CableBlock otherCable) {
             return colorsAllowConnecting(otherCable) && super.canAcceptIncomingConnection(direction, other);
         }
         return super.canAcceptIncomingConnection(direction, other);
     }
 
-    private boolean colorsAllowConnecting(final CableBlockEntity otherCable) {
+    private boolean colorsAllowConnecting(final CableBlock otherCable) {
         final DyeColor defaultColor = Blocks.INSTANCE.getCable().getDefault().getColor();
-        return this.getColor() == otherCable.getColor()
-                || this.getColor() == defaultColor
-                || otherCable.getColor() == defaultColor;
+        return getColor() == otherCable.getColor()
+            || getColor() == defaultColor
+            || otherCable.getColor() == defaultColor;
     }
 
     private DyeColor getColor() {
