@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.block;
 
 import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
 
+import java.util.Map;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -17,13 +18,21 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static net.minecraft.world.level.block.Block.box;
 
-final class CableBlockSupport {
-    private static final BooleanProperty NORTH = BooleanProperty.create("north");
-    private static final BooleanProperty EAST = BooleanProperty.create("east");
-    private static final BooleanProperty SOUTH = BooleanProperty.create("south");
-    private static final BooleanProperty WEST = BooleanProperty.create("west");
-    private static final BooleanProperty UP = BooleanProperty.create("up");
-    private static final BooleanProperty DOWN = BooleanProperty.create("down");
+public final class CableBlockSupport {
+    public static final BooleanProperty NORTH = BooleanProperty.create("north");
+    public static final BooleanProperty EAST = BooleanProperty.create("east");
+    public static final BooleanProperty SOUTH = BooleanProperty.create("south");
+    public static final BooleanProperty WEST = BooleanProperty.create("west");
+    public static final BooleanProperty UP = BooleanProperty.create("up");
+    public static final BooleanProperty DOWN = BooleanProperty.create("down");
+    public static final Map<Direction, BooleanProperty> PROPERTY_BY_DIRECTION = Map.of(
+        Direction.NORTH, NORTH,
+        Direction.EAST, EAST,
+        Direction.SOUTH, SOUTH,
+        Direction.WEST, WEST,
+        Direction.UP, UP,
+        Direction.DOWN, DOWN
+    );
 
     private static final VoxelShape SHAPE_CORE = box(6, 6, 6, 10, 10, 10);
     private static final VoxelShape SHAPE_NORTH = box(6, 6, 0, 10, 10, 6);

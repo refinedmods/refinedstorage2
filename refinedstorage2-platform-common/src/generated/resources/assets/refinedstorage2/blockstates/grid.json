@@ -1,123 +1,109 @@
 {
   "variants": {
-    "direction=up_north,active=true": {
-      "model": "refinedstorage2:block/grid/light_blue",
-      "x": -90,
-      "y": 180
-    },
-    "direction=up_north,active=false": {
-      "model": "refinedstorage2:block/grid/inactive",
-      "x": -90,
-      "y": 180
-    },
-    "direction=up_east,active=true": {
-      "model": "refinedstorage2:block/grid/light_blue",
-      "x": -90,
-      "y": -90
-    },
-    "direction=up_east,active=false": {
-      "model": "refinedstorage2:block/grid/inactive",
-      "x": -90,
-      "y": -90
-    },
-    "direction=up_south,active=true": {
-      "model": "refinedstorage2:block/grid/light_blue",
-      "x": -90,
-      "y": 0
-    },
-    "direction=up_south,active=false": {
-      "model": "refinedstorage2:block/grid/inactive",
-      "x": -90,
-      "y": 0
-    },
-    "direction=up_west,active=true": {
-      "model": "refinedstorage2:block/grid/light_blue",
-      "x": -90,
-      "y": 90
-    },
-    "direction=up_west,active=false": {
-      "model": "refinedstorage2:block/grid/inactive",
-      "x": -90,
-      "y": 90
-    },
-    "direction=down_north,active=true": {
-      "model": "refinedstorage2:block/grid/light_blue",
-      "x": 90,
-      "y": 0
-    },
-    "direction=down_north,active=false": {
-      "model": "refinedstorage2:block/grid/inactive",
-      "x": 90,
-      "y": 0
-    },
-    "direction=down_east,active=true": {
-      "model": "refinedstorage2:block/grid/light_blue",
-      "x": 90,
-      "y": 90
-    },
-    "direction=down_east,active=false": {
-      "model": "refinedstorage2:block/grid/inactive",
-      "x": 90,
-      "y": 90
-    },
-    "direction=down_south,active=true": {
-      "model": "refinedstorage2:block/grid/light_blue",
-      "x": 90,
-      "y": 180
-    },
-    "direction=down_south,active=false": {
-      "model": "refinedstorage2:block/grid/inactive",
-      "x": 90,
-      "y": 180
-    },
-    "direction=down_west,active=true": {
-      "model": "refinedstorage2:block/grid/light_blue",
-      "x": 90,
-      "y": -90
-    },
-    "direction=down_west,active=false": {
+    "active=false,direction=down_east": {
       "model": "refinedstorage2:block/grid/inactive",
       "x": 90,
       "y": -90
     },
-    "direction=north,active=true": {
-      "model": "refinedstorage2:block/grid/light_blue",
-      "x": 0,
-      "y": 0
-    },
-    "direction=north,active=false": {
+    "active=false,direction=down_north": {
       "model": "refinedstorage2:block/grid/inactive",
-      "x": 0,
-      "y": 0
+      "x": 90
     },
-    "direction=east,active=true": {
-      "model": "refinedstorage2:block/grid/light_blue",
-      "x": 0,
-      "y": 90
-    },
-    "direction=east,active=false": {
+    "active=false,direction=down_south": {
       "model": "refinedstorage2:block/grid/inactive",
-      "x": 0,
-      "y": 90
-    },
-    "direction=south,active=true": {
-      "model": "refinedstorage2:block/grid/light_blue",
-      "x": 0,
+      "x": 90,
       "y": 180
     },
-    "direction=south,active=false": {
+    "active=false,direction=down_west": {
       "model": "refinedstorage2:block/grid/inactive",
-      "x": 0,
+      "x": 90,
+      "y": 90
+    },
+    "active=false,direction=east": {
+      "model": "refinedstorage2:block/grid/inactive",
+      "y": 90
+    },
+    "active=false,direction=north": {
+      "model": "refinedstorage2:block/grid/inactive"
+    },
+    "active=false,direction=south": {
+      "model": "refinedstorage2:block/grid/inactive",
       "y": 180
     },
-    "direction=west,active=true": {
-      "model": "refinedstorage2:block/grid/light_blue",
-      "x": 0,
+    "active=false,direction=up_east": {
+      "model": "refinedstorage2:block/grid/inactive",
+      "x": -90,
+      "y": -90
+    },
+    "active=false,direction=up_north": {
+      "model": "refinedstorage2:block/grid/inactive",
+      "x": -90,
+      "y": 180
+    },
+    "active=false,direction=up_south": {
+      "model": "refinedstorage2:block/grid/inactive",
+      "x": -90
+    },
+    "active=false,direction=up_west": {
+      "model": "refinedstorage2:block/grid/inactive",
+      "x": -90,
+      "y": 90
+    },
+    "active=false,direction=west": {
+      "model": "refinedstorage2:block/grid/inactive",
       "y": 270
     },
-    "direction=west,active=false": {
-      "model": "refinedstorage2:block/grid/inactive",
-      "x": 0,
+    "active=true,direction=down_east": {
+      "model": "refinedstorage2:block/grid/light_blue",
+      "x": 90,
+      "y": -90
+    },
+    "active=true,direction=down_north": {
+      "model": "refinedstorage2:block/grid/light_blue",
+      "x": 90
+    },
+    "active=true,direction=down_south": {
+      "model": "refinedstorage2:block/grid/light_blue",
+      "x": 90,
+      "y": 180
+    },
+    "active=true,direction=down_west": {
+      "model": "refinedstorage2:block/grid/light_blue",
+      "x": 90,
+      "y": 90
+    },
+    "active=true,direction=east": {
+      "model": "refinedstorage2:block/grid/light_blue",
+      "y": 90
+    },
+    "active=true,direction=north": {
+      "model": "refinedstorage2:block/grid/light_blue"
+    },
+    "active=true,direction=south": {
+      "model": "refinedstorage2:block/grid/light_blue",
+      "y": 180
+    },
+    "active=true,direction=up_east": {
+      "model": "refinedstorage2:block/grid/light_blue",
+      "x": -90,
+      "y": -90
+    },
+    "active=true,direction=up_north": {
+      "model": "refinedstorage2:block/grid/light_blue",
+      "x": -90,
+      "y": 180
+    },
+    "active=true,direction=up_south": {
+      "model": "refinedstorage2:block/grid/light_blue",
+      "x": -90
+    },
+    "active=true,direction=up_west": {
+      "model": "refinedstorage2:block/grid/light_blue",
+      "x": -90,
+      "y": 90
+    },
+    "active=true,direction=west": {
+      "model": "refinedstorage2:block/grid/light_blue",
       "y": 270
     }
   }

@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 public class GridBlock extends AbstractDirectionalBlock<BiDirection> implements EntityBlock, ColorableBlock<GridBlock> {
-    private static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+    public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     private static final AbstractBlockEntityTicker<GridBlockEntity> TICKER = new NetworkNodeBlockEntityTicker<>(
         BlockEntities.INSTANCE::getGrid,
         ACTIVE

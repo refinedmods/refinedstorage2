@@ -66,6 +66,6 @@ public class ColorMap<T> {
     }
 
     public Collection<T> values() {
-        return map.values().stream().map(Supplier::get).collect(Collectors.toSet());
+        return map.values().stream().map(Supplier::get).collect(Collectors.toList());
     }
 }
