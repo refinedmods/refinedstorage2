@@ -33,7 +33,6 @@ dependencyResolutionManagement {
             library("fabric-loader", "net.fabricmc", "fabric-loader").versionRef(fabricLoader)
             def fabricApi = version("fabric-api", "0.73.2+1.19.3")
             library("fabric-api", "net.fabricmc.fabric-api", "fabric-api").versionRef(fabricApi)
-            bundle("fabric", ["fabric-loader", "fabric-api"])
 
             def parchment = version("parchment", "2022.12.18")
             library("parchment", "org.parchmentmc.data", "parchment-${minecraftVersion}").versionRef(parchment)
@@ -104,6 +103,9 @@ dependencyResolutionManagement {
             def jsr305 = version("jsr305", "3.0.2")
             library("jsr305", "com.google.code.findbugs", "jsr305").versionRef(jsr305)
             version("minecraft", minecraftVersion)
+
+            def jei = version("jei", jeiVersion)
+            library("jei-common-api", "mezz.jei", "jei-${minecraftVersion}-common-api").versionRef(jei)
         }
         testLibs {
             def junit5 = version("junit5", "5.9.2")
