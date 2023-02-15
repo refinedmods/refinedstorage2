@@ -22,7 +22,6 @@ sourceSets {
 
 dependencies {
     compileOnly libs.mixin
-    implementation libs.apiguardian // mandatory as we import it from platform-api
     implementation libs.jei.common.api
     implementation project(':refinedstorage2-platform-api')
     implementation project(':refinedstorage2-core-api')

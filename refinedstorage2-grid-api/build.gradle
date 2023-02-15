@@ -1,7 +1,11 @@
+plugins {
+    id 'java-library'
+}
+
 archivesBaseName = 'refinedstorage2-grid-api'
 
 dependencies {
-    implementation libs.apiguardian
+    api libs.apiguardian
     implementation libs.slf4j.api
     testImplementation testLibs.junit.api
     testImplementation testLibs.junit.params

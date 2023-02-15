@@ -50,8 +50,6 @@ dependencies {
         implementation project(it)
     }
 
-    implementation libs.apiguardian // mandatory as it's imported through platform-api
-
     modImplementation(fabric.cloth.config) {
         exclude(group: 'net.fabricmc.fabric-api')
     }
@@ -62,21 +60,20 @@ dependencies {
     }
     include fabric.teamreborn.energy
 
-    modCompileOnly(fabric.rei.api) {
-        exclude(group: 'me.shedaniel.cloth')
-    }
-    // We test with REI on Fabric.
-    modRuntimeOnly fabric.bundles.rei.runtime
-
-    modImplementation fabric.jei.common.api
-//    modRuntimeOnly fabric.jei.fabric.impl
+    modImplementation fabric.noIndium
+    include fabric.noIndium
 
     modImplementation fabric.modmenu
 
-    modRuntimeOnly fabric.wthit
+    modCompileOnly(fabric.rei.api) {
+        exclude(group: 'me.shedaniel.cloth')
+    }
+    modRuntimeOnly fabric.bundles.rei.runtime
 
-    modImplementation fabric.noIndium
-    include fabric.noIndium
+    modCompileOnly fabric.jei.common.api
+    // modRuntimeOnly fabric.jei.fabric.impl
+
+    modRuntimeOnly fabric.wthit
 }
 
 loom {
