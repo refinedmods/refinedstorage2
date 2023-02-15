@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fixed Disk Drive having 9 slots instead of 8.
+
 ### Added
 
 -  The upgrade slots now show their supported upgrades.
