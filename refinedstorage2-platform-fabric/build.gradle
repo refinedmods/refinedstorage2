@@ -67,7 +67,9 @@ dependencies {
 
     modCompileOnly(fabric.rei.api) {
         exclude(group: 'me.shedaniel.cloth')
+        exclude(group: 'dev.architectury')
     }
+    modCompileOnly(fabric.architectury)
     modRuntimeOnly fabric.bundles.rei.runtime
 
     modCompileOnly fabric.jei.common.api

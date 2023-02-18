@@ -6,9 +6,10 @@ import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.ItemGr
 
 import java.util.Optional;
 
+import dev.architectury.fluid.FluidStack;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 
-public class GridIngredientConverter implements IngredientConverter {
+public class GridResourceIngredientConverter implements IngredientConverter {
     @Override
     public Optional<Object> convertToResource(final Object ingredient) {
         return Optional.empty();
@@ -16,11 +17,16 @@ public class GridIngredientConverter implements IngredientConverter {
 
     @Override
     public Optional<Object> convertToIngredient(final Object resource) {
-        if (resource instanceof ItemGridResource itemResource) {
-            return Optional.of(EntryStacks.of(itemResource.copyItemStack()));
+        if (resource instanceof ItemGridResource itemGridResource) {
+            return Optional.of(EntryStacks.of(itemGridResource.copyItemStack()));
         }
-        if (resource instanceof FluidGridResource fluidResource) {
-            return Optional.of(EntryStacks.of(fluidResource.getFluidResource().fluid()));
+        if (resource instanceof FluidGridResource fluidGridResource) {
+            final FluidStack fluidStack = FluidStack.create(
+                fluidGridResource.getFluidResource().fluid(),
+                FluidStack.bucketAmount(),
+                fluidGridResource.getFluidResource().tag()
+            );
+            return Optional.of(EntryStacks.of(fluidStack));
         }
         return Optional.empty();
     }

@@ -27,8 +27,8 @@ public class FilteredResourceIngredientConverter implements IngredientConverter 
         if (filteredResource.getValue() instanceof FluidResource fluidResource) {
             final FluidStack fluidStack = FluidStack.create(
                 fluidResource.fluid(),
-                1,
-                FluidResource.toTag(fluidResource)
+                FluidStack.bucketAmount(),
+                fluidResource.tag()
             );
             return Optional.of(EntryStacks.of(fluidStack));
         }

@@ -1,7 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei;
 
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
-import com.refinedmods.refinedstorage2.platform.api.resource.FluidResource;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.FluidGridResource;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.view.ItemGridResource;
 
@@ -18,14 +17,14 @@ public class GridResourceIngredientConverter implements IngredientConverter {
 
     @Override
     public Optional<Object> convertToIngredient(final Object resource) {
-        if (resource instanceof ItemGridResource itemResource) {
-            return Optional.of(EntryStacks.of(itemResource.copyItemStack()));
+        if (resource instanceof ItemGridResource itemGridResource) {
+            return Optional.of(EntryStacks.of(itemGridResource.copyItemStack()));
         }
-        if (resource instanceof FluidGridResource fluidResource) {
+        if (resource instanceof FluidGridResource fluidGridResource) {
             final FluidStack fluidStack = FluidStack.create(
-                fluidResource.getFluidResource().fluid(),
-                1,
-                FluidResource.toTag(fluidResource.getFluidResource())
+                fluidGridResource.getFluidResource().fluid(),
+                FluidStack.bucketAmount(),
+                fluidGridResource.getFluidResource().tag()
             );
             return Optional.of(EntryStacks.of(fluidStack));
         }
