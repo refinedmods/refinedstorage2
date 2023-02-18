@@ -44,6 +44,10 @@ public class ItemGridResource extends AbstractGridResource<ItemResource> {
         this.itemStack = itemStack;
     }
 
+    public ItemStack copyItemStack() {
+        return itemStack.copyWithCount(1);
+    }
+
     @Override
     public int getRegistryId() {
         return id;

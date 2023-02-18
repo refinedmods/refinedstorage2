@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.integration.jei;
+package com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei;
 
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.AbstractGridSynchronizer;
 
@@ -8,15 +8,15 @@ import net.minecraft.network.chat.MutableComponent;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
 
-public class JeiGridSynchronizer extends AbstractGridSynchronizer {
-    private static final MutableComponent TITLE = createTranslation("gui", "grid.synchronizer.jei");
-    private static final MutableComponent TITLE_TWO_WAY = createTranslation("gui", "grid.synchronizer.jei.two_way");
+public class ReiGridSynchronizer extends AbstractGridSynchronizer {
+    private static final MutableComponent TITLE = createTranslation("gui", "grid.synchronizer.rei");
+    private static final MutableComponent TITLE_TWO_WAY = createTranslation("gui", "grid.synchronizer.rei.two_way");
 
-    private final JeiProxy jeiProxy;
+    private final ReiProxy reiProxy;
     private final boolean twoWay;
 
-    public JeiGridSynchronizer(final JeiProxy jeiProxy, final boolean twoWay) {
-        this.jeiProxy = jeiProxy;
+    public ReiGridSynchronizer(final ReiProxy reiProxy, final boolean twoWay) {
+        this.reiProxy = reiProxy;
         this.twoWay = twoWay;
     }
 
@@ -27,13 +27,13 @@ public class JeiGridSynchronizer extends AbstractGridSynchronizer {
 
     @Override
     public void synchronizeFromGrid(final String text) {
-        jeiProxy.setSearchFieldText(text);
+        reiProxy.setSearchFieldText(text);
     }
 
     @Override
     @Nullable
     public String getTextToSynchronizeToGrid() {
-        return twoWay ? jeiProxy.getSearchFieldText() : null;
+        return twoWay ? reiProxy.getSearchFieldText() : null;
     }
 
     @Override

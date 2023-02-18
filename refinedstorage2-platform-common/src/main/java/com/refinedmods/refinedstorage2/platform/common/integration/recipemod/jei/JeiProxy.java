@@ -1,10 +1,10 @@
-package com.refinedmods.refinedstorage2.platform.common.integration.jei;
+package com.refinedmods.refinedstorage2.platform.common.integration.recipemod.jei;
 
 import mezz.jei.api.runtime.IJeiRuntime;
 
 public class JeiProxy {
     public String getSearchFieldText() {
-        final IJeiRuntime runtime = RefinedStorageModPlugin.getRuntime();
+        final IJeiRuntime runtime = RefinedStorageJeiModPlugin.getRuntime();
         if (runtime == null) {
             return "";
         }
@@ -12,7 +12,7 @@ public class JeiProxy {
     }
 
     public void setSearchFieldText(final String text) {
-        final IJeiRuntime runtime = RefinedStorageModPlugin.getRuntime();
+        final IJeiRuntime runtime = RefinedStorageJeiModPlugin.getRuntime();
         if (runtime != null) {
             runtime.getIngredientFilter().setFilterText(text);
         }

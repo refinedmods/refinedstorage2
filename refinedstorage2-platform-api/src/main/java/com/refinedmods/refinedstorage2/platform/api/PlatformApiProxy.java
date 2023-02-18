@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.GridInsertionStrategyFa
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategy;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridScrollingStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.grid.GridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerHelper;
 import com.refinedmods.refinedstorage2.platform.api.network.node.exporter.ExporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.api.network.node.externalstorage.PlatformExternalStorageProviderFactory;
@@ -177,6 +178,16 @@ public class PlatformApiProxy implements PlatformApi {
     @Override
     public FilteredResourceFactory getFilteredResourceFactory() {
         return ensureLoaded().getFilteredResourceFactory();
+    }
+
+    @Override
+    public void registerIngredientConverter(final IngredientConverter converter) {
+        ensureLoaded().registerIngredientConverter(converter);
+    }
+
+    @Override
+    public IngredientConverter getIngredientConverter() {
+        return ensureLoaded().getIngredientConverter();
     }
 
     private PlatformApi ensureLoaded() {

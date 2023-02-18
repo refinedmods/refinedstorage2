@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.forge.integration.rei;
+package com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei;
 
 import javax.annotation.Nullable;
 

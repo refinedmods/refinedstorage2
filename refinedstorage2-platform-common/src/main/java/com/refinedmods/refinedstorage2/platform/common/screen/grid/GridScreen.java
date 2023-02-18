@@ -409,6 +409,14 @@ public class GridScreen extends AbstractBaseScreen<GridContainerMenu> {
             && lastModified.amount() <= MODIFIED_JUST_NOW_MAX_SECONDS;
     }
 
+    @Nullable
+    public GridResource getHoveredResource() {
+        if (this.gridSlotNumber == -1) {
+            return null;
+        }
+        return menu.getView().getAll().get(this.gridSlotNumber);
+    }
+
     @Override
     public void render(final PoseStack poseStack, final int mouseX, final int mouseY, final float partialTicks) {
         super.render(poseStack, mouseX, mouseY, partialTicks);

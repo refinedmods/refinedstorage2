@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.fabric.integration.rei;
+package com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei;
 
 import javax.annotation.Nullable;
 

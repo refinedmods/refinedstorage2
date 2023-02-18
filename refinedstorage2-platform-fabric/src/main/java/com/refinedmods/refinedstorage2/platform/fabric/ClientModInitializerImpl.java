@@ -7,8 +7,6 @@ import com.refinedmods.refinedstorage2.platform.common.content.ColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
-import com.refinedmods.refinedstorage2.platform.common.integration.jei.JeiGridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.common.integration.jei.JeiProxy;
 import com.refinedmods.refinedstorage2.platform.common.render.model.ControllerModelPredicateProvider;
 import com.refinedmods.refinedstorage2.platform.common.screen.ControllerScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.DiskDriveScreen;
@@ -20,8 +18,9 @@ import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiGridSynchronizer;
-import com.refinedmods.refinedstorage2.platform.fabric.integration.rei.ReiProxy;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.RefinedStorageREIClientPlugin;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.ReiGridSynchronizer;
+import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.ReiProxy;
 import com.refinedmods.refinedstorage2.platform.fabric.mixin.ItemPropertiesAccessor;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.s2c.ControllerEnergyInfoPacket;
@@ -180,29 +179,16 @@ public class ClientModInitializerImpl implements ClientModInitializer {
 
     private void registerGridSynchronizers() {
         final FabricLoader loader = FabricLoader.getInstance();
-        if (loader.isModLoaded("jei")) {
-            registerJeiGridSynchronizers();
-        }
         if (loader.isModLoaded("roughlyenoughitems")) {
             registerReiGridSynchronizers();
         }
     }
 
-    private void registerJeiGridSynchronizers() {
-        LOGGER.info("Activating JEI grid synchronizers");
-        final JeiProxy jeiProxy = new JeiProxy();
-        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
-            createIdentifier("jei"),
-            new JeiGridSynchronizer(jeiProxy, false)
-        );
-        PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
-            createIdentifier("jei_two_way"),
-            new JeiGridSynchronizer(jeiProxy, true)
-        );
-    }
-
     private void registerReiGridSynchronizers() {
         LOGGER.info("Activating REI grid synchronizers");
+        // This is so the ingredient converters are only registered once
+        // see https://github.com/refinedmods/refinedstorage2/pull/302#discussion_r1070015672
+        RefinedStorageREIClientPlugin.registerIngredientConverters();
         final ReiProxy reiProxy = new ReiProxy();
         PlatformApi.INSTANCE.getGridSynchronizerRegistry().register(
             createIdentifier("rei"),
