@@ -1,7 +1,11 @@
+plugins {
+    id 'java-library'
+}
+
 archivesBaseName = 'refinedstorage2-network-api'
 
 dependencies {
-    implementation libs.apiguardian
+    api libs.apiguardian
     implementation project(':refinedstorage2-core-api')
     implementation project(':refinedstorage2-resource-api')
     implementation project(':refinedstorage2-storage-api')
