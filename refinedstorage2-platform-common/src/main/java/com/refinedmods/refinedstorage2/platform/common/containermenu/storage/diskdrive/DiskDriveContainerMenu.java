@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.storage.di
 import com.refinedmods.refinedstorage2.api.storage.StorageInfo;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.item.StorageContainerItem;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ResourceFilterSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.slot.ValidatedSlot;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.AbstractStorageContainerMenu;
@@ -39,7 +40,11 @@ public class DiskDriveContainerMenu extends AbstractStorageContainerMenu impleme
         this.storageInfoAccessor = new StorageDiskInfoAccessorImpl(PlatformApi.INSTANCE.getStorageRepository(
             playerInventory.player.getLevel()
         ));
-        addSlots(playerInventory.player, new SimpleContainer(9), new ResourceFilterContainer(9));
+        addSlots(
+            playerInventory.player,
+            new SimpleContainer(AbstractDiskDriveBlockEntity.AMOUNT_OF_DISKS),
+            new ResourceFilterContainer(9)
+        );
         initializeResourceFilterSlots(buf);
     }
 
