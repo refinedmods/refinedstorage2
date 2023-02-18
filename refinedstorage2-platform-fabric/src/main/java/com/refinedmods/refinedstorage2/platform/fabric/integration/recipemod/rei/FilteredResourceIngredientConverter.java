@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.api.resource.filter.FilteredReso
 
 import java.util.Optional;
 
+import dev.architectury.fluid.FluidStack;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 
 public class FilteredResourceIngredientConverter implements IngredientConverter {
@@ -24,7 +25,12 @@ public class FilteredResourceIngredientConverter implements IngredientConverter 
             return Optional.of(EntryStacks.of(itemResource.toItemStack()));
         }
         if (filteredResource.getValue() instanceof FluidResource fluidResource) {
-            return Optional.of(EntryStacks.of(fluidResource.fluid()));
+            final FluidStack fluidStack = FluidStack.create(
+                fluidResource.fluid(),
+                FluidStack.bucketAmount(),
+                fluidResource.tag()
+            );
+            return Optional.of(EntryStacks.of(fluidStack));
         }
         return Optional.empty();
     }

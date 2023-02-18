@@ -30,7 +30,11 @@ public class FilteredResourceIngredientConverter implements IngredientConverter 
             return Optional.of(itemResource.toItemStack());
         }
         if (filteredResource.getValue() instanceof FluidResource fluidResource) {
-            return Optional.of(fluidHelper.create(fluidResource.fluid(), 1));
+            return Optional.of(fluidHelper.create(
+                fluidResource.fluid(),
+                fluidHelper.bucketVolume(),
+                fluidResource.tag()
+            ));
         }
         return Optional.empty();
     }

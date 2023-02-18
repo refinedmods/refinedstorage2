@@ -18,7 +18,7 @@ public class RefinedStorageREIClientPlugin implements REIClientPlugin {
     }
 
     public static void registerIngredientConverters() {
-        PlatformApi.INSTANCE.registerIngredientConverter(new GridIngredientConverter());
+        PlatformApi.INSTANCE.registerIngredientConverter(new GridResourceIngredientConverter());
         PlatformApi.INSTANCE.registerIngredientConverter(new FilteredResourceIngredientConverter());
     }
 }
