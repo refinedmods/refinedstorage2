@@ -3,8 +3,8 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.CableBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +30,8 @@ public final class Items {
         = new EnumMap<>(FluidStorageType.Variant.class);
     private final List<Supplier<ControllerBlockItem>> regularControllers = new ArrayList<>();
     private final List<Supplier<? extends Item>> allControllers = new ArrayList<>();
-    private final List<Supplier<CableBlockItem>> allCables = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allCables = new ArrayList<>();
+    private final List<Supplier<NamedBlockItem>> allExporters = new ArrayList<>();
     @Nullable
     private Supplier<Item> quartzEnrichedIron;
     @Nullable
@@ -161,12 +162,20 @@ public final class Items {
         return Collections.unmodifiableList(regularControllers);
     }
 
-    public void addCable(final Supplier<CableBlockItem> supplier) {
+    public void addCable(final Supplier<NamedBlockItem> supplier) {
         allCables.add(supplier);
     }
 
-    public List<Supplier<CableBlockItem>> getCables() {
+    public List<Supplier<NamedBlockItem>> getCables() {
         return Collections.unmodifiableList(allCables);
+    }
+
+    public void addExporter(final Supplier<NamedBlockItem> supplier) {
+        allExporters.add(supplier);
+    }
+
+    public List<Supplier<NamedBlockItem>> getExporters() {
+        return Collections.unmodifiableList(allExporters);
     }
 
     public Item getStorageHousing() {

@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
@@ -24,6 +25,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     @Override
     protected void registerModels() {
         registerCables();
+        registerExporter();
         registerController();
         registerCreativeController();
         registerGrid();
@@ -39,6 +41,17 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
             "cable",
             createIdentifier("block/cable/" + color.getName()))
         );
+    }
+
+    private void registerExporter() {
+        final ResourceLocation base = createIdentifier("item/exporter/base");
+        final ColorMap<ExporterBlock> exporters = Blocks.INSTANCE.getExporter();
+        exporters.forEach((color, exporter) -> singleTexture(
+            exporters.getId(color, createIdentifier("exporter")).getPath(),
+            base,
+            "cable",
+            createIdentifier("block/cable/" + color.getName())
+        ));
     }
 
     private void registerController() {

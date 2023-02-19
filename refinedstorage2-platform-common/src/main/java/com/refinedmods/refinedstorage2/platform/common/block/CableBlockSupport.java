@@ -2,6 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.block;
 
 import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
 
+import java.util.EnumMap;
 import java.util.Map;
 import javax.annotation.Nullable;
 
@@ -25,14 +26,15 @@ public final class CableBlockSupport {
     public static final BooleanProperty WEST = BooleanProperty.create("west");
     public static final BooleanProperty UP = BooleanProperty.create("up");
     public static final BooleanProperty DOWN = BooleanProperty.create("down");
-    public static final Map<Direction, BooleanProperty> PROPERTY_BY_DIRECTION = Map.of(
+    // here EnumMap is needed to give a stable sorting with forEach needed for datagen
+    public static final Map<Direction, BooleanProperty> PROPERTY_BY_DIRECTION = new EnumMap<>(Map.of(
         Direction.NORTH, NORTH,
         Direction.EAST, EAST,
         Direction.SOUTH, SOUTH,
         Direction.WEST, WEST,
         Direction.UP, UP,
         Direction.DOWN, DOWN
-    );
+    ));
 
     private static final VoxelShape SHAPE_CORE = box(6, 6, 6, 10, 10, 10);
     private static final VoxelShape SHAPE_NORTH = box(6, 6, 0, 10, 10, 6);

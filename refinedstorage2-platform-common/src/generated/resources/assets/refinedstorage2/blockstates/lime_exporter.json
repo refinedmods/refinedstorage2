@@ -57,6 +57,59 @@
       "when": {
         "east": "true"
       }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/exporter",
+        "x": 90
+      },
+      "when": {
+        "direction": "down"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/exporter",
+        "x": 270
+      },
+      "when": {
+        "direction": "up"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/exporter"
+      },
+      "when": {
+        "direction": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/exporter",
+        "x": 180
+      },
+      "when": {
+        "direction": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/exporter",
+        "y": 270
+      },
+      "when": {
+        "direction": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/exporter",
+        "y": 90
+      },
+      "when": {
+        "direction": "east"
+      }
     }
   ]
 }

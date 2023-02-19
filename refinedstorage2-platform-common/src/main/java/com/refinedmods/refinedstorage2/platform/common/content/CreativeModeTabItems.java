@@ -32,7 +32,7 @@ public final class CreativeModeTabItems {
             Blocks.INSTANCE.getFluidStorageBlock(variant)
         ));
         consumer.accept(Blocks.INSTANCE.getImporter());
-        consumer.accept(Blocks.INSTANCE.getExporter());
+        Items.INSTANCE.getExporters().stream().map(Supplier::get).forEach(consumer);
         consumer.accept(Blocks.INSTANCE.getExternalStorage());
         consumer.accept(Blocks.INSTANCE.getInterface());
         consumer.accept(Blocks.INSTANCE.getMachineCasing());
