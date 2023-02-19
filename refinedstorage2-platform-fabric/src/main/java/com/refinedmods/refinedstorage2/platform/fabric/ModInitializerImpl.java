@@ -326,10 +326,13 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         Blocks.INSTANCE.getGrid().putAll(color -> register(
             BuiltInRegistries.BLOCK,
             Blocks.INSTANCE.getGrid().getId(color, GRID),
-            new GridBlock(Blocks.INSTANCE.getGrid().getName(color, createTranslation(
-                BLOCK_TRANSLATION_CATEGORY,
-                "grid"
-            )))
+            new GridBlock(
+                Blocks.INSTANCE.getGrid().getName(color, createTranslation(
+                    BLOCK_TRANSLATION_CATEGORY,
+                    "grid"
+                )),
+                color
+            )
         ));
         Blocks.INSTANCE.getController().putAll(color -> register(
             BuiltInRegistries.BLOCK,
@@ -340,7 +343,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                     color,
                     createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")
                 ),
-                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getController)
+                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getController),
+                color
             )
         ));
         Blocks.INSTANCE.getCreativeController().putAll(color -> register(
@@ -352,7 +356,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                     color,
                     createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")
                 ),
-                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getCreativeController)
+                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getCreativeController),
+                color
             )
         ));
 
@@ -587,8 +592,8 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             CABLE,
             FabricBlockEntityTypeBuilder.create(
-                    CableBlockEntity::new,
-                    Blocks.INSTANCE.getCable().toArray()
+                CableBlockEntity::new,
+                Blocks.INSTANCE.getCable().toArray()
             ).build()
         ));
         BlockEntities.INSTANCE.setDiskDrive(register(

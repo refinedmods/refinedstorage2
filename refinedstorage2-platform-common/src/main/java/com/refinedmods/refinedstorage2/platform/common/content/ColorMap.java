@@ -21,6 +21,10 @@ public class ColorMap<T> {
         this.defaultColor = defaultColor;
     }
 
+    public boolean isDefaultColor(final DyeColor color) {
+        return defaultColor == color;
+    }
+
     public void putAll(final Function<DyeColor, Supplier<T>> factory) {
         for (final DyeColor color : DyeColor.values()) {
             map.put(color, factory.apply(color));
@@ -58,7 +62,7 @@ public class ColorMap<T> {
     }
 
     public T getDefault() {
-        return get(this.defaultColor);
+        return get(defaultColor);
     }
 
     public Collection<T> values() {

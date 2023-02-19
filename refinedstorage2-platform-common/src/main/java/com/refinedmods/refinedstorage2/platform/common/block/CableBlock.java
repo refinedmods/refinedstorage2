@@ -46,6 +46,7 @@ public class CableBlock extends AbstractBaseBlock
         this.name = name;
     }
 
+    @Override
     public DyeColor getColor() {
         return color;
     }

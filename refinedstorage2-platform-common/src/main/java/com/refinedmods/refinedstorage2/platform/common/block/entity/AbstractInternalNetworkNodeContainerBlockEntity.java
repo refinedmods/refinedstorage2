@@ -4,6 +4,7 @@ import com.refinedmods.refinedstorage2.api.network.component.EnergyNetworkCompon
 import com.refinedmods.refinedstorage2.api.network.node.AbstractNetworkNode;
 import com.refinedmods.refinedstorage2.platform.api.blockentity.AbstractNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.AbstractDirectionalBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ColorableBlock;
 import com.refinedmods.refinedstorage2.platform.common.util.RedstoneMode;
 
 import javax.annotation.Nullable;
@@ -114,11 +115,35 @@ public abstract class AbstractInternalNetworkNodeContainerBlockEntity<T extends 
 
     @Override
     public boolean canAcceptIncomingConnection(final Direction direction, final BlockState other) {
+        if (!colorsAllowConnecting(other)) {
+            return false;
+        }
         final Direction myDirection = getDirection();
-        if (myDirection == null) {
+        if (myDirection != null) {
+            return myDirection != direction.getOpposite();
+        }
+        return true;
+    }
+
+    private boolean colorsAllowConnecting(final BlockState other) {
+        if (!(other.getBlock() instanceof ColorableBlock<?> otherColorableBlock)) {
             return true;
         }
-        return myDirection != direction.getOpposite();
+        final ColorableBlock<?> colorableBlock = getColor();
+        if (colorableBlock == null) {
+            return true;
+        }
+        return otherColorableBlock.getColor() == colorableBlock.getColor()
+            || colorableBlock.canAlwaysConnect()
+            || otherColorableBlock.canAlwaysConnect();
+    }
+
+    @Nullable
+    private ColorableBlock<?> getColor() {
+        if (!(getBlockState().getBlock() instanceof ColorableBlock<?> colorableBlock)) {
+            return null;
+        }
+        return colorableBlock;
     }
 
     @Nullable

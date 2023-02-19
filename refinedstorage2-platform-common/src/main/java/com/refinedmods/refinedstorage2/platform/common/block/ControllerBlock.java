@@ -7,6 +7,7 @@ import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -26,14 +27,17 @@ public class ControllerBlock extends AbstractBaseBlock implements ColorableBlock
     private final ControllerType type;
     private final MutableComponent name;
     private final ControllerBlockEntityTicker ticker;
+    private final DyeColor color;
 
     public ControllerBlock(final ControllerType type,
                            final MutableComponent name,
-                           final ControllerBlockEntityTicker ticker) {
+                           final ControllerBlockEntityTicker ticker,
+                           final DyeColor color) {
         super(BlockConstants.PROPERTIES);
         this.type = type;
         this.name = name;
         this.ticker = ticker;
+        this.color = color;
     }
 
     @Override
@@ -69,5 +73,15 @@ public class ControllerBlock extends AbstractBaseBlock implements ColorableBlock
         return type == ControllerType.CREATIVE
             ? Blocks.INSTANCE.getCreativeController()
             : Blocks.INSTANCE.getController();
+    }
+
+    @Override
+    public DyeColor getColor() {
+        return color;
+    }
+
+    @Override
+    public boolean canAlwaysConnect() {
+        return true;
     }
 }
