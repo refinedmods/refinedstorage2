@@ -13,9 +13,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
--  The upgrade slots now show their supported upgrades.
--  Different Cable colors. They only connect to same colored cables or the default cable.
--  Support for using the R/U keys in JEI and REI on Grid slots and filtering slots
+-   The upgrade slots now show their supported upgrades.
+-   Different Cable colors. They only connect to same colored cables or the default cable.
+-   Support for using the R/U keys in JEI and REI on Grid slots and filtering slots
+-   Crafting Grid.
 
 ### Removed
 

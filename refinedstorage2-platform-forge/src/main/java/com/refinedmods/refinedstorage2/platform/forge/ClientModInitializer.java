@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockS
 import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.RefinedStorageREIClientPlugin;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.ReiGridSynchronizer;
@@ -65,6 +66,7 @@ public final class ClientModInitializer {
         MenuScreens.register(Menus.INSTANCE.getController(), ControllerScreen::new);
         MenuScreens.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
         MenuScreens.register(Menus.INSTANCE.getGrid(), GridScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getCraftingGrid(), CraftingGridScreen::new);
         MenuScreens.register(Menus.INSTANCE.getItemStorage(), ItemStorageBlockScreen::new);
         MenuScreens.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);
         MenuScreens.register(Menus.INSTANCE.getImporter(), ImporterScreen::new);

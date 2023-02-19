@@ -2,7 +2,8 @@ package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.GridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.content.ColorMap;
@@ -26,6 +27,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         registerController();
         registerCreativeController();
         registerGrid();
+        registerCraftingGrid();
     }
 
     private void registerCables() {
@@ -42,8 +44,8 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
     private void registerController() {
         final ResourceLocation base = new ResourceLocation("item/generated");
         final ResourceLocation off = createIdentifier("block/controller/off");
-        final ResourceLocation nearly_off = createIdentifier("block/controller/nearly_off");
-        final ResourceLocation nearly_on = createIdentifier("block/controller/nearly_on");
+        final ResourceLocation nearlyOff = createIdentifier("block/controller/nearly_off");
+        final ResourceLocation nearlyOn = createIdentifier("block/controller/nearly_on");
         final ResourceLocation stored = createIdentifier("stored_in_controller");
         final ColorMap<ControllerBlock> controllers = Blocks.INSTANCE.getController();
         controllers.forEach((color, controller) ->
@@ -54,11 +56,11 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
                 .end()
                 .override()
                 .predicate(stored, 0.01f)
-                .model(modelFile(nearly_off))
+                .model(modelFile(nearlyOff))
                 .end()
                 .override()
                 .predicate(stored, 0.3f)
-                .model(modelFile(nearly_on))
+                .model(modelFile(nearlyOn))
                 .end()
                 .override()
                 .predicate(stored, 0.4f)
@@ -80,6 +82,14 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         grids.forEach((color, grid) -> withExistingParent(
             grids.getId(color, createIdentifier("grid")).getPath(),
             createIdentifier("block/grid/" + color.getName())
+        ));
+    }
+
+    private void registerCraftingGrid() {
+        final BlockColorMap<CraftingGridBlock> grids = Blocks.INSTANCE.getCraftingGrid();
+        grids.forEach((color, grid) -> withExistingParent(
+            grids.getId(color, createIdentifier("crafting_grid")).getPath(),
+            createIdentifier("block/crafting_grid/" + color.getName())
         ));
     }
 

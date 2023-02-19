@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.packet.s2c;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -29,7 +29,7 @@ public class GridUpdatePacket implements ClientPlayNetworking.PlayChannelHandler
         final T resource = type.fromBuffer(buf);
         final long amount = buf.readLong();
         final TrackedResource trackedResource = PacketUtil.readTrackedResource(buf);
-        if (client.player.containerMenu instanceof GridContainerMenu containerMenu) {
+        if (client.player.containerMenu instanceof AbstractGridContainerMenu containerMenu) {
             containerMenu.onResourceUpdate(resource, amount, trackedResource);
         }
     }

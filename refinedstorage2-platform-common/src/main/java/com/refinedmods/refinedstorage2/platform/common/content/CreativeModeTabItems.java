@@ -22,6 +22,7 @@ public final class CreativeModeTabItems {
     private static void appendBlocks(final Consumer<ItemLike> consumer) {
         Items.INSTANCE.getAllControllers().stream().map(Supplier::get).forEach(consumer);
         appendBlockColors(consumer, Blocks.INSTANCE.getGrid());
+        appendBlockColors(consumer, Blocks.INSTANCE.getCraftingGrid());
         Items.INSTANCE.getCables().stream().map(Supplier::get).forEach(consumer);
         consumer.accept(Blocks.INSTANCE.getDiskDrive());
         Arrays.stream(ItemStorageType.Variant.values()).forEach(variant -> consumer.accept(

@@ -6,11 +6,12 @@ import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.ItemStorageType;
 
@@ -27,6 +28,7 @@ public final class Blocks {
 
     private final BlockColorMap<CableBlock> cable = new BlockColorMap<>(DyeColor.GRAY);
     private final BlockColorMap<GridBlock> grid = new BlockColorMap<>();
+    private final BlockColorMap<CraftingGridBlock> craftingGrid = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
     @Nullable
@@ -69,6 +71,10 @@ public final class Blocks {
 
     public BlockColorMap<GridBlock> getGrid() {
         return grid;
+    }
+
+    public BlockColorMap<CraftingGridBlock> getCraftingGrid() {
+        return craftingGrid;
     }
 
     public BlockColorMap<ControllerBlock> getController() {

@@ -32,17 +32,10 @@ public class ColorMap<T> {
     }
 
     public ResourceLocation getId(final DyeColor color, final ResourceLocation id) {
-        return generateId(color, this.defaultColor, id.getNamespace(), id.getPath());
-    }
-
-    public static ResourceLocation generateId(final DyeColor color,
-                                              final DyeColor defaultColor,
-                                              final String namespace,
-                                              final String path) {
         if (color == defaultColor) {
-            return new ResourceLocation(namespace, path);
+            return id;
         }
-        return new ResourceLocation(namespace, color.getName() + "_" + path);
+        return new ResourceLocation(id.getNamespace(), color.getName() + "_" + id.getPath());
     }
 
     public MutableComponent getName(final DyeColor color, final MutableComponent name) {

@@ -1,0 +1,13 @@
+{
+  "parent": "refinedstorage2:block/emissive_north_cutout",
+  "textures": {
+    "cutout": "refinedstorage2:block/crafting_grid/cutouts/light_blue",
+    "down": "refinedstorage2:block/bottom",
+    "east": "refinedstorage2:block/crafting_grid/right",
+    "north": "refinedstorage2:block/crafting_grid/front",
+    "particle": "refinedstorage2:block/crafting_grid/right",
+    "south": "refinedstorage2:block/crafting_grid/back",
+    "up": "refinedstorage2:block/crafting_grid/top",
+    "west": "refinedstorage2:block/crafting_grid/left"
+  }
+}

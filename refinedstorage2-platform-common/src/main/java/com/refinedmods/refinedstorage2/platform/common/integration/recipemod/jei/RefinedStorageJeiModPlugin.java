@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.integration.recipemod.je
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
 import com.refinedmods.refinedstorage2.platform.common.screen.AbstractBaseScreen;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.AbstractGridScreen;
 
 import javax.annotation.Nullable;
 
@@ -46,7 +46,7 @@ public class RefinedStorageJeiModPlugin implements IModPlugin {
             new FilteredResourceGuiContainerHandler(converter, registration.getJeiHelpers().getIngredientManager())
         );
         registration.addGenericGuiContainerHandler(
-            GridScreen.class,
+            AbstractGridScreen.class,
             new GridGuiContainerHandler(converter, registration.getJeiHelpers().getIngredientManager())
         );
     }

@@ -11,27 +11,30 @@ import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
@@ -118,6 +121,7 @@ import net.minecraftforge.registries.RegisterEvent;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CABLE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONTROLLER;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CRAFTING_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
@@ -281,6 +285,16 @@ public class ModInitializer extends AbstractModInitializer {
                 color
             )
         ));
+        Blocks.INSTANCE.getCraftingGrid().putAll(color -> blockRegistry.register(
+            Blocks.INSTANCE.getCraftingGrid().getId(color, CRAFTING_GRID).getPath(),
+            () -> new CraftingGridBlock(
+                Blocks.INSTANCE.getCraftingGrid().getName(
+                    color,
+                    createTranslation(BLOCK_TRANSLATION_CATEGORY, "crafting_grid")
+                ),
+                color
+            )
+        ));
         Blocks.INSTANCE.getController().putAll(color -> blockRegistry.register(
             Blocks.INSTANCE.getController().getId(color, CONTROLLER).getPath(),
             () -> new ControllerBlock(
@@ -426,6 +440,16 @@ public class ModInitializer extends AbstractModInitializer {
                 ))
             )
         ));
+        Blocks.INSTANCE.getCraftingGrid().forEach((color, block) -> itemRegistry.register(
+            Blocks.INSTANCE.getCraftingGrid().getId(color, CRAFTING_GRID).getPath(),
+            () -> new GridBlockItem(
+                block.get(),
+                Blocks.INSTANCE.getCraftingGrid().getName(color, createTranslation(
+                    BLOCK_TRANSLATION_CATEGORY,
+                    "crafting_grid"
+                ))
+            )
+        ));
     }
 
     private void registerControllerItems() {
@@ -562,6 +586,13 @@ public class ModInitializer extends AbstractModInitializer {
                 Blocks.INSTANCE.getGrid().toArray()
             ).build(null)
         ));
+        BlockEntities.INSTANCE.setCraftingGrid(blockEntityTypeRegistry.register(
+            CRAFTING_GRID.getPath(),
+            () -> BlockEntityType.Builder.of(
+                CraftingGridBlockEntity::new,
+                Blocks.INSTANCE.getCraftingGrid().toArray()
+            ).build(null)
+        ));
 
         for (final ItemStorageType.Variant variant : ItemStorageType.Variant.values()) {
             BlockEntities.INSTANCE.setItemStorageBlock(variant, blockEntityTypeRegistry.register(
@@ -618,6 +649,10 @@ public class ModInitializer extends AbstractModInitializer {
         Menus.INSTANCE.setGrid(menuTypeRegistry.register(
             GRID.getPath(),
             () -> IForgeMenuType.create(GridContainerMenu::new)
+        ));
+        Menus.INSTANCE.setCraftingGrid(menuTypeRegistry.register(
+            CRAFTING_GRID.getPath(),
+            () -> IForgeMenuType.create(CraftingGridContainerMenu::new)
         ));
         Menus.INSTANCE.setItemStorage(menuTypeRegistry.register(
             ITEM_STORAGE_BLOCK.getPath(),

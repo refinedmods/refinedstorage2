@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
+import com.refinedmods.refinedstorage2.platform.common.block.grid.AbstractGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 
 import net.minecraft.data.PackOutput;
@@ -18,7 +20,8 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
     protected void registerModels() {
         registerCables();
         registerController();
-        registerGrid();
+        registerGrid(Blocks.INSTANCE.getGrid(), "grid");
+        registerGrid(Blocks.INSTANCE.getCraftingGrid(), "crafting_grid");
     }
 
     private void registerCables() {
@@ -42,33 +45,32 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
         Blocks.INSTANCE.getController().forEach((color, controller) -> {
             final ResourceLocation cutout = createIdentifier("block/controller/cutouts/" + color.getName());
             withExistingParent("block/controller/" + color.getName(), base)
-                    .texture("particle", off)
-                    .texture("all", on)
-                    .texture("cutout", cutout);
+                .texture("particle", off)
+                .texture("all", on)
+                .texture("cutout", cutout);
         });
     }
 
-    private void registerGrid() {
-        Blocks.INSTANCE.getGrid().forEach((color, controller) -> {
-            final ResourceLocation cutout = createIdentifier("block/grid/cutouts/" + color.getName());
-            registerGrid(color.getName(), cutout);
+    private void registerGrid(final BlockColorMap<? extends AbstractGridBlock<?>> blockMap, final String name) {
+        blockMap.forEach((color, block) -> {
+            final ResourceLocation cutout = createIdentifier("block/" + name + "/cutouts/" + color.getName());
+            registerEmissiveGrid(name, color.getName(), cutout);
         });
-        final ResourceLocation cutout = createIdentifier("block/grid/cutouts/inactive");
-        registerGrid("inactive", cutout, createIdentifier("block/north_cutout"));
+        final ResourceLocation inactiveCutout = createIdentifier("block/" + name + "/cutouts/inactive");
+        registerGrid(name, "inactive", inactiveCutout, createIdentifier("block/north_cutout"));
     }
 
-    private void registerGrid(final String name, final ResourceLocation cutout) {
-        registerGrid(name, cutout, createIdentifier("block/emissive_north_cutout"));
-    }
-
-    private void registerGrid(final String name, final ResourceLocation cutout, final ResourceLocation base) {
-        final ResourceLocation right = createIdentifier("block/grid/right");
-        final ResourceLocation left = createIdentifier("block/grid/left");
-        final ResourceLocation back = createIdentifier("block/grid/back");
-        final ResourceLocation front = createIdentifier("block/grid/front");
-        final ResourceLocation top = createIdentifier("block/grid/top");
+    private void registerGrid(final String name,
+                              final String variantName,
+                              final ResourceLocation cutout,
+                              final ResourceLocation baseModel) {
+        final ResourceLocation right = createIdentifier("block/" + name + "/right");
+        final ResourceLocation left = createIdentifier("block/" + name + "/left");
+        final ResourceLocation back = createIdentifier("block/" + name + "/back");
+        final ResourceLocation front = createIdentifier("block/" + name + "/front");
+        final ResourceLocation top = createIdentifier("block/" + name + "/top");
         final ResourceLocation bottom = createIdentifier("block/bottom");
-        withExistingParent("block/grid/" + name, base)
+        withExistingParent("block/" + name + "/" + variantName, baseModel)
             .texture("particle", right)
             .texture("north", front)
             .texture("east", right)
@@ -77,5 +79,9 @@ public class BlockModelProvider extends net.minecraftforge.client.model.generato
             .texture("up", top)
             .texture("down", bottom)
             .texture("cutout", cutout);
+    }
+
+    private void registerEmissiveGrid(final String name, final String variantName, final ResourceLocation cutout) {
+        registerGrid(name, variantName, cutout, createIdentifier("block/emissive_north_cutout"));
     }
 }

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.common.integration.recipemod.je
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.AbstractGridScreen;
 
 import java.util.Optional;
 
@@ -12,7 +12,7 @@ import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.runtime.IClickableIngredient;
 import mezz.jei.api.runtime.IIngredientManager;
 
-public class GridGuiContainerHandler implements IGuiContainerHandler<GridScreen> {
+public class GridGuiContainerHandler implements IGuiContainerHandler<AbstractGridScreen<?>> {
     private final IngredientConverter converter;
     private final IIngredientManager ingredientManager;
 
@@ -23,7 +23,7 @@ public class GridGuiContainerHandler implements IGuiContainerHandler<GridScreen>
 
     @Override
     public Optional<IClickableIngredient<?>> getClickableIngredientUnderMouse(
-        final GridScreen screen,
+        final AbstractGridScreen screen,
         final double mouseX,
         final double mouseY
     ) {

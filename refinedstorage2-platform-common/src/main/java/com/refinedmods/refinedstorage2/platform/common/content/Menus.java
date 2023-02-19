@@ -2,9 +2,10 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
@@ -23,6 +24,8 @@ public final class Menus {
     private Supplier<MenuType<DiskDriveContainerMenu>> diskDrive;
     @Nullable
     private Supplier<MenuType<GridContainerMenu>> grid;
+    @Nullable
+    private Supplier<MenuType<CraftingGridContainerMenu>> craftingGrid;
     @Nullable
     private Supplier<MenuType<ControllerContainerMenu>> controller;
     @Nullable
@@ -47,6 +50,14 @@ public final class Menus {
 
     public MenuType<GridContainerMenu> getGrid() {
         return Objects.requireNonNull(grid).get();
+    }
+
+    public MenuType<CraftingGridContainerMenu> getCraftingGrid() {
+        return Objects.requireNonNull(craftingGrid).get();
+    }
+
+    public void setCraftingGrid(final Supplier<MenuType<CraftingGridContainerMenu>> supplier) {
+        this.craftingGrid = supplier;
     }
 
     public MenuType<ControllerContainerMenu> getController() {
