@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -32,10 +33,12 @@ public class GridBlock extends AbstractDirectionalBlock<BiDirection> implements 
     );
 
     private final MutableComponent name;
+    private final DyeColor color;
 
-    public GridBlock(final MutableComponent name) {
+    public GridBlock(final MutableComponent name, final DyeColor color) {
         super(BlockConstants.PROPERTIES);
         this.name = name;
+        this.color = color;
     }
 
     @Override
@@ -62,6 +65,16 @@ public class GridBlock extends AbstractDirectionalBlock<BiDirection> implements 
     @Override
     public BlockColorMap<GridBlock> getBlockColorMap() {
         return Blocks.INSTANCE.getGrid();
+    }
+
+    @Override
+    public DyeColor getColor() {
+        return color;
+    }
+
+    @Override
+    public boolean canAlwaysConnect() {
+        return true;
     }
 
     @Nullable

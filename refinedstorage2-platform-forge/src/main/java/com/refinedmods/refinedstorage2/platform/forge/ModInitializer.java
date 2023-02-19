@@ -255,8 +255,8 @@ public class ModInitializer extends AbstractModInitializer {
         Blocks.INSTANCE.getCable().putAll(color -> blockRegistry.register(
             Blocks.INSTANCE.getCable().getId(color, CABLE).getPath(),
             () -> new CableBlock(color, Blocks.INSTANCE.getCable().getName(
-                    color,
-                    createTranslation(BLOCK_TRANSLATION_CATEGORY, "cable"))
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "cable"))
             ))
         );
         Blocks.INSTANCE.setQuartzEnrichedIronBlock(blockRegistry.register(
@@ -273,10 +273,13 @@ public class ModInitializer extends AbstractModInitializer {
         ));
         Blocks.INSTANCE.getGrid().putAll(color -> blockRegistry.register(
             Blocks.INSTANCE.getGrid().getId(color, GRID).getPath(),
-            () -> new GridBlock(Blocks.INSTANCE.getGrid().getName(
-                color,
-                createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")
-            ))
+            () -> new GridBlock(
+                Blocks.INSTANCE.getGrid().getName(
+                    color,
+                    createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")
+                ),
+                color
+            )
         ));
         Blocks.INSTANCE.getController().putAll(color -> blockRegistry.register(
             Blocks.INSTANCE.getController().getId(color, CONTROLLER).getPath(),
@@ -286,7 +289,8 @@ public class ModInitializer extends AbstractModInitializer {
                     color,
                     createTranslation(BLOCK_TRANSLATION_CATEGORY, "controller")
                 ),
-                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getController)
+                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getController),
+                color
             )
         ));
         Blocks.INSTANCE.getCreativeController().putAll(color -> blockRegistry.register(
@@ -297,7 +301,8 @@ public class ModInitializer extends AbstractModInitializer {
                     color,
                     createTranslation(BLOCK_TRANSLATION_CATEGORY, "creative_controller")
                 ),
-                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getCreativeController)
+                new ControllerBlockEntityTicker(BlockEntities.INSTANCE::getCreativeController),
+                color
             )
         ));
 
@@ -525,8 +530,8 @@ public class ModInitializer extends AbstractModInitializer {
         BlockEntities.INSTANCE.setCable(blockEntityTypeRegistry.register(
             CABLE.getPath(),
             () -> BlockEntityType.Builder.of(
-                    CableBlockEntity::new,
-                    Blocks.INSTANCE.getCable().toArray()
+                CableBlockEntity::new,
+                Blocks.INSTANCE.getCable().toArray()
             ).build(null)
         ));
         BlockEntities.INSTANCE.setController(blockEntityTypeRegistry.register(
