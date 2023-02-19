@@ -61,10 +61,14 @@ minecraft {
                 }
             }
         }
+
+        data {
+            args '--mod', 'refinedstorage2', '--all', '--output', file('../refinedstorage2-platform-common/src/generated/resources/'), "--existing", file("../refinedstorage2-platform-common/src/main/resources")
+            ideaModule "${rootProject.name}.${project.name}.main"
+            taskName 'Data'
+        }
     }
 }
-
-sourceSets.main.resources.srcDir 'src/generated/resources'
 
 dependencies {
     minecraft forge.minecraft

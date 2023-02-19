@@ -1,29 +1,29 @@
 {
-  "parent": "item/generated",
+  "parent": "minecraft:item/generated",
   "overrides": [
     {
+      "model": "refinedstorage2:block/controller/off",
       "predicate": {
-        "refinedstorage2:stored_in_controller": 0
-      },
-      "model": "refinedstorage2:block/controller/off"
+        "refinedstorage2:stored_in_controller": 0.0
+      }
     },
     {
+      "model": "refinedstorage2:block/controller/nearly_off",
       "predicate": {
         "refinedstorage2:stored_in_controller": 0.01
-      },
-      "model": "refinedstorage2:block/controller/nearly_off"
+      }
     },
     {
+      "model": "refinedstorage2:block/controller/nearly_on",
       "predicate": {
         "refinedstorage2:stored_in_controller": 0.3
-      },
-      "model": "refinedstorage2:block/controller/nearly_on"
+      }
     },
     {
+      "model": "refinedstorage2:block/controller/cyan",
       "predicate": {
         "refinedstorage2:stored_in_controller": 0.4
-      },
-      "model": "refinedstorage2:block/controller/cyan"
+      }
     }
   ]
 }

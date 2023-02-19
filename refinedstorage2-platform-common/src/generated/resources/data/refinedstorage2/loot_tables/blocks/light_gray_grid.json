@@ -1,20 +1,19 @@
 {
-  "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [],
-          "name": "refinedstorage2:light_gray_grid"
-        }
-      ],
+      "bonus_rolls": 0.0,
       "conditions": [
         {
           "condition": "minecraft:survives_explosion"
         }
-      ]
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "refinedstorage2:light_gray_grid"
+        }
+      ],
+      "rolls": 1.0
     }
   ]
 }
