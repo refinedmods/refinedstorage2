@@ -8,6 +8,7 @@ import com.refinedmods.refinedstorage2.platform.api.grid.PlatformGridServiceFact
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 
+import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -15,6 +16,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.ofItemVariant;
@@ -23,7 +25,6 @@ import static com.refinedmods.refinedstorage2.platform.fabric.util.VariantUtil.t
 public class ItemGridInsertionStrategy implements GridInsertionStrategy {
     private final AbstractContainerMenu containerMenu;
     private final GridService<ItemResource> gridService;
-    private final PlayerInventoryStorage playerInventoryStorage;
     private final SingleSlotStorage<ItemVariant> playerCursorStorage;
 
     public ItemGridInsertionStrategy(final AbstractContainerMenu containerMenu,
@@ -31,7 +32,6 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
                                      final PlatformGridServiceFactory gridServiceFactory) {
         this.containerMenu = containerMenu;
         this.gridService = gridServiceFactory.createForItem(new PlayerActor(player));
-        this.playerInventoryStorage = PlayerInventoryStorage.of(player.getInventory());
         this.playerCursorStorage = PlayerInventoryStorage.getCursorStorage(containerMenu);
     }
 
@@ -57,7 +57,9 @@ public class ItemGridInsertionStrategy implements GridInsertionStrategy {
 
     @Override
     public boolean onTransfer(final int slotIndex) {
-        final SingleSlotStorage<ItemVariant> storage = playerInventoryStorage.getSlot(slotIndex);
+        final Slot slot = containerMenu.getSlot(slotIndex);
+        final InventoryStorage inventoryStorage = InventoryStorage.of(slot.container, null);
+        final SingleSlotStorage<ItemVariant> storage = inventoryStorage.getSlot(slot.getContainerSlot());
         final ItemVariant itemVariantInSlot = StorageUtil.findExtractableResource(storage, null);
         if (itemVariantInSlot == null) {
             return false;

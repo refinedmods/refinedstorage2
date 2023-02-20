@@ -123,8 +123,6 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         this.view.setSortingType(Platform.INSTANCE.getConfig().getGrid().getSortingType());
         this.view.setFilterAndSort(filterStorageChannel());
 
-        addSlots(0);
-
         this.synchronizer = loadSynchronizer();
         this.storageChannelTypeFilter = loadStorageChannelType();
         this.insertionStrategy = new ClientGridInsertionStrategy();
@@ -152,8 +150,6 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         this.playerInventory = playerInventory;
         this.grid = grid;
         this.grid.addWatcher(this, PlayerActor.class);
-
-        addSlots(0);
 
         this.synchronizer = PlatformApi.INSTANCE.getGridSynchronizerRegistry().getDefault();
         this.insertionStrategy = PlatformApi.INSTANCE.createGridInsertionStrategy(
@@ -423,10 +419,10 @@ public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMen
         if (!playerEntity.level.isClientSide()) {
             final Slot slot = getSlot(slotIndex);
             if (slot.hasItem()) {
-                insertionStrategy.onTransfer(slot.getContainerSlot());
+                insertionStrategy.onTransfer(slot.index);
             }
         }
-        return ItemStack.EMPTY;
+        return super.quickMoveStack(playerEntity, slotIndex);
     }
 
     private static <T> void readStorageChannelFromBuffer(final PlatformStorageChannelType<T> type,

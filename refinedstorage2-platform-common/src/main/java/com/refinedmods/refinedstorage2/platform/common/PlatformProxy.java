@@ -19,12 +19,15 @@ import javax.annotation.Nullable;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.core.NonNullList;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -139,6 +142,18 @@ public class PlatformProxy implements Platform {
                                        final BlockHitResult hitResult,
                                        final Player player) {
         return ensureLoaded().getCloneItemStack(state, level, hitResult, player);
+    }
+
+    @Override
+    public NonNullList<ItemStack> getRemainingCraftingItems(final Player player,
+                                                            final CraftingRecipe craftingRecipe,
+                                                            final CraftingContainer container) {
+        return ensureLoaded().getRemainingCraftingItems(player, craftingRecipe, container);
+    }
+
+    @Override
+    public void onItemCrafted(final Player player, final ItemStack craftedStack, final CraftingContainer container) {
+        ensureLoaded().onItemCrafted(player, craftedStack, container);
     }
 
     private Platform ensureLoaded() {

@@ -39,14 +39,17 @@ import net.fabricmc.fabric.impl.transfer.context.ConstantContainerItemContext;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -158,6 +161,18 @@ public final class PlatformImpl extends AbstractPlatform {
                                        final BlockHitResult hitResult,
                                        final Player player) {
         return state.getBlock().getCloneItemStack(level, hitResult.getBlockPos(), state);
+    }
+
+    @Override
+    public NonNullList<ItemStack> getRemainingCraftingItems(final Player player,
+                                                            final CraftingRecipe craftingRecipe,
+                                                            final CraftingContainer craftingContainer) {
+        return craftingRecipe.getRemainingItems(craftingContainer);
+    }
+
+    @Override
+    public void onItemCrafted(final Player player, final ItemStack craftedStack, final CraftingContainer container) {
+        // no op
     }
 
     private Optional<FluidResource> convertNonEmptyToFluid(final ItemStack stack) {
