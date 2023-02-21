@@ -56,6 +56,11 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
+    public void sendCraftingGridClear(final boolean toPlayerInventory) {
+        networkManager.send(new CraftingGridClearPacket(toPlayerInventory));
+    }
+
+    @Override
     public <T> void sendPropertyChange(final PropertyType<T> type, final T value) {
         networkManager.send(new PropertyChangePacket(type.id(), type.serializer().apply(value)));
     }

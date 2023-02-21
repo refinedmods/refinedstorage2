@@ -19,4 +19,6 @@ public interface CraftingGridSource {
     CraftingGridRefillContext openSnapshotRefillContext(Player player);
 
     ItemStack insert(ItemStack stack, Player player);
+
+    void clearMatrix(Player player, boolean toPlayerInventory);
 }

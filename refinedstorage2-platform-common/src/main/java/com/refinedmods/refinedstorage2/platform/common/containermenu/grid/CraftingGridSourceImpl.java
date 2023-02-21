@@ -66,4 +66,21 @@ public class CraftingGridSourceImpl implements CraftingGridSource {
         }
         return stack.copyWithCount((int) remainder);
     }
+
+    @Override
+    public void clearMatrix(final Player player, final boolean toPlayerInventory) {
+        for (int i = 0; i < getCraftingMatrix().getContainerSize(); ++i) {
+            final ItemStack matrixStack = getCraftingMatrix().getItem(i);
+            if (matrixStack.isEmpty()) {
+                continue;
+            }
+            if (toPlayerInventory) {
+                if (player.getInventory().add(matrixStack)) {
+                    getCraftingMatrix().setItem(i, ItemStack.EMPTY);
+                }
+            } else {
+                getCraftingMatrix().setItem(i, insert(matrixStack, player));
+            }
+        }
+    }
 }

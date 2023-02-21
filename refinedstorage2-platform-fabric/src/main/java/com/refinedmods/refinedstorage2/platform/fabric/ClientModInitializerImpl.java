@@ -55,6 +55,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class ClientModInitializerImpl implements ClientModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientModInitializerImpl.class);
+    private static final String KEY_BINDINGS_TRANSLATION_KEY = createTranslationKey("category", "key_bindings");
 
     @Override
     public void onInitializeClient() {
@@ -186,7 +187,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
             createTranslationKey("key", "focus_search_bar"),
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_TAB,
-            createTranslationKey("category", "key_bindings")
+            KEY_BINDINGS_TRANSLATION_KEY
         )));
     }
 

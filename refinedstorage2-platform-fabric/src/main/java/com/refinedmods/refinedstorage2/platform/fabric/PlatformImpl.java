@@ -95,7 +95,7 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public boolean isKeyDown(final KeyMapping keyMapping) {
-        return InputConstants.isKeyDown(
+        return !keyMapping.isUnbound() && InputConstants.isKeyDown(
             Minecraft.getInstance().getWindow().getWindow(),
             ((KeyMappingAccessor) keyMapping).getKey().getValue()
         );

@@ -3,6 +3,9 @@ package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 
+import java.util.function.Consumer;
+import javax.annotation.Nullable;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -14,6 +17,9 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
 
     private final Player player;
     private final CraftingGridSource source;
+
+    @Nullable
+    private Consumer<Boolean> activenessListener;
 
     public CraftingGridContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
         super(Menus.INSTANCE.getCraftingGrid(), syncId, playerInventory, buf);
@@ -29,6 +35,18 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
         this.source = new CraftingGridSourceImpl(grid);
         this.player = playerInventory.player;
         addSlots(0);
+    }
+
+    public void setActivenessListener(@Nullable final Consumer<Boolean> activenessListener) {
+        this.activenessListener = activenessListener;
+    }
+
+    @Override
+    public void onActiveChanged(final boolean newActive) {
+        super.onActiveChanged(newActive);
+        if (activenessListener != null) {
+            activenessListener.accept(newActive);
+        }
     }
 
     @Override
@@ -63,5 +81,9 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
             130 + 4,
             playerInventoryY - Y_OFFSET_BETWEEN_PLAYER_INVENTORY_AND_FIRST_CRAFTING_MATRIX_SLOT + 18
         ));
+    }
+
+    public void clear(final boolean toPlayerInventory) {
+        source.clearMatrix(player, toPlayerInventory);
     }
 }

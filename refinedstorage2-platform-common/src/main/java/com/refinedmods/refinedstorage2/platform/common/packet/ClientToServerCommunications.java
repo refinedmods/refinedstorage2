@@ -21,6 +21,8 @@ public interface ClientToServerCommunications {
 
     void sendGridInsert(GridInsertMode mode, boolean tryAlternatives);
 
+    void sendCraftingGridClear(boolean toPlayerInventory);
+
     <T> void sendPropertyChange(PropertyType<T> type, T value);
 
     void sendStorageInfoRequest(UUID storageId);

@@ -17,6 +17,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Different Cable colors. They only connect to same colored cables or the default cable.
 -   Support for using the R/U keys in JEI and REI on Grid slots and filtering slots
 -   Crafting Grid.
+-   The crafting matrix in the Crafting Grid now has a button and keybinding to clear to the player inventory.
+    The keybinding is only available on Forge.
+
+### Changed
+
+-   The button to clear to the network inventory next to the crafting matrix in the Crafting Grid is now disabled if
+    the Crafting Grid is inactive.
+-   The keybinding to clear the Crafting Grid matrix to the network inventory is only available on Forge.
 
 ### Removed
 

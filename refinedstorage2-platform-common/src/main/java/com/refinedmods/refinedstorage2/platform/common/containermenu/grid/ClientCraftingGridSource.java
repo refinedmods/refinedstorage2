@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 
+import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingMatrix;
 
 import net.minecraft.core.NonNullList;
@@ -44,5 +45,10 @@ public class ClientCraftingGridSource implements CraftingGridSource {
     @Override
     public ItemStack insert(final ItemStack stack, final Player player) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void clearMatrix(final Player player, final boolean toPlayerInventory) {
+        Platform.INSTANCE.getClientToServerCommunications().sendCraftingGridClear(toPlayerInventory);
     }
 }

@@ -57,7 +57,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     private static final List<String> SEARCH_FIELD_HISTORY = new ArrayList<>();
 
-    private final int bottomHeight;
+    protected final int bottomHeight;
 
     @Nullable
     private ScrollbarWidget scrollbar;
