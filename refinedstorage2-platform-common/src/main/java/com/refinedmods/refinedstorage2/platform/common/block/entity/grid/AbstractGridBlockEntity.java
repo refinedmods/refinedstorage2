@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.block.entity;
+package com.refinedmods.refinedstorage2.platform.common.block.entity.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
@@ -10,36 +10,32 @@ import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createTranslation;
-
-public class GridBlockEntity extends AbstractInternalNetworkNodeContainerBlockEntity<GridNetworkNode>
+public abstract class AbstractGridBlockEntity
+    extends AbstractInternalNetworkNodeContainerBlockEntity<GridNetworkNode>
     implements ExtendedMenuProvider {
     private final PlatformRegistry<PlatformStorageChannelType<?>> storageChannelTypeRegistry;
 
-    public GridBlockEntity(final BlockPos pos, final BlockState state) {
-        super(BlockEntities.INSTANCE.getGrid(), pos, state, new GridNetworkNode(
-            Platform.INSTANCE.getConfig().getGrid().getEnergyUsage(),
+    protected AbstractGridBlockEntity(final BlockEntityType<? extends AbstractGridBlockEntity> type,
+                                      final BlockPos pos,
+                                      final BlockState state,
+                                      final long energyUsage) {
+        super(type, pos, state, new GridNetworkNode(
+            energyUsage,
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll()
         ));
         this.storageChannelTypeRegistry = PlatformApi.INSTANCE.getStorageChannelTypeRegistry();
@@ -49,11 +45,6 @@ public class GridBlockEntity extends AbstractInternalNetworkNodeContainerBlockEn
         return Objects.requireNonNull(getNode().getNetwork())
             .getComponent(StorageNetworkComponent.class)
             .getStorageChannel(StorageChannelTypes.ITEM);
-    }
-
-    @Override
-    public Component getDisplayName() {
-        return createTranslation("block", "grid");
     }
 
     @Override
@@ -90,11 +81,5 @@ public class GridBlockEntity extends AbstractInternalNetworkNodeContainerBlockEn
 
     public void removeWatcher(final GridWatcher watcher) {
         getNode().removeWatcher(watcher);
-    }
-
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(final int syncId, final Inventory inventory, final Player player) {
-        return new GridContainerMenu(syncId, inventory, this);
     }
 }

@@ -2,7 +2,7 @@ package com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.re
 
 import com.refinedmods.refinedstorage2.api.grid.view.GridResource;
 import com.refinedmods.refinedstorage2.platform.api.integration.recipemod.IngredientConverter;
-import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.AbstractGridScreen;
 
 import dev.architectury.event.CompoundEventResult;
 import me.shedaniel.math.Point;
@@ -19,7 +19,7 @@ public class GridFocusedStackProvider implements FocusedStackProvider {
 
     @Override
     public CompoundEventResult<EntryStack<?>> provide(final Screen screen, final Point mouse) {
-        if (!(screen instanceof GridScreen gridScreen)) {
+        if (!(screen instanceof AbstractGridScreen<?> gridScreen)) {
             return CompoundEventResult.pass();
         }
         final GridResource resource = gridScreen.getHoveredResource();

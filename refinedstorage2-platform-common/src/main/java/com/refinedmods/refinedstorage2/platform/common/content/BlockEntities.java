@@ -2,12 +2,13 @@ package com.refinedmods.refinedstorage2.platform.common.content;
 
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.type.FluidStorageType;
@@ -30,6 +31,8 @@ public final class BlockEntities {
     private Supplier<BlockEntityType<? extends AbstractDiskDriveBlockEntity>> diskDrive;
     @Nullable
     private Supplier<BlockEntityType<GridBlockEntity>> grid;
+    @Nullable
+    private Supplier<BlockEntityType<CraftingGridBlockEntity>> craftingGrid;
     @Nullable
     private Supplier<BlockEntityType<ControllerBlockEntity>> controller;
     @Nullable
@@ -72,6 +75,14 @@ public final class BlockEntities {
 
     public void setGrid(final Supplier<BlockEntityType<GridBlockEntity>> supplier) {
         this.grid = supplier;
+    }
+
+    public BlockEntityType<CraftingGridBlockEntity> getCraftingGrid() {
+        return Objects.requireNonNull(craftingGrid).get();
+    }
+
+    public void setCraftingGrid(final Supplier<BlockEntityType<CraftingGridBlockEntity>> supplier) {
+        this.craftingGrid = supplier;
     }
 
     public BlockEntityType<ControllerBlockEntity> getController() {

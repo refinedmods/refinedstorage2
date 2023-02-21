@@ -1,0 +1,110 @@
+{
+  "variants": {
+    "active=false,direction=down_east": {
+      "model": "refinedstorage2:block/crafting_grid/inactive",
+      "x": 90,
+      "y": -90
+    },
+    "active=false,direction=down_north": {
+      "model": "refinedstorage2:block/crafting_grid/inactive",
+      "x": 90
+    },
+    "active=false,direction=down_south": {
+      "model": "refinedstorage2:block/crafting_grid/inactive",
+      "x": 90,
+      "y": 180
+    },
+    "active=false,direction=down_west": {
+      "model": "refinedstorage2:block/crafting_grid/inactive",
+      "x": 90,
+      "y": 90
+    },
+    "active=false,direction=east": {
+      "model": "refinedstorage2:block/crafting_grid/inactive",
+      "y": 90
+    },
+    "active=false,direction=north": {
+      "model": "refinedstorage2:block/crafting_grid/inactive"
+    },
+    "active=false,direction=south": {
+      "model": "refinedstorage2:block/crafting_grid/inactive",
+      "y": 180
+    },
+    "active=false,direction=up_east": {
+      "model": "refinedstorage2:block/crafting_grid/inactive",
+      "x": -90,
+      "y": -90
+    },
+    "active=false,direction=up_north": {
+      "model": "refinedstorage2:block/crafting_grid/inactive",
+      "x": -90,
+      "y": 180
+    },
+    "active=false,direction=up_south": {
+      "model": "refinedstorage2:block/crafting_grid/inactive",
+      "x": -90
+    },
+    "active=false,direction=up_west": {
+      "model": "refinedstorage2:block/crafting_grid/inactive",
+      "x": -90,
+      "y": 90
+    },
+    "active=false,direction=west": {
+      "model": "refinedstorage2:block/crafting_grid/inactive",
+      "y": 270
+    },
+    "active=true,direction=down_east": {
+      "model": "refinedstorage2:block/crafting_grid/gray",
+      "x": 90,
+      "y": -90
+    },
+    "active=true,direction=down_north": {
+      "model": "refinedstorage2:block/crafting_grid/gray",
+      "x": 90
+    },
+    "active=true,direction=down_south": {
+      "model": "refinedstorage2:block/crafting_grid/gray",
+      "x": 90,
+      "y": 180
+    },
+    "active=true,direction=down_west": {
+      "model": "refinedstorage2:block/crafting_grid/gray",
+      "x": 90,
+      "y": 90
+    },
+    "active=true,direction=east": {
+      "model": "refinedstorage2:block/crafting_grid/gray",
+      "y": 90
+    },
+    "active=true,direction=north": {
+      "model": "refinedstorage2:block/crafting_grid/gray"
+    },
+    "active=true,direction=south": {
+      "model": "refinedstorage2:block/crafting_grid/gray",
+      "y": 180
+    },
+    "active=true,direction=up_east": {
+      "model": "refinedstorage2:block/crafting_grid/gray",
+      "x": -90,
+      "y": -90
+    },
+    "active=true,direction=up_north": {
+      "model": "refinedstorage2:block/crafting_grid/gray",
+      "x": -90,
+      "y": 180
+    },
+    "active=true,direction=up_south": {
+      "model": "refinedstorage2:block/crafting_grid/gray",
+      "x": -90
+    },
+    "active=true,direction=up_west": {
+      "model": "refinedstorage2:block/crafting_grid/gray",
+      "x": -90,
+      "y": 90
+    },
+    "active=true,direction=west": {
+      "model": "refinedstorage2:block/crafting_grid/gray",
+      "y": 270
+    }
+  }
+}

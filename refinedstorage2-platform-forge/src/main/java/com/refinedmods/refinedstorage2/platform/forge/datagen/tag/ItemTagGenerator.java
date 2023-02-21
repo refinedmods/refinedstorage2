@@ -29,6 +29,7 @@ public class ItemTagGenerator extends ItemTagsProvider {
     public static final TagKey<Item> CONTROLLERS = createTag("controllers");
     public static final TagKey<Item> FLUID_STORAGE_DISKS = createTag("fluid_storage_disks");
     public static final TagKey<Item> GRIDS = createTag("grids");
+    public static final TagKey<Item> CRAFTING_GRIDS = createTag("crafting_grids");
     public static final TagKey<Item> STORAGE_DISKS = createTag("storage_disks");
 
     public ItemTagGenerator(final PackOutput packOutput,
@@ -52,12 +53,16 @@ public class ItemTagGenerator extends ItemTagsProvider {
             Blocks.INSTANCE.getGrid().values().stream()
                 .map(block -> (Supplier<Item>) block::asItem)
                 .toList());
+        addAllToTag(CRAFTING_GRIDS,
+            Blocks.INSTANCE.getCraftingGrid().values().stream()
+                .map(block -> (Supplier<Item>) block::asItem)
+                .toList());
         addAllToTag(STORAGE_DISKS,
             Arrays.stream(ItemStorageType.Variant.values())
-                    .filter(variant -> variant != ItemStorageType.Variant.CREATIVE)
-                    .map(Items.INSTANCE::getItemStorageDisk)
-                    .map(t -> (Supplier<Item>) () -> t)
-                    .collect(Collectors.toList()));
+                .filter(variant -> variant != ItemStorageType.Variant.CREATIVE)
+                .map(Items.INSTANCE::getItemStorageDisk)
+                .map(t -> (Supplier<Item>) () -> t)
+                .collect(Collectors.toList()));
     }
 
     private <T extends Item> void addAllToTag(final TagKey<Item> t, final Collection<Supplier<T>> items) {

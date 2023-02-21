@@ -13,27 +13,30 @@ import com.refinedmods.refinedstorage2.platform.common.block.DiskDriveBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.FluidStorageBlock;
-import com.refinedmods.refinedstorage2.platform.common.block.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.InterfaceBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ItemStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.SimpleBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.CableBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ControllerBlockEntity;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.InterfaceBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.diskdrive.AbstractDiskDriveBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.exporter.ExporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.externalstorage.ExternalStorageBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.GridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.FluidStorageBlockBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.storage.ItemStorageBlockBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.ControllerBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ControllerContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ExporterContainerMenu;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.ImporterContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.InterfaceContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.GridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.ExternalStorageContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.FluidStorageBlockContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.storage.block.ItemStorageBlockContainerMenu;
@@ -74,6 +77,7 @@ import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.exp
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.externalstorage.StoragePlatformExternalStorageProviderFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.internal.network.node.importer.StorageImporterTransferStrategyFactory;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.PacketIds;
+import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.CraftingGridClearPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridExtractPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridInsertPacket;
 import com.refinedmods.refinedstorage2.platform.fabric.packet.c2s.GridScrollPacket;
@@ -120,6 +124,7 @@ import team.reborn.energy.api.EnergyStorage;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CABLE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONSTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CONTROLLER;
+import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CRAFTING_GRID;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.CREATIVE_CONTROLLER;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DESTRUCTION_CORE;
 import static com.refinedmods.refinedstorage2.platform.common.content.ContentIds.DISK_DRIVE;
@@ -334,6 +339,17 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 color
             )
         ));
+        Blocks.INSTANCE.getCraftingGrid().putAll(color -> register(
+            BuiltInRegistries.BLOCK,
+            Blocks.INSTANCE.getCraftingGrid().getId(color, CRAFTING_GRID),
+            new CraftingGridBlock(
+                Blocks.INSTANCE.getCraftingGrid().getName(color, createTranslation(
+                    BLOCK_TRANSLATION_CATEGORY,
+                    "crafting_grid"
+                )),
+                color
+            )
+        ));
         Blocks.INSTANCE.getController().putAll(color -> register(
             BuiltInRegistries.BLOCK,
             Blocks.INSTANCE.getController().getId(color, CONTROLLER),
@@ -493,6 +509,14 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "grid")
             ))
         ));
+        Blocks.INSTANCE.getCraftingGrid().forEach((color, block) -> register(
+            BuiltInRegistries.ITEM,
+            Blocks.INSTANCE.getCraftingGrid().getId(color, CRAFTING_GRID),
+            new GridBlockItem(block.get(), Blocks.INSTANCE.getCraftingGrid().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "crafting_grid")
+            ))
+        ));
     }
 
     private void registerControllerItems() {
@@ -612,6 +636,14 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
                 Blocks.INSTANCE.getGrid().toArray()
             ).build()
         ));
+        BlockEntities.INSTANCE.setCraftingGrid(register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            CRAFTING_GRID,
+            FabricBlockEntityTypeBuilder.create(
+                CraftingGridBlockEntity::new,
+                Blocks.INSTANCE.getCraftingGrid().toArray()
+            ).build()
+        ));
         BlockEntities.INSTANCE.setController(register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             CONTROLLER,
@@ -696,6 +728,11 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             GRID,
             new ExtendedScreenHandlerType<>(GridContainerMenu::new)
         ));
+        Menus.INSTANCE.setCraftingGrid(register(
+            BuiltInRegistries.MENU,
+            CRAFTING_GRID,
+            new ExtendedScreenHandlerType<>(CraftingGridContainerMenu::new)
+        ));
         Menus.INSTANCE.setController(register(
             BuiltInRegistries.MENU,
             CONTROLLER,
@@ -754,6 +791,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_INSERT, new GridInsertPacket());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_EXTRACT, new GridExtractPacket());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.GRID_SCROLL, new GridScrollPacket());
+        ServerPlayNetworking.registerGlobalReceiver(PacketIds.CRAFTING_GRID_CLEAR, new CraftingGridClearPacket());
         ServerPlayNetworking.registerGlobalReceiver(PacketIds.PROPERTY_CHANGE, new PropertyChangePacket());
         ServerPlayNetworking.registerGlobalReceiver(
             PacketIds.RESOURCE_FILTER_SLOT_AMOUNT_CHANGE,

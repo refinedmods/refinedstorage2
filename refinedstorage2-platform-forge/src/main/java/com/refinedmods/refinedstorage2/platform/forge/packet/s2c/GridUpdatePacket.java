@@ -3,7 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge.packet.s2c;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.containermenu.GridContainerMenu;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.AbstractGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.util.PacketUtil;
 
 import java.util.function.Supplier;
@@ -68,7 +68,7 @@ public class GridUpdatePacket<T> {
     }
 
     private static <T> void handle(final Player player, final GridUpdatePacket<T> packet) {
-        if (player.containerMenu instanceof GridContainerMenu containerMenu) {
+        if (player.containerMenu instanceof AbstractGridContainerMenu containerMenu) {
             containerMenu.onResourceUpdate(packet.resource, packet.amount, packet.trackedResource);
         }
     }

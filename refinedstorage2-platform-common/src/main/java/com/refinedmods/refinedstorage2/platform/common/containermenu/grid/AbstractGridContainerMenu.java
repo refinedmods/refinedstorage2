@@ -1,4 +1,4 @@
-package com.refinedmods.refinedstorage2.platform.common.containermenu;
+package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 
 import com.refinedmods.refinedstorage2.api.grid.GridWatcher;
 import com.refinedmods.refinedstorage2.api.grid.query.GridQueryParserException;
@@ -25,11 +25,11 @@ import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
-import com.refinedmods.refinedstorage2.platform.common.block.entity.GridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.AbstractGridBlockEntity;
+import com.refinedmods.refinedstorage2.platform.common.containermenu.AbstractBaseContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ClientProperty;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.PropertyTypes;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.property.ServerProperty;
-import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridExtractionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridInsertionStrategy;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.ClientGridScrollingStrategy;
@@ -52,14 +52,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GridContainerMenu extends AbstractBaseContainerMenu
+public abstract class AbstractGridContainerMenu extends AbstractBaseContainerMenu
     implements GridWatcher, GridInsertionStrategy, GridExtractionStrategy, GridScrollingStrategy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GridContainerMenu.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGridContainerMenu.class);
     private static final GridQueryParserImpl QUERY_PARSER = new GridQueryParserImpl(
         LexerTokenMappings.DEFAULT_MAPPINGS,
         ParserOperatorMappings.DEFAULT_MAPPINGS,
@@ -72,10 +73,10 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
 
     private static String lastSearchQuery = "";
 
-    protected final Inventory playerInventory;
-    protected final GridView view;
+    private final Inventory playerInventory;
+    private final GridView view;
     @Nullable
-    protected GridBlockEntity grid;
+    private AbstractGridBlockEntity grid;
 
     private final GridInsertionStrategy insertionStrategy;
     private final GridExtractionStrategy extractionStrategy;
@@ -93,8 +94,13 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
     @Nullable
     private GridSearchBox searchBox;
 
-    public GridContainerMenu(final int syncId, final Inventory playerInventory, final FriendlyByteBuf buf) {
-        super(Menus.INSTANCE.getGrid(), syncId);
+    protected AbstractGridContainerMenu(
+        final MenuType<? extends AbstractGridContainerMenu> menuType,
+        final int syncId,
+        final Inventory playerInventory,
+        final FriendlyByteBuf buf
+    ) {
+        super(menuType, syncId);
 
         this.playerInventory = playerInventory;
 
@@ -117,8 +123,6 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
         this.view.setSortingType(Platform.INSTANCE.getConfig().getGrid().getSortingType());
         this.view.setFilterAndSort(filterStorageChannel());
 
-        addSlots(0);
-
         this.synchronizer = loadSynchronizer();
         this.storageChannelTypeFilter = loadStorageChannelType();
         this.insertionStrategy = new ClientGridInsertionStrategy();
@@ -127,10 +131,13 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
         this.autoSelected = loadAutoSelected();
     }
 
-    public GridContainerMenu(final int syncId,
-                             final Inventory playerInventory,
-                             final GridBlockEntity grid) {
-        super(Menus.INSTANCE.getGrid(), syncId);
+    protected AbstractGridContainerMenu(
+        final MenuType<? extends AbstractGridContainerMenu> menuType,
+        final int syncId,
+        final Inventory playerInventory,
+        final AbstractGridBlockEntity grid
+    ) {
+        super(menuType, syncId);
 
         this.view = createViewBuilder().build();
 
@@ -143,8 +150,6 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
         this.playerInventory = playerInventory;
         this.grid = grid;
         this.grid.addWatcher(this, PlayerActor.class);
-
-        addSlots(0);
 
         this.synchronizer = PlatformApi.INSTANCE.getGridSynchronizerRegistry().getDefault();
         this.insertionStrategy = PlatformApi.INSTANCE.createGridInsertionStrategy(
@@ -254,12 +259,12 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
         theSearchBox.setAutoSelected(isAutoSelected());
         if (Platform.INSTANCE.getConfig().getGrid().isRememberSearchQuery()) {
             theSearchBox.setValue(lastSearchQuery);
-            theSearchBox.addListener(GridContainerMenu::updateLastSearchQuery);
+            theSearchBox.addListener(AbstractGridContainerMenu::updateLastSearchQuery);
         }
     }
 
     private static void updateLastSearchQuery(final String text) {
-        GridContainerMenu.lastSearchQuery = text;
+        lastSearchQuery = text;
     }
 
     @Override
@@ -414,10 +419,10 @@ public class GridContainerMenu extends AbstractBaseContainerMenu
         if (!playerEntity.level.isClientSide()) {
             final Slot slot = getSlot(slotIndex);
             if (slot.hasItem()) {
-                insertionStrategy.onTransfer(slot.getContainerSlot());
+                insertionStrategy.onTransfer(slot.index);
             }
         }
-        return ItemStack.EMPTY;
+        return super.quickMoveStack(playerEntity, slotIndex);
     }
 
     private static <T> void readStorageChannelFromBuffer(final PlatformStorageChannelType<T> type,

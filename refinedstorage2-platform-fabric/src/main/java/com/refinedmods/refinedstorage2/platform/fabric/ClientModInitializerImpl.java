@@ -1,9 +1,9 @@
 package com.refinedmods.refinedstorage2.platform.fabric;
 
 import com.refinedmods.refinedstorage2.platform.api.PlatformApi;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
-import com.refinedmods.refinedstorage2.platform.common.content.ColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.Items;
 import com.refinedmods.refinedstorage2.platform.common.content.KeyMappings;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
@@ -16,8 +16,8 @@ import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockS
 import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
-import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.RefinedStorageREIClientPlugin;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.ReiGridSynchronizer;
 import com.refinedmods.refinedstorage2.platform.fabric.integration.recipemod.rei.ReiProxy;
@@ -45,6 +45,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.Block;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public class ClientModInitializerImpl implements ClientModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientModInitializerImpl.class);
-    private static final DyeColor DEFAULT_COLOR = DyeColor.LIGHT_BLUE;
+    private static final String KEY_BINDINGS_TRANSLATION_KEY = createTranslationKey("category", "key_bindings");
 
     @Override
     public void onInitializeClient() {
@@ -70,24 +71,29 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     }
 
     private void setRenderLayers() {
-        BlockRenderLayerMap.INSTANCE.putBlock(Blocks.INSTANCE.getImporter(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(Blocks.INSTANCE.getExporter(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(Blocks.INSTANCE.getExternalStorage(), RenderType.cutout());
-        Blocks.INSTANCE.getCable().values().forEach(block ->
-            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout())
-        );
-        Blocks.INSTANCE.getGrid().values().forEach(block ->
-            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
-        Blocks.INSTANCE.getController().values().forEach(block ->
-            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
-        Blocks.INSTANCE.getCreativeController().values().forEach(block ->
-            BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout()));
+        setCutout(Blocks.INSTANCE.getImporter());
+        setCutout(Blocks.INSTANCE.getExporter());
+        setCutout(Blocks.INSTANCE.getExternalStorage());
+        setCutout(Blocks.INSTANCE.getCable());
+        setCutout(Blocks.INSTANCE.getGrid());
+        setCutout(Blocks.INSTANCE.getCraftingGrid());
+        setCutout(Blocks.INSTANCE.getController());
+        setCutout(Blocks.INSTANCE.getCreativeController());
+    }
+
+    private void setCutout(final BlockColorMap<?> blockMap) {
+        blockMap.values().forEach(this::setCutout);
+    }
+
+    private void setCutout(final Block block) {
+        BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutout());
     }
 
     private void registerEmissiveModels() {
         for (final DyeColor color : DyeColor.values()) {
             registerEmissiveControllerModels(color);
             registerEmissiveGridModels(color);
+            registerEmissiveCraftingGridModels(color);
         }
     }
 
@@ -100,23 +106,38 @@ public class ClientModInitializerImpl implements ClientModInitializer {
         );
         // Item
         EmissiveModelRegistry.INSTANCE.register(
-            ColorMap.generateId(color, DEFAULT_COLOR, IdentifierUtil.MOD_ID, "controller"),
+            Blocks.INSTANCE.getController().getId(color, createIdentifier("controller")),
             spriteLocation
         );
         EmissiveModelRegistry.INSTANCE.register(
-            ColorMap.generateId(color, DEFAULT_COLOR, IdentifierUtil.MOD_ID, "creative_controller"),
+            Blocks.INSTANCE.getCreativeController().getId(color, createIdentifier("creative_controller")),
             spriteLocation
         );
     }
 
     private void registerEmissiveGridModels(final DyeColor color) {
+        // Block
         EmissiveModelRegistry.INSTANCE.register(
             createIdentifier("block/grid/" + color.getName()),
             createIdentifier("block/grid/cutouts/" + color.getName())
         );
+        // Item
         EmissiveModelRegistry.INSTANCE.register(
-            ColorMap.generateId(color, DEFAULT_COLOR, IdentifierUtil.MOD_ID, "grid"),
+            Blocks.INSTANCE.getGrid().getId(color, createIdentifier("grid")),
             createIdentifier("block/grid/cutouts/" + color.getName())
+        );
+    }
+
+    private void registerEmissiveCraftingGridModels(final DyeColor color) {
+        // Block
+        EmissiveModelRegistry.INSTANCE.register(
+            createIdentifier("block/crafting_grid/" + color.getName()),
+            createIdentifier("block/crafting_grid/cutouts/" + color.getName())
+        );
+        // Item
+        EmissiveModelRegistry.INSTANCE.register(
+            Blocks.INSTANCE.getCraftingGrid().getId(color, createIdentifier("crafting_grid")),
+            createIdentifier("block/crafting_grid/cutouts/" + color.getName())
         );
     }
 
@@ -151,6 +172,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
     private void registerScreens() {
         MenuScreens.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
         MenuScreens.register(Menus.INSTANCE.getGrid(), GridScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getCraftingGrid(), CraftingGridScreen::new);
         MenuScreens.register(Menus.INSTANCE.getController(), ControllerScreen::new);
         MenuScreens.register(Menus.INSTANCE.getItemStorage(), ItemStorageBlockScreen::new);
         MenuScreens.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);
@@ -165,7 +187,7 @@ public class ClientModInitializerImpl implements ClientModInitializer {
             createTranslationKey("key", "focus_search_bar"),
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_TAB,
-            createTranslationKey("category", "key_bindings")
+            KEY_BINDINGS_TRANSLATION_KEY
         )));
     }
 

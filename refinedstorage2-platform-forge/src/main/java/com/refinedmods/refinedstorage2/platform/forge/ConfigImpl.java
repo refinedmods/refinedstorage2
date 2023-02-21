@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge;
 import com.refinedmods.refinedstorage2.api.grid.view.GridSortingDirection;
 import com.refinedmods.refinedstorage2.platform.common.Config;
 import com.refinedmods.refinedstorage2.platform.common.content.DefaultEnergyUsage;
+import com.refinedmods.refinedstorage2.platform.common.internal.grid.CraftingGridMatrixCloseBehavior;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSize;
 import com.refinedmods.refinedstorage2.platform.common.internal.grid.GridSortingTypes;
 
@@ -21,6 +22,7 @@ public class ConfigImpl implements Config {
     private final ControllerEntry controller;
     private final DiskDriveEntry diskDrive;
     private final GridEntry grid;
+    private final CraftingGridEntry craftingGrid;
     private final StorageBlockEntry storageBlock;
     private final FluidStorageBlockEntry fluidStorageBlock;
     private final SimpleEnergyUsageEntry importer;
@@ -34,6 +36,7 @@ public class ConfigImpl implements Config {
         controller = new ControllerEntryImpl();
         diskDrive = new DiskDriveEntryImpl();
         grid = new GridEntryImpl();
+        craftingGrid = new CraftingGridEntryImpl();
         storageBlock = new StorageBlockEntryImpl();
         fluidStorageBlock = new FluidStorageBlockEntryImpl();
         importer = new SimpleEnergyUsageEntryImpl("importer", "Importer", DefaultEnergyUsage.IMPORTER);
@@ -55,6 +58,11 @@ public class ConfigImpl implements Config {
     @Override
     public GridEntry getGrid() {
         return grid;
+    }
+
+    @Override
+    public CraftingGridEntry getCraftingGrid() {
+        return craftingGrid;
     }
 
     @Override
@@ -332,6 +340,32 @@ public class ConfigImpl implements Config {
         @Override
         public void clearStorageChannelType() {
             this.storageChannelType.set("");
+        }
+    }
+
+    private class CraftingGridEntryImpl implements CraftingGridEntry {
+        private final ForgeConfigSpec.LongValue energyUsage;
+        private final ForgeConfigSpec.EnumValue<CraftingGridMatrixCloseBehavior> craftingMatrixCloseBehavior;
+
+        CraftingGridEntryImpl() {
+            builder.push("craftingGrid");
+            energyUsage = builder
+                .comment("The energy used by the Crafting Grid")
+                .defineInRange(ENERGY_USAGE, DefaultEnergyUsage.CRAFTING_GRID, 0, Long.MAX_VALUE);
+            craftingMatrixCloseBehavior = builder
+                .comment("What should happen to the crafting matrix slots when closing the Crafting Grid")
+                .defineEnum("craftingMatrixCloseBehavior", CraftingGridMatrixCloseBehavior.NONE);
+            builder.pop();
+        }
+
+        @Override
+        public long getEnergyUsage() {
+            return energyUsage.get();
+        }
+
+        @Override
+        public CraftingGridMatrixCloseBehavior getCraftingMatrixCloseBehavior() {
+            return craftingMatrixCloseBehavior.get();
         }
     }
 

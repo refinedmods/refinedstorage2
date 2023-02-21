@@ -16,18 +16,26 @@ public class BlockDropProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        Blocks.INSTANCE.getCable().forEach((color, block) -> this.dropSelf(block.get()));
-        Blocks.INSTANCE.getGrid().forEach((color, block) -> this.dropSelf(block.get()));
-        Blocks.INSTANCE.getController().forEach((color, block) -> this.dropSelf(block.get()));
-        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> this.dropSelf(block.get()));
+        Blocks.INSTANCE.getCable().forEach((color, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getGrid().forEach((color, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getCraftingGrid().forEach((color, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getController().forEach((color, block) -> dropSelf(block.get()));
+        Blocks.INSTANCE.getCreativeController().forEach((color, block) -> dropSelf(block.get()));
     }
 
     @Override
     protected Iterable<Block> getKnownBlocks() {
         final Stream<Block> cables = Blocks.INSTANCE.getCable().values().stream().map(b -> b);
         final Stream<Block> grids = Blocks.INSTANCE.getGrid().values().stream().map(b -> b);
+        final Stream<Block> craftingGrids = Blocks.INSTANCE.getCraftingGrid().values().stream().map(b -> b);
         final Stream<Block> controllers = Blocks.INSTANCE.getController().values().stream().map(b -> b);
         final Stream<Block> creativeControllers = Blocks.INSTANCE.getCreativeController().values().stream().map(b -> b);
-        return Stream.concat(Stream.concat(cables, grids), Stream.concat(controllers, creativeControllers)).toList();
+        return Stream.concat(
+            Stream.concat(
+                cables,
+                Stream.concat(grids, craftingGrids)
+            ),
+            Stream.concat(controllers, creativeControllers)
+        ).toList();
     }
 }

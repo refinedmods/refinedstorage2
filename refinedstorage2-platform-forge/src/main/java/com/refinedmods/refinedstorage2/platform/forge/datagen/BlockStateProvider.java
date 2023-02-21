@@ -2,8 +2,8 @@ package com.refinedmods.refinedstorage2.platform.forge.datagen;
 
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
-import com.refinedmods.refinedstorage2.platform.common.block.GridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.AbstractGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
@@ -40,7 +40,7 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         Blocks.INSTANCE.getCable().forEach((color, cable) -> {
             final var builder = getMultipartBuilder(cable.get())
                 .part()
-                    .modelFile(modelFile(createIdentifier("block/cable/core/" + color.getName()))).addModel()
+                .modelFile(modelFile(createIdentifier("block/cable/core/" + color.getName()))).addModel()
                 .end();
             final ModelFile extension = modelFile(createIdentifier("block/cable/extension/" + color.getName()));
             PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
@@ -57,13 +57,36 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         });
     }
 
+    private void registerGrids() {
+        Blocks.INSTANCE.getGrid().forEach((color, block) -> configureGridVariants(color, block, "grid"));
+        Blocks.INSTANCE.getCraftingGrid().forEach((color, block) -> configureGridVariants(
+            color,
+            block,
+            "crafting_grid"
+        ));
+    }
+
+    private void configureGridVariants(final DyeColor color,
+                                       final Supplier<? extends AbstractGridBlock<?>> block,
+                                       final String name) {
+        final ModelFile inactive = modelFile(createIdentifier("block/" + name + "/inactive"));
+        final ModelFile active = modelFile(createIdentifier("block/" + name + "/" + color.getName()));
+        final var builder = getVariantBuilder(block.get());
+        builder.forAllStates(blockState -> {
+            final ConfiguredModel.Builder<?> model = ConfiguredModel.builder();
+            if (blockState.getValue(AbstractGridBlock.ACTIVE)) {
+                model.modelFile(active);
+            } else {
+                model.modelFile(inactive);
+            }
+            addRotation(model, blockState.getValue(BiDirectionType.INSTANCE.getProperty()));
+            return model.build();
+        });
+    }
+
     private void registerControllers() {
         Blocks.INSTANCE.getController().forEach(this::configureControllerVariants);
         Blocks.INSTANCE.getCreativeController().forEach(this::configureControllerVariants);
-    }
-
-    private void registerGrids() {
-        Blocks.INSTANCE.getGrid().forEach(this::configureGridVariants);
     }
 
     private void configureControllerVariants(final DyeColor color, final Supplier<? extends Block> controller) {
@@ -91,22 +114,6 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         );
     }
 
-    private void configureGridVariants(final DyeColor color, final Supplier<? extends Block> block) {
-        final ModelFile inactive = modelFile(createIdentifier("block/grid/inactive"));
-        final ModelFile active = modelFile(createIdentifier("block/grid/" + color.getName()));
-        final var builder = getVariantBuilder(block.get());
-        builder.forAllStates(blockState -> {
-            final ConfiguredModel.Builder<?> model = ConfiguredModel.builder();
-            if (blockState.getValue(GridBlock.ACTIVE)) {
-                model.modelFile(active);
-            } else {
-                model.modelFile(inactive);
-            }
-            addRotation(model, blockState.getValue(BiDirectionType.INSTANCE.getProperty()));
-            return model.build();
-        });
-    }
-
     private void addRotation(final ConfiguredModel.Builder<?> model, final BiDirection block) {
         final int x = (int) block.getVec().x();
         final int y = (int) block.getVec().y();
@@ -114,10 +121,8 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         switch (block) {
             case UP_EAST, UP_NORTH, UP_SOUTH, UP_WEST, DOWN_EAST, DOWN_WEST, DOWN_SOUTH, DOWN_NORTH ->
                 model.rotationX(x * -1).rotationY(z);
-            case EAST, WEST ->
-                model.rotationY(y + 180);
-            case NORTH, SOUTH ->
-                model.rotationY(y);
+            case EAST, WEST -> model.rotationY(y + 180);
+            case NORTH, SOUTH -> model.rotationY(y);
         }
     }
 

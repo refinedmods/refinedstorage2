@@ -17,6 +17,7 @@ import net.minecraft.world.item.Items;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 import static com.refinedmods.refinedstorage2.platform.forge.datagen.tag.ItemTagGenerator.CABLES;
 import static com.refinedmods.refinedstorage2.platform.forge.datagen.tag.ItemTagGenerator.CONTROLLERS;
+import static com.refinedmods.refinedstorage2.platform.forge.datagen.tag.ItemTagGenerator.CRAFTING_GRIDS;
 import static com.refinedmods.refinedstorage2.platform.forge.datagen.tag.ItemTagGenerator.GRIDS;
 
 public class RecoloringRecipeProvider extends RecipeProvider {
@@ -30,11 +31,14 @@ public class RecoloringRecipeProvider extends RecipeProvider {
             recolorItems(CABLES, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_cable")));
         Blocks.INSTANCE.getController().forEach((color, block) ->
-                recolorItems(CONTROLLERS, block.get().asItem(), color)
-                        .save(provider, createIdentifier("coloring/" + color.getName() + "_controller")));
+            recolorItems(CONTROLLERS, block.get().asItem(), color)
+                .save(provider, createIdentifier("coloring/" + color.getName() + "_controller")));
         Blocks.INSTANCE.getGrid().forEach((color, block) ->
-                recolorItems(GRIDS, block.get().asItem(), color)
-                        .save(provider, createIdentifier("coloring/" + color.getName() + "_grid")));
+            recolorItems(GRIDS, block.get().asItem(), color)
+                .save(provider, createIdentifier("coloring/" + color.getName() + "_grid")));
+        Blocks.INSTANCE.getCraftingGrid().forEach((color, block) ->
+            recolorItems(CRAFTING_GRIDS, block.get().asItem(), color)
+                .save(provider, createIdentifier("coloring/" + color.getName() + "_crafting_grid")));
     }
 
     private ShapelessRecipeBuilder recolorItems(final TagKey<Item> dyeable, final Item result, final DyeColor color) {

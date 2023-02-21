@@ -59,6 +59,11 @@ public class ClientToServerCommunicationsImpl implements ClientToServerCommunica
     }
 
     @Override
+    public void sendCraftingGridClear(final boolean toPlayerInventory) {
+        sendToServer(PacketIds.CRAFTING_GRID_CLEAR, buf -> buf.writeBoolean(toPlayerInventory));
+    }
+
+    @Override
     public <T> void sendPropertyChange(final PropertyType<T> type, final T value) {
         sendToServer(PacketIds.PROPERTY_CHANGE, buf -> {
             buf.writeResourceLocation(type.id());

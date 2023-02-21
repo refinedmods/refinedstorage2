@@ -53,7 +53,7 @@ public abstract class AbstractSideButtonWidget extends Button {
         setBlitOffset(originalZOffset);
 
         if (isHovered) {
-            onTooltip(poseStack, mouseX, mouseY);
+            onTooltip(poseStack, mouseX, mouseY); // TODO - remove use setTooltip.
         }
 
         RenderSystem.disableDepthTest();

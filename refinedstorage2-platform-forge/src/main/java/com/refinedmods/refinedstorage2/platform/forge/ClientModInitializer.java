@@ -14,6 +14,7 @@ import com.refinedmods.refinedstorage2.platform.common.screen.FluidStorageBlockS
 import com.refinedmods.refinedstorage2.platform.common.screen.ImporterScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.InterfaceScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.ItemStorageBlockScreen;
+import com.refinedmods.refinedstorage2.platform.common.screen.grid.CraftingGridScreen;
 import com.refinedmods.refinedstorage2.platform.common.screen.grid.GridScreen;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.RefinedStorageREIClientPlugin;
 import com.refinedmods.refinedstorage2.platform.forge.integration.recipemod.rei.ReiGridSynchronizer;
@@ -28,6 +29,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.settings.KeyConflictContext;
+import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -41,6 +44,7 @@ import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUti
 
 public final class ClientModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientModInitializer.class);
+    private static final String KEY_BINDINGS_TRANSLATION_KEY = createTranslationKey("category", "key_bindings");
 
     private ClientModInitializer() {
     }
@@ -65,6 +69,7 @@ public final class ClientModInitializer {
         MenuScreens.register(Menus.INSTANCE.getController(), ControllerScreen::new);
         MenuScreens.register(Menus.INSTANCE.getDiskDrive(), DiskDriveScreen::new);
         MenuScreens.register(Menus.INSTANCE.getGrid(), GridScreen::new);
+        MenuScreens.register(Menus.INSTANCE.getCraftingGrid(), CraftingGridScreen::new);
         MenuScreens.register(Menus.INSTANCE.getItemStorage(), ItemStorageBlockScreen::new);
         MenuScreens.register(Menus.INSTANCE.getFluidStorage(), FluidStorageBlockScreen::new);
         MenuScreens.register(Menus.INSTANCE.getImporter(), ImporterScreen::new);
@@ -84,10 +89,29 @@ public final class ClientModInitializer {
             createTranslationKey("key", "focus_search_bar"),
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_TAB,
-            createTranslationKey("category", "key_bindings")
+            KEY_BINDINGS_TRANSLATION_KEY
         );
         e.register(focusSearchBarKeyBinding);
         KeyMappings.INSTANCE.setFocusSearchBar(focusSearchBarKeyBinding);
+
+        final KeyMapping clearCraftingGridMatrixToNetwork = new KeyMapping(
+            createTranslationKey("key", "clear_crafting_grid_matrix_to_network"),
+            KeyConflictContext.GUI,
+            KeyModifier.CONTROL,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_X,
+            KEY_BINDINGS_TRANSLATION_KEY
+        );
+        e.register(clearCraftingGridMatrixToNetwork);
+        KeyMappings.INSTANCE.setClearCraftingGridMatrixToNetwork(clearCraftingGridMatrixToNetwork);
+
+        final KeyMapping clearCraftingGridMatrixToInventory = new KeyMapping(
+            createTranslationKey("key", "clear_crafting_grid_matrix_to_inventory"),
+            InputConstants.UNKNOWN.getValue(),
+            KEY_BINDINGS_TRANSLATION_KEY
+        );
+        e.register(clearCraftingGridMatrixToInventory);
+        KeyMappings.INSTANCE.setClearCraftingGridMatrixToInventory(clearCraftingGridMatrixToInventory);
     }
 
     private static void registerBlockEntityRenderer() {
