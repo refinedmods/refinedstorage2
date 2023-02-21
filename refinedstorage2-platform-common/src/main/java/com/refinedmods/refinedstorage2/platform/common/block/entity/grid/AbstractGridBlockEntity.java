@@ -10,7 +10,6 @@ import com.refinedmods.refinedstorage2.platform.api.registry.PlatformRegistry;
 import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.api.storage.channel.PlatformStorageChannelType;
-import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.AbstractInternalNetworkNodeContainerBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.menu.ExtendedMenuProvider;
@@ -33,9 +32,10 @@ public abstract class AbstractGridBlockEntity
 
     protected AbstractGridBlockEntity(final BlockEntityType<? extends AbstractGridBlockEntity> type,
                                       final BlockPos pos,
-                                      final BlockState state) {
+                                      final BlockState state,
+                                      final long energyUsage) {
         super(type, pos, state, new GridNetworkNode(
-            Platform.INSTANCE.getConfig().getGrid().getEnergyUsage(),
+            energyUsage,
             PlatformApi.INSTANCE.getStorageChannelTypeRegistry().getAll()
         ));
         this.storageChannelTypeRegistry = PlatformApi.INSTANCE.getStorageChannelTypeRegistry();

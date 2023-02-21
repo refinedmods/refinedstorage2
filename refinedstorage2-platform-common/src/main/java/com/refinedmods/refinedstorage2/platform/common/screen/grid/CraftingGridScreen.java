@@ -107,6 +107,15 @@ public class CraftingGridScreen extends AbstractGridScreen<CraftingGridContainer
     }
 
     @Override
+    public void onClose() {
+        switch (Platform.INSTANCE.getConfig().getCraftingGrid().getCraftingMatrixCloseBehavior()) {
+            case CLEAR_TO_NETWORK -> getMenu().clear(false);
+            case CLEAR_TO_INVENTORY -> getMenu().clear(true);
+        }
+        super.onClose();
+    }
+
+    @Override
     protected ResourceLocation getTexture() {
         return TEXTURE;
     }

@@ -33,7 +33,12 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
     private final ResultContainer craftingResult = new ResultContainer();
 
     public CraftingGridBlockEntity(final BlockPos pos, final BlockState state) {
-        super(BlockEntities.INSTANCE.getCraftingGrid(), pos, state);
+        super(
+            BlockEntities.INSTANCE.getCraftingGrid(),
+            pos,
+            state,
+            Platform.INSTANCE.getConfig().getCraftingGrid().getEnergyUsage()
+        );
     }
 
     private void setOutput() {

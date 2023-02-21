@@ -7,8 +7,9 @@ public final class DefaultEnergyUsage {
     public static final long INTERFACE = 4;
     public static final long EXTERNAL_STORAGE = 6;
     public static final long GRID = 10;
+    public static final long CRAFTING_GRID = 14;
     public static final long DISK_DRIVE = 10;
-    public static final long DISK_DRIVE_PER_DISK = 5;
+    public static final long DISK_DRIVE_PER_DISK = 4;
     public static final long CONTROLLER_CAPACITY = 1000;
 
     public static final long ONE_K_STORAGE_BLOCK = 2;
