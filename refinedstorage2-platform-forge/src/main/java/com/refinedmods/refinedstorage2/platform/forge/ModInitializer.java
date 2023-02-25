@@ -333,7 +333,13 @@ public class ModInitializer extends AbstractModInitializer {
             ));
         }
 
-        Blocks.INSTANCE.setImporter(blockRegistry.register(IMPORTER.getPath(), ImporterBlock::new));
+        Blocks.INSTANCE.getImporter().putAll(color -> blockRegistry.register(
+            Blocks.INSTANCE.getImporter().getId(color, IMPORTER).getPath(),
+            () -> new ImporterBlock(color, Blocks.INSTANCE.getImporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
+            ))
+        ));
         Blocks.INSTANCE.getExporter().putAll(color -> blockRegistry.register(
             Blocks.INSTANCE.getExporter().getId(color, EXPORTER).getPath(),
             () -> new ExporterBlock(color, Blocks.INSTANCE.getExporter().getName(
@@ -403,10 +409,13 @@ public class ModInitializer extends AbstractModInitializer {
             );
         }
 
-        itemRegistry.register(
-            IMPORTER.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getImporter())
-        );
+        Blocks.INSTANCE.getImporter().forEach((color, block) -> Items.INSTANCE.addImporter(itemRegistry.register(
+            Blocks.INSTANCE.getImporter().getId(color, IMPORTER).getPath(),
+            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getImporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
+            ))
+        )));
         Blocks.INSTANCE.getExporter().forEach((color, block) -> Items.INSTANCE.addExporter(itemRegistry.register(
             Blocks.INSTANCE.getExporter().getId(color, EXPORTER).getPath(),
             () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getExporter().getName(
@@ -626,7 +635,10 @@ public class ModInitializer extends AbstractModInitializer {
 
         BlockEntities.INSTANCE.setImporter(blockEntityTypeRegistry.register(
             IMPORTER.getPath(),
-            () -> BlockEntityType.Builder.of(ImporterBlockEntity::new, Blocks.INSTANCE.getImporter()).build(null)
+            () -> BlockEntityType.Builder.of(
+                    ImporterBlockEntity::new,
+                    Blocks.INSTANCE.getImporter().toArray())
+                .build(null)
         ));
         BlockEntities.INSTANCE.setExporter(blockEntityTypeRegistry.register(
             EXPORTER.getPath(),

@@ -3,8 +3,8 @@ package com.refinedmods.refinedstorage2.platform.forge.datagen;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
-import com.refinedmods.refinedstorage2.platform.common.block.grid.AbstractGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionTypeImpl;
+import com.refinedmods.refinedstorage2.platform.common.block.grid.AbstractGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
@@ -36,6 +36,7 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
     protected void registerStatesAndModels() {
         registerCables();
         registerExporters();
+        registerImporters();
         registerControllers();
         registerGrids();
     }
@@ -52,6 +53,18 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
                 final var part = builder.part();
                 addDirectionalRotation(direction, part);
                 part.modelFile(exporterModel).addModel().condition(DirectionTypeImpl.INSTANCE.getProperty(), direction);
+            });
+        });
+    }
+
+    private void registerImporters() {
+        Blocks.INSTANCE.getImporter().forEach((color, exporter) -> {
+            final MultiPartBlockStateBuilder builder = addCableWithExtensions(exporter.get(), color);
+            final ModelFile importerModel = modelFile(createIdentifier("block/importer"));
+            PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
+                final var part = builder.part();
+                addDirectionalRotation(direction, part);
+                part.modelFile(importerModel).addModel().condition(DirectionTypeImpl.INSTANCE.getProperty(), direction);
             });
         });
     }

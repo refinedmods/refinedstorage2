@@ -1,0 +1,115 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/core/green"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/green",
+        "x": 90
+      },
+      "when": {
+        "down": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/green",
+        "x": 270
+      },
+      "when": {
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/green"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/green",
+        "x": 180
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/green",
+        "y": 270
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/green",
+        "y": 90
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/importer",
+        "x": 90
+      },
+      "when": {
+        "direction": "down"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/importer",
+        "x": 270
+      },
+      "when": {
+        "direction": "up"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/importer"
+      },
+      "when": {
+        "direction": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/importer",
+        "x": 180
+      },
+      "when": {
+        "direction": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/importer",
+        "y": 270
+      },
+      "when": {
+        "direction": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/importer",
+        "y": 90
+      },
+      "when": {
+        "direction": "east"
+      }
+    }
+  ]
+}

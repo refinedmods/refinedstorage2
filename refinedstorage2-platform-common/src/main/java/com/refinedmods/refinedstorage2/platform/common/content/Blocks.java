@@ -32,6 +32,7 @@ public final class Blocks {
     private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
     private final BlockColorMap<ExporterBlock> exporter = new BlockColorMap<>(DyeColor.GRAY);
+    private final BlockColorMap<ImporterBlock> importer = new BlockColorMap<>(DyeColor.GRAY);
     @Nullable
     private Supplier<SimpleBlock> quartzEnrichedIronBlock;
     @Nullable
@@ -42,8 +43,6 @@ public final class Blocks {
         new EnumMap<>(ItemStorageType.Variant.class);
     private final Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> fluidStorageBlocks =
         new EnumMap<>(FluidStorageType.Variant.class);
-    @Nullable
-    private Supplier<ImporterBlock> importer;
     @Nullable
     private Supplier<InterfaceBlock> iface;
     @Nullable
@@ -113,12 +112,8 @@ public final class Blocks {
         return fluidStorageBlocks.get(variant).get();
     }
 
-    public void setImporter(final Supplier<ImporterBlock> importerSupplier) {
-        this.importer = importerSupplier;
-    }
-
-    public ImporterBlock getImporter() {
-        return Objects.requireNonNull(importer).get();
+    public BlockColorMap<ImporterBlock> getImporter() {
+        return importer;
     }
 
     public BlockColorMap<ExporterBlock> getExporter() {

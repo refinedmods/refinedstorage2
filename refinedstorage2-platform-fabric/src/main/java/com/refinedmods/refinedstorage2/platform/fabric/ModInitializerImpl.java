@@ -392,10 +392,13 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             ));
         }
 
-        Blocks.INSTANCE.setImporter(register(
+        Blocks.INSTANCE.getImporter().putAll(color -> register(
             BuiltInRegistries.BLOCK,
-            IMPORTER,
-            new ImporterBlock()
+            Blocks.INSTANCE.getImporter().getId(color, IMPORTER),
+            new ImporterBlock(color, Blocks.INSTANCE.getImporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
+            ))
         ));
         Blocks.INSTANCE.getExporter().putAll(color -> register(
             BuiltInRegistries.BLOCK,
@@ -422,6 +425,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerGridItems();
         registerCableItems();
         registerExporterItems();
+        registerImporterItems();
         registerControllerItems();
         registerStorageItems();
         registerUpgrades();
@@ -469,8 +473,6 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             new SimpleBlockItem(Blocks.INSTANCE.getMachineCasing())
         );
 
-        register(BuiltInRegistries.ITEM, IMPORTER,
-            new SimpleBlockItem(Blocks.INSTANCE.getImporter()));
         register(BuiltInRegistries.ITEM, INTERFACE,
             new SimpleBlockItem(Blocks.INSTANCE.getInterface()));
         register(BuiltInRegistries.ITEM, EXTERNAL_STORAGE, new SimpleBlockItem(Blocks.INSTANCE.getExternalStorage()));
@@ -508,6 +510,17 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getExporter().getName(
                 color,
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "exporter")
+            ))
+        )));
+    }
+
+    private void registerImporterItems() {
+        Blocks.INSTANCE.getImporter().forEach((color, block) -> Items.INSTANCE.addImporter(register(
+            BuiltInRegistries.ITEM,
+            Blocks.INSTANCE.getImporter().getId(color, IMPORTER),
+            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getImporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
             ))
         )));
     }
@@ -700,7 +713,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             IMPORTER,
             FabricBlockEntityTypeBuilder.create(
                 ImporterBlockEntity::new,
-                Blocks.INSTANCE.getImporter()
+                Blocks.INSTANCE.getImporter().toArray()
             ).build()
         ));
         BlockEntities.INSTANCE.setExporter(register(
