@@ -1,0 +1,20 @@
+{
+  "values": [
+    "refinedstorage2:white_importer",
+    "refinedstorage2:orange_importer",
+    "refinedstorage2:magenta_importer",
+    "refinedstorage2:light_blue_importer",
+    "refinedstorage2:yellow_importer",
+    "refinedstorage2:lime_importer",
+    "refinedstorage2:pink_importer",
+    "refinedstorage2:importer",
+    "refinedstorage2:light_gray_importer",
+    "refinedstorage2:cyan_importer",
+    "refinedstorage2:purple_importer",
+    "refinedstorage2:blue_importer",
+    "refinedstorage2:brown_importer",
+    "refinedstorage2:green_importer",
+    "refinedstorage2:red_importer",
+    "refinedstorage2:black_importer"
+  ]
+}

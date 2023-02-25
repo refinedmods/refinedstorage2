@@ -31,6 +31,9 @@ public class ItemTagGenerator extends ItemTagsProvider {
     public static final TagKey<Item> GRIDS = createTag("grids");
     public static final TagKey<Item> CRAFTING_GRIDS = createTag("crafting_grids");
     public static final TagKey<Item> STORAGE_DISKS = createTag("storage_disks");
+    public static final TagKey<Item> IMPORTERS = createTag("importers");
+    public static final TagKey<Item> EXPORTERS = createTag("exporters");
+    public static final TagKey<Item> EXTERNAL_STORAGES = createTag("external_storages");
 
     public ItemTagGenerator(final PackOutput packOutput,
                             final CompletableFuture<HolderLookup.Provider> registries,
@@ -63,6 +66,18 @@ public class ItemTagGenerator extends ItemTagsProvider {
                 .map(Items.INSTANCE::getItemStorageDisk)
                 .map(t -> (Supplier<Item>) () -> t)
                 .collect(Collectors.toList()));
+        addAllToTag(IMPORTERS,
+            Blocks.INSTANCE.getImporter().values().stream()
+                .map(block -> (Supplier<Item>) block::asItem)
+                .toList());
+        addAllToTag(EXPORTERS,
+            Blocks.INSTANCE.getExporter().values().stream()
+                .map(block -> (Supplier<Item>) block::asItem)
+                .toList());
+        addAllToTag(EXTERNAL_STORAGES,
+            Blocks.INSTANCE.getExternalStorage().values().stream()
+                .map(block -> (Supplier<Item>) block::asItem)
+                .toList());
     }
 
     private <T extends Item> void addAllToTag(final TagKey<Item> t, final Collection<Supplier<T>> items) {
