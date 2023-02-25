@@ -33,7 +33,7 @@ public final class CreativeModeTabItems {
         ));
         Items.INSTANCE.getImporters().stream().map(Supplier::get).forEach(consumer);
         Items.INSTANCE.getExporters().stream().map(Supplier::get).forEach(consumer);
-        consumer.accept(Blocks.INSTANCE.getExternalStorage());
+        Items.INSTANCE.getExternalStorages().stream().map(Supplier::get).forEach(consumer);
         consumer.accept(Blocks.INSTANCE.getInterface());
         consumer.accept(Blocks.INSTANCE.getMachineCasing());
         consumer.accept(Blocks.INSTANCE.getQuartzEnrichedIronBlock());

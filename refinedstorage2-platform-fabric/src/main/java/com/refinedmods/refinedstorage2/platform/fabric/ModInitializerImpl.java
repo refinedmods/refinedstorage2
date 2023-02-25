@@ -413,10 +413,13 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             INTERFACE,
             new InterfaceBlock()
         ));
-        Blocks.INSTANCE.setExternalStorage(register(
+        Blocks.INSTANCE.getExternalStorage().putAll(color -> register(
             BuiltInRegistries.BLOCK,
-            EXTERNAL_STORAGE,
-            new ExternalStorageBlock()
+            Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE),
+            new ExternalStorageBlock(color, Blocks.INSTANCE.getExternalStorage().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
+            ))
         ));
     }
 
@@ -426,6 +429,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
         registerCableItems();
         registerExporterItems();
         registerImporterItems();
+        registerExternalStorages();
         registerControllerItems();
         registerStorageItems();
         registerUpgrades();
@@ -475,7 +479,6 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
 
         register(BuiltInRegistries.ITEM, INTERFACE,
             new SimpleBlockItem(Blocks.INSTANCE.getInterface()));
-        register(BuiltInRegistries.ITEM, EXTERNAL_STORAGE, new SimpleBlockItem(Blocks.INSTANCE.getExternalStorage()));
 
         Items.INSTANCE.setConstructionCore(register(BuiltInRegistries.ITEM, CONSTRUCTION_CORE, new SimpleItem()));
         Items.INSTANCE.setDestructionCore(register(BuiltInRegistries.ITEM, DESTRUCTION_CORE, new SimpleItem()));
@@ -521,6 +524,17 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getImporter().getName(
                 color,
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
+            ))
+        )));
+    }
+
+    private void registerExternalStorages() {
+        Blocks.INSTANCE.getExternalStorage().forEach((color, block) -> Items.INSTANCE.addExternalStorage(register(
+            BuiltInRegistries.ITEM,
+            Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE),
+            new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getExternalStorage().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
             ))
         )));
     }
@@ -737,7 +751,7 @@ public class ModInitializerImpl extends AbstractModInitializer implements ModIni
             EXTERNAL_STORAGE,
             FabricBlockEntityTypeBuilder.create(
                 ExternalStorageBlockEntity::new,
-                Blocks.INSTANCE.getExternalStorage()
+                Blocks.INSTANCE.getExternalStorage().toArray()
             ).build()
         ));
     }

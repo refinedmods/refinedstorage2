@@ -348,9 +348,12 @@ public class ModInitializer extends AbstractModInitializer {
             ))
         ));
         Blocks.INSTANCE.setInterface(blockRegistry.register(INTERFACE.getPath(), InterfaceBlock::new));
-        Blocks.INSTANCE.setExternalStorage(blockRegistry.register(
-            EXTERNAL_STORAGE.getPath(),
-            ExternalStorageBlock::new
+        Blocks.INSTANCE.getExternalStorage().putAll(color -> blockRegistry.register(
+            Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE).getPath(),
+            () -> new ExternalStorageBlock(color, Blocks.INSTANCE.getExternalStorage().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
+            ))
         ));
 
         blockRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -427,10 +430,17 @@ public class ModInitializer extends AbstractModInitializer {
             INTERFACE.getPath(),
             () -> new SimpleBlockItem(Blocks.INSTANCE.getInterface())
         );
-        itemRegistry.register(
-            EXTERNAL_STORAGE.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getExternalStorage())
-        );
+        Blocks.INSTANCE.getExternalStorage().forEach((color, block) -> Items.INSTANCE.addExternalStorage(
+            itemRegistry.register(
+                Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE).getPath(),
+                () -> new NamedBlockItem(block.get(), new Item.Properties(),
+                    Blocks.INSTANCE.getExternalStorage().getName(
+                        color,
+                        createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
+                    )
+                )
+            )
+        ));
 
         Items.INSTANCE.setConstructionCore(itemRegistry.register(CONSTRUCTION_CORE.getPath(), SimpleItem::new));
         Items.INSTANCE.setDestructionCore(itemRegistry.register(DESTRUCTION_CORE.getPath(), SimpleItem::new));
@@ -655,7 +665,7 @@ public class ModInitializer extends AbstractModInitializer {
             EXTERNAL_STORAGE.getPath(),
             () -> BlockEntityType.Builder.of(
                 ExternalStorageBlockEntity::new,
-                Blocks.INSTANCE.getExternalStorage()
+                Blocks.INSTANCE.getExternalStorage().toArray()
             ).build(null)
         ));
 

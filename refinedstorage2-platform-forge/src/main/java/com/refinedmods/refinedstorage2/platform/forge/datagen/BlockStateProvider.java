@@ -37,6 +37,7 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
         registerCables();
         registerExporters();
         registerImporters();
+        registerExternalStorages();
         registerControllers();
         registerGrids();
     }
@@ -65,6 +66,20 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
                 final var part = builder.part();
                 addDirectionalRotation(direction, part);
                 part.modelFile(importerModel).addModel().condition(DirectionTypeImpl.INSTANCE.getProperty(), direction);
+            });
+        });
+    }
+
+    private void registerExternalStorages() {
+        Blocks.INSTANCE.getExternalStorage().forEach((color, externalStorage) -> {
+            final MultiPartBlockStateBuilder builder = addCableWithExtensions(externalStorage.get(), color);
+            final ModelFile externalStorageModel = modelFile(createIdentifier("block/external_storage"));
+            PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
+                final var part = builder.part();
+                addDirectionalRotation(direction, part);
+                part.modelFile(externalStorageModel)
+                    .addModel()
+                    .condition(DirectionTypeImpl.INSTANCE.getProperty(), direction);
             });
         });
     }

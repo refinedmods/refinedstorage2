@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.forge.datagen;
 import com.refinedmods.refinedstorage2.platform.common.block.CableBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ExporterBlock;
+import com.refinedmods.refinedstorage2.platform.common.block.ExternalStorageBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ImporterBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.CraftingGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.GridBlock;
@@ -28,6 +29,7 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         registerCables();
         registerExporter();
         registerImporter();
+        registerExternalStorage();
         registerController();
         registerCreativeController();
         registerGrid();
@@ -61,6 +63,17 @@ public class ItemModelProvider extends net.minecraftforge.client.model.generator
         final ColorMap<ImporterBlock> importer = Blocks.INSTANCE.getImporter();
         importer.forEach((color, exporter) -> singleTexture(
             importer.getId(color, createIdentifier("importer")).getPath(),
+            base,
+            "cable",
+            createIdentifier("block/cable/" + color.getName())
+        ));
+    }
+
+    private void registerExternalStorage() {
+        final ResourceLocation base = createIdentifier("item/external_storage/base");
+        final ColorMap<ExternalStorageBlock> externalStorage = Blocks.INSTANCE.getExternalStorage();
+        externalStorage.forEach((color, exporter) -> singleTexture(
+            externalStorage.getId(color, createIdentifier("external_storage")).getPath(),
             base,
             "cable",
             createIdentifier("block/cable/" + color.getName())

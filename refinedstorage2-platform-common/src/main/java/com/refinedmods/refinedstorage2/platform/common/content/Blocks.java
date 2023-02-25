@@ -33,6 +33,7 @@ public final class Blocks {
     private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
     private final BlockColorMap<ExporterBlock> exporter = new BlockColorMap<>(DyeColor.GRAY);
     private final BlockColorMap<ImporterBlock> importer = new BlockColorMap<>(DyeColor.GRAY);
+    private final BlockColorMap<ExternalStorageBlock> externalStorage = new BlockColorMap<>(DyeColor.GRAY);
     @Nullable
     private Supplier<SimpleBlock> quartzEnrichedIronBlock;
     @Nullable
@@ -45,8 +46,6 @@ public final class Blocks {
         new EnumMap<>(FluidStorageType.Variant.class);
     @Nullable
     private Supplier<InterfaceBlock> iface;
-    @Nullable
-    private Supplier<ExternalStorageBlock> externalStorage;
 
     private Blocks() {
     }
@@ -128,11 +127,7 @@ public final class Blocks {
         return Objects.requireNonNull(iface).get();
     }
 
-    public void setExternalStorage(final Supplier<ExternalStorageBlock> externalStorageSupplier) {
-        this.externalStorage = externalStorageSupplier;
-    }
-
-    public ExternalStorageBlock getExternalStorage() {
-        return Objects.requireNonNull(externalStorage).get();
+    public BlockColorMap<ExternalStorageBlock> getExternalStorage() {
+        return externalStorage;
     }
 }
