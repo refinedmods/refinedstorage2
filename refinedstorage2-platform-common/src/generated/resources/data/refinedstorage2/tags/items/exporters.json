@@ -1,0 +1,20 @@
+{
+  "values": [
+    "refinedstorage2:white_exporter",
+    "refinedstorage2:orange_exporter",
+    "refinedstorage2:magenta_exporter",
+    "refinedstorage2:light_blue_exporter",
+    "refinedstorage2:yellow_exporter",
+    "refinedstorage2:lime_exporter",
+    "refinedstorage2:pink_exporter",
+    "refinedstorage2:exporter",
+    "refinedstorage2:light_gray_exporter",
+    "refinedstorage2:cyan_exporter",
+    "refinedstorage2:purple_exporter",
+    "refinedstorage2:blue_exporter",
+    "refinedstorage2:brown_exporter",
+    "refinedstorage2:green_exporter",
+    "refinedstorage2:red_exporter",
+    "refinedstorage2:black_exporter"
+  ]
+}

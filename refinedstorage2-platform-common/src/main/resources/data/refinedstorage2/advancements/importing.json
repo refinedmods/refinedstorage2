@@ -17,9 +17,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "refinedstorage2:importer"
-            ]
+            "tag": "refinedstorage2:importers"
           }
         ]
       }

@@ -17,9 +17,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "refinedstorage2:external_storage"
-            ]
+            "tag": "refinedstorage2:external_storages"
           }
         ]
       }
