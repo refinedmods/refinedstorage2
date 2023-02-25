@@ -1,7 +1,6 @@
 {
   "parent": "block/block",
   "textures": {
-    "cable": "refinedstorage2:block/cable/gray",
     "border": "refinedstorage2:block/cable/part_border"
   },
   "elements": [

@@ -1,0 +1,6 @@
+{
+  "parent": "refinedstorage2:item/importer/base",
+  "textures": {
+    "cable": "refinedstorage2:block/cable/cyan"
+  }
+}

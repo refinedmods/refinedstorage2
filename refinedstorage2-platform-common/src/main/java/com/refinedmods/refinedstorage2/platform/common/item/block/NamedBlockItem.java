@@ -5,10 +5,10 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
-public abstract class AbstractNamedBlockItem extends BlockItem {
+public class NamedBlockItem extends BlockItem {
     private final Component name;
 
-    protected AbstractNamedBlockItem(final Block block, final Properties properties, final Component name) {
+    public NamedBlockItem(final Block block, final Properties properties, final Component name) {
         super(block, properties);
         this.name = name;
     }

@@ -55,12 +55,11 @@ import com.refinedmods.refinedstorage2.platform.common.item.ProcessorItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleItem;
 import com.refinedmods.refinedstorage2.platform.common.item.SimpleUpgradeItem;
 import com.refinedmods.refinedstorage2.platform.common.item.WrenchItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.CableBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.CreativeControllerBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.FluidStorageBlockBlockItem;
-import com.refinedmods.refinedstorage2.platform.common.item.block.GridBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.ItemStorageBlockBlockItem;
+import com.refinedmods.refinedstorage2.platform.common.item.block.NamedBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.item.block.SimpleBlockItem;
 import com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil;
 import com.refinedmods.refinedstorage2.platform.common.util.TickHandler;
@@ -334,12 +333,27 @@ public class ModInitializer extends AbstractModInitializer {
             ));
         }
 
-        Blocks.INSTANCE.setImporter(blockRegistry.register(IMPORTER.getPath(), ImporterBlock::new));
-        Blocks.INSTANCE.setExporter(blockRegistry.register(EXPORTER.getPath(), ExporterBlock::new));
+        Blocks.INSTANCE.getImporter().putAll(color -> blockRegistry.register(
+            Blocks.INSTANCE.getImporter().getId(color, IMPORTER).getPath(),
+            () -> new ImporterBlock(color, Blocks.INSTANCE.getImporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
+            ))
+        ));
+        Blocks.INSTANCE.getExporter().putAll(color -> blockRegistry.register(
+            Blocks.INSTANCE.getExporter().getId(color, EXPORTER).getPath(),
+            () -> new ExporterBlock(color, Blocks.INSTANCE.getExporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "exporter")
+            ))
+        ));
         Blocks.INSTANCE.setInterface(blockRegistry.register(INTERFACE.getPath(), InterfaceBlock::new));
-        Blocks.INSTANCE.setExternalStorage(blockRegistry.register(
-            EXTERNAL_STORAGE.getPath(),
-            ExternalStorageBlock::new
+        Blocks.INSTANCE.getExternalStorage().putAll(color -> blockRegistry.register(
+            Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE).getPath(),
+            () -> new ExternalStorageBlock(color, Blocks.INSTANCE.getExternalStorage().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
+            ))
         ));
 
         blockRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -398,22 +412,35 @@ public class ModInitializer extends AbstractModInitializer {
             );
         }
 
-        itemRegistry.register(
-            IMPORTER.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getImporter())
-        );
-        itemRegistry.register(
-            EXPORTER.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getExporter())
-        );
+        Blocks.INSTANCE.getImporter().forEach((color, block) -> Items.INSTANCE.addImporter(itemRegistry.register(
+            Blocks.INSTANCE.getImporter().getId(color, IMPORTER).getPath(),
+            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getImporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "importer")
+            ))
+        )));
+        Blocks.INSTANCE.getExporter().forEach((color, block) -> Items.INSTANCE.addExporter(itemRegistry.register(
+            Blocks.INSTANCE.getExporter().getId(color, EXPORTER).getPath(),
+            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getExporter().getName(
+                color,
+                createTranslation(BLOCK_TRANSLATION_CATEGORY, "exporter")
+            ))
+        )));
         itemRegistry.register(
             INTERFACE.getPath(),
             () -> new SimpleBlockItem(Blocks.INSTANCE.getInterface())
         );
-        itemRegistry.register(
-            EXTERNAL_STORAGE.getPath(),
-            () -> new SimpleBlockItem(Blocks.INSTANCE.getExternalStorage())
-        );
+        Blocks.INSTANCE.getExternalStorage().forEach((color, block) -> Items.INSTANCE.addExternalStorage(
+            itemRegistry.register(
+                Blocks.INSTANCE.getExternalStorage().getId(color, EXTERNAL_STORAGE).getPath(),
+                () -> new NamedBlockItem(block.get(), new Item.Properties(),
+                    Blocks.INSTANCE.getExternalStorage().getName(
+                        color,
+                        createTranslation(BLOCK_TRANSLATION_CATEGORY, "external_storage")
+                    )
+                )
+            )
+        ));
 
         Items.INSTANCE.setConstructionCore(itemRegistry.register(CONSTRUCTION_CORE.getPath(), SimpleItem::new));
         Items.INSTANCE.setDestructionCore(itemRegistry.register(DESTRUCTION_CORE.getPath(), SimpleItem::new));
@@ -422,7 +449,7 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerCableItems() {
         Blocks.INSTANCE.getCable().forEach((color, block) -> Items.INSTANCE.addCable(itemRegistry.register(
             Blocks.INSTANCE.getCable().getId(color, CABLE).getPath(),
-            () -> new CableBlockItem(block.get(), Blocks.INSTANCE.getCable().getName(
+            () -> new NamedBlockItem(block.get(), new Item.Properties(), Blocks.INSTANCE.getCable().getName(
                 color,
                 createTranslation(BLOCK_TRANSLATION_CATEGORY, "cable")
             ))
@@ -432,8 +459,9 @@ public class ModInitializer extends AbstractModInitializer {
     private void registerGridItems() {
         Blocks.INSTANCE.getGrid().forEach((color, block) -> itemRegistry.register(
             Blocks.INSTANCE.getGrid().getId(color, GRID).getPath(),
-            () -> new GridBlockItem(
+            () -> new NamedBlockItem(
                 block.get(),
+                new Item.Properties(),
                 Blocks.INSTANCE.getGrid().getName(color, createTranslation(
                     BLOCK_TRANSLATION_CATEGORY,
                     "grid"
@@ -442,8 +470,9 @@ public class ModInitializer extends AbstractModInitializer {
         ));
         Blocks.INSTANCE.getCraftingGrid().forEach((color, block) -> itemRegistry.register(
             Blocks.INSTANCE.getCraftingGrid().getId(color, CRAFTING_GRID).getPath(),
-            () -> new GridBlockItem(
+            () -> new NamedBlockItem(
                 block.get(),
+                new Item.Properties(),
                 Blocks.INSTANCE.getCraftingGrid().getName(color, createTranslation(
                     BLOCK_TRANSLATION_CATEGORY,
                     "crafting_grid"
@@ -616,11 +645,17 @@ public class ModInitializer extends AbstractModInitializer {
 
         BlockEntities.INSTANCE.setImporter(blockEntityTypeRegistry.register(
             IMPORTER.getPath(),
-            () -> BlockEntityType.Builder.of(ImporterBlockEntity::new, Blocks.INSTANCE.getImporter()).build(null)
+            () -> BlockEntityType.Builder.of(
+                    ImporterBlockEntity::new,
+                    Blocks.INSTANCE.getImporter().toArray())
+                .build(null)
         ));
         BlockEntities.INSTANCE.setExporter(blockEntityTypeRegistry.register(
             EXPORTER.getPath(),
-            () -> BlockEntityType.Builder.of(ExporterBlockEntity::new, Blocks.INSTANCE.getExporter()).build(null)
+            () -> BlockEntityType.Builder.of(
+                    ExporterBlockEntity::new,
+                    Blocks.INSTANCE.getExporter().toArray())
+                .build(null)
         ));
         BlockEntities.INSTANCE.setInterface(blockEntityTypeRegistry.register(
             INTERFACE.getPath(),
@@ -630,7 +665,7 @@ public class ModInitializer extends AbstractModInitializer {
             EXTERNAL_STORAGE.getPath(),
             () -> BlockEntityType.Builder.of(
                 ExternalStorageBlockEntity::new,
-                Blocks.INSTANCE.getExternalStorage()
+                Blocks.INSTANCE.getExternalStorage().toArray()
             ).build(null)
         ));
 

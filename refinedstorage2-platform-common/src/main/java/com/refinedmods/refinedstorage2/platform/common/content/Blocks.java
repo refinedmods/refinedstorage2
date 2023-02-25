@@ -31,6 +31,9 @@ public final class Blocks {
     private final BlockColorMap<CraftingGridBlock> craftingGrid = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> controller = new BlockColorMap<>();
     private final BlockColorMap<ControllerBlock> creativeController = new BlockColorMap<>();
+    private final BlockColorMap<ExporterBlock> exporter = new BlockColorMap<>(DyeColor.GRAY);
+    private final BlockColorMap<ImporterBlock> importer = new BlockColorMap<>(DyeColor.GRAY);
+    private final BlockColorMap<ExternalStorageBlock> externalStorage = new BlockColorMap<>(DyeColor.GRAY);
     @Nullable
     private Supplier<SimpleBlock> quartzEnrichedIronBlock;
     @Nullable
@@ -42,13 +45,7 @@ public final class Blocks {
     private final Map<FluidStorageType.Variant, Supplier<FluidStorageBlock>> fluidStorageBlocks =
         new EnumMap<>(FluidStorageType.Variant.class);
     @Nullable
-    private Supplier<ImporterBlock> importer;
-    @Nullable
-    private Supplier<ExporterBlock> exporter;
-    @Nullable
     private Supplier<InterfaceBlock> iface;
-    @Nullable
-    private Supplier<ExternalStorageBlock> externalStorage;
 
     private Blocks() {
     }
@@ -114,20 +111,12 @@ public final class Blocks {
         return fluidStorageBlocks.get(variant).get();
     }
 
-    public void setImporter(final Supplier<ImporterBlock> importerSupplier) {
-        this.importer = importerSupplier;
+    public BlockColorMap<ImporterBlock> getImporter() {
+        return importer;
     }
 
-    public ImporterBlock getImporter() {
-        return Objects.requireNonNull(importer).get();
-    }
-
-    public void setExporter(final Supplier<ExporterBlock> exporterSupplier) {
-        this.exporter = exporterSupplier;
-    }
-
-    public ExporterBlock getExporter() {
-        return Objects.requireNonNull(exporter).get();
+    public BlockColorMap<ExporterBlock> getExporter() {
+        return exporter;
     }
 
     public void setInterface(final Supplier<InterfaceBlock> interfaceSupplier) {
@@ -138,11 +127,7 @@ public final class Blocks {
         return Objects.requireNonNull(iface).get();
     }
 
-    public void setExternalStorage(final Supplier<ExternalStorageBlock> externalStorageSupplier) {
-        this.externalStorage = externalStorageSupplier;
-    }
-
-    public ExternalStorageBlock getExternalStorage() {
-        return Objects.requireNonNull(externalStorage).get();
+    public BlockColorMap<ExternalStorageBlock> getExternalStorage() {
+        return externalStorage;
     }
 }

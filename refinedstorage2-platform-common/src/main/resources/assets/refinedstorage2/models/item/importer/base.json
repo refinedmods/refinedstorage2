@@ -1,7 +1,6 @@
 {
   "parent": "block/block",
   "textures": {
-    "cable": "refinedstorage2:block/cable/gray",
     "border": "refinedstorage2:block/cable/part_border"
   },
   "elements": [
@@ -233,23 +232,32 @@
     {
       "name": "Line1",
       "from": [
-        7.0,
-        7.0,
-        2.0
+        6.0,
+        6.0,
+        4.0
       ],
       "to": [
-        9.0,
-        9.0,
+        10.0,
+        10.0,
         6.0
       ],
       "faces": {
-        "east": {
+        "north": {
           "texture": "#border",
           "uv": [
             0.0,
             0.0,
             4.0,
-            2.0
+            4.0
+          ]
+        },
+        "east": {
+          "texture": "#border",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            4.0
           ]
         },
         "south": {
@@ -266,8 +274,8 @@
           "uv": [
             0.0,
             0.0,
-            4.0,
-            2.0
+            2.0,
+            4.0
           ]
         },
         "up": {
@@ -275,8 +283,8 @@
           "uv": [
             0.0,
             0.0,
-            2.0,
-            4.0
+            4.0,
+            2.0
           ]
         },
         "down": {
@@ -284,14 +292,83 @@
           "uv": [
             0.0,
             0.0,
-            2.0,
-            4.0
+            4.0,
+            2.0
           ]
         }
       }
     },
     {
       "name": "Line2",
+      "from": [
+        5.0,
+        5.0,
+        2.0
+      ],
+      "to": [
+        11.0,
+        11.0,
+        4.0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#border",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            6.0
+          ]
+        },
+        "east": {
+          "texture": "#border",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            6.0
+          ]
+        },
+        "south": {
+          "texture": "#border",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            6.0
+          ]
+        },
+        "west": {
+          "texture": "#border",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            6.0
+          ]
+        },
+        "up": {
+          "texture": "#border",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            2.0
+          ]
+        },
+        "down": {
+          "texture": "#border",
+          "uv": [
+            0.0,
+            0.0,
+            6.0,
+            2.0
+          ]
+        }
+      }
+    },
+    {
+      "name": "Line3",
       "from": [
         3.0,
         3.0,

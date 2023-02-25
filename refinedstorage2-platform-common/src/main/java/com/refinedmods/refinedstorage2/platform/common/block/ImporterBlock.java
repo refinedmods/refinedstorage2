@@ -3,12 +3,16 @@ package com.refinedmods.refinedstorage2.platform.common.block;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.ImporterBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.AbstractBlockEntityTicker;
 import com.refinedmods.refinedstorage2.platform.common.block.ticker.NetworkNodeBlockEntityTicker;
+import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -17,12 +21,21 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class ImporterBlock extends AbstractDirectionalCableBlock implements EntityBlock {
+public class ImporterBlock extends AbstractDirectionalCableBlock implements ColorableBlock<ImporterBlock>, EntityBlock {
     private static final AbstractBlockEntityTicker<ImporterBlockEntity> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getImporter);
+    private final DyeColor color;
+    private final MutableComponent name;
 
-    public ImporterBlock() {
+    public ImporterBlock(final DyeColor color, final MutableComponent name) {
         super(BlockConstants.CABLE_PROPERTIES);
+        this.color = color;
+        this.name = name;
+    }
+
+    @Override
+    public DyeColor getColor() {
+        return color;
     }
 
     @Override
@@ -39,6 +52,11 @@ public class ImporterBlock extends AbstractDirectionalCableBlock implements Enti
     }
 
     @Override
+    public BlockColorMap<ImporterBlock> getBlockColorMap() {
+        return Blocks.INSTANCE.getImporter();
+    }
+
+    @Override
     protected VoxelShape getExtensionShape(final Direction direction) {
         return switch (direction) {
             case NORTH -> DirectionalCableBlockShapes.IMPORTER_NORTH;
@@ -48,5 +66,10 @@ public class ImporterBlock extends AbstractDirectionalCableBlock implements Enti
             case UP -> DirectionalCableBlockShapes.IMPORTER_UP;
             case DOWN -> DirectionalCableBlockShapes.IMPORTER_DOWN;
         };
+    }
+
+    @Override
+    public MutableComponent getName() {
+        return name;
     }
 }

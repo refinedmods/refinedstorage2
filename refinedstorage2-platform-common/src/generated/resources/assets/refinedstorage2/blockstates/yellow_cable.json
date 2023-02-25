@@ -8,32 +8,6 @@
     {
       "apply": {
         "model": "refinedstorage2:block/cable/extension/yellow",
-        "y": 90
-      },
-      "when": {
-        "east": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "refinedstorage2:block/cable/extension/yellow"
-      },
-      "when": {
-        "north": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "refinedstorage2:block/cable/extension/yellow",
-        "y": 270
-      },
-      "when": {
-        "west": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "refinedstorage2:block/cable/extension/yellow",
         "x": 90
       },
       "when": {
@@ -51,11 +25,37 @@
     },
     {
       "apply": {
+        "model": "refinedstorage2:block/cable/extension/yellow"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
         "model": "refinedstorage2:block/cable/extension/yellow",
         "x": 180
       },
       "when": {
         "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/yellow",
+        "y": 270
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "refinedstorage2:block/cable/extension/yellow",
+        "y": 90
+      },
+      "when": {
+        "east": "true"
       }
     }
   ]

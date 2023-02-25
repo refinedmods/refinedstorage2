@@ -3,18 +3,21 @@ package com.refinedmods.refinedstorage2.platform.forge.datagen;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerBlock;
 import com.refinedmods.refinedstorage2.platform.common.block.ControllerEnergyType;
 import com.refinedmods.refinedstorage2.platform.common.block.direction.BiDirectionType;
+import com.refinedmods.refinedstorage2.platform.common.block.direction.DirectionTypeImpl;
 import com.refinedmods.refinedstorage2.platform.common.block.grid.AbstractGridBlock;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 import com.refinedmods.refinedstorage2.platform.common.util.BiDirection;
 
 import java.util.function.Supplier;
 
+import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import static com.refinedmods.refinedstorage2.platform.common.block.CableBlockSupport.PROPERTY_BY_DIRECTION;
@@ -32,29 +35,84 @@ public class BlockStateProvider extends net.minecraftforge.client.model.generato
     @Override
     protected void registerStatesAndModels() {
         registerCables();
+        registerExporters();
+        registerImporters();
+        registerExternalStorages();
         registerControllers();
         registerGrids();
     }
 
     private void registerCables() {
-        Blocks.INSTANCE.getCable().forEach((color, cable) -> {
-            final var builder = getMultipartBuilder(cable.get())
-                .part()
-                .modelFile(modelFile(createIdentifier("block/cable/core/" + color.getName()))).addModel()
-                .end();
-            final ModelFile extension = modelFile(createIdentifier("block/cable/extension/" + color.getName()));
+        Blocks.INSTANCE.getCable().forEach((color, cable) -> addCableWithExtensions(cable.get(), color));
+    }
+
+    private void registerExporters() {
+        Blocks.INSTANCE.getExporter().forEach((color, exporter) -> {
+            final MultiPartBlockStateBuilder builder = addCableWithExtensions(exporter.get(), color);
+            final ModelFile exporterModel = modelFile(createIdentifier("block/exporter"));
             PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
                 final var part = builder.part();
-                switch (direction) {
-                    case UP -> part.rotationX(270);
-                    case SOUTH -> part.rotationX(180);
-                    case DOWN -> part.rotationX(90);
-                    case WEST -> part.rotationY(270);
-                    case EAST -> part.rotationY(90);
-                }
-                part.modelFile(extension).addModel().condition(property, true);
+                addDirectionalRotation(direction, part);
+                part.modelFile(exporterModel).addModel().condition(DirectionTypeImpl.INSTANCE.getProperty(), direction);
             });
         });
+    }
+
+    private void registerImporters() {
+        Blocks.INSTANCE.getImporter().forEach((color, exporter) -> {
+            final MultiPartBlockStateBuilder builder = addCableWithExtensions(exporter.get(), color);
+            final ModelFile importerModel = modelFile(createIdentifier("block/importer"));
+            PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
+                final var part = builder.part();
+                addDirectionalRotation(direction, part);
+                part.modelFile(importerModel).addModel().condition(DirectionTypeImpl.INSTANCE.getProperty(), direction);
+            });
+        });
+    }
+
+    private void registerExternalStorages() {
+        Blocks.INSTANCE.getExternalStorage().forEach((color, externalStorage) -> {
+            final MultiPartBlockStateBuilder builder = addCableWithExtensions(externalStorage.get(), color);
+            final ModelFile externalStorageModel = modelFile(createIdentifier("block/external_storage"));
+            PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
+                final var part = builder.part();
+                addDirectionalRotation(direction, part);
+                part.modelFile(externalStorageModel)
+                    .addModel()
+                    .condition(DirectionTypeImpl.INSTANCE.getProperty(), direction);
+            });
+        });
+    }
+
+    private MultiPartBlockStateBuilder addCableWithExtensions(final Block block, final DyeColor color) {
+        final var builder = getMultipartBuilder(block)
+            .part()
+            .modelFile(modelFile(createIdentifier("block/cable/core/" + color.getName()))).addModel()
+            .end();
+        final ModelFile extension = modelFile(createIdentifier("block/cable/extension/" + color.getName()));
+        addForEachDirection(builder, extension);
+        return builder;
+    }
+
+    private static void addForEachDirection(final MultiPartBlockStateBuilder builder, final ModelFile extension) {
+        PROPERTY_BY_DIRECTION.forEach((direction, property) -> {
+            final var part = builder.part();
+            addDirectionalRotation(direction, part);
+            part.modelFile(extension).addModel().condition(property, true);
+        });
+    }
+
+    private static void addDirectionalRotation(
+        final Direction direction,
+        final ConfiguredModel.Builder<MultiPartBlockStateBuilder.PartBuilder> part
+    ) {
+        switch (direction) {
+            case UP -> part.rotationX(270);
+            case SOUTH -> part.rotationX(180);
+            case DOWN -> part.rotationX(90);
+            case WEST -> part.rotationY(270);
+            case EAST -> part.rotationY(90);
+        }
     }
 
     private void registerGrids() {
