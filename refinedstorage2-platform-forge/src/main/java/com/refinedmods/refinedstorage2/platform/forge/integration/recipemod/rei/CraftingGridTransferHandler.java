@@ -35,7 +35,7 @@ public class CraftingGridTransferHandler implements TransferHandler {
         }
         final List<EntryIngredient> ingredients = defaultCraftingDisplay.getOrganisedInputEntries(3, 3);
         if (context.isActuallyCrafting()) {
-            doTransfer(ingredients);
+            doTransfer(ingredients, containerMenu);
             return Result.createSuccessful().blocksFurtherHandling();
         }
         final ResourceList<Object> available = containerMenu.getAvailableListForRecipeTransfer();
@@ -50,10 +50,9 @@ public class CraftingGridTransferHandler implements TransferHandler {
             .blocksFurtherHandling();
     }
 
-    private void doTransfer(final List<EntryIngredient> ingredients) {
-        final List<List<ItemStack>> inputs = getInputs(ingredients);
-        System.out.println(inputs);
-        // TODO - Implementation
+    private void doTransfer(final List<EntryIngredient> ingredients, final CraftingGridContainerMenu containerMenu) {
+        final List<List<ItemResource>> inputs = getInputs(ingredients);
+        containerMenu.transferRecipe(inputs);
     }
 
     private MissingIngredients findMissingIngredients(final List<EntryIngredient> ingredients,
@@ -82,8 +81,11 @@ public class CraftingGridTransferHandler implements TransferHandler {
         return false;
     }
 
-    private List<List<ItemStack>> getInputs(final List<EntryIngredient> ingredients) {
-        return ingredients.stream().map(this::convertIngredientToItemStacks).toList();
+    private List<List<ItemResource>> getInputs(final List<EntryIngredient> ingredients) {
+        return ingredients.stream()
+            .map(this::convertIngredientToItemStacks)
+            .map(list -> list.stream().map(ItemResource::ofItemStack).toList())
+            .toList();
     }
 
     private List<ItemStack> convertIngredientToItemStacks(final EntryIngredient ingredient) {

@@ -1,10 +1,19 @@
 package com.refinedmods.refinedstorage2.platform.common.block.entity.grid;
 
+import com.refinedmods.refinedstorage2.api.core.Action;
+import com.refinedmods.refinedstorage2.api.network.Network;
+import com.refinedmods.refinedstorage2.api.network.component.StorageNetworkComponent;
+import com.refinedmods.refinedstorage2.api.network.impl.node.grid.GridNetworkNode;
+import com.refinedmods.refinedstorage2.api.storage.channel.StorageChannel;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
+import com.refinedmods.refinedstorage2.platform.api.storage.PlayerActor;
 import com.refinedmods.refinedstorage2.platform.common.Platform;
 import com.refinedmods.refinedstorage2.platform.common.containermenu.grid.CraftingGridContainerMenu;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
+import com.refinedmods.refinedstorage2.platform.common.internal.storage.channel.StorageChannelTypes;
 import com.refinedmods.refinedstorage2.platform.common.util.ContainerUtil;
 
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -119,5 +128,48 @@ public class CraftingGridBlockEntity extends AbstractGridBlockEntity {
     public void setLevel(final Level level) {
         super.setLevel(level);
         setOutputSilently(level);
+    }
+
+    public Optional<Network> getNetwork() {
+        final GridNetworkNode node = getNode();
+        if (!node.isActive()) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(node.getNetwork());
+    }
+
+    public Optional<StorageChannel<ItemResource>> getStorageChannel() {
+        return getNetwork().map(network -> network
+            .getComponent(StorageNetworkComponent.class)
+            .getStorageChannel(StorageChannelTypes.ITEM));
+    }
+
+    public ItemStack insert(final ItemStack stack, final Player player) {
+        return getStorageChannel().map(storageChannel -> doInsert(stack, player, storageChannel)).orElse(stack);
+    }
+
+    private ItemStack doInsert(final ItemStack stack,
+                               final Player player,
+                               final StorageChannel<ItemResource> storageChannel) {
+        final long inserted = storageChannel.insert(
+            ItemResource.ofItemStack(stack),
+            stack.getCount(),
+            Action.EXECUTE,
+            new PlayerActor(player)
+        );
+        final long remainder = stack.getCount() - inserted;
+        if (remainder == 0) {
+            return ItemStack.EMPTY;
+        }
+        return stack.copyWithCount((int) remainder);
+    }
+
+    public long extract(final ItemResource resource, final long amount, final Player player) {
+        return getStorageChannel().map(storageChannel -> storageChannel.extract(
+            resource,
+            amount,
+            Action.EXECUTE,
+            new PlayerActor(player)
+        )).orElse(0L);
     }
 }
