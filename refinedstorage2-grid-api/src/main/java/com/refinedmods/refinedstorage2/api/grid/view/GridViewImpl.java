@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.api.grid.view;
 import com.refinedmods.refinedstorage2.api.core.CoreValidations;
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceListImpl;
 import com.refinedmods.refinedstorage2.api.resource.list.ResourceListOperationResult;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
@@ -237,7 +238,14 @@ public class GridViewImpl implements GridView {
     }
 
     @Override
-    public List<GridResource> getAll() {
+    public List<GridResource> getViewList() {
         return viewList;
+    }
+
+    @Override
+    public ResourceList<Object> copyBackingList() {
+        final ResourceList<Object> copy = new ResourceListImpl<>();
+        backingList.getAll().forEach(copy::add);
+        return copy;
     }
 }
