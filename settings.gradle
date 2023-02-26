@@ -53,6 +53,7 @@ dependencyResolutionManagement {
             library("rei-api", "me.shedaniel", "RoughlyEnoughItems-api").versionRef(rei)
             library("architectury", "dev.architectury", "architectury-fabric").versionRef(architectury)
             library("rei-fabric", "me.shedaniel", "RoughlyEnoughItems-fabric").versionRef(rei)
+            library("rei-plugin", "me.shedaniel", "RoughlyEnoughItems-default-plugin").version(reiVersion)
             bundle("rei-runtime", ["architectury", "rei-fabric"])
 
             def jei = version("jei", jeiVersion)
