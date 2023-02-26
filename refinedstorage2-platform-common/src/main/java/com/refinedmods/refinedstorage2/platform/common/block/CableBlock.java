@@ -35,7 +35,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class CableBlock extends AbstractBaseBlock
     implements ColorableBlock<CableBlock>, SimpleWaterloggedBlock, EntityBlock {
     private static final AbstractBlockEntityTicker<CableBlockEntity> TICKER =
-            new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getCable);
+        new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getCable);
 
     private final DyeColor color;
     private final MutableComponent name;
@@ -106,7 +106,8 @@ public class CableBlock extends AbstractBaseBlock
                                final BlockGetter world,
                                final BlockPos pos,
                                final CollisionContext context) {
-        return CableBlockSupport.getShape(state);
+        final CableShapeCacheKey cacheKey = CableShapeCacheKey.of(state);
+        return CableBlockSupport.getShape(cacheKey);
     }
 
     @Override

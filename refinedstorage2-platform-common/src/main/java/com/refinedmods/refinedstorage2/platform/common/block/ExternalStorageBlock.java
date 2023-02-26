@@ -7,6 +7,8 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -27,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public class ExternalStorageBlock extends AbstractDirectionalCableBlock
     implements ColorableBlock<ExternalStorageBlock>, EntityBlock {
+    private static final Map<DirectionalCacheShapeCacheKey, VoxelShape> SHAPE_CACHE = new HashMap<>();
     private static final AbstractBlockEntityTicker<ExternalStorageBlockEntity> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getExternalStorage);
 
@@ -35,7 +38,7 @@ public class ExternalStorageBlock extends AbstractDirectionalCableBlock
     private final MutableComponent name;
 
     public ExternalStorageBlock(final DyeColor color, final MutableComponent name) {
-        super(BlockConstants.CABLE_PROPERTIES);
+        super(BlockConstants.CABLE_PROPERTIES, SHAPE_CACHE);
         this.color = color;
         this.name = name;
     }

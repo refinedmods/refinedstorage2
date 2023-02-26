@@ -3,6 +3,7 @@ package com.refinedmods.refinedstorage2.platform.common.block;
 import com.refinedmods.refinedstorage2.platform.api.network.node.PlatformNetworkNodeContainer;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
 
@@ -43,6 +44,7 @@ public final class CableBlockSupport {
     private static final VoxelShape SHAPE_WEST = box(0, 6, 6, 6, 10, 10);
     private static final VoxelShape SHAPE_UP = box(6, 10, 6, 10, 16, 10);
     private static final VoxelShape SHAPE_DOWN = box(6, 0, 6, 10, 6, 10);
+    private static final Map<CableShapeCacheKey, VoxelShape> SHAPE_CACHE = new HashMap<>();
 
     private CableBlockSupport() {
     }
@@ -62,24 +64,28 @@ public final class CableBlockSupport {
         builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN, BlockStateProperties.WATERLOGGED);
     }
 
-    static VoxelShape getShape(final BlockState state) {
+    static VoxelShape getShape(final CableShapeCacheKey cacheKey) {
+        return SHAPE_CACHE.computeIfAbsent(cacheKey, CableBlockSupport::calculateShape);
+    }
+
+    private static VoxelShape calculateShape(final CableShapeCacheKey cacheKey) {
         VoxelShape shape = SHAPE_CORE;
-        if (Boolean.TRUE.equals(state.getValue(NORTH))) {
+        if (cacheKey.north()) {
             shape = Shapes.or(shape, SHAPE_NORTH);
         }
-        if (Boolean.TRUE.equals(state.getValue(EAST))) {
+        if (cacheKey.east()) {
             shape = Shapes.or(shape, SHAPE_EAST);
         }
-        if (Boolean.TRUE.equals(state.getValue(SOUTH))) {
+        if (cacheKey.south()) {
             shape = Shapes.or(shape, SHAPE_SOUTH);
         }
-        if (Boolean.TRUE.equals(state.getValue(WEST))) {
+        if (cacheKey.west()) {
             shape = Shapes.or(shape, SHAPE_WEST);
         }
-        if (Boolean.TRUE.equals(state.getValue(UP))) {
+        if (cacheKey.up()) {
             shape = Shapes.or(shape, SHAPE_UP);
         }
-        if (Boolean.TRUE.equals(state.getValue(DOWN))) {
+        if (cacheKey.down()) {
             shape = Shapes.or(shape, SHAPE_DOWN);
         }
         return shape;
