@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 -   Fixed Disk Drive having 9 slots instead of 8.
+-   Fixed slow world loading.
 
 ### Added
 

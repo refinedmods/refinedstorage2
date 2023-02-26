@@ -7,6 +7,8 @@ import com.refinedmods.refinedstorage2.platform.common.content.BlockColorMap;
 import com.refinedmods.refinedstorage2.platform.common.content.BlockEntities;
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -22,13 +24,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class ImporterBlock extends AbstractDirectionalCableBlock implements ColorableBlock<ImporterBlock>, EntityBlock {
+    private static final Map<DirectionalCacheShapeCacheKey, VoxelShape> SHAPE_CACHE = new HashMap<>();
     private static final AbstractBlockEntityTicker<ImporterBlockEntity> TICKER =
         new NetworkNodeBlockEntityTicker<>(BlockEntities.INSTANCE::getImporter);
     private final DyeColor color;
     private final MutableComponent name;
 
     public ImporterBlock(final DyeColor color, final MutableComponent name) {
-        super(BlockConstants.CABLE_PROPERTIES);
+        super(BlockConstants.CABLE_PROPERTIES, SHAPE_CACHE);
         this.color = color;
         this.name = name;
     }
