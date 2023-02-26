@@ -19,6 +19,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   Colored variant of exporters, importers and external storages. They connect the same way as colored cables.
 -   Support for using the R/U keys in JEI and REI on Grid slots and filtering slots
 -   Crafting Grid.
+-   JEI recipe transfer integration for the Crafting Grid.
 -   The crafting matrix in the Crafting Grid now has a button and keybinding to clear to the player inventory.
     The keybinding is only available on Forge.
 -   A config option to clear items from the Crafting Grid crafting matrix to the player or network inventory.
@@ -28,6 +29,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The button to clear to the network inventory next to the crafting matrix in the Crafting Grid is now disabled if
     the Crafting Grid is inactive.
 -   The keybinding to clear the Crafting Grid matrix to the network inventory is only available on Forge.
+-   The JEI recipe transfer integration for the Crafting Grid now only supports regular crafting recipes.
 
 ### Removed
 

@@ -9,8 +9,10 @@ import javax.annotation.Nullable;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.helpers.IPlatformFluidHelper;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
+import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
@@ -28,6 +30,11 @@ public class RefinedStorageJeiModPlugin implements IModPlugin {
     @Override
     public ResourceLocation getPluginUid() {
         return ID;
+    }
+
+    @Override
+    public void registerRecipeTransferHandlers(final IRecipeTransferRegistration registration) {
+        registration.addRecipeTransferHandler(new CraftingGridRecipeTransferHandler(), RecipeTypes.CRAFTING);
     }
 
     @Override

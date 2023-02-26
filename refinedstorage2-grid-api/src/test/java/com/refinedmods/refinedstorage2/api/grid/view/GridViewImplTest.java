@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
 import com.refinedmods.refinedstorage2.api.resource.ResourceAmount;
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.Comparator;
@@ -47,7 +48,7 @@ class GridViewImplTest {
         view.onChange(new ResourceWithMetadata("A", 2), 1, null);
 
         // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceWithMetadata(new ResourceAmount<>(
                 new ResourceWithMetadata("A", 1), 1
             )),
@@ -69,7 +70,7 @@ class GridViewImplTest {
         view.onChange("B", 15, null);
         view.onChange("C", 2, null);
 
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("B", 15),
             new GridResourceImpl("A", 15),
             new GridResourceImpl("C", 2)
@@ -81,7 +82,7 @@ class GridViewImplTest {
         view.onChange("B", -15, null);
         view.onChange("B", 15, null);
 
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("B", 15),
             new GridResourceImpl("A", 15),
             new GridResourceImpl("C", 2)
@@ -103,11 +104,17 @@ class GridViewImplTest {
         final Optional<TrackedResource> a = view.getTrackedResource("A");
         final Optional<TrackedResource> b = view.getTrackedResource("B");
         final Optional<TrackedResource> d = view.getTrackedResource("D");
+        final ResourceList<Object> backingList = view.copyBackingList();
 
         // Assert
         assertThat(a).get().usingRecursiveComparison().isEqualTo(new TrackedResource("RaoulA", 2));
         assertThat(b).isEmpty();
         assertThat(d).isEmpty();
+        assertThat(backingList.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(
+            new ResourceAmount<>("A", 2),
+            new ResourceAmount<>("B", 2),
+            new ResourceAmount<>("D", 1)
+        );
     }
 
     @Test
@@ -127,11 +134,18 @@ class GridViewImplTest {
         view.onChange("A", 12, null);
 
         // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 12),
             new GridResourceImpl("B", 15)
         );
+        assertThat(view.copyBackingList().getAll())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount<>("D", 10),
+                new ResourceAmount<>("A", 12),
+                new ResourceAmount<>("B", 15)
+            );
         verify(listener, times(1)).run();
     }
 
@@ -152,7 +166,7 @@ class GridViewImplTest {
         view.onChange("A", 12, null);
 
         // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("B", 15)
         );
@@ -197,11 +211,18 @@ class GridViewImplTest {
         view.onChange("B", 5, null);
 
         // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("B", 11),
             new GridResourceImpl("A", 15)
         );
+        assertThat(view.copyBackingList().getAll())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount<>("D", 10),
+                new ResourceAmount<>("B", 11),
+                new ResourceAmount<>("A", 15)
+            );
         verify(listener, times(1)).run();
     }
 
@@ -223,10 +244,17 @@ class GridViewImplTest {
         view.onChange("B", 5, null);
 
         // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15)
         );
+        assertThat(view.copyBackingList().getAll())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount<>("B", 11),
+                new ResourceAmount<>("D", 10),
+                new ResourceAmount<>("A", 15)
+            );
         verify(listener, never()).run();
     }
 
@@ -245,7 +273,7 @@ class GridViewImplTest {
         view.setListener(listener);
 
         // Act & assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("B", 6),
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15)
@@ -259,21 +287,35 @@ class GridViewImplTest {
         view.onChange("B", 5, null);
         verify(listener, never()).run();
 
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("B", 11),
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15)
         );
+        assertThat(view.copyBackingList().getAll())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount<>("B", 11),
+                new ResourceAmount<>("D", 10),
+                new ResourceAmount<>("A", 15)
+            );
 
         final boolean changed3 = view.setPreventSorting(false);
         assertThat(changed3).isTrue();
         view.sort();
 
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("B", 11),
             new GridResourceImpl("A", 15)
         );
+        assertThat(view.copyBackingList().getAll())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount<>("B", 11),
+                new ResourceAmount<>("D", 10),
+                new ResourceAmount<>("A", 15)
+            );
     }
 
     @Test
@@ -317,11 +359,18 @@ class GridViewImplTest {
         view.onChange("B", -7, null);
 
         // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("B", 13),
             new GridResourceImpl("A", 15)
         );
+        assertThat(view.copyBackingList().getAll())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount<>("D", 10),
+                new ResourceAmount<>("B", 13),
+                new ResourceAmount<>("A", 15)
+            );
         verify(listener, times(1)).run();
     }
 
@@ -343,7 +392,7 @@ class GridViewImplTest {
         view.onChange("B", -7, null);
 
         // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15)
         );
@@ -365,7 +414,7 @@ class GridViewImplTest {
         view.setListener(listener);
 
         // Act & assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15),
             new GridResourceImpl("B", 20)
@@ -376,7 +425,7 @@ class GridViewImplTest {
         view.onChange("B", -7, null);
         verify(listener, never()).run();
 
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15),
             new GridResourceImpl("B", 13)
@@ -385,7 +434,7 @@ class GridViewImplTest {
         view.setPreventSorting(false);
         view.sort();
 
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("B", 13),
             new GridResourceImpl("A", 15)
@@ -410,10 +459,16 @@ class GridViewImplTest {
         view.onChange("B", -20, null);
 
         // Assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15)
         );
+        assertThat(view.copyBackingList().getAll())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount<>("D", 10),
+                new ResourceAmount<>("A", 15)
+            );
         verify(listener, times(1)).run();
     }
 
@@ -432,7 +487,7 @@ class GridViewImplTest {
         view.setListener(listener);
 
         // Act & assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15),
             new GridResourceImpl("B", 20)
@@ -442,19 +497,31 @@ class GridViewImplTest {
         view.onChange("B", -20, null);
         verify(listener, never()).run();
 
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15),
             new GridResourceImpl("B", 20).zeroed()
         );
+        assertThat(view.copyBackingList().getAll())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount<>("D", 10),
+                new ResourceAmount<>("A", 15)
+            );
 
         view.setPreventSorting(false);
         view.sort();
 
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15)
         );
+        assertThat(view.copyBackingList().getAll())
+            .usingRecursiveFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(
+                new ResourceAmount<>("D", 10),
+                new ResourceAmount<>("A", 15)
+            );
     }
 
     @Test
@@ -472,7 +539,7 @@ class GridViewImplTest {
         view.setListener(listener);
 
         // Act & assert
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15),
             new GridResourceImpl("B", 20)
@@ -483,7 +550,7 @@ class GridViewImplTest {
         view.onChange("B", -20, null);
         verify(listener, never()).run();
 
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15),
             new GridResourceImpl("B", 20).zeroed()
@@ -493,7 +560,7 @@ class GridViewImplTest {
         view.onChange("B", 5, null);
         verify(listener, never()).run();
 
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15),
             new GridResourceImpl("B", 5)
@@ -503,7 +570,7 @@ class GridViewImplTest {
         view.onChange("B", 3, null);
         verify(listener, never()).run();
 
-        assertThat(view.getAll()).usingRecursiveFieldByFieldElementComparator().containsExactly(
+        assertThat(view.getViewList()).usingRecursiveFieldByFieldElementComparator().containsExactly(
             new GridResourceImpl("D", 10),
             new GridResourceImpl("A", 15),
             new GridResourceImpl("B", 8)

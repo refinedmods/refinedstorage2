@@ -1,5 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.containermenu.grid;
 
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
+import com.refinedmods.refinedstorage2.platform.api.resource.ItemResource;
 import com.refinedmods.refinedstorage2.platform.common.block.entity.grid.CraftingGridBlockEntity;
 import com.refinedmods.refinedstorage2.platform.common.content.Menus;
 
@@ -7,6 +9,7 @@ import java.util.function.Consumer;
 import javax.annotation.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -85,5 +88,22 @@ public class CraftingGridContainerMenu extends AbstractGridContainerMenu {
 
     public void clear(final boolean toPlayerInventory) {
         source.clearMatrix(player, toPlayerInventory);
+    }
+
+    public ResourceList<Object> getAvailableListForRecipeTransfer() {
+        final ResourceList<Object> available = getView().copyBackingList();
+        addContainerToList(source.getCraftingMatrix(), available);
+        addContainerToList(player.getInventory(), available);
+        return available;
+    }
+
+    private void addContainerToList(final Container container, final ResourceList<Object> available) {
+        for (int i = 0; i < container.getContainerSize(); ++i) {
+            final ItemStack stack = container.getItem(i);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            available.add(ItemResource.ofItemStack(stack), stack.getCount());
+        }
     }
 }

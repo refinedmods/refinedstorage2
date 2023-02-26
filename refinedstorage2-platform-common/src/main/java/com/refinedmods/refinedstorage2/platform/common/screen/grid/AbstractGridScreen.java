@@ -161,7 +161,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (scrollbar == null) {
             return;
         }
-        totalRows = (int) Math.ceil((float) getMenu().getView().getAll().size() / (float) COLUMNS);
+        totalRows = (int) Math.ceil((float) getMenu().getView().getViewList().size() / (float) COLUMNS);
         scrollbar.setEnabled(totalRows > visibleRows);
         final int rowsExcludingVisibleOnes = totalRows - visibleRows;
         final int maxOffset = scrollbar.isScrollAnimation()
@@ -276,8 +276,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         final int slotY = rowY + 1;
 
         GridResource resource = null;
-        if (idx < view.getAll().size()) {
-            resource = view.getAll().get(idx);
+        if (idx < view.getViewList().size()) {
+            resource = view.getViewList().get(idx);
             renderResourceWithAmount(poseStack, slotX, slotY, resource);
         }
 
@@ -340,7 +340,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
     private void renderTooltipWithMaybeSmallLines(final PoseStack poseStack, final int mouseX, final int mouseY) {
         final GridView view = getMenu().getView();
-        final GridResource resource = view.getAll().get(gridSlotNumber);
+        final GridResource resource = view.getViewList().get(gridSlotNumber);
         if (!(resource instanceof PlatformGridResource platformResource)) {
             return;
         }
@@ -407,7 +407,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (this.gridSlotNumber == -1) {
             return null;
         }
-        return menu.getView().getAll().get(this.gridSlotNumber);
+        return menu.getView().getViewList().get(this.gridSlotNumber);
     }
 
     @Override
@@ -429,8 +429,8 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
 
         final ItemStack carriedStack = getMenu().getCarried();
 
-        if (!getMenu().getView().getAll().isEmpty() && gridSlotNumber >= 0 && carriedStack.isEmpty()) {
-            mouseClickedInGrid(clickedButton, getMenu().getView().getAll().get(gridSlotNumber));
+        if (!getMenu().getView().getViewList().isEmpty() && gridSlotNumber >= 0 && carriedStack.isEmpty()) {
+            mouseClickedInGrid(clickedButton, getMenu().getView().getViewList().get(gridSlotNumber));
             return true;
         }
 
@@ -523,7 +523,7 @@ public abstract class AbstractGridScreen<T extends AbstractGridContainerMenu> ex
         if (scrollMode == null) {
             return;
         }
-        final GridResource resource = getMenu().getView().getAll().get(gridSlotNumber);
+        final GridResource resource = getMenu().getView().getViewList().get(gridSlotNumber);
         if (!(resource instanceof PlatformGridResource platformGridResource)) {
             return;
         }

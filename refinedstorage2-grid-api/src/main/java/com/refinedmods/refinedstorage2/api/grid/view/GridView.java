@@ -1,5 +1,6 @@
 package com.refinedmods.refinedstorage2.api.grid.view;
 
+import com.refinedmods.refinedstorage2.api.resource.list.ResourceList;
 import com.refinedmods.refinedstorage2.api.storage.tracked.TrackedResource;
 
 import java.util.List;
@@ -82,5 +83,10 @@ public interface GridView {
     /**
      * @return the view list
      */
-    List<GridResource> getAll();
+    List<GridResource> getViewList();
+
+    /**
+     * @return a copy of the backing list
+     */
+    ResourceList<Object> copyBackingList();
 }
