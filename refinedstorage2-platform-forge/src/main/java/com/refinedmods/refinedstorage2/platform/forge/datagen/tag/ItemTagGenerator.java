@@ -12,7 +12,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
@@ -21,19 +20,19 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CABLES;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CONTROLLERS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CRAFTING_GRIDS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.CREATIVE_CONTROLLERS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.EXPORTERS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.EXTERNAL_STORAGES;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.FLUID_STORAGE_DISKS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.GRIDS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.IMPORTERS;
+import static com.refinedmods.refinedstorage2.platform.common.content.Tags.STORAGE_DISKS;
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.MOD_ID;
-import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
 
 public class ItemTagGenerator extends ItemTagsProvider {
-    public static final TagKey<Item> CABLES = createTag("cables");
-    public static final TagKey<Item> CONTROLLERS = createTag("controllers");
-    public static final TagKey<Item> FLUID_STORAGE_DISKS = createTag("fluid_storage_disks");
-    public static final TagKey<Item> GRIDS = createTag("grids");
-    public static final TagKey<Item> CRAFTING_GRIDS = createTag("crafting_grids");
-    public static final TagKey<Item> STORAGE_DISKS = createTag("storage_disks");
-    public static final TagKey<Item> IMPORTERS = createTag("importers");
-    public static final TagKey<Item> EXPORTERS = createTag("exporters");
-    public static final TagKey<Item> EXTERNAL_STORAGES = createTag("external_storages");
 
     public ItemTagGenerator(final PackOutput packOutput,
                             final CompletableFuture<HolderLookup.Provider> registries,
@@ -46,6 +45,10 @@ public class ItemTagGenerator extends ItemTagsProvider {
     protected void addTags(final HolderLookup.Provider provider) {
         addAllToTag(CABLES, Items.INSTANCE.getCables());
         addAllToTag(CONTROLLERS, Items.INSTANCE.getRegularControllers());
+        addAllToTag(CREATIVE_CONTROLLERS, Blocks.INSTANCE.getCreativeController().values().stream()
+            .map(Block::asItem)
+            .map(c -> (Supplier<Item>) () -> c)
+            .collect(Collectors.toList()));
         addAllToTag(FLUID_STORAGE_DISKS,
             Arrays.stream(FluidStorageType.Variant.values())
                 .filter(variant -> variant != FluidStorageType.Variant.CREATIVE)
@@ -84,9 +87,5 @@ public class ItemTagGenerator extends ItemTagsProvider {
         tag(t)
             .add(items.stream().map(Supplier::get).toArray(Item[]::new))
             .replace(false);
-    }
-
-    private static TagKey<Item> createTag(final String name) {
-        return TagKey.create(Registries.ITEM, createIdentifier(name));
     }
 }
