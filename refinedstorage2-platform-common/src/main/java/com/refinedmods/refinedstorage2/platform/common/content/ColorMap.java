@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.common.content;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -47,7 +48,9 @@ public class ColorMap<T> {
     }
 
     public void forEach(final BiConsumer<DyeColor, Supplier<T>> consumer) {
-        map.forEach(consumer);
+        map.entrySet().stream()
+            .sorted(new ColoredSorter<>(defaultColor))
+            .forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
     public T get(final DyeColor color) {
@@ -60,5 +63,16 @@ public class ColorMap<T> {
 
     public Collection<T> values() {
         return map.values().stream().map(Supplier::get).collect(Collectors.toList());
+    }
+
+    private record ColoredSorter<T>(DyeColor defaultColor) implements Comparator<Map.Entry<DyeColor, T>> {
+        @Override
+        public int compare(final Map.Entry<DyeColor, T> entry1, final Map.Entry<DyeColor, T> entry2) {
+            return getId(entry1) - getId(entry2);
+        }
+
+        private int getId(final Map.Entry<DyeColor, T> entry) {
+            return (entry.getKey().getId() - defaultColor.getId() + 16) % 16;
+        }
     }
 }

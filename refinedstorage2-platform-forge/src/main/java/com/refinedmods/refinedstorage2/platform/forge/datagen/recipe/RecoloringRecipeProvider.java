@@ -1,6 +1,7 @@
 package com.refinedmods.refinedstorage2.platform.forge.datagen.recipe;
 
 import com.refinedmods.refinedstorage2.platform.common.content.Blocks;
+import com.refinedmods.refinedstorage2.platform.common.content.Tags;
 
 import java.util.function.Consumer;
 
@@ -15,13 +16,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
 import static com.refinedmods.refinedstorage2.platform.common.util.IdentifierUtil.createIdentifier;
-import static com.refinedmods.refinedstorage2.platform.forge.datagen.tag.ItemTagGenerator.CABLES;
-import static com.refinedmods.refinedstorage2.platform.forge.datagen.tag.ItemTagGenerator.CONTROLLERS;
-import static com.refinedmods.refinedstorage2.platform.forge.datagen.tag.ItemTagGenerator.CRAFTING_GRIDS;
-import static com.refinedmods.refinedstorage2.platform.forge.datagen.tag.ItemTagGenerator.EXPORTERS;
-import static com.refinedmods.refinedstorage2.platform.forge.datagen.tag.ItemTagGenerator.EXTERNAL_STORAGES;
-import static com.refinedmods.refinedstorage2.platform.forge.datagen.tag.ItemTagGenerator.GRIDS;
-import static com.refinedmods.refinedstorage2.platform.forge.datagen.tag.ItemTagGenerator.IMPORTERS;
 
 public class RecoloringRecipeProvider extends RecipeProvider {
     public RecoloringRecipeProvider(final PackOutput output) {
@@ -31,25 +25,25 @@ public class RecoloringRecipeProvider extends RecipeProvider {
     @Override
     protected void buildRecipes(final Consumer<FinishedRecipe> provider) {
         Blocks.INSTANCE.getCable().forEach((color, block) ->
-            recolorItems(CABLES, block.get().asItem(), color)
+            recolorItems(Tags.CABLES, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_cable")));
         Blocks.INSTANCE.getImporter().forEach((color, block) ->
-            recolorItems(IMPORTERS, block.get().asItem(), color)
+            recolorItems(Tags.IMPORTERS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_importer")));
         Blocks.INSTANCE.getExporter().forEach((color, block) ->
-            recolorItems(EXPORTERS, block.get().asItem(), color)
+            recolorItems(Tags.EXPORTERS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_exporter")));
         Blocks.INSTANCE.getExternalStorage().forEach((color, block) ->
-            recolorItems(EXTERNAL_STORAGES, block.get().asItem(), color)
+            recolorItems(Tags.EXTERNAL_STORAGES, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_external_storage")));
         Blocks.INSTANCE.getController().forEach((color, block) ->
-            recolorItems(CONTROLLERS, block.get().asItem(), color)
+            recolorItems(Tags.CONTROLLERS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_controller")));
         Blocks.INSTANCE.getGrid().forEach((color, block) ->
-            recolorItems(GRIDS, block.get().asItem(), color)
+            recolorItems(Tags.GRIDS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_grid")));
         Blocks.INSTANCE.getCraftingGrid().forEach((color, block) ->
-            recolorItems(CRAFTING_GRIDS, block.get().asItem(), color)
+            recolorItems(Tags.CRAFTING_GRIDS, block.get().asItem(), color)
                 .save(provider, createIdentifier("coloring/" + color.getName() + "_crafting_grid")));
     }
 

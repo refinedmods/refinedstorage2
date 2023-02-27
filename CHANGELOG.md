@@ -23,6 +23,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The crafting matrix in the Crafting Grid now has a button and keybinding to clear to the player inventory.
     The keybinding is only available on Forge.
 -   A config option to clear items from the Crafting Grid crafting matrix to the player or network inventory.
+-   Support for collapsable entries for REI.
 
 ### Changed
 
