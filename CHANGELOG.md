@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0-milestone.2.8] - 2023-03-04
+
 ### Fixed
 
 -   Fixed Disk Drive having 9 slots instead of 8.
@@ -326,7 +328,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 -   The Grid can now use smooth scrolling.
 -   The Grid now has syntax highlighting for the search query.
 
-[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.7...HEAD
+[Unreleased]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.8...HEAD
+
+[2.0.0-milestone.2.8]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.7...v2.0.0-milestone.2.8
 
 [2.0.0-milestone.2.7]: https://github.com/refinedmods/refinedstorage2/compare/v2.0.0-milestone.2.6...v2.0.0-milestone.2.7
 
